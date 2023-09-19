@@ -25,7 +25,7 @@ go 1.21.0
 //replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
 
 require (
-	cloud.google.com/go/firestore v1.12.0
+	cloud.google.com/go/firestore v1.13.0
 	github.com/aws/aws-sdk-go v1.45.11
 	github.com/bots-go-framework/bots-fw v0.21.4
 	github.com/bots-go-framework/bots-fw-store v0.1.0
@@ -38,6 +38,7 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/sneat-co/sneat-core-modules v0.0.5
 	github.com/sneat-co/sneat-go-core v0.9.1
+	github.com/sneat-co/sneat-go-firebase v0.3.1
 	github.com/sneat-co/sneat-go-modules v0.0.9
 	github.com/stretchr/testify v1.8.4
 	github.com/strongo/app v0.5.7
@@ -50,18 +51,24 @@ require (
 	cloud.google.com/go/compute v1.23.0 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
 	cloud.google.com/go/datastore v1.14.0 // indirect
+	cloud.google.com/go/iam v1.1.1 // indirect
 	cloud.google.com/go/longrunning v0.5.1 // indirect
+	cloud.google.com/go/storage v1.30.1 // indirect
+	firebase.google.com/go/v4 v4.12.0 // indirect
 	github.com/AlekSi/pointer v1.0.0 // indirect
+	github.com/MicahParks/keyfunc v1.9.0 // indirect
 	github.com/alexsergivan/transliterator v1.0.0 // indirect
 	github.com/bots-go-framework/bots-api-telegram v0.4.1 // indirect
 	github.com/bots-go-framework/bots-go-core v0.0.1 // indirect
 	github.com/crediterra/money v0.2.1 // indirect
 	github.com/dal-go/dalgo2datastore v0.0.20 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/s2a-go v0.1.7 // indirect
+	github.com/google/uuid v1.3.1 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.5 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.0 // indirect
 	github.com/gosimple/slug v1.13.1 // indirect

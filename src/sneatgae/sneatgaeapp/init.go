@@ -1,14 +1,14 @@
 package sneatgaeapp
 
 import (
-	"cloud.google.com/go/firestore"
-	"context"
-	"github.com/dal-go/dalgo/dal"
-	"github.com/dal-go/dalgo2firestore"
-	"github.com/sneat-co/sneat-go-core/facade"
+	"github.com/sneat-co/sneat-go-firebase/sneatfb"
 	"os"
 	"strings"
 )
+
+func init() {
+	sneatfb.InitFirebaseForSneat(projectID, "sneat")
+}
 
 func getProjectID() string {
 	for _, v := range os.Environ() {
@@ -28,14 +28,3 @@ func getProjectID() string {
 }
 
 var projectID = getProjectID()
-
-func init() {
-	facade.GetDatabase = func(ctx context.Context) dal.DB {
-
-		client, err := firestore.NewClient(ctx, projectID)
-		if err != nil {
-			panic(err)
-		}
-		return dalgo2firestore.NewDatabase("sneat", client)
-	}
-}
