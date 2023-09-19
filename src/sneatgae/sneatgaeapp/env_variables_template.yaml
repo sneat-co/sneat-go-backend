@@ -1,0 +1,4 @@
+env_variables:
+  AWS_REGION: "us-west-1"
+  AWS_ACCESS_KEY_ID: "<TO_BE_SUPPLIED>"
+  AWS_SECRET_ACCESS_KEY: "<TO_BE_SUPPLIED>"

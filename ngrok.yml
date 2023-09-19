@@ -1,0 +1,13 @@
+version: "2"
+#authtoken: _________
+
+tunnels:
+
+  gae:
+    proto: http
+    addr: 4300
+  #    hostname: sneatgaeapp.ngrok.io
+
+  ionic:
+    proto: http
+    addr: 4200

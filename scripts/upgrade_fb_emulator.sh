@@ -1,0 +1,1 @@
+pnpm install -g firebase-tools
