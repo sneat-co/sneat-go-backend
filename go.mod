@@ -4,6 +4,10 @@ go 1.21.0
 
 // TODO: Get ret rid of: github.com/dal-go/dalgo2datastore
 
+replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
+
+replace github.com/sneat-co/sneat-go-modules => ../sneat-go-modules
+
 //replace github.com/bots-go-framework/bots-fw => ../../bots-go-framework/bots-fw
 //
 //replace github.com/bots-go-framework/bots-fw-store => ../../bots-go-framework/bots-fw-store
@@ -22,22 +26,20 @@ go 1.21.0
 
 //replace github.com/strongo/i18n => ../../strongo/i18n
 
-//replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
-
 require (
 	cloud.google.com/go/firestore v1.13.0
-	github.com/aws/aws-sdk-go v1.45.11
-	github.com/bots-go-framework/bots-fw v0.21.4
+	github.com/aws/aws-sdk-go v1.45.13
+	github.com/bots-go-framework/bots-fw v0.21.5
 	github.com/bots-go-framework/bots-fw-store v0.1.0
 	github.com/bots-go-framework/bots-fw-telegram v0.6.20
 	github.com/bots-go-framework/bots-fw-telegram-models v0.0.13
 	github.com/bots-go-framework/bots-host-gae v0.4.11
-	github.com/dal-go/dalgo v0.10.2
+	github.com/dal-go/dalgo v0.12.0
 	github.com/dal-go/dalgo2firestore v0.1.26
 	github.com/getsentry/sentry-go v0.24.1
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/sneat-co/sneat-core-modules v0.0.5
-	github.com/sneat-co/sneat-go-core v0.9.1
+	github.com/sneat-co/sneat-core-modules v0.0.6
+	github.com/sneat-co/sneat-go-core v0.9.2
 	github.com/sneat-co/sneat-go-firebase v0.3.1
 	github.com/sneat-co/sneat-go-modules v0.0.9
 	github.com/stretchr/testify v1.8.4
@@ -55,7 +57,7 @@ require (
 	cloud.google.com/go/longrunning v0.5.1 // indirect
 	cloud.google.com/go/storage v1.30.1 // indirect
 	firebase.google.com/go/v4 v4.12.0 // indirect
-	github.com/AlekSi/pointer v1.0.0 // indirect
+	github.com/AlekSi/pointer v1.2.0 // indirect
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
 	github.com/alexsergivan/transliterator v1.0.0 // indirect
 	github.com/bots-go-framework/bots-api-telegram v0.4.1 // indirect

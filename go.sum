@@ -21,6 +21,8 @@ firebase.google.com/go/v4 v4.12.0 h1:I6dCkcWUMFNkFdWgzlf8SLWecQnKdFgJhMv5fT9l1qI
 firebase.google.com/go/v4 v4.12.0/go.mod h1:60c36dWLK4+j05Vw5XMllek3b3PCynU3BfI46OSwsUE=
 github.com/AlekSi/pointer v1.0.0 h1:KWCWzsvFxNLcmM5XmiqHsGTTsuwZMsLFwWF9Y+//bNE=
 github.com/AlekSi/pointer v1.0.0/go.mod h1:1kjywbfcPFCmncIxtk6fIEub6LKrfMz3gc5QKVOSOA8=
+github.com/AlekSi/pointer v1.2.0 h1:glcy/gc4h8HnG2Z3ZECSzZ1IX1x2JxRVuDzaJwQE0+w=
+github.com/AlekSi/pointer v1.2.0/go.mod h1:gZGfd3dpW4vEc/UlyfKKi1roIqcCgwOIvb0tSNSBle0=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/MicahParks/keyfunc v1.9.0 h1:lhKd5xrFHLNOWrDc4Tyb/Q1AJ4LCzQ48GVJyVIID3+o=
 github.com/MicahParks/keyfunc v1.9.0/go.mod h1:IdnCilugA0O/99dW+/MkvlyrsX8+L8+x95xuVNtM5jw=
@@ -28,10 +30,16 @@ github.com/alexsergivan/transliterator v1.0.0 h1:SAA+fkGZKLnak47h8Dr6829IE2kpSZR
 github.com/alexsergivan/transliterator v1.0.0/go.mod h1:0IrumukulURJ4PD0z6UcdJKP2job1DYDhnHAP5y+5pE=
 github.com/aws/aws-sdk-go v1.45.11 h1:8qiSrA12+NRr+2MVpMApi3JxtiFFjDVU1NeWe+80bYg=
 github.com/aws/aws-sdk-go v1.45.11/go.mod h1:aVsgQcEevwlmQ7qHE9I3h+dtQgpqhFB+i8Phjh7fkwI=
+github.com/aws/aws-sdk-go v1.45.12 h1:+bKbbesGNPp+TeGrcqfrWuZoqcIEhjwKyBMHQPp80Jo=
+github.com/aws/aws-sdk-go v1.45.12/go.mod h1:aVsgQcEevwlmQ7qHE9I3h+dtQgpqhFB+i8Phjh7fkwI=
+github.com/aws/aws-sdk-go v1.45.13 h1:LwD/G+PX7FQnbU8wXekx12e90i1GuKJQC2+pl4IlPAs=
+github.com/aws/aws-sdk-go v1.45.13/go.mod h1:aVsgQcEevwlmQ7qHE9I3h+dtQgpqhFB+i8Phjh7fkwI=
 github.com/bots-go-framework/bots-api-telegram v0.4.1 h1:JCaz3XBiEYUZAhNoqy2mEuFAS7FiufFFQYyoaxv6BP0=
 github.com/bots-go-framework/bots-api-telegram v0.4.1/go.mod h1:8Moflzb9qwFY4TbZO25irISFEYuYo/xb3h92owP4RKI=
 github.com/bots-go-framework/bots-fw v0.21.4 h1:vbFSdhig2PpekzqWWljktMOAzamaYN5RepR360MSoFw=
 github.com/bots-go-framework/bots-fw v0.21.4/go.mod h1:nSvXhZx5cui5Sexyk4DNFTPs6TUolvjz2XFX6mNy7cI=
+github.com/bots-go-framework/bots-fw v0.21.5 h1:wgJDKfq/IDPk+4tq8UQGedXtEaj4w18efsDdLS6HjP0=
+github.com/bots-go-framework/bots-fw v0.21.5/go.mod h1:U+CT3TicUjjNDX5IjjFqZYGCULgwU6d2THOh6zpxjfo=
 github.com/bots-go-framework/bots-fw-store v0.1.0 h1:Ob2r28xC2Qui8a5vAskBI0YpiMncYnyhXoKnpBn5BdU=
 github.com/bots-go-framework/bots-fw-store v0.1.0/go.mod h1:XkLKnHugQ98Wr5VIlw2YuRYJNMcqqYDDw/j47plxmBY=
 github.com/bots-go-framework/bots-fw-telegram v0.6.20 h1:ux2TxQQeLYa48K2BiVx7MchnUjHaZ5/vks7DO5yAn70=
@@ -49,6 +57,10 @@ github.com/crediterra/money v0.2.1 h1:VWe0gMQy/o9iDW84mLQnjM1TqyLRJ14C81VvaTU7jV
 github.com/crediterra/money v0.2.1/go.mod h1:0BT7dzPk4Wv+Wi8J6sxlFbCknYioLWVVQM4ciMJh6TI=
 github.com/dal-go/dalgo v0.10.2 h1:kBVNpH3wRK4uP9eBwMYsL5U5QjvPX8jYcZAgJgaG2tE=
 github.com/dal-go/dalgo v0.10.2/go.mod h1:741DXTLpQfmvkazyEiivX8OBFylpzS1QErdh/6WquqI=
+github.com/dal-go/dalgo v0.11.0 h1:+3yu2GnrSfzL5Y9cqa99ti36n0wgrbSA0m8LzBt3Qhc=
+github.com/dal-go/dalgo v0.11.0/go.mod h1:741DXTLpQfmvkazyEiivX8OBFylpzS1QErdh/6WquqI=
+github.com/dal-go/dalgo v0.12.0 h1:giibzqo6mIkU06b0r4uKb3ZEa2agtj1qnL8RNa6sOBM=
+github.com/dal-go/dalgo v0.12.0/go.mod h1:741DXTLpQfmvkazyEiivX8OBFylpzS1QErdh/6WquqI=
 github.com/dal-go/dalgo2datastore v0.0.20 h1:AvT9lYG3FEbJsAZTyCSuhWwmLGUBcZbz7hDdR152wV8=
 github.com/dal-go/dalgo2datastore v0.0.20/go.mod h1:BTyj4iaNGaoB1JaIKIbayKc8CjR4PiRlP6iMpU+Fm5k=
 github.com/dal-go/dalgo2firestore v0.1.26 h1:6F1Fbx7raWnJyhHOVMWB4yLMuCLUUxCH+SFCeTjRLT0=
@@ -142,6 +154,8 @@ github.com/sneat-co/sneat-go-core v0.9.0 h1:eJQ0JS4pOy3CZkJu6QIhdfgaCdBmCeQJC4qF
 github.com/sneat-co/sneat-go-core v0.9.0/go.mod h1:7FPOHtwk97vYGDpPa79tA8Hiz+7KwkTnc4xrfbsX6ws=
 github.com/sneat-co/sneat-go-core v0.9.1 h1:H1qd6lXgZQXYxa53CXXivnamLm6FU1udfv99MjSxRQE=
 github.com/sneat-co/sneat-go-core v0.9.1/go.mod h1:7FPOHtwk97vYGDpPa79tA8Hiz+7KwkTnc4xrfbsX6ws=
+github.com/sneat-co/sneat-go-core v0.9.2 h1:CDyQgDNdmN8Z6qHmYgd/2X6+ksYCP81hObODXYtgx0o=
+github.com/sneat-co/sneat-go-core v0.9.2/go.mod h1:8b9g6HVJdAZN7e01qraR6EwV4XvZ2+wtegc9bdBPRhY=
 github.com/sneat-co/sneat-go-firebase v0.1.1 h1:kxBqDxLJ68dSQhALP80DfDnD97YrXcIoTfIIs7CofFw=
 github.com/sneat-co/sneat-go-firebase v0.1.1/go.mod h1:6I56AA6/EXC2eu26DoicUbUp2l8oH4enQ0OhA6PCuIk=
 github.com/sneat-co/sneat-go-firebase v0.2.0 h1:JhON1Gfpe+BH+mUwlP1LqzdGXeFN+SmqdJRmkgN9dCM=
