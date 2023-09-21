@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "github>dal-go/dalgo-renovate-config"
+    "github>sneat-co/sneat-renovate-go"
   ]
 }
