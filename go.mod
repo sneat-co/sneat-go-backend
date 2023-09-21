@@ -28,20 +28,20 @@ go 1.21.0
 
 require (
 	cloud.google.com/go/firestore v1.13.0
-	github.com/aws/aws-sdk-go v1.45.13
+	github.com/aws/aws-sdk-go v1.45.14
 	github.com/bots-go-framework/bots-fw v0.21.5
 	github.com/bots-go-framework/bots-fw-store v0.1.0
-	github.com/bots-go-framework/bots-fw-telegram v0.6.20
+	github.com/bots-go-framework/bots-fw-telegram v0.6.21
 	github.com/bots-go-framework/bots-fw-telegram-models v0.0.13
 	github.com/bots-go-framework/bots-host-gae v0.4.11
 	github.com/dal-go/dalgo v0.12.0
-	github.com/dal-go/dalgo2firestore v0.1.26
+	github.com/dal-go/dalgo2firestore v0.1.27
 	github.com/getsentry/sentry-go v0.24.1
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/sneat-co/sneat-core-modules v0.0.6
 	github.com/sneat-co/sneat-go-core v0.9.2
 	github.com/sneat-co/sneat-go-firebase v0.3.1
-	github.com/sneat-co/sneat-go-modules v0.0.9
+	github.com/sneat-co/sneat-go-modules v0.0.11
 	github.com/stretchr/testify v1.8.4
 	github.com/strongo/app v0.5.7
 	github.com/strongo/i18n v0.0.4
@@ -95,12 +95,12 @@ require (
 	golang.org/x/text v0.13.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
-	google.golang.org/api v0.141.0 // indirect
+	google.golang.org/api v0.142.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/appengine/v2 v2.0.5 // indirect
 	google.golang.org/genproto v0.0.0-20230822172742-b8732ec3820d // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20230822172742-b8732ec3820d // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20230911183012-2d3300fd4832 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20230913181813-007df8e322eb // indirect
 	google.golang.org/grpc v1.58.1 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
