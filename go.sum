@@ -24,8 +24,6 @@ github.com/MicahParks/keyfunc v1.9.0 h1:lhKd5xrFHLNOWrDc4Tyb/Q1AJ4LCzQ48GVJyVIID
 github.com/MicahParks/keyfunc v1.9.0/go.mod h1:IdnCilugA0O/99dW+/MkvlyrsX8+L8+x95xuVNtM5jw=
 github.com/alexsergivan/transliterator v1.0.0 h1:SAA+fkGZKLnak47h8Dr6829IE2kpSZR2Y3yTd69cIwY=
 github.com/alexsergivan/transliterator v1.0.0/go.mod h1:0IrumukulURJ4PD0z6UcdJKP2job1DYDhnHAP5y+5pE=
-github.com/aws/aws-sdk-go v1.45.13 h1:LwD/G+PX7FQnbU8wXekx12e90i1GuKJQC2+pl4IlPAs=
-github.com/aws/aws-sdk-go v1.45.13/go.mod h1:aVsgQcEevwlmQ7qHE9I3h+dtQgpqhFB+i8Phjh7fkwI=
 github.com/aws/aws-sdk-go v1.45.14 h1:/IPMEh9oelbK7506fdMHkbV9mq4a6f5aeiy9OT0PRKw=
 github.com/aws/aws-sdk-go v1.45.14/go.mod h1:aVsgQcEevwlmQ7qHE9I3h+dtQgpqhFB+i8Phjh7fkwI=
 github.com/bots-go-framework/bots-api-telegram v0.4.1 h1:JCaz3XBiEYUZAhNoqy2mEuFAS7FiufFFQYyoaxv6BP0=
@@ -34,8 +32,6 @@ github.com/bots-go-framework/bots-fw v0.21.5 h1:wgJDKfq/IDPk+4tq8UQGedXtEaj4w18e
 github.com/bots-go-framework/bots-fw v0.21.5/go.mod h1:U+CT3TicUjjNDX5IjjFqZYGCULgwU6d2THOh6zpxjfo=
 github.com/bots-go-framework/bots-fw-store v0.1.0 h1:Ob2r28xC2Qui8a5vAskBI0YpiMncYnyhXoKnpBn5BdU=
 github.com/bots-go-framework/bots-fw-store v0.1.0/go.mod h1:XkLKnHugQ98Wr5VIlw2YuRYJNMcqqYDDw/j47plxmBY=
-github.com/bots-go-framework/bots-fw-telegram v0.6.20 h1:ux2TxQQeLYa48K2BiVx7MchnUjHaZ5/vks7DO5yAn70=
-github.com/bots-go-framework/bots-fw-telegram v0.6.20/go.mod h1:05JmsEb8E92GVIFHL9VdVcbmUK/mvnvhD7WyrUbMNTQ=
 github.com/bots-go-framework/bots-fw-telegram v0.6.21 h1:HYTAvcAWFr00ophfvxkBINbNek5netE24f6s70GpMdM=
 github.com/bots-go-framework/bots-fw-telegram v0.6.21/go.mod h1:FRXeuV3sg2gQAs8Hsm4pTrTCZcWHuCh/WLwZuzOOFCc=
 github.com/bots-go-framework/bots-fw-telegram-models v0.0.13 h1:nfFE6Vm3b0PDStvU0sBW9+q/J0mR0soBkC/bJvoBxdk=
@@ -53,8 +49,6 @@ github.com/dal-go/dalgo v0.12.0 h1:giibzqo6mIkU06b0r4uKb3ZEa2agtj1qnL8RNa6sOBM=
 github.com/dal-go/dalgo v0.12.0/go.mod h1:741DXTLpQfmvkazyEiivX8OBFylpzS1QErdh/6WquqI=
 github.com/dal-go/dalgo2datastore v0.0.20 h1:AvT9lYG3FEbJsAZTyCSuhWwmLGUBcZbz7hDdR152wV8=
 github.com/dal-go/dalgo2datastore v0.0.20/go.mod h1:BTyj4iaNGaoB1JaIKIbayKc8CjR4PiRlP6iMpU+Fm5k=
-github.com/dal-go/dalgo2firestore v0.1.26 h1:6F1Fbx7raWnJyhHOVMWB4yLMuCLUUxCH+SFCeTjRLT0=
-github.com/dal-go/dalgo2firestore v0.1.26/go.mod h1:RnZTX9QEV1U+g8/+e2PYmfFqpk+y5088FofZcbntPWg=
 github.com/dal-go/dalgo2firestore v0.1.27 h1:S6+bfoR58lpVxTXto+BYmAB/SJ3HnPpunQ45uo0+6WY=
 github.com/dal-go/dalgo2firestore v0.1.27/go.mod h1:xmxBUmUSOONO+0zZ6ML6cJ1vpU3ijQtxEpU3oOVEybs=
 github.com/dal-go/mocks4dalgo v0.1.16 h1:hpaqlWk7HQsCO4xH1LVnE//yjFcwYmFGsAIL2+J9xSU=
@@ -146,8 +140,6 @@ github.com/sneat-co/sneat-go-core v0.9.2 h1:CDyQgDNdmN8Z6qHmYgd/2X6+ksYCP81hObOD
 github.com/sneat-co/sneat-go-core v0.9.2/go.mod h1:8b9g6HVJdAZN7e01qraR6EwV4XvZ2+wtegc9bdBPRhY=
 github.com/sneat-co/sneat-go-firebase v0.3.1 h1:P7CO82JwtaEFbkFf9sgQkBrFIkWcdoyC2FqKp44t1cE=
 github.com/sneat-co/sneat-go-firebase v0.3.1/go.mod h1:xjs7JEKhJMO79laEww96DSAOpTOl7YfsjYmHKYGlx6A=
-github.com/sneat-co/sneat-go-modules v0.0.9 h1:u+GzrBdKppOVUcIgdArs+91NTMFEL+q1sahz9e+2HVk=
-github.com/sneat-co/sneat-go-modules v0.0.9/go.mod h1:T+3PruVg5c7iM1rsTmiMl8DUQjSCo1usESzeByWjTuk=
 github.com/sneat-co/sneat-go-modules v0.0.11 h1:KERT6iZUO60I9kyl9rRimgZlbaTxb9wOq/u1+GV3VBs=
 github.com/sneat-co/sneat-go-modules v0.0.11/go.mod h1:dgq/k6Oa3hE3ArcJJLmDPeeursoAQZj2RC7yh500aTg=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
@@ -245,8 +237,6 @@ golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod h1:I/5z698sn9Ka8T
 golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 h1:H2TDz8ibqkAF6YGhCdN3jS9O0/s90v0rJh3X/OLHEUk=
 golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2/go.mod h1:K8+ghG5WaK9qNqU5K3HdILfMLy1f3aNYFI/wnl100a8=
-google.golang.org/api v0.141.0 h1:Df6vfMgDoIM6ss0m7H4MPwFwY87WNXHfBIda/Bmfl4E=
-google.golang.org/api v0.141.0/go.mod h1:iZqLkdPlXKyG0b90eu6KxVSE4D/ccRF2e/doKD2CnQQ=
 google.golang.org/api v0.142.0 h1:mf+7EJ94fi5ZcnpPy+m0Yv2dkz8bKm+UL0snTCuwXlY=
 google.golang.org/api v0.142.0/go.mod h1:zJAN5o6HRqR7O+9qJUFOWrZkYE66RH+efPBdTLA4xBA=
 google.golang.org/appengine v1.1.0/go.mod h1:EbEs0AVv82hx2wNQdGPgUI5lhzA/G0D9YwlJXL52JkM=
@@ -262,8 +252,6 @@ google.golang.org/genproto v0.0.0-20230822172742-b8732ec3820d h1:VBu5YqKPv6XiJ19
 google.golang.org/genproto v0.0.0-20230822172742-b8732ec3820d/go.mod h1:yZTlhN0tQnXo3h00fuXNCxJdLdIdnVFVBaRJ5LWBbw4=
 google.golang.org/genproto/googleapis/api v0.0.0-20230822172742-b8732ec3820d h1:DoPTO70H+bcDXcd39vOqb2viZxgqeBeSGtZ55yZU4/Q=
 google.golang.org/genproto/googleapis/api v0.0.0-20230822172742-b8732ec3820d/go.mod h1:KjSP20unUpOx5kyQUFa7k4OJg0qeJ7DEZflGDu2p6Bk=
-google.golang.org/genproto/googleapis/rpc v0.0.0-20230911183012-2d3300fd4832 h1:o4LtQxebKIJ4vkzyhtD2rfUNZ20Zf0ik5YVP5E7G7VE=
-google.golang.org/genproto/googleapis/rpc v0.0.0-20230911183012-2d3300fd4832/go.mod h1:+Bk1OCOj40wS2hwAMA+aCW9ypzm63QTBBHp6lQ3p+9M=
 google.golang.org/genproto/googleapis/rpc v0.0.0-20230913181813-007df8e322eb h1:Isk1sSH7bovx8Rti2wZK0UZF6oraBDK74uoyLEEVFN0=
 google.golang.org/genproto/googleapis/rpc v0.0.0-20230913181813-007df8e322eb/go.mod h1:+Bk1OCOj40wS2hwAMA+aCW9ypzm63QTBBHp6lQ3p+9M=
 google.golang.org/grpc v1.19.0/go.mod h1:mqu4LbDTu4XGKhr4mRzUsmM4RtVoemTSY81AxZiDr8c=
