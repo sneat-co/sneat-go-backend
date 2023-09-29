@@ -44,7 +44,7 @@ require (
 	github.com/sneat-co/sneat-core-modules v0.2.4
 	github.com/sneat-co/sneat-go-core v0.12.0
 	github.com/sneat-co/sneat-go-firebase v0.4.0
-	github.com/sneat-co/sneat-go-modules v0.0.13
+	github.com/sneat-co/sneat-go-modules v0.0.14
 	github.com/stretchr/testify v1.8.4
 	github.com/strongo/app v0.5.7
 	github.com/strongo/i18n v0.0.4
@@ -58,7 +58,7 @@ require (
 	cloud.google.com/go/datastore v1.14.0 // indirect
 	cloud.google.com/go/iam v1.1.1 // indirect
 	cloud.google.com/go/longrunning v0.5.1 // indirect
-	cloud.google.com/go/storage v1.30.1 // indirect
+	cloud.google.com/go/storage v1.33.0 // indirect
 	firebase.google.com/go/v4 v4.12.1 // indirect
 	github.com/AlekSi/pointer v1.2.0 // indirect
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
