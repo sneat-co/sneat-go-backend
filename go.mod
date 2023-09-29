@@ -42,9 +42,9 @@ require (
 	github.com/getsentry/sentry-go v0.24.1
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/sneat-co/sneat-core-modules v0.2.3
-	github.com/sneat-co/sneat-go-core v0.11.1
+	github.com/sneat-co/sneat-go-core v0.12.0
 	github.com/sneat-co/sneat-go-firebase v0.4.0
-	github.com/sneat-co/sneat-go-modules v0.0.12
+	github.com/sneat-co/sneat-go-modules v0.0.13
 	github.com/stretchr/testify v1.8.4
 	github.com/strongo/app v0.5.7
 	github.com/strongo/i18n v0.0.4
