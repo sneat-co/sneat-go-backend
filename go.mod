@@ -31,19 +31,19 @@ go 1.21.0
 
 require (
 	cloud.google.com/go/firestore v1.13.0
-	github.com/aws/aws-sdk-go v1.45.19
+	github.com/aws/aws-sdk-go v1.45.24
 	github.com/bots-go-framework/bots-fw v0.21.5
 	github.com/bots-go-framework/bots-fw-store v0.1.0
 	github.com/bots-go-framework/bots-fw-telegram v0.6.21
 	github.com/bots-go-framework/bots-fw-telegram-models v0.0.13
-	github.com/bots-go-framework/bots-host-gae v0.4.13
+	github.com/bots-go-framework/bots-host-gae v0.4.14
 	github.com/dal-go/dalgo v0.12.0
-	github.com/dal-go/dalgo2firestore v0.1.29
-	github.com/getsentry/sentry-go v0.24.1
+	github.com/dal-go/dalgo2firestore v0.1.30
+	github.com/getsentry/sentry-go v0.25.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/sneat-co/sneat-core-modules v0.3.0
 	github.com/sneat-co/sneat-go-core v0.12.0
-	github.com/sneat-co/sneat-go-firebase v0.4.1
+	github.com/sneat-co/sneat-go-firebase v0.4.2
 	github.com/sneat-co/sneat-go-modules v0.0.16
 	github.com/stretchr/testify v1.8.4
 	github.com/strongo/app v0.5.7
@@ -55,7 +55,7 @@ require (
 	cloud.google.com/go v0.110.7 // indirect
 	cloud.google.com/go/compute v1.23.0 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
-	cloud.google.com/go/datastore v1.14.0 // indirect
+	cloud.google.com/go/datastore v1.15.0 // indirect
 	cloud.google.com/go/iam v1.1.1 // indirect
 	cloud.google.com/go/longrunning v0.5.1 // indirect
 	cloud.google.com/go/storage v1.33.0 // indirect
@@ -66,7 +66,7 @@ require (
 	github.com/bots-go-framework/bots-api-telegram v0.4.1 // indirect
 	github.com/bots-go-framework/bots-go-core v0.0.1 // indirect
 	github.com/crediterra/money v0.2.1 // indirect
-	github.com/dal-go/dalgo2datastore v0.0.24 // indirect
+	github.com/dal-go/dalgo2datastore v0.0.27 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
@@ -98,7 +98,7 @@ require (
 	golang.org/x/text v0.13.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
-	google.golang.org/api v0.143.0 // indirect
+	google.golang.org/api v0.145.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/appengine/v2 v2.0.5 // indirect
 	google.golang.org/genproto v0.0.0-20230913181813-007df8e322eb // indirect
