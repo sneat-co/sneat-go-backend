@@ -17,7 +17,6 @@ package sneatgaeapp
 import (
 	"github.com/sneat-co/sneat-core-modules/contactus"
 	"github.com/sneat-co/sneat-core-modules/invitus"
-	"github.com/sneat-co/sneat-core-modules/memberus"
 	"github.com/sneat-co/sneat-core-modules/teamus"
 	"github.com/sneat-co/sneat-core-modules/userus"
 	"github.com/sneat-co/sneat-go-backend/src/sneatgae/sneatgaeapp/bots"
@@ -81,7 +80,6 @@ func registerModules(handle modules.HTTPHandleFunc) {
 		userus.Module(),
 		assetus.Module(),
 		teamus.Module(),
-		memberus.Module(),
 		listus.Module(),
 		schedulus.Module(),
 		contactus.Module(),

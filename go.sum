@@ -46,6 +46,8 @@ github.com/bots-go-framework/bots-host-gae v0.4.13 h1:jPAjJskO5GQH2IRoBZ3GQGdByj
 github.com/bots-go-framework/bots-host-gae v0.4.13/go.mod h1:VY84vE0ao3M3AoPOkxCK4TJOS0lY1sd74WvE89LUJHU=
 github.com/bots-go-framework/bots-host-gae v0.4.14 h1:qT3oYO/3GRBuWTcozHGzyTpj1PfrjVfmhtPynrHGedI=
 github.com/bots-go-framework/bots-host-gae v0.4.14/go.mod h1:yHkimYuLRymsGxqhSFeBy+/cXheWmUNmnYwTe01W0Zs=
+github.com/bots-go-framework/bots-host-gae v0.4.15 h1:/XtHqyNb9DdWMyjTNR4NWRiG0JM+ASAZmhSiDSN58xg=
+github.com/bots-go-framework/bots-host-gae v0.4.15/go.mod h1:n+ush/we9OH2LY1debkGj/GMdyNv/HeNuVzMoNbeoFo=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
@@ -57,6 +59,8 @@ github.com/dal-go/dalgo2datastore v0.0.24 h1:2gTXBfzqUEpKHz90AJJt/yjPi8WMV93cQ/V
 github.com/dal-go/dalgo2datastore v0.0.24/go.mod h1:wnTjwLy8tEsB/mbP0ocW99Q6OEQ/eASo+ptwHxsMI9I=
 github.com/dal-go/dalgo2datastore v0.0.27 h1:jZL6NC4voaj48OnKROW4Y1BNYSHlH8THyFafYRFfmEY=
 github.com/dal-go/dalgo2datastore v0.0.27/go.mod h1:OCBsqxCb1O7jYl+Ao8SbBEotxxTOfN7vZYhYjfgoGtc=
+github.com/dal-go/dalgo2datastore v0.0.28 h1:AZYk8qsGdJs9rDuRni+emPMW4BbSOb13Mzq1s6DjxBM=
+github.com/dal-go/dalgo2datastore v0.0.28/go.mod h1:egZghsIiYWiV4rGgmGMHBfs4ZAwAP+N/AaCvQMwDgOY=
 github.com/dal-go/dalgo2firestore v0.1.29 h1:F95FQOHBn/+lmnVSnFBNyI5M9ePtGn5PLKkw3kqzHls=
 github.com/dal-go/dalgo2firestore v0.1.29/go.mod h1:eU1+oZqC3KfNSv68xR303GgA4lls75I7S9Zl7pC3eFM=
 github.com/dal-go/dalgo2firestore v0.1.30 h1:tL1Nz0t2IKlvuc8FjYH26c9pMBNpJO7ZHn91sXQ/FYs=
@@ -150,6 +154,8 @@ github.com/sneat-co/sneat-core-modules v0.2.4 h1:K0I2+RAiK6/VvhdRMMxY0peZUbVLbv1
 github.com/sneat-co/sneat-core-modules v0.2.4/go.mod h1:ePjk71SRLcAWtZOBLz5F0idnAzHrdLFrWxguSCdqJ0M=
 github.com/sneat-co/sneat-core-modules v0.3.0 h1:GXGDOxKUB19w0lHDZvjnAfFzki6C5Yzr3D85Pcjg/ig=
 github.com/sneat-co/sneat-core-modules v0.3.0/go.mod h1:ePjk71SRLcAWtZOBLz5F0idnAzHrdLFrWxguSCdqJ0M=
+github.com/sneat-co/sneat-core-modules v0.3.1 h1:S5fhlK7aNqx9hWH3L7/bcklBEjPm2T2gAH1ugfVoZzE=
+github.com/sneat-co/sneat-core-modules v0.3.1/go.mod h1:ePjk71SRLcAWtZOBLz5F0idnAzHrdLFrWxguSCdqJ0M=
 github.com/sneat-co/sneat-go-core v0.12.0 h1:mMM4MOhp3lEIddv4+GOAf+aH6iCOQMyX0r/3jhqJrU8=
 github.com/sneat-co/sneat-go-core v0.12.0/go.mod h1:8b9g6HVJdAZN7e01qraR6EwV4XvZ2+wtegc9bdBPRhY=
 github.com/sneat-co/sneat-go-firebase v0.4.0 h1:FEMi5yLa6DG58XDzDyimp3nVJwQkmjrI00nyD62b4SY=
@@ -162,6 +168,8 @@ github.com/sneat-co/sneat-go-modules v0.0.14 h1:W/fAxzS4jdHBdup5DCTmTgnDFDPmSW5h
 github.com/sneat-co/sneat-go-modules v0.0.14/go.mod h1:I8vemNx74lEWvPfPOzyfTZbWMo/grEc1ZKk2OytqD3Y=
 github.com/sneat-co/sneat-go-modules v0.0.16 h1:zMXqtrIKYACP2S5A0ywfkY78JosCaMv9p54CnpmY2G0=
 github.com/sneat-co/sneat-go-modules v0.0.16/go.mod h1:kUyQglH01qul2ZDC8V4Qt5I6/CBo487moJqO0roUG2Q=
+github.com/sneat-co/sneat-go-modules v0.0.17 h1:kci+fp7SvPNKMXZumGtqWt3s2ZD0omu9qtlGCELIe4c=
+github.com/sneat-co/sneat-go-modules v0.0.17/go.mod h1:QLf3r4rUfxdbHZDQE0UF/9lUxwopUXnyuVQTbo/zn/8=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
 github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=
@@ -261,6 +269,8 @@ google.golang.org/api v0.143.0 h1:o8cekTkqhywkbZT6p1UHJPZ9+9uuCAJs/KYomxZB8fA=
 google.golang.org/api v0.143.0/go.mod h1:FoX9DO9hT7DLNn97OuoZAGSDuNAXdJRuGK98rSUgurk=
 google.golang.org/api v0.145.0 h1:kBjvf1A3/m30kUvnUX9jZJxTu3lJrpGFt5V/1YZrjwg=
 google.golang.org/api v0.145.0/go.mod h1:OARJqIfoYjXJj4C1AiBSXYZt03qsoz8FQYU6fBEfrHM=
+google.golang.org/api v0.146.0 h1:9aBYT4vQXt9dhCuLNfwfd3zpwu8atg0yPkjBymwSrOM=
+google.golang.org/api v0.146.0/go.mod h1:OARJqIfoYjXJj4C1AiBSXYZt03qsoz8FQYU6fBEfrHM=
 google.golang.org/appengine v1.1.0/go.mod h1:EbEs0AVv82hx2wNQdGPgUI5lhzA/G0D9YwlJXL52JkM=
 google.golang.org/appengine v1.4.0/go.mod h1:xpcJRLb0r/rnEns0DIKYYv+WjYCduHsrkT7/EB5XEv4=
 google.golang.org/appengine v1.6.8 h1:IhEN5q69dyKagZPYMSdIjS2HqprW324FRQZJcGqPAsM=
