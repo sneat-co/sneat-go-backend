@@ -35,7 +35,7 @@ import (
 	"net/http"
 )
 
-func Start() {
+func Start(extraModule []modules.Module) {
 	defaultLogger := golog.Default()
 	log.AddLogger(log.NewPrinter("log.Default()", func(format string, a ...any) (n int, err error) {
 		defaultLogger.Printf(format, a...)
@@ -57,7 +57,7 @@ func Start() {
 
 	healthcheck.InitHealthCheck(handle)
 
-	registerModules(handle)
+	RegisterModules(handle, extraModule)
 
 	// Ready to serve
 	serve(httpRouter)
@@ -74,9 +74,9 @@ func initInfrastructure() {
 	initEmail()    // Settings for sending out emails
 }
 
-func registerModules(handle modules.HTTPHandleFunc) {
+func RegisterModules(handle modules.HTTPHandleFunc, extraModule []modules.Module) {
 	args := modules.NewModuleRegistrationArgs(handle)
-	mods := []modules.Module{
+	standardModules := []modules.Module{
 		userus.Module(),
 		assetus.Module(),
 		teamus.Module(),
@@ -89,7 +89,10 @@ func registerModules(handle modules.HTTPHandleFunc) {
 		sportus.Module(),
 		generic.Module(),
 	}
-	for _, m := range mods {
+	for _, m := range standardModules {
+		m.Register(args)
+	}
+	for _, m := range extraModule {
 		m.Register(args)
 	}
 }
