@@ -5,9 +5,8 @@ go 1.21.0
 // TODO: Get ret rid of: github.com/dal-go/dalgo2datastore
 
 //replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
-replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
-
-replace github.com/sneat-co/sneat-go-modules => ../sneat-go-modules
+//replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
+//replace github.com/sneat-co/sneat-go-modules => ../sneat-go-modules
 
 //replace github.com/bots-go-framework/bots-fw => ../../bots-go-framework/bots-fw
 //replace github.com/bots-go-framework/bots-fw-store => ../../bots-go-framework/bots-fw-store
