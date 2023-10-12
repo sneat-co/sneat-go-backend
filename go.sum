@@ -26,6 +26,8 @@ github.com/alexsergivan/transliterator v1.0.0 h1:SAA+fkGZKLnak47h8Dr6829IE2kpSZR
 github.com/alexsergivan/transliterator v1.0.0/go.mod h1:0IrumukulURJ4PD0z6UcdJKP2job1DYDhnHAP5y+5pE=
 github.com/aws/aws-sdk-go v1.45.24 h1:TZx/CizkmCQn8Rtsb11iLYutEQVGK5PK9wAhwouELBo=
 github.com/aws/aws-sdk-go v1.45.24/go.mod h1:aVsgQcEevwlmQ7qHE9I3h+dtQgpqhFB+i8Phjh7fkwI=
+github.com/aws/aws-sdk-go v1.45.25 h1:c4fLlh5sLdK2DCRTY1z0hyuJZU4ygxX8m1FswL6/nF4=
+github.com/aws/aws-sdk-go v1.45.25/go.mod h1:aVsgQcEevwlmQ7qHE9I3h+dtQgpqhFB+i8Phjh7fkwI=
 github.com/bots-go-framework/bots-api-telegram v0.4.1 h1:JCaz3XBiEYUZAhNoqy2mEuFAS7FiufFFQYyoaxv6BP0=
 github.com/bots-go-framework/bots-api-telegram v0.4.1/go.mod h1:8Moflzb9qwFY4TbZO25irISFEYuYo/xb3h92owP4RKI=
 github.com/bots-go-framework/bots-fw v0.21.5 h1:wgJDKfq/IDPk+4tq8UQGedXtEaj4w18efsDdLS6HjP0=
