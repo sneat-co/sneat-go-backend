@@ -35,7 +35,7 @@ import (
 	"net/http"
 )
 
-func Start(extraModule []modules.Module) {
+func Start(extraModule ...modules.Module) {
 	defaultLogger := golog.Default()
 	log.AddLogger(log.NewPrinter("log.Default()", func(format string, a ...any) (n int, err error) {
 		defaultLogger.Printf(format, a...)

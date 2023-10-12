@@ -5,5 +5,5 @@ import (
 )
 
 func main() { // TODO: document why we need this wrapper
-	sneatgaeapp.Start(nil)
+	sneatgaeapp.Start()
 }
