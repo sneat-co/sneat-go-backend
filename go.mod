@@ -5,8 +5,10 @@ go 1.21.0
 // TODO: Get ret rid of: github.com/dal-go/dalgo2datastore
 
 //replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
-//replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
-//replace github.com/sneat-co/sneat-go-modules => ../sneat-go-modules
+replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
+
+replace github.com/sneat-co/sneat-go-modules => ../sneat-go-modules
+
 //replace github.com/bots-go-framework/bots-fw => ../../bots-go-framework/bots-fw
 //replace github.com/bots-go-framework/bots-fw-store => ../../bots-go-framework/bots-fw-store
 //replace github.com/bots-go-framework/bots-fw-telegram => ../../bots-go-framework/bots-fw-telegram
@@ -26,10 +28,10 @@ require (
 	github.com/bots-go-framework/bots-fw-telegram-models v0.0.13
 	github.com/bots-go-framework/bots-host-gae v0.4.15
 	github.com/dal-go/dalgo v0.12.0
-	github.com/dal-go/dalgo2firestore v0.1.30
+	github.com/dal-go/dalgo2firestore v0.1.31
 	github.com/getsentry/sentry-go v0.25.0
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/sneat-co/sneat-core-modules v0.3.1
+	github.com/sneat-co/sneat-core-modules v0.4.0
 	github.com/sneat-co/sneat-go-core v0.12.0
 	github.com/sneat-co/sneat-go-firebase v0.4.2
 	github.com/sneat-co/sneat-go-modules v0.0.17
@@ -92,7 +94,7 @@ require (
 	google.golang.org/genproto v0.0.0-20230913181813-007df8e322eb // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20230913181813-007df8e322eb // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230920204549-e6e6cdab5c13 // indirect
-	google.golang.org/grpc v1.58.2 // indirect
+	google.golang.org/grpc v1.58.3 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
