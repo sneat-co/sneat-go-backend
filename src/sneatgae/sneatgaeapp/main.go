@@ -17,6 +17,7 @@ package sneatgaeapp
 import (
 	"github.com/sneat-co/sneat-core-modules/contactus"
 	"github.com/sneat-co/sneat-core-modules/invitus"
+	"github.com/sneat-co/sneat-core-modules/schedulus"
 	"github.com/sneat-co/sneat-core-modules/teamus"
 	"github.com/sneat-co/sneat-core-modules/userus"
 	"github.com/sneat-co/sneat-go-backend/src/sneatgae/sneatgaeapp/bots"
@@ -27,7 +28,6 @@ import (
 	"github.com/sneat-co/sneat-go-modules/healthcheck"
 	"github.com/sneat-co/sneat-go-modules/listus"
 	"github.com/sneat-co/sneat-go-modules/retrospectus"
-	"github.com/sneat-co/sneat-go-modules/schedulus"
 	"github.com/sneat-co/sneat-go-modules/scrumus"
 	"github.com/sneat-co/sneat-go-modules/sportus"
 	"github.com/strongo/log"
