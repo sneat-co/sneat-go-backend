@@ -20,7 +20,7 @@ go 1.21.0
 
 require (
 	cloud.google.com/go/firestore v1.13.0
-	github.com/aws/aws-sdk-go v1.45.25
+	github.com/aws/aws-sdk-go v1.45.26
 	github.com/bots-go-framework/bots-fw v0.21.5
 	github.com/bots-go-framework/bots-fw-store v0.1.0
 	github.com/bots-go-framework/bots-fw-telegram v0.6.21
@@ -32,8 +32,8 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/sneat-co/sneat-core-modules v0.5.0
 	github.com/sneat-co/sneat-go-core v0.12.1
-	github.com/sneat-co/sneat-go-firebase v0.4.4
-	github.com/sneat-co/sneat-go-modules v0.1.0
+	github.com/sneat-co/sneat-go-firebase v0.4.5
+	github.com/sneat-co/sneat-go-modules v0.1.1
 	github.com/stretchr/testify v1.8.4
 	github.com/strongo/app v0.5.7
 	github.com/strongo/i18n v0.0.4
