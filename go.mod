@@ -19,7 +19,7 @@ go 1.21.0
 //replace github.com/strongo/i18n => ../../strongo/i18n
 
 require (
-	cloud.google.com/go/firestore v1.13.0
+	cloud.google.com/go/firestore v1.14.0
 	github.com/aws/aws-sdk-go v1.45.26
 	github.com/bots-go-framework/bots-fw v0.21.5
 	github.com/bots-go-framework/bots-fw-store v0.1.0
@@ -27,7 +27,7 @@ require (
 	github.com/bots-go-framework/bots-fw-telegram-models v0.0.13
 	github.com/bots-go-framework/bots-host-gae v0.4.16
 	github.com/dal-go/dalgo v0.12.0
-	github.com/dal-go/dalgo2firestore v0.1.32
+	github.com/dal-go/dalgo2firestore v0.1.33
 	github.com/getsentry/sentry-go v0.25.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/sneat-co/sneat-core-modules v0.5.0
@@ -93,7 +93,7 @@ require (
 	google.golang.org/genproto v0.0.0-20231002182017-d307bd883b97 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20231002182017-d307bd883b97 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231009173412-8bfb1ae86b6c // indirect
-	google.golang.org/grpc v1.58.3 // indirect
+	google.golang.org/grpc v1.59.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
