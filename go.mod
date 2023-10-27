@@ -30,7 +30,7 @@ require (
 	github.com/dal-go/dalgo2firestore v0.1.34
 	github.com/getsentry/sentry-go v0.25.0
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/sneat-co/sneat-core-modules v0.6.0
+	github.com/sneat-co/sneat-core-modules v0.6.1
 	github.com/sneat-co/sneat-go-core v0.14.0
 	github.com/sneat-co/sneat-go-firebase v0.4.7
 	github.com/sneat-co/sneat-go-modules v0.1.2
