@@ -20,20 +20,20 @@ go 1.21.0
 
 require (
 	cloud.google.com/go/firestore v1.14.0
-	github.com/aws/aws-sdk-go v1.46.6
+	github.com/aws/aws-sdk-go v1.47.1
 	github.com/bots-go-framework/bots-fw v0.21.5
 	github.com/bots-go-framework/bots-fw-store v0.1.0
 	github.com/bots-go-framework/bots-fw-telegram v0.6.21
 	github.com/bots-go-framework/bots-fw-telegram-models v0.0.13
 	github.com/bots-go-framework/bots-host-gae v0.4.17
 	github.com/dal-go/dalgo v0.12.0
-	github.com/dal-go/dalgo2firestore v0.1.34
+	github.com/dal-go/dalgo2firestore v0.1.35
 	github.com/getsentry/sentry-go v0.25.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/sneat-co/sneat-core-modules v0.8.1
 	github.com/sneat-co/sneat-go-core v0.15.1
 	github.com/sneat-co/sneat-go-firebase v0.4.8
-	github.com/sneat-co/sneat-go-modules v0.1.3
+	github.com/sneat-co/sneat-go-modules v0.1.4
 	github.com/stretchr/testify v1.8.4
 	github.com/strongo/app v0.5.7
 	github.com/strongo/i18n v0.0.4
@@ -61,8 +61,8 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/s2a-go v0.1.7 // indirect
-	github.com/google/uuid v1.3.1 // indirect
-	github.com/googleapis/enterprise-certificate-proxy v0.3.1 // indirect
+	github.com/google/uuid v1.4.0 // indirect
+	github.com/googleapis/enterprise-certificate-proxy v0.3.2 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.0 // indirect
 	github.com/gosimple/slug v1.13.1 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
@@ -86,7 +86,7 @@ require (
 	golang.org/x/text v0.13.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
-	google.golang.org/api v0.148.0 // indirect
+	google.golang.org/api v0.149.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/appengine/v2 v2.0.5 // indirect
 	google.golang.org/genproto v0.0.0-20231016165738-49dd2c1f3d0b // indirect
