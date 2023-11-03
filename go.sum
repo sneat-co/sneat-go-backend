@@ -26,6 +26,8 @@ github.com/alexsergivan/transliterator v1.0.0 h1:SAA+fkGZKLnak47h8Dr6829IE2kpSZR
 github.com/alexsergivan/transliterator v1.0.0/go.mod h1:0IrumukulURJ4PD0z6UcdJKP2job1DYDhnHAP5y+5pE=
 github.com/aws/aws-sdk-go v1.47.1 h1:j9ih0Ashcw8tQcnfqNimBM8ARQ/CMpoBwjKue1D6Fuk=
 github.com/aws/aws-sdk-go v1.47.1/go.mod h1:LF8svs817+Nz+DmiMQKTO3ubZ/6IaTpq3TjupRn3Eqk=
+github.com/aws/aws-sdk-go v1.47.3 h1:e0H6NFXiniCpR8Lu3lTphVdRaeRCDLAeRyTHd1tJSd8=
+github.com/aws/aws-sdk-go v1.47.3/go.mod h1:LF8svs817+Nz+DmiMQKTO3ubZ/6IaTpq3TjupRn3Eqk=
 github.com/bots-go-framework/bots-api-telegram v0.4.1 h1:JCaz3XBiEYUZAhNoqy2mEuFAS7FiufFFQYyoaxv6BP0=
 github.com/bots-go-framework/bots-api-telegram v0.4.1/go.mod h1:8Moflzb9qwFY4TbZO25irISFEYuYo/xb3h92owP4RKI=
 github.com/bots-go-framework/bots-fw v0.21.5 h1:wgJDKfq/IDPk+4tq8UQGedXtEaj4w18efsDdLS6HjP0=
@@ -40,6 +42,8 @@ github.com/bots-go-framework/bots-go-core v0.0.1 h1:Br7j+Ir3R6U8x1mnFZFq1G1K0bup
 github.com/bots-go-framework/bots-go-core v0.0.1/go.mod h1:txRZn1MlcJEiCUra3bQtpkt9IM2EFGaeUvqS1VLyl30=
 github.com/bots-go-framework/bots-host-gae v0.4.17 h1:u+w5iFpQ1BLIu3Dt3gYuJZf9/YgBcIpgkPc/nENTBbA=
 github.com/bots-go-framework/bots-host-gae v0.4.17/go.mod h1:xqfB+EIuZ850FMlWQkg5JViIUo77uqXCZ9LqftrYZeU=
+github.com/bots-go-framework/bots-host-gae v0.4.18 h1:KkffeZdHoN7kBcd+guh7mpv/OIeeoK9W+p4p+YbOKKI=
+github.com/bots-go-framework/bots-host-gae v0.4.18/go.mod h1:6xWoHlAIdoAWeTmYyDIK2X0y7KIwSslu0hTJB4pU0Dc=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
@@ -49,6 +53,8 @@ github.com/dal-go/dalgo v0.12.0 h1:giibzqo6mIkU06b0r4uKb3ZEa2agtj1qnL8RNa6sOBM=
 github.com/dal-go/dalgo v0.12.0/go.mod h1:741DXTLpQfmvkazyEiivX8OBFylpzS1QErdh/6WquqI=
 github.com/dal-go/dalgo2datastore v0.0.30 h1:u31O9YISz+f2afJveETyRHVaKzfLrYknpUPYj1RJi/o=
 github.com/dal-go/dalgo2datastore v0.0.30/go.mod h1:3NWf38cJGKKFOWUWzneye3DOaZa3EoK0pIeQLm5IzVs=
+github.com/dal-go/dalgo2datastore v0.0.31 h1:BSsAPFfQRUgidYUR1LOw93NFk0I6BOph87l91YgQJ6E=
+github.com/dal-go/dalgo2datastore v0.0.31/go.mod h1:UVTZa5sE615H+Yt8c046E2lZGn0tiUe1y+RXvj0CtnQ=
 github.com/dal-go/dalgo2firestore v0.1.35 h1:xjXt+ngDUoxm7IfiklM3DK7pjcACR/dyxz59UVEKR90=
 github.com/dal-go/dalgo2firestore v0.1.35/go.mod h1:Fg6sWTp5pKpVNuQt6y2kP3m7GuPi9q3riTXFO9/YtPw=
 github.com/dal-go/mocks4dalgo v0.1.17 h1:tvVDg+HubKWKn23kk4gw58gWrDwcww5wwsM4HsrkRR4=
@@ -140,6 +146,8 @@ github.com/sneat-co/sneat-go-core v0.15.1 h1:M1LxRDcpw1lcXU7dQ5r2TeBbxXLz8HRQvpq
 github.com/sneat-co/sneat-go-core v0.15.1/go.mod h1:8b9g6HVJdAZN7e01qraR6EwV4XvZ2+wtegc9bdBPRhY=
 github.com/sneat-co/sneat-go-firebase v0.4.8 h1:wq9hMDWQw9Nu1RZqQqTceJjRWa2S+6iqihW1V0jPBMM=
 github.com/sneat-co/sneat-go-firebase v0.4.8/go.mod h1:DBwJcJK7yZ5j9EjFy4EsqauBd+GTC+UDYAMC51QfSk0=
+github.com/sneat-co/sneat-go-firebase v0.4.9 h1:Lsgn68WpkzNROSm0gvgzoR9DXwfNq7ABlPHAfzFT8/c=
+github.com/sneat-co/sneat-go-firebase v0.4.9/go.mod h1:qcs1iYZEe94X8Jztq5GDMGVMoC9vUXbkfYIYJpnz/90=
 github.com/sneat-co/sneat-go-modules v0.1.4 h1:dkIJyJBU16JCgVw/HTcO0lnGna9l+G+NcZFzMg2ZKxU=
 github.com/sneat-co/sneat-go-modules v0.1.4/go.mod h1:BG8EWINcGg5GDO5hvLMGVvC5975mA9+r2PxvGodBH2Y=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
