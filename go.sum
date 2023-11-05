@@ -142,8 +142,12 @@ github.com/rogpeppe/go-internal v1.11.0 h1:cWPaGQEPrBb5/AsnsZesgZZ9yb1OQ+GOISoDN
 github.com/rogpeppe/go-internal v1.11.0/go.mod h1:ddIwULY96R17DhadqLgMfk9H9tvdUzkipdSkR5nkCZA=
 github.com/sneat-co/sneat-core-modules v0.8.1 h1:ylQRS2nT5D+PFxEbNdtV1lD79TEvt6BWZrdpK1qpwbE=
 github.com/sneat-co/sneat-core-modules v0.8.1/go.mod h1:M9cO6ye1dpm/NuF18cy97TlZsfG8PlfVeqzS+fvq/Ps=
+github.com/sneat-co/sneat-core-modules v0.9.0 h1:W5c1Qe4nEvNZXYU3KjEow4/pLr/qqLUmEh4QGpsiUdM=
+github.com/sneat-co/sneat-core-modules v0.9.0/go.mod h1:ohU6grMeDDNHIgl36/C3aIcc2emFM6Zk64AQLk9CQDo=
 github.com/sneat-co/sneat-go-core v0.15.1 h1:M1LxRDcpw1lcXU7dQ5r2TeBbxXLz8HRQvpqqPKay33E=
 github.com/sneat-co/sneat-go-core v0.15.1/go.mod h1:8b9g6HVJdAZN7e01qraR6EwV4XvZ2+wtegc9bdBPRhY=
+github.com/sneat-co/sneat-go-core v0.16.0 h1:aCTnwSsjshGw4Dl7tQmlqOF6XMJ3V3flZM/E+VH0M4o=
+github.com/sneat-co/sneat-go-core v0.16.0/go.mod h1:8b9g6HVJdAZN7e01qraR6EwV4XvZ2+wtegc9bdBPRhY=
 github.com/sneat-co/sneat-go-firebase v0.4.8 h1:wq9hMDWQw9Nu1RZqQqTceJjRWa2S+6iqihW1V0jPBMM=
 github.com/sneat-co/sneat-go-firebase v0.4.8/go.mod h1:DBwJcJK7yZ5j9EjFy4EsqauBd+GTC+UDYAMC51QfSk0=
 github.com/sneat-co/sneat-go-firebase v0.4.9 h1:Lsgn68WpkzNROSm0gvgzoR9DXwfNq7ABlPHAfzFT8/c=
