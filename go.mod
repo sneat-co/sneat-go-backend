@@ -5,7 +5,8 @@ go 1.21.0
 // TODO: Get ret rid of: github.com/dal-go/dalgo2datastore
 
 //replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
-//replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
+replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
+
 //replace github.com/sneat-co/sneat-go-modules => ../sneat-go-modules
 
 //replace github.com/bots-go-framework/bots-fw => ../../bots-go-framework/bots-fw
@@ -19,24 +20,14 @@ go 1.21.0
 //replace github.com/strongo/i18n => ../../strongo/i18n
 
 require (
-	cloud.google.com/go/firestore v1.14.0
-	github.com/aws/aws-sdk-go v1.47.3
-	github.com/bots-go-framework/bots-fw v0.21.5
-	github.com/bots-go-framework/bots-fw-store v0.1.0
-	github.com/bots-go-framework/bots-fw-telegram v0.6.21
-	github.com/bots-go-framework/bots-fw-telegram-models v0.0.13
-	github.com/bots-go-framework/bots-host-gae v0.4.18
-	github.com/dal-go/dalgo v0.12.0
-	github.com/dal-go/dalgo2firestore v0.1.35
+	github.com/aws/aws-sdk-go v1.47.4
 	github.com/getsentry/sentry-go v0.25.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/sneat-co/sneat-core-modules v0.9.0
-	github.com/sneat-co/sneat-go-core v0.16.0
-	github.com/sneat-co/sneat-go-firebase v0.4.9
-	github.com/sneat-co/sneat-go-modules v0.1.4
+	github.com/sneat-co/sneat-go-core v0.16.1
+	github.com/sneat-co/sneat-go-firebase v0.4.10
+	github.com/sneat-co/sneat-go-modules v0.1.5
 	github.com/stretchr/testify v1.8.4
-	github.com/strongo/app v0.5.7
-	github.com/strongo/i18n v0.0.4
 	github.com/strongo/log v0.3.0
 )
 
@@ -44,18 +35,17 @@ require (
 	cloud.google.com/go v0.110.9 // indirect
 	cloud.google.com/go/compute v1.23.1 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
-	cloud.google.com/go/datastore v1.15.0 // indirect
+	cloud.google.com/go/firestore v1.14.0 // indirect
 	cloud.google.com/go/iam v1.1.3 // indirect
 	cloud.google.com/go/longrunning v0.5.2 // indirect
 	cloud.google.com/go/storage v1.33.0 // indirect
 	firebase.google.com/go/v4 v4.12.1 // indirect
-	github.com/AlekSi/pointer v1.2.0 // indirect
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
 	github.com/alexsergivan/transliterator v1.0.0 // indirect
-	github.com/bots-go-framework/bots-api-telegram v0.4.1 // indirect
-	github.com/bots-go-framework/bots-go-core v0.0.1 // indirect
+	github.com/bots-go-framework/bots-fw-store v0.1.0 // indirect
 	github.com/crediterra/money v0.2.1 // indirect
-	github.com/dal-go/dalgo2datastore v0.0.31 // indirect
+	github.com/dal-go/dalgo v0.12.0 // indirect
+	github.com/dal-go/dalgo2firestore v0.1.35 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
@@ -67,16 +57,14 @@ require (
 	github.com/gosimple/slug v1.13.1 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
-	github.com/olebedev/when v1.0.0 // indirect
+	github.com/kr/pretty v0.3.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/pquerna/ffjson v0.0.0-20190930134022-aa0246cd15f7 // indirect
+	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	github.com/strongo/decimal v0.0.1 // indirect
-	github.com/strongo/gamp v0.0.1 // indirect
 	github.com/strongo/random v0.0.1 // indirect
 	github.com/strongo/slice v0.1.4 // indirect
 	github.com/strongo/validation v0.0.5 // indirect
-	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/crypto v0.14.0 // indirect
 	golang.org/x/net v0.17.0 // indirect
@@ -94,5 +82,6 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231016165738-49dd2c1f3d0b // indirect
 	google.golang.org/grpc v1.59.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
+	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

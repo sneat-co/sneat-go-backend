@@ -20,7 +20,6 @@ import (
 	"github.com/sneat-co/sneat-core-modules/schedulus"
 	"github.com/sneat-co/sneat-core-modules/teamus"
 	"github.com/sneat-co/sneat-core-modules/userus"
-	"github.com/sneat-co/sneat-go-backend/src/sneatgae/sneatgaeapp/bots"
 	"github.com/sneat-co/sneat-go-backend/src/sneatgae/sneatgaeapp/pages"
 	"github.com/sneat-co/sneat-go-core/modules"
 	"github.com/sneat-co/sneat-go-modules/assetus"
@@ -46,7 +45,7 @@ func Start(extraModule ...modules.Module) {
 
 	httpRouter := initHTTPRouter(globalOptionsHandler)
 
-	bots.InitializeBots(httpRouter) // TODO: should be part of module registration?
+	//bots.InitializeBots(httpRouter) // TODO: should be part of module registration?
 
 	// A shortcut to map handlers to httpRouter
 	var handle = func(method, path string, handler http.HandlerFunc) {
