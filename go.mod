@@ -1,6 +1,6 @@
 module github.com/sneat-co/sneat-go-backend
 
-go 1.21.0
+go 1.21.4
 
 // TODO: Get ret rid of: github.com/dal-go/dalgo2datastore
 
@@ -20,13 +20,13 @@ go 1.21.0
 //replace github.com/strongo/i18n => ../../strongo/i18n
 
 require (
-	github.com/aws/aws-sdk-go v1.47.4
+	github.com/aws/aws-sdk-go v1.47.7
 	github.com/getsentry/sentry-go v0.25.0
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/sneat-co/sneat-core-modules v0.9.0
+	github.com/sneat-co/sneat-core-modules v0.9.1
 	github.com/sneat-co/sneat-go-core v0.16.1
 	github.com/sneat-co/sneat-go-firebase v0.4.10
-	github.com/sneat-co/sneat-go-modules v0.1.5
+	github.com/sneat-co/sneat-go-modules v0.1.6
 	github.com/stretchr/testify v1.8.4
 	github.com/strongo/log v0.3.0
 )
