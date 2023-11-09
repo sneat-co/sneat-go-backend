@@ -15,6 +15,7 @@
 package sneatgaeapp
 
 import (
+	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/sneat-core-modules/contactus"
 	"github.com/sneat-co/sneat-core-modules/invitus"
 	"github.com/sneat-co/sneat-core-modules/schedulus"
@@ -34,7 +35,11 @@ import (
 	"net/http"
 )
 
-func Start(extraModule ...modules.Module) {
+func CreateHttpRouter() *httprouter.Router {
+	return initHTTPRouter(globalOptionsHandler)
+}
+
+func Start(httpRouter *httprouter.Router, extraModule ...modules.Module) {
 	defaultLogger := golog.Default()
 	log.AddLogger(log.NewPrinter("log.Default()", func(format string, a ...any) (n int, err error) {
 		defaultLogger.Printf(format, a...)
@@ -42,8 +47,6 @@ func Start(extraModule ...modules.Module) {
 	}))
 
 	initInfrastructure()
-
-	httpRouter := initHTTPRouter(globalOptionsHandler)
 
 	//bots.InitializeBots(httpRouter) // TODO: should be part of module registration?
 

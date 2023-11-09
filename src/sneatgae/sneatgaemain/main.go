@@ -5,5 +5,6 @@ import (
 )
 
 func main() { // TODO: document why we need this wrapper
-	sneatgaeapp.Start()
+	httpRouter := sneatgaeapp.CreateHttpRouter()
+	sneatgaeapp.Start(httpRouter)
 }

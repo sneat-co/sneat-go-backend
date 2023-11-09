@@ -22,5 +22,6 @@ func Test_start(t *testing.T) {
 	serve = func(handler http.Handler) {
 		assert.NotNil(t, handler)
 	}
-	Start()
+	httpRouter := CreateHttpRouter()
+	Start(httpRouter)
 }
