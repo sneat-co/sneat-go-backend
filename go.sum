@@ -118,6 +118,8 @@ github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:
 github.com/rogpeppe/go-internal v1.9.0/go.mod h1:WtVeX8xhTBvf0smdhujwtBcq4Qrzq/fJaraNFVN+nFs=
 github.com/rogpeppe/go-internal v1.11.0 h1:cWPaGQEPrBb5/AsnsZesgZZ9yb1OQ+GOISoDNXVBh4M=
 github.com/rogpeppe/go-internal v1.11.0/go.mod h1:ddIwULY96R17DhadqLgMfk9H9tvdUzkipdSkR5nkCZA=
+github.com/sneat-co/sneat-core-modules v0.9.0 h1:W5c1Qe4nEvNZXYU3KjEow4/pLr/qqLUmEh4QGpsiUdM=
+github.com/sneat-co/sneat-core-modules v0.9.0/go.mod h1:ohU6grMeDDNHIgl36/C3aIcc2emFM6Zk64AQLk9CQDo=
 github.com/sneat-co/sneat-go-core v0.16.1 h1:jJWiccJkicN8lXI3axWCNllLX8Lc0k88eoyQA19zve8=
 github.com/sneat-co/sneat-go-core v0.16.1/go.mod h1:8b9g6HVJdAZN7e01qraR6EwV4XvZ2+wtegc9bdBPRhY=
 github.com/sneat-co/sneat-go-firebase v0.4.10 h1:9yssruyQntAPUab1v4Ip6/4wKGDIwIUDEMWQUF+tNV8=
