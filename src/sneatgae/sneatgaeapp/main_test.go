@@ -1,18 +1,11 @@
 package sneatgaeapp
 
 import (
+	"github.com/sneat-co/sneat-go-core/emails/email2console"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
 )
-
-func TestInitEmail(t *testing.T) {
-	initEmail()
-}
-
-func TestInitSentry(t *testing.T) {
-	initSentry()
-}
 
 func TestInitFirebase(t *testing.T) {
 	initFirebase()
@@ -23,5 +16,5 @@ func Test_start(t *testing.T) {
 		assert.NotNil(t, handler)
 	}
 	httpRouter := CreateHttpRouter()
-	Start(httpRouter)
+	Start(nil, nil, httpRouter, email2console.NewClient())
 }

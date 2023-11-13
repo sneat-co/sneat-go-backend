@@ -22,6 +22,7 @@ import (
 	"github.com/sneat-co/sneat-core-modules/teamus"
 	"github.com/sneat-co/sneat-core-modules/userus"
 	"github.com/sneat-co/sneat-go-backend/src/sneatgae/sneatgaeapp/pages"
+	"github.com/sneat-co/sneat-go-core/emails"
 	"github.com/sneat-co/sneat-go-core/modules"
 	"github.com/sneat-co/sneat-go-modules/assetus"
 	"github.com/sneat-co/sneat-go-modules/generic"
@@ -39,14 +40,20 @@ func CreateHttpRouter() *httprouter.Router {
 	return initHTTPRouter(globalOptionsHandler)
 }
 
-func Start(httpRouter *httprouter.Router, extraModule ...modules.Module) {
+func Start(reportPanic func(err any), errorsReporter HandlerWrapper, httpRouter *httprouter.Router, emailClient emails.Client, extraModule ...modules.Module) {
+	if reportPanic != nil {
+		ReportPanic = reportPanic
+	}
+	if errorsReporter != nil {
+		errsReporter = errorsReporter
+	}
 	defaultLogger := golog.Default()
 	log.AddLogger(log.NewPrinter("log.Default()", func(format string, a ...any) (n int, err error) {
 		defaultLogger.Printf(format, a...)
 		return 0, nil
 	}))
 
-	initInfrastructure()
+	initInfrastructure(emailClient)
 
 	//bots.InitializeBots(httpRouter) // TODO: should be part of module registration?
 
@@ -70,10 +77,9 @@ func initHtmlPageHandlers(handle modules.HTTPHandleFunc) {
 	handle(http.MethodGet, "/", pages.IndexHandler)
 }
 
-func initInfrastructure() {
-	initSentry()   // Errors logging
+func initInfrastructure(emailClient emails.Client) {
 	initFirebase() // Connection to Firebase
-	initEmail()    // Settings for sending out emails
+	emails.Init(emailClient)
 }
 
 func RegisterModules(handle modules.HTTPHandleFunc, extraModule []modules.Module) {

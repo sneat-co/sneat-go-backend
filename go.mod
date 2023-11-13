@@ -20,8 +20,6 @@ go 1.21.4
 //replace github.com/strongo/i18n => ../../strongo/i18n
 
 require (
-	github.com/aws/aws-sdk-go v1.47.9
-	github.com/getsentry/sentry-go v0.25.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/sneat-co/sneat-core-modules v0.9.3
 	github.com/sneat-co/sneat-go-core v0.18.0
@@ -56,7 +54,6 @@ require (
 	github.com/googleapis/gax-go/v2 v2.12.0 // indirect
 	github.com/gosimple/slug v1.13.1 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
-	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect

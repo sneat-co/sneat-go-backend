@@ -2,7 +2,6 @@ package sneatgaeapp
 
 import (
 	"fmt"
-	"github.com/getsentry/sentry-go"
 	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/sneat-go-core/capturer"
 	"github.com/sneat-co/sneat-go-core/httpserver"
@@ -10,7 +9,6 @@ import (
 	"log"
 	"net/http"
 	"runtime/debug"
-	"time"
 )
 
 func initHTTPRouter(globalOptions http.HandlerFunc) *httprouter.Router {
@@ -68,6 +66,21 @@ func allowedOrigin(r *http.Request, w http.ResponseWriter) (string, bool) {
 	return origin, true
 }
 
+var ReportPanic = func(err any) {
+}
+
+type HandlerWrapper interface {
+	Handle(handler http.Handler) http.Handler
+}
+
+type noOpHandlerWrapper struct{}
+
+func (noOpHandlerWrapper) Handle(handler http.Handler) http.Handler {
+	return handler
+}
+
+var errsReporter HandlerWrapper = noOpHandlerWrapper{}
+
 func wrapHTTPHandlerFunc(handler http.HandlerFunc) http.HandlerFunc {
 	var handlerWrapper http.HandlerFunc = func(w http.ResponseWriter, r *http.Request) {
 		if _, isAllowedOrigin := allowedOrigin(r, w); !isAllowedOrigin { // Check origin, is this  unnecessary?
@@ -81,15 +94,14 @@ func wrapHTTPHandlerFunc(handler http.HandlerFunc) http.HandlerFunc {
 		handler(w, r)
 		log.Println(r.Method, uri, "finished")
 	}
-	sentryHandler := sentryHandler.Handle(handlerWrapper)
+	errorsReporterHandler := errsReporter.Handle(handlerWrapper)
 	panicHandler := func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			err := recover()
 			if err != nil {
 				stack := string(debug.Stack())
 				handlePanic(w, r, err, stack)
-				sentry.CurrentHub().Recover(err)
-				sentry.Flush(time.Second * 5)
+				ReportPanic(err)
 				fmt.Println("PANIC:", err, "\nSTACKTRACE from panic:\n"+stack)
 				w.WriteHeader(http.StatusInternalServerError)
 				httpserver.AccessControlAllowOrigin(w, r)
@@ -103,7 +115,7 @@ func wrapHTTPHandlerFunc(handler http.HandlerFunc) http.HandlerFunc {
 		//		//panic(p)
 		//	}
 		//}()
-		sentryHandler.ServeHTTP(w, r)
+		errorsReporterHandler.ServeHTTP(w, r)
 	}
 	return panicHandler
 }
