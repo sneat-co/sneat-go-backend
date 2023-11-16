@@ -23,8 +23,8 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/sneat-co/sneat-core-modules v0.9.3
 	github.com/sneat-co/sneat-go-core v0.18.0
-	github.com/sneat-co/sneat-go-firebase v0.4.12
-	github.com/sneat-co/sneat-go-modules v0.2.1
+	github.com/sneat-co/sneat-go-firebase v0.4.13
+	github.com/sneat-co/sneat-go-modules v0.2.2
 	github.com/stretchr/testify v1.8.4
 	github.com/strongo/log v0.3.0
 )
@@ -43,7 +43,7 @@ require (
 	github.com/bots-go-framework/bots-fw-store v0.1.2 // indirect
 	github.com/crediterra/money v0.2.1 // indirect
 	github.com/dal-go/dalgo v0.12.0 // indirect
-	github.com/dal-go/dalgo2firestore v0.1.36 // indirect
+	github.com/dal-go/dalgo2firestore v0.1.37 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
