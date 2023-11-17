@@ -13,8 +13,8 @@ runs:
     - name: Start sneat-go-backend
       shell: bash
       run: |
-        go version
-        pwd
-        ls
-        sh ./scripts/serve_gae.sh &
+#        go version
+#        pwd
+#        ls
+        sh ./sneat-go-backend/scripts/serve_gae.sh &
         sleep 30
