@@ -10,9 +10,12 @@ runs:
         cache: true
 #        check-latest: true
 
+    - run: echo "${{ github.action_path }/scripts}" >> $GITHUB_PATH
+      shell: bash
+
     - name: Serve sneat-go-backend
       shell: bash
-      run: ./scripts/serve_gae.sh
+      run: serve_gae.sh
 #      run: |
 #        go version
 #        pwd
