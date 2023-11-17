@@ -6,13 +6,15 @@ runs:
     - name: Install GoLang
       uses: actions/setup-go@v4
       with:
-        go-version: 1.21.4
-        check-latest: true
+#        go-version: 1.21.4
+#        check-latest: true
         cache: true
 
     - name: Start sneat-go-backend
       shell: bash
       run: |
         go version
+        pwd
+        ls
         sh ./scripts/serve_gae.sh &
         sleep 30
