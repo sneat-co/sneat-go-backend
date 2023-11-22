@@ -26,30 +26,22 @@ service cloud.firestore {
             allow list, read: if isTeamItemGrantedToUser(database, team);
         }
 
-        match /users/{user} {
-            allow read: // if resource.id == 'hmugAs2njxRhN950VPVBVno8Tm42';
-                if request.auth != null && request.auth.uid == user;
-            // allow create, read, write:
-            // if request.auth != null;
-        }
         match /users/{user}/{document=**} {
             allow read: if request.auth != null && request.auth.uid == user;
         }
+
         match /documents/{document} {
             allow read: if isGrantedToUser();
         }
+
         match /happenings/{happening} {
             allow read: if isGrantedToUser();
         }
+
         match /schedule_days/{day} {
             allow read: if true;
         }
-        match /team_contacts/{contact} {
-            allow read: if isGrantedToUser();
-        }
-        match /team_documents/{document} {
-            allow read: if isGrantedToUser();
-        }
+
         match /datatug_projects/{project} {
             allow read: if request.auth != null
                            && request.auth.uid != null
