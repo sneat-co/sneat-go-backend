@@ -3,17 +3,18 @@ description: 'Starts a backend server for sneat.app'
 runs:
   using: "composite"
   steps:
+    - run: echo "${{ github.action_path }}"
+      shell: bash
+
     - name: Install GoLang
       uses: actions/setup-go@v4
       with:
-#        go-version: 1.21.4
-        go-version-file: {{ github.action_path }}/go.mod
+        go-version: 1.21.4
+#        go-version-file: {{ github.action_path }}/go.mod
         cache: true
         cache-dependency-path: |
           ./go.sum
 
-    - run: echo "${{ github.action_path }}"
-      shell: bash
 
     - name: Serve sneat-go-backend
       shell: bash
