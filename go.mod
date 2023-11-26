@@ -21,9 +21,9 @@ go 1.21.4
 
 require (
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/sneat-co/sneat-core-modules v0.9.6
-	github.com/sneat-co/sneat-go-core v0.18.0
-	github.com/sneat-co/sneat-go-firebase v0.4.14
+	github.com/sneat-co/sneat-core-modules v0.9.7
+	github.com/sneat-co/sneat-go-core v0.19.0
+	github.com/sneat-co/sneat-go-firebase v0.4.15
 	github.com/sneat-co/sneat-go-modules v0.2.4
 	github.com/stretchr/testify v1.8.4
 	github.com/strongo/log v0.3.0
@@ -37,10 +37,10 @@ require (
 	cloud.google.com/go/iam v1.1.5 // indirect
 	cloud.google.com/go/longrunning v0.5.4 // indirect
 	cloud.google.com/go/storage v1.35.1 // indirect
-	firebase.google.com/go/v4 v4.12.1 // indirect
+	firebase.google.com/go/v4 v4.13.0 // indirect
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
 	github.com/alexsergivan/transliterator v1.0.0 // indirect
-	github.com/bots-go-framework/bots-fw-store v0.1.2 // indirect
+	github.com/bots-go-framework/bots-fw-store v0.4.0 // indirect
 	github.com/crediterra/money v0.2.1 // indirect
 	github.com/dal-go/dalgo v0.12.0 // indirect
 	github.com/dal-go/dalgo2firestore v0.1.38 // indirect
