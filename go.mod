@@ -21,10 +21,10 @@ go 1.21.4
 
 require (
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/sneat-co/sneat-core-modules v0.9.7
+	github.com/sneat-co/sneat-core-modules v0.9.8
 	github.com/sneat-co/sneat-go-core v0.19.1
-	github.com/sneat-co/sneat-go-firebase v0.4.15
-	github.com/sneat-co/sneat-go-modules v0.2.4
+	github.com/sneat-co/sneat-go-firebase v0.4.16
+	github.com/sneat-co/sneat-go-modules v0.2.6
 	github.com/stretchr/testify v1.8.4
 	github.com/strongo/log v0.3.0
 )
