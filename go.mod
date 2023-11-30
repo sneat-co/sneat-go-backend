@@ -6,7 +6,6 @@ go 1.21.4
 
 //replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
 //replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
-
 //replace github.com/sneat-co/sneat-go-modules => ../sneat-go-modules
 
 //replace github.com/bots-go-framework/bots-fw => ../../bots-go-framework/bots-fw
@@ -21,7 +20,7 @@ go 1.21.4
 
 require (
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/sneat-co/sneat-core-modules v0.9.8
+	github.com/sneat-co/sneat-core-modules v0.10.0
 	github.com/sneat-co/sneat-go-core v0.19.1
 	github.com/sneat-co/sneat-go-firebase v0.4.16
 	github.com/sneat-co/sneat-go-modules v0.2.6

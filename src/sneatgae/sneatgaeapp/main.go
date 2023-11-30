@@ -16,11 +16,7 @@ package sneatgaeapp
 
 import (
 	"github.com/julienschmidt/httprouter"
-	"github.com/sneat-co/sneat-core-modules/contactus"
-	"github.com/sneat-co/sneat-core-modules/invitus"
-	"github.com/sneat-co/sneat-core-modules/schedulus"
-	"github.com/sneat-co/sneat-core-modules/teamus"
-	"github.com/sneat-co/sneat-core-modules/userus"
+	"github.com/sneat-co/sneat-core-modules/core"
 	"github.com/sneat-co/sneat-go-backend/src/sneatgae/sneatgaeapp/pages"
 	"github.com/sneat-co/sneat-go-core/emails"
 	"github.com/sneat-co/sneat-go-core/modules"
@@ -84,19 +80,15 @@ func initInfrastructure(emailClient emails.Client) {
 
 func RegisterModules(handle modules.HTTPHandleFunc, extraModule []modules.Module) {
 	args := modules.NewModuleRegistrationArgs(handle)
-	standardModules := []modules.Module{
-		userus.Module(),
+	standardModules := append(
+		core.Modules(),
 		assetus.Module(),
-		teamus.Module(),
 		listus.Module(),
-		schedulus.Module(),
-		contactus.Module(),
-		invitus.Module(),
 		scrumus.Module(),
 		retrospectus.Module(),
 		sportus.Module(),
 		generic.Module(),
-	}
+	)
 	for _, m := range standardModules {
 		m.Register(args)
 	}
