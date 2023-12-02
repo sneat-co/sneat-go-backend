@@ -23,7 +23,7 @@ require (
 	github.com/sneat-co/sneat-core-modules v0.10.0
 	github.com/sneat-co/sneat-go-core v0.19.1
 	github.com/sneat-co/sneat-go-firebase v0.4.17
-	github.com/sneat-co/sneat-go-modules v0.2.6
+	github.com/sneat-co/sneat-go-modules v0.2.7
 	github.com/stretchr/testify v1.8.4
 	github.com/strongo/log v0.3.0
 )
