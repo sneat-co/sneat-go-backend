@@ -1,6 +1,6 @@
 module github.com/sneat-co/sneat-go-backend
 
-go 1.21.4
+go 1.21.5
 
 // TODO: Get ret rid of: github.com/dal-go/dalgo2datastore
 
