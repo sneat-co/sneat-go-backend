@@ -1,9 +1,11 @@
 package sneatgaeapp
 
 import (
-	"github.com/sneat-co/sneat-go-core/emails/email2console"
+	"github.com/sneat-co/sneat-go-core/emails/email2writer"
 	"github.com/stretchr/testify/assert"
+	"io"
 	"net/http"
+	"os"
 	"testing"
 )
 
@@ -16,5 +18,9 @@ func Test_start(t *testing.T) {
 		assert.NotNil(t, handler)
 	}
 	httpRouter := CreateHttpRouter()
-	Start(nil, nil, httpRouter, email2console.NewClient())
+	emailClient := email2writer.NewClient(func() (io.StringWriter, error) {
+		return os.Stdout, nil
+	})
+
+	Start(nil, nil, httpRouter, emailClient)
 }
