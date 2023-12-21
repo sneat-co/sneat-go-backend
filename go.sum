@@ -123,10 +123,14 @@ github.com/sneat-co/sneat-core-modules v0.10.1 h1:YXkcn5/t3R09YHS5Zzpui9C/xdwnt2
 github.com/sneat-co/sneat-core-modules v0.10.1/go.mod h1:KpseaOGO80R/XKIq6YNp6SC80q4EP+FfWnQm0jOWXxE=
 github.com/sneat-co/sneat-core-modules v0.11.0 h1:SQBKlcuT5tWIGWoifuH885XrbvjzWA55YfWuyOaJ1vA=
 github.com/sneat-co/sneat-core-modules v0.11.0/go.mod h1:HAJSlMABx+MZRn+pxKjMHaz48KqgaCIZmoIfB0CGyR8=
+github.com/sneat-co/sneat-core-modules v0.12.0 h1:esmD77TkNA8LbUhTn31JKrU3horPTnswYcmjOMY93ws=
+github.com/sneat-co/sneat-core-modules v0.12.0/go.mod h1:NQTvsZOtjVDWxLuelNwhsEY/Uq+OWBXCCMaiF/CJUwY=
 github.com/sneat-co/sneat-go-core v0.20.0 h1:OJ0R+BmAYj99sez178yuoFeRMeVqdBxCpDM+PEsAL1A=
 github.com/sneat-co/sneat-go-core v0.20.0/go.mod h1:f/iHP/HNDnwQIwEPDuBNKCN9iI39Ls+1GqPgCxEC9HA=
 github.com/sneat-co/sneat-go-core v0.20.2 h1:zq6lsH+cZEGgkOV3aJcKnr1q/bTKYkmjki0wqBn4IQ0=
 github.com/sneat-co/sneat-go-core v0.20.2/go.mod h1:bUiUFlbP01z0vfnMTEtwMt3vYRoGA/07fvFEIyvSSYo=
+github.com/sneat-co/sneat-go-core v0.21.0 h1:nDZaJsUJ7wvUpZM6WvTeAgfZp3N0sNvgcTihaXdn3DQ=
+github.com/sneat-co/sneat-go-core v0.21.0/go.mod h1:ijsI9IiaYQtqZEyp46FX0Q5u8j/61182sYRjYdsI+rM=
 github.com/sneat-co/sneat-go-firebase v0.4.18 h1:tw6+NQ83x/J+qDPGU7Pg7c1m1Q/XzNBRGb67VsKZ6Pg=
 github.com/sneat-co/sneat-go-firebase v0.4.18/go.mod h1:kBoO3xHFrr3Tip2OpqB4B365pxsLRwLHkxJaCS86rnw=
 github.com/sneat-co/sneat-go-firebase v0.4.19 h1:x/OUyOTbhLVKRk9z6ton115XH9P2WUiJ5TYDw5BCMW0=
@@ -137,6 +141,8 @@ github.com/sneat-co/sneat-go-modules v0.2.8 h1:pgxsvhizV7n/9QilkjZ8ncY4nc2YKd6RY
 github.com/sneat-co/sneat-go-modules v0.2.8/go.mod h1:qJ6TsoXlFyHzcdTTRdCyex83duLKJ0HwqX97WFslFpk=
 github.com/sneat-co/sneat-go-modules v0.2.9 h1:wLFr6JoPg3wF9gA/ut86Jmm8WXp71WKYnYyO3umPsCI=
 github.com/sneat-co/sneat-go-modules v0.2.9/go.mod h1:Pxw2nw4/wIXAr7x0mLu1Hu9zIaemggJ/1omUgIE5mtE=
+github.com/sneat-co/sneat-go-modules v0.3.0 h1:8bJ/+iSgTkep09UDmZb6oaNv08uNGZ6B0AWxmVfIvVQ=
+github.com/sneat-co/sneat-go-modules v0.3.0/go.mod h1:o258YtUp005Y16nCcNGOuyyOsYwPOieXMZ7awvSrtIw=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
 github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=
@@ -158,6 +164,8 @@ github.com/strongo/strongoapp v0.9.1 h1:M3JqRZtqftTHGqnekW3ncNYYqLv2B1weye7yhPIG
 github.com/strongo/strongoapp v0.9.1/go.mod h1:UWRe4rYG7val1PRumvd+V1TbCHmckfHr3DQ+OzvYnqo=
 github.com/strongo/strongoapp v0.14.1 h1:LmILg2qnjm6SB89cHD6cxd1SgDkDYiQITD3OlRYByhY=
 github.com/strongo/strongoapp v0.14.1/go.mod h1:T/QYm0Pv6MIvQ/yWVKX+rGRoIuSSIiZuhl4JlJnyH24=
+github.com/strongo/strongoapp v0.15.0 h1:QXaTjXmraScjUCs8+sSfMFCxTZv+6Mh8J06Ily2B3rk=
+github.com/strongo/strongoapp v0.15.0/go.mod h1:yMpsZiowjazIpPEKqieS9hbaaUyuyRPcFA948feBPPE=
 github.com/strongo/validation v0.0.6 h1:RskXD45ILagVW3jmuKUiq7WshE4kmoQEiUbgfigqHzw=
 github.com/strongo/validation v0.0.6/go.mod h1:V4Nu8b8CPsLNwYLKmMHN2ghkoabOpiOW8NNcUczuCWE=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=

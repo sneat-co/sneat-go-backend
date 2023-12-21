@@ -6,6 +6,7 @@ go 1.21.5
 
 //replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
 //replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
+
 //replace github.com/sneat-co/sneat-go-modules => ../sneat-go-modules
 
 //replace github.com/bots-go-framework/bots-fw => ../../bots-go-framework/bots-fw
@@ -20,10 +21,10 @@ go 1.21.5
 
 require (
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/sneat-co/sneat-core-modules v0.11.0
-	github.com/sneat-co/sneat-go-core v0.20.2
+	github.com/sneat-co/sneat-core-modules v0.12.0
+	github.com/sneat-co/sneat-go-core v0.21.0
 	github.com/sneat-co/sneat-go-firebase v0.4.19
-	github.com/sneat-co/sneat-go-modules v0.2.9
+	github.com/sneat-co/sneat-go-modules v0.3.0
 	github.com/stretchr/testify v1.8.4
 	github.com/strongo/log v0.3.0
 )
@@ -63,7 +64,7 @@ require (
 	github.com/strongo/decimal v0.0.1 // indirect
 	github.com/strongo/random v0.0.1 // indirect
 	github.com/strongo/slice v0.1.4 // indirect
-	github.com/strongo/strongoapp v0.14.1 // indirect
+	github.com/strongo/strongoapp v0.15.0 // indirect
 	github.com/strongo/validation v0.0.6 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.46.1 // indirect
