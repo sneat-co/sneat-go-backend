@@ -23,7 +23,7 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/sneat-co/sneat-core-modules v0.12.0
 	github.com/sneat-co/sneat-go-core v0.21.0
-	github.com/sneat-co/sneat-go-firebase v0.4.19
+	github.com/sneat-co/sneat-go-firebase v0.4.20
 	github.com/sneat-co/sneat-go-modules v0.3.0
 	github.com/stretchr/testify v1.8.4
 	github.com/strongo/log v0.3.0
@@ -43,7 +43,7 @@ require (
 	github.com/bots-go-framework/bots-fw-store v0.4.0 // indirect
 	github.com/crediterra/money v0.2.1 // indirect
 	github.com/dal-go/dalgo v0.12.0 // indirect
-	github.com/dal-go/dalgo2firestore v0.1.41 // indirect
+	github.com/dal-go/dalgo2firestore v0.1.42 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-logr/logr v1.3.0 // indirect
@@ -86,7 +86,7 @@ require (
 	google.golang.org/genproto v0.0.0-20231120223509-83a465c0220f // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20231120223509-83a465c0220f // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231127180814-3a041ad873d4 // indirect
-	google.golang.org/grpc v1.60.0 // indirect
+	google.golang.org/grpc v1.60.1 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
