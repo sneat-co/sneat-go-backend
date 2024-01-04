@@ -21,8 +21,8 @@ go 1.21.5
 
 require (
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/sneat-co/sneat-core-modules v0.12.0
-	github.com/sneat-co/sneat-go-core v0.21.0
+	github.com/sneat-co/sneat-core-modules v0.12.2
+	github.com/sneat-co/sneat-go-core v0.22.0
 	github.com/sneat-co/sneat-go-firebase v0.4.20
 	github.com/sneat-co/sneat-go-modules v0.3.0
 	github.com/stretchr/testify v1.8.4

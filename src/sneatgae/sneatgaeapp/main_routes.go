@@ -49,11 +49,9 @@ func globalOptionsHandler(w http.ResponseWriter, r *http.Request) {
 func allowedOrigin(r *http.Request, w http.ResponseWriter) (string, bool) {
 	origin := r.Header.Get("Origin")
 	if origin == "" {
-		//w.WriteHeader(http.StatusBadRequest)
-		//const m = "Missing required request header: Origin"
-		//_, _ = fmt.Println(w, m)
-		//log.Printf("globalOptionsHandler(%s): %s\n", r.URL.String(), m)
-		//return origin, false
+		origin = r.Header.Get("Referer")
+	}
+	if origin == "" {
 		return "", true
 	}
 	if !security.IsSupportedOrigin(origin) {
