@@ -21,16 +21,15 @@ go 1.21.6
 
 require (
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/sneat-co/sneat-core-modules v0.12.4
 	github.com/sneat-co/sneat-go-core v0.23.0
 	github.com/sneat-co/sneat-go-firebase v0.4.21
-	github.com/sneat-co/sneat-go-modules v0.3.1
+	github.com/sneat-co/sneat-go-modules v0.4.1
 	github.com/stretchr/testify v1.8.4
 	github.com/strongo/log v0.3.0
 )
 
 require (
-	cloud.google.com/go v0.111.0 // indirect
+	cloud.google.com/go v0.112.0 // indirect
 	cloud.google.com/go/compute v1.23.3 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
 	cloud.google.com/go/firestore v1.14.0 // indirect
