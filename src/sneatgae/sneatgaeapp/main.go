@@ -16,11 +16,11 @@ package sneatgaeapp
 
 import (
 	"github.com/julienschmidt/httprouter"
+	sneatgomodules "github.com/sneat-co/sneat-go-backend/src/modules"
+	"github.com/sneat-co/sneat-go-backend/src/modules/healthcheck"
 	"github.com/sneat-co/sneat-go-backend/src/sneatgae/sneatgaeapp/pages"
 	"github.com/sneat-co/sneat-go-core/emails"
 	"github.com/sneat-co/sneat-go-core/modules"
-	"github.com/sneat-co/sneat-go-modules"
-	"github.com/sneat-co/sneat-go-modules/modules/healthcheck"
 	"github.com/strongo/log"
 	golog "log"
 	"net/http"
