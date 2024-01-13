@@ -23,7 +23,7 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/sneat-co/sneat-go-core v0.23.0
 	github.com/sneat-co/sneat-go-firebase v0.4.21
-	github.com/sneat-co/sneat-go-modules v0.4.1
+	github.com/sneat-co/sneat-go-modules v0.5.0
 	github.com/stretchr/testify v1.8.4
 	github.com/strongo/log v0.3.0
 )

@@ -20,7 +20,7 @@ import (
 	"github.com/sneat-co/sneat-go-core/emails"
 	"github.com/sneat-co/sneat-go-core/modules"
 	"github.com/sneat-co/sneat-go-modules"
-	"github.com/sneat-co/sneat-go-modules/healthcheck"
+	"github.com/sneat-co/sneat-go-modules/modules/healthcheck"
 	"github.com/strongo/log"
 	golog "log"
 	"net/http"
