@@ -32,7 +32,7 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/olebedev/when v1.0.0
 	github.com/sneat-co/sneat-go-core v0.23.0
-	github.com/sneat-co/sneat-go-firebase v0.4.21
+	github.com/sneat-co/sneat-go-firebase v0.4.22
 	github.com/stretchr/testify v1.8.4
 	github.com/strongo/i18n v0.0.4
 	github.com/strongo/log v0.3.0
@@ -56,7 +56,7 @@ require (
 	github.com/alexsergivan/transliterator v1.0.0 // indirect
 	github.com/bots-go-framework/bots-api-telegram v0.4.2 // indirect
 	github.com/bots-go-framework/bots-go-core v0.0.2 // indirect
-	github.com/dal-go/dalgo2firestore v0.1.43 // indirect
+	github.com/dal-go/dalgo2firestore v0.1.44 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-logr/logr v1.4.1 // indirect
