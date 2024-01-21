@@ -32,7 +32,7 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/olebedev/when v1.0.0
 	github.com/sneat-co/sneat-go-core v0.23.0
-	github.com/sneat-co/sneat-go-firebase v0.4.22
+	github.com/sneat-co/sneat-go-firebase v0.4.23
 	github.com/stretchr/testify v1.8.4
 	github.com/strongo/i18n v0.0.4
 	github.com/strongo/log v0.3.0
@@ -56,7 +56,7 @@ require (
 	github.com/alexsergivan/transliterator v1.0.0 // indirect
 	github.com/bots-go-framework/bots-api-telegram v0.4.2 // indirect
 	github.com/bots-go-framework/bots-go-core v0.0.2 // indirect
-	github.com/dal-go/dalgo2firestore v0.1.44 // indirect
+	github.com/dal-go/dalgo2firestore v0.1.45 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-logr/logr v1.4.1 // indirect
@@ -91,12 +91,12 @@ require (
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
-	google.golang.org/api v0.156.0 // indirect
+	google.golang.org/api v0.157.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/appengine/v2 v2.0.5 // indirect
 	google.golang.org/genproto v0.0.0-20240108191215-35c7eff3a6b1 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240108191215-35c7eff3a6b1 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240108191215-35c7eff3a6b1 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240116215550-a9fa1716bcac // indirect
 	google.golang.org/grpc v1.60.1 // indirect
 	google.golang.org/protobuf v1.32.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
