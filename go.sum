@@ -50,6 +50,8 @@ github.com/dal-go/dalgo2firestore v0.1.44 h1:6xRcyakrUhXfS+0qkkUMKxqaDSXpUMBMU7v
 github.com/dal-go/dalgo2firestore v0.1.44/go.mod h1:9NMT0J7Uu74V7RUgUFEziyyDLiVmdTIH37oEG0h6btc=
 github.com/dal-go/dalgo2firestore v0.1.45 h1:tGh7l2JSAsXSkM54R/Y3R0/mqairGeJxnUZNvSAV2k8=
 github.com/dal-go/dalgo2firestore v0.1.45/go.mod h1:NlaPettV+QMCRDbCqBnhEpB/z6t5T0pLW7e+rh7ALxA=
+github.com/dal-go/dalgo2firestore v0.1.46 h1:n1ocTeLLLzLb9qU+GE57dmYXdrc3cb+aT3oOS4nglME=
+github.com/dal-go/dalgo2firestore v0.1.46/go.mod h1:8jvRAT90akfNuGJM9xt+eicbxsZFVXpjRDgZIqt0rTI=
 github.com/dal-go/mocks4dalgo v0.1.17 h1:tvVDg+HubKWKn23kk4gw58gWrDwcww5wwsM4HsrkRR4=
 github.com/dal-go/mocks4dalgo v0.1.17/go.mod h1:Nf61t1XjeLzJ+lPw7oEU3iTBcdO+DNMIEGTOe4ZJdwY=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -140,6 +142,8 @@ github.com/sneat-co/sneat-go-firebase v0.4.22 h1:i+gDauFCs+hs++pLDAr1JGemyfV+3C8
 github.com/sneat-co/sneat-go-firebase v0.4.22/go.mod h1:8j14UzOxLgyrsh4kEwDK+oqdaFSzx+IMiC7ZeDLgxkc=
 github.com/sneat-co/sneat-go-firebase v0.4.23 h1:e762pNU8ujSoIoqF2UM7yiulH41cIZiaiJFarCycIA4=
 github.com/sneat-co/sneat-go-firebase v0.4.23/go.mod h1:g0a2RUojAVx/vXOIxK0QD1uGFPxnJUuxz3POwj75g4s=
+github.com/sneat-co/sneat-go-firebase v0.4.24 h1:Puk3Svby+j1nGzkvXpOMcK07zwhkf4FVBkulnxU6044=
+github.com/sneat-co/sneat-go-firebase v0.4.24/go.mod h1:thSbiq/lhJlIO14/z5gsyGEdNZN5OhsxHbQEVR+QUXU=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
 github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=
@@ -281,6 +285,8 @@ google.golang.org/grpc v1.27.0/go.mod h1:qbnxyOmOxrQa7FizSgH+ReBfzJrCY1pSN7KXBS8
 google.golang.org/grpc v1.33.2/go.mod h1:JMHMWHQWaTccqQQlmk3MJZS+GWXOdAesneDmEnv2fbc=
 google.golang.org/grpc v1.60.1 h1:26+wFr+cNqSGFcOXcabYC0lUVJVRa2Sb2ortSK7VrEU=
 google.golang.org/grpc v1.60.1/go.mod h1:OlCHIeLYqSSsLi6i49B5QGdzaMZK9+M7LXN2FKz4eGM=
+google.golang.org/grpc v1.61.0 h1:TOvOcuXn30kRao+gfcvsebNEa5iZIiLkisYEkf7R7o0=
+google.golang.org/grpc v1.61.0/go.mod h1:VUbo7IFqmF1QtCAstipjG0GIoq49KvMe9+h1jFLBNJs=
 google.golang.org/protobuf v0.0.0-20200109180630-ec00e32a8dfd/go.mod h1:DFci5gLYBciE7Vtevhsrf46CRTquxDuWsQurQQe4oz8=
 google.golang.org/protobuf v0.0.0-20200221191635-4d8936d0db64/go.mod h1:kwYJMbMJ01Woi6D6+Kah6886xMZcty6N08ah7+eCXa0=
 google.golang.org/protobuf v0.0.0-20200228230310-ab0ca4ff8a60/go.mod h1:cfTl7dwQJ+fmap5saPgwCLgHXTUD7jkjRqWcaiX5VyM=
