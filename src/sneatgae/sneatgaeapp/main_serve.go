@@ -13,11 +13,10 @@ var serve = func(handler http.Handler) {
 		port = "4300"
 		//log.Printf("Defaulting to port %s", port)
 	}
+	// [END setting_port]
 
 	log.Printf("Listening on port %s, http://localhost:%s", port, port)
 	if err := http.ListenAndServe(":"+port, handler); err != nil {
 		log.Fatal(err)
 	}
-	// [END setting_port]
-
 }
