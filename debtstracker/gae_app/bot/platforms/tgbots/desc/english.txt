@@ -1,0 +1,30 @@
+=========================
+English - DebtsTrackerBot
+=========================
+
+------------------------------------------------------------------------------------------------------------------------
+/setabouttext (120 chars limit, no linebreaks)
+----------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------
+/setdescription
+---------------
+Helps to manage list of debts and sends automatic reminders to you & your debtors (Telegram, email, SMS, etc.)
+
+Developed by https://debtstracker.io/en/#utm_source=telegram&utm_medium=bot&utm_campaign=about
+
+Click the "Start" button at bottom to begin using it for free.
+------------------------------------------------------------------------------------------------------------------------
+/setcommands
+------------
+menu - Main menu
+balance - display current balance
+return - return previously recorded debt
+got - record money you received from others
+gave - record money you gave to others
+start - a starting point
+settings - adjust your preferences
+history - latest transactions
+cancel - Cancel last transfer
+clear - Removes all data. Start a new life!
+------------------------------------------------------------------------------------------------------------------------

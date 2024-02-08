@@ -1,0 +1,164 @@
+runtime: go120
+# application: debtstracker
+# api_version: go111
+
+#automatic_scaling:
+#  max_concurrent_requests: 80
+#  max_idle_instances: 0
+
+handlers:
+
+- url: /((wp|wordpress|blog|member/|data/).*|.+\.(aspx?|php)(\..+)?)
+  static_files: static/no-robots.txt
+  upload: static/no-robots.txt
+  expiration: "1d"
+
+- url: /invite
+  static_files: static/invite.html
+  upload: static/invite.html
+  expiration: "1m"
+  secure: always
+
+- url: /manifest.json
+  static_files: static/manifest.json
+  upload: static/manifest.json
+  expiration: "1d"
+
+- url: /.well-known/assetlinks.json
+  static_files: static/.well-known/assetlinks.json
+  upload: static/.well-known/assetlinks.json
+  expiration: "1d"
+
+- url: /OneSignalSDKUpdaterWorker.js
+  static_files: static/OneSignalSDKUpdaterWorker.js
+  upload: static/OneSignalSDKUpdaterWorker.js
+  expiration: "1d"
+  secure: always
+
+- url: /OneSignalSDKWorker.js
+  static_files: static/OneSignalSDKWorker.js
+  upload: static/OneSignalSDKWorker.js
+  expiration: "1d"
+  secure: always
+
+- url: /robots.txt
+  static_files: static/robots.txt
+  upload: static/robots.txt
+  expiration: "1h"
+
+- url: /botmap.xml
+  static_files: static/botmap.xml
+  upload: static/botmap.xml
+  expiration: "1h"
+
+- url: /img/logo.png
+  static_files: static/img/debtstracker-32x32.png
+  upload: static/img/debtstracker-32x32.png
+  expiration: "1d"
+
+- url: /img
+  static_dir: static/img
+  expiration: "1d"
+
+# The URL pattern is a regular expression, with a grouping that is inserted into the path to the file.
+- url: /((apple-touch|android-chrome|mstile|safari-pinned|favicon)-.*|browserconfig\.xml|favicon\.ico)$
+  static_files: static/favicons/\1
+  upload: static/favicons/.*\.(png|svg|xml|ico)$
+  expiration: "1d"
+
+- url: /config.xml
+  static_files: ionic-app/config.xml
+  upload: ionic-app/config.xml
+  expiration: "10m"
+  secure: always
+  redirect_http_response_code: 301
+
+- url: /device
+  static_dir: static/device
+  expiration: "1d"
+  secure: always
+  redirect_http_response_code: 301
+
+- url: /app/cordova.js
+  static_files: ionic-app/cordova.js
+  upload: ionic-app/cordova.js
+  expiration: "1d"
+  secure: always
+  redirect_http_response_code: 301
+
+- url: /app/cordova_plugins.js
+  static_files: ionic-app/cordova_plugins.js
+  upload: ionic-app/cordova_plugins.js
+  expiration: "1d"
+  secure: always
+  redirect_http_response_code: 301
+
+- url: /app/build/polyfills.js
+  static_files: ionic-app/build/polyfills.js
+  upload: ionic-app/build/polyfills.js
+  expiration: "1d"
+  secure: always
+  redirect_http_response_code: 301
+
+- url: /app/plugins
+  static_dir: ionic-app/plugins
+  expiration: "1d"
+  secure: always
+  redirect_http_response_code: 301
+
+- url: /app/$
+  static_files: ionic-app/index.html
+  upload: ionic-app/index.html
+  expiration: "1m"
+  secure: always
+  redirect_http_response_code: 301
+
+- url: /app
+  static_dir: ionic-app
+  expiration: "1m"
+  secure: always
+  redirect_http_response_code: 301
+
+#- url: /demo
+#  static_dir: static/demo
+#  expiration: "10s"
+#  secure: always
+
+- url: /5F4BAA801B97B9A93D1F038177783A83.txt
+  static_files: 5F4BAA801B97B9A93D1F038177783A83.txt
+  upload: 5F4BAA801B97B9A93D1F038177783A83.txt
+  expiration: "1m"
+
+- url: /((admin|cron|task-?queue?|support)/.*)
+  login: admin
+  script: auto
+
+- url: /_ah/.*
+  login: admin
+  script: auto
+
+- url: /apps/vk/iframe$
+  script: auto
+  secure: always
+  redirect_http_response_code: 301
+
+- url: /auth/google/sign(in|ed)$
+  script: auto
+  secure: always
+  redirect_http_response_code: 301
+
+- url: /Users/astec/.* # To clear logs from JS maps files like: /Users/astec/debtstracker/ionic-apps/public/www/build/3.main.js.map
+  script: auto
+
+- url: /inspector/.*
+  script: auto
+  secure: always
+  redirect_http_response_code: 301
+
+- url: /(receipt|transfer|confirm|contact|open/new-debt|test-pointer)?$|/(api|webhooks/(twilio)|bot/(tg|viber|fbm|skype|kik|line|wechat)|((\w{2})(-\w{2})?))/.*
+  script: auto
+  secure: always
+  redirect_http_response_code: 301
+
+- url: /\w{2}$ # Redirects /en to /en/
+  script: auto

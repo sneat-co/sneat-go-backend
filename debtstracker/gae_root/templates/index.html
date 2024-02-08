@@ -1,0 +1,116 @@
+{{define "title"}}{{ .WS_INDEX_TITLE }}{{end}}
+
+{{define "canonical"}}<link rel="canonical" href="https://debtstracker.io/{{.lang}}/"/>{{end}}
+
+{{define "alternate"}}
+<link rel="alternate" hreflang="en-us" href="https://debtstracker.io/en/"/>
+<link rel="alternate" hreflang="fa-ir" href="https://debtstracker.io/fa/"/>
+<link rel="alternate" hreflang="es" href="https://debtstracker.io/es/"/>
+<link rel="alternate" hreflang="ru" href="https://debtstracker.io/ru/"/>
+<link rel="alternate" hreflang="pl" href="https://debtstracker.io/pl/"/>
+<link rel="alternate" hreflang="pt" href="https://debtstracker.io/pt/"/>
+<link rel="alternate" hreflang="de" href="https://debtstracker.io/de/"/>
+<link rel="alternate" hreflang="fr" href="https://debtstracker.io/fr/"/>
+<link rel="alternate" hreflang="it" href="https://debtstracker.io/it/"/>
+<link rel="alternate" hreflang="ko" href="https://debtstracker.io/ko/"/>
+<link rel="alternate" hreflang="ja" href="https://debtstracker.io/ja/"/>
+<link rel="alternate" hreflang="zh" href="https://debtstracker.io/zh/"/>
+{{end}}
+
+{{define "content"}}
+<script>
+if (window.history.replaceState) {
+	window.history.replaceState(null, window.title, '/{{.lang}}/');
+}
+</script>
+
+	<div class="jumbotron">
+		<!--<div>-->
+		<!--<img src="/img/table_money_32x32.png" alt="Debts Tacker .IO" width="32" height="32" style="vertical-align: bottom;">-->
+		<!--<div style="display: inline; margin-right: 30px; font-size: 3rem;">-->
+		<!--<a href="/{{.lang}}/" style="text-decoration: none"><span style="color: royalblue">Debts</span><span style="color: dodgerblue">Tracker</span><span style="color: lightskyblue">.IO</span></a>-->
+		<!--</div>-->
+		<!--<p class="head-motto">{{ .WS_MOTTO }}</p>-->
+		<!--<div style="display: inline">-->
+		<!--<div-->
+		<!--class="fb-like"-->
+		<!--data-href="https://debtstracker.io/{{.lang}}/"-->
+		<!--data-share="true"-->
+		<!--data-width="450"-->
+		<!--data-show-faces="true">-->
+		<!--</div>-->
+		<!--</div>-->
+		<!--<hr>-->
+		<!--</div>-->
+
+		<h1>{{.WS_INDEX_TITLE}}</h1>
+		<hr/>
+		<p>{{ .WS_SHORT_DESC }}</p>
+	</div>
+	<div class="row">
+		<div class="col-xs-12 col-xl-6">
+			<h2>Chat bots</h2>
+			<p>Our app works with your messenger!</p>
+			<div>
+				<h3>{{ .WS_INDEX_TG_BOT_H2 }}</h3>
+				<p>{{ .WS_INDEX_TG_BOT_P }}</p>
+				<p><a class="btn btn-primary btn-sm" href="https://telegram.me/{{.TgBotID}}" role="button">{{ .WS_INDEX_TG_BOT_OPEN }}</a></p>
+			</div>
+			<div>
+				<h3>Viber</h3>
+				<p>A bot for Viber is coming soon...</p>
+			</div>
+			<div>
+				<h3>FB Messenger</h3>
+				<p>A bot for Facebook Messenger is coming soon...</p>
+			</div>
+			<div>
+				<h3>Kik</h3>
+				<p>A bot for Kik Messenger is coming soon...</p>
+			</div>
+			<div>
+				<h3>Line</h3>
+				<p>A bot for Line Messenger is coming soon...</p>
+			</div>
+			<div>
+				<h3>WeChat</h3>
+				<p>A bot for WeChat Messenger is coming soon, please check later.</p>
+			</div>
+		</div>
+		<div class="col-xs-12 col-xl-6">
+			<h2>iOS app</h2>
+			<p>An iPhone app is coming soon, please check later.</p>
+			<!--<p><a class="btn btn-primary" href="#" role="button">View details &raquo;</a></p>-->
+		</div><!--/span-->
+		<div class="col-xs-12 col-xl-6">
+			<h2>Android app</h2>
+			<p>An Android app is coming soon, please check later.</p>
+			<!--<p><a class="btn btn-primary" href="#" role="button">View details &raquo;</a></p>-->
+		</div><!--/span-->
+		<div class="col-xs-12 col-xl-6">
+			<h2>Web app</h2>
+			<p>A web app is coming soon, please check later.</p>
+			<!--<p><a class="btn btn-primary" href="#" role="button">View details &raquo;</a></p>-->
+		</div><!--/span-->
+	</div><!--/row-->
+	<div>
+		<h2>IOU - Send automatic "I owe you / You owe me" receipts & notifications</h2>
+		<p>Our app is a perfect tool to manage your IOU<span>s</span>.</p>
+	</div>
+
+	{{if eq .lang "en"}}
+	<div>
+		<h2>Songs</h2>
+		<ul style="list-style: none; padding-left: 0;">
+			<li>
+				<h3><a href="/en/songs/annie-iou-a-dance">Annie I owe you a dance</a></h3>
+				<p>Song by Tim McGraw &mdash; lyrics & link to Google Play</p>
+			</li>
+			<li>
+				<h3><a href="/en/songs/iou-by-dappy">I.O.U. by Dappy</a></h3>
+				<p>Song by Dappy &mdash; video, lyrics & link to iTunes & Amazon</p>
+			</li>
+		</ul>
+	</div>
+	{{end}}
+{{end}}

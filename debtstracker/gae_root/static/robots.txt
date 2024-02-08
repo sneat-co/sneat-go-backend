@@ -1,0 +1,5 @@
+Host: debtstracker.io
+User-agent: *
+Disallow: /api/
+Disallow: /app/
+Disallow: /history

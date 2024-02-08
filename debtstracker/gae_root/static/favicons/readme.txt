@@ -1,0 +1,1 @@
+Generate at http://realfavicongenerator.net/

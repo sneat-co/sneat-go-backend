@@ -1,0 +1,18 @@
+https://gist.github.com/jessedearing/2351836
+
+NGINX config location: /usr/local/etc/nginx/nginx.conf
+
+http {
+	server {  # This servers dynamic content of DebtsTracker project over HTTPS
+		listen          443;
+		server_name     debtstracker.local;
+		ssl                  on;
+		ssl_certificate      /etc/ssl/certs/debtstrackerdev.crt;
+		ssl_certificate_key  /etc/ssl/private/debtstrackerdev.key;
+
+		location / {
+			proxy_pass   http://127.0.0.1:8080;
+			proxy_set_header Host $http_host;
+		}
+	}
+}

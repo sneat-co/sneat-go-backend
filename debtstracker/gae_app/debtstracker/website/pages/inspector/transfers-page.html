@@ -1,0 +1,104 @@
+<%!
+import (
+"github.com/sneat-co/debtstracker-go/gae_app/debtstracker/models"
+)
+%>
+
+
+<%: func renderTransfersPage(contact models.Contact, currency money.Currency, balancesWithoutInterest, balancesWithInterest balanceRow, transfers []models.Transfer, w io.Writer) %>
+
+
+<%~ "layout.html" %>
+
+<%@ title { %>Contact # <%=i contact.ID %>: <%=v currency %><% } %>
+
+<%@ body { %>
+
+<div class="row">
+    <h1>Contact # <%=i contact.ID %>: <%=v currency %></h1>
+</div>
+
+<div class="row">
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Balances</th>
+            <th scope="col">Currency</th>
+            <th scope="col" class=d>User</th>
+            <th scope="col" class=d>Contact</th>
+            <th scope="col" class=d>Transfers</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th>Without interest</th>
+            <th><%=v currency %></th>
+            <td class=d><%=v balancesWithoutInterest.user %></td>
+            <td class=d><%=v balancesWithoutInterest.contacts %></td>
+            <td class=d><%=v balancesWithoutInterest.transfers %></td>
+        </tr>
+        <tr>
+            <th>With interest</th>
+            <th><%=v currency %></th>
+            <td class=d><%=v balancesWithInterest.user %></td>
+            <td class=d><%=v balancesWithInterest.contacts %></td>
+            <td class=d></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+
+<div class="row">
+    <h2>Transfers</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>ID</th>
+            <th>Created at</th>
+            <th>Created on</th>
+            <th>From</th>
+            <th>To</th>
+            <th>IsReturn</th>
+            <th>IsOutstanding</th>
+            <th>Interest</th>
+            <th class=d>Amount</th>
+            <th class=d>Returned</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% for i, transfer := range transfers { %>
+        <tr>
+            <td class="d"><%=i i+1 %></td>
+            <td class="d"><a href="transfer?id=<%=i transfer.ID %>"><%=i transfer.ID %></a></td>
+            <td><%=v transfer.DtCreated %></td>
+            <td>
+                <% if transfer.CreatedOnPlatform == "telegram" { %>
+                <a href="https://t.me/<%=s transfer.CreatedOnID %>">@<%=s transfer.CreatedOnID %></a>
+                <% } %>
+                <% if transfer.CreatedOnPlatform != "telegram" { %>
+                <%= transfer.CreatedOnID %>@<%= transfer.CreatedOnPlatform %>
+                <% } %>
+            </td>
+            <td><%=s transfer.From().Name() %></td>
+            <td><%=s transfer.To().Name() %></td>
+            <td><%=b transfer.IsReturn %></td>
+            <td><%=b transfer.IsOutstanding %></td>
+            <td>
+                <% if transfer.InterestPercent != 0 { %>
+                <%=v transfer.InterestPercent %>%
+                per <%=i transfer.InterestPeriod %> days
+                <% if transfer.InterestMinimumPeriod > 1 { %>
+                minimum for <%=i transfer.InterestMinimumPeriod %> days
+                <% } %>
+                <% } %>
+            </td>
+            <td class=d><%=v transfer.AmountInCents %></td>
+            <td class=d><%=v transfer.AmountInCentsReturned %></td>
+        </tr>
+        <% } %>
+        </tbody>
+    </table>
+</div>
+<% } %>

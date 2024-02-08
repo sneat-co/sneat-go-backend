@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="{{.lang}}">
+<head>
+	<meta charset="UTF-8">
+	  <title>DebtsTracker.io</title>
+	  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	  <meta name="format-detection" content="telephone=no">
+	  <meta name="msapplication-tap-highlight" content="no">
+
+	  <link rel="icon" type="image/x-icon" href="assets/icon/favicon.ico">
+	  <link rel="manifest" href="assets/manifest.json">
+	  <meta name="theme-color" content="#4e8ef7">
+	<style>
+		body {
+			font-family: Verdana, serif;
+			padding: 0 10px;
+		}
+	</style>
+	<link rel="stylesheet" href="/device/device.css" />
+	{{template "device.js.html" .}}
+</head>
+
+<body>
+
+</body>
+
+	<div id="device-selector" style="float: left">
+		<h2>Устройство</h2>
+		{{template "device-switcher"}}
+	</div>
+
+	<div id="device"><iframe id="device-iframe"></iframe><script>showPlatform();</script></div>
+
+<script src="https://vk.com/js/api/xd_connection.js?2"  type="text/javascript"></script>
+<script type="text/javascript">
+VK.init(function() {
+ // API initialization succeeded
+ // Your code here
+	console.log('VK API initialization succeeded');
+}, function() {
+ // API initialization failed
+ // Can reload page here
+	console.log('VK API initialization failed');
+}, '5.60');
+</script>
+</html>

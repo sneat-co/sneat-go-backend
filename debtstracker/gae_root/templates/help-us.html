@@ -1,0 +1,24 @@
+{{define "title"}}{{ .WS_HELP_US_TITLE }}{{end}}
+
+{{define "canonical"}}<link rel="canonical" href="https://debtstracker.io/{{.lang}}/" />{{end}}
+
+{{define "alternate"}}
+<link rel="alternate" hreflang="en-us" href="https://debtstracker.io/en{{.SubLocalePath}}" />
+<link rel="alternate" hreflang="ru" href="https://debtstracker.io/ru{{.SubLocalePath}}" />
+<link rel="alternate" hreflang="fa-ir" href="https://debtstracker.io/fa{{.SubLocalePath}}" />
+<link rel="alternate" hreflang="es" href="https://debtstracker.io/es{{.SubLocalePath}}" />
+<link rel="alternate" hreflang="pl" href="https://debtstracker.io/pl{{.SubLocalePath}}" />
+<link rel="alternate" hreflang="pt" href="https://debtstracker.io/pt{{.SubLocalePath}}" />
+<link rel="alternate" hreflang="de" href="https://debtstracker.io/de{{.SubLocalePath}}" />
+<link rel="alternate" hreflang="fr" href="https://debtstracker.io/fr{{.SubLocalePath}}" />
+<link rel="alternate" hreflang="it" href="https://debtstracker.io/it{{.SubLocalePath}}" />
+<link rel="alternate" hreflang="ko" href="https://debtstracker.io/ko{{.SubLocalePath}}" />
+<link rel="alternate" hreflang="ja" href="https://debtstracker.io/ja{{.SubLocalePath}}" />
+<link rel="alternate" hreflang="zh" href="https://debtstracker.io/zh{{.SubLocalePath}}" />
+{{end}}
+
+{{define "content"}}
+<h1>{{ .WS_HELP_US_TITLE }}</h1>
+
+{{ .WS_HELP_US_CONTENT }}
+{{end}}

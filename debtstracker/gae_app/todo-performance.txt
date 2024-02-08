@@ -1,0 +1,1 @@
+* Consider replacing ffjson with parsejson - supposed to be faster

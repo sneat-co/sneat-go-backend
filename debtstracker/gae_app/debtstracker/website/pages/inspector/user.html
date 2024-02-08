@@ -1,0 +1,93 @@
+<%!
+import (
+"github.com/sneat-co/debtstracker-go/gae_app/debtstracker/models"
+)
+%>
+
+
+<%: func renderUserPage(
+now time.Time,
+user models.AppUser,
+userBalances balances,
+contactsMissingInJson, contactsMissedByQuery, matchedContacts []contactWithBalances,
+contactInfosNotFoundInDb []models.UserContactJson,
+w io.Writer) %>
+
+
+<%~ "layout.html" %>
+
+<%@ title { %><%=i user.ID %><% } %>
+
+<%@ body { %>
+
+<div class="row">
+    <div class="col">
+        <h1>User # <%=i user.ID %></h1>
+
+        <table class="table">
+            <thead>
+            <tr class=thead-light>
+                <th>First name</th>
+                <th>Last name</th>
+                <th>Nickname</th>
+                <th>Screen name</th>
+                <th>Full name</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><%= user.FirstName %></td>
+                <td><%= user.LastName %></td>
+                <td><%= user.Nickname %></td>
+                <td><%= user.ScreenName %></td>
+                <td><%= user.FullName() %></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    <%
+    renderUserBalance("Balance (no interest)", userBalances.withoutInterest, false, _buffer)
+    renderUserBalance("Balance with interest", userBalances.withInterest, false, _buffer)
+    %>
+</div>
+
+<% if len(contactInfosNotFoundInDb) > 0 { %>
+<h3 class=row>Contacts not found by ID: <%=i len(contactInfosNotFoundInDb) %></h3>
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Telegram</th>
+    </thead>
+    <tbody>")
+    for _, contactInfo := range contactInfosNotFoundInDb {
+    fmt.Fprintf(w, "
+    <tr>
+        <td>%v</td>
+        <td>%v</td>
+        <td>%v</td>
+    </tr>
+    ", contactInfo.ID, contactInfo.Name, contactInfo.TgUserID)
+    }
+    fmt.Fprintln(w, "
+    </tbody>
+</table>
+<% } %>
+
+<%
+if len(contactsMissingInJson) > 0 {
+heroContactsBlock(now, "Contacts missed in cache", contactsMissingInJson, _buffer)
+}
+
+if len(contactsMissedByQuery) > 0 {
+heroContactsBlock(now, "Contacts missed by query", contactsMissedByQuery, _buffer)
+}
+
+if len(matchedContacts) > 0 {
+heroContactsBlock(now, "Matched contacts", matchedContacts, _buffer)
+}
+%>
+<% } %>

@@ -1,0 +1,90 @@
+#device-selector h2{
+    font-size: small;
+}
+
+.horizontal #device-selector-switch {
+    list-style-type: none;
+}
+.horizontal #device-selector-switch li {
+    display: inline;
+    padding: 10px;
+    margin: 1px;
+}
+
+#device-selector-switch a {
+    text-decoration: none;
+    color: #285473;
+}
+#device-selector-switch a:hover {
+    text-decoration: underline;
+}
+#device-selector-switch a:visited {
+    color: #285473;
+}
+#device-selector-switch {
+    padding-left: 20px;
+}
+#device-selector-switch.ios .ios {
+    font-weight: bold;
+}
+#device-selector-switch.android .android {
+    font-weight: bold;
+}
+#device-selector-switch.windows .windows {
+    font-weight: bold;
+}
+#device-selector-switch .platform-selector-item {
+    cursor: hand;
+    padding: 5px;
+}
+
+#device {
+    width: 467px;
+    height: 800px;
+    text-align: center;
+    margin: 0 auto;
+    background: center top no-repeat url(devices-sprite-tiny.jpg);
+    background-size: 467px;
+}
+
+
+/*@media (max-width: 576px) {*/
+    /*#device {*/
+        /*padding-left: 55px;*/
+        /*margin-left: -55px;*/
+    /*}*/
+    /*#device-iframe {*/
+        /*margin-left: -55px;*/
+    /*}*/
+/*}*/
+
+#device.ios {
+    background-position: center top;
+}
+#device.android {
+    background-position: center center;
+}
+#device.windows {
+    background-position: center bottom;
+}
+
+#device-iframe {
+    border: 0;
+}
+
+#device-iframe.ios {
+    margin-top: 85px;
+    width: 320px;
+    height: 568px;
+}
+#device-iframe.android {
+    margin-top: 64px;
+    width: 360px;
+    height: 590px;
+}
+#device-iframe.windows {
+    margin-top: 72px;
+    width: 350px;
+    height: 622px;
+    /*background: #fff;*/
+}

@@ -1,0 +1,23 @@
+<%!
+import (
+"github.com/sneat-co/debtstracker-go/gae_app/debtstracker/models"
+)
+%>
+
+
+<%: func heroContactsBlock(now time.Time, title string, contacts []contactWithBalances, buffer *bytes.Buffer) %>
+<div>
+    <div class="row">
+        <h3 class="col-sm"><%=s title %>: <%=i len(contacts) %></h3>
+    </div>
+
+    <div class="card-columns" style="column-count: 2;">
+        <%
+        for _, contact := range contacts {
+        heroContactCard(now, contact, buffer)
+        }
+        %>
+    </div>
+</div>
+
+
