@@ -34,8 +34,12 @@ const ( // Transfer directions
 )
 
 const ( // Transfer statuses
-	TransferViewed   = "viewed" // TODO: use the status
+	// TransferViewed   = "viewed" // TODO: use the status
+
+	// TransferAccepted for transfers that have been accepted by the counterparty
 	TransferAccepted = "accepted"
+
+	// TransferDeclined for transfers that have been declined by the counterparty
 	TransferDeclined = "declined"
 )
 
@@ -921,9 +925,9 @@ func (t *TransferData) GetReturnedAmount() money.Amount {
 	return money.Amount{Currency: t.Currency, Value: t.AmountReturned()}
 }
 
-func ReverseTransfers(t []Transfer) {
-	last := len(t) - 1
-	for i := 0; i < len(t)/2; i++ {
-		t[i], t[last-i] = t[last-i], t[i]
-	}
-}
+//func ReverseTransfers(t []Transfer) {
+//	last := len(t) - 1
+//	for i := 0; i < len(t)/2; i++ {
+//		t[i], t[last-i] = t[last-i], t[i]
+//	}
+//}
