@@ -28,8 +28,8 @@ type InviteTemplateParams struct {
 func SendInviteByEmail(ec strongoapp.ExecutionContext, translator i18n.SingleLocaleTranslator, fromName, toEmail, toName, inviteCode, telegramBotID, utmSource string) (emailID string, err error) {
 	//cred := credentials.NewStaticCredentials(, , "")
 	//credStaticProvider := credentials.StaticProvider{}
-	//credStaticProvider.AccessKeyID = "AKIAIT2ZJZOT2CKJ2JFQ"
-	//credStaticProvider.SecretAccessKey = "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"
+	//credStaticProvider.AccessKeyID = "******"
+	//credStaticProvider.SecretAccessKey = "*******"
 	//credStaticProvider.ProviderName = "Static"
 	//htmlTemplate, err := template.New("html").Parse(Translate(EMAIL_INVITE_HTML, whc))
 	//if err != nil {
