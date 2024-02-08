@@ -9,7 +9,7 @@ import (
 	"github.com/strongo/log"
 )
 
-func optionsHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
+func OptionsHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 	if r.Method != "OPTIONS" {
 		panic("Method != OPTIONS")
 	}
@@ -50,7 +50,7 @@ func optionsHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 }
 
 //func getOnly(handler dtdal.ContextHandler) func(w http.ResponseWriter, r *http.Request) {
-//	return dtdal.HttpAppHost.HandleWithContext(optionsHandler(func(c context.Context, w http.ResponseWriter, r *http.Request) {
+//	return dtdal.HttpAppHost.HandleWithContext(OptionsHandler(func(c context.Context, w http.ResponseWriter, r *http.Request) {
 //		if r.Method != "GET" {
 //			BadRequestMessage(c, w, "Expecting to get request method GET, got: "+r.Method)
 //			return
@@ -62,7 +62,7 @@ func optionsHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 //}
 //
 //func postOnly(handler dtdal.ContextHandler) func(w http.ResponseWriter, r *http.Request) {
-//	return dtdal.HttpAppHost.HandleWithContext(optionsHandler(func(c context.Context, w http.ResponseWriter, r *http.Request) {
+//	return dtdal.HttpAppHost.HandleWithContext(OptionsHandler(func(c context.Context, w http.ResponseWriter, r *http.Request) {
 //		if r.Method != "POST" {
 //			BadRequestMessage(c, w, "Expecting to get request method POST, got: "+r.Method)
 //			return

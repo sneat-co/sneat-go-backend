@@ -12,7 +12,7 @@ import (
 	"github.com/strongo/log"
 )
 
-func getEnvironment(r *http.Request) string {
+func GetEnvironment(r *http.Request) string {
 	switch r.Host {
 	case "debtstracker.io":
 		return "prod"
@@ -27,7 +27,7 @@ func getEnvironment(r *http.Request) string {
 	}
 }
 
-func getStrID(c context.Context, w http.ResponseWriter, r *http.Request, idParamName string) string {
+func GetStrID(c context.Context, w http.ResponseWriter, r *http.Request, idParamName string) string {
 	q := r.URL.Query()
 	if idParamName == "" {
 		panic("idParamName is not specified")
@@ -41,7 +41,7 @@ func getStrID(c context.Context, w http.ResponseWriter, r *http.Request, idParam
 	return idParamVal
 }
 
-func hasError(c context.Context, w http.ResponseWriter, err error, entity string, id string, notFoundStatus int) bool {
+func HasError(c context.Context, w http.ResponseWriter, err error, entity string, id string, notFoundStatus int) bool {
 	switch {
 	case err == nil:
 		return false
@@ -62,7 +62,8 @@ func hasError(c context.Context, w http.ResponseWriter, err error, entity string
 	return true
 }
 
-func jsonToResponse(c context.Context, w http.ResponseWriter, v interface{}) {
+// TODO - replace with generic sneat one
+func JsonToResponse(c context.Context, w http.ResponseWriter, v interface{}) {
 	header := w.Header()
 	if buffer, err := ffjson.Marshal(v); err != nil {
 		log.Errorf(c, err.Error())
@@ -71,7 +72,7 @@ func jsonToResponse(c context.Context, w http.ResponseWriter, v interface{}) {
 		log.Debugf(c, "w.Header(): %v", header)
 		_, _ = w.Write([]byte(err.Error()))
 	} else {
-		markResponseAsJson(header)
+		MarkResponseAsJson(header)
 		log.Debugf(c, "w.Header(): %v", header)
 		_, err := w.Write(buffer)
 		ffjson.Pool(buffer)
@@ -91,10 +92,10 @@ func ErrorAsJson(c context.Context, w http.ResponseWriter, status int, err error
 		log.Infof(c, "Error: %v", err.Error())
 	}
 	w.WriteHeader(status)
-	jsonToResponse(c, w, map[string]string{"error": err.Error()})
+	JsonToResponse(c, w, map[string]string{"error": err.Error()})
 }
 
-func markResponseAsJson(header http.Header) {
+func MarkResponseAsJson(header http.Header) {
 	header.Add("Content-Type", "application/json")
 	header.Add("Access-Control-Allow-Origin", "*")
 }

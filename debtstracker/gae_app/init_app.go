@@ -5,8 +5,9 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/debtus/cmd/dtb_transfer"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/splitus"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api/apigaedepended"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api/unsorted"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/apimapping"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/apps/vkapp"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal/gaedal"
@@ -36,7 +37,7 @@ func Init(botHost botsfw.BotHost) {
 	httpRouter := httprouter.New()
 	http.Handle("/", httpRouter)
 
-	api.InitApi(httpRouter)
+	apimapping.InitApi(httpRouter)
 	website.InitWebsite(httpRouter)
 	webhooks.InitWebhooks(httpRouter)
 	vkapp.InitVkIFrameApp(httpRouter)
@@ -61,7 +62,7 @@ func initDelaying() {
 	dtb_transfer.InitDelaying(delaying.MustRegisterFunc)
 	splitus.InitDelaying(delaying.MustRegisterFunc)
 	reminders.InitDelaying(delaying.MustRegisterFunc)
-	api.InitDelaying(delaying.MustRegisterFunc)
+	unsorted.InitDelaying(delaying.MustRegisterFunc)
 }
 
 func NotFoundSilent(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
