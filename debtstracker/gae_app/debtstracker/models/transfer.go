@@ -164,7 +164,7 @@ type TransferData struct {
 	SmsStats
 	// DirectionObsoleteProp string `datastore:"Direction,noindex,omitempty"`
 
-	// We need it is not always possible to identify original transfer (think multiple & partial transfers)
+	// We need it as it is not always possible to identify original transfer (think multiple & partial transfers)
 	IsReturn bool `datastore:",noindex,omitempty"`
 
 	// List of transfer to which this debt is a return. Should be populated only if IsReturn=True
