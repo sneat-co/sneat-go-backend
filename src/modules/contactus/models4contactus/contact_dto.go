@@ -13,7 +13,7 @@ import (
 // and TeamID is also in record key as prefix.
 const TeamContactsCollection = "contacts"
 
-// ContactDto belongs only to single team
+// ContactDto belongs only to a single team
 type ContactDto struct {
 	//dbmodels.WithTeamID -- not needed as it's in record key
 	//dbmodels.WithUserIDs
