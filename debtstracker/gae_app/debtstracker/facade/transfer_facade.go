@@ -25,11 +25,11 @@ const (
 
 var (
 	ErrNotImplemented                      = errors.New("not implemented yet")
-	ErrDebtAlreadyReturned                 = errors.New("This debt already has been returned")
-	ErrPartialReturnGreaterThenOutstanding = errors.New("An attempt to do partial return for amount greater then outstanding")
+	ErrDebtAlreadyReturned                 = errors.New("this debt already has been returned")
+	ErrPartialReturnGreaterThenOutstanding = errors.New("an attempt to do partial return for amount greater then outstanding")
 	//
 	ErrNoOutstandingTransfers                                       = errors.New("no outstanding transfers")
-	ErrAttemptToCreateDebtWithInterestAffectingOutstandingTransfers = errors.New("You are trying to create a debt with interest that will affect outstanding transfers. Please close them first.")
+	ErrAttemptToCreateDebtWithInterestAffectingOutstandingTransfers = errors.New("an attempt to create a debt with interest that will affect outstanding transfers")
 )
 
 func TransferCounterparties(direction models.TransferDirection, creatorInfo models.TransferCounterpartyInfo) (from, to *models.TransferCounterpartyInfo) {
