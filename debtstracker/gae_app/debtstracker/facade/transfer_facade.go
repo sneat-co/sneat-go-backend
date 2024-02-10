@@ -23,13 +23,6 @@ const (
 	userBalanceDecreased = -1
 )
 
-type TransfersFacade interface {
-	GetTransferByID(c context.Context, tx dal.ReadSession, id string) (transfer models.Transfer, err error)
-	SaveTransfer(c context.Context, tx dal.ReadwriteTransaction, transfer models.Transfer) error
-	CreateTransfer(c context.Context, input dto.CreateTransferInput) (output dto.CreateTransferOutput, err error)
-	UpdateTransferOnReturn(c context.Context, tx dal.ReadwriteTransaction, returnTransfer, transfer models.Transfer, returnedAmount decimal.Decimal64p2) (err error)
-}
-
 var (
 	ErrNotImplemented                      = errors.New("not implemented yet")
 	ErrDebtAlreadyReturned                 = errors.New("This debt already has been returned")
@@ -58,16 +51,16 @@ func TransferCounterparties(direction models.TransferDirection, creatorInfo mode
 	}
 }
 
-type transferFacade struct {
+type TransfersFacade struct {
 }
 
-var Transfers TransfersFacade = transferFacade{}
+var Transfers = TransfersFacade{}
 
-func (transferFacade) SaveTransfer(c context.Context, tx dal.ReadwriteTransaction, transfer models.Transfer) error {
+func (TransfersFacade) SaveTransfer(c context.Context, tx dal.ReadwriteTransaction, transfer models.Transfer) error {
 	return tx.Set(c, transfer.Record)
 }
 
-func (transferFacade transferFacade) CreateTransfer(c context.Context, input dto.CreateTransferInput) (
+func (transferFacade TransfersFacade) CreateTransfer(c context.Context, input dto.CreateTransferInput) (
 	output dto.CreateTransferOutput, err error,
 ) {
 	now := time.Now()
@@ -219,8 +212,8 @@ func (transferFacade transferFacade) CreateTransfer(c context.Context, input dto
 	return
 }
 
-func (transferFacade transferFacade) checkOutstandingTransfersForReturns(c context.Context, now time.Time, input dto.CreateTransferInput) (returnToTransferIDs []string, err error) {
-	log.Debugf(c, "transferFacade.checkOutstandingTransfersForReturns()")
+func (transferFacade TransfersFacade) checkOutstandingTransfersForReturns(c context.Context, now time.Time, input dto.CreateTransferInput) (returnToTransferIDs []string, err error) {
+	log.Debugf(c, "TransfersFacade.checkOutstandingTransfersForReturns()")
 	var (
 		outstandingTransfers []models.Transfer
 	)
@@ -281,7 +274,7 @@ func (transferFacade transferFacade) checkOutstandingTransfersForReturns(c conte
 	return
 }
 
-func (transferFacade transferFacade) createTransferWithinTransaction(
+func (transferFacade TransfersFacade) createTransferWithinTransaction(
 	c context.Context,
 	tx dal.ReadwriteTransaction,
 	dtCreated time.Time,
@@ -713,7 +706,7 @@ func (transferFacade transferFacade) createTransferWithinTransaction(
 	return
 }
 
-func (transferFacade) GetTransferByID(c context.Context, tx dal.ReadSession, id string) (transfer models.Transfer, err error) {
+func (TransfersFacade) GetTransferByID(c context.Context, tx dal.ReadSession, id string) (transfer models.Transfer, err error) {
 	if tx == nil {
 		if tx, err = GetDatabase(c); err != nil {
 			return
@@ -724,7 +717,7 @@ func (transferFacade) GetTransferByID(c context.Context, tx dal.ReadSession, id 
 	return
 }
 
-func (transferFacade) updateUserAndCounterpartyWithTransferInfo(
+func (TransfersFacade) updateUserAndCounterpartyWithTransferInfo(
 	c context.Context,
 	amount money.Amount,
 	transfer models.Transfer,
@@ -887,7 +880,7 @@ func InsertTransfer(c context.Context, tx dal.ReadwriteTransaction, transferEnti
 	return
 }
 
-func (transferFacade) UpdateTransferOnReturn(c context.Context, tx dal.ReadwriteTransaction, returnTransfer, transfer models.Transfer, returnedAmount decimal.Decimal64p2) (err error) {
+func (TransfersFacade) UpdateTransferOnReturn(c context.Context, tx dal.ReadwriteTransaction, returnTransfer, transfer models.Transfer, returnedAmount decimal.Decimal64p2) (err error) {
 	log.Debugf(c, "UpdateTransferOnReturn(\n\treturnTransfer=%v,\n\ttransfer=%v,\n\treturnedAmount=%v)", litter.Sdump(returnTransfer), litter.Sdump(transfer), returnedAmount)
 
 	if returnTransfer.Data.Currency != transfer.Data.Currency {
