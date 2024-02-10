@@ -8,6 +8,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/pquerna/ffjson/ffjson"
+	"github.com/sneat-co/sneat-go-backend/src/coremodels"
 	"github.com/strongo/i18n"
 	"github.com/strongo/strongoapp/appuser"
 	"net/http"
@@ -110,7 +111,7 @@ type DebutsAppUserDataOBSOLETE struct { // TODO: Remove obsolete struct
 
 	DtAccessGranted time.Time `datastore:",noindex,omitempty"`
 
-	SmsStats
+	coremodels.SmsStats
 	DtCreated time.Time
 	appuser.LastLogin
 

@@ -2,10 +2,10 @@ package gaedal
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/decimal"
 	"github.com/strongo/gotwilio"
 	"github.com/strongo/log"
 	"google.golang.org/appengine/v2"
@@ -54,8 +54,9 @@ func (TwilioDalGae) SaveTwilioSms(
 		twilioSms = models.NewTwilioSms(smsResponse.Sid, nil)
 		counterparty := models.NewDebtusContact(transfer.Data.Counterparty().ContactID, nil)
 		if err := tx.GetMulti(tc, []dal.Record{user.Record, twilioSms.Record, transfer.Record, counterparty.Record}); err != nil {
-			if multiError, ok := err.(appengine.MultiError); ok {
-				if multiError[1] == dal.ErrNoMoreRecords {
+			var multiError appengine.MultiError
+			if errors.As(err, &multiError) {
+				if errors.Is(multiError[1], dal.ErrNoMoreRecords) {
 					twilioSmsEntity = models.NewTwilioSmsFromSmsResponse(userID, smsResponse)
 					twilioSmsEntity.CreatorTgChatID = tgChatID
 					twilioSmsEntity.CreatorTgSmsStatusMessageID = smsStatusMessageID
@@ -63,13 +64,8 @@ func (TwilioDalGae) SaveTwilioSms(
 					user.Data.SmsCount += 1
 					transfer.Data.SmsCount += 1
 
-					user.Data.SmsCost += twilioSmsEntity.Price
-					transfer.Data.SmsCost += twilioSmsEntity.Price
-
-					smsPriceUSD := decimal.NewDecimal64p2FromFloat64(float64(twilioSmsEntity.Price))
-					twilioSmsEntity.PriceUSD = smsPriceUSD
-					user.Data.SmsCostUSD += smsPriceUSD
-					transfer.Data.SmsCostUSD += smsPriceUSD
+					user.Data.SmsCost += float64(twilioSmsEntity.Price)
+					transfer.Data.SmsCost += float64(twilioSmsEntity.Price)
 
 					recordsToPut := []dal.Record{
 						user.Record,
@@ -88,8 +84,6 @@ func (TwilioDalGae) SaveTwilioSms(
 				} else if multiError[1] == nil {
 					log.Warningf(c, "Twillio SMS already saved to DB (1)")
 				}
-			} else {
-				return err
 			}
 		} else {
 			log.Warningf(c, "Twillio SMS already saved to DB (2)")

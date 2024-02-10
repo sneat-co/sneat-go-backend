@@ -8,7 +8,9 @@ import (
 	"github.com/crediterra/money"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtmocks"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
 	"github.com/strongo/decimal"
 	"github.com/strongo/strongoapp"
 	"runtime/debug"
@@ -21,7 +23,7 @@ type assertHelper struct {
 	t *testing.T
 }
 
-func (assert assertHelper) OutputIsNilIfErr(output createTransferOutput, err error) (createTransferOutput, error) {
+func (assert assertHelper) OutputIsNilIfErr(output dto.CreateTransferOutput, err error) (dto.CreateTransferOutput, error) {
 	assert.t.Helper()
 	if err != nil {
 		if output.Transfer.ID != "" {
@@ -79,15 +81,25 @@ func TestCreateTransfer(t *testing.T) {
 		}
 
 		creatorUser := models.NewAppUser(userID, nil)
-		newTransfer := NewTransferInput(strongoapp.LocalHostEnv,
+
+		interest := models.NoInterest()
+
+		dueOn := time.Now().Add(time.Minute)
+
+		request := dto.CreateTransferRequest{
+			TeamRequest: dto4teamus.TeamRequest{},
+			Amount:      money.NewAmount(currency, 10),
+			DueOn:       &dueOn,
+			Interest:    &interest,
+			IsReturn:    false,
+		}
+		newTransfer := dto.NewTransferInput(
+			strongoapp.LocalHostEnv,
 			source,
 			creatorUser,
-			"",
-			false,
-			"",
+			request,
 			from, to,
-			money.NewAmount(currency, 10),
-			time.Now().Add(time.Minute), models.NoInterest())
+		)
 
 		output, err := assert.OutputIsNilIfErr(Transfers.CreateTransfer(c, newTransfer))
 		if err != nil {
@@ -411,15 +423,22 @@ func testCreateTransfer(t *testing.T, testCase createTransferTestCase) {
 			from = tContact
 			to = tUser
 		}
-		newTransfer := NewTransferInput(strongoapp.LocalHostEnv,
+
+		request := dto.CreateTransferRequest{
+			TeamRequest:        dto4teamus.TeamRequest{},
+			IsReturn:           step.input.isReturn,
+			ReturnToTransferID: step.input.returnToTransferID,
+			Amount:             money.NewAmount(currency, step.input.amount),
+			DueOn:              &step.input.time,
+			Interest:           &step.input.TransferInterest,
+		}
+		newTransfer := dto.NewTransferInput(
+			strongoapp.LocalHostEnv,
 			source,
 			creatorUser,
-			"",
-			step.input.isReturn,
-			step.input.returnToTransferID,
+			request,
 			from, to,
-			money.NewAmount(currency, step.input.amount),
-			step.input.time, step.input.TransferInterest)
+		)
 
 		// =============================================================
 		output, err := Transfers.CreateTransfer(c, newTransfer)

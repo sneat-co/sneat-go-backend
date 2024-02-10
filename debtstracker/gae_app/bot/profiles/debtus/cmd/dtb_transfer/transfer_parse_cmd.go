@@ -6,15 +6,14 @@ import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/crediterra/money"
-	"github.com/sneat-co/debtstracker-translations/trans"
-	"strings"
-	"time"
-
 	"github.com/sneat-co/debtstracker-translations/emoji"
+	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/decimal"
 	"github.com/strongo/log"
+	"strings"
 )
 
 var ParseTransferCommand = botsfw.Command{
@@ -96,16 +95,18 @@ var ParseTransferCommand = botsfw.Command{
 		//}
 		creatorUser := models.NewAppUser(whc.AppUserID(), nil /*botUserEntity.(*models.DebutsAppUserDataOBSOLETE)*/)
 
-		newTransfer := facade.NewTransferInput(whc.Environment(),
-			GetTransferSource(whc),
+		request := dto.CreateTransferRequest{
+			IsReturn: isReturn,
+			Amount:   money.Amount{Currency: currency, Value: value},
+		}
+		env := whc.Environment()
+		source := GetTransferSource(whc)
+		newTransfer := dto.NewTransferInput(
+			env,
+			source,
 			creatorUser,
-			"",
-			isReturn,
-			"",
+			request,
 			from, to,
-			money.Amount{Currency: currency, Value: value},
-			time.Time{},
-			models.NoInterest(),
 		)
 
 		output, err := facade.Transfers.CreateTransfer(c, newTransfer)

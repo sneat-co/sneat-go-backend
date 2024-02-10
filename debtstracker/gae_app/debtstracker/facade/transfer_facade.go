@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
 	"github.com/strongo/slice"
 	"time"
 
@@ -25,7 +26,7 @@ const (
 type TransfersFacade interface {
 	GetTransferByID(c context.Context, tx dal.ReadSession, id string) (transfer models.Transfer, err error)
 	SaveTransfer(c context.Context, tx dal.ReadwriteTransaction, transfer models.Transfer) error
-	CreateTransfer(c context.Context, input createTransferInput) (output createTransferOutput, err error)
+	CreateTransfer(c context.Context, input dto.CreateTransferInput) (output dto.CreateTransferOutput, err error)
 	UpdateTransferOnReturn(c context.Context, tx dal.ReadwriteTransaction, returnTransfer, transfer models.Transfer, returnedAmount decimal.Decimal64p2) (err error)
 }
 
@@ -66,166 +67,8 @@ func (transferFacade) SaveTransfer(c context.Context, tx dal.ReadwriteTransactio
 	return tx.Set(c, transfer.Record)
 }
 
-type createTransferInput struct {
-	Env                string // TODO: I believe we don't need this
-	Source             dtdal.TransferSource
-	CreatorUser        models.AppUser
-	BillID             string
-	IsReturn           bool
-	ReturnToTransferID string
-	// direction models.TransferDirection,
-	// creatorInfo models.TransferCounterpartyInfo,
-	From, To *models.TransferCounterpartyInfo
-	Amount   money.Amount
-	DueOn    time.Time
-	Interest models.TransferInterest
-}
-
-func (input createTransferInput) Direction() (direction models.TransferDirection) {
-	if input.CreatorUser.ID == "" {
-		panic("createTransferInput.CreatorUserID == 0")
-	}
-	switch input.CreatorUser.ID {
-	case input.From.UserID:
-		return models.TransferDirectionUser2Counterparty
-	case input.To.UserID:
-		return models.TransferDirectionCounterparty2User
-	default:
-		if input.BillID == "" {
-			panic("Not able to detect direction")
-		}
-		return models.TransferDirection3dParty
-	}
-}
-
-func (input createTransferInput) CreatorContactID() string {
-	switch input.CreatorUser.ID {
-	case input.From.UserID:
-		return input.To.ContactID
-	case input.To.UserID:
-		return input.From.ContactID
-	}
-	panic("Can't get creator's contact ID as it's a 3d-party transfer")
-}
-
-type createTransferOutputCounterparty struct {
-	User    models.AppUser
-	Contact models.Contact
-}
-
-type createTransferOutput struct {
-	Transfer          models.Transfer
-	ReturnedTransfers []models.Transfer
-	From, To          *createTransferOutputCounterparty
-}
-
-func (output createTransferOutput) Validate() {
-	if output.Transfer.ID == "" {
-		panic("Transfer.ID == 0")
-	}
-	if output.Transfer.Data == nil {
-		panic("TransferData == nil")
-	}
-}
-
-func (input createTransferInput) Validate() {
-	if input.Source == nil {
-		panic("source == nil")
-	}
-	if input.CreatorUser.ID == "" {
-		panic("creatorUser.ID == 0")
-	}
-	if input.CreatorUser.Data == nil {
-		panic("creatorUser.DebutsAppUserDataOBSOLETE == nil")
-	}
-	if input.Amount.Value <= 0 {
-		panic("amount.Value <= 0")
-	}
-	if input.From == nil {
-		panic("from == nil")
-	}
-	if input.To == nil {
-		panic("to == nil")
-	}
-
-	if (input.From.ContactID == "" && input.To.ContactID == "") || (input.From.UserID == "" && input.To.UserID == "") {
-		panic("(from.ContactID == 0  && to.ContactID == 0) || (from.UserID == 0 && to.UserID == 0)")
-	}
-	if input.From.UserID != "" && input.To.ContactID == "" && input.To.UserID == "" {
-		panic("from.UserID != 0 && to.ContactID == 0 && to.UserID == 0")
-	}
-	if input.To.UserID != "" && input.From.ContactID == "" && input.From.UserID == "" {
-		panic("to.UserID != 0 && from.ContactID == 0 && from.UserID == 0")
-	}
-
-	if input.From.UserID == input.To.UserID {
-		if input.From.UserID == "" && input.To.UserID == "" {
-			if input.From.ContactID == "" {
-				panic("from.UserID == 0 && to.UserID == 0 && from.ContactID == 0")
-			}
-			if input.To.ContactID == "" {
-				panic("from.UserID == 0 && to.UserID == 0 && to.ContactID == 0")
-			}
-		} else {
-			panic("from.UserID == to.UserID")
-		}
-	}
-	switch input.CreatorUser.ID {
-	case input.From.UserID:
-		if input.To.ContactID == "" {
-			panic("creatorUserID == from.UserID && to.ContactID == 0")
-		}
-	case input.To.UserID:
-		if input.From.ContactID == "" {
-			panic("creatorUserID == from.UserID && from.ContactID == 0")
-		}
-	default:
-		if input.From.ContactID == "" {
-			panic("3d party transfer and from.ContactID == 0")
-		}
-		if input.To.ContactID == "" {
-			panic("3d party transfer and to.ContactID == 0")
-		}
-	}
-}
-
-func (input createTransferInput) String() string {
-	return fmt.Sprintf("CreatorUserID=%s, IsReturn=%v, ReturnToTransferID=%s, Amount=%v, From=%v, To=%v, DueOn=%v",
-		input.CreatorUser.ID, input.IsReturn, input.ReturnToTransferID, input.Amount, input.From, input.To, input.DueOn)
-}
-
-func NewTransferInput(
-	env string,
-	source dtdal.TransferSource,
-	creatorUser models.AppUser,
-	billID string,
-	isReturn bool,
-	returnToTransferID string,
-	from, to *models.TransferCounterpartyInfo,
-	amount money.Amount,
-	dueOn time.Time,
-	transferInterest models.TransferInterest,
-) (input createTransferInput) {
-	// All checks are in the input.Validate()
-	input = createTransferInput{
-		Env:                env,
-		Source:             source,
-		CreatorUser:        creatorUser,
-		BillID:             billID,
-		IsReturn:           isReturn,
-		ReturnToTransferID: returnToTransferID,
-		From:               from,
-		To:                 to,
-		Amount:             amount,
-		DueOn:              dueOn,
-		Interest:           transferInterest,
-	}
-	input.Validate()
-	return
-}
-
-func (transferFacade transferFacade) CreateTransfer(c context.Context, input createTransferInput) (
-	output createTransferOutput, err error,
+func (transferFacade transferFacade) CreateTransfer(c context.Context, input dto.CreateTransferInput) (
+	output dto.CreateTransferOutput, err error,
 ) {
 	now := time.Now()
 
@@ -238,7 +81,34 @@ func (transferFacade transferFacade) CreateTransfer(c context.Context, input cre
 		return
 	}
 
-	if input.ReturnToTransferID == "" {
+	//if input.Request.ReturnToTransferID != "" {
+	//	if counterparty, err := GetContactByID(c, nil, contactID); err != nil {
+	//		if dal.IsNotFound(err) {
+	//			api.BadRequestError(c, w, err)
+	//		} else {
+	//			api.InternalError(c, w, err)
+	//		}
+	//		return
+	//	} else {
+	//		balance := counterparty.Data.Balance()
+	//		if balanceAmount, ok := balance[amountWithCurrency.Currency]; !ok {
+	//			api.BadRequestMessage(c, w, fmt.Sprintf("No balance for %v", amountWithCurrency.Currency))
+	//		} else {
+	//			switch direction {
+	//			case models.TransferDirectionUser2Counterparty:
+	//				if balanceAmount > 0 {
+	//					api.BadRequestMessage(c, w, fmt.Sprintf("balanceAmount > 0 && direction == %v", direction))
+	//				}
+	//			case models.TransferDirectionCounterparty2User:
+	//				if balanceAmount < 0 {
+	//					api.BadRequestMessage(c, w, fmt.Sprintf("balanceAmount < 0 && direction == %v", direction))
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
+
+	if input.Request.ReturnToTransferID == "" {
 		log.Debugf(c, "input.ReturnToTransferID == 0")
 		contacts := input.CreatorUser.Data.Contacts()
 		creatorContactID := input.CreatorContactID()
@@ -251,10 +121,10 @@ func (transferFacade transferFacade) CreateTransfer(c context.Context, input cre
 			for _, contact := range contacts {
 				if contact.ID == creatorContactID {
 					contactBalance := contact.Balance()
-					if v, ok := contactBalance[input.Amount.Currency]; !ok || v == 0 {
+					if v, ok := contactBalance[input.Request.Amount.Currency]; !ok || v == 0 {
 						log.Debugf(c, "No need to check for outstanding transfers as contacts balance is 0")
 					} else {
-						if input.Interest.HasInterest() {
+						if input.Request.Interest.HasInterest() {
 							if d := input.Direction(); d == models.TransferDirectionUser2Counterparty && v < 0 || d == models.TransferDirectionCounterparty2User && v > 0 {
 								err = ErrAttemptToCreateDebtWithInterestAffectingOutstandingTransfers
 								return
@@ -297,18 +167,18 @@ func (transferFacade transferFacade) CreateTransfer(c context.Context, input cre
 		}
 		return
 	contactFound:
-	} else if !input.IsReturn {
+	} else if !input.Request.IsReturn {
 		panic("ReturnToTransferID != 0 && !IsReturn")
 	}
 
-	if input.ReturnToTransferID != "" {
+	if input.Request.ReturnToTransferID != "" {
 		var transferToReturn models.Transfer
-		if transferToReturn, err = Transfers.GetTransferByID(c, db, input.ReturnToTransferID); err != nil {
-			err = fmt.Errorf("failed to get returnToTransferID=%s: %w", input.ReturnToTransferID, err)
+		if transferToReturn, err = Transfers.GetTransferByID(c, db, input.Request.ReturnToTransferID); err != nil {
+			err = fmt.Errorf("failed to get returnToTransferID=%s: %w", input.Request.ReturnToTransferID, err)
 			return
 		}
 
-		if transferToReturn.Data.Currency != input.Amount.Currency {
+		if transferToReturn.Data.Currency != input.Request.Amount.Currency {
 			panic("transferToReturn.Currency != amount.Currency")
 		}
 
@@ -318,22 +188,22 @@ func (transferFacade transferFacade) CreateTransfer(c context.Context, input cre
 			return
 		}
 
-		if input.Amount.Value > transferToReturn.Data.GetOutstandingValue(now) {
-			log.Debugf(c, "amount.Value:%v > transferToReturn.GetOutstandingValue(now):%v", input.Amount.Value, transferToReturn.Data.GetOutstandingValue(now))
-			if input.Amount.Value == transferToReturn.Data.AmountInCents {
+		if input.Request.Amount.Value > transferToReturn.Data.GetOutstandingValue(now) {
+			log.Debugf(c, "amount.Value:%v > transferToReturn.GetOutstandingValue(now):%v", input.Request.Amount.Value, transferToReturn.Data.GetOutstandingValue(now))
+			if input.Request.Amount.Value == transferToReturn.Data.AmountInCents {
 				// For situations when a transfer was partially returned but user wants to mark it as fully returned.
-				log.Debugf(c, "amount.Value (%v) == transferToReturn.AmountInCents (%v)", input.Amount.Value, transferToReturn.Data.AmountInCents)
-				input.Amount.Value = transferToReturn.Data.GetOutstandingValue(now)
-				log.Debugf(c, "Updated amount.Value: %v", input.Amount.Value)
+				log.Debugf(c, "amount.Value (%v) == transferToReturn.AmountInCents (%v)", input.Request.Amount.Value, transferToReturn.Data.AmountInCents)
+				input.Request.Amount.Value = transferToReturn.Data.GetOutstandingValue(now)
+				log.Debugf(c, "Updated amount.Value: %v", input.Request.Amount.Value)
 			} else {
 				err = ErrPartialReturnGreaterThenOutstanding
 				return
 			}
-		} else if input.Amount.Value < transferToReturn.Data.GetOutstandingValue(now) {
+		} else if input.Request.Amount.Value < transferToReturn.Data.GetOutstandingValue(now) {
 			log.Debugf(c, "input.Amount.Value < transferToReturn.GetOutstandingValue(now)")
 		}
 
-		returnToTransferIDs = append(returnToTransferIDs, input.ReturnToTransferID)
+		returnToTransferIDs = append(returnToTransferIDs, input.Request.ReturnToTransferID)
 		output.ReturnedTransfers = append(output.ReturnedTransfers, transferToReturn)
 	}
 
@@ -349,7 +219,7 @@ func (transferFacade transferFacade) CreateTransfer(c context.Context, input cre
 	return
 }
 
-func (transferFacade transferFacade) checkOutstandingTransfersForReturns(c context.Context, now time.Time, input createTransferInput) (returnToTransferIDs []string, err error) {
+func (transferFacade transferFacade) checkOutstandingTransfersForReturns(c context.Context, now time.Time, input dto.CreateTransferInput) (returnToTransferIDs []string, err error) {
 	log.Debugf(c, "transferFacade.checkOutstandingTransfersForReturns()")
 	var (
 		outstandingTransfers []models.Transfer
@@ -364,17 +234,17 @@ func (transferFacade transferFacade) checkOutstandingTransfersForReturns(c conte
 	if db, err = GetDatabase(c); err != nil {
 		return
 	}
-	outstandingTransfers, err = dtdal.Transfer.LoadOutstandingTransfers(c, db, now, creatorUserID, creatorContactID, input.Amount.Currency, reversedDirection)
+	outstandingTransfers, err = dtdal.Transfer.LoadOutstandingTransfers(c, db, now, creatorUserID, creatorContactID, input.Request.Amount.Currency, reversedDirection)
 	if err != nil {
 		err = fmt.Errorf("failed to load outstanding transfers: %w", err)
 		return
 	}
-	if input.IsReturn && len(outstandingTransfers) == 0 {
+	if input.Request.IsReturn && len(outstandingTransfers) == 0 {
 		err = ErrNoOutstandingTransfers
 		return
 	}
 
-	log.Debugf(c, "facade.checkOutstandingTransfersForReturns() => dtdal.Transfer.LoadOutstandingTransfers(userID=%v, currency=%v) => %d transfers", input.CreatorUser.ID, input.Amount.Currency, len(outstandingTransfers))
+	log.Debugf(c, "facade.checkOutstandingTransfersForReturns() => dtdal.Transfer.LoadOutstandingTransfers(userID=%v, currency=%v) => %d transfers", input.CreatorUser.ID, input.Request.Amount.Currency, len(outstandingTransfers))
 
 	if outstandingTransfersCount := len(outstandingTransfers); outstandingTransfersCount > 0 { // Assign the return to specific transfers
 		var (
@@ -387,13 +257,13 @@ func (transferFacade transferFacade) checkOutstandingTransfersForReturns(c conte
 			_, _ = fmt.Fprintf(buf, "\t[%v]: %v", i, litter.Sdump(outstandingTransfer))
 			outstandingTransferID := outstandingTransfers[i].ID
 			outstandingValue := outstandingTransfer.Data.GetOutstandingValue(now)
-			if outstandingValue == input.Amount.Value { // A check for exact match that has higher priority then earlie transfers
+			if outstandingValue == input.Request.Amount.Value { // A check for exact match that has higher priority then earlie transfers
 				log.Infof(c, " - found outstanding transfer %v with exact amount match: %v", outstandingTransfer.ID, outstandingValue)
-				assignedValue = input.Amount.Value
+				assignedValue = input.Request.Amount.Value
 				returnToTransferIDs = []string{outstandingTransferID}
 				break
 			}
-			if assignedValue < input.Amount.Value { // Do not break so we check all outstanding transfers for exact match
+			if assignedValue < input.Request.Amount.Value { // Do not break so we check all outstanding transfers for exact match
 				returnToTransferIDs = append(returnToTransferIDs, outstandingTransferID)
 				assignedValue += outstandingValue
 			}
@@ -401,10 +271,10 @@ func (transferFacade transferFacade) checkOutstandingTransfersForReturns(c conte
 			buf.WriteString("\n")
 		}
 		log.Debugf(c, buf.String())
-		if input.IsReturn && assignedValue < input.Amount.Value {
+		if input.Request.IsReturn && assignedValue < input.Request.Amount.Value {
 			log.Warningf(c,
 				"There are not enough outstanding transfers to return %v. All outstanding count: %v, Right direction: %v, Assigned amount: %v. Could be data integrity issue.",
-				input.Amount, len(outstandingTransfers), outstandingRightDirection, assignedValue,
+				input.Request.Amount, len(outstandingTransfers), outstandingRightDirection, assignedValue,
 			)
 		}
 	}
@@ -415,20 +285,22 @@ func (transferFacade transferFacade) createTransferWithinTransaction(
 	c context.Context,
 	tx dal.ReadwriteTransaction,
 	dtCreated time.Time,
-	input createTransferInput,
+	input dto.CreateTransferInput,
 	returnToTransferIDs []string,
 ) (
-	output createTransferOutput, err error,
+	output dto.CreateTransferOutput, err error,
 ) {
 	log.Debugf(c, "createTransferWithinTransaction(input=%v, returnToTransferIDs=%v)", input, returnToTransferIDs)
 
-	input.Validate()
+	if err = input.Validate(); err != nil {
+		return
+	}
 	// if len(returnToTransferIDs) > 0 && !input.IsReturn { // TODO: It's OK to have transfers without isReturn=true
 	// 	panic("len(returnToTransferIDs) > 0 && !isReturn")
 	// }
 
-	output.From = new(createTransferOutputCounterparty)
-	output.To = new(createTransferOutputCounterparty)
+	output.From = new(dto.CreateTransferOutputCounterparty)
+	output.To = new(dto.CreateTransferOutputCounterparty)
 	from, to := input.From, input.To
 
 	records := make([]dal.Record, 0, 4+len(returnToTransferIDs))
@@ -565,11 +437,11 @@ func (transferFacade transferFacade) createTransferWithinTransaction(
 		}
 	}
 
-	transferData := models.NewTransferData(input.CreatorUser.ID, input.IsReturn, input.Amount, input.From, input.To)
+	transferData := models.NewTransferData(input.CreatorUser.ID, input.Request.IsReturn, input.Request.Amount, input.From, input.To)
 	transferData.DtCreated = dtCreated
 	output.Transfer.Data = transferData
 	input.Source.PopulateTransfer(transferData)
-	transferData.TransferInterest = input.Interest
+	transferData.TransferInterest = *input.Request.Interest
 
 	type TransferReturnInfo struct {
 		Transfer       models.Transfer
@@ -593,7 +465,7 @@ func (transferFacade transferFacade) createTransferWithinTransaction(
 			return
 		}
 		log.Debugf(c, "Loaded %d returnToTransfers by keys", len(returnToTransfers))
-		amountToAssign := input.Amount.Value
+		amountToAssign := input.Request.Amount.Value
 		assignedToExistingTransfers := false
 		for _, returnToTransfer := range returnToTransfers {
 			//returnToTransfer := returnToTransfer.Data().(*models.TransferData)
@@ -653,10 +525,10 @@ func (transferFacade transferFacade) createTransferWithinTransaction(
 		}
 		if assignedToExistingTransfers {
 			if returnedValue > 0 {
-				if returnedValue > input.Amount.Value {
+				if returnedValue > input.Request.Amount.Value {
 					panic("returnedAmount > input.Amount.Value")
 				}
-				if returnedValue == input.Amount.Value && !transferData.IsReturn {
+				if returnedValue == input.Request.Amount.Value && !transferData.IsReturn {
 					transferData.IsReturn = true
 					// transferData.AmountInCentsOutstanding = 0
 					// transferData.AmountInCentsReturned = 0
@@ -680,8 +552,8 @@ func (transferFacade transferFacade) createTransferWithinTransaction(
 		}
 	}
 
-	if !input.DueOn.IsZero() {
-		transferData.DtDueOn = input.DueOn
+	if input.Request.DueOn != nil && !input.Request.DueOn.IsZero() {
+		transferData.DtDueOn = *input.Request.DueOn
 		if from.UserID != "" {
 			output.From.User.Data.HasDueTransfers = true
 		}
@@ -750,11 +622,11 @@ func (transferFacade transferFacade) createTransferWithinTransaction(
 	{
 		var amountWithoutInterest money.Amount
 		if returnedValue > 0 {
-			amountWithoutInterest = money.Amount{Currency: input.Amount.Currency, Value: input.Amount.Value - returnedInterest}
+			amountWithoutInterest = money.Amount{Currency: input.Request.Amount.Currency, Value: input.Request.Amount.Value - returnedInterest}
 		} else if returnedValue < 0 {
 			panic(fmt.Sprintf("returnedValue < 0: %v", returnedValue))
 		} else {
-			amountWithoutInterest = input.Amount
+			amountWithoutInterest = input.Request.Amount
 		}
 
 		log.Debugf(c, "closedTransferIDs: %v", closedTransferIDs)

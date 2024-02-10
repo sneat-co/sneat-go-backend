@@ -7,6 +7,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/pquerna/ffjson/ffjson"
+	"github.com/sneat-co/sneat-go-backend/src/coremodels"
 	"github.com/strongo/strongoapp/with"
 	"reflect"
 	"strings"
@@ -110,7 +111,7 @@ func (entity *DebtusContactData) MustMatchCounterparty(counterparty Contact) {
 type DebtusContactData struct {
 	with.CreatedFields
 	money.Balanced
-	UserID                     string // owner can not be in parent key as we have problem with filtering transfers then
+	UserID                     string // owner cannot be in parent key as we have a problem with filtering transfers then
 	CounterpartyUserID         string // The counterparty user ID if registered
 	CounterpartyCounterpartyID string
 	LinkedBy                   string `datastore:",noindex"`
@@ -118,11 +119,13 @@ type DebtusContactData struct {
 	Status string
 	ContactDetails
 	TransfersJson string `datastore:",noindex"`
-	SmsStats
+	coremodels.SmsStats
 	//
 	//TelegramChatID int
-	//
-	//LasttransferID int  `datastore:",noindex"` - Decided against as we do not need it really and would require either 2 Put() instead of 1 PutMulti()
+
+	// Decided against as we do not need it really and would require either 2 Put() instead of 1 PutMulti()
+	//LastTransferID int  `datastore:",noindex"`
+
 	SearchName          []string `datastore:",noindex"` // Deprecated
 	NoTransferUpdatesBy []string `datastore:",noindex"`
 	GroupIDs            []string `datastore:",noindex"`

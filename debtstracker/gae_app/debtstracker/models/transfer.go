@@ -7,6 +7,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/general"
+	"github.com/sneat-co/sneat-go-backend/src/coremodels"
 	"github.com/strongo/decimal"
 	"reflect"
 	"time"
@@ -32,6 +33,14 @@ const ( // Transfer directions
 	TransferDirectionCounterparty2User = "c2u"
 	TransferDirection3dParty           = "3d-party"
 )
+
+func IsKnownTransferDirection(direction TransferDirection) bool {
+	switch direction {
+	case TransferDirectionUser2Counterparty, TransferDirectionCounterparty2User, TransferDirection3dParty:
+		return true
+	}
+	return false
+}
 
 const ( // Transfer statuses
 	// TransferViewed   = "viewed" // TODO: use the status
@@ -165,7 +174,7 @@ type TransferData struct {
 
 	BillIDs []string
 
-	SmsStats
+	coremodels.SmsStats
 	// DirectionObsoleteProp string `datastore:"Direction,noindex,omitempty"`
 
 	// We need it as it is not always possible to identify original transfer (think multiple & partial transfers)

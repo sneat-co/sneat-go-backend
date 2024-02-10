@@ -2,10 +2,10 @@ package transfers
 
 import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
 	"net/http"
 
 	"context"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api/dto"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"

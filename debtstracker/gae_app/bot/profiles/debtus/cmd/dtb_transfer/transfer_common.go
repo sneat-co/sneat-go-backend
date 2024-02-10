@@ -9,6 +9,8 @@ import (
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
+	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
 	"github.com/strongo/i18n"
 	"math"
 	"net/url"
@@ -595,16 +597,19 @@ func CreateTransferFromBot(
 	if appUser, err = facade.User.GetUserByID(c, nil, whc.AppUserID()); err != nil {
 		return
 	}
-	newTransfer := facade.NewTransferInput(whc.Environment(),
-		GetTransferSource(whc),
+	request := dto.CreateTransferRequest{
+		TeamRequest: dto4teamus.TeamRequest{},
+		Amount:      amount,
+		DueOn:       &dueOn,
+		Interest:    &transferInterest,
+	}
+	env := whc.Environment()
+	source := GetTransferSource(whc)
+	newTransfer := dto.NewTransferInput(env,
+		source,
 		appUser,
-		"",
-		isReturn,
-		returnToTransferID,
+		request,
 		from, to,
-		amount,
-		dueOn,
-		transferInterest,
 	)
 
 	output, err := facade.Transfers.CreateTransfer(whc.Context(), newTransfer)
