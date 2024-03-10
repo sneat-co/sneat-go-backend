@@ -104,6 +104,8 @@ github.com/dal-go/dalgo2firestore v0.1.54 h1:nAtSHYqLYLhjPQsBYym1kM8V5uCQ2RT9XUB
 github.com/dal-go/dalgo2firestore v0.1.54/go.mod h1:9PucvAemSmqBs9EpiivNc1G77kfzyFg3qw8A8BVG+xM=
 github.com/dal-go/dalgo2firestore v0.1.55 h1:GUfIpyFTKAWO7yg/Bnf78rD2H/0e8JaQ1P5KffQEp3Y=
 github.com/dal-go/dalgo2firestore v0.1.55/go.mod h1:v7Ri4J/fKrgQWdStCHslSJFtpF9CpvC8h2yEEYJ0wzg=
+github.com/dal-go/dalgo2firestore v0.1.56 h1:ytcwu01zXL1Dpk1HTvIfjnmFzmal6yc+q0LD0KeW3UM=
+github.com/dal-go/dalgo2firestore v0.1.56/go.mod h1:4oodBo/dKF85vMCcwSPm9KMi/3l6JOgy8k3cvXalNnY=
 github.com/dal-go/mocks4dalgo v0.1.17 h1:tvVDg+HubKWKn23kk4gw58gWrDwcww5wwsM4HsrkRR4=
 github.com/dal-go/mocks4dalgo v0.1.17/go.mod h1:Nf61t1XjeLzJ+lPw7oEU3iTBcdO+DNMIEGTOe4ZJdwY=
 github.com/dal-go/mocks4dalgo v0.1.19 h1:ylcFHCSwJwwNpUKsiUB42BP0RKFGRu44VySQI0qgbRU=
@@ -248,6 +250,8 @@ github.com/sneat-co/sneat-go-firebase v0.4.34 h1:c3mJt2AH7XzROrG7PYm+iCL3ZNgt/Ke
 github.com/sneat-co/sneat-go-firebase v0.4.34/go.mod h1:wpyA7qYR94pI/hl1Tm0xmsD8wyk+HtJNoMp94NWji0w=
 github.com/sneat-co/sneat-go-firebase v0.4.35 h1:Wm3CbVT8dl4kTjIHbrf6QjD97gwwRYMhIPT9JUSCkRk=
 github.com/sneat-co/sneat-go-firebase v0.4.35/go.mod h1:0GGybhC7qL3UJ8kiou5ihKhnuvT2NhvNSVykYKZzbN0=
+github.com/sneat-co/sneat-go-firebase v0.4.36 h1:wCa92GjZWyMffeidTXJ2z7YFLrLR6NqFgiccZlg2sJw=
+github.com/sneat-co/sneat-go-firebase v0.4.36/go.mod h1:oLkJ0wyvPgTeqKL+hLqsSXrIzSZj6e/dRPAX1gUSJZ8=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
 github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=
@@ -446,6 +450,8 @@ google.golang.org/api v0.167.0 h1:CKHrQD1BLRii6xdkatBDXyKzM0mkawt2QP+H3LtPmSE=
 google.golang.org/api v0.167.0/go.mod h1:4FcBc686KFi7QI/U51/2GKKevfZMpM17sCdibqe/bSA=
 google.golang.org/api v0.168.0 h1:MBRe+Ki4mMN93jhDDbpuRLjRddooArz4FeSObvUMmjY=
 google.golang.org/api v0.168.0/go.mod h1:gpNOiMA2tZ4mf5R9Iwf4rK/Dcz0fbdIgWYWVoxmsyLg=
+google.golang.org/api v0.169.0 h1:QwWPy71FgMWqJN/l6jVlFHUa29a7dcUy02I8o799nPY=
+google.golang.org/api v0.169.0/go.mod h1:gpNOiMA2tZ4mf5R9Iwf4rK/Dcz0fbdIgWYWVoxmsyLg=
 google.golang.org/appengine v1.1.0/go.mod h1:EbEs0AVv82hx2wNQdGPgUI5lhzA/G0D9YwlJXL52JkM=
 google.golang.org/appengine v1.4.0/go.mod h1:xpcJRLb0r/rnEns0DIKYYv+WjYCduHsrkT7/EB5XEv4=
 google.golang.org/appengine v1.6.8 h1:IhEN5q69dyKagZPYMSdIjS2HqprW324FRQZJcGqPAsM=
