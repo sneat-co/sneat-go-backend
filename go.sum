@@ -298,6 +298,8 @@ github.com/technoweenie/multipartstreamer v1.0.1 h1:XRztA5MXiR1TIRHxH2uNxXxaIkKQ
 github.com/technoweenie/multipartstreamer v1.0.1/go.mod h1:jNVxdtShOxzAsukZwTSw6MDx5eUJoiEBsSvzDU9uzog=
 github.com/yaa110/go-persian-calendar v1.1.5 h1:EUipRRhzE6bR2NZaSyZ5BEOP46LGbUjzQgdC+Ivrbe4=
 github.com/yaa110/go-persian-calendar v1.1.5/go.mod h1:qtnmHCS9u1EiwzzSCSttGoxD5NfV9ZMzymxFCBYmqfg=
+github.com/yaa110/go-persian-calendar v1.2.0 h1:VRD/hFMCDWrcoYOGw3nLCAYKNwfLqgdcMl8vao086G0=
+github.com/yaa110/go-persian-calendar v1.2.0/go.mod h1:qtnmHCS9u1EiwzzSCSttGoxD5NfV9ZMzymxFCBYmqfg=
 github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 go.opencensus.io v0.24.0 h1:y73uSU6J157QMP2kn2r30vwW1A2W2WFwSCGnAVxeaD0=
