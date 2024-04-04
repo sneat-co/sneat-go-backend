@@ -1,6 +1,6 @@
 module github.com/sneat-co/sneat-go-backend
 
-go 1.22.1
+go 1.22.2
 
 // TODO: Get ret rid of: github.com/dal-go/dalgo2datastore
 
@@ -60,8 +60,8 @@ require (
 	github.com/strongo/strongoapp v0.17.1
 	github.com/strongo/validation v0.0.6
 	github.com/yaa110/go-persian-calendar v1.2.0
-	golang.org/x/crypto v0.21.0
-	golang.org/x/net v0.22.0
+	golang.org/x/crypto v0.22.0
+	golang.org/x/net v0.24.0
 	google.golang.org/appengine/v2 v2.0.5
 )
 
@@ -106,7 +106,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.24.0 // indirect
 	golang.org/x/oauth2 v0.17.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect
-	golang.org/x/sys v0.18.0 // indirect
+	golang.org/x/sys v0.19.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
