@@ -1,0 +1,24 @@
+package api4logist
+
+import (
+	"context"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/facade4logist"
+	"github.com/sneat-co/sneat-go-core/apicore"
+	"github.com/sneat-co/sneat-go-core/facade"
+	"net/http"
+)
+
+var createOrder = facade4logist.CreateOrder
+
+func httpCreateOrder(w http.ResponseWriter, r *http.Request) {
+	var request dto4logist.CreateOrderRequest
+	handler := func(ctx context.Context, userCtx facade.User) (interface{}, error) {
+		order, err := createOrder(ctx, userCtx, request)
+		response := dto4logist.CreateOrderResponse{
+			Order: order,
+		}
+		return response, err
+	}
+	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, handler, http.StatusCreated, defaultJsonWithAuthRequired)
+}
