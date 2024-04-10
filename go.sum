@@ -36,6 +36,8 @@ github.com/bots-go-framework/bots-go-core v0.0.2 h1:3F/czNOLZCO5rco1Zr9rATLvJrze
 github.com/bots-go-framework/bots-go-core v0.0.2/go.mod h1:u4r0W8t+n/07ulLlPZT3rdCt+mb5WHXP72z4oeTJVN0=
 github.com/bots-go-framework/bots-host-gae v0.5.6 h1:mdrXrrZhNkzI4T6odcGStGo5st/QmwwYNwX5OH2o+G0=
 github.com/bots-go-framework/bots-host-gae v0.5.6/go.mod h1:9HeMrBc/NawMBDzEL/ClhA5G/4xw2xanWXyjpKKunk0=
+github.com/bots-go-framework/bots-host-gae v0.5.7 h1:s5TkslnyvqAzPxP+aHdUcTKnQOkDmwjHwuEfsDitF/g=
+github.com/bots-go-framework/bots-host-gae v0.5.7/go.mod h1:ESScT8F68MGBF/T7s7HC52JuM+aAeYNK1AVSNpEBnQg=
 github.com/captaincodeman/datastore-locker v0.0.0-20170308203336-4eddc467484e h1:SJoKNBURy0VzeEc1htXwTqk8I41evmoJxdKqRm7VzdA=
 github.com/captaincodeman/datastore-locker v0.0.0-20170308203336-4eddc467484e/go.mod h1:cfbNKs2bgtqUSICVQ/5kZQmmV+dfjV0GZEs0Dic1ymg=
 github.com/captaincodeman/datastore-mapper v0.0.0-20170320145307-cb380a4c4d13 h1:iRzHagI4qlAzIqRuZShPS+4Y5i7jjXvjcDVjoZP9hvo=
@@ -168,6 +170,8 @@ github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsT
 github.com/stretchr/testify v1.9.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
 github.com/strongo/app-host-gae v0.1.24 h1:6NJkBrdOm4mJpc2F2zVQsB8o2QII8JTt6F9H25dLb1k=
 github.com/strongo/app-host-gae v0.1.24/go.mod h1:B6bIiYnP3fX2cFq7Mw9QrUGO2220KW6U+VYBW5rjZeQ=
+github.com/strongo/app-host-gae v0.1.25 h1:rP35/0OxWEO6kcFaX/cqRXd/9cYCkoLGgjdlpul9aNA=
+github.com/strongo/app-host-gae v0.1.25/go.mod h1:MgoP/N++B3N6XopdnmkLqXy3QOKL6aBGUeRlv3Icn2Y=
 github.com/strongo/decimal v0.0.1 h1:DQwMkKatXuoh9WhQvOTr3c2cIbprdbR8Yl0MA1mme6Y=
 github.com/strongo/decimal v0.0.1/go.mod h1:uKFgetJbR2uT026stdbK54ELXTH9h0vZOPPOp7DAODk=
 github.com/strongo/delaying v0.0.1 h1:avN7p5oKcowaDeEbGJLB4QHgttK6y9OtGwFN0UkEDi8=
