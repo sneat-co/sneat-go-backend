@@ -26,7 +26,7 @@ require (
 	github.com/bots-go-framework/bots-fw-telegram v0.8.4
 	github.com/bots-go-framework/bots-fw-telegram-models v0.1.3
 	github.com/bots-go-framework/bots-go-core v0.0.2
-	github.com/bots-go-framework/bots-host-gae v0.5.6
+	github.com/bots-go-framework/bots-host-gae v0.5.7
 	github.com/captaincodeman/datastore-mapper v0.0.0-20170320145307-cb380a4c4d13
 	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85
 	github.com/crediterra/money v0.2.1
@@ -46,7 +46,7 @@ require (
 	github.com/sneat-co/sneat-go-core v0.23.3
 	github.com/sneat-co/sneat-go-firebase v0.4.37
 	github.com/stretchr/testify v1.9.0
-	github.com/strongo/app-host-gae v0.1.24
+	github.com/strongo/app-host-gae v0.1.25
 	github.com/strongo/decimal v0.0.1
 	github.com/strongo/delaying v0.0.1
 	github.com/strongo/facebook v1.8.1
