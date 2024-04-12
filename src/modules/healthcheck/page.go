@@ -14,14 +14,17 @@ import (
 // httpGetPage renders health-check page
 func httpGetPage(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	data := healthCheck{
-		At: time.Now(),
-	}
+	data := healthCheck{}
 	key := dal.NewKeyWithID("health_checks", "firestore-write")
-	record := dal.NewRecordWithData(key, data)
+	record := dal.NewRecordWithData(key, &data)
 
 	db := facade.GetDatabase(ctx)
 	err := db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+		err := tx.Get(ctx, record)
+		if err != nil && !dal.IsNotFound(err) {
+			return fmt.Errorf("failed to get health check record: %w", err)
+		}
+		data.At = time.Now()
 		return tx.Set(ctx, record)
 	})
 	if err != nil {
