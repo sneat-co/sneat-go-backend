@@ -63,7 +63,7 @@ func (*RelatedItem) validateRelationships(related Relationships) error {
 			return errors.New("key is empty string")
 		}
 		if err := relationshipDetails.Validate(); err != nil {
-			return err
+			return validation.NewErrBadRecordFieldValue("relationshipID", err.Error())
 		}
 	}
 	return nil
