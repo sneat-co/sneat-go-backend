@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-core/apicore"
-	"github.com/sneat-co/sneat-go-core/apicore/verify"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"log"
 	"net/http"
@@ -14,12 +13,7 @@ import (
 
 // httpGetPage renders health-check page
 func httpGetPage(w http.ResponseWriter, r *http.Request) {
-	ctx, _, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
-	if err != nil {
-		log.Println("VerifyRequest error:", err)
-		//api4meetingus.ReturnError(ctx, w, err)
-		return
-	}
+	ctx := r.Context()
 	data := healthCheck{
 		At: time.Now(),
 	}
@@ -27,7 +21,7 @@ func httpGetPage(w http.ResponseWriter, r *http.Request) {
 	record := dal.NewRecordWithData(key, data)
 
 	db := facade.GetDatabase(ctx)
-	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+	err := db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		return tx.Set(ctx, record)
 	})
 	if err != nil {
