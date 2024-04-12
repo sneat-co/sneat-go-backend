@@ -60,10 +60,10 @@ func (v *RelatedItem) Validate() error {
 func (*RelatedItem) validateRelationships(related Relationships) error {
 	for relationshipID, relationshipDetails := range related {
 		if strings.TrimSpace(relationshipID) == "" {
-			return errors.New("key is empty string")
+			return errors.New("relationship key is empty string")
 		}
 		if err := relationshipDetails.Validate(); err != nil {
-			return validation.NewErrBadRecordFieldValue("relationshipID", err.Error())
+			return validation.NewErrBadRecordFieldValue(relationshipID, err.Error())
 		}
 	}
 	return nil
