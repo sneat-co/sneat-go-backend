@@ -60,6 +60,10 @@ func (v WithContactsBase[T]) GetContactBriefByUserID(userID string) (id string, 
 	return id, contactBrief
 }
 
+func (v WithContactsBase[T]) GetContactBriefByContactID(contactID string) (contactBrief T) {
+	return v.Contacts[contactID]
+}
+
 func (v WithContactsBase[T]) GetContactBriefsByRoles(roles ...string) map[string]T {
 	result := make(map[string]T)
 	for id, c := range v.Contacts {

@@ -83,7 +83,8 @@ func (v *WithRelatedAndIDs) GetRelated() *WithRelatedAndIDs {
 }
 
 type WithRelated struct {
-	// Related defines relationship of the current contact to other contacts. Key is contact ID.
+	// Related defines relationships of the current contact to other contacts.
+	// Key is team ID.
 	Related RelatedByTeamID `json:"related,omitempty" firestore:"related,omitempty"`
 }
 
@@ -161,7 +162,7 @@ func (v *WithRelated) SetRelationshipToItem(
 		return nil, fmt.Errorf("failed to validate link: %w", err)
 	}
 
-	var alreadyHasRelatedAs, alreadyHasRelatesAs bool
+	var alreadyHasRelatedAs bool
 
 	if relatedByModuleID := v.Related[link.TeamID]; relatedByModuleID != nil {
 		if relatedByCollectionID := relatedByModuleID[link.ModuleID]; relatedByCollectionID != nil {
@@ -188,7 +189,7 @@ func (v *WithRelated) SetRelationshipToItem(
 		}
 	}
 
-	if alreadyHasRelatedAs && alreadyHasRelatesAs {
+	if alreadyHasRelatedAs {
 		if len(v.Related) == 0 {
 			v.Related = nil
 		}

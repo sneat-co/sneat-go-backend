@@ -75,19 +75,29 @@ func CreateContactTx(
 		err = errors.New("user is not a member of the team")
 		return
 	}
-	switch userContactBrief.AgeGroup {
-	case "", dbmodels.AgeGroupUnknown:
-		if request.Related != nil {
-			for _, relatedByModuleID := range request.Related {
-				relatedByCollection := relatedByModuleID[const4contactus.ModuleID]
-				if relatedByCollection == nil {
-					continue
+	if request.Related != nil {
+		for relatedTeamID, relatedByModuleID := range request.Related {
+			if relatedTeamID != params.Team.ID {
+				err = errors.New("currently unsupported creating a contact with relationship to another team")
+				return
+			}
+			relatedByCollection := relatedByModuleID[const4contactus.ModuleID]
+			if relatedByCollection == nil {
+				continue
+			}
+			relatedByItemID := relatedByCollection[const4contactus.ContactsCollection]
+			if relatedByItemID == nil {
+				continue
+			}
+			var isRelatedByUserID bool
+			for contactID, relatedItem := range relatedByItemID {
+				if contactID == params.UserID {
+					isRelatedByUserID = true
+				} else if contactBrief := params.TeamModuleEntry.Data.GetContactBriefByContactID(contactID); contactBrief == nil {
+					return contact, fmt.Errorf("contact with ID=[%s] is not found", contactID)
 				}
-				relatedByItemID := relatedByCollection[const4contactus.ContactsCollection]
-				if relatedByItemID == nil {
-					continue
-				}
-				for _, relatedItem := range relatedByItemID {
+				switch userContactBrief.AgeGroup {
+				case "", dbmodels.AgeGroupUnknown:
 					for relatedAs := range relatedItem.RelatedAs {
 						switch relatedAs {
 						case dbmodels.RelationshipSpouse, dbmodels.RelationshipChild:
@@ -105,6 +115,10 @@ func CreateContactTx(
 						}
 					}
 				}
+			}
+			if isRelatedByUserID {
+				relatedByItemID[userContactID] = relatedByItemID[params.UserID]
+				delete(relatedByItemID, params.UserID)
 			}
 		}
 	}
