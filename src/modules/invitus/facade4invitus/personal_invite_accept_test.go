@@ -101,7 +101,7 @@ func Test_createOrUpdateUserRecord(t *testing.T) {
 			args: args{
 				user:            models4userus.NewUserContext("test_user_id"),
 				userRecordError: dal.ErrRecordNotFound,
-				team: dal4teamus.NewTeamContextWithDto("testteamid", &models4teamus.TeamDto{
+				team: dal4teamus.NewTeamContextWithDto("testteamid", &models4teamus.TeamDbo{
 					TeamBrief: models4teamus.TeamBrief{
 						RequiredCountryID: with.RequiredCountryID{
 							CountryID: with.UnknownCountryID,
@@ -293,13 +293,13 @@ func Test_updateTeamRecord(t *testing.T) {
 			args: args{
 				uid:      "test_user_id",
 				memberID: "test_member_id1",
-				team: dal4teamus.NewTeamContextWithDto("testteamid", &models4teamus.TeamDto{
+				team: dal4teamus.NewTeamContextWithDto("testteamid", &models4teamus.TeamDbo{
 					TeamBrief: models4teamus.TeamBrief{
 						Type:  "family",
 						Title: "Family",
 					},
 				}),
-				contactusTeam: dal4contactus.NewContactusTeamModuleEntryWithData("testteamid", &models4contactus.ContactusTeamDto{
+				contactusTeam: dal4contactus.NewContactusTeamModuleEntryWithData("testteamid", &models4contactus.ContactusTeamDbo{
 					WithSingleTeamContactsWithoutContactIDs: briefs4contactus.WithSingleTeamContactsWithoutContactIDs[*briefs4contactus.ContactBrief]{
 						WithContactsBase: briefs4contactus.WithContactsBase[*briefs4contactus.ContactBrief]{
 							WithContactBriefs: briefs4contactus.WithContactBriefs[*briefs4contactus.ContactBrief]{

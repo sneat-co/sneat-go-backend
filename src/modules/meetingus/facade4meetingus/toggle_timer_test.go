@@ -46,7 +46,7 @@ func TestToggleTimer(t *testing.T) { // TODO(help-wanted): add more test cases
 		timestamps []dbmodels.Timestamp,
 		expected expecting,
 		initMeeting func(meeting *models4meetingus.Meeting),
-		assert func(response ToggleTimerResponse, meeting models4meetingus.Meeting, team models4teamus.TeamDto),
+		assert func(response ToggleTimerResponse, meeting models4meetingus.Meeting, team models4teamus.TeamDbo),
 	) {
 		assertTimer := func(source string, timer *models4meetingus.Timer) {
 			if timer == nil {
@@ -135,7 +135,7 @@ func TestToggleTimer(t *testing.T) { // TODO(help-wanted): add more test cases
 					func(meeting *models4meetingus.Meeting) {
 
 					},
-					func(response ToggleTimerResponse, meeting models4meetingus.Meeting, team models4teamus.TeamDto) {
+					func(response ToggleTimerResponse, meeting models4meetingus.Meeting, team models4teamus.TeamDbo) {
 						if meeting.Timer.ActiveMemberID != request.Member {
 							t.Errorf("api4meetingus.Timer.ActiveMemberID !== request.MemberDto: %v != %v", meeting.Timer.ActiveMemberID, request.Member)
 						}

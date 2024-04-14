@@ -6,7 +6,7 @@ import (
 
 type teamRecord struct {
 	ID  string                `json:"id"`
-	Dto models4teamus.TeamDto `json:"dto"`
+	Dto models4teamus.TeamDbo `json:"dto"`
 }
 
 // TeamResponse response

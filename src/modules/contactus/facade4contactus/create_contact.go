@@ -18,6 +18,7 @@ import (
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/slice"
 	"github.com/strongo/strongoapp/person"
+	"time"
 )
 
 // CreateContact creates team contact
@@ -34,8 +35,8 @@ func CreateContact(
 		return response, fmt.Errorf("invalid CreateContactRequest: %w", err)
 	}
 
-	err = dal4teamus.CreateTeamItem(ctx, userContext, const4contactus.ContactsCollection, request.TeamRequest, const4contactus.ModuleID, new(models4contactus.ContactusTeamDto),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4contactus.ContactusTeamDto]) (err error) {
+	err = dal4teamus.CreateTeamItem(ctx, userContext, const4contactus.ContactsCollection, request.TeamRequest, const4contactus.ModuleID, new(models4contactus.ContactusTeamDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4contactus.ContactusTeamDbo]) (err error) {
 			var contact dal4contactus.ContactEntry
 			if contact, err = CreateContactTx(ctx, tx, userCanBeNonTeamMember, request, params); err != nil {
 				return err
@@ -43,6 +44,9 @@ func CreateContact(
 			response = dto4contactus.CreateContactResponse{
 				ID:   contact.ID,
 				Data: contact.Data,
+			}
+			if response.Data == nil {
+				return errors.New("CreateContactTx returned nil contact data")
 			}
 			return err
 		},
@@ -59,7 +63,7 @@ func CreateContactTx(
 	tx dal.ReadwriteTransaction,
 	userCanBeNonTeamMember bool,
 	request dto4contactus.CreateContactRequest,
-	params *dal4teamus.ModuleTeamWorkerParams[*models4contactus.ContactusTeamDto],
+	params *dal4teamus.ModuleTeamWorkerParams[*models4contactus.ContactusTeamDbo],
 ) (
 	contact dal4contactus.ContactEntry,
 	err error,
@@ -133,59 +137,59 @@ func CreateContactTx(
 		}
 	}
 
-	var contactDto models4contactus.ContactDto
-	contactDto.CreatedAt = params.Started
-	contactDto.CreatedBy = params.UserID
-	contactDto.Status = "active"
-	contactDto.ParentID = parentContactID
-	contactDto.RolesField = request.RolesField
+	var contactDbo models4contactus.ContactDbo
+	contactDbo.CreatedAt = params.Started
+	contactDbo.CreatedBy = params.UserID
+	contactDbo.Status = "active"
+	contactDbo.ParentID = parentContactID
+	contactDbo.RolesField = request.RolesField
 	if request.Person != nil {
-		contactDto.ContactBase = request.Person.ContactBase
-		contactDto.Type = briefs4contactus.ContactTypePerson
-		if contactDto.AgeGroup == "" {
-			contactDto.AgeGroup = "unknown"
+		contactDbo.ContactBase = request.Person.ContactBase
+		contactDbo.Type = briefs4contactus.ContactTypePerson
+		if contactDbo.AgeGroup == "" {
+			contactDbo.AgeGroup = "unknown"
 		}
-		if contactDto.Gender == "" {
-			contactDto.Gender = "unknown"
+		if contactDbo.Gender == "" {
+			contactDbo.Gender = "unknown"
 		}
-		contactDto.ContactBase = request.Person.ContactBase
+		contactDbo.ContactBase = request.Person.ContactBase
 		for _, role := range request.Roles {
-			if !slice.Contains(contactDto.Roles, role) {
-				contactDto.Roles = append(contactDto.Roles, role)
+			if !slice.Contains(contactDbo.Roles, role) {
+				contactDbo.Roles = append(contactDbo.Roles, role)
 			}
 		}
 	} else if request.Company != nil {
-		contactDto.Type = briefs4contactus.ContactTypeCompany
-		contactDto.Title = request.Company.Title
-		contactDto.VATNumber = request.Company.VATNumber
-		contactDto.Address = request.Company.Address
+		contactDbo.Type = briefs4contactus.ContactTypeCompany
+		contactDbo.Title = request.Company.Title
+		contactDbo.VATNumber = request.Company.VATNumber
+		contactDbo.Address = request.Company.Address
 	} else if request.Location != nil {
-		contactDto.Type = briefs4contactus.ContactTypeLocation
-		contactDto.Title = request.Location.Title
-		contactDto.Address = &request.Location.Address
+		contactDbo.Type = briefs4contactus.ContactTypeLocation
+		contactDbo.Title = request.Location.Title
+		contactDbo.Address = &request.Location.Address
 	} else if request.Basic != nil {
-		contactDto.Type = request.Type
-		contactDto.Title = request.Basic.Title
+		contactDbo.Type = request.Type
+		contactDbo.Title = request.Basic.Title
 	} else {
 		return contact, errors.New("contact type is not specified")
 	}
-	if contactDto.Address != nil {
-		contactDto.CountryID = contactDto.Address.CountryID
+	if contactDbo.Address != nil {
+		contactDbo.CountryID = contactDbo.Address.CountryID
 	}
-	contactDto.ShortTitle = contactDto.DetermineShortTitle(request.Person.Title, params.TeamModuleEntry.Data.Contacts)
+	contactDbo.ShortTitle = contactDbo.DetermineShortTitle(request.Person.Title, params.TeamModuleEntry.Data.Contacts)
 	var contactID string
 	if request.ContactID == "" {
-		contactID, err = person.NewUniqueRandomID(params.TeamModuleEntry.Data.ContactIDs(), 3)
-		if err != nil {
-			return contact, fmt.Errorf("failed to generate new contact ID: %w", err)
+		contactIDs := params.TeamModuleEntry.Data.ContactIDs()
+		if contactID, err = person.GenerateIDFromNameOrRandom(request.Person.Names, contactIDs); err != nil {
+			return contact, fmt.Errorf("failed to generate contact ID: %w", err)
 		}
 	} else {
 		contactID = request.ContactID
 	}
-	if contactDto.CountryID == "" && params.Team.Data.CountryID != "" && params.Team.Data.Type == core4teamus.TeamTypeFamily {
-		contactDto.CountryID = params.Team.Data.CountryID
+	if contactDbo.CountryID == "" && params.Team.Data.CountryID != "" && params.Team.Data.Type == core4teamus.TeamTypeFamily {
+		contactDbo.CountryID = params.Team.Data.CountryID
 	}
-	params.TeamModuleEntry.Data.AddContact(contactID, &contactDto.ContactBrief)
+	params.TeamModuleEntry.Data.AddContact(contactID, &contactDbo.ContactBrief)
 	if params.TeamModuleEntry.Record.Exists() {
 		if err = tx.Update(ctx, params.TeamModuleEntry.Key, []dal.Update{
 			{
@@ -204,67 +208,82 @@ func CreateContactTx(
 	params.TeamUpdates = append(params.TeamUpdates, params.Team.Data.UpdateNumberOf(const4contactus.ContactsField, len(params.TeamModuleEntry.Data.Contacts)))
 
 	if request.Related != nil {
-		if userContactID, _ = params.TeamModuleEntry.Data.GetContactBriefByUserID(params.UserID); userContactID == "" {
-			if userContactID, err = facade4userus.GetUserTeamContactID(ctx, tx, params.UserID, params.TeamModuleEntry); err != nil {
-				return
-			}
-			if userContactID == "" {
-				err = errors.New("user is not associated with the teamID=" + params.Team.ID)
-				return
-			}
-		}
-		contactDocRef := models4linkage.TeamModuleDocRef{
-			TeamID:     request.TeamID,
-			ModuleID:   const4contactus.ModuleID,
-			Collection: const4contactus.ContactsCollection,
-			ItemID:     contactID,
-		}
-		//relatableAdapter := facade4linkage.NewRelatableAdapter[*models4contactus.ContactDto](
-		//	func(ctx context.Context, tx dal.ReadTransaction, recordRef models4linkage.TeamModuleDocRef) (err error) {
-		//		return err
-		//	},
-		//)
-		for teamID, relatedByModuleID := range request.Related {
-			for moduleID, relatedByCollection := range relatedByModuleID {
-				for collection, relatedByItemID := range relatedByCollection {
-					for itemID, relatedItem := range relatedByItemID {
-						itemRef := models4linkage.TeamModuleDocRef{
-							TeamID:     teamID,
-							ModuleID:   moduleID,
-							Collection: collection,
-							ItemID:     itemID,
-						}
-
-						if _, err = contactDto.SetRelationshipsToItem(
-							params.UserID,
-							contactDocRef,
-							itemRef,
-							relatedItem.RelatedAs,
-							relatedItem.RelatesAs,
-							params.Started,
-						); err != nil {
-							return contact, err
-						}
-					}
-				}
-			}
+		if err = updateRelationshipsInRelatedItems(ctx, tx, params.UserID, userContactID, params.Team.ID, contactID, params.Started, params.TeamModuleEntry, contactDbo, request.Related); err != nil {
+			err = fmt.Errorf("failed to update relationships in related items: %w", err)
+			return
 		}
 	}
 
-	contact = dal4contactus.NewContactEntryWithData(request.TeamID, contactID, &contactDto)
+	contact = dal4contactus.NewContactEntryWithData(request.TeamID, contactID, &contactDbo)
 
-	//contact.Data.UserIDs = params.Team.Data.UserIDs
-	if err := contact.Data.Validate(); err != nil {
+	if err = contact.Data.Validate(); err != nil {
 		return contact, fmt.Errorf("contact record is not valid: %w", err)
 	}
 	if err = tx.Insert(ctx, contact.Record); err != nil {
 		return contact, fmt.Errorf("failed to insert contact record: %w", err)
 	}
-
 	if parent.ID != "" {
 		if err = updateParentContact(ctx, tx, contact, parent); err != nil {
 			return contact, fmt.Errorf("failed to update parent contact: %w", err)
 		}
 	}
 	return contact, err
+}
+
+func updateRelationshipsInRelatedItems(ctx context.Context, tx dal.ReadTransaction,
+	userID, userContactID, teamID, contactID string,
+	started time.Time,
+	contactusTeamEntry dal4contactus.ContactusTeamModuleEntry,
+	contactDbo models4contactus.ContactDbo,
+	related models4linkage.RelatedByTeamID,
+) (err error) {
+	if userContactID == "" { // Why we get it 2nd time? Previous is up in stack in CreateContactTx()
+		if userContactID, err = facade4userus.GetUserTeamContactID(ctx, tx, userID, contactusTeamEntry); err != nil {
+			return
+		}
+		if userContactID == "" {
+			err = errors.New("user is not associated with the teamID=" + teamID)
+			return
+		}
+	}
+
+	//relatableAdapter := facade4linkage.NewRelatableAdapter[*models4contactus.ContactDbo](
+	//	func(ctx context.Context, tx dal.ReadTransaction, recordRef models4linkage.TeamModuleDocRef) (err error) {
+	//		return err
+	//	},
+	//)
+
+	contactDocRef := models4linkage.TeamModuleDocRef{
+		TeamID:     teamID,
+		ModuleID:   const4contactus.ModuleID,
+		Collection: const4contactus.ContactsCollection,
+		ItemID:     contactID,
+	}
+
+	for teamID, relatedByModuleID := range related {
+		for moduleID, relatedByCollection := range relatedByModuleID {
+			for collection, relatedByItemID := range relatedByCollection {
+				for itemID, relatedItem := range relatedByItemID {
+					itemRef := models4linkage.TeamModuleDocRef{
+						TeamID:     teamID,
+						ModuleID:   moduleID,
+						Collection: collection,
+						ItemID:     itemID,
+					}
+
+					if _, err = contactDbo.SetRelationshipsToItem(
+						userID,
+						contactDocRef,
+						itemRef,
+						relatedItem.RelatedAs,
+						relatedItem.RelatesAs,
+						started,
+					); err != nil {
+						return err
+					}
+				}
+			}
+		}
+	}
+	return nil
 }

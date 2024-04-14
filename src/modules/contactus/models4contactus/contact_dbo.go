@@ -13,8 +13,8 @@ import (
 // and TeamID is also in record key as prefix.
 const TeamContactsCollection = "contacts"
 
-// ContactDto belongs only to a single team
-type ContactDto struct {
+// ContactDbo belongs only to a single team
+type ContactDbo struct {
 	//dbmodels.WithTeamID -- not needed as it's in record key
 	//dbmodels.WithUserIDs
 
@@ -27,7 +27,7 @@ type ContactDto struct {
 }
 
 // Validate returns error if not valid
-func (v ContactDto) Validate() error {
+func (v ContactDbo) Validate() error {
 	if err := v.ContactBase.Validate(); err != nil {
 		return fmt.Errorf("ContactRecordBase is not valid: %w", err)
 	}

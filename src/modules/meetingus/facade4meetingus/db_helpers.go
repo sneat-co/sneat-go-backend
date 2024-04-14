@@ -31,9 +31,9 @@ type WorkerTeam struct {
 	workerItem
 }
 
-// Data returns *models4teamus.TeamDto
-func (v WorkerTeam) Data() *models4teamus.TeamDto {
-	return v.Record.Data().(*models4teamus.TeamDto)
+// Data returns *models4teamus.TeamDbo
+func (v WorkerTeam) Data() *models4teamus.TeamDbo {
+	return v.Record.Data().(*models4teamus.TeamDbo)
 }
 
 // WorkerMeeting a worker for a meeting

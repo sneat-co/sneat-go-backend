@@ -4,10 +4,10 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 )
 
-type ContactusTeamDto struct {
+type ContactusTeamDbo struct {
 	briefs4contactus.WithSingleTeamContactsWithoutContactIDs[*briefs4contactus.ContactBrief]
 }
 
-func (v *ContactusTeamDto) Validate() error {
+func (v *ContactusTeamDbo) Validate() error {
 	return nil
 }

@@ -10,11 +10,11 @@ import (
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
-type ContactusTeamWorkerParams = dal4teamus.ModuleTeamWorkerParams[*models4contactus.ContactusTeamDto]
+type ContactusTeamWorkerParams = dal4teamus.ModuleTeamWorkerParams[*models4contactus.ContactusTeamDbo]
 
 func NewContactusTeamWorkerParams(userID, teamID string) *ContactusTeamWorkerParams {
 	teamWorkerParams := dal4teamus.NewTeamWorkerParams(userID, teamID)
-	return dal4teamus.NewTeamModuleWorkerParams(const4contactus.ModuleID, teamWorkerParams, new(models4contactus.ContactusTeamDto))
+	return dal4teamus.NewTeamModuleWorkerParams(const4contactus.ModuleID, teamWorkerParams, new(models4contactus.ContactusTeamDbo))
 }
 
 func RunReadonlyContactusTeamWorker(
@@ -23,7 +23,7 @@ func RunReadonlyContactusTeamWorker(
 	request dto4teamus.TeamRequest,
 	worker func(ctx context.Context, tx dal.ReadTransaction, params *ContactusTeamWorkerParams) (err error),
 ) error {
-	return dal4teamus.RunReadonlyModuleTeamWorker(ctx, user, request, const4contactus.ModuleID, new(models4contactus.ContactusTeamDto), worker)
+	return dal4teamus.RunReadonlyModuleTeamWorker(ctx, user, request, const4contactus.ModuleID, new(models4contactus.ContactusTeamDbo), worker)
 }
 
 func RunContactusTeamWorker(
@@ -32,7 +32,7 @@ func RunContactusTeamWorker(
 	request dto4teamus.TeamRequest,
 	worker func(ctx context.Context, tx dal.ReadwriteTransaction, params *ContactusTeamWorkerParams) (err error),
 ) error {
-	return dal4teamus.RunModuleTeamWorker(ctx, user, request, const4contactus.ModuleID, new(models4contactus.ContactusTeamDto), worker)
+	return dal4teamus.RunModuleTeamWorker(ctx, user, request, const4contactus.ModuleID, new(models4contactus.ContactusTeamDbo), worker)
 }
 
 func RunContactusTeamWorkerTx(
@@ -42,5 +42,5 @@ func RunContactusTeamWorkerTx(
 	request dto4teamus.TeamRequest,
 	worker func(ctx context.Context, tx dal.ReadwriteTransaction, params *ContactusTeamWorkerParams) (err error),
 ) error {
-	return dal4teamus.RunModuleTeamWorkerTx(ctx, tx, user, request, const4contactus.ModuleID, new(models4contactus.ContactusTeamDto), worker)
+	return dal4teamus.RunModuleTeamWorkerTx(ctx, tx, user, request, const4contactus.ModuleID, new(models4contactus.ContactusTeamDbo), worker)
 }

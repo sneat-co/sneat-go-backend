@@ -6,13 +6,13 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/models4contactus"
 )
 
-type ContactEntry = record.DataWithID[string, *models4contactus.ContactDto]
+type ContactEntry = record.DataWithID[string, *models4contactus.ContactDbo]
 
 func NewContactEntry(teamID, contactID string) ContactEntry {
-	return NewContactEntryWithData(teamID, contactID, new(models4contactus.ContactDto))
+	return NewContactEntryWithData(teamID, contactID, new(models4contactus.ContactDbo))
 }
 
-func NewContactEntryWithData(teamID, contactID string, data *models4contactus.ContactDto) (contact ContactEntry) {
+func NewContactEntryWithData(teamID, contactID string, data *models4contactus.ContactDbo) (contact ContactEntry) {
 	key := NewContactKey(teamID, contactID)
 	contact.ID = contactID
 	contact.FullID = teamID + ":" + contactID
@@ -29,12 +29,4 @@ func FindContactEntryByContactID(contacts []ContactEntry, contactID string) (con
 		}
 	}
 	return contact, false
-}
-
-func ContactIDs(contacts []ContactEntry) []string {
-	ids := make([]string, len(contacts))
-	for i, contact := range contacts {
-		ids[i] = contact.ID
-	}
-	return ids
 }

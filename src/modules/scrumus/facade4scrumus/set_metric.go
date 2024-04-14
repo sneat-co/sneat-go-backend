@@ -68,7 +68,7 @@ type setMetricParams struct {
 	teamMetric *models4teamus.TeamMetric
 }
 
-func setPersonalMetric(p setMetricParams, contactusTeam *models4contactus.ContactusTeamDto) (scrumUpdates []dal.Update, err error) {
+func setPersonalMetric(p setMetricParams, contactusTeam *models4contactus.ContactusTeamDbo) (scrumUpdates []dal.Update, err error) {
 	var status *models4scrumus.MemberStatus
 	var teamMember *briefs4contactus.ContactBrief
 	var teamMemberContactID string

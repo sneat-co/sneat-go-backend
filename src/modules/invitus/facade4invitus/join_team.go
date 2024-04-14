@@ -39,7 +39,7 @@ func (v *JoinTeamRequest) Validate() error {
 }
 
 // JoinTeam joins team
-func JoinTeam(ctx context.Context, userContext facade.User, request JoinTeamRequest) (team *models4teamus.TeamDto, err error) {
+func JoinTeam(ctx context.Context, userContext facade.User, request JoinTeamRequest) (team *models4teamus.TeamDbo, err error) {
 	if err = request.Validate(); err != nil {
 		err = fmt.Errorf("invalid request: %w", err)
 		return
@@ -121,7 +121,7 @@ func JoinTeam(ctx context.Context, userContext facade.User, request JoinTeamRequ
 	return
 }
 
-//func joinAddUserToLastScrum(ctx context.Context, tx dal.ReadwriteTransaction, teamKey *dal.Key, team models4teamus.TeamDto, uID string) (err error) {
+//func joinAddUserToLastScrum(ctx context.Context, tx dal.ReadwriteTransaction, teamKey *dal.Key, team models4teamus.TeamDbo, uID string) (err error) {
 //	scrumKey := dal.NewKeyWithID("scrums", team.Last.Scrum.ID, dal.WithParentKey(teamKey))
 //	scrum := new(dbscrum.Scrum)
 //	scrumRecord := dal.NewRecordWithData(scrumKey, scrum)
@@ -170,7 +170,7 @@ func onJoinAddTeamToUser(
 	userDto *models4userus.UserDto,
 	userRecord dal.Record,
 	teamID string,
-	team *models4teamus.TeamDto,
+	team *models4teamus.TeamDbo,
 	member dal4contactus.ContactEntry,
 ) (err error) {
 	var updates []dal.Update

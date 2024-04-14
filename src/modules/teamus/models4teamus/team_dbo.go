@@ -100,7 +100,7 @@ type TeamMeetings struct {
 	Scrum         *TeamMeetingInfo `json:"scrum,omitempty" firestore:"scrum,omitempty"`
 }
 
-// TeamBrief is a base class for TeamDto
+// TeamBrief is a base class for TeamDbo
 type TeamBrief struct {
 	Type   core4teamus.TeamType `json:"type" firestore:"type"`
 	Title  string               `json:"title" firestore:"title"`
@@ -147,8 +147,8 @@ func IsKnownTeamStatus(status dbmodels.Status) bool {
 	return false
 }
 
-// TeamDto record
-type TeamDto struct {
+// TeamDbo record
+type TeamDbo struct {
 	TeamBrief
 	with.CreatedFields
 	dbmodels.WithUpdatedAndVersion
@@ -164,7 +164,7 @@ type TeamDto struct {
 	Metrics []*TeamMetric `json:"metrics,omitempty" firestore:"metrics,omitempty"`
 }
 
-func (v *TeamDto) SetNumberOf(name string, value int) (update dal.Update) {
+func (v *TeamDbo) SetNumberOf(name string, value int) (update dal.Update) {
 	if v.NumberOf == nil {
 		v.NumberOf = make(map[string]int)
 	}
@@ -176,7 +176,7 @@ func (v *TeamDto) SetNumberOf(name string, value int) (update dal.Update) {
 }
 
 // IncreaseVersion increases record version and sets timestamp
-func (v *TeamDto) IncreaseVersion(timestamp time.Time, updatedBy string) int {
+func (v *TeamDbo) IncreaseVersion(timestamp time.Time, updatedBy string) int {
 	v.Version++
 	v.UpdatedAt = timestamp
 	v.UpdatedBy = updatedBy
@@ -184,7 +184,7 @@ func (v *TeamDto) IncreaseVersion(timestamp time.Time, updatedBy string) int {
 }
 
 // Validate validates record
-func (v *TeamDto) Validate() error {
+func (v *TeamDbo) Validate() error {
 	if err := v.TeamBrief.Validate(); err != nil {
 		return err
 	}
@@ -231,7 +231,7 @@ func (v *TeamDto) Validate() error {
 }
 
 // HasUser checks if team has a user with given ID
-func (v *TeamDto) HasUser(uid string) bool {
+func (v *TeamDbo) HasUser(uid string) bool {
 	return slice.Index(v.UserIDs, uid) >= 0
 }
 
@@ -239,7 +239,7 @@ func NumberOfUpdateField(name string) string {
 	return "numberOf." + name
 }
 
-func (v *TeamDto) UpdateNumberOf(name string, value int) dal.Update {
+func (v *TeamDbo) UpdateNumberOf(name string, value int) dal.Update {
 	v.NumberOf[name] = value
 	return dal.Update{
 		Field: NumberOfUpdateField(name),

@@ -24,7 +24,7 @@ func MockTx(t *testing.T) (tx *mocks4dal.MockReadwriteTransaction) {
 				orderDto := record.Data().(*models4logist.OrderDto)
 				orderDto.Status = "active"
 			case models4contactus.TeamContactsCollection:
-				contactDto := record.Data().(*models4contactus.ContactDto)
+				contactDto := record.Data().(*models4contactus.ContactDbo)
 				contactDto.Status = "active"
 				contactDto.CountryID = "IE"
 				contactDto.CreatedAt = time.Now()

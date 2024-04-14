@@ -87,7 +87,7 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 	if request.Type == "family" && request.Title == "" {
 		request.Title = "Family"
 	}
-	teamDto := &models4teamus.TeamDto{
+	teamDbo := &models4teamus.TeamDbo{
 		TeamBrief: models4teamus.TeamBrief{
 			Type:   request.Type,
 			Title:  request.Title,
@@ -110,12 +110,12 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 			"members": 1,
 		},
 	}
-	teamDto.IncreaseVersion(now, userID)
-	teamDto.CountryID = user.Dto.CountryID
+	teamDbo.IncreaseVersion(now, userID)
+	teamDbo.CountryID = user.Dto.CountryID
 	if request.Type == "work" {
 		zero := 0
 		hundred := 100
-		teamDto.Metrics = []*models4teamus.TeamMetric{
+		teamDbo.Metrics = []*models4teamus.TeamMetric{
 			{ID: "cc", Title: "Code coverage", Type: "int", Mode: "TeamIDs", Min: &zero, Max: &hundred},
 			{ID: "bb", Title: "Build is broken", Type: "bool", Mode: "TeamIDs", Bool: &models4teamus.BoolMetric{
 				True:  &models4teamus.BoolMetricVal{Label: "Yes", Color: "danger"},
@@ -128,8 +128,8 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 		}
 	}
 
-	if err = teamDto.Validate(); err != nil {
-		return response, fmt.Errorf("teamDto reacord is not valid: %w", err)
+	if err = teamDbo.Validate(); err != nil {
+		return response, fmt.Errorf("teamDbo reacord is not valid: %w", err)
 	}
 
 	var teamID string
@@ -139,13 +139,13 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 	}
 	teamID, err = getUniqueTeamID(ctx, tx, title)
 	if err != nil {
-		return response, fmt.Errorf("failed to get an unique ID for a new teamDto: %w", err)
+		return response, fmt.Errorf("failed to get an unique ID for a new teamDbo: %w", err)
 	}
 	teamKey := dal.NewKeyWithID(dal4teamus.TeamsCollection, teamID)
 
-	teamRecord := dal.NewRecordWithData(teamKey, teamDto)
+	teamRecord := dal.NewRecordWithData(teamKey, teamDbo)
 	if err = tx.Insert(ctx, teamRecord); err != nil {
-		return response, fmt.Errorf("failed to insert a new teamDto record: %w", err)
+		return response, fmt.Errorf("failed to insert a new teamDbo record: %w", err)
 	}
 
 	teamContactus := dal4contactus.NewContactusTeamModuleEntry(teamID)
@@ -169,11 +169,11 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 	teamContactus.Data.AddContact(userTeamContactID, &teamMember)
 
 	if err := tx.Insert(ctx, teamContactus.Record); err != nil {
-		return response, fmt.Errorf("failed to insert a new teamDto contactus record: %w", err)
+		return response, fmt.Errorf("failed to insert a new teamDbo contactus record: %w", err)
 	}
 
 	userTeamBrief := models4userus.UserTeamBrief{
-		TeamBrief:     teamDto.TeamBrief,
+		TeamBrief:     teamDbo.TeamBrief,
 		UserContactID: userTeamContactID,
 		Roles:         roles,
 	}
@@ -187,7 +187,7 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 	}
 	if user.Record.Exists() {
 		if err = tx.Update(ctx, user.Key, updates); err != nil {
-			return response, fmt.Errorf("failed to update user record with a new teamDto info: %w", err)
+			return response, fmt.Errorf("failed to update user record with a new teamDbo info: %w", err)
 		}
 	} else {
 		if err = tx.Insert(ctx, user.Record); err != nil {
@@ -201,7 +201,7 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 	}
 
 	response.Team.ID = teamID
-	response.Team.Data = teamDto
+	response.Team.Data = teamDbo
 	return
 }
 

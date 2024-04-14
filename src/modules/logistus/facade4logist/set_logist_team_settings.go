@@ -32,14 +32,14 @@ func SetLogistTeamSettings(
 		const4logistus.ModuleID,
 		new(models4logist.LogistTeamDto),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4teamus.ModuleTeamWorkerParams[*models4logist.LogistTeamDto]) (err error) {
-			return setLogistTeamSettingsTx(ctx, userContext, request, tx, teamWorkerParams)
+			return setLogistTeamSettingsTx(ctx /*userContext,*/, request, tx, teamWorkerParams)
 		},
 	)
 }
 
 func setLogistTeamSettingsTx(
 	ctx context.Context,
-	userContext facade.User,
+	//userContext facade.User,
 	request dto4logist.SetLogistTeamSettingsRequest,
 	tx dal.ReadwriteTransaction,
 	workerParams *dal4teamus.ModuleTeamWorkerParams[*models4logist.LogistTeamDto],
@@ -82,7 +82,7 @@ func setLogistTeamSettingsTx(
 			createContactRequest.Roles = append(createContactRequest.Roles, string(role))
 		}
 
-		contactusWorkerParams := &dal4teamus.ModuleTeamWorkerParams[*models4contactus.ContactusTeamDto]{
+		contactusWorkerParams := &dal4teamus.ModuleTeamWorkerParams[*models4contactus.ContactusTeamDbo]{
 			TeamWorkerParams: workerParams.TeamWorkerParams,
 			TeamModuleEntry:  dal4contactus.NewContactusTeamModuleEntry(request.TeamID),
 		}
@@ -122,7 +122,7 @@ func setLogistTeamSettingsTx(
 	return nil
 }
 
-func updateLogistTeam(logistTeamDto *models4logist.LogistTeamDto, teamDto *models4teamus.TeamDto, teamContact dal4contactus.ContactEntry, request dto4logist.SetLogistTeamSettingsRequest) (updates []dal.Update) {
+func updateLogistTeam(logistTeamDto *models4logist.LogistTeamDto, teamDto *models4teamus.TeamDbo, teamContact dal4contactus.ContactEntry, request dto4logist.SetLogistTeamSettingsRequest) (updates []dal.Update) {
 	if logistTeamDto.ContactID != teamContact.ID {
 		logistTeamDto.ContactID = teamContact.ID
 		updates = append(updates, dal.Update{Field: "contactID", Value: teamContact.ID})
@@ -142,7 +142,7 @@ func updateLogistTeam(logistTeamDto *models4logist.LogistTeamDto, teamDto *model
 	return updates
 }
 
-func updateContact(contactDto *models4contactus.ContactDto, request dto4logist.SetLogistTeamSettingsRequest) (updates []dal.Update) {
+func updateContact(contactDto *models4contactus.ContactDbo, request dto4logist.SetLogistTeamSettingsRequest) (updates []dal.Update) {
 	if contactDto.VATNumber != request.VATNumber {
 		contactDto.VATNumber = request.VATNumber
 		updates = append(updates, dal.Update{Field: "vatNumber", Value: request.VATNumber})

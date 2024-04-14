@@ -90,7 +90,7 @@ func TestHttpAddMember(t *testing.T) {
 			t.Fatalf("Expected teamID=%v, got: %v", teamID, request.TeamID)
 		}
 		response.ID = "abc1"
-		response.Data = &models4contactus.ContactDto{
+		response.Data = &models4contactus.ContactDbo{
 			ContactBase: briefs4contactus.ContactBase{
 				ContactBrief: briefs4contactus.ContactBrief{
 					Type:  briefs4contactus.ContactTypeCompany,
@@ -108,7 +108,7 @@ func TestHttpAddMember(t *testing.T) {
 				//},
 			},
 		}
-		response.Data = &models4contactus.ContactDto{
+		response.Data = &models4contactus.ContactDbo{
 			ContactBase: response.Data.ContactBase,
 		}
 		return

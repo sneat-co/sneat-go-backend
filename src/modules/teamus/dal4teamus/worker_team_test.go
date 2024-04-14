@@ -51,7 +51,7 @@ func TestRunModuleTeamWorker(t *testing.T) {
 				for _, record := range records {
 					record.SetError(nil)
 					if record.Key().Collection() == "teams" {
-						teamData := record.Data().(*models4teamus.TeamDto)
+						teamData := record.Data().(*models4teamus.TeamDbo)
 						teamData.CreatedAt = time.Now()
 						teamData.CreatedBy = "test"
 						teamData.IncreaseVersion(teamData.CreatedAt, teamData.CreatedBy)

@@ -113,7 +113,7 @@ func updateContactTxWorker(
 			TeamID:     request.TeamID,
 			ItemID:     request.ContactID,
 		}
-		relatableAdapted := facade4linkage.NewRelatableAdapter[*models4contactus.ContactDto](func(ctx context.Context, tx dal.ReadTransaction, recordRef models4linkage.TeamModuleDocRef) (err error) {
+		relatableAdapted := facade4linkage.NewRelatableAdapter[*models4contactus.ContactDbo](func(ctx context.Context, tx dal.ReadTransaction, recordRef models4linkage.TeamModuleDocRef) (err error) {
 			// Verify contactID belongs to the same team
 			teamContactBriefID := recordRef.ItemID
 			if _, existingContact := params.TeamModuleEntry.Data.Contacts[teamContactBriefID]; !existingContact {
