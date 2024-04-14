@@ -137,7 +137,7 @@ func CreateContactTx(
 		}
 	}
 
-	var contactDbo models4contactus.ContactDbo
+	contactDbo := new(models4contactus.ContactDbo)
 	contactDbo.CreatedAt = params.Started
 	contactDbo.CreatedBy = params.UserID
 	contactDbo.Status = "active"
@@ -214,7 +214,7 @@ func CreateContactTx(
 		}
 	}
 
-	contact = dal4contactus.NewContactEntryWithData(request.TeamID, contactID, &contactDbo)
+	contact = dal4contactus.NewContactEntryWithData(request.TeamID, contactID, contactDbo)
 
 	if err = contact.Data.Validate(); err != nil {
 		return contact, fmt.Errorf("contact record is not valid: %w", err)
@@ -234,7 +234,7 @@ func updateRelationshipsInRelatedItems(ctx context.Context, tx dal.ReadTransacti
 	userID, userContactID, teamID, contactID string,
 	started time.Time,
 	contactusTeamEntry dal4contactus.ContactusTeamModuleEntry,
-	contactDbo models4contactus.ContactDbo,
+	contactDbo *models4contactus.ContactDbo,
 	related models4linkage.RelatedByTeamID,
 ) (err error) {
 	if userContactID == "" { // Why we get it 2nd time? Previous is up in stack in CreateContactTx()
