@@ -6,13 +6,13 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dto4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/models4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
 // LeaveTeam leaves team
-func LeaveTeam(ctx context.Context, userContext facade.User, request dto4teamus.LeaveTeamRequest) (err error) {
+func LeaveTeam(ctx context.Context, userContext facade.User, request dto4contactus.ContactRequestWithOptionalMessage) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}

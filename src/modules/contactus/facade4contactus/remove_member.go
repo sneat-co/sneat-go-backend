@@ -14,8 +14,8 @@ import (
 	"github.com/strongo/slice"
 )
 
-// RemoveMember removes members from a team
-func RemoveMember(ctx context.Context, user facade.User, request dto4contactus.ContactRequest) (err error) {
+// RemoveTeamMember removes members from a team
+func RemoveTeamMember(ctx context.Context, user facade.User, request dto4contactus.ContactRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return err
 	}
@@ -26,6 +26,13 @@ func RemoveMember(ctx context.Context, user facade.User, request dto4contactus.C
 }
 
 func removeTeamMemberTx(ctx context.Context, tx dal.ReadwriteTransaction, user facade.User, request dto4contactus.ContactRequest, params *dal4contactus.ContactusTeamWorkerParams) (err error) {
+
+	contact := dal4contactus.NewContactEntry(request.TeamID, request.ContactID)
+
+	if err = params.GetRecords(ctx, tx, user.GetID(), contact.Record); err != nil {
+		return err
+	}
+
 	var memberUserID string
 
 	var contactMatcher = func(contactID string, _ *briefs4contactus.ContactBrief) bool {
@@ -72,12 +79,13 @@ func removeTeamMember(
 ) (memberUserID string, updates []dal.Update, err error) {
 	userIds := contactusTeam.Data.UserIDs
 
-	for id, m := range contactusTeam.Data.Contacts {
-		if match(id, m) {
-			if m.UserID != "" {
-				memberUserID = m.UserID
-				userIds = removeTeamUserID(userIds, m.UserID)
+	for id, contactBrief := range contactusTeam.Data.Contacts {
+		if match(id, contactBrief) {
+			if contactBrief.UserID != "" {
+				memberUserID = contactBrief.UserID
+				userIds = removeTeamUserID(userIds, contactBrief.UserID)
 			}
+
 			updates = append(updates, contactusTeam.Data.RemoveContact(id))
 		}
 	}

@@ -10,12 +10,11 @@ import (
 	"net/http"
 )
 
-var setContactsStatus = facade4contactus.SetContactsStatus
-
-func httpSetContactStatus(w http.ResponseWriter, r *http.Request) {
-	var request dto4contactus.SetContactsStatusRequest
+// httpPostArchiveContact is an API endpoint that archive contact - e.g., hides it from the list of contacts
+func httpPostArchiveContact(w http.ResponseWriter, r *http.Request) {
+	var request dto4contactus.ContactRequest
 	handler := func(ctx context.Context, userCtx facade.User) (interface{}, error) {
-		return nil, setContactsStatus(ctx, userCtx, request)
+		return nil, facade4contactus.ArchiveContact(ctx, userCtx, request)
 	}
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, handler, http.StatusOK, verify.DefaultJsonWithAuthRequired)
 }
