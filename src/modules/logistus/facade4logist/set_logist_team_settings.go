@@ -99,7 +99,7 @@ func setLogistTeamSettingsTx(
 			},
 			VatNumber: &request.VATNumber,
 		}
-		var contactWorkerParams *facade4contactus.ContactWorkerParams
+		var contactWorkerParams *dal4contactus.ContactWorkerParams
 		if err = facade4contactus.UpdateContactTx(ctx, tx, request, contactWorkerParams); err != nil {
 			return fmt.Errorf("failed to update team contact record: %w", err)
 		}

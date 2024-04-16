@@ -26,11 +26,13 @@ func RunReadonlyContactusTeamWorker(
 	return dal4teamus.RunReadonlyModuleTeamWorker(ctx, user, request, const4contactus.ModuleID, new(models4contactus.ContactusTeamDbo), worker)
 }
 
+type ContactusModuleWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *ContactusTeamWorkerParams) (err error)
+
 func RunContactusTeamWorker(
 	ctx context.Context,
 	user facade.User,
 	request dto4teamus.TeamRequest,
-	worker func(ctx context.Context, tx dal.ReadwriteTransaction, params *ContactusTeamWorkerParams) (err error),
+	worker ContactusModuleWorker,
 ) error {
 	return dal4teamus.RunModuleTeamWorker(ctx, user, request, const4contactus.ModuleID, new(models4contactus.ContactusTeamDbo), worker)
 }
@@ -40,7 +42,7 @@ func RunContactusTeamWorkerTx(
 	tx dal.ReadwriteTransaction,
 	user facade.User,
 	request dto4teamus.TeamRequest,
-	worker func(ctx context.Context, tx dal.ReadwriteTransaction, params *ContactusTeamWorkerParams) (err error),
+	worker ContactusModuleWorker,
 ) error {
 	return dal4teamus.RunModuleTeamWorkerTx(ctx, tx, user, request, const4contactus.ModuleID, new(models4contactus.ContactusTeamDbo), worker)
 }

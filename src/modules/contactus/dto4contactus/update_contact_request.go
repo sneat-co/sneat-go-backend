@@ -10,11 +10,11 @@ import (
 
 type UpdateContactRequest struct {
 	ContactRequest
-	Address   *dbmodels.Address       `json:"address,omitempty"`
-	AgeGroup  string                  `json:"ageGroup,omitempty"`
-	Roles     *SetContactRolesRequest `json:"roles,omitempty"`
-	VatNumber *string                 `json:"vatNumber,omitempty"`
-	RelatedTo *models4linkage.Link    `json:"relatedTo,omitempty"`
+	Address   *dbmodels.Address    `json:"address,omitempty"`
+	AgeGroup  string               `json:"ageGroup,omitempty"`
+	Roles     *SetRolesRequest     `json:"roles,omitempty"`
+	VatNumber *string              `json:"vatNumber,omitempty"`
+	RelatedTo *models4linkage.Link `json:"relatedTo,omitempty"`
 }
 
 func (v UpdateContactRequest) Validate() error {

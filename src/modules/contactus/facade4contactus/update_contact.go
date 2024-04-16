@@ -11,7 +11,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/facade4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/models4linkage"
 	"github.com/sneat-co/sneat-go-core/facade"
-	"github.com/strongo/slice"
 )
 
 // UpdateContact sets contact fields
@@ -20,9 +19,10 @@ func UpdateContact(
 	user facade.User,
 	request dto4contactus.UpdateContactRequest,
 ) (err error) {
-	return RunContactWorker(ctx, user, request.ContactRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *ContactWorkerParams) (err error) {
-		return UpdateContactTx(ctx, tx, request, params)
-	})
+	return dal4contactus.RunContactWorker(ctx, user, request.ContactRequest,
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactWorkerParams) (err error) {
+			return UpdateContactTx(ctx, tx, request, params)
+		})
 }
 
 // UpdateContactTx sets contact fields
@@ -30,7 +30,7 @@ func UpdateContactTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	request dto4contactus.UpdateContactRequest,
-	params *ContactWorkerParams,
+	params *dal4contactus.ContactWorkerParams,
 ) (err error) {
 	if err = request.Validate(); err != nil {
 		return
@@ -42,7 +42,7 @@ func updateContactTxWorker(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	request dto4contactus.UpdateContactRequest,
-	params *ContactWorkerParams,
+	params *dal4contactus.ContactWorkerParams,
 ) (err error) {
 	contact := dal4contactus.NewContactEntry(params.Team.ID, request.ContactID)
 	//contactData := contact.Data
@@ -93,17 +93,11 @@ func updateContactTxWorker(
 	}
 
 	if request.Roles != nil {
-		for _, role := range request.Roles.Remove {
-			contact.Data.Roles = slice.RemoveInPlace(role, contact.Data.Roles)
+		var contactFieldsUpdated []string
+		if contactFieldsUpdated, err = updateContactRoles(params, *request.Roles); err != nil {
+			return err
 		}
-		contact.Data.Roles = append(contact.Data.Roles, request.Roles.Add...)
-		updatedContactFields = append(updatedContactFields, "roles")
-		contactUpdates = append(contactUpdates, dal.Update{Field: "roles", Value: contact.Data.Roles})
-		params.TeamModuleUpdates = append(params.TeamModuleUpdates,
-			dal.Update{
-				Field: fmt.Sprintf("contacts.%s.roles", request.ContactID),
-				Value: contact.Data.Roles,
-			})
+		updatedContactFields = append(updatedContactFields, contactFieldsUpdated...)
 	}
 
 	if request.RelatedTo != nil {
