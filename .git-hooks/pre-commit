@@ -1,1 +1,1 @@
-echo "executed .git-hooks/pre-commit"
+echo "executed .git-hooks/pre-commit (v2)"
