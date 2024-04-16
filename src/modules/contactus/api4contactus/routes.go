@@ -14,9 +14,6 @@ func RegisterHttpRoutes(handle modules.HTTPHandleFunc) {
 
 	handle(http.MethodPost, "/v0/contactus/archive_contact", httpPostArchiveContact)
 	handle(http.MethodPost, "/v0/contactus/create_member", httpPostCreateMember)
-
-	// leave_team & remove_member should do the same things - consider merging them
-	handle(http.MethodPost, "/v0/contactus/leave_team", httpPostLeaveTeam)
 	handle(http.MethodPost, "/v0/contactus/remove_member", httpPostRemoveTeamMember)
 
 	////
