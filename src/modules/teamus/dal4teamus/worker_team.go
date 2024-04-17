@@ -14,8 +14,8 @@ import (
 
 type teamWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *TeamWorkerParams) (err error)
 
-func NewTeamWorkerParams(userID, teamID string) TeamWorkerParams {
-	return TeamWorkerParams{
+func NewTeamWorkerParams(userID, teamID string) *TeamWorkerParams {
+	return &TeamWorkerParams{
 		UserID:  userID,
 		Team:    NewTeamContext(teamID),
 		Started: time.Now(),
@@ -31,7 +31,7 @@ type TeamWorkerParams struct {
 	TeamUpdates []dal.Update
 }
 
-// GetRecords loads records from DB. If userID is passed it will check for user permissions
+// GetRecords loads records from DB. If userID is passed, it will check for user permissions
 func (v TeamWorkerParams) GetRecords(ctx context.Context, tx dal.ReadSession, records ...dal.Record) error {
 	records = append(records, v.Team.Record)
 	err := tx.GetMulti(ctx, records)
@@ -48,7 +48,7 @@ func (v TeamWorkerParams) GetRecords(ctx context.Context, tx dal.ReadSession, re
 
 // ModuleTeamWorkerParams passes data to a team worker
 type ModuleTeamWorkerParams[D TeamModuleData] struct {
-	TeamWorkerParams
+	*TeamWorkerParams
 	TeamModuleEntry   record.DataWithID[string, D]
 	TeamModuleUpdates []dal.Update
 }
@@ -82,7 +82,7 @@ func RunModuleTeamWorkerTx[D TeamModuleData](
 
 func NewTeamModuleWorkerParams[D TeamModuleData](
 	moduleID string,
-	teamWorkerParams TeamWorkerParams,
+	teamWorkerParams *TeamWorkerParams,
 	data D,
 ) *ModuleTeamWorkerParams[D] {
 	return &ModuleTeamWorkerParams[D]{
@@ -180,7 +180,7 @@ var RunTeamWorker = func(ctx context.Context, user facade.User, request dto4team
 		if err = params.Team.Data.Validate(); err != nil {
 			log.Printf("WARNING: team record loaded from DB is not valid: %v: dto=%+v", err, params.Team.Data)
 		}
-		if err = worker(ctx, tx, &params); err != nil {
+		if err = worker(ctx, tx, params); err != nil {
 			return fmt.Errorf("failed to execute team worker: %w", err)
 		}
 		if err = applyTeamUpdates(ctx, tx, params); err != nil {
@@ -190,7 +190,7 @@ var RunTeamWorker = func(ctx context.Context, user facade.User, request dto4team
 	})
 }
 
-func applyTeamUpdates(ctx context.Context, tx dal.ReadwriteTransaction, params TeamWorkerParams) (err error) {
+func applyTeamUpdates(ctx context.Context, tx dal.ReadwriteTransaction, params *TeamWorkerParams) (err error) {
 	if len(params.TeamUpdates) > 0 {
 		if err = params.Team.Data.Validate(); err != nil {
 			return fmt.Errorf("team record is not valid before applying %d team updates: %w", len(params.TeamUpdates), err)
@@ -246,7 +246,7 @@ func CreateTeamItem[D TeamModuleData](
 				return fmt.Errorf("failed to execute team worker passed to CreateTeamItem: %w", err)
 			}
 			if counter != "" {
-				if err = incrementCounter(&params.TeamWorkerParams, counter); err != nil {
+				if err = incrementCounter(params.TeamWorkerParams, counter); err != nil {
 					return fmt.Errorf("failed to incement teams counter=%v: %w", counter, err)
 				}
 			}

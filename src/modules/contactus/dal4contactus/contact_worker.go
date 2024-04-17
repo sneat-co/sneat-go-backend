@@ -13,6 +13,10 @@ type ContactWorkerParams struct {
 	ContactUpdates []dal.Update
 }
 
+func (v ContactWorkerParams) GetRecords(ctx context.Context, tx dal.ReadSession, records ...dal.Record) error {
+	return v.ContactusTeamWorkerParams.GetRecords(ctx, tx, append(records, v.Contact.Record)...)
+}
+
 func NewContactWorkerParams(moduleParams *ContactusTeamWorkerParams, contactID string) *ContactWorkerParams {
 	return &ContactWorkerParams{
 		ContactusTeamWorkerParams: moduleParams,
@@ -26,25 +30,26 @@ func RunContactWorker(
 	ctx context.Context,
 	user facade.User,
 	request dto4contactus.ContactRequest,
-	worker func(ctx context.Context, tx dal.ReadwriteTransaction, params *ContactWorkerParams) (err error),
+	worker ContactWorker,
 ) error {
-	moduleWorker := func(ctx context.Context, tx dal.ReadwriteTransaction, moduleWorkerParams *ContactusTeamWorkerParams) (err error) {
+	contactWorker := func(ctx context.Context, tx dal.ReadwriteTransaction, moduleWorkerParams *ContactusTeamWorkerParams) (err error) {
 		params := NewContactWorkerParams(moduleWorkerParams, request.ContactID)
-		return worker(ctx, tx, params)
+		if err = worker(ctx, tx, params); err != nil {
+			return err
+		}
+		if err = applyContactUpdates(ctx, tx, params); err != nil {
+			return err
+		}
+		return err
 	}
-	return RunContactusTeamWorker(ctx, user, request.TeamRequest, moduleWorker)
+	return RunContactusTeamWorker(ctx, user, request.TeamRequest, contactWorker)
 }
 
-func RunContactWorkerTx(
-	ctx context.Context,
-	tx dal.ReadwriteTransaction,
-	user facade.User,
-	request dto4contactus.ContactRequest,
-	worker func(ctx context.Context, tx dal.ReadwriteTransaction, params *ContactWorkerParams) (err error),
-) error {
-	moduleWorker := func(ctx context.Context, tx dal.ReadwriteTransaction, moduleWorkerParams *ContactusTeamWorkerParams) (err error) {
-		params := NewContactWorkerParams(moduleWorkerParams, request.ContactID)
-		return worker(ctx, tx, params)
+func applyContactUpdates(ctx context.Context, tx dal.ReadwriteTransaction, params *ContactWorkerParams) (err error) {
+	if len(params.ContactUpdates) > 0 {
+		if err = tx.Update(ctx, params.Contact.Record.Key(), params.ContactUpdates); err != nil {
+			return err
+		}
 	}
-	return RunContactusTeamWorkerTx(ctx, tx, user, request.TeamRequest, moduleWorker)
+	return err
 }

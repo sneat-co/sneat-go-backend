@@ -147,6 +147,8 @@ func IsKnownTeamStatus(status dbmodels.Status) bool {
 	return false
 }
 
+const NumberOfMembersFieldName = "members"
+
 // TeamDbo record
 type TeamDbo struct {
 	TeamBrief

@@ -24,7 +24,7 @@ func ArchiveContact(ctx context.Context, userContext facade.User, request dto4co
 func archiveContactTxWorker(
 	ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactWorkerParams,
 ) (err error) {
-	if err = params.GetRecords(ctx, tx, params.Contact.Record); err != nil {
+	if err = params.GetRecords(ctx, tx); err != nil {
 		return err
 	}
 	if removeContactRoles(params); len(params.ContactUpdates) > 0 {

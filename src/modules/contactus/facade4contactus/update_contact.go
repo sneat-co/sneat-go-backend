@@ -44,13 +44,12 @@ func updateContactTxWorker(
 	request dto4contactus.UpdateContactRequest,
 	params *dal4contactus.ContactWorkerParams,
 ) (err error) {
-	contact := dal4contactus.NewContactEntry(params.Team.ID, request.ContactID)
-	//contactData := contact.Data
-	//contactData.Validate()
 
-	if err = params.GetRecords(ctx, tx, contact.Record); err != nil {
+	if err = params.GetRecords(ctx, tx); err != nil {
 		return err
 	}
+
+	contact := params.Contact
 
 	if err := contact.Data.Validate(); err != nil {
 		return fmt.Errorf("contact DTO is not valid after loading from DB: %w", err)
@@ -59,13 +58,12 @@ func updateContactTxWorker(
 	contactBrief := params.TeamModuleEntry.Data.Contacts[request.ContactID]
 
 	var updatedContactFields []string
-	var contactUpdates []dal.Update
 
 	if request.Address != nil {
 		if *request.Address != *contact.Data.Address {
 			updatedContactFields = append(updatedContactFields, "address")
 			contact.Data.Address = request.Address
-			contactUpdates = append(contactUpdates, dal.Update{Field: "address", Value: request.Address})
+			params.ContactUpdates = append(params.ContactUpdates, dal.Update{Field: "address", Value: request.Address})
 		}
 	}
 
@@ -73,7 +71,7 @@ func updateContactTxWorker(
 		if vat := *request.VatNumber; vat != contact.Data.VATNumber {
 			updatedContactFields = append(updatedContactFields, "vatNumber")
 			contact.Data.VATNumber = vat
-			contactUpdates = append(contactUpdates, dal.Update{Field: "vatNumber", Value: vat})
+			params.ContactUpdates = append(params.ContactUpdates, dal.Update{Field: "vatNumber", Value: vat})
 		}
 	}
 
@@ -81,7 +79,7 @@ func updateContactTxWorker(
 		if request.AgeGroup != contact.Data.AgeGroup {
 			updatedContactFields = append(updatedContactFields, "ageGroup")
 			contact.Data.AgeGroup = request.AgeGroup
-			contactUpdates = append(contactUpdates, dal.Update{Field: "ageGroup", Value: contact.Data.AgeGroup})
+			params.ContactUpdates = append(params.ContactUpdates, dal.Update{Field: "ageGroup", Value: contact.Data.AgeGroup})
 		}
 		if contactBrief != nil && contactBrief.AgeGroup != request.AgeGroup {
 			params.TeamModuleUpdates = append(params.TeamModuleUpdates,
@@ -121,17 +119,17 @@ func updateContactTxWorker(
 		if relUpdate, err = facade4linkage.SetRelated(ctx, tx, params.UserID, params.Started, relatableAdapted, params.Contact, recordRef, *request.RelatedTo); err != nil {
 			return err
 		}
-		contactUpdates = append(contactUpdates, relUpdate...)
+		params.ContactUpdates = append(params.ContactUpdates, relUpdate...)
 	}
 
-	if len(contactUpdates) > 0 {
+	if len(params.ContactUpdates) > 0 {
 		contact.Data.IncreaseVersion(params.Started, params.UserID)
-		contactUpdates = append(contactUpdates, contact.Data.WithUpdatedAndVersion.GetUpdates()...)
+		params.ContactUpdates = append(params.ContactUpdates, contact.Data.WithUpdatedAndVersion.GetUpdates()...)
 		if err := contact.Data.Validate(); err != nil {
 			return fmt.Errorf("contact DTO is not valid after updating %d fields (%+v) and before storing changes DB: %w",
 				len(updatedContactFields), updatedContactFields, err)
 		}
-		if err := tx.Update(ctx, contact.Key, contactUpdates); err != nil {
+		if err := tx.Update(ctx, contact.Key, params.ContactUpdates); err != nil {
 			return err
 		}
 	}
