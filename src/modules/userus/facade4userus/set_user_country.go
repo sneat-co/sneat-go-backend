@@ -40,7 +40,7 @@ func SetUserCountry(ctx context.Context, userContext facade.User, request SetUse
 			}
 			teamRequest := dto4teamus.TeamRequest{TeamID: teamID}
 			err = dal4contactus.RunContactusTeamWorkerTx(ctx, tx, userContext, teamRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusTeamWorkerParams) error {
-				if err = params.GetRecords(ctx, tx, params.UserID); err != nil {
+				if err = params.GetRecords(ctx, tx); err != nil {
 					return err
 				}
 				if params.Team.Data.CountryID == "" || params.Team.Data.CountryID == with.UnknownCountryID {

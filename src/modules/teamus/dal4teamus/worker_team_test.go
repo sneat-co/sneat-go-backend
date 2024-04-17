@@ -30,7 +30,7 @@ func TestRunModuleTeamWorker(t *testing.T) {
 	request := dto4teamus.TeamRequest{TeamID: "team1"}
 	const moduleID = "test_module"
 	assertTxWorker := func(ctx context.Context, tx dal.ReadwriteTransaction, params *ModuleTeamWorkerParams[*fooModuleTeamData]) (err error) {
-		if err := params.GetRecords(ctx, tx, params.UserID); err != nil {
+		if err := params.GetRecords(ctx, tx); err != nil {
 			return err
 		}
 		assert.NotNil(t, params)

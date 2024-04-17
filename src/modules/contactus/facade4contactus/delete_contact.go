@@ -32,7 +32,7 @@ func deleteContactTxWorker(
 		return validation.NewErrBadRequestFieldValue("contactID", "cannot delete contact that represents team/company itself")
 	}
 	contact := dal4contactus.NewContactEntry(params.Team.ID, contactID)
-	if err = params.GetRecords(ctx, tx, params.UserID, params.Team.Record); err != nil {
+	if err = params.GetRecords(ctx, tx, params.Team.Record); err != nil {
 		return err
 	}
 

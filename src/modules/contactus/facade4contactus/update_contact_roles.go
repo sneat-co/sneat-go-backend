@@ -37,16 +37,15 @@ func updateContactRoles(params *dal4contactus.ContactWorkerParams, roles dto4con
 }
 
 func removeContactRoles(
-	params *dal4contactus.ContactusTeamWorkerParams,
-	contact dal4contactus.ContactEntry,
-) (contactUpdates []dal.Update) {
+	params *dal4contactus.ContactWorkerParams,
+) {
+	contact := params.Contact
 	contactBrief := params.TeamModuleEntry.Data.GetContactBriefByContactID(contact.ID)
 	if contactBrief != nil && contactBrief.RemoveRole(const4contactus.TeamMemberRoleMember) {
 		params.TeamModuleUpdates = append(params.TeamModuleUpdates, dal.Update{Field: "contacts." + contact.ID + ".roles", Value: contact.Data.Roles})
 	}
 
 	if contact.Data.RolesField.RemoveRole(const4contactus.TeamMemberRoleMember) {
-		contactUpdates = append(contactUpdates, dal.Update{Field: "roles", Value: contact.Data.Roles})
+		params.ContactUpdates = append(params.ContactUpdates, dal.Update{Field: "roles", Value: contact.Data.Roles})
 	}
-	return contactUpdates
 }

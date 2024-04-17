@@ -32,15 +32,15 @@ type TeamWorkerParams struct {
 }
 
 // GetRecords loads records from DB. If userID is passed it will check for user permissions
-func (v TeamWorkerParams) GetRecords(ctx context.Context, tx dal.ReadSession, userID string, records ...dal.Record) error {
+func (v TeamWorkerParams) GetRecords(ctx context.Context, tx dal.ReadSession, records ...dal.Record) error {
 	records = append(records, v.Team.Record)
 	err := tx.GetMulti(ctx, records)
 	if err != nil {
 		return err
 	}
-	if userID != "" && v.Team.Record.Exists() {
-		if !slice.Contains(v.Team.Data.UserIDs, userID) {
-			return fmt.Errorf("%w: team record has no current user ID in UserIDs field: %s", facade.ErrUnauthorized, userID)
+	if v.UserID != "" && v.Team.Record.Exists() {
+		if !slice.Contains(v.Team.Data.UserIDs, v.UserID) {
+			return fmt.Errorf("%w: team record has no current user ID in UserIDs field: %s", facade.ErrUnauthorized, v.UserID)
 		}
 	}
 	return nil
@@ -53,9 +53,8 @@ type ModuleTeamWorkerParams[D TeamModuleData] struct {
 	TeamModuleUpdates []dal.Update
 }
 
-func (v ModuleTeamWorkerParams[D]) GetRecords(ctx context.Context, tx dal.ReadSession, userID string, records ...dal.Record) error {
-	records = append(records, v.TeamModuleEntry.Record)
-	return v.TeamWorkerParams.GetRecords(ctx, tx, userID, records...)
+func (v ModuleTeamWorkerParams[D]) GetRecords(ctx context.Context, tx dal.ReadSession, records ...dal.Record) error {
+	return v.TeamWorkerParams.GetRecords(ctx, tx, append(records, v.TeamModuleEntry.Record)...)
 }
 
 type ModuleData interface {

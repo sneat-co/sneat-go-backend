@@ -72,7 +72,7 @@ func createHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, request
 ) {
 	happeningDto.CreatedAt = params.Started
 	contactusTeam := dal4contactus.NewContactusTeamModuleEntry(params.Team.ID)
-	if err = params.GetRecords(ctx, tx, params.UserID, contactusTeam.Record); err != nil {
+	if err = params.GetRecords(ctx, tx, contactusTeam.Record); err != nil {
 		return response, err
 	}
 

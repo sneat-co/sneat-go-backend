@@ -48,7 +48,7 @@ func updateContactTxWorker(
 	//contactData := contact.Data
 	//contactData.Validate()
 
-	if err = params.GetRecords(ctx, tx, params.UserID, contact.Record); err != nil {
+	if err = params.GetRecords(ctx, tx, contact.Record); err != nil {
 		return err
 	}
 

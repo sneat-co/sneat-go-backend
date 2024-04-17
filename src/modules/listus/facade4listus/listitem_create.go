@@ -18,16 +18,15 @@ func CreateListItems(ctx context.Context, userContext facade.User, request Creat
 	if err = request.Validate(); err != nil {
 		return
 	}
-	uid := userContext.GetID()
 	err = dal4teamus.RunModuleTeamWorker(ctx, userContext, request.TeamRequest, const4listus.ModuleID, new(models4listus.ListusTeamDto),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4listus.ListusTeamDto]) error {
-			return createListItemTxWorker(ctx, request, uid, tx, params)
+			return createListItemTxWorker(ctx, request, tx, params)
 		})
 	return
 }
 
-func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest, uid string, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4listus.ListusTeamDto]) (err error) {
-	if err = params.GetRecords(ctx, tx, uid); err != nil {
+func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4listus.ListusTeamDto]) (err error) {
+	if err = params.GetRecords(ctx, tx); err != nil {
 		return err
 	}
 	//if slice.Index(params.Team.Data.UserIDs, uid) < 0 {
@@ -54,7 +53,7 @@ func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest,
 		}
 
 		listDto.TeamIDs = []string{request.TeamID}
-		listDto.UserIDs = []string{uid}
+		listDto.UserIDs = []string{params.UserID}
 		listDto.Type = request.ListType
 		listDto.Title = request.ListID
 		if request.ListType == "to-buy" && request.ListID == "groceries" {
@@ -87,7 +86,7 @@ func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest,
 			ListItemBase: item.ListItemBase,
 		}
 		listItem.CreatedAt = params.Started
-		listItem.CreatedBy = uid
+		listItem.CreatedBy = params.UserID
 		listDto.Items = append(listDto.Items, &listItem)
 	}
 	listDto.Count = len(listDto.Items)
@@ -96,8 +95,8 @@ func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest,
 		return fmt.Errorf("list record is not valid: %w", err)
 	}
 	if listRecord.Exists() {
-		if slice.Index(listDto.UserIDs, uid) < 0 {
-			return errors.New("current user does not have access to the list: userID=" + uid)
+		if slice.Index(listDto.UserIDs, params.UserID) < 0 {
+			return errors.New("current user does not have access to the list: userID=" + params.UserID)
 		}
 		if err := tx.Update(ctx, listKey, []dal.Update{
 			{
@@ -124,7 +123,7 @@ func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest,
 		})
 	} else {
 		params.TeamModuleEntry.Data.CreatedAt = params.Started
-		params.TeamModuleEntry.Data.CreatedBy = uid
+		params.TeamModuleEntry.Data.CreatedBy = params.UserID
 		if err = tx.Insert(ctx, params.TeamModuleEntry.Record); err != nil {
 			return fmt.Errorf("failed to insert team module entry record: %w", err)
 		}

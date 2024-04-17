@@ -71,7 +71,7 @@ func CreateContactTx(
 	if err = request.Validate(); err != nil {
 		return
 	}
-	if err = params.GetRecords(ctx, tx, params.UserID); err != nil {
+	if err = params.GetRecords(ctx, tx); err != nil {
 		return
 	}
 	userContactID, userContactBrief := params.TeamModuleEntry.Data.GetContactBriefByUserID(params.UserID)

@@ -14,24 +14,21 @@ func ArchiveContact(ctx context.Context, userContext facade.User, request dto4co
 		return
 	}
 
-	return dal4contactus.RunContactusTeamWorker(ctx, userContext, request.TeamRequest,
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusTeamWorkerParams) (err error) {
-			return archiveContactTxWorker(ctx, tx, params, request.ContactID)
+	return dal4contactus.RunContactWorker(ctx, userContext, request,
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactWorkerParams) (err error) {
+			return archiveContactTxWorker(ctx, tx, params)
 		},
 	)
 }
 
 func archiveContactTxWorker(
-	ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusTeamWorkerParams,
-	contactID string,
+	ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactWorkerParams,
 ) (err error) {
-	contact := dal4contactus.NewContactEntry(params.Team.ID, contactID)
-	if err = params.GetRecords(ctx, tx, params.UserID, contact.Record); err != nil {
+	if err = params.GetRecords(ctx, tx, params.Contact.Record); err != nil {
 		return err
 	}
-	contactUpdates := removeContactRoles(params, contact)
-	if len(contactUpdates) > 0 {
-		if err = tx.Update(ctx, contact.Record.Key(), contactUpdates); err != nil {
+	if removeContactRoles(params); len(params.ContactUpdates) > 0 {
+		if err = tx.Update(ctx, params.Contact.Record.Key(), params.ContactUpdates); err != nil {
 			return err
 		}
 	}

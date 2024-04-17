@@ -54,7 +54,7 @@ func getPersonalInviteRecords(ctx context.Context, getter dal.ReadSession, param
 		member = dal4contactus.NewContactEntry(params.Team.ID, memberID)
 		records = append(records, member.Record)
 	}
-	if err = params.GetRecords(ctx, getter, params.UserID, records...); err != nil {
+	if err = params.GetRecords(ctx, getter, records...); err != nil {
 		return
 	}
 	if !params.TeamModuleEntry.Record.Exists() {

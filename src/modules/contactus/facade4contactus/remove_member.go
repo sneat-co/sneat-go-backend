@@ -21,15 +21,15 @@ func RemoveTeamMember(ctx context.Context, user facade.User, request dto4contact
 	}
 	return dal4contactus.RunContactusTeamWorker(ctx, user, request.TeamRequest,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusTeamWorkerParams) (err error) {
-			return removeTeamMemberTx(ctx, tx, user, request, params)
+			return removeTeamMemberTx(ctx, tx, request, params)
 		})
 }
 
-func removeTeamMemberTx(ctx context.Context, tx dal.ReadwriteTransaction, user facade.User, request dto4contactus.ContactRequest, params *dal4contactus.ContactusTeamWorkerParams) (err error) {
+func removeTeamMemberTx(ctx context.Context, tx dal.ReadwriteTransaction, request dto4contactus.ContactRequest, params *dal4contactus.ContactusTeamWorkerParams) (err error) {
 
 	contact := dal4contactus.NewContactEntry(request.TeamID, request.ContactID)
 
-	if err = params.GetRecords(ctx, tx, user.GetID(), contact.Record); err != nil {
+	if err = params.GetRecords(ctx, tx, contact.Record); err != nil {
 		return err
 	}
 
