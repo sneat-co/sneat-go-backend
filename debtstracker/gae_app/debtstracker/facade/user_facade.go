@@ -9,8 +9,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/log"
-	"github.com/strongo/strongoapp/appuser"
-	gae_user "google.golang.org/appengine/v2/user"
 	"strings"
 	"time"
 )
@@ -158,206 +156,206 @@ func (uf userFacade) GetOrCreateEmailUser(
 	return
 }
 
-func (uf userFacade) GetOrCreateUserGoogleOnSignIn(
-	c context.Context, googleUser *gae_user.User, appUserID string, clientInfo models.ClientInfo,
-) (
-	userGoogle models.UserAccount, appUser models.AppUser, err error,
-) {
-	if googleUser == nil {
-		panic("googleUser == nil")
-	}
-	getUserAccountRecordFromDB := func(c context.Context) (appuser.AccountRecord, error) {
-		userGoogle, err = dtdal.UserGoogle.GetUserGoogleByID(c, googleUser.ID)
-		return &userGoogle, err
-	}
-	newUserAccountRecord := func(c context.Context) (appuser.AccountRecord, error) {
-		if googleUser.Email == "" {
-			return nil, errors.New("Not implemented yet: Google did not provided appUser email")
-		}
-		userGoogle = models.NewUserAccount(googleUser.ID)
-		data := userGoogle.DataStruct()
-		data.EmailData = appuser.NewEmailData(googleUser.Email)
-		data.ClientID = googleUser.ClientID
-		data.FederatedProvider = googleUser.FederatedProvider
-		data.FederatedIdentity = googleUser.FederatedIdentity
-		data.OwnedByUserWithID.AppUserID = appUserID
-		return &userGoogle, nil
-	}
+//func (uf userFacade) GetOrCreateUserGoogleOnSignIn(
+//	c context.Context, googleUser *gae_user.User, appUserID string, clientInfo models.ClientInfo,
+//) (
+//	userGoogle models.UserAccount, appUser models.AppUser, err error,
+//) {
+//	if googleUser == nil {
+//		panic("googleUser == nil")
+//	}
+//	getUserAccountRecordFromDB := func(c context.Context) (appuser.AccountRecord, error) {
+//		userGoogle, err = dtdal.UserGoogle.GetUserGoogleByID(c, googleUser.ID)
+//		return &userGoogle, err
+//	}
+//	newUserAccountRecord := func(c context.Context) (appuser.AccountRecord, error) {
+//		if googleUser.Email == "" {
+//			return nil, errors.New("Not implemented yet: Google did not provided appUser email")
+//		}
+//		userGoogle = models.NewUserAccount(googleUser.ID)
+//		data := userGoogle.DataStruct()
+//		data.EmailData = appuser.NewEmailData(googleUser.Email)
+//		data.ClientID = googleUser.ClientID
+//		data.FederatedProvider = googleUser.FederatedProvider
+//		data.FederatedIdentity = googleUser.FederatedIdentity
+//		data.OwnedByUserWithID.AppUserID = appUserID
+//		return &userGoogle, nil
+//	}
+//
+//	if appUser, err = getOrCreateUserAccountRecordOnSignIn(
+//		c,
+//		"google",
+//		appUserID,
+//		getUserAccountRecordFromDB,
+//		newUserAccountRecord,
+//		clientInfo,
+//	); err != nil {
+//		return
+//	}
+//	return
+//}
 
-	if appUser, err = getOrCreateUserAccountRecordOnSignIn(
-		c,
-		"google",
-		appUserID,
-		getUserAccountRecordFromDB,
-		newUserAccountRecord,
-		clientInfo,
-	); err != nil {
-		return
-	}
-	return
-}
-
-func getOrCreateUserAccountRecordOnSignIn(
-	c context.Context,
-	provider string,
-	userID string,
-	getUserAccountRecordFromDB func(c context.Context) (appuser.AccountRecord, error),
-	newUserAccountRecord func(c context.Context) (appuser.AccountRecord, error),
-	clientInfo models.ClientInfo,
-) (
-	appUser models.AppUser, err error,
-) {
-	log.Debugf(c, "getOrCreateUserAccountRecordOnSignIn(provider=%v, userID=%d)", provider, userID)
-	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
-		return
-	}
-	var userAccount appuser.AccountRecord
-	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-		if userAccount, err = getUserAccountRecordFromDB(c); err != nil {
-			if !dal.IsNotFound(err) {
-				// Technical error
-				return fmt.Errorf("failed to get user account record: %w", err)
-			}
-		}
-
-		userAccountRecord := dal.NewRecordWithData(dal.NewKeyWithID("User"+userAccount.Key().Provider, userAccount.Key().ID), userAccount.Data())
-
-		now := time.Now()
-
-		isNewUser := userID == ""
-
-		accountData := userAccount.Data()
-
-		updateUser := func() {
-			appUser.Data.SetLastLogin(now)
-			appUser.Data.SetLastLogin(now)
-			if !appUser.Data.EmailConfirmed && accountData.GetEmailConfirmed() {
-				appUser.Data.EmailConfirmed = true
-			}
-			names := accountData.GetNames()
-			if appUser.Data.FirstName == "" && names.FirstName != "" {
-				appUser.Data.FirstName = names.FirstName
-			}
-			if appUser.Data.LastName == "" && names.LastName != "" {
-				appUser.Data.LastName = names.LastName
-			}
-			if appUser.Data.Nickname == "" && names.NickName != "" {
-				appUser.Data.Nickname = names.NickName
-			}
-		}
-
-		if err == nil { // User account record found
-			uaRecordUserID := accountData.GetAppUserID()
-			if !isNewUser && uaRecordUserID != userID {
-				panic(fmt.Sprintf("Relinking of appUser accounts us not implemented yet => userAccount.GetAppUserIntID():%s != userID:%s", uaRecordUserID, userID))
-			}
-			if appUser, err = User.GetUserByID(c, tx, uaRecordUserID); err != nil {
-				if dal.IsNotFound(err) {
-					err = fmt.Errorf("record UserAccount is referencing non existing appUser: %w", err)
-				}
-				return
-			}
-			accountData.SetLastLogin(now)
-			updateUser()
-
-			if err = tx.SetMulti(c, []dal.Record{userAccountRecord, appUser.Record}); err != nil {
-				return fmt.Errorf("failed to update User & UserFacebook with DtLastLogin: %w", err)
-			}
-			return
-		}
-
-		// UserAccount record not found
-		// Lets create new UserAccount record
-		if userAccount, err = newUserAccountRecord(c); err != nil {
-			return
-		}
-
-		if isNewUser {
-			//if i, ok := userAccount.(user.CreatedTimesSetter); ok {
-			//	i.SetCreatedTime(now)
-			//}
-		} else {
-			if appUser, err = User.GetUserByID(c, tx, userID); err != nil {
-				return
-			}
-		}
-
-		//if i, ok := userAccount.(user.UpdatedTimeSetter); ok {
-		//	i.SetUpdatedTime(now)
-		//}
-		accountData.SetLastLogin(now)
-
-		email := models.GetEmailID(accountData.GetEmailLowerCase())
-
-		if email == "" {
-			panic("Not implemented: userAccount.GetEmail() returned empty string")
-		}
-
-		var userEmail models.UserEmail
-		if userEmail, err = dtdal.UserEmail.GetUserEmailByID(c, tx, email); err != nil && !dal.IsNotFound(err) {
-			return // error
-		}
-
-		if dal.IsNotFound(err) { // UserEmail record NOT found
-			userEmail := models.NewUserEmail(email, models.NewUserEmailData(0, true, provider))
-			userEmail.Data.CreatedAt = now
-
-			// We need to create new User entity
-			if isNewUser {
-				appUser = models.NewUser(clientInfo)
-				appUser.Data.DtCreated = now
-			}
-			appUser.Data.AddAccount(userAccount.Key())       // No need to check for changed as new appUser
-			appUser.Data.AddAccount(userEmail.UserAccount()) // No need to check for changed as new appUser
-			updateUser()
-
-			if isNewUser {
-				if appUser, err = dtdal.User.CreateUser(c, appUser.Data); err != nil {
-					return
-				}
-			} else if err = User.SaveUser(c, tx, appUser); err != nil {
-				return
-			}
-
-			userAccount.(appuser.BelongsToUser).SetAppUserID(appUser.ID)
-			userEmail.Data.AppUserID = appUser.ID
-
-			if err = tx.SetMulti(c, []dal.Record{userAccountRecord, userEmail.Record}); err != nil {
-				return
-			}
-			return
-		} else { // UserEmail record found
-			userAccount.(appuser.BelongsToUser).SetAppUserID(userEmail.Data.AppUserID) // No need to create a new appUser, link to existing
-			if !isNewUser && userEmail.Data.AppUserID != userID {
-				panic(fmt.Sprintf("Relinking of appUser accounts us not implemented yet => userEmail.AppUserID:%s != userID:%s", userEmail.Data.AppUserID, userID))
-			}
-
-			if isNewUser {
-				if appUser, err = User.GetUserByID(c, tx, userEmail.Data.AppUserID); err != nil {
-					if dal.IsNotFound(err) {
-						err = fmt.Errorf("record UserEmail is referencing non existing User: %w", err)
-					}
-					return
-				}
-			}
-
-			if changed := userEmail.Data.AddProvider(provider); changed || !userEmail.Data.IsConfirmed {
-				userEmail.Data.IsConfirmed = true
-				if err = dtdal.UserEmail.SaveUserEmail(c, tx, userEmail); err != nil {
-					return
-				}
-			}
-			appUser.Data.AddAccount(userAccount.Key())
-			updateUser()
-			if err = tx.SetMulti(c, []dal.Record{userAccountRecord, appUser.Record}); err != nil {
-				return fmt.Errorf("failed to create UserFacebook & update User: %w", err)
-			}
-			return
-		}
-	})
-	return
-}
+//func getOrCreateUserAccountRecordOnSignIn(
+//	c context.Context,
+//	provider string,
+//	userID string,
+//	getUserAccountRecordFromDB func(c context.Context) (appuser.AccountRecord, error),
+//	newUserAccountRecord func(c context.Context) (appuser.AccountRecord, error),
+//	clientInfo models.ClientInfo,
+//) (
+//	appUser models.AppUser, err error,
+//) {
+//	log.Debugf(c, "getOrCreateUserAccountRecordOnSignIn(provider=%v, userID=%d)", provider, userID)
+//	var db dal.DB
+//	if db, err = GetDatabase(c); err != nil {
+//		return
+//	}
+//	var userAccount appuser.AccountRecord
+//	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+//		if userAccount, err = getUserAccountRecordFromDB(c); err != nil {
+//			if !dal.IsNotFound(err) {
+//				// Technical error
+//				return fmt.Errorf("failed to get user account record: %w", err)
+//			}
+//		}
+//
+//		userAccountRecord := dal.NewRecordWithData(dal.NewKeyWithID("User"+userAccount.Key().Provider, userAccount.Key().ID), userAccount.Data())
+//
+//		now := time.Now()
+//
+//		isNewUser := userID == ""
+//
+//		accountData := userAccount.Data()
+//
+//		updateUser := func() {
+//			appUser.Data.SetLastLogin(now)
+//			appUser.Data.SetLastLogin(now)
+//			if !appUser.Data.EmailConfirmed && accountData.GetEmailConfirmed() {
+//				appUser.Data.EmailConfirmed = true
+//			}
+//			names := accountData.GetNames()
+//			if appUser.Data.FirstName == "" && names.FirstName != "" {
+//				appUser.Data.FirstName = names.FirstName
+//			}
+//			if appUser.Data.LastName == "" && names.LastName != "" {
+//				appUser.Data.LastName = names.LastName
+//			}
+//			if appUser.Data.Nickname == "" && names.NickName != "" {
+//				appUser.Data.Nickname = names.NickName
+//			}
+//		}
+//
+//		if err == nil { // User account record found
+//			uaRecordUserID := accountData.GetAppUserID()
+//			if !isNewUser && uaRecordUserID != userID {
+//				panic(fmt.Sprintf("Relinking of appUser accounts us not implemented yet => userAccount.GetAppUserIntID():%s != userID:%s", uaRecordUserID, userID))
+//			}
+//			if appUser, err = User.GetUserByID(c, tx, uaRecordUserID); err != nil {
+//				if dal.IsNotFound(err) {
+//					err = fmt.Errorf("record UserAccount is referencing non existing appUser: %w", err)
+//				}
+//				return
+//			}
+//			accountData.SetLastLogin(now)
+//			updateUser()
+//
+//			if err = tx.SetMulti(c, []dal.Record{userAccountRecord, appUser.Record}); err != nil {
+//				return fmt.Errorf("failed to update User & UserFacebook with DtLastLogin: %w", err)
+//			}
+//			return
+//		}
+//
+//		// UserAccount record not found
+//		// Lets create new UserAccount record
+//		if userAccount, err = newUserAccountRecord(c); err != nil {
+//			return
+//		}
+//
+//		if isNewUser {
+//			//if i, ok := userAccount.(user.CreatedTimesSetter); ok {
+//			//	i.SetCreatedTime(now)
+//			//}
+//		} else {
+//			if appUser, err = User.GetUserByID(c, tx, userID); err != nil {
+//				return
+//			}
+//		}
+//
+//		//if i, ok := userAccount.(user.UpdatedTimeSetter); ok {
+//		//	i.SetUpdatedTime(now)
+//		//}
+//		accountData.SetLastLogin(now)
+//
+//		email := models.GetEmailID(accountData.GetEmailLowerCase())
+//
+//		if email == "" {
+//			panic("Not implemented: userAccount.GetEmail() returned empty string")
+//		}
+//
+//		var userEmail models.UserEmail
+//		if userEmail, err = dtdal.UserEmail.GetUserEmailByID(c, tx, email); err != nil && !dal.IsNotFound(err) {
+//			return // error
+//		}
+//
+//		if dal.IsNotFound(err) { // UserEmail record NOT found
+//			userEmail := models.NewUserEmail(email, models.NewUserEmailData(0, true, provider))
+//			userEmail.Data.CreatedAt = now
+//
+//			// We need to create new User entity
+//			if isNewUser {
+//				appUser = models.NewUser(clientInfo)
+//				appUser.Data.DtCreated = now
+//			}
+//			appUser.Data.AddAccount(userAccount.Key())       // No need to check for changed as new appUser
+//			appUser.Data.AddAccount(userEmail.UserAccount()) // No need to check for changed as new appUser
+//			updateUser()
+//
+//			if isNewUser {
+//				if appUser, err = dtdal.User.CreateUser(c, appUser.Data); err != nil {
+//					return
+//				}
+//			} else if err = User.SaveUser(c, tx, appUser); err != nil {
+//				return
+//			}
+//
+//			userAccount.(appuser.BelongsToUser).SetAppUserID(appUser.ID)
+//			userEmail.Data.AppUserID = appUser.ID
+//
+//			if err = tx.SetMulti(c, []dal.Record{userAccountRecord, userEmail.Record}); err != nil {
+//				return
+//			}
+//			return
+//		} else { // UserEmail record found
+//			userAccount.(appuser.BelongsToUser).SetAppUserID(userEmail.Data.AppUserID) // No need to create a new appUser, link to existing
+//			if !isNewUser && userEmail.Data.AppUserID != userID {
+//				panic(fmt.Sprintf("Relinking of appUser accounts us not implemented yet => userEmail.AppUserID:%s != userID:%s", userEmail.Data.AppUserID, userID))
+//			}
+//
+//			if isNewUser {
+//				if appUser, err = User.GetUserByID(c, tx, userEmail.Data.AppUserID); err != nil {
+//					if dal.IsNotFound(err) {
+//						err = fmt.Errorf("record UserEmail is referencing non existing User: %w", err)
+//					}
+//					return
+//				}
+//			}
+//
+//			if changed := userEmail.Data.AddProvider(provider); changed || !userEmail.Data.IsConfirmed {
+//				userEmail.Data.IsConfirmed = true
+//				if err = dtdal.UserEmail.SaveUserEmail(c, tx, userEmail); err != nil {
+//					return
+//				}
+//			}
+//			appUser.Data.AddAccount(userAccount.Key())
+//			updateUser()
+//			if err = tx.SetMulti(c, []dal.Record{userAccountRecord, appUser.Record}); err != nil {
+//				return fmt.Errorf("failed to create UserFacebook & update User: %w", err)
+//			}
+//			return
+//		}
+//	})
+//	return
+//}
 
 //func (uf userFacade) GetOrCreateUserFacebookOnSignIn(
 //	c context.Context,

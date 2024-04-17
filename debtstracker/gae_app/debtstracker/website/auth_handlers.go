@@ -1,19 +1,16 @@
 package website
 
 import (
-	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"google.golang.org/appengine/v2"
 	"net/http"
 	"strings"
 	"time"
 
-	"context"
 	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/strongo/log"
-	gaeuser "google.golang.org/appengine/v2/user"
 )
 
 func LoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -67,39 +64,40 @@ func LoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		if _user.Data.EmailAddress != "" {
 			log.Infof(c, "_user.EmailAddress: %v", _user.Data.EmailAddress)
 		} else {
-			gaeUser := gaeuser.Current(c)
-			if gaeUser == nil {
-				log.Infof(c, "appengine.user.Current(): nil")
-			} else {
-				if gaeUser.Email == "" {
-					log.Infof(c, "gaeUser.Email is empty")
-				} else {
-					log.Infof(c, "gaeUser.Email: %v", gaeUser.Email)
-					var db dal.DB
-					if db, err = facade.GetDatabase(c); err != nil {
-						w.WriteHeader(http.StatusInternalServerError)
-						log.Errorf(c, err.Error())
-						return
-					}
-					err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
-						u, err := facade.User.GetUserByID(tc, tx, userID)
-						if err != nil {
-							return err
-						}
-						if u.Data.EmailAddress == "" {
-							u.Data.SetEmail(gaeUser.Email, true)
-							if err = facade.User.SaveUser(c, tx, u); err != nil {
-								return fmt.Errorf("failed to save user: %w", err)
-							}
-						}
-						return err
-					}, nil)
-					if err != nil {
-						w.WriteHeader(http.StatusInternalServerError)
-						log.Errorf(c, err.Error())
-					}
-				}
-			}
+			panic("disabled: switch to Firestore authentication") // TODO: switch to Firestore authentication
+			//gaeUser := gaeuser.Current(c)
+			//if gaeUser == nil {
+			//	log.Infof(c, "appengine.user.Current(): nil")
+			//} else {
+			//	if gaeUser.Email == "" {
+			//		log.Infof(c, "gaeUser.Email is empty")
+			//	} else {
+			//		log.Infof(c, "gaeUser.Email: %v", gaeUser.Email)
+			//		var db dal.DB
+			//		if db, err = facade.GetDatabase(c); err != nil {
+			//			w.WriteHeader(http.StatusInternalServerError)
+			//			log.Errorf(c, err.Error())
+			//			return
+			//		}
+			//		err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
+			//			u, err := facade.User.GetUserByID(tc, tx, userID)
+			//			if err != nil {
+			//				return err
+			//			}
+			//			if u.Data.EmailAddress == "" {
+			//				u.Data.SetEmail(gaeUser.Email, true)
+			//				if err = facade.User.SaveUser(c, tx, u); err != nil {
+			//					return fmt.Errorf("failed to save user: %w", err)
+			//				}
+			//			}
+			//			return err
+			//		}, nil)
+			//		if err != nil {
+			//			w.WriteHeader(http.StatusInternalServerError)
+			//			log.Errorf(c, err.Error())
+			//		}
+			//	}
+			//}
 		}
 	}
 
