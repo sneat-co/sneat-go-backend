@@ -13,7 +13,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/strongo/log"
-	"google.golang.org/appengine/v2/user"
+	gaeuser "google.golang.org/appengine/v2/user"
 )
 
 func LoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -67,7 +67,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		if _user.Data.EmailAddress != "" {
 			log.Infof(c, "_user.EmailAddress: %v", _user.Data.EmailAddress)
 		} else {
-			gaeUser := user.Current(c)
+			gaeUser := gaeuser.Current(c)
 			if gaeUser == nil {
 				log.Infof(c, "appengine.user.Current(): nil")
 			} else {

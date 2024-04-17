@@ -10,7 +10,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/log"
 	"github.com/strongo/strongoapp/appuser"
-	"google.golang.org/appengine/v2/user"
+	gaeuser "google.golang.org/appengine/v2/user"
 	"net/http"
 	"net/url"
 	"strings"
@@ -40,7 +40,7 @@ func handleSigninWithGoogle(c context.Context, w http.ResponseWriter, r *http.Re
 		callbackUrl += "&secret=" + secret
 	}
 
-	loginUrl, err := user.LoginURL(c, callbackUrl)
+	loginUrl, err := gaeuser.LoginURL(c, callbackUrl)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -63,7 +63,7 @@ func handleSignedWithGoogle(c context.Context, w http.ResponseWriter, r *http.Re
 
 	clientInfo := models.NewClientInfoFromRequest(r)
 
-	googleUser := user.Current(c)
+	googleUser := gaeuser.Current(c)
 	if googleUser == nil {
 		err := errors.New("handleSignedWithGoogle(): googleUser == nil")
 		log.Errorf(c, err.Error())

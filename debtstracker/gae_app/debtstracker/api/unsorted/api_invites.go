@@ -6,12 +6,12 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"google.golang.org/appengine/v2/user"
+	gaeuser "google.golang.org/appengine/v2/user"
 	"net/http"
 )
 
 func CreateInvite(c context.Context, w http.ResponseWriter, r *http.Request) {
-	gaeUser := user.Current(c)
+	gaeUser := gaeuser.Current(c)
 	if !gaeUser.Admin {
 		w.WriteHeader(http.StatusForbidden)
 	}
