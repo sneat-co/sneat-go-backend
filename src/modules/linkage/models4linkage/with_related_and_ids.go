@@ -59,20 +59,16 @@ func (v *WithRelatedAndIDs) Validate() error {
 		}
 		relatedRef := NewTeamModuleDocRefFromString(relatedID)
 
-		relatedByModuleID := v.Related[relatedRef.TeamID]
-		if relatedByModuleID == nil {
-			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), fmt.Sprintf("field 'related'  does not have value for team ID=%s", relatedRef.TeamID))
-		}
-		relatedByCollectionID := relatedByModuleID[relatedRef.ModuleID]
+		relatedByCollectionID := v.Related[relatedRef.ModuleID]
 		if relatedByCollectionID == nil {
 			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), fmt.Sprintf("field 'related[%s]' does not have value for module ID=%s", relatedRef.TeamID, relatedRef.ModuleID))
 		}
-		relatedByItemID := relatedByCollectionID[relatedRef.Collection]
-		if relatedByItemID == nil {
+		relatedItems := relatedByCollectionID[relatedRef.Collection]
+		if relatedItems == nil {
 			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), fmt.Sprintf("field 'related[%s][%s]' does not have value for collection ID=%s", relatedRef.TeamID, relatedRef.ModuleID, relatedRef.Collection))
 		}
-		_, ok := relatedByItemID[relatedRef.ItemID]
-		if !ok {
+
+		if !HasRelatedItem(relatedItems, RelatedItemKey{TeamID: relatedRef.TeamID, ItemID: relatedRef.ItemID}) {
 			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), fmt.Sprintf("field 'related[%s][%s][%s]' does not have value for item ID=%s", relatedRef.TeamID, relatedRef.ModuleID, relatedRef.Collection, relatedRef.ItemID))
 		}
 	}
@@ -81,10 +77,10 @@ func (v *WithRelatedAndIDs) Validate() error {
 
 func (v *WithRelatedAndIDs) SetRelationshipsToItem(
 	userID string,
-	recordRef TeamModuleDocRef,
+	/*recordRef*/ _ TeamModuleDocRef,
 	relatedTo TeamModuleDocRef,
 	relatedAs Relationships,
-	relatesAs Relationships,
+	/*relatesAs*/ _ Relationships,
 	now time.Time,
 ) (updates []dal.Update, err error) {
 	link := Link{
@@ -110,11 +106,11 @@ func (v *WithRelatedAndIDs) SetRelationshipToItem(
 
 func (v *WithRelatedAndIDs) updateRelatedIDs() {
 	v.RelatedIDs = make([]string, 0, len(v.Related))
-	for teamID, relatedByModuleID := range v.Related {
-		for moduleID, relatedByCollectionID := range relatedByModuleID {
-			for collectionID, relatedByItemID := range relatedByCollectionID {
-				for itemID := range relatedByItemID {
-					id := NewTeamModuleDocRef(teamID, moduleID, collectionID, itemID).ID()
+	for moduleID, relatedByCollectionID := range v.Related {
+		for collectionID, relatedItems := range relatedByCollectionID {
+			for _, relatedItem := range relatedItems {
+				for _, k := range relatedItem.Keys {
+					id := NewTeamModuleDocRef(k.TeamID, moduleID, collectionID, k.ItemID).ID()
 					v.RelatedIDs = append(v.RelatedIDs, id)
 				}
 			}
@@ -147,7 +143,7 @@ func (v *WithRelated) AddRelationship(
 		return nil, err
 	}
 	if v.Related == nil {
-		v.Related = make(RelatedByTeamID, 1)
+		v.Related = make(RelatedByModuleID, 1)
 	}
 
 	for _, linkRelatedAs := range link.RelatesAs {
@@ -156,28 +152,20 @@ func (v *WithRelated) AddRelationship(
 		}
 	}
 
-	relatedByModuleID := v.Related[link.TeamID]
-	if relatedByModuleID == nil {
-		relatedByModuleID = make(RelatedByModuleID, 1)
-		v.Related[link.TeamID] = relatedByModuleID
-	}
-
-	relatedByCollectionID := relatedByModuleID[link.ModuleID]
+	relatedByCollectionID := v.Related[link.ModuleID]
 	if relatedByCollectionID == nil {
 		relatedByCollectionID = make(RelatedByCollectionID, 1)
-		relatedByModuleID[const4contactus.ModuleID] = relatedByCollectionID
+		v.Related[const4contactus.ModuleID] = relatedByCollectionID
 	}
 
-	relatedByItemID := relatedByCollectionID[const4contactus.ContactsCollection]
-	if relatedByItemID == nil {
-		relatedByItemID = make(RelatedByItemID, 1)
-		relatedByCollectionID[const4contactus.ContactsCollection] = relatedByItemID
-	}
+	relatedItems := relatedByCollectionID[const4contactus.ContactsCollection]
 
-	relatedItem := relatedByItemID[link.ItemID]
+	relatedItemKey := RelatedItemKey{TeamID: link.TeamID, ItemID: link.ItemID}
+	relatedItem := GetRelatedItemByKey(relatedItems, relatedItemKey)
 	if relatedItem == nil {
-		relatedItem = NewRelatedItem()
-		relatedByItemID[link.ItemID] = relatedItem
+		relatedItem = NewRelatedItem(relatedItemKey)
+		relatedItems = append(relatedItems, relatedItem)
+		relatedByCollectionID[const4contactus.ContactsCollection] = relatedItems
 	}
 
 	addRelationship := func(field string, relationshipIDs []RelationshipID, relationships Relationships) Relationships {

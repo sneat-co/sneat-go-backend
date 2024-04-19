@@ -11,7 +11,7 @@ import (
 
 func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 	type fields struct {
-		Related    RelatedByTeamID
+		Related    RelatedByModuleID
 		relatedIDs []string
 	}
 	type args struct {
@@ -50,12 +50,12 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 				now: now,
 			},
 			wantUpdates: []dal.Update{
-				{Field: "related.team1.contactus.contacts.c2.relatedAs.parent", Value: &Relationship{
+				{Field: "related.contactus.contacts.team1.c2.relatedAs.parent", Value: &Relationship{
 					CreatedField: with.CreatedField{
 						Created: with.Created{By: "u1", At: now.Format(time.DateOnly)}}},
 				},
 				//{Field: "related.team1.contactus.contacts.c2.relatesAs.child", Value: &Relationship{WithCreatedField: dbmodels.WithCreatedField{Created: dbmodels.Created{By: "u1", On: now.Format(time.DateOnly)}}}},
-				{Field: "relatedIDs", Value: []string{"team1.contactus.contacts.c2"}},
+				{Field: "relatedIDs", Value: []string{"contactus.contacts.team1.c2"}},
 			},
 		},
 		{
@@ -81,7 +81,7 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 				now: now,
 			},
 			wantUpdates: []dal.Update{
-				{Field: "related.team1.contactus.contacts.c2.relatedAs.child",
+				{Field: "related.contactus.contacts.team1.c2.relatedAs.child",
 					Value: &Relationship{
 						CreatedField: with.CreatedField{
 							Created: with.Created{By: "u1",
@@ -90,7 +90,7 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 						},
 					},
 				},
-				{Field: "relatedIDs", Value: []string{"team1.contactus.contacts.c2"}},
+				{Field: "relatedIDs", Value: []string{"contactus.contacts.team1.c2"}},
 			},
 		},
 	}
@@ -111,7 +111,7 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 				t.Fatal(gotErr)
 			}
 			if !reflect.DeepEqual(gotUpdates, tt.wantUpdates) {
-				t.Errorf("SetRelationshipToItem() = \n%+v,\nwant:\n%+v", gotUpdates, tt.wantUpdates)
+				t.Errorf("SetRelationshipToItem()\nactual:\n%+v,\nwant:\n%+v", gotUpdates, tt.wantUpdates)
 			}
 		})
 	}

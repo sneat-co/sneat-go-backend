@@ -28,18 +28,19 @@ func TestHttpAddMember(t *testing.T) {
 			TeamID: teamID,
 		},
 		WithRelated: models4linkage.WithRelated{
-			Related: models4linkage.RelatedByTeamID{
-				"team1": models4linkage.RelatedByModuleID{
-					const4contactus.ModuleID: models4linkage.RelatedByCollectionID{
-						const4contactus.ContactsCollection: models4linkage.RelatedByItemID{
-							"c1": &models4linkage.RelatedItem{
-								RelatedAs: map[models4linkage.RelationshipID]*models4linkage.Relationship{
-									"spouse": {
-										CreatedField: with.CreatedField{
-											Created: with.Created{
-												By: "u1",
-												At: "2020-01-01",
-											},
+			Related: models4linkage.RelatedByModuleID{
+				const4contactus.ModuleID: models4linkage.RelatedByCollectionID{
+					const4contactus.ContactsCollection: []*models4linkage.RelatedItem{
+						{
+							Keys: []models4linkage.RelatedItemKey{
+								{TeamID: "team1", ItemID: "c1"},
+							},
+							RelatedAs: map[models4linkage.RelationshipID]*models4linkage.Relationship{
+								"spouse": {
+									CreatedField: with.CreatedField{
+										Created: with.Created{
+											By: "u1",
+											At: "2020-01-01",
 										},
 									},
 								},

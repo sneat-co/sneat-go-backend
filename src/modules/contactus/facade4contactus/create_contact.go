@@ -80,49 +80,43 @@ func CreateContactTx(
 		return
 	}
 	if request.Related != nil {
-		for relatedTeamID, relatedByModuleID := range request.Related {
-			if relatedTeamID != params.Team.ID {
-				err = errors.New("currently unsupported creating a contact with relationship to another team")
-				return
-			}
-			relatedByCollection := relatedByModuleID[const4contactus.ModuleID]
-			if relatedByCollection == nil {
-				continue
-			}
-			relatedByItemID := relatedByCollection[const4contactus.ContactsCollection]
-			if relatedByItemID == nil {
-				continue
-			}
-			var isRelatedByUserID bool
-			for contactID, relatedItem := range relatedByItemID {
-				if contactID == params.UserID {
-					isRelatedByUserID = true
-				} else if contactBrief := params.TeamModuleEntry.Data.GetContactBriefByContactID(contactID); contactBrief == nil {
-					return contact, fmt.Errorf("contact with ID=[%s] is not found", contactID)
-				}
-				switch userContactBrief.AgeGroup {
-				case "", dbmodels.AgeGroupUnknown:
-					for relatedAs := range relatedItem.RelatedAs {
-						switch relatedAs {
-						case dbmodels.RelationshipSpouse, dbmodels.RelationshipChild:
-							userContactBrief.AgeGroup = dbmodels.AgeGroupAdult
-							userContactKey := dal4contactus.NewContactKey(request.TeamID, userContactID)
-							if err = tx.Update(ctx, userContactKey, []dal.Update{
-								{
-									Field: "ageGroup",
-									Value: userContactBrief.AgeGroup,
-								},
-							}); err != nil {
-								err = fmt.Errorf("failed to update member record: %w", err)
-								return
+		relatedByCollection := request.Related[const4contactus.ModuleID]
+		if relatedByCollection != nil {
+			relatedItems := relatedByCollection[const4contactus.ContactsCollection]
+			if len(relatedItems) > 0 {
+				var isRelatedByUserID bool
+				for _, relatedItem := range relatedItems {
+					isRelatedByUserID = models4linkage.HasRelatedItem(relatedItems, models4linkage.RelatedItemKey{TeamID: params.Team.ID, ItemID: params.UserID})
+					if !isRelatedByUserID {
+						contactID := relatedItem.Keys[0].ItemID
+						if contactBrief := params.TeamModuleEntry.Data.GetContactBriefByContactID(contactID); contactBrief == nil {
+							return contact, fmt.Errorf("contact with ID=[%s] is not found", contactID)
+						}
+					}
+					switch userContactBrief.AgeGroup {
+					case "", dbmodels.AgeGroupUnknown:
+						for relatedAs := range relatedItem.RelatedAs {
+							switch relatedAs {
+							case dbmodels.RelationshipSpouse, dbmodels.RelationshipChild:
+								userContactBrief.AgeGroup = dbmodels.AgeGroupAdult
+								userContactKey := dal4contactus.NewContactKey(request.TeamID, userContactID)
+								if err = tx.Update(ctx, userContactKey, []dal.Update{
+									{
+										Field: "ageGroup",
+										Value: userContactBrief.AgeGroup,
+									},
+								}); err != nil {
+									err = fmt.Errorf("failed to update member record: %w", err)
+									return
+								}
 							}
 						}
 					}
 				}
-			}
-			if isRelatedByUserID {
-				relatedByItemID[userContactID] = relatedByItemID[params.UserID]
-				delete(relatedByItemID, params.UserID)
+				if isRelatedByUserID {
+					userRelatedItem := models4linkage.GetRelatedItemByKey(relatedItems, models4linkage.RelatedItemKey{TeamID: params.Team.ID, ItemID: params.UserID})
+					userRelatedItem.Keys[0].ItemID = userContactID
+				}
 			}
 		}
 	}
@@ -235,7 +229,7 @@ func updateRelationshipsInRelatedItems(ctx context.Context, tx dal.ReadTransacti
 	started time.Time,
 	contactusTeamEntry dal4contactus.ContactusTeamModuleEntry,
 	contactDbo *models4contactus.ContactDbo,
-	related models4linkage.RelatedByTeamID,
+	related models4linkage.RelatedByModuleID,
 ) (err error) {
 	if userContactID == "" { // Why we get it 2nd time? Previous is up in stack in CreateContactTx()
 		if userContactID, err = facade4userus.GetUserTeamContactID(ctx, tx, userID, contactusTeamEntry); err != nil {
@@ -260,15 +254,15 @@ func updateRelationshipsInRelatedItems(ctx context.Context, tx dal.ReadTransacti
 		ItemID:     contactID,
 	}
 
-	for teamID, relatedByModuleID := range related {
-		for moduleID, relatedByCollection := range relatedByModuleID {
-			for collection, relatedByItemID := range relatedByCollection {
-				for itemID, relatedItem := range relatedByItemID {
+	for moduleID, relatedByCollection := range related {
+		for collection, relatedByItemID := range relatedByCollection {
+			for _, relatedItem := range relatedByItemID {
+				for _, key := range relatedItem.Keys {
 					itemRef := models4linkage.TeamModuleDocRef{
 						TeamID:     teamID,
 						ModuleID:   moduleID,
 						Collection: collection,
-						ItemID:     itemID,
+						ItemID:     key.ItemID,
 					}
 
 					if _, err = contactDbo.SetRelationshipsToItem(

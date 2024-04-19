@@ -1,7 +1,6 @@
 package models4linkage
 
 import (
-	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
@@ -23,8 +22,49 @@ func (v Relationship) Validate() error {
 
 type Relationships = map[RelationshipID]*Relationship
 
+type RelatedItemKey struct {
+	TeamID string `json:"teamID" firestore:"teamID"`
+	ItemID string `json:"itemID" firestore:"itemID"`
+}
+
+func (v RelatedItemKey) String() string {
+	return fmt.Sprintf("%s@%s", v.ItemID, v.TeamID)
+}
+
+func (v RelatedItemKey) Validate() error {
+	if v.TeamID == "" {
+		return validation.NewErrRecordIsMissingRequiredField("teamID")
+	}
+	if v.ItemID == "" {
+		return validation.NewErrRecordIsMissingRequiredField("itemID")
+	}
+	return nil
+}
+
+func HasRelatedItem(relatedItems []*RelatedItem, key RelatedItemKey) bool {
+	for _, relatedItem := range relatedItems {
+		for _, k := range relatedItem.Keys {
+			if k == key {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func GetRelatedItemByKey(relatedItems []*RelatedItem, key RelatedItemKey) *RelatedItem {
+	for _, relatedItem := range relatedItems {
+		for _, k := range relatedItem.Keys {
+			if k == key {
+				return relatedItem
+			}
+		}
+	}
+	return nil
+}
+
 type RelatedItem struct {
-	// Brief any // TODO: do we need a brief here?
+	Keys []RelatedItemKey `json:"keys" firestore:"keys"`
 
 	// RelatedAs - if related contact is a child of the current contact, then relatedAs = {"child": ...}
 	RelatedAs Relationships `json:"relatedAs,omitempty" firestore:"relatedAs,omitempty"`
@@ -40,14 +80,23 @@ func (v *RelatedItem) String() string {
 	return fmt.Sprintf("RelatedItem{RelatedAs=%+v, RelatesAs=%+v}", v.RelatedAs, v.RelatesAs)
 }
 
-func NewRelatedItem() *RelatedItem {
+func NewRelatedItem(key RelatedItemKey) *RelatedItem {
 	return &RelatedItem{
+		Keys:      []RelatedItemKey{key},
 		RelatedAs: make(Relationships, 1),
 		RelatesAs: make(Relationships, 1),
 	}
 }
 
 func (v *RelatedItem) Validate() error {
+	if len(v.Keys) == 0 {
+		return validation.NewErrRecordIsMissingRequiredField("keys")
+	}
+	for i, key := range v.Keys {
+		if err := key.Validate(); err != nil {
+			return validation.NewErrBadRequestFieldValue(fmt.Sprintf("keys[%v]", i), err.Error())
+		}
+	}
 	if err := v.validateRelationships(v.RelatedAs); err != nil {
 		return validation.NewErrBadRecordFieldValue("relatedAs", err.Error())
 	}
@@ -60,7 +109,7 @@ func (v *RelatedItem) Validate() error {
 func (*RelatedItem) validateRelationships(related Relationships) error {
 	for relationshipID, relationshipDetails := range related {
 		if strings.TrimSpace(relationshipID) == "" {
-			return errors.New("relationship key is empty string")
+			return validation.NewValidationError("relationship key is empty string")
 		}
 		if err := relationshipDetails.Validate(); err != nil {
 			return validation.NewErrBadRecordFieldValue(relationshipID, err.Error())
@@ -69,10 +118,8 @@ func (*RelatedItem) validateRelationships(related Relationships) error {
 	return nil
 }
 
-type RelatedByItemID = map[string]*RelatedItem
-type RelatedByCollectionID = map[string]RelatedByItemID
+type RelatedByCollectionID = map[string][]*RelatedItem
 type RelatedByModuleID = map[string]RelatedByCollectionID
-type RelatedByTeamID = map[string]RelatedByModuleID
 
 const relatedField = "related"
 
@@ -85,7 +132,7 @@ func (v *WithRelatedAndIDs) GetRelated() *WithRelatedAndIDs {
 type WithRelated struct {
 	// Related defines relationships of the current contact to other contacts.
 	// Key is team ID.
-	Related RelatedByTeamID `json:"related,omitempty" firestore:"related,omitempty"`
+	Related RelatedByModuleID `json:"related,omitempty" firestore:"related,omitempty"`
 }
 
 func (v *WithRelated) Validate() error {
@@ -106,43 +153,26 @@ func (v *WithRelated) RemoveRelationshipToContact(ref TeamModuleDocRef) (updates
 }
 
 func (v *WithRelated) ValidateRelated(validateID func(relatedID string) error) error {
-	for teamID, relatedByModuleID := range v.Related {
-		if teamID == "" {
-			return validation.NewErrBadRecordFieldValue(relatedField, "has empty team ID")
+	for moduleID, relatedByCollectionID := range v.Related {
+		if moduleID == "" {
+			return validation.NewErrBadRecordFieldValue(relatedField, "has empty module ID")
 		}
-		for moduleID, relatedByCollectionID := range relatedByModuleID {
-			if moduleID == "" {
+		for collectionID, relatedItems := range relatedByCollectionID {
+			if collectionID == "" {
 				return validation.NewErrBadRecordFieldValue(
-					relatedField+"."+teamID,
-					"has empty module ID")
+					fmt.Sprintf("%s.%s", relatedField, moduleID),
+					"has empty collection ID",
+				)
 			}
-			for collectionID, relatedByItemID := range relatedByCollectionID {
-				if collectionID == "" {
-					return validation.NewErrBadRecordFieldValue(
-						fmt.Sprintf("%s.%s.%s", relatedField, teamID, moduleID),
-						"has empty collection ID",
-					)
+			for i, relatedItem := range relatedItems {
+				field := fmt.Sprintf("%s.%s.%s[%d]", relatedField, moduleID, collectionID, i)
+
+				if err := relatedItem.Validate(); err != nil {
+					return validation.NewErrBadRecordFieldValue(field, err.Error())
 				}
-				for itemID, relatedItem := range relatedByItemID {
-					if itemID == "" {
-						return validation.NewErrBadRecordFieldValue(
-							fmt.Sprintf("%s.%s.%s.%s", relatedField, teamID, moduleID, collectionID),
-							"has empty item ID")
-					}
-
-					key := fmt.Sprintf("%s.%s.%s.%s", teamID, moduleID, collectionID, itemID)
-					field := relatedField + "." + key
-
-					if relatedItem == nil {
-						return validation.NewErrRecordIsMissingRequiredField(field)
-					}
-
-					if err := relatedItem.Validate(); err != nil {
-						return validation.NewErrBadRecordFieldValue(field, err.Error())
-					}
-
+				for _, key := range relatedItem.Keys {
 					if validateID != nil {
-						if err := validateID(key); err != nil {
+						if err := validateID(key.String()); err != nil {
 							return validation.NewErrBadRecordFieldValue(field, err.Error())
 						}
 					}
@@ -164,30 +194,43 @@ func (v *WithRelated) SetRelationshipToItem(
 
 	var alreadyHasRelatedAs bool
 
-	if relatedByModuleID := v.Related[link.TeamID]; relatedByModuleID != nil {
-		if relatedByCollectionID := relatedByModuleID[link.ModuleID]; relatedByCollectionID != nil {
-			if relatedByItemID := relatedByCollectionID[const4contactus.ContactsCollection]; relatedByItemID != nil {
-				if related := relatedByItemID[link.ItemID]; related != nil {
-					addIfNeeded := func(f string, itemRelationships Relationships, linkRelationshipIDs []RelationshipID) {
-						field := func() string {
-							return fmt.Sprintf("%s.%s.%s", relatedField, link.ID(), f)
-						}
-						for _, linkRelationshipID := range linkRelationshipIDs {
-							for itemRelationshipID := range itemRelationships {
-								if itemRelationshipID == linkRelationshipID {
-									alreadyHasRelatedAs = true
-								} else {
-									updates = append(updates, dal.Update{Field: field(), Value: dal.DeleteField})
-								}
-							}
-						}
-					}
-					addIfNeeded("relatedAs", related.RelatedAs, link.RelatedAs)
-					addIfNeeded("relatesAs", related.RelatesAs, link.RelatesAs)
+	if v.Related == nil {
+		v.Related = make(RelatedByModuleID, 1)
+	}
+	relatedByCollectionID := v.Related[link.ModuleID]
+	if relatedByCollectionID == nil {
+		relatedByCollectionID = make(RelatedByCollectionID, 1)
+		v.Related[link.ModuleID] = relatedByCollectionID
+	}
+	relatedItems := relatedByCollectionID[const4contactus.ContactsCollection]
+	if relatedItems == nil {
+		relatedItems = make([]*RelatedItem, 0, 1)
+		relatedByCollectionID[const4contactus.ContactsCollection] = relatedItems
+	}
+	relatedItemKey := RelatedItemKey{TeamID: link.TeamID, ItemID: link.ItemID}
+	relatedItem := GetRelatedItemByKey(relatedItems, relatedItemKey)
+	if relatedItem == nil {
+		relatedItem = NewRelatedItem(relatedItemKey)
+		relatedItems = append(relatedItems, relatedItem)
+		relatedByCollectionID[const4contactus.ContactsCollection] = relatedItems
+	}
+
+	addIfNeeded := func(f string, itemRelationships Relationships, linkRelationshipIDs []RelationshipID) {
+		field := func() string {
+			return fmt.Sprintf("%s.%s.%s", relatedField, link.ID(), f)
+		}
+		for _, linkRelationshipID := range linkRelationshipIDs {
+			for itemRelationshipID := range itemRelationships {
+				if itemRelationshipID == linkRelationshipID {
+					alreadyHasRelatedAs = true
+				} else {
+					updates = append(updates, dal.Update{Field: field(), Value: dal.DeleteField})
 				}
 			}
 		}
 	}
+	addIfNeeded("relatedAs", relatedItem.RelatedAs, link.RelatedAs)
+	addIfNeeded("relatesAs", relatedItem.RelatesAs, link.RelatesAs)
 
 	if alreadyHasRelatedAs {
 		if len(v.Related) == 0 {

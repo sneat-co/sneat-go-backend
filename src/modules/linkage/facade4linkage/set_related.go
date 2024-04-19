@@ -37,11 +37,11 @@ func NewRelatableAdapter[D models4linkage.Relatable](
 
 // SetRelated updates related records to define relationships
 func SetRelated[D models4linkage.Relatable](
-	ctx context.Context,
-	tx dal.ReadwriteTransaction,
+	_ context.Context,
+	_ dal.ReadwriteTransaction,
 	userID string,
 	now time.Time,
-	adapter RelatableAdapter[D],
+	/*adapter*/ _ RelatableAdapter[D],
 	object record.DataWithID[string, D],
 	objectRef models4linkage.TeamModuleDocRef,
 	relatedTo models4linkage.Link,
@@ -63,7 +63,7 @@ func SetRelated[D models4linkage.Relatable](
 
 	objectWithRelated := object.Data.GetRelated()
 	if objectWithRelated.Related == nil {
-		objectWithRelated.Related = make(models4linkage.RelatedByTeamID, 1)
+		objectWithRelated.Related = make(models4linkage.RelatedByModuleID, 1)
 	}
 	getRelationships := func(ids []string) (relationships models4linkage.Relationships) {
 		relationships = make(models4linkage.Relationships, len(ids))
