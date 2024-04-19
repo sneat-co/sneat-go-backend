@@ -183,10 +183,6 @@ func (v *WithRelated) AddRelationship(
 					},
 				}
 				relationships[relationshipID] = relationship
-				updates = append(updates, dal.Update{
-					Field: fmt.Sprintf("related.%s.%s.%s", link.ID(), field, relationshipID),
-					Value: relationship,
-				})
 			}
 		}
 		return relationships
@@ -194,6 +190,11 @@ func (v *WithRelated) AddRelationship(
 
 	relatedItem.RelatedAs = addRelationship("relatedAs", link.RelatedAs, relatedItem.RelatedAs)
 	relatedItem.RelatedAs = addRelationship("relatesAs", link.RelatesAs, relatedItem.RelatesAs)
+
+	updates = append(updates, dal.Update{
+		Field: fmt.Sprintf("related.%s", link.ModuleCollectionPath()),
+		Value: relatedItems,
+	})
 
 	return updates, nil
 }

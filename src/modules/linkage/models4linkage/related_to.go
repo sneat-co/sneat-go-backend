@@ -49,7 +49,11 @@ func NewTeamModuleDocRefFromString(id string) TeamModuleDocRef {
 }
 
 func (v TeamModuleDocRef) ID() string {
-	return fmt.Sprintf("%s.%s.%s.%s", v.ModuleID, v.Collection, v.TeamID, v.ItemID)
+	return fmt.Sprintf("%s.%s.%s", v.ModuleCollectionPath(), v.TeamID, v.ItemID)
+}
+
+func (v TeamModuleDocRef) ModuleCollectionPath() string {
+	return fmt.Sprintf("%s.%s", v.ModuleID, v.Collection)
 }
 
 func (v TeamModuleDocRef) Validate() error {

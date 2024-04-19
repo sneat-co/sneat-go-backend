@@ -2,6 +2,7 @@ package facade4calendarium
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
@@ -16,6 +17,11 @@ func getHappeningContactRecords(ctx context.Context, tx dal.ReadwriteTransaction
 
 	if err = tx.GetMulti(ctx, []dal.Record{params.Happening.Record, params.TeamModuleEntry.Record, contact.Record}); err != nil {
 		return contact, fmt.Errorf("failed to get records: %w", err)
+	}
+	if err = params.TeamModuleEntry.Record.Error(); err != nil {
+		if !dal.IsNotFound(err) && !errors.Is(err, dal.NoError) {
+			return contact, fmt.Errorf("failed to get contactus team record: %w", err)
+		}
 	}
 	if !params.TeamModuleEntry.Record.Exists() {
 		return contact, fmt.Errorf("happening not found: %w", params.TeamModuleEntry.Record.Error())
