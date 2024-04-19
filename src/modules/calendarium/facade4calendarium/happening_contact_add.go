@@ -21,7 +21,7 @@ func AddParticipantToHappening(ctx context.Context, user facade.User, request dt
 	}
 
 	var worker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *happeningWorkerParams) error {
-		//contact, err := getHappeningContactRecords(ctx, tx, &request, params)
+		_, err := getHappeningContactRecords(ctx, tx, &request, params)
 		if err != nil {
 			return err
 		}

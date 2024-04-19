@@ -20,7 +20,7 @@ func (v HappeningRequest) Validate() error {
 		return err
 	}
 	if strings.TrimSpace(v.HappeningID) == "" {
-		return validation.NewErrRequestIsMissingRequiredField("list")
+		return validation.NewErrRequestIsMissingRequiredField("happeningID")
 	}
 	//switch v.ListType {
 	//case "", "to-buy", "to-do":
