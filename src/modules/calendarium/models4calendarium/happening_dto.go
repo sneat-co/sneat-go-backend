@@ -5,14 +5,13 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/models4linkage"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
-	"github.com/strongo/slice"
 	"github.com/strongo/strongoapp/with"
 	"github.com/strongo/validation"
 	"strings"
 )
 
-// HappeningDto DTO
-type HappeningDto struct {
+// HappeningDbo DTO
+type HappeningDbo struct {
 	HappeningBrief
 	with.CreatedFields
 	with.TagsField
@@ -21,11 +20,10 @@ type HappeningDto struct {
 	models4linkage.WithRelatedAndIDs
 	//dbmodels.WithTeamDates
 	briefs4contactus.WithMultiTeamContacts[*briefs4contactus.ContactBrief]
-	AssetIDs []string `json:"assetIDs,omitempty" firestore:"assetIDs,omitempty"` // TODO: migrated to WithRelatedAndIDs
 }
 
 // Validate returns error if not valid
-func (v *HappeningDto) Validate() error {
+func (v *HappeningDbo) Validate() error {
 	if err := v.HappeningBrief.Validate(); err != nil {
 		return err
 	}
@@ -82,60 +80,6 @@ func (v *HappeningDto) Validate() error {
 
 	if err := v.WithMultiTeamContacts.Validate(); err != nil {
 		return err
-	}
-	if err := validateHappeningAssets(v.AssetIDs, v.HappeningAssets); err != nil {
-		return err
-	}
-	//if v.Role == HappeningTypeRecurring && v.Status == HappeningStatusCanceled {
-	//	for _, slot := range v.Slots {
-	//		if slot.Status != SlotStatusCanceled {
-	//
-	//		}
-	//	}
-	//}
-	return nil
-}
-
-func validateHappeningAssets(assetIDs []string, assets map[string]*HappeningAsset) error {
-	if err := validateHappeningAssetIDs(assetIDs, assets); err != nil {
-		return err
-	}
-	if err := validateHappeningAssetBriefs(assets); err != nil {
-		return err
-	}
-	for assetID := range assets {
-		if !slice.Contains(assetIDs, assetID) {
-			return validation.NewErrBadRecordFieldValue(
-				fmt.Sprintf("happeningAssets[%s]", assetID),
-				"asset ID is missing from assetIDs")
-		}
-	}
-	return nil
-}
-
-func validateHappeningAssetIDs(assetIDs []string, assets map[string]*HappeningAsset) error {
-	if len(assetIDs) == 0 {
-		return validation.NewErrRecordIsMissingRequiredField("assetIDs")
-	}
-	if assetIDs[0] != "*" {
-		return validation.NewErrBadRecordFieldValue("assetIDs[0]", "should be '*'")
-	}
-	for i, assetID := range assetIDs[1:] {
-		if assetID == "" {
-			return validation.NewErrBadRecordFieldValue("assetIDs", "assetID is empty")
-		}
-		field := func() string {
-			return fmt.Sprintf("assetIDs[%d]", i)
-		}
-		if slice.Contains(assetIDs[:i], assetID) {
-			return validation.NewErrBadRecordFieldValue(field(), "assetID is empty")
-		}
-		if err := dbmodels.TeamItemID(assetID).Validate(); err != nil {
-			return validation.NewErrBadRecordFieldValue(field(), err.Error())
-		}
-		if _, ok := assets[assetID]; !ok {
-			return validation.NewErrBadRecordFieldValue(field(), "asset brief is missing")
-		}
 	}
 	return nil
 }

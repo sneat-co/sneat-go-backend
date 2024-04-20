@@ -36,7 +36,7 @@ func modifyHappening(ctx context.Context, user facade.User, request dto4calendar
 			return fmt.Errorf("failed in happening worker: %w", err)
 		}
 		if len(happeningParams.HappeningUpdates) > 0 {
-			if err = happeningParams.Happening.Dto.Validate(); err != nil {
+			if err = happeningParams.Happening.Dbo.Validate(); err != nil {
 				return fmt.Errorf("happening record is not valid after running worker: %w", err)
 			}
 			log.Printf("updating happening: %s", happeningParams.Happening.Key)

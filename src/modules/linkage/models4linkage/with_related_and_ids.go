@@ -100,7 +100,12 @@ func (v *WithRelatedAndIDs) updateRelatedIDs() (updates []dal.Update) {
 			}
 		}
 	}
-	updates = append(updates, dal.Update{Field: "relatedIDs", Value: v.RelatedIDs})
+	if len(v.RelatedIDs) == 0 {
+		v.RelatedIDs = nil
+		updates = append(updates, dal.Update{Field: "relatedIDs", Value: dal.DeleteField})
+	} else {
+		updates = append(updates, dal.Update{Field: "relatedIDs", Value: v.RelatedIDs})
+	}
 	return
 }
 

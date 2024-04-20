@@ -43,7 +43,7 @@ func RunHappeningTeamWorker(
 		}
 		if err = tx.Get(ctx, params.Happening.Record); err != nil {
 			if dal.IsNotFound(err) {
-				params.Happening.Dto.Type = request.HappeningType
+				params.Happening.Dbo.Type = request.HappeningType
 			} else {
 				return fmt.Errorf("failed to get happening: %w", err)
 			}

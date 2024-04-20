@@ -26,7 +26,7 @@ func DeleteHappening(ctx context.Context, user facade.User, request dto4calendar
 
 func deleteHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, user facade.User, request dto4calendarium.HappeningRequest, params *dal4calendarium.HappeningWorkerParams) (err error) {
 	happening := params.Happening
-	switch happening.Dto.Type {
+	switch happening.Dbo.Type {
 	case "":
 		return fmt.Errorf("unknown happening type: %w", validation.NewErrRecordIsMissingRequiredField("type"))
 	case "single":
@@ -45,7 +45,7 @@ func deleteHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, user fa
 			})
 		}
 	default:
-		return validation.NewErrBadRecordFieldValue("type", "happening has unknown type: "+happening.Dto.Type)
+		return validation.NewErrBadRecordFieldValue("type", "happening has unknown type: "+happening.Dbo.Type)
 	}
 	if happening.Record.Exists() {
 		if err = tx.Delete(ctx, happening.Key); err != nil {

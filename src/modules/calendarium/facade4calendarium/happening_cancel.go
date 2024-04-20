@@ -31,7 +31,7 @@ func CancelHappening(ctx context.Context, user facade.User, request dto4calendar
 			if err = tx.Get(ctx, happening.Record); err != nil {
 				return fmt.Errorf("failed to get happening: %w", err)
 			}
-			switch happening.Dto.Type {
+			switch happening.Dbo.Type {
 			case "":
 				return fmt.Errorf("happening record has no type: %w", validation.NewErrRecordIsMissingRequiredField("type"))
 			case "single":
@@ -39,7 +39,7 @@ func CancelHappening(ctx context.Context, user facade.User, request dto4calendar
 			case "recurring":
 				return cancelRecurringHappening(ctx, tx, params, params.UserID, happening, request)
 			default:
-				return validation.NewErrBadRecordFieldValue("type", "happening has unknown type: "+happening.Dto.Type)
+				return validation.NewErrBadRecordFieldValue("type", "happening has unknown type: "+happening.Dbo.Type)
 			}
 		})
 	if err != nil {
@@ -49,21 +49,21 @@ func CancelHappening(ctx context.Context, user facade.User, request dto4calendar
 }
 
 func cancelSingleHappening(ctx context.Context, tx dal.ReadwriteTransaction, userID string, happening models4calendarium.HappeningContext) error {
-	switch happening.Dto.Status {
+	switch happening.Dbo.Status {
 	case "":
 		return validation.NewErrRecordIsMissingRequiredField("status")
 	case models4calendarium.HappeningStatusActive:
-		happening.Dto.Status = models4calendarium.HappeningStatusCanceled
-		happening.Dto.Canceled = &models4calendarium.Canceled{
+		happening.Dbo.Status = models4calendarium.HappeningStatusCanceled
+		happening.Dbo.Canceled = &models4calendarium.Canceled{
 			At: time.Now(),
 			By: dbmodels.ByUser{UID: userID},
 		}
-		if err := happening.Dto.Validate(); err != nil {
+		if err := happening.Dbo.Validate(); err != nil {
 			return fmt.Errorf("happening record is not valid: %w", err)
 		}
 		happeningUpdates := []dal.Update{
-			{Field: "status", Value: happening.Dto.Status},
-			{Field: "canceled", Value: happening.Dto.Canceled},
+			{Field: "status", Value: happening.Dbo.Status},
+			{Field: "canceled", Value: happening.Dbo.Canceled},
 		}
 		if err := tx.Update(ctx, happening.Key, happeningUpdates); err != nil {
 			return err
@@ -71,9 +71,9 @@ func cancelSingleHappening(ctx context.Context, tx dal.ReadwriteTransaction, use
 	case models4calendarium.HappeningStatusDeleted:
 		// Nothing to do
 	default:
-		return fmt.Errorf("only active happening can be canceled but happening is in status=[%v]", happening.Dto.Status)
+		return fmt.Errorf("only active happening can be canceled but happening is in status=[%v]", happening.Dbo.Status)
 	}
-	happening.Dto.Status = "canceled"
+	happening.Dbo.Status = "canceled"
 	return nil
 }
 
@@ -118,7 +118,7 @@ func cancelRecurringHappening(
 		var dayUpdates []dal.Update
 		_, adjustment := calendarDay.Dto.GetAdjustment(happening.ID, request.SlotID)
 		if adjustment == nil {
-			_, slot := happening.Dto.GetSlot(request.SlotID)
+			_, slot := happening.Dbo.GetSlot(request.SlotID)
 			if slot == nil {
 				return fmt.Errorf("%w: slot not found by ContactID=%v", facade.ErrBadRequest, request.SlotID)
 			}
@@ -153,7 +153,7 @@ func cancelRecurringHappening(
 				modified = true
 			}
 		} else {
-			_, slot := happening.Dto.GetSlot(request.SlotID)
+			_, slot := happening.Dbo.GetSlot(request.SlotID)
 			if slot == nil {
 				return fmt.Errorf("%w: unknown slot ContactID=%v", facade.ErrBadRequest, request.SlotID)
 			}
@@ -202,23 +202,23 @@ func markRecurringHappeningRecordAsCanceled(
 	request dto4calendarium.CancelHappeningRequest,
 ) error {
 	var happeningUpdates []dal.Update
-	happening.Dto.Status = models4calendarium.HappeningStatusCanceled
-	if happening.Dto.Canceled == nil {
-		happening.Dto.Canceled = createCanceled(uid, request.Reason)
+	happening.Dbo.Status = models4calendarium.HappeningStatusCanceled
+	if happening.Dbo.Canceled == nil {
+		happening.Dbo.Canceled = createCanceled(uid, request.Reason)
 	} else if reason := strings.TrimSpace(request.Reason); reason != "" {
-		happening.Dto.Canceled.Reason = reason
+		happening.Dbo.Canceled.Reason = reason
 	}
 	happeningUpdates = append(happeningUpdates,
 		dal.Update{
 			Field: "status",
-			Value: happening.Dto.Status,
+			Value: happening.Dbo.Status,
 		},
 		dal.Update{
 			Field: "canceled",
-			Value: happening.Dto.Canceled,
+			Value: happening.Dbo.Canceled,
 		},
 	)
-	if err := happening.Dto.Validate(); err != nil {
+	if err := happening.Dbo.Validate(); err != nil {
 		return fmt.Errorf("happening record is not valid: %w", err)
 	}
 	if err := tx.Update(ctx, happening.Key, happeningUpdates); err != nil {

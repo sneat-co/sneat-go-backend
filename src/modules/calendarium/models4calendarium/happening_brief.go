@@ -14,12 +14,6 @@ type HappeningBrief struct {
 	Title    string           `json:"title" firestore:"title"`
 	Levels   []string         `json:"levels,omitempty" firestore:"levels,omitempty"`
 	Slots    []*HappeningSlot `json:"slots,omitempty" firestore:"slots,omitempty"`
-
-	//WithParticipants // TODO: replace with models4linkage.WithRelated
-
-	// HappeningAssets keeps briefs for assets related to the happening.
-	// Map key is expected to be valid dbmodels.TeamItemID to support contacts from multiple teams.
-	HappeningAssets map[string]*HappeningAsset `json:"places,omitempty" firestore:"places,omitempty"`
 }
 
 func (v HappeningBrief) GetSlot(id string) (i int, slot *HappeningSlot) {
@@ -70,32 +64,6 @@ func (v HappeningBrief) Validate() error {
 				return validation.NewErrBadRecordFieldValue("slots", fmt.Sprintf("at least 2 slots have same ContactID at indexes: %v & %v", i, j))
 			}
 			// TODO: Add more validations?
-		}
-	}
-
-	//if err := v.WithParticipants.Validate(); err != nil {
-	//	return err
-	//}
-	if err := validateHappeningAssetBriefs(v.HappeningAssets); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func validateHappeningAssetBriefs(assets map[string]*HappeningAsset) error {
-	for assetID, assetBrief := range assets {
-		if assetID == "" {
-			return validation.NewErrBadRecordFieldValue("happeningAssets", "assetID is empty")
-		}
-		field := func() string {
-			return fmt.Sprintf("happeningAssets[%s]", assetID)
-		}
-		if err := dbmodels.TeamItemID(assetID).Validate(); err != nil {
-			return validation.NewErrBadRecordFieldValue(field(), err.Error())
-		}
-		if err := assetBrief.Validate(); err != nil {
-			return validation.NewErrBadRecordFieldValue(field(), err.Error())
 		}
 	}
 	return nil

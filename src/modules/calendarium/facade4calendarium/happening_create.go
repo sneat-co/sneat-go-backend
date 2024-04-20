@@ -29,7 +29,7 @@ func CreateHappening(
 	if request.Happening.Type == models4calendarium.HappeningTypeRecurring {
 		counter = "recurringHappenings"
 	}
-	happeningDto := &models4calendarium.HappeningDto{
+	happeningDto := &models4calendarium.HappeningDbo{
 		HappeningBrief: *request.Happening,
 		CreatedFields: with.CreatedFields{
 			CreatedByField: with.CreatedByField{
@@ -43,9 +43,6 @@ func CreateHappening(
 		//},
 	}
 	happeningDto.ContactIDs = append(happeningDto.ContactIDs, "*")
-	if len(happeningDto.AssetIDs) == 0 {
-		happeningDto.AssetIDs = []string{"*"}
-	}
 
 	if happeningDto.Type == models4calendarium.HappeningTypeSingle {
 		for _, slot := range happeningDto.Slots {
@@ -67,7 +64,7 @@ func CreateHappening(
 	return
 }
 
-func createHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, request dto4calendarium.CreateHappeningRequest, happeningDto *models4calendarium.HappeningDto, params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDto]) (
+func createHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, request dto4calendarium.CreateHappeningRequest, happeningDto *models4calendarium.HappeningDbo, params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDto]) (
 	response dto4calendarium.CreateHappeningResponse, err error,
 ) {
 	happeningDto.CreatedAt = params.Started

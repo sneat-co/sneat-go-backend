@@ -25,7 +25,7 @@ func AddParticipantToHappening(ctx context.Context, user facade.User, request dt
 			return err
 		}
 
-		switch params.Happening.Dto.Type {
+		switch params.Happening.Dbo.Type {
 		case "single":
 			break // No special processing needed
 		case "recurring":
@@ -37,11 +37,11 @@ func AddParticipantToHappening(ctx context.Context, user facade.User, request dt
 		default:
 			return fmt.Errorf("invalid happenning record: %w",
 				validation.NewErrBadRecordFieldValue("type",
-					fmt.Sprintf("unknown value: [%v]", params.Happening.Dto.Type)))
+					fmt.Sprintf("unknown value: [%v]", params.Happening.Dbo.Type)))
 		}
 		contactFullRef := models4contactus.NewContactFullRef(request.TeamID, request.Contact.ID)
 		var updates []dal.Update
-		if updates, err = params.Happening.Dto.WithRelated.AddRelationship(
+		if updates, err = params.Happening.Dbo.AddRelationshipAndID(
 			models4linkage.Link{
 				TeamModuleItemRef: contactFullRef,
 				RelatedAs:         []string{"participant"},
@@ -71,10 +71,10 @@ func addContactToHappeningBriefInTeamDto(
 	//teamContactID := dbmodels.NewTeamItemID(teamID, contactID)
 	var happeningBrief models4calendarium.HappeningBrief
 	if happeningBriefPointer == nil {
-		happeningBrief = happening.Dto.HappeningBrief // Make copy so we do not affect the DTO object
+		happeningBrief = happening.Dbo.HappeningBrief // Make copy so we do not affect the DTO object
 		happeningBriefPointer = &models4calendarium.CalendarHappeningBrief{
 			HappeningBrief: happeningBrief,
-			WithRelated:    happening.Dto.WithRelated,
+			WithRelated:    happening.Dbo.WithRelated,
 		}
 		//} else if happeningBriefPointer.Participants[string(teamContactID)] != nil {
 		//	return nil // Already added to happening brief in calendariumTeam record

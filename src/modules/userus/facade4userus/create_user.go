@@ -35,32 +35,32 @@ package facade4userus
 //		return err // Might be nil or not related to "record not found"
 //	}
 //
-//	user.Dto.Created.Client = request.RemoteClient
-//	user.Dto.CreatedAt = time.Now()
-//	user.Dto.CreatedBy = request.RemoteClient.HostOrApp
-//	if i := strings.Index(user.Dto.CreatedBy, ":"); i > 0 {
-//		user.Dto.CreatedBy = user.Dto.CreatedBy[:i]
+//	user.Dbo.Created.Client = request.RemoteClient
+//	user.Dbo.CreatedAt = time.Now()
+//	user.Dbo.CreatedBy = request.RemoteClient.HostOrApp
+//	if i := strings.Index(user.Dbo.CreatedBy, ":"); i > 0 {
+//		user.Dbo.CreatedBy = user.Dbo.CreatedBy[:i]
 //	}
 //
 //	{ // Set user's names
-//		user.Dto.Names.Full = briefs4contactus.CleanTitle(request.Title)
-//		if strings.Contains(user.Dto.Names.Full, " ") {
-//			user.Dto.Defaults = &models4userus.UserDefaults{
-//				ShortNames: briefs4contactus.GetShortNames(user.Dto.Names.Full),
+//		user.Dbo.Names.Full = briefs4contactus.CleanTitle(request.Title)
+//		if strings.Contains(user.Dbo.Names.Full, " ") {
+//			user.Dbo.Defaults = &models4userus.UserDefaults{
+//				ShortNames: briefs4contactus.GetShortNames(user.Dbo.Names.Full),
 //			}
 //		}
 //	}
-//	user.Dto.Email = strings.TrimSpace(request.Email)
-//	user.Dto.Emails = []dbmodels.PersonEmail{
-//		{Type: "primary", Address: user.Dto.Email},
+//	user.Dbo.Email = strings.TrimSpace(request.Email)
+//	user.Dbo.Emails = []dbmodels.PersonEmail{
+//		{Type: "primary", Address: user.Dbo.Email},
 //	}
-//	if user.Dto.Gender == "" {
-//		user.Dto.Gender = "unknown"
+//	if user.Dbo.Gender == "" {
+//		user.Dbo.Gender = "unknown"
 //	}
-//	if user.Dto.AgeGroup == "" {
-//		user.Dto.AgeGroup = "unknown"
+//	if user.Dbo.AgeGroup == "" {
+//		user.Dbo.AgeGroup = "unknown"
 //	}
-//	if err := user.Dto.Validate(); err != nil {
+//	if err := user.Dbo.Validate(); err != nil {
 //		return fmt.Errorf("not able to create user record: %w", err)
 //	}
 //	if err := tx.Insert(ctx, user.Record); err != nil {

@@ -17,7 +17,7 @@ func AdjustSlot(ctx context.Context, user facade.User, request dto4calendarium.H
 	}
 
 	var worker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *happeningWorkerParams) (err error) {
-		switch params.Happening.Dto.Type {
+		switch params.Happening.Dbo.Type {
 		case "single":
 			return errors.New("only recurring happenings can be adjusted, single happenings should be updated")
 		case "recurring":
@@ -36,7 +36,7 @@ func AdjustSlot(ctx context.Context, user facade.User, request dto4calendarium.H
 }
 
 func adjustRecurringSlot(ctx context.Context, tx dal.ReadwriteTransaction, happening models4calendarium.HappeningContext, request dto4calendarium.HappeningSlotDateRequest) (err error) {
-	//for _, teamID := range happening.Dto.TeamIDs { // TODO: run in parallel in go routine if > 1
+	//for _, teamID := range happening.Dbo.TeamIDs { // TODO: run in parallel in go routine if > 1
 	if err := adjustSlotInCalendarDay(ctx, tx, request.TeamID, happening.ID, request); err != nil {
 		return fmt.Errorf("failed to adjust slot in calendar day record for teamID=%v: %w", request.TeamID, err)
 	}

@@ -21,12 +21,12 @@ func UpdateSlot(ctx context.Context, user facade.User, request dto4calendarium.H
 		//	return nil, fmt.Errorf("failed to get team record: %w", err)
 		//}
 
-		if params.Happening.Dto.Type == "single" {
-			params.Happening.Dto.Slots[0] = &request.Slot
+		if params.Happening.Dbo.Type == "single" {
+			params.Happening.Dbo.Slots[0] = &request.Slot
 			params.HappeningUpdates = []dal.Update{
 				{
 					Field: "slots",
-					Value: params.Happening.Dto.Slots,
+					Value: params.Happening.Dbo.Slots,
 				},
 			}
 		}

@@ -29,12 +29,12 @@ func DeleteSlots(ctx context.Context, user facade.User, request dto4calendarium.
 			if err = tx.Get(ctx, happening.Record); err != nil {
 				if dal.IsNotFound(err) {
 					hasHappeningRecord = false
-					happening.Dto.Type = request.HappeningType
+					happening.Dbo.Type = request.HappeningType
 				} else {
 					return fmt.Errorf("failed to get happening: %w", err)
 				}
 			}
-			switch happening.Dto.Type {
+			switch happening.Dbo.Type {
 			case "":
 				return fmt.Errorf("unknown happening type: %w", validation.NewErrRecordIsMissingRequiredField("type"))
 			case "single":
@@ -46,9 +46,9 @@ func DeleteSlots(ctx context.Context, user facade.User, request dto4calendarium.
 					return fmt.Errorf("failed to delete slot from recurrign happening: %w", err)
 				}
 			default:
-				return validation.NewErrBadRecordFieldValue("type", "happening has unknown type: "+happening.Dto.Type)
+				return validation.NewErrBadRecordFieldValue("type", "happening has unknown type: "+happening.Dbo.Type)
 			}
-			if request.SlotID == "" && hasHappeningRecord || len(happening.Dto.Slots) == 0 {
+			if request.SlotID == "" && hasHappeningRecord || len(happening.Dbo.Slots) == 0 {
 				if err = tx.Delete(ctx, happening.Key); err != nil {
 					return fmt.Errorf("faield to delete happening record: %w", err)
 				}
@@ -96,35 +96,35 @@ func removeSlotFromHappeningDto(
 	request dto4calendarium.DeleteHappeningSlotRequest,
 ) error {
 	log.Printf("removeSlotFromHappeningDto() %+v", request)
-	if len(happening.Dto.Slots) == 0 {
+	if len(happening.Dbo.Slots) == 0 {
 		return nil
 	}
 	var updates []dal.Update
 	if request.Weekday == "" {
-		slots := removeSlots(happening.Dto.Slots, []string{request.SlotID})
-		if len(slots) < len(happening.Dto.Slots) {
+		slots := removeSlots(happening.Dbo.Slots, []string{request.SlotID})
+		if len(slots) < len(happening.Dbo.Slots) {
 			if len(slots) == 0 {
-				happening.Dto.Status = models4calendarium.HappeningStatusDeleted
+				happening.Dbo.Status = models4calendarium.HappeningStatusDeleted
 				updates = append(updates, dal.Update{
-					Field: "status", Value: happening.Dto.Status,
+					Field: "status", Value: happening.Dbo.Status,
 				})
 			} else {
-				happening.Dto.Slots = slots
+				happening.Dbo.Slots = slots
 				updates = append(updates, dal.Update{
-					Field: "slots", Value: happening.Dto.Slots,
+					Field: "slots", Value: happening.Dbo.Slots,
 				})
 			}
 		}
 	} else {
-		_, slot := happening.Dto.GetSlot(request.SlotID)
+		_, slot := happening.Dbo.GetSlot(request.SlotID)
 		if changed := removeWeekday(slot, request.Weekday); changed {
 			updates = append(updates, dal.Update{
 				Field: "slots",
-				Value: happening.Dto.Slots,
+				Value: happening.Dbo.Slots,
 			})
 		}
 	}
-	if err := happening.Dto.Validate(); err != nil {
+	if err := happening.Dbo.Validate(); err != nil {
 		return fmt.Errorf("happening record is not valid after removal of slots: %w", err)
 	}
 	if len(updates) > 0 {

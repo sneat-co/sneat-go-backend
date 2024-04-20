@@ -163,8 +163,8 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 	//if len(teamMember.Emails) == 0 && len(user.Emails) > 0 {
 	//	teamMember.Emails = user.Emails
 	//}
-	//if len(teamMember.Phones) == 0 && len(user.Dto.Phones) > 0 {
-	//	teamMember.Phones = user.Dto.Phones
+	//if len(teamMember.Phones) == 0 && len(user.Dbo.Phones) > 0 {
+	//	teamMember.Phones = user.Dbo.Phones
 	//}
 	teamContactus.Data.AddContact(userTeamContactID, &teamMember)
 

@@ -30,7 +30,7 @@ func (v CreateHappeningRequest) Validate() error {
 // CreateHappeningResponse DTO
 type CreateHappeningResponse struct {
 	ID  string                          `json:"id"`
-	Dto models4calendarium.HappeningDto `json:"dto"`
+	Dto models4calendarium.HappeningDbo `json:"dto"`
 }
 
 // Validate returns error if not valid

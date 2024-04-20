@@ -28,7 +28,7 @@ func RevokeHappeningCancellation(ctx context.Context, user facade.User, request 
 			if err = tx.Get(ctx, happening.Record); err != nil {
 				return fmt.Errorf("failed to get happening: %w", err)
 			}
-			switch happening.Dto.Type {
+			switch happening.Dbo.Type {
 			case "":
 				return fmt.Errorf("happening record has no type: %w", validation.NewErrRecordIsMissingRequiredField("type"))
 			case "single":
@@ -36,7 +36,7 @@ func RevokeHappeningCancellation(ctx context.Context, user facade.User, request 
 			case "recurring":
 				return revokeRecurringHappeningCancellation(ctx, tx, params, happening, request.Date, request.SlotID)
 			default:
-				return validation.NewErrBadRecordFieldValue("type", "happening has unknown type: "+happening.Dto.Type)
+				return validation.NewErrBadRecordFieldValue("type", "happening has unknown type: "+happening.Dbo.Type)
 			}
 		})
 	if err != nil {
@@ -58,7 +58,7 @@ func revokeRecurringHappeningCancellation(
 	slotID string,
 ) error {
 	log.Printf("revokeRecurringHappeningCancellation(): teamID=%v, dateID=%v, happeningID=%v, slotID=%+v", params.Team.ID, dateID, happening.ID, slotID)
-	if happening.Dto.Status == models4calendarium.HappeningStatusCanceled {
+	if happening.Dbo.Status == models4calendarium.HappeningStatusCanceled {
 		if err := removeCancellationFromHappeningRecord(ctx, tx, happening); err != nil {
 			return fmt.Errorf("failed to remove cancellation from happening record: %w", err)
 		}
@@ -93,12 +93,12 @@ func removeCancellationFromHappeningBrief(params *dal4teamus.ModuleTeamWorkerPar
 }
 
 func removeCancellationFromHappeningRecord(ctx context.Context, tx dal.ReadwriteTransaction, happening models4calendarium.HappeningContext) error {
-	if happening.Dto.Status != models4calendarium.HappeningStatusCanceled {
-		return fmt.Errorf("not allowed to revoke cancelation for happening in status=" + happening.Dto.Status)
+	if happening.Dbo.Status != models4calendarium.HappeningStatusCanceled {
+		return fmt.Errorf("not allowed to revoke cancelation for happening in status=" + happening.Dbo.Status)
 	}
-	happening.Dto.Status = models4calendarium.HappeningStatusCanceled
-	happening.Dto.Canceled = nil
-	if err := happening.Dto.Validate(); err != nil {
+	happening.Dbo.Status = models4calendarium.HappeningStatusCanceled
+	happening.Dbo.Canceled = nil
+	if err := happening.Dbo.Validate(); err != nil {
 		return err
 	}
 	updates := []dal.Update{

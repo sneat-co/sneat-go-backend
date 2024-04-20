@@ -23,21 +23,23 @@ func RemoveParticipantFromHappening(ctx context.Context, user facade.User, reque
 		if err != nil {
 			return err
 		}
-		teamContactID := dbmodels.NewTeamItemID(request.Contact.TeamID, request.Contact.ID)
-		switch params.Happening.Dto.Type {
+		contactShortRef := dbmodels.NewTeamItemID(request.Contact.TeamID, request.Contact.ID)
+		switch params.Happening.Dbo.Type {
 		case "single":
 			break // nothing to do
 		case "recurring":
 			var updates []dal.Update
-			if updates, err = removeContactFromHappeningBriefInTeamDto(params.TeamModuleEntry, params.Happening, teamContactID); err != nil {
+			if updates, err = removeContactFromHappeningBriefInContactusTeamDbo(params.TeamModuleEntry, params.Happening, contactShortRef); err != nil {
 				return fmt.Errorf("failed to remove member from happening brief in team DBO: %w", err)
 			}
 			params.TeamModuleUpdates = append(params.TeamModuleUpdates, updates...)
 		default:
 			return fmt.Errorf("invalid happenning record: %w",
 				validation.NewErrBadRecordFieldValue("type",
-					fmt.Sprintf("unknown value: [%v]", params.Happening.Dto.Type)))
+					fmt.Sprintf("unknown value: [%v]", params.Happening.Dbo.Type)))
 		}
+		contactFullRef := models4contactus.NewContactFullRef(contactShortRef.TeamID(), contactShortRef.ItemID())
+		params.HappeningUpdates = append(params.HappeningUpdates, params.Happening.Dbo.RemoveRelatedAndID(contactFullRef)...)
 		return err
 	}
 
@@ -47,7 +49,7 @@ func RemoveParticipantFromHappening(ctx context.Context, user facade.User, reque
 	return nil
 }
 
-func removeContactFromHappeningBriefInTeamDto(
+func removeContactFromHappeningBriefInContactusTeamDbo(
 	calendariumTeam dal4calendarium.CalendariumTeamContext,
 	happening models4calendarium.HappeningContext,
 	contactShortRef dbmodels.TeamItemID,

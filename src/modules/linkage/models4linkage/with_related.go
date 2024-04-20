@@ -66,6 +66,8 @@ func GetRelatedItemByKey(relatedItems []*RelatedItem, key RelatedItemKey) *Relat
 type RelatedItem struct {
 	Keys []RelatedItemKey `json:"keys" firestore:"keys"`
 
+	Note string `json:"note,omitempty" firestore:"note,omitempty"`
+
 	// RelatedAs - if related contact is a child of the current contact, then relatedAs = {"child": ...}
 	RelatedAs Relationships `json:"relatedAs,omitempty" firestore:"relatedAs,omitempty"`
 
@@ -137,7 +139,7 @@ func (v *WithRelated) Validate() error {
 	return v.ValidateRelated(nil)
 }
 
-// RemoveRelatedItem removes all relationships to a given contact
+// RemoveRelatedItem removes all relationships to a given item
 // TODO(help-wanted): needs 100% code coverage by tests
 func (v *WithRelated) RemoveRelatedItem(ref TeamModuleItemRef) (updates []dal.Update) {
 	collectionsRelated := v.Related[ref.ModuleID]
