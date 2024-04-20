@@ -2,7 +2,6 @@ package models4calendarium
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/models4linkage"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/strongoapp/with"
@@ -19,7 +18,7 @@ type HappeningDbo struct {
 	with.DatesFields
 	models4linkage.WithRelatedAndIDs
 	//dbmodels.WithTeamDates
-	briefs4contactus.WithMultiTeamContacts[*briefs4contactus.ContactBrief]
+	//briefs4contactus.WithMultiTeamContacts[*briefs4contactus.ContactBrief]
 }
 
 // Validate returns error if not valid
@@ -54,9 +53,6 @@ func (v *HappeningDbo) Validate() error {
 			)
 		}
 	}
-	if err := v.WithMultiTeamContactIDs.Validate(); err != nil {
-		return err
-	}
 	switch v.Type {
 	case "":
 		return validation.NewErrRecordIsMissingRequiredField("type")
@@ -78,8 +74,8 @@ func (v *HappeningDbo) Validate() error {
 		return validation.NewErrBadRecordFieldValue("type", "unknown value: "+v.Type)
 	}
 
-	if err := v.WithMultiTeamContacts.Validate(); err != nil {
-		return err
-	}
+	//if err := v.WithMultiTeamContacts.Validate(); err != nil {
+	//	return err
+	//}
 	return nil
 }

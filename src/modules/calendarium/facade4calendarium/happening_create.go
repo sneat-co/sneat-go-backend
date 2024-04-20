@@ -42,7 +42,7 @@ func CreateHappening(
 		//	},
 		//},
 	}
-	happeningDto.ContactIDs = append(happeningDto.ContactIDs, "*")
+	//happeningDto.ContactIDs = append(happeningDto.ContactIDs, "*")
 
 	if happeningDto.Type == models4calendarium.HappeningTypeSingle {
 		for _, slot := range happeningDto.Slots {
@@ -56,7 +56,7 @@ func CreateHappening(
 		const4calendarium.ModuleID,
 		new(models4calendarium.CalendariumTeamDto),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDto]) (err error) {
-			response, err = createHappeningTx(ctx, tx, request, happeningDto, params)
+			response, err = createHappeningTx(ctx, tx, happeningDto, params)
 			return
 		},
 	)
@@ -64,7 +64,7 @@ func CreateHappening(
 	return
 }
 
-func createHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, request dto4calendarium.CreateHappeningRequest, happeningDto *models4calendarium.HappeningDbo, params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDto]) (
+func createHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, happeningDto *models4calendarium.HappeningDbo, params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDto]) (
 	response dto4calendarium.CreateHappeningResponse, err error,
 ) {
 	happeningDto.CreatedAt = params.Started
@@ -113,11 +113,11 @@ func createHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, request
 		if err = tx.GetMulti(ctx, contactRecords); err != nil {
 			return response, err
 		}
-		for teamID, teamContacts := range contactsByTeamID {
-			for _, contact := range teamContacts {
-				happeningDto.AddContact(teamID, contact.ID, &contact.Data.ContactBrief)
-			}
-		}
+		//for teamID, teamContacts := range contactsByTeamID {
+		//	for _, contact := range teamContacts {
+		//		happeningDto.AddContact(teamID, contact.ID, &contact.Data.ContactBrief)
+		//	}
+		//}
 	}
 
 	var happeningID string
