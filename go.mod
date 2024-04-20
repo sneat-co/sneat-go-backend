@@ -20,8 +20,8 @@ require (
 	github.com/bots-go-framework/bots-api-telegram v0.4.3
 	github.com/bots-go-framework/bots-fw v0.25.2
 	github.com/bots-go-framework/bots-fw-store v0.4.0
-	github.com/bots-go-framework/bots-fw-telegram v0.8.5
-	github.com/bots-go-framework/bots-fw-telegram-models v0.1.4
+	github.com/bots-go-framework/bots-fw-telegram v0.8.6
+	github.com/bots-go-framework/bots-fw-telegram-models v0.1.5
 	github.com/bots-go-framework/bots-go-core v0.0.2
 	github.com/bots-go-framework/bots-host-gae v0.5.7
 	github.com/captaincodeman/datastore-mapper v0.0.0-20170320145307-cb380a4c4d13
@@ -40,10 +40,10 @@ require (
 	github.com/sendgrid/sendgrid-go v3.14.0+incompatible
 	github.com/shiyanhui/hero v0.0.2
 	github.com/sneat-co/debtstracker-translations v0.0.21
-	github.com/sneat-co/sneat-go-core v0.23.4
-	github.com/sneat-co/sneat-go-firebase v0.4.39
+	github.com/sneat-co/sneat-go-core v0.23.5
+	github.com/sneat-co/sneat-go-firebase v0.4.40
 	github.com/stretchr/testify v1.9.0
-	github.com/strongo/app-host-gae v0.1.26
+	github.com/strongo/app-host-gae v0.1.27
 	github.com/strongo/decimal v0.0.1
 	github.com/strongo/delaying v0.0.1
 	github.com/strongo/facebook v1.8.1
