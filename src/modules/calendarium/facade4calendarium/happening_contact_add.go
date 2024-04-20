@@ -12,7 +12,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/models4linkage"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
-	"time"
 )
 
 func AddParticipantToHappening(ctx context.Context, user facade.User, request dto4calendarium.HappeningContactRequest) (err error) {
@@ -31,7 +30,7 @@ func AddParticipantToHappening(ctx context.Context, user facade.User, request dt
 			break // No special processing needed
 		case "recurring":
 			var updates []dal.Update
-			if updates, err = addContactToHappeningBriefInTeamDto(ctx, user, tx, params.TeamModuleEntry, params.Happening, request.Contact.ID); err != nil {
+			if updates, err = addContactToHappeningBriefInTeamDto(ctx, tx, params.TeamModuleEntry, params.Happening, request.Contact.ID); err != nil {
 				return fmt.Errorf("failed to add member to happening brief in team DTO: %w", err)
 			}
 			params.TeamModuleUpdates = append(params.TeamModuleUpdates, updates...)
@@ -40,14 +39,17 @@ func AddParticipantToHappening(ctx context.Context, user facade.User, request dt
 				validation.NewErrBadRecordFieldValue("type",
 					fmt.Sprintf("unknown value: [%v]", params.Happening.Dto.Type)))
 		}
-		contactRef := models4contactus.NewContactRef(request.TeamID, request.Contact.ID)
+		contactFullRef := models4contactus.NewContactFullRef(request.TeamID, request.Contact.ID)
 		var updates []dal.Update
-		if updates, err = params.Happening.Dto.WithRelated.AddRelationship(user.GetID(), models4linkage.Link{TeamModuleDocRef: contactRef, RelatedAs: []string{"participant"}}, time.Now()); err != nil {
+		if updates, err = params.Happening.Dto.WithRelated.AddRelationship(
+			models4linkage.Link{
+				TeamModuleItemRef: contactFullRef,
+				RelatedAs:         []string{"participant"},
+			},
+		); err != nil {
 			return err
 		}
 		params.HappeningUpdates = append(params.HappeningUpdates, updates...)
-		//params.HappeningUpdates = append(params.HappeningUpdates, params.Happening.Dto.AddContact(request.Contact.TeamID, contact.ID, &contact.Data.ContactBrief)...)
-		//params.HappeningUpdates = append(params.HappeningUpdates, params.Happening.Dto.AddParticipant(request.Contact.TeamID, contact.ID, nil)...)
 		return err
 	}
 
@@ -58,9 +60,8 @@ func AddParticipantToHappening(ctx context.Context, user facade.User, request dt
 }
 
 func addContactToHappeningBriefInTeamDto(
-	ctx context.Context,
-	user facade.User,
-	tx dal.ReadwriteTransaction,
+	_ context.Context,
+	_ dal.ReadwriteTransaction,
 	calendariumTeam dal4calendarium.CalendariumTeamContext,
 	happening models4calendarium.HappeningContext,
 	contactID string,
@@ -80,7 +81,7 @@ func addContactToHappeningBriefInTeamDto(
 	}
 	contactRef := models4linkage.NewTeamModuleDocRef(teamID, const4contactus.ModuleID, const4contactus.ContactsCollection, contactID)
 
-	updates, err = happeningBriefPointer.AddRelationship(user.GetID(), models4linkage.Link{TeamModuleDocRef: contactRef, RelatedAs: []string{"participant"}}, time.Now())
+	updates, err = happeningBriefPointer.AddRelationship(models4linkage.Link{TeamModuleItemRef: contactRef, RelatedAs: []string{"participant"}})
 	for i := range updates {
 		updates[i].Field = fmt.Sprintf("recurringHappenings.%s.%s", happening.ID, updates[i].Field)
 	}

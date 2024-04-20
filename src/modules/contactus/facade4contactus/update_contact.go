@@ -99,13 +99,13 @@ func updateContactTxWorker(
 	}
 
 	if request.RelatedTo != nil {
-		recordRef := models4linkage.TeamModuleDocRef{
+		recordRef := models4linkage.TeamModuleItemRef{
 			ModuleID:   const4contactus.ModuleID,
 			Collection: const4contactus.ContactsCollection,
 			TeamID:     request.TeamID,
 			ItemID:     request.ContactID,
 		}
-		relatableAdapted := facade4linkage.NewRelatableAdapter[*models4contactus.ContactDbo](func(ctx context.Context, tx dal.ReadTransaction, recordRef models4linkage.TeamModuleDocRef) (err error) {
+		relatableAdapted := facade4linkage.NewRelatableAdapter[*models4contactus.ContactDbo](func(ctx context.Context, tx dal.ReadTransaction, recordRef models4linkage.TeamModuleItemRef) (err error) {
 			// Verify contactID belongs to the same team
 			teamContactBriefID := recordRef.ItemID
 			if _, existingContact := params.TeamModuleEntry.Data.Contacts[teamContactBriefID]; !existingContact {
@@ -116,7 +116,7 @@ func updateContactTxWorker(
 			return nil
 		})
 		var relUpdate []dal.Update
-		if relUpdate, err = facade4linkage.SetRelated(ctx, tx, params.UserID, params.Started, relatableAdapted, params.Contact, recordRef, *request.RelatedTo); err != nil {
+		if relUpdate, err = facade4linkage.SetRelated(ctx, tx, relatableAdapted, params.Contact, recordRef, *request.RelatedTo); err != nil {
 			return err
 		}
 		params.ContactUpdates = append(params.ContactUpdates, relUpdate...)

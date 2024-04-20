@@ -3,7 +3,6 @@ package models4linkage
 import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
-	"github.com/strongo/strongoapp/with"
 	"reflect"
 	"testing"
 	"time"
@@ -16,7 +15,7 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 	}
 	type args struct {
 		userID string
-		//recordRef TeamModuleDocRef
+		//recordRef TeamModuleItemRef
 		link Link
 		now  time.Time
 	}
@@ -32,14 +31,8 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 			fields: fields{},
 			args: args{
 				userID: "u1",
-				//recordRef: TeamModuleDocRef{
-				//	TeamID:     "team1",
-				//	ModuleID:   const4contactus.ModuleID,
-				//	Collection: const4contactus.ContactsCollection,
-				//	ItemID:     "u1c",
-				//},
 				link: Link{
-					TeamModuleDocRef: TeamModuleDocRef{
+					TeamModuleItemRef: TeamModuleItemRef{
 						TeamID:     "team1",
 						ModuleID:   const4contactus.ModuleID,
 						Collection: const4contactus.ContactsCollection,
@@ -50,11 +43,27 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 				now: now,
 			},
 			wantUpdates: []dal.Update{
-				{Field: "related.contactus.contacts.team1.c2.relatedAs.parent", Value: &Relationship{
-					CreatedField: with.CreatedField{
-						Created: with.Created{By: "u1", At: now.Format(time.DateOnly)}}},
+				{
+					Field: "related.contactus.contacts", // team1.c2.relatedAs.child
+					Value: []*RelatedItem{
+						{
+							Keys: []RelatedItemKey{
+								{TeamID: "team1", ItemID: "c2"},
+							},
+							RelatedAs: Relationships{
+								"parent": &Relationship{
+									//CreatedField: with.CreatedField{
+									//	Created: with.Created{
+									//		By: "u1",
+									//		At: now.Format(time.DateTime),
+									//	},
+									//},
+								},
+							},
+						},
+					},
 				},
-				//{Field: "related.team1.contactus.contacts.c2.relatesAs.child", Value: &Relationship{WithCreatedField: dbmodels.WithCreatedField{Created: dbmodels.Created{By: "u1", On: now.Format(time.DateOnly)}}}},
+				//{Field: "related.team1.contactus.contacts.c2.relatesAs.child", Value: &Relationship{WithCreatedField: dbmodels.WithCreatedField{Created: dbmodels.Created{By: "u1", On: now.Format(time.DateTime)}}}},
 				{Field: "relatedIDs", Value: []string{"contactus.contacts.team1.c2"}},
 			},
 		},
@@ -63,14 +72,14 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 			fields: fields{},
 			args: args{
 				userID: "u1",
-				//recordRef: TeamModuleDocRef{
+				//recordRef: TeamModuleItemRef{
 				//	TeamID:     "team1",
 				//	ModuleID:   const4contactus.ModuleID,
 				//	Collection: const4contactus.ContactsCollection,
 				//	ItemID:     "u1c",
 				//},
 				link: Link{
-					TeamModuleDocRef: TeamModuleDocRef{
+					TeamModuleItemRef: TeamModuleItemRef{
 						TeamID:     "team1",
 						ModuleID:   const4contactus.ModuleID,
 						Collection: const4contactus.ContactsCollection,
@@ -81,11 +90,20 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 				now: now,
 			},
 			wantUpdates: []dal.Update{
-				{Field: "related.contactus.contacts.team1.c2.relatedAs.child",
-					Value: &Relationship{
-						CreatedField: with.CreatedField{
-							Created: with.Created{By: "u1",
-								At: now.Format(time.DateOnly),
+				{Field: "related.contactus.contacts", // team1.c2.relatedAs.child
+					Value: []*RelatedItem{
+						{
+							Keys: []RelatedItemKey{
+								{TeamID: "team1", ItemID: "c2"},
+							},
+							RelatedAs: Relationships{
+								"child": &Relationship{
+									//CreatedField: with.CreatedField{
+									//	Created: with.Created{By: "u1",
+									//		At: now.Format(time.DateTime),
+									//	},
+									//},
+								},
 							},
 						},
 					},
@@ -102,16 +120,43 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 				},
 				RelatedIDs: tt.fields.relatedIDs,
 			}
-			gotUpdates, gotErr := v.SetRelationshipToItem(
-				tt.args.userID,
+			gotUpdates, gotErr := v.AddRelationshipAndID(
 				tt.args.link,
-				tt.args.now,
 			)
 			if gotErr != nil {
 				t.Fatal(gotErr)
 			}
-			if !reflect.DeepEqual(gotUpdates, tt.wantUpdates) {
+			if len(gotUpdates) != len(tt.wantUpdates) {
 				t.Errorf("SetRelationshipToItem()\nactual:\n%+v,\nwant:\n%+v", gotUpdates, tt.wantUpdates)
+			}
+			for i, gotUpdate := range gotUpdates {
+				wantUpdate := tt.wantUpdates[i]
+				if gotUpdate.Field != wantUpdate.Field {
+					t.Errorf("SetRelationshipToItem()[%d]\nactual.Field:\n\t%+v,\nwant.Field:\n\t%+v", i, gotUpdate.Field, wantUpdate.Field)
+				}
+				if !reflect.DeepEqual(gotUpdate.FieldPath, wantUpdate.FieldPath) {
+					t.Errorf("SetRelationshipToItem()[%d]\nactual.Field:\n\t%+v,\nwant.Field:\n\t%+v", i, gotUpdate.FieldPath, wantUpdate.FieldPath)
+				}
+				if !reflect.DeepEqual(gotUpdate.Value, wantUpdate.Value) {
+					t.Errorf("SetRelationshipToItem()[%d]\nactual.Value:\n\t%+v,\nwant.Value:\n\t%+v", i, gotUpdate.Value, wantUpdate.Value)
+					gotItems := gotUpdate.Value.([]*RelatedItem)
+					wantItems := wantUpdate.Value.([]*RelatedItem)
+					if len(gotItems) != len(wantItems) {
+						t.Errorf("SetRelationshipToItem()[%d]\nactual.Value:\n\t%+v,\nwant.Value:\n\t%+v", i, gotItems, wantItems)
+					}
+					for j, gotItem := range gotItems {
+						wantItem := wantItems[j]
+						if !reflect.DeepEqual(gotItem.Keys, wantItem.Keys) {
+							t.Errorf("SetRelationshipToItem()[%d]\nactual.Value[%d].Keys:\n\t%+v,\nwant.Value[%d].Keys:\n\t%+v", i, j, gotItem.Keys, j, wantItem.Keys)
+						}
+						if !reflect.DeepEqual(gotItem.RelatedAs, wantItem.RelatedAs) {
+							t.Errorf("SetRelationshipToItem()[%d]\nactual.Value[%d].RelatedAs:\n\t%+v,\nwant.Value[%d].RelatedAs:\n\t%+v", i, j, gotItem.RelatedAs, j, wantItem.RelatedAs)
+						}
+						if !reflect.DeepEqual(gotItem.RelatesAs, wantItem.RelatesAs) {
+							t.Errorf("SetRelationshipToItem()[%d]\nactual.Value[%d].RelatesAs:\n\t%+v,\nwant.Value[%d].RelatesAs:\n\t%+v", i, j, gotItem.RelatesAs, j, wantItem.RelatesAs)
+						}
+					}
+				}
 			}
 		})
 	}

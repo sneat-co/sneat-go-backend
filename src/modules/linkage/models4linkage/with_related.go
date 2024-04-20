@@ -4,20 +4,20 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
-	"github.com/strongo/strongoapp/with"
+	"github.com/strongo/slice"
 	"github.com/strongo/validation"
 	"strings"
-	"time"
 )
 
 type RelationshipID = string
 
 type Relationship struct {
-	with.CreatedField
+	//with.CreatedField
 }
 
 func (v Relationship) Validate() error {
-	return v.CreatedField.Validate()
+	return nil
+	//return v.CreatedField.Validate()
 }
 
 type Relationships = map[RelationshipID]*Relationship
@@ -82,9 +82,7 @@ func (v *RelatedItem) String() string {
 
 func NewRelatedItem(key RelatedItemKey) *RelatedItem {
 	return &RelatedItem{
-		Keys:      []RelatedItemKey{key},
-		RelatedAs: make(Relationships, 1),
-		RelatesAs: make(Relationships, 1),
+		Keys: []RelatedItemKey{key},
 	}
 }
 
@@ -139,15 +137,58 @@ func (v *WithRelated) Validate() error {
 	return v.ValidateRelated(nil)
 }
 
-// RemoveRelationshipToContact removes all relationships to a given contact
-func (v *WithRelated) RemoveRelationshipToContact(ref TeamModuleDocRef) (updates []dal.Update) {
-	id := ref.ID()
-	if _, ok := v.Related[id]; ok {
-		delete(v.Related, id)
-		updates = append(updates, dal.Update{
-			Field: relatedField + "." + id,
-			Value: dal.DeleteField,
-		})
+// RemoveRelatedItem removes all relationships to a given contact
+// TODO(help-wanted): needs 100% code coverage by tests
+func (v *WithRelated) RemoveRelatedItem(ref TeamModuleItemRef) (updates []dal.Update) {
+	collectionsRelated := v.Related[ref.ModuleID]
+	if collectionsRelated == nil {
+		return
+	}
+	relatedItems := collectionsRelated[ref.Collection]
+	if len(relatedItems) == 0 {
+		return
+	}
+	var newRelatedItems []*RelatedItem
+
+relatedItemCycle:
+	for _, relatedItem := range relatedItems {
+		for _, key := range relatedItem.Keys {
+			if key.TeamID == ref.TeamID && key.ItemID == ref.ItemID {
+				continue relatedItemCycle
+			}
+		}
+		newRelatedItems = append(newRelatedItems, relatedItem)
+	}
+	field := fmt.Sprintf("%s.%s.%s", relatedField, ref.ModuleID, ref.Collection)
+	if len(newRelatedItems) != len(relatedItems) {
+		if len(newRelatedItems) == 0 {
+			delete(collectionsRelated, ref.Collection)
+			if len(collectionsRelated) == 0 {
+				delete(v.Related, ref.ModuleID)
+				if len(v.Related) == 0 {
+					updates = append(updates, dal.Update{
+						Field: relatedField,
+						Value: dal.DeleteField,
+					})
+				} else {
+					updates = append(updates, dal.Update{
+						Field: fmt.Sprintf("%s.%s", relatedField, ref.ModuleID),
+						Value: dal.DeleteField,
+					})
+				}
+			} else {
+				updates = append(updates, dal.Update{
+					Field: field,
+					Value: dal.DeleteField,
+				})
+			}
+		} else {
+			collectionsRelated[ref.Collection] = newRelatedItems
+			updates = append(updates, dal.Update{
+				Field: field,
+				Value: newRelatedItems,
+			})
+		}
 	}
 	return updates
 }
@@ -183,30 +224,28 @@ func (v *WithRelated) ValidateRelated(validateID func(relatedID string) error) e
 	return nil
 }
 
-func (v *WithRelated) SetRelationshipToItem(
-	userID string,
-	link Link,
-	now time.Time,
-) (updates []dal.Update, err error) {
-	if err = link.Validate(); err != nil {
-		return nil, fmt.Errorf("failed to validate link: %w", err)
+func (v *WithRelated) AddRelationship(link Link) (updates []dal.Update, err error) {
+	if err := link.Validate(); err != nil {
+		return nil, err
 	}
-
-	var alreadyHasRelatedAs bool
-
 	if v.Related == nil {
 		v.Related = make(RelatedByModuleID, 1)
 	}
+
+	for _, linkRelatedAs := range link.RelatesAs {
+		if relatesAs := GetRelatesAsFromRelated(linkRelatedAs); relatesAs != "" && !slice.Contains(link.RelatesAs, relatesAs) {
+			link.RelatesAs = append(link.RelatesAs, "child")
+		}
+	}
+
 	relatedByCollectionID := v.Related[link.ModuleID]
 	if relatedByCollectionID == nil {
 		relatedByCollectionID = make(RelatedByCollectionID, 1)
-		v.Related[link.ModuleID] = relatedByCollectionID
+		v.Related[const4contactus.ModuleID] = relatedByCollectionID
 	}
+
 	relatedItems := relatedByCollectionID[const4contactus.ContactsCollection]
-	if relatedItems == nil {
-		relatedItems = make([]*RelatedItem, 0, 1)
-		relatedByCollectionID[const4contactus.ContactsCollection] = relatedItems
-	}
+
 	relatedItemKey := RelatedItemKey{TeamID: link.TeamID, ItemID: link.ItemID}
 	relatedItem := GetRelatedItemByKey(relatedItems, relatedItemKey)
 	if relatedItem == nil {
@@ -215,35 +254,102 @@ func (v *WithRelated) SetRelationshipToItem(
 		relatedByCollectionID[const4contactus.ContactsCollection] = relatedItems
 	}
 
-	addIfNeeded := func(f string, itemRelationships Relationships, linkRelationshipIDs []RelationshipID) {
-		field := func() string {
-			return fmt.Sprintf("%s.%s.%s", relatedField, link.ID(), f)
+	addRelationship := func(field string, relationshipIDs []RelationshipID, relationships Relationships) Relationships {
+		if len(relationshipIDs) == 0 {
+			return relationships
 		}
-		for _, linkRelationshipID := range linkRelationshipIDs {
-			for itemRelationshipID := range itemRelationships {
-				if itemRelationshipID == linkRelationshipID {
-					alreadyHasRelatedAs = true
-				} else {
-					updates = append(updates, dal.Update{Field: field(), Value: dal.DeleteField})
+		if relationships == nil {
+			relationships = make(Relationships, len(relationshipIDs))
+		}
+		for _, relationshipID := range relationshipIDs {
+			if relationship := relationships[relationshipID]; relationship == nil {
+				relationship = &Relationship{
+					//CreatedField: with.CreatedField{
+					//	Created: with.Created{
+					//		By: userID,
+					//		At: now.Format(time.RFC3339),
+					//	},
+					//},
 				}
+				relationships[relationshipID] = relationship
 			}
 		}
-	}
-	addIfNeeded("relatedAs", relatedItem.RelatedAs, link.RelatedAs)
-	addIfNeeded("relatesAs", relatedItem.RelatesAs, link.RelatesAs)
-
-	if alreadyHasRelatedAs {
-		if len(v.Related) == 0 {
-			v.Related = nil
-		}
-		return updates, nil
+		return relationships
 	}
 
-	var relationshipUpdate []dal.Update
-	if relationshipUpdate, err = v.AddRelationship(userID, link, now); err != nil {
-		return updates, err
-	}
-	updates = append(updates, relationshipUpdate...)
+	relatedItem.RelatedAs = addRelationship("relatedAs", link.RelatedAs, relatedItem.RelatedAs)
+	relatedItem.RelatesAs = addRelationship("relatesAs", link.RelatesAs, relatedItem.RelatesAs)
 
-	return updates, err
+	updates = append(updates, dal.Update{
+		Field: fmt.Sprintf("related.%s", link.ModuleCollectionPath()),
+		Value: relatedItems,
+	})
+
+	return updates, nil
 }
+
+//func (v *WithRelated) SetRelationshipToItem(
+//	userID string,
+//	link Link,
+//	now time.Time,
+//) (updates []dal.Update, err error) {
+//	if err = link.Validate(); err != nil {
+//		return nil, fmt.Errorf("failed to validate link: %w", err)
+//	}
+//
+//	//var alreadyHasRelatedAs bool
+//
+//	changed := false
+//
+//	if v.Related == nil {
+//		v.Related = make(RelatedByModuleID, 1)
+//	}
+//	relatedByCollectionID := v.Related[link.ModuleID]
+//	if relatedByCollectionID == nil {
+//		relatedByCollectionID = make(RelatedByCollectionID, 1)
+//		v.Related[link.ModuleID] = relatedByCollectionID
+//	}
+//	relatedItems := relatedByCollectionID[const4contactus.ContactsCollection]
+//	//if relatedItems == nil {
+//	//	relatedItems = make([]*RelatedItem, 0, 1)
+//	//	relatedByCollectionID[const4contactus.ContactsCollection] = relatedItems
+//	//}
+//	relatedItemKey := RelatedItemKey{TeamID: link.TeamID, ItemID: link.ItemID}
+//	relatedItem := GetRelatedItemByKey(relatedItems, relatedItemKey)
+//	if relatedItem == nil {
+//		relatedItem = NewRelatedItem(relatedItemKey)
+//		relatedItems = append(relatedItems, relatedItem)
+//		relatedByCollectionID[const4contactus.ContactsCollection] = relatedItems
+//		changed = true
+//	}
+//
+//	//addIfNeeded := func(f string, itemRelationships Relationships, linkRelationshipIDs []RelationshipID) {
+//	//	field := func() string {
+//	//		return fmt.Sprintf("%s.%s.%s", relatedField, link.ID(), f)
+//	//	}
+//	//	for _, linkRelationshipID := range linkRelationshipIDs {
+//	//		itemRelationship := itemRelationships[linkRelationshipID]
+//	//		if itemRelationship == nil {
+//	//			itemRelationships[linkRelationshipID] = &Relationship{
+//	//				CreatedField: with.CreatedField{
+//	//					Created: with.Created{
+//	//						By: userID,
+//	//						At: now.Format(time.DateOnly),
+//	//					},
+//	//				},
+//	//			}
+//	//			alreadyHasRelatedAs = true
+//	//		}
+//	//	}
+//	//}
+//	//addIfNeeded("relatedAs", relatedItem.RelatedAs, link.RelatedAs)
+//	//addIfNeeded("relatesAs", relatedItem.RelatesAs, link.RelatesAs)
+//
+//	var relationshipUpdate []dal.Update
+//	if relationshipUpdate, err = v.AddRelationshipAndID(userID, link, now); err != nil {
+//		return updates, err
+//	}
+//	updates = append(updates, relationshipUpdate...)
+//
+//	return updates, err
+//}

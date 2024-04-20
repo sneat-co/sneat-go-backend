@@ -3,12 +3,9 @@ package models4linkage
 import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/strongo/slice"
-	"github.com/strongo/strongoapp/with"
 	"github.com/strongo/validation"
 	"strings"
-	"time"
 )
 
 // WithRelatedAndIDs defines relationship of the current contact record to other contacts.
@@ -75,36 +72,23 @@ func (v *WithRelatedAndIDs) Validate() error {
 	return nil
 }
 
-func (v *WithRelatedAndIDs) SetRelationshipsToItem(
-	userID string,
-	/*recordRef*/ _ TeamModuleDocRef,
-	relatedTo TeamModuleDocRef,
+func (v *WithRelatedAndIDs) AddRelationshipsAndIDs(
+	/*recordRef*/ _ TeamModuleItemRef, // TODO: handle or remove
+	relatedTo TeamModuleItemRef,
 	relatedAs Relationships,
-	/*relatesAs*/ _ Relationships,
-	now time.Time,
+	/*relatesAs*/ _ Relationships, // TODO: needs implementation
 ) (updates []dal.Update, err error) {
 	link := Link{
-		TeamModuleDocRef: relatedTo,
+		TeamModuleItemRef: relatedTo,
 	}
 	for relatedAsID := range relatedAs {
 		link.RelatesAs = append(link.RelatesAs, relatedAsID)
 	}
-	return v.SetRelationshipToItem(userID, link, now)
-	//return nil, errors.New("not implemented yet - SetRelationshipsToItem")
+	return v.AddRelationshipAndID(link)
+	//return nil, errors.New("not implemented yet - AddRelationshipsAndIDs")
 }
 
-func (v *WithRelatedAndIDs) SetRelationshipToItem(
-	userID string,
-	link Link,
-	now time.Time,
-) (updates []dal.Update, err error) {
-	updates, err = v.WithRelated.SetRelationshipToItem(userID, link, now)
-	v.updateRelatedIDs()
-	updates = append(updates, dal.Update{Field: "relatedIDs", Value: v.RelatedIDs})
-	return
-}
-
-func (v *WithRelatedAndIDs) updateRelatedIDs() {
+func (v *WithRelatedAndIDs) updateRelatedIDs() (updates []dal.Update) {
 	v.RelatedIDs = make([]string, 0, len(v.Related))
 	for moduleID, relatedByCollectionID := range v.Related {
 		for collectionID, relatedItems := range relatedByCollectionID {
@@ -116,98 +100,21 @@ func (v *WithRelatedAndIDs) updateRelatedIDs() {
 			}
 		}
 	}
-}
-
-func (v *WithRelatedAndIDs) AddRelationship(
-	userID string,
-	link Link,
-	now time.Time,
-) (updates []dal.Update, err error) {
-	if updates, err = v.WithRelated.AddRelationship(userID, link, now); err != nil {
-		return nil, err
-	}
-	relatedItemID := link.TeamModuleDocRef.ID()
-	if !slice.Contains(v.RelatedIDs, relatedItemID) {
-		v.RelatedIDs = append(v.RelatedIDs, relatedItemID)
-		updates = append(updates, dal.Update{Field: "relatedIDs", Value: v.RelatedIDs})
-	}
+	updates = append(updates, dal.Update{Field: "relatedIDs", Value: v.RelatedIDs})
 	return
 }
 
-func (v *WithRelated) AddRelationship(
-	userID string,
+func (v *WithRelatedAndIDs) AddRelationshipAndID(
 	link Link,
-	now time.Time,
 ) (updates []dal.Update, err error) {
-	if err := link.Validate(); err != nil {
-		return nil, err
-	}
-	if v.Related == nil {
-		v.Related = make(RelatedByModuleID, 1)
-	}
-
-	for _, linkRelatedAs := range link.RelatesAs {
-		if relatesAs := GetRelatesAsFromRelated(linkRelatedAs); relatesAs != "" && !slice.Contains(link.RelatesAs, relatesAs) {
-			link.RelatesAs = append(link.RelatesAs, "child")
-		}
-	}
-
-	relatedByCollectionID := v.Related[link.ModuleID]
-	if relatedByCollectionID == nil {
-		relatedByCollectionID = make(RelatedByCollectionID, 1)
-		v.Related[const4contactus.ModuleID] = relatedByCollectionID
-	}
-
-	relatedItems := relatedByCollectionID[const4contactus.ContactsCollection]
-
-	relatedItemKey := RelatedItemKey{TeamID: link.TeamID, ItemID: link.ItemID}
-	relatedItem := GetRelatedItemByKey(relatedItems, relatedItemKey)
-	if relatedItem == nil {
-		relatedItem = NewRelatedItem(relatedItemKey)
-		relatedItems = append(relatedItems, relatedItem)
-		relatedByCollectionID[const4contactus.ContactsCollection] = relatedItems
-	}
-
-	addRelationship := func(field string, relationshipIDs []RelationshipID, relationships Relationships) Relationships {
-		if relationships == nil {
-			relationships = make(Relationships, len(relationshipIDs))
-		}
-		for _, relationshipID := range relationshipIDs {
-			if relationship := relationships[relationshipID]; relationship == nil {
-				relationship = &Relationship{
-					CreatedField: with.CreatedField{
-						Created: with.Created{
-							By: userID,
-							At: now.Format(time.DateOnly),
-						},
-					},
-				}
-				relationships[relationshipID] = relationship
-			}
-		}
-		return relationships
-	}
-
-	relatedItem.RelatedAs = addRelationship("relatedAs", link.RelatedAs, relatedItem.RelatedAs)
-	relatedItem.RelatedAs = addRelationship("relatesAs", link.RelatesAs, relatedItem.RelatesAs)
-
-	updates = append(updates, dal.Update{
-		Field: fmt.Sprintf("related.%s", link.ModuleCollectionPath()),
-		Value: relatedItems,
-	})
-
-	return updates, nil
+	updates, err = v.WithRelated.AddRelationship(link)
+	updates = append(updates, v.updateRelatedIDs()...)
+	return
 }
 
-func (v *WithRelatedAndIDs) RemoveRelationship(ref TeamModuleDocRef) (updates []dal.Update) {
-	updates = v.WithRelated.RemoveRelationshipToContact(ref)
-	if slice.Contains(v.RelatedIDs, ref.ID()) {
-		v.RelatedIDs = slice.RemoveInPlace(ref.ID(), v.RelatedIDs)
-		updates = append(updates, dal.Update{
-			Field: "relatedIDs",
-			Value: v.RelatedIDs,
-		})
-	}
+func (v *WithRelatedAndIDs) RemoveRelatedAndID(ref TeamModuleItemRef) (updates []dal.Update) {
+	updates = v.WithRelated.RemoveRelatedItem(ref)
+	updates = append(updates, v.updateRelatedIDs()...)
 	return updates
 }
 

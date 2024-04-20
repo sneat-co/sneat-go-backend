@@ -22,15 +22,15 @@ func (v *ShortTeamModuleDocRef) Validate() error {
 	return nil
 }
 
-type TeamModuleDocRef struct { // TODO: Move to sneat-go-core or document why not
+type TeamModuleItemRef struct { // TODO: Move to sneat-go-core or document why not
 	TeamID     string `json:"teamID" firestore:"teamID"`
 	ModuleID   string `json:"moduleID" firestore:"moduleID"`
 	Collection string `json:"collection" firestore:"collection"`
 	ItemID     string `json:"itemID" firestore:"itemID"`
 }
 
-func NewTeamModuleDocRef(teamID, moduleID, collection, itemID string) TeamModuleDocRef {
-	return TeamModuleDocRef{
+func NewTeamModuleDocRef(teamID, moduleID, collection, itemID string) TeamModuleItemRef {
+	return TeamModuleItemRef{
 		TeamID:     teamID,
 		ModuleID:   moduleID,
 		Collection: collection,
@@ -38,9 +38,9 @@ func NewTeamModuleDocRef(teamID, moduleID, collection, itemID string) TeamModule
 	}
 }
 
-func NewTeamModuleDocRefFromString(id string) TeamModuleDocRef {
+func NewTeamModuleDocRefFromString(id string) TeamModuleItemRef {
 	ids := strings.Split(id, ".")
-	return TeamModuleDocRef{
+	return TeamModuleItemRef{
 		TeamID:     ids[0],
 		ModuleID:   ids[1],
 		Collection: ids[2],
@@ -48,15 +48,15 @@ func NewTeamModuleDocRefFromString(id string) TeamModuleDocRef {
 	}
 }
 
-func (v TeamModuleDocRef) ID() string {
+func (v TeamModuleItemRef) ID() string {
 	return fmt.Sprintf("%s.%s.%s", v.ModuleCollectionPath(), v.TeamID, v.ItemID)
 }
 
-func (v TeamModuleDocRef) ModuleCollectionPath() string {
+func (v TeamModuleItemRef) ModuleCollectionPath() string {
 	return fmt.Sprintf("%s.%s", v.ModuleID, v.Collection)
 }
 
-func (v TeamModuleDocRef) Validate() error {
+func (v TeamModuleItemRef) Validate() error {
 	// TeamID can be empty for global collections like Happening
 	if v.ModuleID == "" {
 		return validation.NewErrRecordIsMissingRequiredField("moduleID")
@@ -73,14 +73,14 @@ func (v TeamModuleDocRef) Validate() error {
 }
 
 type Link struct {
-	TeamModuleDocRef
+	TeamModuleItemRef
 	//
 	RelatedAs []RelationshipID `json:"relatedAs,omitempty" firestore:"relatedAs,omitempty"`
 	RelatesAs []RelationshipID `json:"relatesAs,omitempty" firestore:"relatesAs,omitempty"`
 }
 
 func (v Link) Validate() error {
-	if err := v.TeamModuleDocRef.Validate(); err != nil {
+	if err := v.TeamModuleItemRef.Validate(); err != nil {
 		return err
 	}
 	valRelationIDs := func(field string, relations []string) error {

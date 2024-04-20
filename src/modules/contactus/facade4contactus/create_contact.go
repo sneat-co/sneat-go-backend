@@ -18,7 +18,6 @@ import (
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/slice"
 	"github.com/strongo/strongoapp/person"
-	"time"
 )
 
 // CreateContact creates team contact
@@ -202,7 +201,7 @@ func CreateContactTx(
 	params.TeamUpdates = append(params.TeamUpdates, params.Team.Data.UpdateNumberOf(const4contactus.ContactsField, len(params.TeamModuleEntry.Data.Contacts)))
 
 	if request.Related != nil {
-		if err = updateRelationshipsInRelatedItems(ctx, tx, params.UserID, userContactID, params.Team.ID, contactID, params.Started, params.TeamModuleEntry, contactDbo, request.Related); err != nil {
+		if err = updateRelationshipsInRelatedItems(ctx, tx, params.UserID, userContactID, params.Team.ID, contactID, params.TeamModuleEntry, contactDbo, request.Related); err != nil {
 			err = fmt.Errorf("failed to update relationships in related items: %w", err)
 			return
 		}
@@ -226,7 +225,6 @@ func CreateContactTx(
 
 func updateRelationshipsInRelatedItems(ctx context.Context, tx dal.ReadTransaction,
 	userID, userContactID, teamID, contactID string,
-	started time.Time,
 	contactusTeamEntry dal4contactus.ContactusTeamModuleEntry,
 	contactDbo *models4contactus.ContactDbo,
 	related models4linkage.RelatedByModuleID,
@@ -242,12 +240,12 @@ func updateRelationshipsInRelatedItems(ctx context.Context, tx dal.ReadTransacti
 	}
 
 	//relatableAdapter := facade4linkage.NewRelatableAdapter[*models4contactus.ContactDbo](
-	//	func(ctx context.Context, tx dal.ReadTransaction, recordRef models4linkage.TeamModuleDocRef) (err error) {
+	//	func(ctx context.Context, tx dal.ReadTransaction, recordRef models4linkage.TeamModuleItemRef) (err error) {
 	//		return err
 	//	},
 	//)
 
-	contactDocRef := models4linkage.TeamModuleDocRef{
+	contactDocRef := models4linkage.TeamModuleItemRef{
 		TeamID:     teamID,
 		ModuleID:   const4contactus.ModuleID,
 		Collection: const4contactus.ContactsCollection,
@@ -258,20 +256,18 @@ func updateRelationshipsInRelatedItems(ctx context.Context, tx dal.ReadTransacti
 		for collection, relatedByItemID := range relatedByCollection {
 			for _, relatedItem := range relatedByItemID {
 				for _, key := range relatedItem.Keys {
-					itemRef := models4linkage.TeamModuleDocRef{
+					itemRef := models4linkage.TeamModuleItemRef{
 						TeamID:     teamID,
 						ModuleID:   moduleID,
 						Collection: collection,
 						ItemID:     key.ItemID,
 					}
 
-					if _, err = contactDbo.SetRelationshipsToItem(
-						userID,
-						contactDocRef,
+					if _, err = contactDbo.AddRelationshipsAndIDs(
+						contactDocRef, // TODO: not used, why passing?
 						itemRef,
 						relatedItem.RelatedAs,
-						relatedItem.RelatesAs,
-						started,
+						relatedItem.RelatesAs, // TODO: not used, needs implementation
 					); err != nil {
 						return err
 					}

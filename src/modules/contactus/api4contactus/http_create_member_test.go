@@ -37,12 +37,12 @@ func TestHttpAddMember(t *testing.T) {
 							},
 							RelatedAs: map[models4linkage.RelationshipID]*models4linkage.Relationship{
 								"spouse": {
-									CreatedField: with.CreatedField{
-										Created: with.Created{
-											By: "u1",
-											At: "2020-01-01",
-										},
-									},
+									//CreatedField: with.CreatedField{
+									//	Created: with.Created{
+									//		By: "u1",
+									//		At: "2020-01-01",
+									//	},
+									//},
 								},
 							},
 						},

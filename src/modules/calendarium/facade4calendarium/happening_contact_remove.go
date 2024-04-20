@@ -30,18 +30,14 @@ func RemoveParticipantFromHappening(ctx context.Context, user facade.User, reque
 		case "recurring":
 			var updates []dal.Update
 			if updates, err = removeContactFromHappeningBriefInTeamDto(params.TeamModuleEntry, params.Happening, teamContactID); err != nil {
-				return fmt.Errorf("failed to remove member from happening brief in team DTO: %w", err)
+				return fmt.Errorf("failed to remove member from happening brief in team DBO: %w", err)
 			}
-			if len(updates) > 0 {
-				params.TeamModuleUpdates = append(params.TeamModuleUpdates, updates...)
-			}
+			params.TeamModuleUpdates = append(params.TeamModuleUpdates, updates...)
 		default:
 			return fmt.Errorf("invalid happenning record: %w",
 				validation.NewErrBadRecordFieldValue("type",
 					fmt.Sprintf("unknown value: [%v]", params.Happening.Dto.Type)))
 		}
-		//params.HappeningUpdates = append(params.HappeningUpdates, params.Happening.Dto.RemoveContact(request.Contact.TeamID, request.Contact.ID)...)
-		//params.HappeningUpdates = append(params.HappeningUpdates, params.Happening.Dto.RemoveParticipant(request.Contact.TeamID, request.Contact.ID)...)
 		return err
 	}
 
@@ -54,13 +50,18 @@ func RemoveParticipantFromHappening(ctx context.Context, user facade.User, reque
 func removeContactFromHappeningBriefInTeamDto(
 	calendariumTeam dal4calendarium.CalendariumTeamContext,
 	happening models4calendarium.HappeningContext,
-	teamContactRef dbmodels.TeamItemID,
+	contactShortRef dbmodels.TeamItemID,
 ) (updates []dal.Update, err error) {
 	calendarHappeningBrief := calendariumTeam.Data.GetRecurringHappeningBrief(happening.ID)
 	if calendarHappeningBrief == nil {
 		return nil, err
 	}
-	contactRef := models4contactus.NewContactRef(teamContactRef.TeamID(), teamContactRef.ItemID())
-	updates = calendarHappeningBrief.WithRelated.RemoveRelationshipToContact(contactRef)
+	contactFullRef := models4contactus.NewContactFullRef(contactShortRef.TeamID(), contactShortRef.ItemID())
+	updates = calendarHappeningBrief.WithRelated.RemoveRelatedItem(contactFullRef)
+	if len(updates) > 0 {
+		for i := range updates {
+			updates[i].Field = fmt.Sprintf("recurringHappenings.%s.%s", happening.ID, updates[i].Field)
+		}
+	}
 	return updates, nil
 }
