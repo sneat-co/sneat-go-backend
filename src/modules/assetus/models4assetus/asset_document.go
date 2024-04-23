@@ -7,6 +7,7 @@ import (
 )
 
 type AssetDocumentExtra struct {
+	AssetExtraBase
 	IssuedOn      string `json:"issuedOn,omitempty" firestore:"issuedOn,omitempty"`
 	EffectiveFrom string `json:"effectiveFrom,omitempty" firestore:"effectiveFrom,omitempty"`
 	ExpiresOn     string `json:"expiresOn,omitempty" firestore:"expiresOn,omitempty"`

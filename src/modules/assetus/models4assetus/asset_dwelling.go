@@ -3,6 +3,7 @@ package models4assetus
 import "github.com/strongo/validation"
 
 type AssetDwellingExtra struct {
+	AssetExtraBase
 	BedRooms  int `json:"bedRooms,omitempty" firestore:"bedRooms,omitempty"`
 	BathRooms int `json:"bathRooms,omitempty" firestore:"bathRooms,omitempty"`
 }

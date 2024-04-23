@@ -50,6 +50,7 @@ var _ AssetExtra = (*AssetVehicleExtra)(nil)
 
 // AssetVehicleExtra is an extension of asset data for vehicles
 type AssetVehicleExtra struct {
+	AssetExtraBase
 	EngineData
 	Vin string `json:"vin,omitempty" firestore:"vin"`
 }

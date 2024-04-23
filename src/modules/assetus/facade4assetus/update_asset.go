@@ -32,7 +32,7 @@ func UpdateAssetTx(ctx context.Context, tx dal.ReadwriteTransaction, user facade
 	case "dwelling":
 		return runAssetWorker(ctx, tx, user, request, new(models4assetus.AssetDwellingExtra))
 	default:
-		return runAssetWorker(ctx, tx, user, request, new(models4assetus.AssetNoExtra))
+		return runAssetWorker(ctx, tx, user, request, models4assetus.NewAssetNoExtra())
 	}
 }
 

@@ -23,14 +23,31 @@ type WithAssetValidator interface {
 }
 
 type AssetExtra interface {
+	GetType() AssetExtraType
 	Validate() error
 }
 
-// AssetNoExtra is used if no extension data is required by an asset type
-type AssetNoExtra struct{}
+type AssetExtraType string
+
+type AssetExtraBase struct {
+	Type AssetExtraType `json:"type" firestore:"type"`
+}
+
+func (v *AssetExtraBase) GetType() AssetExtraType {
+	return v.Type
+}
+
+func NewAssetNoExtra() AssetExtra {
+	return &assetNoExtra{AssetExtraBase{Type: "empty"}}
+}
+
+// assetNoExtra is used if no extension data is required by an asset type
+type assetNoExtra struct {
+	AssetExtraBase
+}
 
 // Validate always returns nil
-func (AssetNoExtra) Validate() error {
+func (assetNoExtra) Validate() error {
 	return nil
 }
 
