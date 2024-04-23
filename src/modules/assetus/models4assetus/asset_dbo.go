@@ -6,41 +6,59 @@ import (
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/strongoapp/with"
+	"github.com/strongo/validation"
 )
 
 const TeamAssetsCollection = "assets"
 
-type AssetSpecificData interface {
-	Validate() error
-}
-
-type AssetMain interface {
-	Validate() error
-	AssetMainData() *AssetMainDto
-	SpecificData() AssetSpecificData
-	SetSpecificData(AssetSpecificData)
-}
-
 type AssetCreationData interface {
+	AssetBaseDboExtension
+	//Validate() error
+	//AssetMainData() *AssetBaseDbo
+	//SpecificData() AssetSpecificData
+}
+
+type WithAssetValidator interface {
+	ValidateWithAsset(asset *AssetBaseDbo) error
+}
+
+type AssetExtra interface {
 	Validate() error
-	AssetMainData() *AssetMainDto
-	SpecificData() AssetSpecificData
 }
 
-type AssetDto struct {
-	with.TagsField
+// AssetNoExtra is used if no extension data is required by an asset type
+type AssetNoExtra struct{}
+
+// Validate always returns nil
+func (AssetNoExtra) Validate() error {
+	return nil
 }
 
-// AssetDbData defines mandatory fields & methods on an asset record
-type AssetDbData interface {
-	AssetMain
-	AssetExtraData() *AssetExtraDto
+// WithAssetExtraField defines and `Extra` field to store extension data
+type WithAssetExtraField struct {
+	Extra AssetExtra `json:"extra" firestore:"extra"`
 }
 
-// AssetMainDto was intended to be used in both AssetBaseDto and request to create an asset,
-// but it was not a good idea as not clear how to manage module specific fields
-type AssetMainDto struct {
+func (v WithAssetExtraField) Validate() error {
+	if v.Extra == nil {
+		return validation.NewErrRecordIsMissingRequiredField("extra")
+	}
+	if err := v.Extra.Validate(); err != nil {
+		return validation.NewErrBadRecordFieldValue("extra", err.Error())
+	}
+	return nil
+}
+
+type AssetBaseDboExtension interface {
+	Validate() error
+	GetAssetBaseDbo() *AssetBaseDbo
+}
+
+// AssetBaseDbo was intended to be used in both AssetDbo and request to create an asset,
+// but it was not a good idea as not clear how to manage module-specific fields
+type AssetBaseDbo struct {
 	briefs4assetus.AssetBrief
+	WithAssetExtraField
 	briefs4assetus.WithAssetusTeamBriefs[*briefs4assetus.AssetBrief]
 	with.TagsField
 	briefs4contactus.WithMultiTeamContactIDs
@@ -48,11 +66,7 @@ type AssetMainDto struct {
 	AssetDates
 }
 
-func (v *AssetMainDto) AssetMainData() *AssetMainDto {
-	return v
-}
-
-func (v *AssetMainDto) Validate() error {
+func (v *AssetBaseDbo) Validate() error {
 	if err := v.AssetBrief.Validate(); err != nil {
 		return err
 	}
@@ -71,21 +85,32 @@ func (v *AssetMainDto) Validate() error {
 	if err := v.AssetDates.Validate(); err != nil {
 		return err
 	}
+	if extra, ok := v.Extra.(WithAssetValidator); ok {
+		if err := extra.ValidateWithAsset(v); err != nil {
+			return validation.NewErrBadRecordFieldValue("extra", err.Error())
+		}
+	} else if err := v.Extra.Validate(); err != nil {
+		return validation.NewErrBadRecordFieldValue("extra", err.Error())
+	}
 	return nil
 }
 
-// AssetExtraDto defines extra fields on an asset record that are not passed in create asset request
-type AssetExtraDto struct {
+// AssetDbo defines fields on an asset record that are not passed in create asset request
+type AssetDbo struct {
+	AssetBaseDbo
 	dbmodels.WithModified
 	dbmodels.WithUserIDs
 	dbmodels.WithTeamIDs
 }
 
-func (v *AssetExtraDto) AssetExtraData() *AssetExtraDto {
+func (v *AssetDbo) AssetExtraData() *AssetDbo {
 	return v
 }
 
-func (v *AssetExtraDto) Validate() error {
+func (v *AssetDbo) Validate() error {
+	if err := v.AssetBaseDbo.Validate(); err != nil {
+		return err
+	}
 	if err := v.WithModified.Validate(); err != nil {
 		return err
 	}

@@ -6,12 +6,10 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dal4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dto4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/models4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
-	"github.com/strongo/validation"
 )
 
 func UpdateAsset(ctx context.Context, user facade.User, request dto4assetus.UpdateAssetRequest) (err error) {
@@ -30,27 +28,26 @@ func UpdateAssetTx(ctx context.Context, tx dal.ReadwriteTransaction, user facade
 	}
 	switch request.AssetCategory {
 	case "vehicle":
-		return runAssetWorker(ctx, tx, user, request, new(models4assetus.AssetDtoVehicle))
-	//case "dwelling":
-	//	return runAssetWorker(ctx, tx, new(models4assetus.AssetDtoDwelling))
+		return runAssetWorker(ctx, tx, user, request, new(models4assetus.AssetVehicleExtra))
+	case "dwelling":
+		return runAssetWorker(ctx, tx, user, request, new(models4assetus.AssetDwellingExtra))
 	default:
-		return validation.NewErrBadRequestFieldValue("assetCategory", "unknown value")
+		return runAssetWorker(ctx, tx, user, request, new(models4assetus.AssetNoExtra))
 	}
 }
 
-type AssetWorkerParams[D models4assetus.AssetDbData] struct {
+type AssetWorkerParams struct {
 	*dal4teamus.ModuleTeamWorkerParams[*models4assetus.AssetusTeamDto]
-	Asset        record.DataWithID[string, D]
+	Asset        record.DataWithID[string, *models4assetus.AssetDbo]
 	AssetUpdates []dal.Update
 }
 
-func runAssetWorker[D models4assetus.AssetDbData](ctx context.Context, tx dal.ReadwriteTransaction, user facade.User, request dto4assetus.UpdateAssetRequest, assetData D) (err error) {
+func runAssetWorker(ctx context.Context, tx dal.ReadwriteTransaction, user facade.User, request dto4assetus.UpdateAssetRequest, assetExtra models4assetus.AssetExtra) (err error) {
 	// TODO: Replace with future RunTeamModuleItemWorkerTx
 	return dal4teamus.RunModuleTeamWorkerTx[*models4assetus.AssetusTeamDto](ctx, tx, user, request.TeamRequest, const4assetus.ModuleID, new(models4assetus.AssetusTeamDto),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4teamus.ModuleTeamWorkerParams[*models4assetus.AssetusTeamDto]) (err error) {
-			key := dal4assetus.NewAssetKey(request.TeamID, request.AssetID)
-			params := AssetWorkerParams[D]{
-				Asset:                  record.NewDataWithID(request.AssetID, key, assetData),
+			params := AssetWorkerParams{
+				Asset:                  NewAsset("", assetExtra),
 				ModuleTeamWorkerParams: teamWorkerParams,
 			}
 			if err := tx.Get(ctx, params.Asset.Record); err != nil {
@@ -72,7 +69,7 @@ func runAssetWorker[D models4assetus.AssetDbData](ctx context.Context, tx dal.Re
 	)
 }
 
-func updateAssetTxWorker[D models4assetus.AssetDbData](ctx context.Context, tx dal.ReadwriteTransaction, request dto4assetus.UpdateAssetRequest, params *AssetWorkerParams[D]) (err error) {
+func updateAssetTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, request dto4assetus.UpdateAssetRequest, params *AssetWorkerParams) (err error) {
 	if err = tx.Get(ctx, params.Asset.Record); err != nil {
 		return fmt.Errorf("failed to get asset record: %w", err)
 	}
@@ -83,7 +80,7 @@ func updateAssetTxWorker[D models4assetus.AssetDbData](ctx context.Context, tx d
 
 	if request.RegNumber != nil {
 		regNumber := *request.RegNumber
-		params.Asset.Data.AssetMainData().RegNumber = regNumber
+		params.Asset.Data.RegNumber = regNumber
 		params.AssetUpdates = append(params.AssetUpdates, dal.Update{Field: "regNumber", Value: regNumber})
 		assetBrief := params.TeamModuleEntry.Data.GetAssetBriefByID(params.Asset.ID)
 		if assetBrief != nil {

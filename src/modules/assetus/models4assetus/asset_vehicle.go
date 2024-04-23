@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/strongo/slice"
 	"github.com/strongo/validation"
-	"strings"
 )
 
 // EngineType is a type of engine
@@ -47,10 +46,19 @@ func IsKnownFuelType(v FuelType) bool {
 	return slice.Contains(FuelTypes, v)
 }
 
-// VehicleData is extension of asset data for vehicles
-type VehicleData struct {
+var _ AssetExtra = (*AssetVehicleExtra)(nil)
+
+// AssetVehicleExtra is an extension of asset data for vehicles
+type AssetVehicleExtra struct {
 	EngineData
 	Vin string `json:"vin,omitempty" firestore:"vin"`
+}
+
+func (v AssetVehicleExtra) Validate() error {
+	if err := v.EngineData.Validate(); err != nil {
+		return validation.NewErrBadRecordFieldValue("engineData", err.Error())
+	}
+	return nil
 }
 
 // EngineData is a struct for engine data
@@ -92,74 +100,6 @@ func (v EngineData) Validate() error {
 		}
 	default:
 		return validation.NewErrBadRecordFieldValue("engineType", "unknown engine type: "+v.EngineType)
-	}
-	return nil
-}
-
-var _ AssetMain = (*VehicleAssetMainData)(nil)
-
-// VehicleAssetMainData is a base struct for DB and request DTOs
-type VehicleAssetMainData struct {
-	AssetMainDto
-	VehicleData
-}
-
-// SpecificData returns specific data
-func (v *VehicleAssetMainData) SpecificData() AssetSpecificData {
-	return &v.VehicleData
-}
-
-// SetSpecificData sets specific data
-func (v *VehicleAssetMainData) SetSpecificData(data AssetSpecificData) {
-	v.VehicleData = data.(VehicleData)
-}
-
-// GenerateTitle generates asset title from vehicle data
-func (v *VehicleAssetMainData) GenerateTitle() string {
-	if v.Title != "" {
-		return v.Title
-	}
-	title := make([]string, 0, 2)
-	if v.Make != "" {
-		title = append(title, v.Make)
-	}
-	if v.Model != "" {
-		title = append(title, v.Model)
-	}
-	if v.RegNumber != "" {
-		title = append(title, v.RegNumber)
-	}
-	return strings.Join(title, " ")
-}
-
-// Validate returns error if not valid
-func (v *VehicleAssetMainData) Validate() error {
-	return nil
-}
-
-var _ AssetDbData = (*AssetDtoVehicle)(nil)
-
-// AssetDtoVehicle is a DB DTO
-type AssetDtoVehicle struct {
-	VehicleAssetMainData
-	AssetExtraDto
-}
-
-// NewVehicleAssetDbData creates new AssetDtoVehicle
-func NewVehicleAssetDbData() *AssetDtoVehicle {
-	return &AssetDtoVehicle{
-		//VehicleAssetMainData: new(VehicleAssetMainData),
-		//AssetExtraDto:        new(AssetExtraDto),
-	}
-}
-
-// Validate returns error if not valid
-func (v *AssetDtoVehicle) Validate() error {
-	if err := v.VehicleAssetMainData.Validate(); err != nil {
-		return err
-	}
-	if err := v.AssetExtraDto.Validate(); err != nil {
-		return err
 	}
 	return nil
 }

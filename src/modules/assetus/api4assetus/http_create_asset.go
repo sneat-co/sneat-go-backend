@@ -19,18 +19,11 @@ func httpPostCreateAsset(w http.ResponseWriter, r *http.Request) {
 	assetCategory := r.URL.Query().Get("assetCategory")
 	switch assetCategory {
 	case const4assetus.AssetCategoryVehicle:
-		asset := models4assetus.NewVehicleAssetDbData()
-		asset.Title = asset.GenerateTitle()
-		request.Asset = &asset.VehicleAssetMainData
-		request.DbData = asset
-	//case const4assetus.AssetCategoryRealEstate:
-	//	asset := models4assetus.NewDwellingAssetDbData()
-	//	request.Asset = &asset.AssetDtoDwelling
-	//	request.DbData = asset
+		request.Asset.GetAssetBaseDbo().Extra = new(models4assetus.AssetVehicleExtra)
 	case const4assetus.AssetCategoryDocument:
-		asset := models4assetus.NewDocumentDbData()
-		request.Asset = asset.DocumentMainData
-		request.DbData = asset
+		request.Asset.GetAssetBaseDbo().Extra = new(models4assetus.AssetDocumentExtra)
+	case const4assetus.AssetCategoryRealEstate:
+		request.Asset.GetAssetBaseDbo().Extra = new(models4assetus.AssetDwellingExtra)
 	case "":
 		apicore.ReturnError(r.Context(), w, r, errors.New("GET parameter 'assetCategory' is required"))
 		return
@@ -38,7 +31,7 @@ func httpPostCreateAsset(w http.ResponseWriter, r *http.Request) {
 		apicore.ReturnError(r.Context(), w, r, fmt.Errorf("unsupported asset category: %s", assetCategory))
 		return
 	}
-	handler := func(ctx context.Context, userCtx facade.User) (interface{}, error) {
+	createAssetHttpHandler := func(ctx context.Context, userCtx facade.User) (interface{}, error) {
 		asset, err := facade4assetus.CreateAsset(ctx, userCtx, request)
 		if err != nil {
 			return nil, fmt.Errorf("failed to create asset: %w", err)
@@ -46,14 +39,11 @@ func httpPostCreateAsset(w http.ResponseWriter, r *http.Request) {
 		if asset.ID == "" {
 			return nil, errors.New("asset created by facade does not have an ContactID")
 		}
-		if asset.Data == nil {
-			return nil, errors.New("asset created by facade does not have a DTO")
-		}
 		if err = asset.Data.Validate(); err != nil {
 			err = fmt.Errorf("asset created by facade is not valid: %w", err)
 			return asset, err
 		}
 		return asset, nil
 	}
-	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, handler, http.StatusCreated, verify.DefaultJsonWithAuthRequired)
+	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, createAssetHttpHandler, http.StatusCreated, verify.DefaultJsonWithAuthRequired)
 }

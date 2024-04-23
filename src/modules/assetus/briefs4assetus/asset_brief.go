@@ -15,15 +15,37 @@ import (
 type AssetBrief struct {
 	IsRequest  bool                          `json:"isRequest,omitempty" firestore:"isRequest,omitempty"` // This is used to flag that struct is part of a request and some validations should be skipped
 	Title      string                        `json:"title" firestore:"title"`                             // Should be required if the make, model & reg number are not provided
-	Status     const4assetus.AssetStatus     `json:"status,omitempty" firestore:"status,omitempty"`
-	Category   const4assetus.AssetCategory   `json:"category" firestore:"category"`
-	Type       const4assetus.AssetType       `json:"type" firestore:"type"`
-	Possession const4assetus.AssetPossession `json:"possession" firestore:"possession"`
-	CountryID  geo.CountryAlpha2             `json:"countryID"  firestore:"countryID"` // intentionally not omitempty so can be used in queries
-	Make       string                        `json:"make" firestore:"make"`            // intentionally not omitempty so can be used in queries
-	Model      string                        `json:"model" firestore:"model"`          // intentionally not omitempty so can be used in queries
-	RegNumber  string                        `json:"regNumber"  firestore:"regNumber"` // intentionally not omitempty so can be used in queries
+	Status     const4assetus.AssetStatus     `json:"status" firestore:"status"`                           // required field
+	Category   const4assetus.AssetCategory   `json:"category" firestore:"category"`                       // required field
+	Type       const4assetus.AssetType       `json:"type" firestore:"type"`                               // required field
+	Possession const4assetus.AssetPossession `json:"possession" firestore:"possession"`                   // required field
+	CountryID  geo.CountryAlpha2             `json:"countryID"  firestore:"countryID"`                    // intentionally not omitempty so can be used in queries
+	WithMakeModelFields
+	RegNumber string `json:"regNumber" firestore:"regNumber"` // intentionally not omitempty so can be used in queries
 	dbmodels.WithOptionalRelatedAs
+}
+
+type WithMakeModelFields struct {
+	Make  string `json:"make" firestore:"make"`   // intentionally not omitempty so can be used in queries
+	Model string `json:"model" firestore:"model"` // intentionally not omitempty so can be used in queries
+}
+
+// GenerateTitleFromMakeModelAndRegNumber generates asset title from vehicle data
+func (v *WithMakeModelFields) GenerateTitleFromMakeModelAndRegNumber(reNumber string) string {
+	title := make([]string, 0, 4)
+	if v.Make != "" {
+		title = append(title, v.Make)
+	}
+	if v.Model != "" {
+		title = append(title, v.Model)
+	}
+	if reNumber != "" {
+		title = append(title, "#", reNumber)
+	}
+	if len(title) == 0 {
+		return ""
+	}
+	return strings.Join(title, " ")
 }
 
 func (v *AssetBrief) Equal(v2 *AssetBrief) bool {
