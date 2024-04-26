@@ -41,7 +41,7 @@ require (
 	github.com/shiyanhui/hero v0.0.2
 	github.com/sneat-co/debtstracker-translations v0.0.21
 	github.com/sneat-co/sneat-go-core v0.23.5
-	github.com/sneat-co/sneat-go-firebase v0.4.40
+	github.com/sneat-co/sneat-go-firebase v0.4.41
 	github.com/stretchr/testify v1.9.0
 	github.com/strongo/app-host-gae v0.1.27
 	github.com/strongo/decimal v0.0.1
@@ -64,6 +64,8 @@ require (
 
 require (
 	cloud.google.com/go v0.112.2 // indirect
+	cloud.google.com/go/auth v0.3.0 // indirect
+	cloud.google.com/go/auth/oauth2adapt v0.2.2 // indirect
 	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	cloud.google.com/go/firestore v1.15.0 // indirect
 	cloud.google.com/go/iam v1.1.7 // indirect
@@ -74,7 +76,7 @@ require (
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
 	github.com/alexsergivan/transliterator v1.0.0 // indirect
 	github.com/captaincodeman/datastore-locker v0.0.0-20170308203336-4eddc467484e // indirect
-	github.com/dal-go/dalgo2firestore v0.1.59 // indirect
+	github.com/dal-go/dalgo2firestore v0.1.60 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-logr/logr v1.4.1 // indirect
@@ -105,7 +107,7 @@ require (
 	golang.org/x/sys v0.19.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
-	google.golang.org/api v0.173.0 // indirect
+	google.golang.org/api v0.176.1 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto v0.0.0-20240415180920-8c6c420018be // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240415180920-8c6c420018be // indirect
