@@ -1,6 +1,8 @@
 package models4assetus
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/briefs4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
@@ -29,6 +31,12 @@ type AssetExtra interface {
 
 type AssetExtraType string
 
+const (
+	AssetExtraTypeVehicle  AssetExtraType = "vehicle"
+	AssetExtraTypeDwelling AssetExtraType = "dwelling"
+	AssetExtraTypeDocument AssetExtraType = "document"
+)
+
 type AssetExtraBase struct {
 	Type AssetExtraType `json:"type" firestore:"type"`
 }
@@ -53,14 +61,61 @@ func (assetNoExtra) Validate() error {
 
 // WithAssetExtraField defines and `Extra` field to store extension data
 type WithAssetExtraField struct {
-	Extra AssetExtra `json:"extra" firestore:"extra"`
+	ExtraType AssetExtraType `json:"extraType" firestore:"extraType"`
+	Extra     map[string]any `json:"extra" firestore:"extra"`
+	extra     AssetExtra
 }
 
-func (v WithAssetExtraField) Validate() error {
+func (v *WithAssetExtraField) SetExtra(extra AssetExtra) (err error) {
+	v.extra = extra
+	if extra == nil {
+		v.Extra = make(map[string]any)
+	} else {
+		var b []byte
+		if b, err = json.Marshal(extra); err != nil {
+			return fmt.Errorf("failed to marshal extra data to JSON: %w", err)
+		}
+		if err = json.Unmarshal(b, &v.Extra); err != nil {
+			return fmt.Errorf("failed to unmarshal JSON data to extra type %t: %w", extra, err)
+		}
+	}
+	return nil
+}
+
+func (v *WithAssetExtraField) GetExtra() (extra AssetExtra, err error) {
+	var b []byte
+	if v.extra == nil {
+		switch v.ExtraType {
+		case AssetExtraTypeVehicle:
+			v.extra = new(AssetVehicleExtra)
+		case AssetExtraTypeDwelling:
+			v.extra = new(AssetDwellingExtra)
+		case AssetExtraTypeDocument:
+			v.extra = new(AssetDocumentExtra)
+		default:
+			return nil, fmt.Errorf("unsupported extra type: %s", v.ExtraType)
+		}
+	}
+	if len(v.Extra) == 0 {
+		return v.extra, nil
+	}
+	if b, err = json.Marshal(v.Extra); err != nil {
+		return nil, fmt.Errorf("failed to marshal extra data to JSON: %w", err)
+	}
+
+	if err = json.Unmarshal(b, &v.extra); err != nil {
+		return nil, err
+	}
+	return v.extra, nil
+}
+
+func (v *WithAssetExtraField) Validate() error {
 	if v.Extra == nil {
 		return validation.NewErrRecordIsMissingRequiredField("extra")
 	}
-	if err := v.Extra.Validate(); err != nil {
+	if extra, err := v.GetExtra(); err != nil {
+		return validation.NewErrBadRecordFieldValue("extra", fmt.Errorf("failed to get extra data: %w", err).Error())
+	} else if err = extra.Validate(); err != nil {
 		return validation.NewErrBadRecordFieldValue("extra", err.Error())
 	}
 	return nil
@@ -102,11 +157,13 @@ func (v *AssetBaseDbo) Validate() error {
 	if err := v.AssetDates.Validate(); err != nil {
 		return err
 	}
-	if extra, ok := v.Extra.(WithAssetValidator); ok {
-		if err := extra.ValidateWithAsset(v); err != nil {
+	if extra, err := v.GetExtra(); err != nil {
+		return err
+	} else if extra2, ok := extra.(WithAssetValidator); ok {
+		if err := extra2.ValidateWithAsset(v); err != nil {
 			return validation.NewErrBadRecordFieldValue("extra", err.Error())
 		}
-	} else if err := v.Extra.Validate(); err != nil {
+	} else if err := extra.Validate(); err != nil {
 		return validation.NewErrBadRecordFieldValue("extra", err.Error())
 	}
 	return nil

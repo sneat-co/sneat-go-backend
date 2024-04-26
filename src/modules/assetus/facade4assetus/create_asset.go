@@ -5,46 +5,13 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dto4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/models4assetus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/models4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/random"
 )
-
-// AssetSummary DTO
-type AssetSummary struct {
-	RegNumber      string `json:"number,omitempty"`
-	DateOfBuild    string `json:"dateOfBuild,omitempty"`
-	DateOfPurchase string `json:"dateOfPurchase,omitempty"`
-}
-
-type CreateAssetData struct {
-	models4assetus.AssetBaseDbo
-}
-
-type AssetDto struct {
-}
-
-// CreateAssetRequest is a DTO for creating an asset
-type CreateAssetRequest struct {
-	dto4teamus.TeamRequest
-	Asset   models4assetus.AssetCreationData `json:"asset"`
-	Related models4linkage.WithRelated       `json:"related"`
-}
-
-// Validate returns error if not valid
-func (v CreateAssetRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
-		return err
-	}
-	if err := v.Asset.Validate(); err != nil {
-		return err
-	}
-	return nil
-}
 
 // CreateAssetResponse DTO
 type CreateAssetResponse struct {
@@ -53,12 +20,15 @@ type CreateAssetResponse struct {
 }
 
 // CreateAsset creates an asset
-func CreateAsset(ctx context.Context, user facade.User, request CreateAssetRequest) (response CreateAssetResponse, err error) {
+func CreateAsset(ctx context.Context, user facade.User, request dto4assetus.CreateAssetRequest) (response CreateAssetResponse, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 	err = dal4teamus.CreateTeamItem(ctx, user, "assets", request.TeamRequest, const4assetus.ModuleID, new(models4assetus.AssetusTeamDto),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4assetus.AssetusTeamDto]) (err error) {
+			if err = params.GetRecords(ctx, tx); err != nil {
+				return err
+			}
 			response, err = createAssetTx(ctx, tx, request, params)
 			return err
 		},
@@ -69,19 +39,29 @@ func CreateAsset(ctx context.Context, user facade.User, request CreateAssetReque
 func createAssetTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	request CreateAssetRequest,
+	request dto4assetus.CreateAssetRequest,
 	params *dal4teamus.ModuleTeamWorkerParams[*models4assetus.AssetusTeamDto],
 ) (
 	response CreateAssetResponse, err error,
 ) {
-	response.ID = random.ID(7) // TODO: consider using incomplete key with options?
-	asset := NewAsset("", nil)
+	asset := NewAsset(random.ID(8), nil)
+	asset.Data.AssetBaseDbo = request.Asset
 	asset.Data.UserIDs = []string{params.UserID}
 	asset.Data.TeamIDs = []string{request.TeamRequest.TeamID}
+	asset.Data.ContactIDs = []string{"*"}
 	asset.Data.WithModified = dbmodels.NewWithModified(params.Started, params.UserID)
-	if err = tx.Insert(ctx, asset.Record); err != nil {
-		return response, fmt.Errorf("failed to insert response record")
+
+	asset.Record.SetError(nil) // Mark record as not having an error
+
+	if err = asset.Data.Validate(); err != nil {
+		return response, fmt.Errorf("assert record data is not valid before insert: %w", err)
 	}
+
+	if err = tx.Set(ctx, asset.Record); err != nil { // TODO: change to .Insert() with random ID generator
+		return response, fmt.Errorf("failed to insert asset record: %w", err)
+	}
+
+	response.ID = asset.ID
 
 	assetusTeamModuleUpdates := params.TeamModuleEntry.Data.WithAssets.AddAsset(response.ID, &asset.Data.AssetBrief)
 
@@ -99,5 +79,6 @@ func createAssetTx(
 		}
 	}
 
+	response.Data = asset.Data.AssetBaseDbo
 	return response, err
 }
