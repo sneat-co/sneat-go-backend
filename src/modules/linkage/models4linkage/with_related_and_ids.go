@@ -8,35 +8,35 @@ import (
 	"strings"
 )
 
-// WithRelatedAndIDs defines relationship of the current contact record to other contacts.
+// WithRelatedAndIDs defines relationships of the current contact record to other contacts.
 type WithRelatedAndIDs struct {
-	/* Example of related field as a JSON:
-
-	Contact(id="child1") {
-		relatedIDs: ["team1:parent1:contactus:contacts:parent"],
-		related: {
-			"team1": { // Team ID
-				"contactus": { // Module ID
-					"contacts": { // Collection
-						"parent1": { // Item ID
-							relatedAs: {
-								"parent": {} // Relationship ID
-							}
-							relatesAs: {
-								"child": {} // Relationship ID
-							},
-						},
-					}
-				},
-			},
-		}
-	}
-	*/
-
 	WithRelated
 
-	// RelatedIDs is a list of IDs of records that are related to the current record - this is needed for indexed search.
+	// RelatedIDs holds identifiers of related records - needed for indexed search.
 	RelatedIDs []string `json:"relatedIDs,omitempty" firestore:"relatedIDs,omitempty"`
+
+	//	Example of related field as a JSON and relevant relatedIDs field:
+	/*
+	   Contact(id="child1") {
+	   	relatedIDs: ["team1:parent1:contactus:contacts:parent"],
+	   	related: {
+	   		"team1": { // Team ID
+	   			"contactus": { // Module ID
+	   				"contacts": { // Collection
+	   					"parent1": { // Item ID
+	   						relatedAs: {
+	   							"parent": {} // Relationship ID
+	   						}
+	   						relatesAs: {
+	   							"child": {} // Relationship ID
+	   						},
+	   					},
+	   				}
+	   			},
+	   		},
+	   	}
+	   }
+	*/
 }
 
 // Validate returns error if not valid

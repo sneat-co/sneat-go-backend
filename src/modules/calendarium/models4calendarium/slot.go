@@ -2,6 +2,7 @@ package models4calendarium
 
 import (
 	"fmt"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/models4linkage"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
 	"strconv"
@@ -12,6 +13,7 @@ import (
 type HappeningSlot struct {
 	ID string `json:"id" firestore:"id"`
 	HappeningSlotTiming
+	models4linkage.WithRelated
 	Locations []Location `json:"locations,omitempty" firestore:"locations,omitempty"`
 }
 
