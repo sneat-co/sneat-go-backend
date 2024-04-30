@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dal4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dto4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/models4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
@@ -44,8 +45,9 @@ func createAssetTx(
 ) (
 	response CreateAssetResponse, err error,
 ) {
-	asset := NewAsset(random.ID(8), nil)
+	asset := dal4assetus.NewAssetEntry(request.TeamRequest.TeamID, random.ID(8)) // TODO: use DALgo random ID generator
 	asset.Data.AssetBaseDbo = request.Asset
+	asset.Data.AssetBaseDbo.IsRequest = false
 	asset.Data.UserIDs = []string{params.UserID}
 	asset.Data.TeamIDs = []string{request.TeamRequest.TeamID}
 	asset.Data.ContactIDs = []string{"*"}

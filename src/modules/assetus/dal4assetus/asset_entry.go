@@ -10,13 +10,13 @@ import (
 	core "github.com/sneat-co/sneat-go-core"
 )
 
-func NewAssetEntryWithData[D any](teamID, contactID string, data D) (asset record.DataWithID[string, D]) {
-	key := NewAssetKey(teamID, contactID)
-	asset.ID = contactID
-	asset.FullID = teamID + ":" + contactID
+func NewAssetEntry(teamID, assetID string) (asset record.DataWithID[string, *models4assetus.AssetDbo]) {
+	key := NewAssetKey(teamID, assetID)
+	asset.ID = assetID
+	asset.FullID = teamID + ":" + assetID
 	asset.Key = key
-	asset.Data = data
-	asset.Record = dal.NewRecordWithData(key, data)
+	asset.Data = new(models4assetus.AssetDbo)
+	asset.Record = dal.NewRecordWithData(key, asset.Data)
 	return
 }
 

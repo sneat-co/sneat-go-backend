@@ -13,15 +13,15 @@ import (
 
 // AssetBrief keeps main props of an asset
 type AssetBrief struct {
-	IsRequest  bool                          `json:"isRequest,omitempty" firestore:"isRequest,omitempty"` // This is used to flag that struct is part of a request and some validations should be skipped
-	Title      string                        `json:"title" firestore:"title"`                             // Should be required if the make, model & reg number are not provided
-	Status     const4assetus.AssetStatus     `json:"status" firestore:"status"`                           // required field
-	Category   const4assetus.AssetCategory   `json:"category" firestore:"category"`                       // required field
-	Type       const4assetus.AssetType       `json:"type" firestore:"type"`                               // required field
-	Possession const4assetus.AssetPossession `json:"possession" firestore:"possession"`                   // required field
-	CountryID  geo.CountryAlpha2             `json:"countryID"  firestore:"countryID"`                    // intentionally not omitempty so can be used in queries
-	WithMakeModelFields
-	RegNumber string `json:"regNumber" firestore:"regNumber"` // intentionally not omitempty so can be used in queries
+	IsRequest           bool                          `json:"isRequest,omitempty" firestore:"isRequest,omitempty"` // This is used to flag that struct is part of a request and some validations should be skipped
+	Title               string                        `json:"title" firestore:"title"`                             // Should be required if the make, model & reg number are not provided
+	Status              const4assetus.AssetStatus     `json:"status" firestore:"status"`                           // required field
+	Category            const4assetus.AssetCategory   `json:"category" firestore:"category"`                       // required field
+	Type                const4assetus.AssetType       `json:"type" firestore:"type"`                               // required field
+	Possession          const4assetus.AssetPossession `json:"possession" firestore:"possession"`                   // required field
+	CountryID           geo.CountryAlpha2             `json:"countryID"  firestore:"countryID"`                    // intentionally not omitempty so can be used in queries
+	WithMakeModelFields                               // It's so common fields that it makes sense to make them part of base struct
+	RegNumber           string                        `json:"regNumber" firestore:"regNumber"` // intentionally not omitempty so can be used in queries
 	dbmodels.WithOptionalRelatedAs
 }
 

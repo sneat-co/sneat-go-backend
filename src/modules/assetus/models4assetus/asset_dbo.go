@@ -24,8 +24,7 @@ type AssetBaseDboExtension interface {
 	GetAssetBaseDbo() *AssetBaseDbo
 }
 
-// AssetBaseDbo was intended to be used in both AssetDbo and request to create an asset,
-// but it was not a good idea as not clear how to manage module-specific fields
+// AssetBaseDbo is used in both AssetDbo and a request to create an asset,
 type AssetBaseDbo struct {
 	briefs4assetus.AssetBrief
 	WithAssetExtraField
@@ -82,6 +81,9 @@ func (v *AssetDbo) AssetExtraData() *AssetDbo {
 func (v *AssetDbo) Validate() error {
 	if err := v.AssetBaseDbo.Validate(); err != nil {
 		return err
+	}
+	if v.IsRequest {
+		return validation.NewErrBadRecordFieldValue("isRequest", "should be false")
 	}
 	if err := v.WithModified.Validate(); err != nil {
 		return err
