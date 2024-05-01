@@ -50,7 +50,7 @@ func createAssetTx(
 	asset.Data.AssetBaseDbo.IsRequest = false
 	asset.Data.UserIDs = []string{params.UserID}
 	asset.Data.TeamIDs = []string{request.TeamRequest.TeamID}
-	asset.Data.ContactIDs = []string{"*"}
+	//asset.Data.ContactIDs = []string{"*"}
 	asset.Data.WithModified = dbmodels.NewWithModified(params.Started, params.UserID)
 
 	asset.Record.SetError(nil) // Mark record as not having an error

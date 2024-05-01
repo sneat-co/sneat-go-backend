@@ -2,7 +2,6 @@ package models4assetus
 
 import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/briefs4assetus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/strongoapp/with"
@@ -30,7 +29,7 @@ type AssetBaseDbo struct {
 	WithAssetExtraField
 	briefs4assetus.WithAssetusTeamBriefs[*briefs4assetus.AssetBrief]
 	with.TagsField
-	briefs4contactus.WithMultiTeamContactIDs
+	//briefs4contactus.WithMultiTeamContactIDs
 	dbmodels.WithCustomFields
 	AssetDates
 }
@@ -45,9 +44,9 @@ func (v *AssetBaseDbo) Validate() error {
 	if err := v.TagsField.Validate(); err != nil {
 		return err
 	}
-	if err := v.WithMultiTeamContactIDs.Validate(); err != nil {
-		return err
-	}
+	//if err := v.WithMultiTeamContactIDs.Validate(); err != nil {
+	//	return err
+	//}
 	if err := v.WithCustomFields.Validate(); err != nil {
 		return err
 	}
