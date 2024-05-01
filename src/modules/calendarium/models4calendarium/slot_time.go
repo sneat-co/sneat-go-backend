@@ -3,6 +3,7 @@ package models4calendarium
 import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-core/validate"
+	"github.com/strongo/slice"
 	"github.com/strongo/validation"
 	"strconv"
 )
@@ -124,7 +125,7 @@ type HappeningSlotTiming struct {
 
 	Weekdays []WeekdayCode `json:"weekdays,omitempty" firestore:"weekdays,omitempty"`
 
-	// e.g. with [1,3]: repeats=monthly => every 1 & 3d week of every month.
+	// e.g., with [1,3]: repeats=monthly => every 1 & 3d week of every month.
 	Weeks []int `json:"weeks,omitempty" firestore:"weeks,omitempty"`
 }
 
@@ -166,6 +167,14 @@ func (v HappeningSlotTiming) Validate() error {
 			break
 		default:
 
+		}
+	}
+	for i, wd := range v.Weeks {
+		if wd < 1 || wd > 5 {
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("weeks[%v]", i), "should be in range 1-5, got: "+strconv.Itoa(wd))
+		}
+		if i+1 < len(v.Weeks) && slice.Contains(v.Weeks[i+1:], wd) {
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("weeks[%v]", i), "duplicated value: "+strconv.Itoa(wd))
 		}
 	}
 	return nil
