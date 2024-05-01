@@ -14,6 +14,7 @@ type HappeningBrief struct {
 	Title    string           `json:"title" firestore:"title"`
 	Levels   []string         `json:"levels,omitempty" firestore:"levels,omitempty"`
 	Slots    []*HappeningSlot `json:"slots,omitempty" firestore:"slots,omitempty"`
+	WithHappeningPrices
 }
 
 func (v HappeningBrief) GetSlot(id string) (i int, slot *HappeningSlot) {
@@ -65,6 +66,9 @@ func (v HappeningBrief) Validate() error {
 			}
 			// TODO: Add more validations?
 		}
+	}
+	if err := v.WithHappeningPrices.Validate(); err != nil {
+		return err // No need for field name as it reported by WithHappeningPrices.Validate()
 	}
 	return nil
 }

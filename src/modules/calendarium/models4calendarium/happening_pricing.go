@@ -6,9 +6,19 @@ import (
 	"strconv"
 )
 
-// HappeningPrices describes prices for happening
-type HappeningPrices struct {
+// WithHappeningPrices describes prices for happening
+type WithHappeningPrices struct {
 	Prices []HappeningPrice `json:"prices,omitempty" firestore:"prices,omitempty"`
+}
+
+// Validate returns error if not valid
+func (v WithHappeningPrices) Validate() error {
+	for i, price := range v.Prices {
+		if err := price.Validate(); err != nil {
+			return validation.NewErrBadRecordFieldValue("prices["+strconv.Itoa(i)+"]", err.Error())
+		}
+	}
+	return nil
 }
 
 // HappeningPrice describes price for happening
