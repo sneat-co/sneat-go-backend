@@ -60,6 +60,8 @@ github.com/dal-go/dalgo2firestore v0.1.59 h1:Tyvg8e0sxAdEAx8j0Y0kotd48wF+d/EJLbq
 github.com/dal-go/dalgo2firestore v0.1.59/go.mod h1:w5VAniBeJpTcSQnPT2rnVauZEu0vHyXsS7ADuxQiMTE=
 github.com/dal-go/dalgo2firestore v0.1.60 h1:D8+VGNjeS/d/x0hsHNLY3MUh5A9tjWrabUq4EwhnGFY=
 github.com/dal-go/dalgo2firestore v0.1.60/go.mod h1:Fvet89/Hg0MECmmu5nRKtlyn6EUzaUzLgC4ivkAp/hU=
+github.com/dal-go/dalgo2firestore v0.1.61 h1:2THq0I4HcYC78plzqQkehLYn8B52muQpjTHQaLGE0Eo=
+github.com/dal-go/dalgo2firestore v0.1.61/go.mod h1:Mtx8xvCr7hygpsbXkhxV3MB3jG47wdsta+1qXvjdi+4=
 github.com/dal-go/mocks4dalgo v0.1.19 h1:ylcFHCSwJwwNpUKsiUB42BP0RKFGRu44VySQI0qgbRU=
 github.com/dal-go/mocks4dalgo v0.1.19/go.mod h1:b6auVWLTgMZcmHtT3c1G4qpASZrlroEiTV8sr3UaGdA=
 github.com/davecgh/go-spew v0.0.0-20161028175848-04cdfd42973b/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -170,6 +172,8 @@ github.com/sneat-co/sneat-go-firebase v0.4.40 h1:cxw74T866LEO0LYBJjgshCTeQqNnD6h
 github.com/sneat-co/sneat-go-firebase v0.4.40/go.mod h1:bnwrFm2V0Egrzr6pZFsJYBIPxSMVjsAHoNETmmEtMdA=
 github.com/sneat-co/sneat-go-firebase v0.4.41 h1:SPeYi7bVvY6R1JtA2uZ3j+K0gzFQVX3cULLLiB84wJQ=
 github.com/sneat-co/sneat-go-firebase v0.4.41/go.mod h1:nAu1ijx3WzeManzDaalcyqJJHRN1cVne41Lw3lFUSL0=
+github.com/sneat-co/sneat-go-firebase v0.4.42 h1:9Te+AG89w9l4MQkeFk7ycDQVFQO4JVXDLLxMi3xuIuw=
+github.com/sneat-co/sneat-go-firebase v0.4.42/go.mod h1:CMZCO5xg++B92BNIoHyhxaQWsS7+r4++t41Xd9Pqe0k=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
 github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=
@@ -302,6 +306,8 @@ google.golang.org/api v0.173.0 h1:fz6B7GWYWLS/HfruiTsRYVKQQApJ6vasTYWAK6+Qo8g=
 google.golang.org/api v0.173.0/go.mod h1:ins7pTzjeBPQ3SdC/plzki6d/dQWwAWy8qVZ4Vgkzl8=
 google.golang.org/api v0.176.1 h1:DJSXnV6An+NhJ1J+GWtoF2nHEuqB1VNoTfnIbjNvwD4=
 google.golang.org/api v0.176.1/go.mod h1:j2MaSDYcvYV1lkZ1+SMW4IeF90SrEyFA+tluDYWRrFg=
+google.golang.org/api v0.177.0 h1:8a0p/BbPa65GlqGWtUKxot4p0TV8OGOfyTjtmkXNXmk=
+google.golang.org/api v0.177.0/go.mod h1:srbhue4MLjkjbkux5p3dw/ocYOSZTaIEvf7bCOnFQDw=
 google.golang.org/appengine v1.1.0/go.mod h1:EbEs0AVv82hx2wNQdGPgUI5lhzA/G0D9YwlJXL52JkM=
 google.golang.org/appengine v1.4.0/go.mod h1:xpcJRLb0r/rnEns0DIKYYv+WjYCduHsrkT7/EB5XEv4=
 google.golang.org/appengine v1.6.8 h1:IhEN5q69dyKagZPYMSdIjS2HqprW324FRQZJcGqPAsM=
@@ -317,6 +323,8 @@ google.golang.org/genproto/googleapis/api v0.0.0-20240415180920-8c6c420018be h1:
 google.golang.org/genproto/googleapis/api v0.0.0-20240415180920-8c6c420018be/go.mod h1:dvdCTIoAGbkWbcIKBniID56/7XHTt6WfxXNMxuziJ+w=
 google.golang.org/genproto/googleapis/rpc v0.0.0-20240415180920-8c6c420018be h1:LG9vZxsWGOmUKieR8wPAUR3u3MpnYFQZROPIMaXh7/A=
 google.golang.org/genproto/googleapis/rpc v0.0.0-20240415180920-8c6c420018be/go.mod h1:WtryC6hu0hhx87FDGxWCDptyssuo68sk10vYjF+T9fY=
+google.golang.org/genproto/googleapis/rpc v0.0.0-20240429193739-8cf5692501f6 h1:DujSIu+2tC9Ht0aPNA7jgj23Iq8Ewi5sgkQ++wdvonE=
+google.golang.org/genproto/googleapis/rpc v0.0.0-20240429193739-8cf5692501f6/go.mod h1:WtryC6hu0hhx87FDGxWCDptyssuo68sk10vYjF+T9fY=
 google.golang.org/grpc v1.19.0/go.mod h1:mqu4LbDTu4XGKhr4mRzUsmM4RtVoemTSY81AxZiDr8c=
 google.golang.org/grpc v1.23.0/go.mod h1:Y5yQAOtifL1yxbo5wqy6BxZv8vAUGQwXBOALyacEbxg=
 google.golang.org/grpc v1.25.1/go.mod h1:c3i+UQWmh7LiEpx4sFZnkU36qjEYZ0imhYfXVyQciAY=
@@ -338,6 +346,8 @@ google.golang.org/protobuf v1.26.0/go.mod h1:9q0QmTI4eRPtz6boOQmLYwt+qCgq0jsYwAQ
 google.golang.org/protobuf v1.30.0/go.mod h1:HV8QOd/L58Z+nl8r43ehVNZIU/HEI6OcFqwMG9pJV4I=
 google.golang.org/protobuf v1.33.0 h1:uNO2rsAINq/JlFpSdYEKIZ0uKD/R9cpdv0T+yoGwGmI=
 google.golang.org/protobuf v1.33.0/go.mod h1:c6P6GXX6sHbq/GpV6MGZEdwhWPcYBgnhAHhKbcUYpos=
+google.golang.org/protobuf v1.34.0 h1:Qo/qEd2RZPCf2nKuorzksSknv0d3ERwp1vFG38gSmH4=
+google.golang.org/protobuf v1.34.0/go.mod h1:c6P6GXX6sHbq/GpV6MGZEdwhWPcYBgnhAHhKbcUYpos=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c h1:Hei/4ADfdWqJk1ZMxUNpqntNwaWcugrBjAiHlqqRiVk=
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c/go.mod h1:JHkPIbrfpd72SG/EVd6muEfDQjcINNoR0C8j2r3qZ4Q=
