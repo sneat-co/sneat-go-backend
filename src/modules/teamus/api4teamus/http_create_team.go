@@ -15,6 +15,9 @@ func httpPostCreateTeam(w http.ResponseWriter, r *http.Request) {
 	var request dto4teamus.CreateTeamRequest
 	handler := func(ctx context.Context, userCtx facade.User) (interface{}, error) {
 		facadeResponse, err := facade4teamus.CreateTeam(ctx, userCtx, request)
+		if err != nil {
+			return nil, err
+		}
 		var apiResponse dto4teamus.CreateTeamResponse
 		apiResponse.Team.ID = facadeResponse.Team.ID
 		apiResponse.Team.Dto = *facadeResponse.Team.Data
