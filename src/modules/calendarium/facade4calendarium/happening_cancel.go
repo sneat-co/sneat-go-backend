@@ -26,17 +26,17 @@ func CancelHappening(ctx context.Context, user facade.User, request dto4calendar
 	happening := models4calendarium.NewHappeningContext(request.TeamID, request.HappeningID)
 	err = dal4teamus.RunModuleTeamWorker(ctx, user, request.TeamRequest,
 		const4calendarium.ModuleID,
-		new(models4calendarium.CalendariumTeamDto),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDto]) (err error) {
+		new(models4calendarium.CalendariumTeamDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo]) (err error) {
 			if err = tx.Get(ctx, happening.Record); err != nil {
 				return fmt.Errorf("failed to get happening: %w", err)
 			}
 			switch happening.Dbo.Type {
 			case "":
 				return fmt.Errorf("happening record has no type: %w", validation.NewErrRecordIsMissingRequiredField("type"))
-			case "single":
+			case models4calendarium.HappeningTypeSingle:
 				return cancelSingleHappening(ctx, tx, params.UserID, happening)
-			case "recurring":
+			case models4calendarium.HappeningTypeRecurring:
 				return cancelRecurringHappening(ctx, tx, params, params.UserID, happening, request)
 			default:
 				return validation.NewErrBadRecordFieldValue("type", "happening has unknown type: "+happening.Dbo.Type)
@@ -80,7 +80,7 @@ func cancelSingleHappening(ctx context.Context, tx dal.ReadwriteTransaction, use
 func cancelRecurringHappening(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDto],
+	params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo],
 	uid string,
 	happening models4calendarium.HappeningContext,
 	request dto4calendarium.CancelHappeningRequest,

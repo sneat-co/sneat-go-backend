@@ -30,7 +30,7 @@ func (v *HappeningAdjustment) Validate() error {
 	if err := v.Slot.Validate(); err != nil {
 		return err
 	}
-	if v.Slot.Repeats == "recurring" {
+	if v.Slot.Repeats == "recurring" { // TODO: Validate repeat value
 		return validation.NewErrBadRecordFieldValue("slot.repeats", fmt.Sprintf("must be 'once', got '%v'", v.Slot.Repeats))
 	}
 	if v.Canceled != nil {

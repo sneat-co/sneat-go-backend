@@ -16,4 +16,6 @@ func RegisterHttpRoutes(handle modules.HTTPHandleFunc) {
 	handle(http.MethodPost, "/v0/happenings/remove_participant", httpRemoveParticipantFromHappening)
 	handle(http.MethodPost, "/v0/happenings/update_slot", httpUpdateSlot)
 	handle(http.MethodPost, "/v0/happenings/adjust_slot", httpAdjustSlot)
+	handle(http.MethodPost, "/v0/happenings/add_prices", httpAddPrices)
+	handle(http.MethodPost, "/v0/happenings/delete_prices", httpDeletePrices)
 }

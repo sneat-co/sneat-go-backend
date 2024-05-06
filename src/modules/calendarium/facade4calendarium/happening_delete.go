@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/const4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
+	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/models4calendarium"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )
@@ -21,7 +21,7 @@ func DeleteHappening(ctx context.Context, user facade.User, request dto4calendar
 		return deleteHappeningTx(ctx, tx, user, request, params)
 	}
 
-	return dal4calendarium.RunHappeningTeamWorker(ctx, user, request, const4calendarium.ModuleID, worker)
+	return dal4calendarium.RunHappeningTeamWorker(ctx, user, request, worker)
 }
 
 func deleteHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, user facade.User, request dto4calendarium.HappeningRequest, params *dal4calendarium.HappeningWorkerParams) (err error) {
@@ -29,8 +29,8 @@ func deleteHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, user fa
 	switch happening.Dbo.Type {
 	case "":
 		return fmt.Errorf("unknown happening type: %w", validation.NewErrRecordIsMissingRequiredField("type"))
-	case "single":
-	case "recurring":
+	case models4calendarium.HappeningTypeSingle:
+	case models4calendarium.HappeningTypeRecurring:
 		happeningBrief := params.TeamModuleEntry.Data.GetRecurringHappeningBrief(request.HappeningID)
 
 		if happeningBrief != nil {

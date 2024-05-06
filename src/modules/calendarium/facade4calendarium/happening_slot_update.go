@@ -3,7 +3,9 @@ package facade4calendarium
 import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
+	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/models4calendarium"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
@@ -12,16 +14,11 @@ func UpdateSlot(ctx context.Context, user facade.User, request dto4calendarium.H
 		return
 	}
 
-	var worker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *happeningWorkerParams) (err error) {
-		//teamKey := models4teamus.NewTeamKey(request.TeamID)
-		//teamDto := new(models4teamus.TeamDto)
-		//teamRecord := dal.NewRecordWithData(teamKey, teamDto)
-		//
-		//if err = tx.Get(ctx, teamRecord); err != nil {
-		//	return nil, fmt.Errorf("failed to get team record: %w", err)
-		//}
-
-		if params.Happening.Dbo.Type == "single" {
+	var worker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
+		if err = params.GetRecords(ctx, tx); err != nil {
+			return err
+		}
+		if params.Happening.Dbo.Type == models4calendarium.HappeningTypeSingle {
 			params.Happening.Dbo.Slots[0] = &request.Slot
 			params.HappeningUpdates = []dal.Update{
 				{
@@ -33,8 +30,5 @@ func UpdateSlot(ctx context.Context, user facade.User, request dto4calendarium.H
 		return
 	}
 
-	if err = modifyHappening(ctx, user, request.HappeningRequest, worker); err != nil {
-		return err
-	}
-	return nil
+	return dal4calendarium.RunHappeningTeamWorker(ctx, user, request.HappeningRequest, worker)
 }

@@ -22,8 +22,8 @@ func DeleteSlots(ctx context.Context, user facade.User, request dto4calendarium.
 
 	err = dal4teamus.RunModuleTeamWorker(ctx, user, request.TeamRequest,
 		const4calendarium.ModuleID,
-		new(models4calendarium.CalendariumTeamDto),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDto]) (err error) {
+		new(models4calendarium.CalendariumTeamDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo]) (err error) {
 			happening := models4calendarium.NewHappeningContext(request.TeamID, request.HappeningID)
 			hasHappeningRecord := true
 			if err = tx.Get(ctx, happening.Record); err != nil {
@@ -37,11 +37,11 @@ func DeleteSlots(ctx context.Context, user facade.User, request dto4calendarium.
 			switch happening.Dbo.Type {
 			case "":
 				return fmt.Errorf("unknown happening type: %w", validation.NewErrRecordIsMissingRequiredField("type"))
-			case "single":
+			case models4calendarium.HappeningTypeSingle:
 				if err := removeSlotFromSingleHappening(ctx, tx, happening, request); err != nil {
 					return fmt.Errorf("failed to delete slot from single happening: %w", err)
 				}
-			case "recurring":
+			case models4calendarium.HappeningTypeRecurring:
 				if err := removeSlotFromRecurringHappening(ctx, tx, params, happening, request); err != nil {
 					return fmt.Errorf("failed to delete slot from recurrign happening: %w", err)
 				}
@@ -76,7 +76,7 @@ func removeSlotFromSingleHappening(
 func removeSlotFromRecurringHappening(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDto],
+	params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo],
 	happening models4calendarium.HappeningContext,
 	request dto4calendarium.DeleteHappeningSlotRequest,
 ) error {
@@ -136,7 +136,7 @@ func removeSlotFromHappeningDto(
 }
 
 func removeSlotFromHappeningBriefInTeamRecord(
-	params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDto],
+	params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo],
 	happening models4calendarium.HappeningContext,
 	request dto4calendarium.DeleteHappeningSlotRequest,
 ) error {

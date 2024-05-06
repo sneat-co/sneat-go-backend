@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/models4calendarium"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -16,11 +17,11 @@ func AdjustSlot(ctx context.Context, user facade.User, request dto4calendarium.H
 		return
 	}
 
-	var worker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *happeningWorkerParams) (err error) {
+	var worker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
 		switch params.Happening.Dbo.Type {
-		case "single":
+		case models4calendarium.HappeningTypeSingle:
 			return errors.New("only recurring happenings can be adjusted, single happenings should be updated")
-		case "recurring":
+		case models4calendarium.HappeningTypeRecurring:
 			if err = adjustRecurringSlot(ctx, tx, params.Happening, request); err != nil {
 				return fmt.Errorf("failed to adjust recurring happening: %w", err)
 			}
@@ -29,7 +30,7 @@ func AdjustSlot(ctx context.Context, user facade.User, request dto4calendarium.H
 		return
 	}
 
-	if err = modifyHappening(ctx, user, request.HappeningRequest, worker); err != nil {
+	if err = dal4calendarium.RunHappeningTeamWorker(ctx, user, request.HappeningRequest, worker); err != nil {
 		return err
 	}
 	return nil

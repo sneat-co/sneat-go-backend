@@ -1,6 +1,7 @@
 package models4calendarium
 
 import (
+	"fmt"
 	"github.com/crediterra/money"
 	"github.com/strongo/validation"
 	"strconv"
@@ -8,12 +9,15 @@ import (
 
 // WithHappeningPrices describes prices for happening
 type WithHappeningPrices struct {
-	Prices []HappeningPrice `json:"prices,omitempty" firestore:"prices,omitempty"`
+	Prices []*HappeningPrice `json:"prices,omitempty" firestore:"prices,omitempty"`
 }
 
 // Validate returns error if not valid
 func (v WithHappeningPrices) Validate() error {
 	for i, price := range v.Prices {
+		if price == nil {
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("prices[%d]", i), "nil value")
+		}
 		if err := price.Validate(); err != nil {
 			return validation.NewErrBadRecordFieldValue("prices["+strconv.Itoa(i)+"]", err.Error())
 		}
@@ -23,6 +27,7 @@ func (v WithHappeningPrices) Validate() error {
 
 // HappeningPrice describes price for happening
 type HappeningPrice struct {
+	ID     string       `json:"id,omitempty" firestore:"id,omitempty"`
 	Term   Term         `json:"term" firestore:"term"`
 	Amount money.Amount `json:"amount" firestore:"amount"`
 }

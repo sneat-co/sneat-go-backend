@@ -1,6 +1,7 @@
 package dto4calendarium
 
 import (
+	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/models4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
 	"github.com/strongo/validation"
 	"strings"
@@ -28,7 +29,7 @@ func (v HappeningRequest) Validate() error {
 	//	return fmt.Errorf("\"unknown list type: %v", v.ListType)
 	//}
 	switch v.HappeningType {
-	case "", "single", "recurring": // OK
+	case "", models4calendarium.HappeningTypeSingle, models4calendarium.HappeningTypeRecurring: // OK
 	default:
 		return validation.NewErrBadRequestFieldValue("happeningType", "unknown value: "+v.HappeningType)
 	}

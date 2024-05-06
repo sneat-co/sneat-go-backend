@@ -5,11 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 )
 
-func getHappeningContactRecords(ctx context.Context, tx dal.ReadwriteTransaction, request *dto4calendarium.HappeningContactRequest, params *happeningWorkerParams) (contact dal4contactus.ContactEntry, err error) {
+func getHappeningContactRecords(ctx context.Context, tx dal.ReadwriteTransaction, request *dto4calendarium.HappeningContactRequest, params *dal4calendarium.HappeningWorkerParams) (contact dal4contactus.ContactEntry, err error) {
 	if request.Contact.TeamID == "" {
 		request.Contact.TeamID = request.TeamID
 	}

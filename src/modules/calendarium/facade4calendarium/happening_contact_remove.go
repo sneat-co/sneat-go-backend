@@ -18,16 +18,16 @@ func RemoveParticipantFromHappening(ctx context.Context, user facade.User, reque
 		return
 	}
 
-	var worker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *happeningWorkerParams) error {
+	var worker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
 		_, err := getHappeningContactRecords(ctx, tx, &request, params)
 		if err != nil {
 			return err
 		}
 		contactShortRef := dbmodels.NewTeamItemID(request.Contact.TeamID, request.Contact.ID)
 		switch params.Happening.Dbo.Type {
-		case "single":
+		case models4calendarium.HappeningTypeSingle:
 			break // nothing to do
-		case "recurring":
+		case models4calendarium.HappeningTypeRecurring:
 			var updates []dal.Update
 			if updates, err = removeContactFromHappeningBriefInContactusTeamDbo(params.TeamModuleEntry, params.Happening, contactShortRef); err != nil {
 				return fmt.Errorf("failed to remove member from happening brief in team DBO: %w", err)
@@ -43,7 +43,7 @@ func RemoveParticipantFromHappening(ctx context.Context, user facade.User, reque
 		return err
 	}
 
-	if err = modifyHappening(ctx, user, request.HappeningRequest, worker); err != nil {
+	if err = dal4calendarium.RunHappeningTeamWorker(ctx, user, request.HappeningRequest, worker); err != nil {
 		return err
 	}
 	return nil

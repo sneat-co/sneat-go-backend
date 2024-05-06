@@ -11,31 +11,31 @@ import (
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
-type CalendariumTeamWorkerParams = dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDto]
+type CalendariumTeamWorkerParams = dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo]
 
 func NewCalendariumTeamWorkerParams(userID, teamID string) *CalendariumTeamWorkerParams {
 	teamWorkerParams := dal4teamus.NewTeamWorkerParams(userID, teamID)
-	return dal4teamus.NewTeamModuleWorkerParams(const4calendarium.ModuleID, teamWorkerParams, new(models4calendarium.CalendariumTeamDto))
+	return dal4teamus.NewTeamModuleWorkerParams(const4calendarium.ModuleID, teamWorkerParams, new(models4calendarium.CalendariumTeamDbo))
 }
 
 type HappeningWorkerParams struct {
 	CalendariumTeamWorkerParams
-	Happening models4calendarium.HappeningContext
+	Happening        models4calendarium.HappeningContext
+	HappeningUpdates []dal.Update
 }
+
+type HappeningWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *HappeningWorkerParams) (err error)
 
 func RunHappeningTeamWorker(
 	ctx context.Context,
 	user facade.User,
 	request dto4calendarium.HappeningRequest,
-	moduleID string,
-	happeningWorker func(ctx context.Context, tx dal.ReadwriteTransaction, params *HappeningWorkerParams) (err error),
+	happeningWorker HappeningWorker,
 ) (err error) {
-	calendariumTeamDto := new(models4calendarium.CalendariumTeamDto)
-
 	moduleTeamWorker := func(
 		ctx context.Context,
 		tx dal.ReadwriteTransaction,
-		moduleTeamParams *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDto],
+		moduleTeamParams *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo],
 	) (err error) {
 		params := &HappeningWorkerParams{
 			CalendariumTeamWorkerParams: *moduleTeamParams,
@@ -49,7 +49,24 @@ func RunHappeningTeamWorker(
 			}
 		}
 
-		return happeningWorker(ctx, tx, params)
+		if err = happeningWorker(ctx, tx, params); err != nil {
+			return err
+		}
+		if len(params.HappeningUpdates) > 0 {
+			if err = tx.Update(ctx, params.Happening.Key, params.HappeningUpdates); err != nil {
+				return fmt.Errorf("failed to update happening record: %w", err)
+			}
+		}
+		if len(params.TeamModuleUpdates) == 0 && params.Happening.Dbo.Type == models4calendarium.HappeningTypeRecurring && (len(params.HappeningUpdates) > 0 || params.Happening.Record.HasChanged()) {
+			recurringHappening := params.TeamModuleEntry.Data.RecurringHappenings[params.Happening.ID]
+			recurringHappening.HappeningBrief = params.Happening.Dbo.HappeningBrief
+			recurringHappening.WithRelated = params.Happening.Dbo.WithRelated
+			moduleTeamParams.TeamModuleUpdates = append(moduleTeamParams.TeamModuleUpdates, dal.Update{
+				Field: "recurringHappenings." + request.HappeningID,
+				Value: params.Happening.Dbo.HappeningBrief,
+			})
+		}
+		return nil
 	}
-	return dal4teamus.RunModuleTeamWorker(ctx, user, request.TeamRequest, moduleID, calendariumTeamDto, moduleTeamWorker)
+	return RunCalendariumTeamWorker(ctx, user, request.TeamRequest, moduleTeamWorker)
 }

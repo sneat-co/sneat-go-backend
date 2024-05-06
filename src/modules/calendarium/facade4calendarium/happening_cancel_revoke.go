@@ -23,17 +23,17 @@ func RevokeHappeningCancellation(ctx context.Context, user facade.User, request 
 	happening := models4calendarium.NewHappeningContext(request.TeamID, request.HappeningID)
 	err = dal4teamus.RunModuleTeamWorker(ctx, user, request.TeamRequest,
 		const4calendarium.ModuleID,
-		new(models4calendarium.CalendariumTeamDto),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDto]) (err error) {
+		new(models4calendarium.CalendariumTeamDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo]) (err error) {
 			if err = tx.Get(ctx, happening.Record); err != nil {
 				return fmt.Errorf("failed to get happening: %w", err)
 			}
 			switch happening.Dbo.Type {
 			case "":
 				return fmt.Errorf("happening record has no type: %w", validation.NewErrRecordIsMissingRequiredField("type"))
-			case "single":
+			case models4calendarium.HappeningTypeSingle:
 				return revokeSingleHappeningCancellation(ctx, tx, happening)
-			case "recurring":
+			case models4calendarium.HappeningTypeRecurring:
 				return revokeRecurringHappeningCancellation(ctx, tx, params, happening, request.Date, request.SlotID)
 			default:
 				return validation.NewErrBadRecordFieldValue("type", "happening has unknown type: "+happening.Dbo.Type)
@@ -52,7 +52,7 @@ func revokeSingleHappeningCancellation(ctx context.Context, tx dal.ReadwriteTran
 func revokeRecurringHappeningCancellation(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDto],
+	params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo],
 	happening models4calendarium.HappeningContext,
 	dateID string,
 	slotID string,
@@ -73,7 +73,7 @@ func revokeRecurringHappeningCancellation(
 	return nil
 }
 
-func removeCancellationFromHappeningBrief(params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDto], happening models4calendarium.HappeningContext) error {
+func removeCancellationFromHappeningBrief(params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo], happening models4calendarium.HappeningContext) error {
 	happeningBrief := params.TeamModuleEntry.Data.GetRecurringHappeningBrief(happening.ID)
 	if happeningBrief == nil {
 		return nil

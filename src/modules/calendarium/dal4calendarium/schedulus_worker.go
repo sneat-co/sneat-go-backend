@@ -16,5 +16,5 @@ func RunCalendariumTeamWorker(
 	request dto4teamus.TeamRequest,
 	worker func(ctx context.Context, tx dal.ReadwriteTransaction, params *CalendariumTeamWorkerParams) (err error),
 ) error {
-	return dal4teamus.RunModuleTeamWorker(ctx, user, request, const4calendarium.ModuleID, new(models4calendarium.CalendariumTeamDto), worker)
+	return dal4teamus.RunModuleTeamWorker(ctx, user, request, const4calendarium.ModuleID, new(models4calendarium.CalendariumTeamDbo), worker)
 }

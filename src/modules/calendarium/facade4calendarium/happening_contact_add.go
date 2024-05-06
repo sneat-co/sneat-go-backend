@@ -19,16 +19,16 @@ func AddParticipantToHappening(ctx context.Context, user facade.User, request dt
 		return
 	}
 
-	var worker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *happeningWorkerParams) error {
+	var worker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
 		_, err := getHappeningContactRecords(ctx, tx, &request, params)
 		if err != nil {
 			return err
 		}
 
 		switch params.Happening.Dbo.Type {
-		case "single":
+		case models4calendarium.HappeningTypeSingle:
 			break // No special processing needed
-		case "recurring":
+		case models4calendarium.HappeningTypeRecurring:
 			var updates []dal.Update
 			if updates, err = addContactToHappeningBriefInTeamDto(ctx, tx, params.TeamModuleEntry, params.Happening, request.Contact.ID); err != nil {
 				return fmt.Errorf("failed to add member to happening brief in team DTO: %w", err)
@@ -53,7 +53,7 @@ func AddParticipantToHappening(ctx context.Context, user facade.User, request dt
 		return err
 	}
 
-	if err = modifyHappening(ctx, user, request.HappeningRequest, worker); err != nil {
+	if err = dal4calendarium.RunHappeningTeamWorker(ctx, user, request.HappeningRequest, worker); err != nil {
 		return fmt.Errorf("failed to add member to happening: %w", err)
 	}
 	return nil

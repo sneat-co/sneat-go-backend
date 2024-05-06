@@ -54,8 +54,8 @@ func CreateHappening(
 	}
 	err = dal4teamus.CreateTeamItem(ctx, user, counter, request.TeamRequest,
 		const4calendarium.ModuleID,
-		new(models4calendarium.CalendariumTeamDto),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDto]) (err error) {
+		new(models4calendarium.CalendariumTeamDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo]) (err error) {
 			response, err = createHappeningTx(ctx, tx, happeningDto, params)
 			return
 		},
@@ -64,7 +64,7 @@ func CreateHappening(
 	return
 }
 
-func createHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, happeningDto *models4calendarium.HappeningDbo, params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDto]) (
+func createHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, happeningDto *models4calendarium.HappeningDbo, params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo]) (
 	response dto4calendarium.CreateHappeningResponse, err error,
 ) {
 	happeningDto.CreatedAt = params.Started
@@ -75,7 +75,7 @@ func createHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, happeni
 
 	happeningDto.UserIDs = params.Team.Data.UserIDs
 	happeningDto.Status = "active"
-	if happeningDto.Type == "single" {
+	if happeningDto.Type == models4calendarium.HappeningTypeSingle {
 		date := happeningDto.Slots[0].Start.Date
 		happeningDto.Dates = []string{date}
 		happeningDto.DateMin = date
