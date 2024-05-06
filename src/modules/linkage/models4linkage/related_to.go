@@ -40,10 +40,13 @@ func NewTeamModuleDocRef(teamID, moduleID, collection, itemID string) TeamModule
 
 func NewTeamModuleDocRefFromString(id string) TeamModuleItemRef {
 	ids := strings.Split(id, ".")
+	if len(ids) != 4 {
+		panic(fmt.Sprintf("invalid ID: '%s'", id))
+	}
 	return TeamModuleItemRef{
-		TeamID:     ids[0],
-		ModuleID:   ids[1],
-		Collection: ids[2],
+		ModuleID:   ids[0],
+		Collection: ids[1],
+		TeamID:     ids[2],
 		ItemID:     ids[3],
 	}
 }

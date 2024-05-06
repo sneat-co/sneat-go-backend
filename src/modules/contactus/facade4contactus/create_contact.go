@@ -209,6 +209,7 @@ func CreateContactTx(
 
 	contact = dal4contactus.NewContactEntryWithData(request.TeamID, contactID, contactDbo)
 
+	_ = contact.Data.UpdateRelatedIDs()
 	if err = contact.Data.Validate(); err != nil {
 		return contact, fmt.Errorf("contact record is not valid: %w", err)
 	}

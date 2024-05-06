@@ -215,7 +215,8 @@ func (v *WithRelated) ValidateRelated(validateID func(relatedID string) error) e
 				}
 				for _, key := range relatedItem.Keys {
 					if validateID != nil {
-						if err := validateID(key.String()); err != nil {
+						relatedID := NewTeamModuleDocRef(key.TeamID, moduleID, collectionID, key.ItemID).ID()
+						if err := validateID(relatedID); err != nil {
 							return validation.NewErrBadRecordFieldValue(field, err.Error())
 						}
 					}

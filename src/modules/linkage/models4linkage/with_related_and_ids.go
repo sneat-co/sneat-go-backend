@@ -8,6 +8,9 @@ import (
 	"strings"
 )
 
+const NoRelatedID = "-"
+const AnyRelatedID = "*"
+
 // WithRelatedAndIDs defines relationships of the current contact record to other contacts.
 type WithRelatedAndIDs struct {
 	WithRelated
@@ -44,15 +47,25 @@ func (v *WithRelatedAndIDs) Validate() error {
 	if err := v.ValidateRelated(func(relatedID string) error {
 		if !slice.Contains(v.RelatedIDs, relatedID) {
 			return validation.NewErrBadRecordFieldValue("relatedIDs",
-				"does not have relevant value in 'relatedIDs' field: "+relatedID)
+				fmt.Sprintf(`does not have relevant value in 'relatedIDs' field: relatedID="%s"`, relatedID))
 		}
 		return nil
 	}); err != nil {
 		return err
 	}
-	for i, relatedID := range v.RelatedIDs {
+	if len(v.RelatedIDs) == 0 {
+		return validation.NewErrRecordIsMissingRequiredField("relatedIDs")
+	}
+	if v.RelatedIDs[0] != AnyRelatedID && v.RelatedIDs[0] != NoRelatedID {
+		return validation.NewErrBadRecordFieldValue("relatedIDs[0]", fmt.Sprintf("should be either '%s' or '%s'", AnyRelatedID, NoRelatedID))
+	}
+	for i, relatedID := range v.RelatedIDs[1:] { // The first item is always either "*" or "-"
 		if strings.TrimSpace(relatedID) == "" {
 			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), "empty contact ID")
+		}
+		if strings.HasSuffix(relatedID, "."+AnyRelatedID) {
+			// TODO: Validate search index values
+			continue
 		}
 		relatedRef := NewTeamModuleDocRefFromString(relatedID)
 
@@ -88,12 +101,20 @@ func (v *WithRelatedAndIDs) AddRelationshipsAndIDs(
 	//return nil, errors.New("not implemented yet - AddRelationshipsAndIDs")
 }
 
-func (v *WithRelatedAndIDs) updateRelatedIDs() (updates []dal.Update) {
-	v.RelatedIDs = make([]string, 0, len(v.Related))
+func (v *WithRelatedAndIDs) UpdateRelatedIDs() (updates []dal.Update) {
+	searchIndex := []string{AnyRelatedID}
+	v.RelatedIDs = make([]string, 0)
 	for moduleID, relatedByCollectionID := range v.Related {
+		searchIndex = append(searchIndex, fmt.Sprintf("%s.%s", moduleID, AnyRelatedID))
 		for collectionID, relatedItems := range relatedByCollectionID {
+			searchIndex = append(searchIndex, fmt.Sprintf("%s.%s.%s", moduleID, collectionID, AnyRelatedID))
+			teamIDs := make([]string, 0, len(relatedItems))
 			for _, relatedItem := range relatedItems {
 				for _, k := range relatedItem.Keys {
+					if !slice.Contains(teamIDs, k.TeamID) {
+						teamIDs = append(teamIDs, k.TeamID)
+						searchIndex = append(searchIndex, fmt.Sprintf("%s.%s.%s.%s", moduleID, collectionID, k.TeamID, AnyRelatedID))
+					}
 					id := NewTeamModuleDocRef(k.TeamID, moduleID, collectionID, k.ItemID).ID()
 					v.RelatedIDs = append(v.RelatedIDs, id)
 				}
@@ -101,9 +122,10 @@ func (v *WithRelatedAndIDs) updateRelatedIDs() (updates []dal.Update) {
 		}
 	}
 	if len(v.RelatedIDs) == 0 {
-		v.RelatedIDs = nil
+		v.RelatedIDs = []string{NoRelatedID}
 		updates = append(updates, dal.Update{Field: "relatedIDs", Value: dal.DeleteField})
 	} else {
+		v.RelatedIDs = append(searchIndex, v.RelatedIDs...)
 		updates = append(updates, dal.Update{Field: "relatedIDs", Value: v.RelatedIDs})
 	}
 	return
@@ -113,13 +135,13 @@ func (v *WithRelatedAndIDs) AddRelationshipAndID(
 	link Link,
 ) (updates []dal.Update, err error) {
 	updates, err = v.WithRelated.AddRelationship(link)
-	updates = append(updates, v.updateRelatedIDs()...)
+	updates = append(updates, v.UpdateRelatedIDs()...)
 	return
 }
 
 func (v *WithRelatedAndIDs) RemoveRelatedAndID(ref TeamModuleItemRef) (updates []dal.Update) {
 	updates = v.WithRelated.RemoveRelatedItem(ref)
-	updates = append(updates, v.updateRelatedIDs()...)
+	updates = append(updates, v.UpdateRelatedIDs()...)
 	return updates
 }
 
