@@ -70,5 +70,10 @@ func (v HappeningBrief) Validate() error {
 	if err := v.WithHappeningPrices.Validate(); err != nil {
 		return err // No need for field name as it reported by WithHappeningPrices.Validate()
 	}
+	for i, price := range v.Prices {
+		if price.ID == "" {
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("prices[%v].id", i), "empty string value")
+		}
+	}
 	return nil
 }

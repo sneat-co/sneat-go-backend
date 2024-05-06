@@ -12,6 +12,7 @@ type WithHappeningPrices struct {
 	Prices []*HappeningPrice `json:"prices,omitempty" firestore:"prices,omitempty"`
 }
 
+// GetPriceByID returns price by ID
 func (v WithHappeningPrices) GetPriceByID(priceID string) *HappeningPrice {
 	for _, price := range v.Prices {
 		if price.ID == priceID {
@@ -46,10 +47,18 @@ type HappeningPrice struct {
 	ID     string       `json:"id,omitempty" firestore:"id,omitempty"`
 	Term   Term         `json:"term" firestore:"term"`
 	Amount money.Amount `json:"amount" firestore:"amount"`
+
+	// Does not need to be *int as '0' means not applicable and is omitted from JSON & Firestore
+	ExpenseQuantity int `json:"expenseQuantity,omitempty" firestore:"expenseQuantity,omitempty"`
 }
 
 // Validate returns error if not valid
 func (v HappeningPrice) Validate() error {
+	// We do not validate ID for "" here as it will be empty in request to create a new price entry
+	// Though we validate it's not empty in HappeningBrief
+	if v.ID == "*" {
+		return validation.NewErrBadRecordFieldValue("id", "should not be '*'")
+	}
 	if err := v.Term.Validate(); err != nil {
 		return validation.NewErrBadRecordFieldValue("term", err.Error())
 	}
@@ -58,6 +67,9 @@ func (v HappeningPrice) Validate() error {
 	}
 	if v.Amount.Value < 0 {
 		return validation.NewErrBadRecordFieldValue("amount", "should be positive, got: "+v.Amount.String())
+	}
+	if v.ExpenseQuantity < 0 {
+		return validation.NewErrBadRecordFieldValue("expenseQuantity", "should be positive or zero, got: "+strconv.Itoa(v.ExpenseQuantity))
 	}
 	return nil
 }
@@ -82,10 +94,12 @@ type Term struct {
 	Length int      `json:"length" firestore:"length"`
 }
 
+// ID returns unique identifier of the term
 func (v Term) ID() string {
 	return fmt.Sprintf("%s%d", v.Unit, v.Length)
 }
 
+// String returns string representation of the term
 func (v Term) String() string {
 	if v.Unit == TermUnitSingle {
 		return "single"
