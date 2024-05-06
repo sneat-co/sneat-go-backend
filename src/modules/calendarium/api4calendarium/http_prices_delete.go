@@ -8,13 +8,13 @@ import (
 	"net/http"
 )
 
-func httpDeletePrices(w http.ResponseWriter, r *http.Request) {
-	var request dto4calendarium.HappeningPricesRequest
+func httpDeleteHappeningPrices(w http.ResponseWriter, r *http.Request) {
+	var request dto4calendarium.DeleteHappeningPricesRequest
 	request.HappeningRequest = getHappeningRequestParamsFromURL(r)
 	ctx, userContext, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
 	if err != nil {
 		return
 	}
 	err = facade4calendarium.DeleteHappeningPrices(ctx, userContext, request)
-	apicore.ReturnJSON(ctx, w, r, http.StatusOK, err, nil)
+	apicore.ReturnJSON(ctx, w, r, http.StatusNoContent, err, nil)
 }

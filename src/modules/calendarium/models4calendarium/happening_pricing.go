@@ -12,6 +12,15 @@ type WithHappeningPrices struct {
 	Prices []*HappeningPrice `json:"prices,omitempty" firestore:"prices,omitempty"`
 }
 
+func (v WithHappeningPrices) GetPriceByID(priceID string) *HappeningPrice {
+	for _, price := range v.Prices {
+		if price.ID == priceID {
+			return price
+		}
+	}
+	return nil
+}
+
 // Validate returns error if not valid
 func (v WithHappeningPrices) Validate() error {
 	for i, price := range v.Prices {
@@ -20,6 +29,13 @@ func (v WithHappeningPrices) Validate() error {
 		}
 		if err := price.Validate(); err != nil {
 			return validation.NewErrBadRecordFieldValue("prices["+strconv.Itoa(i)+"]", err.Error())
+		}
+		id := price.Term.ID()
+		for j, p := range v.Prices {
+			if i != j && p.ID == id {
+				return validation.NewErrBadRecordFieldValue("prices",
+					fmt.Sprintf("duplicate price ID at indexes %d & %d: %s", i, j, id))
+			}
 		}
 	}
 	return nil
@@ -64,6 +80,20 @@ const (
 type Term struct {
 	Unit   TermUnit `json:"unit" firestore:"unit"`
 	Length int      `json:"length" firestore:"length"`
+}
+
+func (v Term) ID() string {
+	return fmt.Sprintf("%s%d", v.Unit, v.Length)
+}
+
+func (v Term) String() string {
+	if v.Unit == TermUnitSingle {
+		return "single"
+	}
+	if v.Length == 1 {
+		return fmt.Sprintf("1 %s", v.Unit)
+	}
+	return fmt.Sprintf("%d %ss", v.Length, v.Unit)
 }
 
 // Validate returns error if not valid

@@ -26,7 +26,7 @@ require (
 	github.com/bots-go-framework/bots-host-gae v0.5.7
 	github.com/captaincodeman/datastore-mapper v0.0.0-20170320145307-cb380a4c4d13
 	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85
-	github.com/crediterra/money v0.2.1
+	github.com/crediterra/money v0.2.2
 	github.com/dal-go/dalgo v0.12.1
 	github.com/dal-go/mocks4dalgo v0.1.19
 	github.com/golang-jwt/jwt/v5 v5.2.1

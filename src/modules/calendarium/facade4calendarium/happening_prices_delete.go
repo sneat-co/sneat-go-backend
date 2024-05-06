@@ -7,16 +7,17 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/models4calendarium"
 	"github.com/sneat-co/sneat-go-core/facade"
+	"github.com/strongo/slice"
 )
 
-func DeleteHappeningPrices(ctx context.Context, user facade.User, request dto4calendarium.HappeningPricesRequest) (err error) {
+func DeleteHappeningPrices(ctx context.Context, user facade.User, request dto4calendarium.DeleteHappeningPricesRequest) (err error) {
 	var deleteHappeningPricesWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
 		return deleteHappeningPricesTx(ctx, tx, user, params, request)
 	}
 	return dal4calendarium.RunHappeningTeamWorker(ctx, user, request.HappeningRequest, deleteHappeningPricesWorker)
 }
 
-func deleteHappeningPricesTx(ctx context.Context, tx dal.ReadwriteTransaction, _ facade.User, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.HappeningPricesRequest) (err error) {
+func deleteHappeningPricesTx(ctx context.Context, tx dal.ReadwriteTransaction, _ facade.User, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.DeleteHappeningPricesRequest) (err error) {
 	if err = params.GetRecords(ctx, tx); err != nil {
 		return err
 	}
@@ -24,17 +25,18 @@ func deleteHappeningPricesTx(ctx context.Context, tx dal.ReadwriteTransaction, _
 
 	prices := make([]*models4calendarium.HappeningPrice, 0, len(happeningDbo.Prices))
 
-requestPrices:
-	for _, price := range request.Prices {
-		for _, p := range happeningDbo.Prices {
-			if p.Term == price.Term {
-				continue requestPrices
-			}
+	for _, price := range happeningDbo.Prices {
+		if slice.Contains(request.PriceIDs, price.ID) {
+			continue
 		}
-		prices = append(happeningDbo.Prices, price)
+		prices = append(prices, price)
 	}
 	if len(prices) < len(happeningDbo.Prices) {
 		happeningDbo.Prices = prices
+		params.HappeningUpdates = append(params.HappeningUpdates, dal.Update{
+			Field: "prices",
+			Value: happeningDbo.Prices,
+		})
 		params.Happening.Record.MarkAsChanged()
 	}
 	return nil

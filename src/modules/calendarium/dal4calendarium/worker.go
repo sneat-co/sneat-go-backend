@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/const4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/models4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
@@ -12,11 +11,6 @@ import (
 )
 
 type CalendariumTeamWorkerParams = dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo]
-
-func NewCalendariumTeamWorkerParams(userID, teamID string) *CalendariumTeamWorkerParams {
-	teamWorkerParams := dal4teamus.NewTeamWorkerParams(userID, teamID)
-	return dal4teamus.NewTeamModuleWorkerParams(const4calendarium.ModuleID, teamWorkerParams, new(models4calendarium.CalendariumTeamDbo))
-}
 
 type HappeningWorkerParams struct {
 	CalendariumTeamWorkerParams

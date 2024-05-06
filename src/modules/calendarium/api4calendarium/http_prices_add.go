@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func httpAddPrices(w http.ResponseWriter, r *http.Request) {
+func httpAddHappeningPrices(w http.ResponseWriter, r *http.Request) {
 	var request dto4calendarium.HappeningPricesRequest
 	request.HappeningRequest = getHappeningRequestParamsFromURL(r)
 	ctx, userContext, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
@@ -16,5 +16,5 @@ func httpAddPrices(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	err = facade4calendarium.AddHappeningPrices(ctx, userContext, request)
-	apicore.ReturnJSON(ctx, w, r, http.StatusOK, err, nil)
+	apicore.ReturnJSON(ctx, w, r, http.StatusNoContent, err, nil)
 }

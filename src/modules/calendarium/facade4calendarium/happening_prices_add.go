@@ -2,10 +2,12 @@ package facade4calendarium
 
 import (
 	"context"
+	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
 	"github.com/sneat-co/sneat-go-core/facade"
+	"github.com/strongo/random"
 )
 
 func AddHappeningPrices(ctx context.Context, user facade.User, request dto4calendarium.HappeningPricesRequest) (err error) {
@@ -15,7 +17,7 @@ func AddHappeningPrices(ctx context.Context, user facade.User, request dto4calen
 	return dal4calendarium.RunHappeningTeamWorker(ctx, user, request.HappeningRequest, addHappeningPricesWorker)
 }
 
-func addHappeningPricesTx(ctx context.Context, tx dal.ReadwriteTransaction, user facade.User, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.HappeningPricesRequest) (err error) {
+func addHappeningPricesTx(ctx context.Context, tx dal.ReadwriteTransaction, _ facade.User, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.HappeningPricesRequest) (err error) {
 	if err = params.GetRecords(ctx, tx); err != nil {
 		return err
 	}
@@ -32,8 +34,27 @@ requestPrices:
 				continue requestPrices
 			}
 		}
-		happeningDbo.Prices = append(happeningDbo.Prices, price)
+		termID := price.Term.ID()
+		price.ID = termID // Ignore ID passed in request from client
+		const maxAttempts = 10
+		for k := 0; k < maxAttempts+1; k++ {
+			if k == maxAttempts {
+				return fmt.Errorf("too many attempts to generate unique price ID for term %v", termID)
+			}
+			if price.ID != "" && happeningDbo.GetPriceByID(price.ID) == nil {
+				happeningDbo.Prices = append(happeningDbo.Prices, price)
+				break
+			}
+			price.ID = termID + random.ID(k+1)
+		}
 		params.Happening.Record.MarkAsChanged()
+	}
+
+	if params.Happening.Record.HasChanged() {
+		params.HappeningUpdates = append(params.HappeningUpdates, dal.Update{
+			Field: "prices",
+			Value: happeningDbo.Prices,
+		})
 	}
 
 	return nil
