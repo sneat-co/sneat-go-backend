@@ -27,12 +27,13 @@ func (v *HappeningAdjustment) Validate() error {
 	if strings.TrimSpace(v.HappeningID) == "" {
 		return validation.NewErrRecordIsMissingRequiredField("happeningID")
 	}
+	if strings.TrimSpace(v.HappeningID) == "" {
+		return validation.NewErrRecordIsMissingRequiredField("happeningID")
+	}
 	if err := v.Slot.Validate(); err != nil {
 		return err
 	}
-	if v.Slot.Repeats == "recurring" { // TODO: Validate repeat value
-		return validation.NewErrBadRecordFieldValue("slot.repeats", fmt.Sprintf("must be 'once', got '%v'", v.Slot.Repeats))
-	}
+
 	if v.Canceled != nil {
 		if err := v.Canceled.Validate(); err != nil {
 			return validation.NewErrBadRecordFieldValue("canceled", err.Error())

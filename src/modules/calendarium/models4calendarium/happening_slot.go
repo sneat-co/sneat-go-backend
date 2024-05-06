@@ -13,7 +13,7 @@ type Canceled struct {
 	Reason string          `json:"reason,omitempty" firestore:"reason,omitempty"`
 }
 
-func (v Canceled) Validate() error {
+func (v *Canceled) Validate() error {
 	if v.At.IsZero() {
 		return validation.NewErrRecordIsMissingRequiredField("at")
 	}

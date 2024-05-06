@@ -6,27 +6,40 @@ import (
 	"github.com/strongo/slice"
 	"github.com/strongo/validation"
 	"strconv"
+	"strings"
 )
 
-// Repeat defines repeat mode
-type Repeat = string
+// RepeatPeriod defines repeat mode
+type RepeatPeriod = string
 
 const (
-	// RepeatOnce = "once"
-	RepeatOnce Repeat = "once"
+	// RepeatPeriodOnce = "once"
+	RepeatPeriodOnce RepeatPeriod = "once"
 
-	// RepeatDaily = "daily"
-	RepeatDaily Repeat = "daily"
+	// RepeatPeriodDaily = "daily"
+	RepeatPeriodDaily RepeatPeriod = "daily"
 
-	// RepeatWeekly = "weekly"
-	RepeatWeekly Repeat = "weekly"
+	// RepeatPeriodWeekly = "weekly"
+	RepeatPeriodWeekly RepeatPeriod = "weekly"
 
-	// RepeatMonthly = "monthly"
-	RepeatMonthly Repeat = "monthly"
+	// RepeatPeriodMonthly = "monthly"
+	RepeatPeriodMonthly RepeatPeriod = "monthly"
 
-	// RepeatYearly = "yearly"
-	RepeatYearly Repeat = "yearly"
+	// RepeatPeriodYearly = "yearly"
+	RepeatPeriodYearly RepeatPeriod = "yearly"
 )
+
+var KnownRepeatPeriods = []RepeatPeriod{
+	RepeatPeriodOnce,
+	RepeatPeriodDaily,
+	RepeatPeriodWeekly,
+	RepeatPeriodMonthly,
+	RepeatPeriodYearly,
+}
+
+func IsKnownRepeatPeriod(repeat RepeatPeriod) bool {
+	return slice.Contains(KnownRepeatPeriods, repeat)
+}
 
 // WeekdayCode defines weekday 2 chars code. Values: mo, tu, we, th, fr, sa, su
 type WeekdayCode = string
@@ -121,7 +134,7 @@ func (v Timing) Validate() error {
 // HappeningSlotTiming DTO
 type HappeningSlotTiming struct {
 	Timing
-	Repeats Repeat `json:"repeats" firestore:"repeats"`
+	Repeats RepeatPeriod `json:"repeats" firestore:"repeats"`
 
 	Weekdays []WeekdayCode `json:"weekdays,omitempty" firestore:"weekdays,omitempty"`
 
@@ -137,18 +150,23 @@ func (v HappeningSlotTiming) Validate() error {
 	switch v.Repeats {
 	case "":
 		return validation.NewErrRecordIsMissingRequiredField("repeats")
-	case RepeatWeekly:
+	case RepeatPeriodWeekly:
 		if len(v.Weekdays) == 0 {
 			return validation.NewErrBadRecordFieldValue("weekdays", "for weekly recurring happenings weekdays also should be specified")
 		}
-	case RepeatOnce, RepeatDaily, RepeatMonthly, RepeatYearly:
+	case RepeatPeriodOnce, RepeatPeriodDaily, RepeatPeriodMonthly, RepeatPeriodYearly:
 		if len(v.Weekdays) > 0 {
 			return validation.NewErrBadRecordFieldValue("weekdays", "can be specified only for weekly recurring happenings")
 		}
 	default:
+		if !IsKnownRepeatPeriod(v.Repeats) {
+			return validation.NewErrBadRecordFieldValue("slot.repeats",
+				fmt.Sprintf("got '%s', expcted one of: %s",
+					v.Repeats, strings.Join(KnownRepeatPeriods, ", ")))
+		}
 		return validation.NewErrBadRecordFieldValue("repeats", "unknown value: "+v.Repeats)
 	}
-	if v.Repeats == RepeatOnce {
+	if v.Repeats == RepeatPeriodOnce {
 		if v.Start.Date == "" {
 			return validation.NewErrRecordIsMissingRequiredField("slots[0].start.date")
 		}
