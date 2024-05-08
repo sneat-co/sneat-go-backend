@@ -13,7 +13,7 @@ import (
 type CalendariumTeamWorkerParams = dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo]
 
 type HappeningWorkerParams struct {
-	CalendariumTeamWorkerParams
+	*CalendariumTeamWorkerParams
 	Happening        models4calendarium.HappeningContext
 	HappeningUpdates []dal.Update
 }
@@ -32,7 +32,7 @@ func RunHappeningTeamWorker(
 		moduleTeamParams *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo],
 	) (err error) {
 		params := &HappeningWorkerParams{
-			CalendariumTeamWorkerParams: *moduleTeamParams,
+			CalendariumTeamWorkerParams: moduleTeamParams,
 			Happening:                   models4calendarium.NewHappeningContext(request.TeamID, request.HappeningID),
 		}
 		if err = tx.Get(ctx, params.Happening.Record); err != nil {

@@ -50,6 +50,23 @@ func AddParticipantToHappening(ctx context.Context, user facade.User, request dt
 			return err
 		}
 		params.HappeningUpdates = append(params.HappeningUpdates, updates...)
+
+		//if params.Happening.Dbo.Type == models4calendarium.HappeningTypeRecurring {
+		//	recurringHappening := params.TeamModuleEntry.Data.RecurringHappenings[params.Happening.ID]
+		//	if recurringHappening != nil {
+		//		recurringHappening.Related = params.Happening.Dbo.Related
+		//		if err = recurringHappening.Validate(); err != nil {
+		//			return fmt.Errorf("failed to validate recurring happening: %w", err)
+		//		}
+		//		if err = params.TeamModuleEntry.Data.Validate(); err != nil {
+		//			return fmt.Errorf("failed to validate calendarium team module data: %w", err)
+		//		}
+		//		params.TeamModuleUpdates = append(params.TeamModuleUpdates, dal.Update{
+		//			Field: fmt.Sprintf("recurringHappenings.%s.related", params.Happening.ID),
+		//		})
+		//	}
+		//}
+
 		return err
 	}
 
