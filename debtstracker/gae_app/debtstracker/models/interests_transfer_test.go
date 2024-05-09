@@ -111,12 +111,12 @@ func TestUserContactJson_BalanceWithInterest(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log(string(data))
+	//t.Log(string(data))
 	err = ffjson.Unmarshal(data, &userContact)
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Logf("%+v", userContact.Transfers.OutstandingWithInterest[0])
+	//t.Logf("%+v", userContact.Transfers.OutstandingWithInterest[0])
 	balanceWithInterest, _ := userContact.BalanceWithInterest(context.Background(), time.Now())
 	if len(balanceWithInterest) != 1 {
 		t.Fatalf("len(balanceWithInterest) != 1: %v", len(balanceWithInterest))

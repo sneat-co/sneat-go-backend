@@ -96,6 +96,7 @@ func MockTx(t *testing.T) (tx *mocks4dal.MockReadwriteTransaction) {
 				default:
 					return dal.ErrRecordNotFound
 				}
+				contactDto.UpdateRelatedIDs()
 			default:
 				t.Fatalf("Unexpected collection: %v", record.Key())
 			}
