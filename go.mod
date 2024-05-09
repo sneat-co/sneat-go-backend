@@ -40,8 +40,8 @@ require (
 	github.com/sendgrid/sendgrid-go v3.14.0+incompatible
 	github.com/shiyanhui/hero v0.0.2
 	github.com/sneat-co/debtstracker-translations v0.0.21
-	github.com/sneat-co/sneat-go-core v0.23.5
-	github.com/sneat-co/sneat-go-firebase v0.4.42
+	github.com/sneat-co/sneat-go-core v0.23.6
+	github.com/sneat-co/sneat-go-firebase v0.4.43
 	github.com/stretchr/testify v1.9.0
 	github.com/strongo/app-host-gae v0.1.27
 	github.com/strongo/decimal v0.1.1
@@ -57,8 +57,8 @@ require (
 	github.com/strongo/strongoapp v0.18.2
 	github.com/strongo/validation v0.0.6
 	github.com/yaa110/go-persian-calendar v1.2.0
-	golang.org/x/crypto v0.22.0
-	golang.org/x/net v0.24.0
+	golang.org/x/crypto v0.23.0
+	golang.org/x/net v0.25.0
 	google.golang.org/appengine/v2 v2.0.6
 )
 
@@ -104,8 +104,8 @@ require (
 	go.opentelemetry.io/otel/trace v1.25.0 // indirect
 	golang.org/x/oauth2 v0.19.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
-	golang.org/x/sys v0.19.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/sys v0.20.0 // indirect
+	golang.org/x/text v0.15.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	google.golang.org/api v0.177.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
