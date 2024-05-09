@@ -194,6 +194,8 @@ github.com/strongo/decimal v0.0.1 h1:DQwMkKatXuoh9WhQvOTr3c2cIbprdbR8Yl0MA1mme6Y
 github.com/strongo/decimal v0.0.1/go.mod h1:uKFgetJbR2uT026stdbK54ELXTH9h0vZOPPOp7DAODk=
 github.com/strongo/decimal v0.1.0 h1:x26I+uTA7dIHSGzl6AMwYsPa5GgTbvZ93P2qP4lSnUk=
 github.com/strongo/decimal v0.1.0/go.mod h1:uKFgetJbR2uT026stdbK54ELXTH9h0vZOPPOp7DAODk=
+github.com/strongo/decimal v0.1.1 h1:k7HY/0NmG6Ne5YPV7XybII+AT7O4AShl6HZpLiNZsb4=
+github.com/strongo/decimal v0.1.1/go.mod h1:uKFgetJbR2uT026stdbK54ELXTH9h0vZOPPOp7DAODk=
 github.com/strongo/delaying v0.0.1 h1:avN7p5oKcowaDeEbGJLB4QHgttK6y9OtGwFN0UkEDi8=
 github.com/strongo/delaying v0.0.1/go.mod h1:nQ3n4876SKTIR0FUrig6huZgI/mWHAOeGMVHkGs76tk=
 github.com/strongo/facebook v1.8.1 h1:1kR0YdkeuP3YS3t6fns57boPiarMZq92/M4S5PeUhMs=

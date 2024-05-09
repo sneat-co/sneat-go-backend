@@ -44,7 +44,7 @@ require (
 	github.com/sneat-co/sneat-go-firebase v0.4.42
 	github.com/stretchr/testify v1.9.0
 	github.com/strongo/app-host-gae v0.1.27
-	github.com/strongo/decimal v0.1.0
+	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.0.1
 	github.com/strongo/facebook v1.8.1
 	github.com/strongo/gamp v0.0.1

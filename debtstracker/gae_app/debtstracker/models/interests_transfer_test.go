@@ -92,7 +92,7 @@ func TestTransferEntityGetOutstandingValue(t *testing.T) {
 func TestUserContactJson_BalanceWithInterest(t *testing.T) {
 	now := time.Now()
 
-	balanceJson := json.RawMessage(`{"EUR": 100}`)
+	balanceJson := json.RawMessage(`{"EUR": 10000}`)
 	userContact := UserContactJson{
 		BalanceJson: &balanceJson,
 		Transfers: &UserContactTransfersInfo{

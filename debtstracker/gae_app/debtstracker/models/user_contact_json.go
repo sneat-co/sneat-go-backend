@@ -88,7 +88,7 @@ type UserContactJson struct {
 	Transfers   *UserContactTransfersInfo `json:",omitempty"`
 }
 
-func (o UserContactJson) Equal(o2 UserContactJson) bool {
+func (o *UserContactJson) Equal(o2 UserContactJson) bool {
 	return o.ID == o2.ID &&
 		o.Name == o2.Name &&
 		o.Status == o2.Status &&
@@ -98,7 +98,7 @@ func (o UserContactJson) Equal(o2 UserContactJson) bool {
 		((o.Transfers == nil && o2.Transfers == nil) || (o.Transfers != nil && o2.Transfers != nil && o.Transfers.Equal(o2.Transfers)))
 }
 
-func (o UserContactJson) Balance() (balance money.Balance) {
+func (o *UserContactJson) Balance() (balance money.Balance) {
 	balance = make(money.Balance)
 	if o.BalanceJson == nil {
 		return
@@ -124,7 +124,7 @@ func (o *UserContactJson) SetBalance(balance money.Balance) (err error) {
 	return
 }
 
-func (o UserContactJson) BalanceWithInterest(c context.Context, periodEnds time.Time) (balance money.Balance, err error) {
+func (o *UserContactJson) BalanceWithInterest(c context.Context, periodEnds time.Time) (balance money.Balance, err error) {
 	balance = o.Balance()
 	if o.Transfers != nil {
 		if err = updateBalanceWithInterest(false, balance, o.Transfers.OutstandingWithInterest, periodEnds); err != nil {
