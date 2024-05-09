@@ -64,7 +64,13 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 					},
 				},
 				//{Field: "related.team1.contactus.contacts.c2.relatesAs.child", Value: &Relationship{WithCreatedField: dbmodels.WithCreatedField{Created: dbmodels.Created{By: "u1", On: now.Format(time.DateTime)}}}},
-				{Field: "relatedIDs", Value: []string{"contactus.contacts.team1.c2"}},
+				{Field: "relatedIDs", Value: []string{
+					"*",
+					"contactus.*",
+					"contactus.contacts.*",
+					"contactus.contacts.team1.*",
+					"contactus.contacts.team1.c2",
+				}},
 			},
 		},
 		{
@@ -108,7 +114,13 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 						},
 					},
 				},
-				{Field: "relatedIDs", Value: []string{"contactus.contacts.team1.c2"}},
+				{Field: "relatedIDs", Value: []string{
+					"*",
+					"contactus.*",
+					"contactus.contacts.*",
+					"contactus.contacts.team1.*",
+					"contactus.contacts.team1.c2",
+				}},
 			},
 		},
 	}
@@ -139,21 +151,28 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 				}
 				if !reflect.DeepEqual(gotUpdate.Value, wantUpdate.Value) {
 					t.Errorf("SetRelationshipToItem()[%d]\nactual.Value:\n\t%+v,\nwant.Value:\n\t%+v", i, gotUpdate.Value, wantUpdate.Value)
-					gotItems := gotUpdate.Value.([]*RelatedItem)
-					wantItems := wantUpdate.Value.([]*RelatedItem)
-					if len(gotItems) != len(wantItems) {
-						t.Errorf("SetRelationshipToItem()[%d]\nactual.Value:\n\t%+v,\nwant.Value:\n\t%+v", i, gotItems, wantItems)
-					}
-					for j, gotItem := range gotItems {
-						wantItem := wantItems[j]
-						if !reflect.DeepEqual(gotItem.Keys, wantItem.Keys) {
-							t.Errorf("SetRelationshipToItem()[%d]\nactual.Value[%d].Keys:\n\t%+v,\nwant.Value[%d].Keys:\n\t%+v", i, j, gotItem.Keys, j, wantItem.Keys)
+					if gotUpdate.Field == "related" {
+						gotItems, ok := gotUpdate.Value.([]*RelatedItem)
+						if !ok {
+							t.Errorf("SetRelationshipToItem()[%d]\nactual type:\n\t%T,\nwant type:\n\t%T", i, gotUpdate.Value, wantUpdate.Value)
+							return
 						}
-						if !reflect.DeepEqual(gotItem.RelatedAs, wantItem.RelatedAs) {
-							t.Errorf("SetRelationshipToItem()[%d]\nactual.Value[%d].RelatedAs:\n\t%+v,\nwant.Value[%d].RelatedAs:\n\t%+v", i, j, gotItem.RelatedAs, j, wantItem.RelatedAs)
+						wantItems := wantUpdate.Value.([]*RelatedItem)
+						if len(gotItems) != len(wantItems) {
+							t.Errorf("SetRelationshipToItem()[%d]\nactual.Value:\n\t%+v,\nwant.Value:\n\t%+v", i, gotItems, wantItems)
+							return
 						}
-						if !reflect.DeepEqual(gotItem.RelatesAs, wantItem.RelatesAs) {
-							t.Errorf("SetRelationshipToItem()[%d]\nactual.Value[%d].RelatesAs:\n\t%+v,\nwant.Value[%d].RelatesAs:\n\t%+v", i, j, gotItem.RelatesAs, j, wantItem.RelatesAs)
+						for j, gotItem := range gotItems {
+							wantItem := wantItems[j]
+							if !reflect.DeepEqual(gotItem.Keys, wantItem.Keys) {
+								t.Errorf("SetRelationshipToItem()[%d]\nactual.Value[%d].Keys:\n\t%+v,\nwant.Value[%d].Keys:\n\t%+v", i, j, gotItem.Keys, j, wantItem.Keys)
+							}
+							if !reflect.DeepEqual(gotItem.RelatedAs, wantItem.RelatedAs) {
+								t.Errorf("SetRelationshipToItem()[%d]\nactual.Value[%d].RelatedAs:\n\t%+v,\nwant.Value[%d].RelatedAs:\n\t%+v", i, j, gotItem.RelatedAs, j, wantItem.RelatedAs)
+							}
+							if !reflect.DeepEqual(gotItem.RelatesAs, wantItem.RelatesAs) {
+								t.Errorf("SetRelationshipToItem()[%d]\nactual.Value[%d].RelatesAs:\n\t%+v,\nwant.Value[%d].RelatesAs:\n\t%+v", i, j, gotItem.RelatesAs, j, wantItem.RelatesAs)
+							}
 						}
 					}
 				}
