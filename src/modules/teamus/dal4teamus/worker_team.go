@@ -247,7 +247,7 @@ func CreateTeamItem[D TeamModuleData](
 			}
 			if counter != "" {
 				if err = incrementCounter(params.TeamWorkerParams, counter); err != nil {
-					return fmt.Errorf("failed to incement teams counter=%v: %w", counter, err)
+					return fmt.Errorf("failed to incement teams counter=%s: %w", counter, err)
 				}
 			}
 			if err = params.Team.Data.Validate(); err != nil {

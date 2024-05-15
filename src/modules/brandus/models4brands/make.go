@@ -34,7 +34,7 @@ func (v *Maker) Validate() error {
 	}
 	for i, model := range v.Models {
 		if strings.TrimSpace(model) == "" {
-			return validation.NewErrRequestIsMissingRequiredField(fmt.Sprintf("models[%v]", i))
+			return validation.NewErrRequestIsMissingRequiredField(fmt.Sprintf("models[%d]", i))
 		}
 	}
 	return nil

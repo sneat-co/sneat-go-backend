@@ -35,10 +35,10 @@ func ReorderTask(ctx context.Context, userContext facade.User, request ReorderTa
 		}
 		tasks := status.ByType[request.Type]
 		if len(tasks) <= request.From {
-			return fmt.Errorf("len(tasks) <= request.From: %v < %v", len(tasks), request.From)
+			return fmt.Errorf("len(tasks) <= request.From: %d < %d", len(tasks), request.From)
 		}
 		if len(tasks) <= request.To {
-			return fmt.Errorf("len(tasks) <= request.To: %v < %v", len(tasks), request.To)
+			return fmt.Errorf("len(tasks) <= request.To: %d < %d", len(tasks), request.To)
 		}
 		task := tasks[request.From]
 		if task.ID == request.Task && len(tasks) == request.Len {
@@ -63,7 +63,7 @@ func ReorderTask(ctx context.Context, userContext facade.User, request ReorderTa
 				Value: dal.Increment(1),
 			},
 			{
-				Field: fmt.Sprintf("statuses.%v.byType.%v", request.ContactID, request.Type),
+				Field: fmt.Sprintf("statuses.%s.byType.%s", request.ContactID, request.Type),
 				Value: tasks,
 			},
 		})

@@ -88,7 +88,7 @@ func TestHttpAddMember(t *testing.T) {
 
 	createMember = func(ctx context.Context, userCtx facade.User, request dal4contactus.CreateMemberRequest) (response dto4contactus.CreateContactResponse, err error) {
 		if request.TeamID != teamID {
-			t.Fatalf("Expected teamID=%v, got: %v", teamID, request.TeamID)
+			t.Fatalf("Expected teamID=%s, got: %s", teamID, request.TeamID)
 		}
 		response.ID = "abc1"
 		response.Data = &models4contactus.ContactDbo{
@@ -131,7 +131,7 @@ func TestHttpAddMember(t *testing.T) {
 
 	if expected := http.StatusCreated; rr.Code != expected {
 		t.Fatalf(
-			"unexpected status: got (%v) expects (%v): %v",
+			"unexpected status: got (%d) expects (%d): %s",
 			rr.Code,
 			expected,
 			responseBody,

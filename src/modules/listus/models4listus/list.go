@@ -107,7 +107,7 @@ func (v ListBrief) Validate() error {
 		return err
 	}
 	if v.ItemsCount < 0 {
-		return validation.NewErrBadRecordFieldValue("itemsCount", fmt.Sprintf("should be positive, got: %v", v.ItemsCount))
+		return validation.NewErrBadRecordFieldValue("itemsCount", fmt.Sprintf("should be positive, got: %d", v.ItemsCount))
 	}
 	return nil
 }

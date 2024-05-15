@@ -72,7 +72,7 @@ func AddComment(ctx context.Context, userContext facade.User, request AddComment
 			params.task.Comments = append(params.task.Comments, comment)
 			return tx.Update(ctx, params.Meeting.Key, []dal.Update{
 				{
-					Field: fmt.Sprintf("statuses.%v.byType.%v", request.TaskRequest.ContactID, request.TaskRequest.Type),
+					Field: fmt.Sprintf("statuses.%s.byType.%s", request.TaskRequest.ContactID, request.TaskRequest.Type),
 					Value: params.tasks,
 				},
 			})

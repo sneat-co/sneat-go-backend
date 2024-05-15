@@ -48,7 +48,7 @@ func (v *TeamMetric) Validate() error {
 	case "personal", "team":
 		break
 	default:
-		return validation.NewErrBadRecordFieldValue("mode", fmt.Sprintf("unknwon value: %v", v.Mode))
+		return validation.NewErrBadRecordFieldValue("mode", fmt.Sprintf("unknwon value: %s", v.Mode))
 	}
 	switch v.Type {
 	case "":
@@ -56,7 +56,7 @@ func (v *TeamMetric) Validate() error {
 	case "bool", "int", "options":
 		break
 	default:
-		return validation.NewErrBadRecordFieldValue("type", fmt.Sprintf("unknwon value: %v", v.Type))
+		return validation.NewErrBadRecordFieldValue("type", fmt.Sprintf("unknwon value: %s", v.Type))
 	}
 	return nil
 }
@@ -212,7 +212,7 @@ func (v *TeamDbo) Validate() error {
 		//	counter := v.NumberOf[counterName]
 		//	if counter < 0 {
 		//		return validation.NewErrBadRecordFieldValue("numberOf."+counterName,
-		//			fmt.Sprintf("should be positive, got: %v", counter))
+		//			fmt.Sprintf("should be positive, got: %d", counter))
 		//	}
 		//	if briefsCount != counter {
 		//		return validation.NewErrBadRecordFieldValue("numberOf."+counterName,
@@ -224,7 +224,7 @@ func (v *TeamDbo) Validate() error {
 		for name, value := range v.NumberOf {
 			if value < 0 {
 				return validation.NewErrBadRecordFieldValue("numberOf."+name,
-					fmt.Sprintf("should be positive, got: %v", value))
+					fmt.Sprintf("should be positive, got: %d", value))
 			}
 		}
 	}

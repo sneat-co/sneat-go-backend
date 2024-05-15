@@ -75,7 +75,7 @@ func ReorderListItem(ctx context.Context, userContext facade.User, request Reord
 		if err = tx.Update(ctx, listKey, listUpdates); err != nil {
 			return fmt.Errorf("failed to update list record: %w", err)
 		}
-		log.Printf("Updated list with listKey=%v, field=%v, item[1]: %+v", listKey, listUpdates[0].Field, listUpdates[0].Value)
+		log.Printf("Updated list with listKey=%v, field=%s, item[1]: %+v", listKey, listUpdates[0].Field, listUpdates[0].Value)
 		return nil
 	})
 	if err != nil {

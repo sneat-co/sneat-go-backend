@@ -13,6 +13,6 @@ func TestAddTeamMetricRequest_Decoding(t *testing.T) {
 		t.Fatal(err)
 	}
 	if request.Metric.Title != "Test metric" {
-		t.Errorf("Title expected to be [Test metric], got: %v", request.Metric.Title)
+		t.Errorf("Title expected to be [Test metric], got: %s", request.Metric.Title)
 	}
 }

@@ -79,7 +79,7 @@ func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest,
 	for i, item := range request.Items {
 		id, err := generateRandomListItemID(listDto.Items, item.ID)
 		if err != nil {
-			return fmt.Errorf("failed to generate random id for item #%v: %w", i, err)
+			return fmt.Errorf("failed to generate random id for item #%d: %w", i, err)
 		}
 		listItem := models4listus.ListItemBrief{
 			ID:           id,

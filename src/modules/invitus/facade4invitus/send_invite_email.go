@@ -10,6 +10,7 @@ import (
 	"github.com/sneat-co/sneat-go-core/capturer"
 	"github.com/sneat-co/sneat-go-core/emails"
 	"html/template"
+	"mime"
 )
 
 const inviteEmailTemplateText = `
@@ -48,7 +49,7 @@ func sendInviteEmail(ctx context.Context, id string, invite *models4invitus.Pers
 	if invite.From.Address == "" {
 		templateData["fromHTML"] = invite.From.Title
 	} else {
-		templateData["fromHTML"] = fmt.Sprintf(`<a href="mailto:%v">%v</a>`, invite.From.Address, invite.From.Title)
+		templateData["fromHTML"] = fmt.Sprintf(`<a href="mailto:%s">%s</a>`, invite.From.Address, invite.From.Title)
 	}
 	templateData["invite"] = invite
 	templateData["team"] = invite.Team
@@ -59,9 +60,9 @@ func sendInviteEmail(ctx context.Context, id string, invite *models4invitus.Pers
 	}
 
 	msg := emails.Email{
-		From:    fmt.Sprintf(`"%v" <inviter@sneat.app>`, invite.From.Title),
+		From:    fmt.Sprintf(`"%s" <inviter@sneat.app>`, mime.QEncoding.Encode("utf-8", invite.From.Title)),
 		To:      []string{invite.To.Address},
-		Subject: fmt.Sprintf("You are invited by %v to join %v", invite.From.Title, invite.Team.Title),
+		Subject: fmt.Sprintf("You are invited by %s to join %s", invite.From.Title, invite.Team.Title),
 		HTML:    buf.String(),
 		//ReplyTo: nil,
 	}

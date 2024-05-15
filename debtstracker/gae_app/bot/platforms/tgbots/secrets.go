@@ -59,7 +59,7 @@ func Bots(environment string, router func(profile string) botsfw.WebhooksRouter)
 	const prod = "prod"
 
 	if len(_bots.ByCode) == 0 {
-		//log.Debugf(c, "Bots() => hostname:%v, environment:%v:%v", hostname, environment, strongoapp.EnvironmentNames[environment])
+		//log.Debugf(c, "Bots() => hostname:%v, environment:%s:%s", hostname, environment, strongoapp.EnvironmentNames[environment])
 		switch environment {
 		case prod:
 			_bots = botsfw.NewBotSettingsBy( // Production bots

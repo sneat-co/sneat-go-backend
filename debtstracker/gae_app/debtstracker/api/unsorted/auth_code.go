@@ -42,7 +42,7 @@ func HandleSignInWithCode(c context.Context, w http.ResponseWriter, r *http.Requ
 			}
 		} else {
 			if authInfo.UserID != "" && userID != authInfo.UserID {
-				log.Warningf(c, "userID:%v != authInfo.AppUserIntID:%v", userID, authInfo.UserID)
+				log.Warningf(c, "userID:%s != authInfo.AppUserIntID:%s", userID, authInfo.UserID)
 			}
 			ReturnToken(c, w, userID, false, false)
 			return
@@ -76,7 +76,7 @@ func HandleSignInWithPin(c context.Context, w http.ResponseWriter, r *http.Reque
 			}
 		} else {
 			if authInfo.UserID != "" && userID != authInfo.UserID {
-				log.Warningf(c, "userID:%v != authInfo.AppUserIntID:%v", userID, authInfo.UserID)
+				log.Warningf(c, "userID:%s != authInfo.AppUserIntID:%s", userID, authInfo.UserID)
 			}
 			ReturnToken(c, w, userID, false, false)
 		}

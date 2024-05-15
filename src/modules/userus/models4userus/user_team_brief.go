@@ -56,10 +56,10 @@ func (v UserTeamBrief) Validate() error {
 	}
 	for i, role := range v.Roles {
 		if role == "" {
-			return validation.NewErrRecordIsMissingRequiredField(fmt.Sprintf("roles[%v]", i))
+			return validation.NewErrRecordIsMissingRequiredField(fmt.Sprintf("roles[%d]", i))
 		}
 		if !const4contactus.IsKnownTeamMemberRole(role, nil) {
-			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("roles[%v]", i), fmt.Sprintf("unknown role (expected one of this role: %+v): %v",
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("roles[%d]", i), fmt.Sprintf("unknown role (expected one of this role: %+v): %s",
 				const4contactus.TeamMemberWellKnownRoles, role))
 		}
 	}
@@ -73,7 +73,7 @@ func (v UserTeamBrief) Validate() error {
 	//		}
 	//		for i, item := range items {
 	//			newItemErr := func(message string) error {
-	//				return validation.NewErrBadRecordFieldValue(fmt.Sprintf("retroItems[%v][%v]", itemType, i), message)
+	//				return validation.NewErrBadRecordFieldValue(fmt.Sprintf("retroItems[%s][%d]", itemType, i), message)
 	//			}
 	//			if item == nil {
 	//				return newItemErr("nil item")

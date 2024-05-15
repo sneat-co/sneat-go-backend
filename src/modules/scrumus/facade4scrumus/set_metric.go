@@ -30,7 +30,7 @@ func SetMetric(ctx context.Context, userContext facade.User, request SetMetricRe
 				}
 			}
 			if teamMetric == nil {
-				return fmt.Errorf("unknown metric: %v", request.Metric)
+				return fmt.Errorf("unknown metric: %s", request.Metric)
 			}
 			var scrumUpdates []dal.Update
 			p := setMetricParams{
@@ -49,7 +49,7 @@ func SetMetric(ctx context.Context, userContext facade.User, request SetMetricRe
 					return
 				}
 			default:
-				err = fmt.Errorf("unknown metric mode: %v", teamMetric.Mode)
+				err = fmt.Errorf("unknown metric mode: %s", teamMetric.Mode)
 			}
 			if len(scrumUpdates) > 0 {
 				if err = tx.Update(ctx, params.Meeting.Key, scrumUpdates); err != nil {
@@ -80,7 +80,7 @@ func setPersonalMetric(p setMetricParams, contactusTeam *models4contactus.Contac
 		}
 	}
 	if teamMember == nil {
-		err = validation.NewErrBadRequestFieldValue("members", fmt.Sprintf("unknown members ContactID: %v", p.request.Member))
+		err = validation.NewErrBadRequestFieldValue("members", fmt.Sprintf("unknown members ContactID: %s", p.request.Member))
 		return
 	}
 	for id, s := range p.scrum.Statuses {

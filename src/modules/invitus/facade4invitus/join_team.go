@@ -73,7 +73,7 @@ func JoinTeam(ctx context.Context, userContext facade.User, request JoinTeamRequ
 		case "expired":
 			return fmt.Errorf("%w: the invite has expired", facade.ErrBadRequest)
 		default:
-			return fmt.Errorf("the invite has unknown status: [%v]", inviteDto.Status)
+			return fmt.Errorf("the invite has unknown status: [%s]", inviteDto.Status)
 		}
 
 		if inviteDto.Pin == "" {
@@ -248,7 +248,7 @@ func onJoinUpdateMemberBriefInTeamOrAddIfMissing(
 		return validation.NewErrBadRecordFieldValue("userID", "joining member should have populated field 'userID'")
 	}
 	if member.Data.UserID != uid {
-		return validation.NewErrBadRecordFieldValue("userID", fmt.Sprintf("joining member should have same user ID as current user, got: {uid=%v, member.Data.UserID=%v}", uid, member.Data.UserID))
+		return validation.NewErrBadRecordFieldValue("userID", fmt.Sprintf("joining member should have same user ID as current user, got: {uid=%s, member.Data.UserID=%s}", uid, member.Data.UserID))
 	}
 	//updates = make([]dal.Update, 0, 2)
 	for _, userID := range params.TeamModuleEntry.Data.UserIDs {
@@ -273,14 +273,14 @@ UserIdAddedToUserIDsField:
 			memberBrief = m
 			goto MemberAdded
 		} else if m.UserID == uid {
-			return fmt.Errorf("current user already joined this team with different contactID=%v", mID)
+			return fmt.Errorf("current user already joined this team with different contactID=%s", mID)
 		}
 		if mID == inviterMemberID {
 			isValidInviter = true
 		}
 	}
 	if !isValidInviter {
-		return fmt.Errorf("supplied inviterMemberID does not belong to the team: %v", inviterMemberID)
+		return fmt.Errorf("supplied inviterMemberID does not belong to the team: %s", inviterMemberID)
 	}
 	memberBrief = &briefs4contactus.ContactBrief{
 		Type:   briefs4contactus.ContactTypePerson,

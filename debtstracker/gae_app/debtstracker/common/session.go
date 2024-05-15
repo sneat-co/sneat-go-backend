@@ -60,7 +60,7 @@ type DTSession struct {
 //}
 
 //func CreateSecret(transferID, userID int64) (string) {
-//	toSign := "54db6494-381f-4b04-b748-a5f90c274cfd:" + fmt.Sprintf("%v:%v", EncodeID(transferID), EncodeID(userID))
+//	toSign := "54db6494-381f-4b04-b748-a5f90c274cfd:" + fmt.Sprintf("%s:%s", EncodeID(transferID), EncodeID(userID))
 //	signature := sha1.Sum([]byte(toSign))
 //	return base64.RawURLEncoding.EncodeToString(signature[:])
 //}

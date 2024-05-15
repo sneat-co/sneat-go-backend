@@ -45,7 +45,7 @@ func (v CompanyDto) Validate() error {
 	}
 	for k, v := range v.NumberOf {
 		if v < 0 {
-			return validation.NewErrBadRecordFieldValue("numberOf."+k, fmt.Sprintf("value expected to be positive, got: %v", v))
+			return validation.NewErrBadRecordFieldValue("numberOf."+k, fmt.Sprintf("value expected to be positive, got: %d", v))
 		}
 	}
 	return nil

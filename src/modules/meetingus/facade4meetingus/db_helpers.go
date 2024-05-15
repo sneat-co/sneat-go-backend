@@ -91,7 +91,7 @@ var GetMeetingAndTeam = func(ctx context.Context, tx dal.ReadwriteTransaction, u
 	}
 
 	if !params.Team.Record.Exists() {
-		return params, fmt.Errorf("unknown team ContactID: %v", params.Team.Key.ID)
+		return params, fmt.Errorf("unknown team ContactID: %s", params.Team.Key.ID)
 	}
 
 	userBelongsToTeam := false

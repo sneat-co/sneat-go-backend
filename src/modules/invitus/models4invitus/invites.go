@@ -30,7 +30,7 @@ func ValidateChannel(v string, required bool) error {
 		}
 	case "email", "sms", "link": // known channels
 	default:
-		return validation.NewErrBadRecordFieldValue("channel", fmt.Sprintf("unsupported value: [%v]", v))
+		return validation.NewErrBadRecordFieldValue("channel", fmt.Sprintf("unsupported value: [%s]", v))
 	}
 	return nil
 }
@@ -91,7 +91,7 @@ func (v InviteTo) Validate() error {
 	const maxTitleLen = 100
 	if len(v.Title) > maxTitleLen {
 		return validation.NewErrBadRecordFieldValue("title",
-			fmt.Sprintf("contact title should not exceed max length of %v, got: %v",
+			fmt.Sprintf("contact title should not exceed max length of %d, got: %d",
 				maxTitleLen, len(v.Title)))
 	}
 	//if strings.TrimSpace(v.Title) == "" {
@@ -282,7 +282,7 @@ func (v InviteDto) Validate() error {
 	}
 	for i, role := range v.Roles {
 		if strings.TrimSpace(role) == "" {
-			return validation.NewErrRecordIsMissingRequiredField(fmt.Sprintf("roles[%v]", i))
+			return validation.NewErrRecordIsMissingRequiredField(fmt.Sprintf("roles[%d]", i))
 		}
 	}
 	return nil

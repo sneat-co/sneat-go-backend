@@ -91,7 +91,7 @@ func (v *ContactBase) Validate() error {
 	hasPrimaryEmail := false
 	for i, email := range v.Emails {
 		if err := email.Validate(); err != nil {
-			errs = append(errs, validation.NewErrBadRecordFieldValue(fmt.Sprintf("emails[%v]", i), err.Error()))
+			errs = append(errs, validation.NewErrBadRecordFieldValue(fmt.Sprintf("emails[%d]", i), err.Error()))
 		}
 		if email.Type == "primary" {
 			if hasPrimaryEmail {
@@ -102,7 +102,7 @@ func (v *ContactBase) Validate() error {
 	}
 	for i, phone := range v.Phones {
 		if err := phone.Validate(); err != nil {
-			errs = append(errs, validation.NewErrBadRecordFieldValue(fmt.Sprintf("phones[%v]", i), err.Error()))
+			errs = append(errs, validation.NewErrBadRecordFieldValue(fmt.Sprintf("phones[%d]", i), err.Error()))
 		}
 	}
 	if l := len(errs); l == 1 {

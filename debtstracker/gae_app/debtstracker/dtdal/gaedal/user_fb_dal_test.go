@@ -13,5 +13,5 @@ func TestNewUserFacebookKey(t *testing.T) {
 		fbUserID = "975"
 	)
 	key := NewUserFacebookKey(context.Background(), fbAppID, fbUserID)
-	testDatastoreStringKey(t, fmt.Sprintf("%v:%v", fbAppID, fbUserID), key)
+	testDatastoreStringKey(t, fmt.Sprintf("%s:%s", fbAppID, fbUserID), key)
 }

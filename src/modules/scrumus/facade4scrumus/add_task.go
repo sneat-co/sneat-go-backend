@@ -31,7 +31,7 @@ var addTaskInTransaction = func(
 		status.Member.ID = request.ContactID
 		status.Member.Title = contactBrief.Title
 	} else {
-		err = fmt.Errorf("unknown contact: %v", request.ContactID)
+		err = fmt.Errorf("unknown contact: %s", request.ContactID)
 		return
 	}
 
@@ -69,11 +69,11 @@ var addTaskInTransaction = func(
 				Value: dal.Increment(1),
 			},
 			dal.Update{
-				Field: fmt.Sprintf("statuses.%v.byType.%v", request.ContactID, request.Type),
+				Field: fmt.Sprintf("statuses.%s.byType.%s", request.ContactID, request.Type),
 				Value: tasks,
 			},
 			dal.Update{
-				Field: fmt.Sprintf("statuses.%v.members", request.ContactID),
+				Field: fmt.Sprintf("statuses.%s.members", request.ContactID),
 				Value: status.Member,
 			},
 		)

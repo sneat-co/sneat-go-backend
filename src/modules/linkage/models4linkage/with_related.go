@@ -94,7 +94,7 @@ func (v *RelatedItem) Validate() error {
 	}
 	for i, key := range v.Keys {
 		if err := key.Validate(); err != nil {
-			return validation.NewErrBadRequestFieldValue(fmt.Sprintf("keys[%v]", i), err.Error())
+			return validation.NewErrBadRequestFieldValue(fmt.Sprintf("keys[%d]", i), err.Error())
 		}
 	}
 	if err := v.validateRelationships(v.RelatedAs); err != nil {

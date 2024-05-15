@@ -51,7 +51,7 @@ func (v *Task) Validate() error {
 	}
 	for i, comment := range v.Comments {
 		if err := comment.Validate(); err != nil {
-			return fmt.Errorf("invalid comment at index %v: %w", i, err)
+			return fmt.Errorf("invalid comment at index %d: %w", i, err)
 		}
 	}
 	return nil
@@ -81,14 +81,14 @@ type Tasks = []*Task
 func ValidateTasks(v Tasks) error {
 	for i, t1 := range v {
 		if t1 == nil {
-			return fmt.Errorf("nil task at index %v", i)
+			return fmt.Errorf("nil task at index %d", i)
 		}
 		if err := t1.Validate(); err != nil {
 			return err
 		}
 		for j, t2 := range v {
 			if i != j && t1.ID == t2.ID {
-				return fmt.Errorf("duplicate task taskID=%v at indexes %v, %v", t1.ID, i, j)
+				return fmt.Errorf("duplicate task taskID=%s at indexes %d, %d", t1.ID, i, j)
 			}
 		}
 	}

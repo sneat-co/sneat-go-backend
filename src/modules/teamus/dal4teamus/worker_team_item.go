@@ -128,7 +128,7 @@ func incrementCounter(params *TeamWorkerParams, counter string) (err error) {
 			if numberOfItems >= 0 {
 				params.TeamUpdates = append(params.TeamUpdates, dal.Update{Field: numberFieldName, Value: dal.Increment(1)})
 			} else {
-				return validation.NewErrBadRecordFieldValue(numberFieldName, fmt.Sprintf("has negative value: %v", numberOfItems))
+				return validation.NewErrBadRecordFieldValue(numberFieldName, fmt.Sprintf("has negative value: %d", numberOfItems))
 			}
 		} else {
 			params.TeamUpdates = append(params.TeamUpdates, dal.Update{Field: numberFieldName, Value: 1})
@@ -150,7 +150,7 @@ func decrementCounter(params *TeamItemWorkerParams) (err error) {
 			if numberOfItems > 0 {
 				params.TeamUpdates = append(params.TeamUpdates, dal.Update{Field: numberFieldName, Value: dal.Increment(-1)})
 			} else {
-				return validation.NewErrBadRecordFieldValue(numberFieldName, fmt.Sprintf("an attempt to decrement counter with negative or zero value: %v", numberOfItems))
+				return validation.NewErrBadRecordFieldValue(numberFieldName, fmt.Sprintf("an attempt to decrement counter with negative or zero value: %d", numberOfItems))
 			}
 		} else {
 			return validation.NewErrBadRecordFieldValue(numberFieldName, "an attempt to decrement non existing counter")
@@ -203,7 +203,7 @@ func DeleteTeamItem[D TeamModuleData](
 						return fmt.Errorf("failed to update team record: %w", err)
 					}
 				} else {
-					return fmt.Errorf("got %v team updates but input indicated team record is not required", len(params.TeamUpdates))
+					return fmt.Errorf("got %d team updates but input indicated team record is not required", len(params.TeamUpdates))
 				}
 			}
 			moduleWorkerParams.TeamUpdates = deleteBrief[D](moduleWorkerParams.TeamModuleEntry, input.ShortID, input.BriefsAdapter, params.TeamUpdates)

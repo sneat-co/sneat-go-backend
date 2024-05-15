@@ -93,7 +93,7 @@ func (v CreateContactRequest) Validate() error {
 		return validation.NewErrBadRequestFieldValue("location", "the `location` field is not nil, but contact type is set to 'location'")
 	}
 	if err := v.RolesField.Validate(); err != nil {
-		return fmt.Errorf("%w: %v", facade.ErrBadRequest, err.Error())
+		return fmt.Errorf("%w: %v", facade.ErrBadRequest, err)
 	}
 	if v.Person != nil && v.Person.Status != v.Status {
 		return validation.NewErrBadRecordFieldValue("status",

@@ -61,20 +61,20 @@ func (v *WithMultiTeamContactIDs) Validate() error {
 		switch strings.TrimSpace(string(id)) {
 		case string(id): // OK - as expected
 		case "":
-			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("contactIDs[%v]", i), "can not be empty string")
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("contactIDs[%d]", i), "can not be empty string")
 		default:
-			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("contactIDs[%v]", i), "leading or trailing whitespaces")
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("contactIDs[%d]", i), "leading or trailing whitespaces")
 		}
 		ids := strings.Split(string(id), dbmodels.TeamItemIDSeparator)
 		if len(ids) != 2 {
-			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("contactIDs[%v]", i),
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("contactIDs[%d]", i),
 				fmt.Sprintf("should be in format '%s', got: %s", dbmodels.NewTeamItemID("teamID", "contactID"), id))
 		}
 		if ids[0] == "" {
-			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("contactIDs[%v]", i), "teamID can not be empty string")
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("contactIDs[%d]", i), "teamID can not be empty string")
 		}
 		if ids[1] == "" {
-			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("contactIDs[%v]", i), "contactID can not be empty string")
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("contactIDs[%d]", i), "contactID can not be empty string")
 		}
 	}
 	return nil

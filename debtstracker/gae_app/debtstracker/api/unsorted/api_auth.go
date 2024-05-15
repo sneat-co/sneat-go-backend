@@ -24,11 +24,10 @@ type AuthHandlerWithUser func(c context.Context, w http.ResponseWriter, r *http.
 
 func AuthOnly(handler AuthHandler) strongoapp.HttpHandlerWithContext {
 	return func(c context.Context, w http.ResponseWriter, r *http.Request) {
-		log.Debugf(c, "AuthOnly(%v)", handler)
 		if authInfo, _, err := auth.Authenticate(w, r, true); err == nil {
 			handler(c, w, r, authInfo)
 		} else {
-			log.Warningf(c, "Failed to authenticate: %v", err.Error())
+			log.Warningf(c, "Failed to authenticate: %v", err)
 		}
 	}
 }
@@ -65,7 +64,6 @@ func OptionalAuth(handler AuthHandler) strongoapp.HttpHandlerWithContext {
 
 func AdminOnly(handler AuthHandler) strongoapp.HttpHandlerWithContext {
 	return func(c context.Context, w http.ResponseWriter, r *http.Request) {
-		log.Debugf(c, "AdminOnly(%v)", handler)
 		if authInfo, _, err := auth.Authenticate(w, r, true); err == nil {
 			if !authInfo.IsAdmin {
 				log.Debugf(c, "Not admin!")
@@ -74,7 +72,7 @@ func AdminOnly(handler AuthHandler) strongoapp.HttpHandlerWithContext {
 			}
 			handler(c, w, r, authInfo)
 		} else {
-			log.Errorf(c, "Failed to authenticate: %v", err.Error())
+			log.Errorf(c, "Failed to authenticate: %v", err)
 		}
 	}
 }
@@ -116,7 +114,7 @@ func HandleAuthLoginId(c context.Context, w http.ResponseWriter, r *http.Request
 
 	returnLoginID := func(loginID int) {
 		encoded := common.EncodeIntID(loginID)
-		log.Infof(c, "Login ID: %d, Encoded: %v", loginID, encoded)
+		log.Infof(c, "Login ID: %s, Encoded: %s", loginID, encoded)
 		if _, err = w.Write([]byte(encoded)); err != nil {
 			log.Criticalf(c, "Failed to write login ID to response: %v", err)
 		}

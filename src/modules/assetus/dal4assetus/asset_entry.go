@@ -22,7 +22,7 @@ func NewAssetEntry(teamID, assetID string) (asset record.DataWithID[string, *mod
 
 func NewAssetKey(teamID, assetID string) *dal.Key {
 	if !core.IsAlphanumericOrUnderscore(assetID) {
-		panic(fmt.Errorf("assetID should be alphanumeric, got: [%v]", assetID))
+		panic(fmt.Errorf("assetID should be alphanumeric, got: [%s]", assetID))
 	}
 	teamModuleKey := dal4teamus.NewTeamModuleKey(teamID, const4assetus.ModuleID)
 	return dal.NewKeyWithParentAndID(teamModuleKey, models4assetus.TeamAssetsCollection, assetID)

@@ -138,7 +138,7 @@ func (v *UserDto) validateEmails() error {
 	primaryEmailInEmails := false
 	for i, email := range v.Emails {
 		if err := email.Validate(); err != nil {
-			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("emails[%v]", i), err.Error())
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("emails[%d]", i), err.Error())
 		}
 		if email.Address == v.Email {
 			primaryEmailInEmails = true
@@ -153,20 +153,20 @@ func (v *UserDto) validateEmails() error {
 func (v *UserDto) validateTeams() error {
 	if len(v.Teams) != len(v.TeamIDs) {
 		return validation.NewErrBadRecordFieldValue("teamIDs",
-			fmt.Sprintf("len(v.Teams) != len(v.TeamIDs): %v != %v", len(v.Teams), len(v.TeamIDs)))
+			fmt.Sprintf("len(v.Teams) != len(v.TeamIDs): %d != %d", len(v.Teams), len(v.TeamIDs)))
 	}
 	if len(v.Teams) > 0 {
 		teamIDs := make([]string, 0, len(v.Teams))
 		teamTitles := make([]string, 0, len(v.Teams))
 		for teamID, t := range v.Teams {
 			if teamID == "" {
-				return validation.NewErrBadRecordFieldValue(fmt.Sprintf("teams['%v']", teamID), "holds empty id")
+				return validation.NewErrBadRecordFieldValue(fmt.Sprintf("teams['%s']", teamID), "holds empty id")
 			}
 			if !slice.Contains(v.TeamIDs, teamID) {
 				return validation.NewErrBadRecordFieldValue("teamIDs", "missing team ID: "+teamID)
 			}
 			if err := t.Validate(); err != nil {
-				return validation.NewErrBadRecordFieldValue(fmt.Sprintf("teams[%s]{title=%v}", teamID, t.Title), err.Error())
+				return validation.NewErrBadRecordFieldValue(fmt.Sprintf("teams[%s]{title=%s}", teamID, t.Title), err.Error())
 			}
 			if t.Title != "" {
 				if i := slices.Index(teamTitles, t.Title); i >= 0 {

@@ -76,7 +76,7 @@ func TestCreateMassInvite(t *testing.T) {
 
 	if expected := http.StatusCreated; rr.Code != expected {
 		t.Fatalf(
-			"unexpected status: got (%v) expects (%v): %v",
+			"unexpected status: got (%d) expects (%d): %s",
 			rr.Code,
 			expected,
 			responseBody,

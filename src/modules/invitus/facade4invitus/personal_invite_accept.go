@@ -60,7 +60,7 @@ func AcceptPersonalInvite(ctx context.Context, userContext facade.User, request 
 				return err
 			}
 			if invite.Dto.Status != "active" {
-				return fmt.Errorf("invite status is not equal to 'active', got '%v'", invite.Dto.Status)
+				return fmt.Errorf("invite status is not equal to 'active', got '%s'", invite.Dto.Status)
 			}
 
 			if invite.Dto.Pin != request.Pin {
@@ -184,7 +184,7 @@ func updateTeamRecord(
 		}
 	}
 	if teamMember == nil {
-		return teamMember, fmt.Errorf("team member is not found by ID=%v", inviteToMemberID)
+		return teamMember, fmt.Errorf("team member is not found by ID=%s", inviteToMemberID)
 	}
 
 	if params.Team.Data.HasUserID(uid) {

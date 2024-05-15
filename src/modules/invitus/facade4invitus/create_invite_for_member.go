@@ -38,10 +38,10 @@ func (v InviteMemberRequest) Validate() error {
 		return validation.NewErrBadRequestFieldValue("to", err.Error())
 	}
 	if len(v.Message) > maxMessageSize {
-		return validation.NewErrBadRequestFieldValue("message", fmt.Sprintf("message length limit is %v characters max", maxMessageSize))
+		return validation.NewErrBadRequestFieldValue("message", fmt.Sprintf("message length limit is %d characters max", maxMessageSize))
 	}
 	if v.To.Channel != "email" && v.Send {
-		return fmt.Errorf("%w: at the moment invites can be sent only by email, channel='%v'", facade.ErrBadRequest, v.To.Channel)
+		return fmt.Errorf("%w: at the moment invites can be sent only by email, channel='%s'", facade.ErrBadRequest, v.To.Channel)
 	}
 	return nil
 }
@@ -166,7 +166,7 @@ func createPersonalInvite(
 	}
 	if request.Send {
 		if personalInvite.MessageID, err = sendInviteEmail(ctx, inviteID, personalInvite); err != nil {
-			err = fmt.Errorf("%v: %w", FailedToSendEmail, err)
+			err = fmt.Errorf("%s: %w", FailedToSendEmail, err)
 			return inviteID, personalInvite, err
 		}
 		inviteKey := NewInviteKey(inviteID)
@@ -174,7 +174,7 @@ func createPersonalInvite(
 			[]dal.Update{
 				{Field: "messageId", Value: personalInvite.MessageID},
 			}); err != nil {
-			err = fmt.Errorf("failed to update invite record with message ID: %v", err)
+			err = fmt.Errorf("failed to update invite record with message ID: %w", err)
 			return inviteID, personalInvite, err
 		}
 	}

@@ -17,7 +17,7 @@ import (
 //	if err != nil {
 //		panic(err.Error())
 //	}
-//	return fmt.Sprintf("%v:%v", base64UrlEncoder.EncodeToString(expiryBytes), base64UrlEncoder.EncodeToString(signature))
+//	return fmt.Sprintf("%s:%s", base64UrlEncoder.EncodeToString(expiryBytes), base64UrlEncoder.EncodeToString(signature))
 //}
 
 func SignStrWithExpiry(c context.Context, v string, expires time.Time) string {
@@ -28,5 +28,5 @@ func SignStrWithExpiry(c context.Context, v string, expires time.Time) string {
 	if err != nil {
 		panic(err.Error())
 	}
-	return fmt.Sprintf("%v:%v", base64UrlEncoder.EncodeToString(expiryBytes), base64UrlEncoder.EncodeToString(signature))
+	return fmt.Sprintf("%s:%s", base64UrlEncoder.EncodeToString(expiryBytes), base64UrlEncoder.EncodeToString(signature))
 }

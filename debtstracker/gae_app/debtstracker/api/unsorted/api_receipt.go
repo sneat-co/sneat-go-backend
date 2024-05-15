@@ -131,11 +131,11 @@ func HandleGetReceipt(c context.Context, w http.ResponseWriter, r *http.Request)
 //	return dto.NewContactDto(transferContact)
 //}
 
-func HandleReceiptAccept(c context.Context, w http.ResponseWriter, r *http.Request) {
+func HandleReceiptAccept(c context.Context, w http.ResponseWriter, _ *http.Request) {
 	api.JsonToResponse(c, w, "ok")
 }
 
-func HandleReceiptDecline(c context.Context, w http.ResponseWriter, r *http.Request) {
+func HandleReceiptDecline(c context.Context, w http.ResponseWriter, _ *http.Request) {
 	api.JsonToResponse(c, w, "ok")
 }
 
@@ -257,9 +257,9 @@ func updateReceiptAndTransferOnSent(c context.Context, receiptID string, channel
 				err = fmt.Errorf("failed to save receipt & transfer: %w", err)
 			}
 		} else if receipt.Data.SentVia == channel {
-			log.Infof(c, "Receipt already has channel '%v'", channel)
+			log.Infof(c, "Receipt already has channel '%s'", channel)
 		} else {
-			log.Warningf(c, "An attempt to set receipt channel to '%v' when it's alreay '%v'", channel, receipt.Data.SentVia)
+			log.Warningf(c, "An attempt to set receipt channel to '%s' when it's alreay '%s'", channel, receipt.Data.SentVia)
 		}
 
 		return err
@@ -297,9 +297,9 @@ func HandleSetReceiptChannel(c context.Context, w http.ResponseWriter, r *http.R
 		}
 	}
 
-	log.Debugf(c, "HandleSetReceiptChannel(receiptID=%v, channel=%v)", receiptID, channel)
+	log.Debugf(c, "HandleSetReceiptChannel(receiptID=%s, channel=%s)", receiptID, channel)
 	if channel == RECEIPT_CHANNEL_DRAFT {
-		m := fmt.Sprintf("Status '%v' is not supported in this method", RECEIPT_CHANNEL_DRAFT)
+		m := fmt.Sprintf("Status '%s' is not supported in this method", RECEIPT_CHANNEL_DRAFT)
 		log.Warningf(c, m)
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte(m))
@@ -344,7 +344,7 @@ func HandleCreateReceipt(c context.Context, w http.ResponseWriter, r *http.Reque
 		_, _ = w.Write([]byte("Invalid form data"))
 		return
 	}
-	log.Debugf(c, "HandleCreateReceipt() => r.Form: %v", r.Form)
+	//log.Debugf(c, "HandleCreateReceipt() => r.Form: %+v", r.Form)
 	transferID := r.FormValue("transfer")
 	if transferID == "" {
 		w.WriteHeader(http.StatusBadRequest)
@@ -442,7 +442,7 @@ func HandleCreateReceipt(c context.Context, w http.ResponseWriter, r *http.Reque
 		translator := i18n.NewSingleMapTranslator(locale, nil /*common.TheAppContext.GetTranslator(c)*/)
 		//ec := strongoapp.NewExecutionContext(c, translator)
 
-		log.Debugf(c, "r.Host: %v", r.Host)
+		log.Debugf(c, "r.Host: %s", r.Host)
 
 		templateParams := struct {
 			ReceiptURL string

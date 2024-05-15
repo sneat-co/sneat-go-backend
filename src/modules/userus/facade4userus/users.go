@@ -34,7 +34,7 @@ type DbFacade struct {
 // GetUserByID load user record by ID
 var GetUserByID = func(ctx context.Context, getter dal.ReadSession, user dal.Record) (err error) {
 	if err = getter.Get(ctx, user); err != nil {
-		return fmt.Errorf("failed to get user record by user=%v: %w", user.Key().ID, err)
+		return fmt.Errorf("failed to get user record by user=%s: %w", user.Key().ID, err)
 	}
 	return nil
 }

@@ -73,7 +73,7 @@ func ThumbUp(ctx context.Context, userContext facade.User, request ThumbUpReques
 			}
 			return tx.Update(ctx, params.Meeting.Key, []dal.Update{
 				{
-					Field: fmt.Sprintf("statuses.%v.byType.%v", request.ContactID, request.Type),
+					Field: fmt.Sprintf("statuses.%s.byType.%s", request.ContactID, request.Type),
 					Value: params.tasks,
 				},
 			})

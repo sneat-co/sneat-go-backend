@@ -50,10 +50,10 @@ func HandleSignUpWithEmail(c context.Context, w http.ResponseWriter, r *http.Req
 		if !dal.IsNotFound(err) {
 			api.ErrorAsJson(c, w, http.StatusInternalServerError, err)
 			return
+		} else {
+			api.ErrorAsJson(c, w, http.StatusConflict, facade.ErrEmailAlreadyRegistered)
+			return
 		}
-	} else if err == nil {
-		api.ErrorAsJson(c, w, http.StatusConflict, facade.ErrEmailAlreadyRegistered)
-		return
 	}
 
 	if user, userEmail, err := facade.User.CreateUserByEmail(c, email, userName); err != nil {
@@ -76,7 +76,7 @@ func HandleSignUpWithEmail(c context.Context, w http.ResponseWriter, r *http.Req
 func HandleSignInWithEmail(c context.Context, w http.ResponseWriter, r *http.Request) {
 	email := strings.TrimSpace(r.PostFormValue("email"))
 	password := strings.TrimSpace(r.PostFormValue("password"))
-	log.Debugf(c, "Email: %v", email)
+	//log.Debugf(c, "Email: %s", email)
 	if email == "" || password == "" {
 		api.ErrorAsJson(c, w, http.StatusBadRequest, errors.New("Missing required value"))
 		return
@@ -96,8 +96,8 @@ func HandleSignInWithEmail(c context.Context, w http.ResponseWriter, r *http.Req
 		}
 		return
 	} else if err = userEmail.Data.CheckPassword(password); err != nil {
-		log.Debugf(c, "Invalid password: %v", err.Error())
-		api.ErrorAsJson(c, w, http.StatusForbidden, errors.New("Invalid password"))
+		log.Debugf(c, "Invalid password: %v", err)
+		api.ErrorAsJson(c, w, http.StatusForbidden, errors.New("invalid password"))
 		return
 	}
 

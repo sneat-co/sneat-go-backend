@@ -18,10 +18,10 @@ func NewTeamKey(id string) *dal.Key {
 		panic("empty team ID")
 	}
 	if l := len(id); l > maxLen {
-		panic(fmt.Sprintf("team ID is %v characters long exceded what is %v more then maxLen %v", l, maxLen-l, maxLen))
+		panic(fmt.Sprintf("team ID is %v characters long exceded what is %d more then maxLen %d", l, maxLen-l, maxLen))
 	}
 	if !core.IsAlphanumericOrUnderscore(id) {
-		panic(fmt.Sprintf("team ID has non alphanumeric characters or letters in upper case: [%v]", id))
+		panic(fmt.Sprintf("team ID has non alphanumeric characters or letters in upper case: [%s]", id))
 	}
 	return dal.NewKeyWithID(TeamsCollection, id)
 }

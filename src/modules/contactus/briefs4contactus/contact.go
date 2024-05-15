@@ -61,7 +61,7 @@ func ValidateContactType(v ContactType) error {
 	}
 	if !slice.Contains(ContactTypes, v) {
 		return validation.NewErrBadRecordFieldValue("type",
-			fmt.Sprintf("unknown value: [%v]", v))
+			fmt.Sprintf("unknown value: [%s]", v))
 	}
 	return nil
 }

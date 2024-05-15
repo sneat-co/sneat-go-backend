@@ -25,13 +25,13 @@ func OptionsHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	default:
 		if !(strings.HasPrefix(origin, "http://") && strings.HasSuffix(origin, ":8100")) {
-			err := fmt.Errorf("Unknown origin: %v", origin)
+			err := fmt.Errorf("unknown origin: %s", origin)
 			log.Debugf(c, err.Error())
 			BadRequestError(c, w, err)
 			return
 		}
 	}
-	log.Debugf(c, "Request 'Origin' header: %v", origin)
+	log.Debugf(c, "Request 'Origin' header: %s", origin)
 	responseHeader := w.Header()
 	if accessControlRequestMethod := r.Header.Get("Access-Control-Request-Method"); !(accessControlRequestMethod == "GET" || accessControlRequestMethod == "POST") {
 		BadRequestMessage(c, w, "Requested method is unsupported: "+accessControlRequestMethod)

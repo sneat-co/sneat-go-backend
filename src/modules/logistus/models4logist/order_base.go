@@ -140,7 +140,7 @@ func (v OrderBase) validateCounterparty(cp *OrderCounterparty, contactIDsWithRol
 			return validation.NewErrBadRecordFieldValue("parent", fmt.Sprintf("counterparty not found in order by (role=%s, contactID=%s)", cp.Parent.Role, cp.Parent.ContactID))
 		}
 	}
-	id := fmt.Sprintf("%v:%v", cp.ContactID, cp.Role)
+	id := fmt.Sprintf("%s:%s", cp.ContactID, cp.Role)
 	if slice.Index(contactIDsWithRole, id) >= 0 {
 		return fmt.Errorf("at least 2 counterparties have same role and contactID: %v-%v",
 			cp.ContactID, cp.Role)

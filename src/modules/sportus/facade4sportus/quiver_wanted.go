@@ -38,7 +38,7 @@ func validateBrands(ctx context.Context, brands []string, db dal.DB) error {
 	}
 	for _, brandRecord := range brandRecords {
 		if !brandRecord.Exists() {
-			return fmt.Errorf("unknown brand: %v", brandRecord.Key().ID)
+			return fmt.Errorf("unknown brand: %s", brandRecord.Key().ID)
 		}
 	}
 	return nil
@@ -87,7 +87,7 @@ func DeleteWanted(ctx context.Context, userContext facade.User, request DeleteWa
 		}
 		uid := userContext.GetID()
 		if wanted.UserID != uid {
-			return fmt.Errorf("wanted.UserID != userContext.ContactID(): %v != %v", wanted.UserID, uid)
+			return fmt.Errorf("wanted.UserID != userContext.ContactID(): %s != %s", wanted.UserID, uid)
 		}
 		if err := tx.Delete(ctx, key); err != nil {
 			return fmt.Errorf("failed to delete wanted record: %v", err)

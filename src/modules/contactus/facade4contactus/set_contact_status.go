@@ -34,7 +34,7 @@ func setContactsStatusTxWorker(
 ) (err error) {
 	for _, contactID := range contactIDs {
 		if err := setContactStatusTxWorker(ctx, tx, params, contactID, status); err != nil {
-			return fmt.Errorf("failed to set status for contact id=[%v]: %w", contactID, err)
+			return fmt.Errorf("failed to set status for contact id=[%s]: %w", contactID, err)
 		}
 	}
 	return nil

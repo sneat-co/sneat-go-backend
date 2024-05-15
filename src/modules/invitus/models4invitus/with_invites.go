@@ -16,7 +16,7 @@ func (v WithInvites) Validate() error {
 			return validation.NewErrBadRecordFieldValue("invites", fmt.Sprintf("nil invite at index %d", i))
 		}
 		if err := mi.Validate(); err != nil {
-			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("invites[%v]", i), err.Error())
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("invites[%d]", i), err.Error())
 		}
 	}
 	return nil

@@ -21,7 +21,7 @@ func (v CreateListItemsRequest) Validate() error {
 	}
 	for i, item := range v.Items {
 		if err := item.Validate(); err != nil {
-			return validation.NewErrBadRequestFieldValue(fmt.Sprintf("items[%v]", i), err.Error())
+			return validation.NewErrBadRequestFieldValue(fmt.Sprintf("items[%d]", i), err.Error())
 		}
 	}
 	return nil
@@ -66,7 +66,7 @@ func (v ListItemIDsRequest) Validate() error {
 	//}
 	for i, id := range v.ItemIDs {
 		if strings.TrimSpace(id) == "" {
-			return validation.NewErrRecordIsMissingRequiredField(fmt.Sprintf("itemIDs[%v]", i))
+			return validation.NewErrRecordIsMissingRequiredField(fmt.Sprintf("itemIDs[%d]", i))
 		}
 	}
 	return nil

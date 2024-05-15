@@ -12,7 +12,7 @@ import (
 // NewContactKey creates a new contact's key in format "teamID:memberID"
 func NewContactKey(teamID, contactID string) *dal.Key {
 	if !core.IsAlphanumericOrUnderscore(contactID) {
-		panic(fmt.Errorf("contactID should be alphanumeric, got: [%v]", contactID))
+		panic(fmt.Errorf("contactID should be alphanumeric, got: [%s]", contactID))
 	}
 	teamModuleKey := dal4teamus.NewTeamModuleKey(teamID, const4contactus.ModuleID)
 	return dal.NewKeyWithParentAndID(teamModuleKey, models4contactus.TeamContactsCollection, contactID)

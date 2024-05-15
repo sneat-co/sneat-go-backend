@@ -55,7 +55,7 @@ func (l Linker) UrlToContact(contactID string) string {
 }
 
 func formatIssuer(botPlatform, botID string) string {
-	return fmt.Sprintf("%v:%v", botPlatform, botID)
+	return fmt.Sprintf("%s:%s", botPlatform, botID)
 }
 
 func (l Linker) url(path, query, hash string) string {
@@ -74,6 +74,6 @@ func (l Linker) url(path, query, hash string) string {
 	return buffer.String()
 }
 
-func (l Linker) ToMainScreen(whc botsfw.WebhookContext) string {
+func (l Linker) ToMainScreen(_ botsfw.WebhookContext) string {
 	return l.url("/app/", "", "#")
 }

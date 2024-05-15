@@ -91,7 +91,7 @@ func GetTeamJoinInfo(ctx context.Context, request JoinInfoRequest) (response Joi
 	var inviteDto *models4invitus.InviteDto
 	inviteDto, _, err = GetInviteByID(ctx, db, request.InviteID)
 	if err != nil {
-		err = fmt.Errorf("failed to get invite record by ID=%v: %w", request.InviteID, err)
+		err = fmt.Errorf("failed to get invite record by ID=%s: %w", request.InviteID, err)
 		return
 	}
 	if inviteDto == nil {

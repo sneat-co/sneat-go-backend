@@ -22,7 +22,7 @@ func (v *TeamMetricsRequest) Validate() error {
 	}
 	for i, m := range v.Metrics {
 		if strings.TrimSpace(m) == "" {
-			return validation.NewErrBadRequestFieldValue("metrics", fmt.Sprintf("empty value: metrics[%v]", i))
+			return validation.NewErrBadRequestFieldValue("metrics", fmt.Sprintf("empty value: metrics[%d]", i))
 		}
 	}
 	return nil

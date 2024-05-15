@@ -24,7 +24,7 @@ func GetRelatedContacts(
 	switch relatedAs {
 	case RelatedAsChild, RelatedAsParent: // OK
 	default:
-		return nil, fmt.Errorf("unknown relatedAs: [%v]", relatedAs)
+		return nil, fmt.Errorf("unknown relatedAs: [%s]", relatedAs)
 	}
 	var directlyRelated []dal4contactus.ContactEntry
 	for _, contact := range contacts {

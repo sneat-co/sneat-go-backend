@@ -28,7 +28,7 @@ func CreateList(ctx context.Context, user facade.User, request CreateListRequest
 
 			for id, brief := range params.TeamModuleEntry.Data.Lists {
 				if brief.Title == request.Title {
-					return fmt.Errorf("an attempt to create a new list with duplicate title [%v] equal to list {id=%v, type=%v}", request.Title, id, brief.Type)
+					return fmt.Errorf("an attempt to create a new list with duplicate title [%s] equal to list {id=%s, type=%s}", request.Title, id, brief.Type)
 				}
 			}
 			id := request.Type

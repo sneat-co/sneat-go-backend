@@ -40,7 +40,7 @@ func (v ContactsRequest) Validate() error {
 	}
 	for i, contactID := range v.ContactIDs {
 		if strings.TrimSpace(contactID) == "" {
-			return validation.NewErrRequestIsMissingRequiredField(fmt.Sprintf("contactIDs[%v]", i))
+			return validation.NewErrRequestIsMissingRequiredField(fmt.Sprintf("contactIDs[%d]", i))
 		}
 	}
 	return nil

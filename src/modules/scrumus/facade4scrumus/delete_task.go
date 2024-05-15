@@ -44,7 +44,7 @@ func DeleteTask(ctx context.Context, userContext facade.User, request DeleteTask
 					Value: dal.Increment(1),
 				},
 				{
-					Field: fmt.Sprintf("statuses.%v.byType.%v", request.ContactID, request.Type),
+					Field: fmt.Sprintf("statuses.%s.byType.%s", request.ContactID, request.Type),
 					Value: updateValue,
 				},
 			}

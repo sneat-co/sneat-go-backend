@@ -20,7 +20,7 @@ import (
 // InitUserRecord sets user title
 func InitUserRecord(ctx context.Context, userContext facade.User, request dto4userus.InitUserRecordRequest) (user models4userus.UserContext, err error) {
 	if err = request.Validate(); err != nil {
-		err = fmt.Errorf("%w: %v", facade.ErrBadRequest, err.Error())
+		err = fmt.Errorf("%w: %v", facade.ErrBadRequest, err)
 		return
 	}
 	userID := userContext.GetID()

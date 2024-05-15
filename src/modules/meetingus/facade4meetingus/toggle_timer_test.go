@@ -53,7 +53,7 @@ func TestToggleTimer(t *testing.T) { // TODO(help-wanted): add more test cases
 				t.Fatalf(source + ".Timer == nil")
 			}
 			if timer.Status != expected.status {
-				t.Errorf(source+".Timer.Status != expected.status: `%v` != `%v`", timer.Status, expected.status)
+				t.Errorf(source+".Timer.Status != expected.status: `%s` != `%s`", timer.Status, expected.status)
 			}
 			if timer.At.IsZero() {
 				t.Error(source + ".Timer.At is zero")

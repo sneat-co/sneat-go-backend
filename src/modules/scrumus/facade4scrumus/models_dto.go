@@ -141,34 +141,34 @@ func (v *ReorderTaskRequest) Validate() error {
 		return validation.NewErrBadRequestFieldValue("Len", "can't perform reorder on empty list")
 	}
 	if v.From < 0 {
-		return validation.NewErrBadRequestFieldValue("From", fmt.Sprintf("should be >= 0, got %v", v.From))
+		return validation.NewErrBadRequestFieldValue("From", fmt.Sprintf("should be >= 0, got %d", v.From))
 	}
 	if v.To < 0 {
-		return validation.NewErrBadRequestFieldValue("To", fmt.Sprintf("should be >= 0, got %v", v.To))
+		return validation.NewErrBadRequestFieldValue("To", fmt.Sprintf("should be >= 0, got %d", v.To))
 	}
 	if v.From >= v.Len {
-		return validation.NewErrBadRequestFieldValue("From", fmt.Sprintf("should be < len=%v, got %v", v.Len, v.From))
+		return validation.NewErrBadRequestFieldValue("From", fmt.Sprintf("should be < len=%d, got %d", v.Len, v.From))
 	}
 	if v.To >= v.Len {
-		return validation.NewErrBadRequestFieldValue("To", fmt.Sprintf("field 'to' should be >= len=%v, got %v", v.Len, v.To))
+		return validation.NewErrBadRequestFieldValue("To", fmt.Sprintf("field 'to' should be >= len=%d, got %d", v.Len, v.To))
 	}
 	if v.From == v.To {
-		return validation.NewErrBadRequestFieldValue("From == To", fmt.Sprintf("can't be equal, got %v", v.From))
+		return validation.NewErrBadRequestFieldValue("From == To", fmt.Sprintf("can't be equal, got %d", v.From))
 	}
 	if v.After == v.Before {
-		return validation.NewErrBadRequestFieldValue("After == Before", fmt.Sprintf("can't be equal, got: %v", v.After))
+		return validation.NewErrBadRequestFieldValue("After == Before", fmt.Sprintf("can't be equal, got: %s", v.After))
 	}
 	if v.After == v.Task {
-		return validation.NewErrBadRequestFieldValue("After == Task", fmt.Sprintf("can't be equal, got: %v", v.Task))
+		return validation.NewErrBadRequestFieldValue("After == Task", fmt.Sprintf("can't be equal, got: %s", v.Task))
 	}
 	if v.Before == v.Task {
-		return validation.NewErrBadRequestFieldValue("After == Task", fmt.Sprintf("can't be equal, got: %v", v.Task))
+		return validation.NewErrBadRequestFieldValue("After == Task", fmt.Sprintf("can't be equal, got: %s", v.Task))
 	}
 	if v.To == 0 && v.After != "" {
-		return validation.NewErrBadRequestFieldValue("After", fmt.Sprintf("can't have this field when moving to then beginning of list, got %v", v.After))
+		return validation.NewErrBadRequestFieldValue("After", fmt.Sprintf("can't have this field when moving to then beginning of list, got %s", v.After))
 	}
 	if v.To == v.Len-1 && v.Before != "" {
-		return validation.NewErrBadRequestFieldValue("Before", fmt.Sprintf("can't have this field when moving to the end of list, got %v", v.Before))
+		return validation.NewErrBadRequestFieldValue("Before", fmt.Sprintf("can't have this field when moving to the end of list, got %s", v.Before))
 	}
 	return nil
 }

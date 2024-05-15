@@ -39,7 +39,7 @@ func newReceiptDbChanges() *receiptDbChanges {
 func workaroundReinsertContact(c context.Context, receipt models.Receipt, invitedContact models.Contact, changes *receiptDbChanges) (err error) {
 	if _, err = GetContactByID(c, nil, invitedContact.ID); err != nil {
 		if dal.IsNotFound(err) {
-			log.Warningf(c, "workaroundReinsertContact(invitedContact.ID=%v) => %v", invitedContact.ID, err.Error())
+			log.Warningf(c, "workaroundReinsertContact(invitedContact.ID=%s) => %v", invitedContact.ID, err)
 			err = nil
 			if receipt.Data.Status == models.ReceiptStatusAcknowledged {
 				if invitedContactInfo := changes.invitedUser.Data.ContactByID(invitedContact.ID); invitedContactInfo != nil {
@@ -51,10 +51,10 @@ func workaroundReinsertContact(c context.Context, receipt models.Receipt, invite
 			}
 			changes.FlagAsChanged(changes.invitedContact.Record)
 		} else {
-			log.Errorf(c, "workaroundReinsertContact(invitedContact.ID=%v) => %v", invitedContact.ID, err.Error())
+			log.Errorf(c, "workaroundReinsertContact(invitedContact.ID=%s) => %v", invitedContact.ID, err)
 		}
 	} else {
-		log.Debugf(c, "workaroundReinsertContact(%v) => contact found by ID!", invitedContact.ID)
+		log.Debugf(c, "workaroundReinsertContact(%s) => contact found by ID!", invitedContact.ID)
 	}
 	return
 }
@@ -62,7 +62,7 @@ func workaroundReinsertContact(c context.Context, receipt models.Receipt, invite
 func AcknowledgeReceipt(c context.Context, receiptID, currentUserID string, operation string) (
 	receipt models.Receipt, transfer models.Transfer, isCounterpartiesJustConnected bool, err error,
 ) {
-	log.Debugf(c, "AcknowledgeReceipt(receiptID=%d, currentUserID=%d, operation=%v)", receiptID, currentUserID, operation)
+	log.Debugf(c, "AcknowledgeReceipt(receiptID=%s, currentUserID=%s, operation=%s)", receiptID, currentUserID, operation)
 	var transferAckStatus string
 	switch operation {
 	case dtdal.AckAccept:
@@ -115,7 +115,7 @@ func AcknowledgeReceipt(c context.Context, receiptID, currentUserID string, oper
 			for _, counterpartyTgUserID := range invitedUser.Data.GetTelegramUserIDs() {
 				for _, creatorTgUserID := range inviterUser.Data.GetTelegramUserIDs() {
 					if counterpartyTgUserID == creatorTgUserID {
-						return fmt.Errorf("data integrity issue: counterpartyTgUserID == creatorTgUserID (%v)", counterpartyTgUserID)
+						return fmt.Errorf("data integrity issue: counterpartyTgUserID == creatorTgUserID (%d)", counterpartyTgUserID)
 					}
 				}
 			}
@@ -145,8 +145,8 @@ func AcknowledgeReceipt(c context.Context, receiptID, currentUserID string, oper
 			}
 			invitedContact = *changes.invitedContact
 			inviterContact = *changes.inviterContact
-			log.Debugf(c, "linkUsersByReceiptWithinTransaction() =>\n\tinvitedContact %v: %+v\n\tinviterContact %v: %v",
-				invitedContact.ID, invitedContact.Data, inviterContact.ID, inviterContact.Data)
+			//log.Debugf(c, "linkUsersByReceiptWithinTransaction() =>\n\tinvitedContact %s: %+v\n\tinviterContact %s: %v",
+			//	invitedContact.ID, invitedContact.Data, inviterContact.ID, inviterContact.Data)
 		} else {
 			log.Debugf(c, "No need to link users as already linked")
 			inviterContact.ID = transfer.Data.CounterpartyInfoByUserID(inviterUser.ID).ContactID
@@ -157,7 +157,7 @@ func AcknowledgeReceipt(c context.Context, receiptID, currentUserID string, oper
 		invitedUser.Data.CountOfAckTransfersByUser += 1
 
 		if recordsToSave := changes.Records(); len(recordsToSave) > 0 {
-			log.Debugf(c, "%v entities to save: %+v", len(recordsToSave), recordsToSave)
+			//log.Debugf(c, "%d entities to save: %+v", len(recordsToSave), recordsToSave)
 			if err = tx.SetMulti(c, recordsToSave); err != nil {
 				return
 			}
@@ -250,7 +250,7 @@ func getReceiptTransferAndUsers(c context.Context, tx dal.ReadSession, receiptID
 	counterpartyUser models.AppUser,
 	err error,
 ) {
-	log.Debugf(c, "getReceiptTransferAndUsers(receiptID=%v, userID=%v)", receiptID, userID)
+	log.Debugf(c, "getReceiptTransferAndUsers(receiptID=%s, userID=%s)", receiptID, userID)
 
 	if receipt, err = dtdal.Receipt.GetReceiptByID(c, tx, receiptID); err != nil {
 		return
@@ -279,14 +279,14 @@ func getReceiptTransferAndUsers(c context.Context, tx dal.ReadSession, receiptID
 		}
 	}
 
-	log.Debugf(c, "getReceiptTransferAndUsers(receiptID=%v, userID=%v) =>\n\tcreatorUser(id=%v): %+v\n\tcounterpartyUser(id=%v): %+v",
+	log.Debugf(c, "getReceiptTransferAndUsers(receiptID=%s, userID=%s) =>\n\tcreatorUser(id=%s): %+v\n\tcounterpartyUser(id=%s): %+v",
 		receiptID, userID,
 		creatorUser.ID, creatorUser.Data,
 		counterpartyUser.ID, counterpartyUser.Data,
 	)
 
 	if creatorUser.Data == nil {
-		err = fmt.Errorf("creatorUser(id=%v) == nil - data integrity or app logic issue", transfer.Data.CreatorUserID)
+		err = fmt.Errorf("creatorUser(id=%s) == nil - data integrity or app logic issue", transfer.Data.CreatorUserID)
 		return
 	}
 	return

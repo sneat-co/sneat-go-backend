@@ -78,7 +78,7 @@ func (v Item) Validate() error {
 		return validation.NewErrBadRecordFieldValue("dtUpdated", "is before dtCreated")
 	}
 	if strings.TrimSpace(v.Status) != v.Status {
-		return validation.NewErrBadRecordFieldValue("status", fmt.Sprintf("unknown value: %v", v.Status))
+		return validation.NewErrBadRecordFieldValue("status", fmt.Sprintf("unknown value: %s", v.Status))
 	}
 	switch v.Status {
 	case "":
