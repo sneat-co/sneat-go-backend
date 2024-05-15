@@ -16,7 +16,7 @@ func confirmEmailRedirect(w http.ResponseWriter, r *http.Request, _ httprouter.P
 		return
 	}
 	redirectToWebApp(w, r, false,
-		fmt.Sprintf("confirm-email=%v:%v", url.QueryEscape(email), url.QueryEscape(pin)),
+		fmt.Sprintf("confirm-email=%s!%s", url.QueryEscape(email), url.QueryEscape(pin)),
 		map[string]string{}, []string{},
 	)
 }
