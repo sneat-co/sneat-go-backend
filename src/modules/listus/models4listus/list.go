@@ -36,9 +36,11 @@ func IsKnownListType(v string) bool {
 	return false
 }
 
+const ListIDSeparator = "!"
+
 // GetFullListID returns full list ContactID
 func GetFullListID(listType ListType, listID string) string {
-	return fmt.Sprintf("%v:%v", listType, listID)
+	return listType + ListIDSeparator + listID
 }
 
 // ListBase DTO
@@ -133,15 +135,15 @@ func (v ListDto) Validate() error {
 		return err
 	}
 	if v.Count < 0 {
-		return validation.NewErrBadRecordFieldValue("count", fmt.Sprintf("should be positive, got: %v", v.Count))
+		return validation.NewErrBadRecordFieldValue("count", fmt.Sprintf("should be positive, got: %d", v.Count))
 	}
 	for i, item := range v.Items {
 		if err := item.Validate(); err != nil {
-			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("items[%v]", i), err.Error())
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("items[%d]", i), err.Error())
 		}
 	}
 	if count := len(v.Items); count != v.Count {
-		return validation.NewErrBadRecordFieldValue("count", fmt.Sprintf("count != len(items): %v != %v", v.Count, count))
+		return validation.NewErrBadRecordFieldValue("count", fmt.Sprintf("count != len(items): %d != %d", v.Count, count))
 	}
 	return nil
 }
