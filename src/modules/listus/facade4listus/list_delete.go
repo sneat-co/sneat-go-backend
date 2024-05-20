@@ -21,12 +21,13 @@ func DeleteList(ctx context.Context, user facade.User, request ListRequest) (err
 	if uid == "" {
 		return validation.NewErrRecordIsMissingRequiredField("user.ContactID()")
 	}
-	id := models4listus.GetFullListID(request.ListType, request.ListID)
+	listType := request.ListType()
+	id := models4listus.GetFullListID(listType, request.ListID)
 	key := dal4listus.NewTeamListKey(request.TeamID, id)
 	input := dal4teamus.TeamItemRunnerInput[*models4listus.ListusTeamDto]{
 		Counter:       "lists",
 		TeamItem:      dal.NewRecord(key),
-		BriefsAdapter: briefsAdapter(request.ListType, request.ListID),
+		BriefsAdapter: briefsAdapter(listType, request.ListID),
 	}
 	err = dal4teamus.DeleteTeamItem(ctx, user, input, const4listus.ModuleID, new(models4listus.ListusTeamDto), func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.TeamItemWorkerParams) (err error) {
 		return errors.New("not implemented")

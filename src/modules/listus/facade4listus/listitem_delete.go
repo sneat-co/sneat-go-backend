@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/listus/models4listus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )
@@ -21,7 +20,7 @@ func DeleteListItems(ctx context.Context, userContext facade.User, request ListI
 	}
 	db := facade.GetDatabase(ctx)
 	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
-		listID := models4listus.GetFullListID(request.ListType, request.ListID)
+		listID := request.ListID
 		list := dal4listus.NewTeamListContext(request.TeamID, listID)
 
 		if err := GetListForUpdate(ctx, tx, list); err != nil {

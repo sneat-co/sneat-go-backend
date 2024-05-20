@@ -22,7 +22,7 @@ func NewTeamListKey(teamID, id string) *dal.Key {
 func NewTeamListContext(teamID, listID string) (list ListContext) {
 	key := NewTeamListKey(teamID, listID)
 	list.ID = listID
-	list.FullID = teamID + ":" + listID
+	list.FullID = teamID + models4listus.ListIDSeparator + listID
 	list.Key = key
 	list.Dto = new(models4listus.ListDto)
 	list.Record = dal.NewRecordWithData(key, list.Dto)

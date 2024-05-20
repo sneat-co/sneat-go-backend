@@ -34,7 +34,8 @@ func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest,
 	//	return fmt.Errorf("user have no access to this team")
 	//}
 
-	listID := models4listus.GetFullListID(request.ListType, request.ListID)
+	listType := request.ListType()
+	listID := request.ListID
 	listKey := dal4listus.NewTeamListKey(request.TeamID, listID)
 	var listDto models4listus.ListDto
 	var listRecord = dal.NewRecordWithData(listKey, &listDto)
@@ -43,9 +44,10 @@ func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest,
 	}
 
 	if !listRecord.Exists() {
+
 		isOkToAutoCreateList :=
-			request.ListType == models4listus.ListTypeToBuy && request.ListID == "groceries" ||
-				request.ListType == models4listus.ListTypeToWatch && request.ListID == "movies"
+			request.ListID == models4listus.GetFullListID(models4listus.ListTypeToBuy, "groceries") ||
+				request.ListID == models4listus.GetFullListID(models4listus.ListTypeToWatch, "movies")
 
 		if !isOkToAutoCreateList {
 			err = fmt.Errorf("list not found by ID=%s: %w", listID, err)
@@ -54,10 +56,15 @@ func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest,
 
 		listDto.TeamIDs = []string{request.TeamID}
 		listDto.UserIDs = []string{params.UserID}
-		listDto.Type = request.ListType
+		listDto.Type = listType
 		listDto.Title = request.ListID
-		if request.ListType == "to-buy" && request.ListID == "groceries" {
-			listDto.Emoji = "🛒"
+		if listDto.Emoji == "" {
+			switch request.ListType() {
+			case models4listus.ListTypeToBuy:
+				listDto.Emoji = "🛒"
+			case models4listus.ListTypeToWatch:
+				listDto.Emoji = "📽️"
+			}
 		}
 	}
 
@@ -66,7 +73,7 @@ func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest,
 		params.TeamModuleEntry.Data.Lists = make(map[string]*models4listus.ListBrief, 1)
 		listBrief = &models4listus.ListBrief{
 			ListBase: models4listus.ListBase{
-				Type:  request.ListType,
+				Type:  request.ListType(),
 				Title: request.ListID,
 			},
 		}

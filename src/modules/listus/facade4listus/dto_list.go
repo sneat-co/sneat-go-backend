@@ -12,19 +12,33 @@ import (
 // ListRequest DTO
 type ListRequest struct {
 	dto4teamus.TeamRequest
-	ListID   string                 `json:"listID"`
-	ListType models4listus.ListType `json:"listType,omitempty"`
+	ListID   string `json:"listID"`
+	listType models4listus.ListType
+}
+
+func (v *ListRequest) ListType() models4listus.ListType {
+	if v.listType != "" {
+		return v.listType
+	}
+	if v.ListID == "" {
+		return ""
+	}
+	i := strings.Index(v.ListID, models4listus.ListIDSeparator)
+	if i < 0 {
+		return ""
+	}
+	return v.ListID[:i]
 }
 
 // Validate returns error if not valid
-func (v ListRequest) Validate() error {
+func (v *ListRequest) Validate() error {
 	if err := v.TeamRequest.Validate(); err != nil {
 		return err
 	}
 	if strings.TrimSpace(v.ListID) == "" {
 		return validation.NewErrRequestIsMissingRequiredField("list")
 	}
-	switch v.ListType {
+	switch v.ListType() {
 	case "", "to-buy", "to-do":
 	default:
 		return fmt.Errorf("")

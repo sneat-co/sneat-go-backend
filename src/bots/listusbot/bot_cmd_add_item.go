@@ -56,8 +56,7 @@ var addBuyItemCommand = botsfw.Command{
 
 		request := facade4listus.CreateListItemsRequest{
 			ListRequest: facade4listus.ListRequest{
-				ListID:   "groceries",
-				ListType: "buy",
+				ListID: models4listus.GetFullListID(models4listus.ListTypeToBuy, "groceries"),
 				TeamRequest: dto4teamus.TeamRequest{
 					TeamID: teamID,
 				},
