@@ -9,6 +9,9 @@ type AssetDwellingExtra struct {
 }
 
 func (v AssetDwellingExtra) Validate() error {
+	if err := v.AssetExtraBase.Validate(); err != nil {
+		return err
+	}
 	if v.BedRooms < 0 {
 		return validation.NewErrBadRecordFieldValue("bedRooms", "negative value")
 	}
