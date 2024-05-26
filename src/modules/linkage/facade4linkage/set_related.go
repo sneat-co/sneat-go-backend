@@ -77,14 +77,13 @@ func SetRelated[D models4linkage.Relatable](
 		}
 		return
 	}
-	relatedAs := getRelationships(relatedTo.Add.RolesOfItem)
-	relatesAs := getRelationships(relatedTo.Add.RolesToItem)
+	rolesOfItem := getRelationships(relatedTo.Add.RolesOfItem)
+	rolesToItem := getRelationships(relatedTo.Add.RolesToItem)
 
 	if relUpdates, err = objectWithRelated.AddRelationshipsAndIDs(
-		objectRef,
 		relatedTo.TeamModuleItemRef,
-		relatedAs,
-		relatesAs,
+		rolesOfItem,
+		rolesToItem,
 	); err != nil {
 		return itemUpdates, teamModuleUpdates, err
 	}

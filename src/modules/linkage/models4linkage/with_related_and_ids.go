@@ -86,7 +86,6 @@ func (v *WithRelatedAndIDs) Validate() error {
 }
 
 func (v *WithRelatedAndIDs) AddRelationshipsAndIDs(
-	/*recordRef*/ _ TeamModuleItemRef, // TODO: handle or remove
 	relatedTo TeamModuleItemRef,
 	rolesOfItem RelationshipRoles,
 	rolesToItem RelationshipRoles, // TODO: needs implementation
@@ -94,12 +93,12 @@ func (v *WithRelatedAndIDs) AddRelationshipsAndIDs(
 	link := Link{
 		TeamModuleItemRef: relatedTo,
 	}
-	if len(rolesToItem) > 0 {
+	if len(rolesOfItem) > 0 {
 		if link.Add == nil {
 			link.Add = new(RolesCommand)
 		}
 		for roleOfItem := range rolesOfItem {
-			link.Add.RolesToItem = append(link.Add.RolesToItem, roleOfItem)
+			link.Add.RolesOfItem = append(link.Add.RolesOfItem, roleOfItem)
 		}
 	}
 	if len(rolesToItem) > 0 {
@@ -107,7 +106,7 @@ func (v *WithRelatedAndIDs) AddRelationshipsAndIDs(
 			link.Remove = new(RolesCommand)
 		}
 		for roleToItem := range rolesToItem {
-			link.Remove.RolesOfItem = append(link.Remove.RolesOfItem, roleToItem)
+			link.Remove.RolesToItem = append(link.Remove.RolesToItem, roleToItem)
 		}
 	}
 	return v.AddRelationshipAndID(link)
@@ -162,8 +161,12 @@ func (v *WithRelatedAndIDs) RemoveRelatedAndID(ref TeamModuleItemRef) (updates [
 func GetOppositeRole(relationshipRoleID RelationshipRoleID) RelationshipRoleID {
 	// TODO: Move to contactus module as this relationships are relevant to contacts only?
 	switch relationshipRoleID {
-	case "parent", "child", "sibling", "spouse", "partner", "team-mate":
+	case "sibling", "spouse", "partner", "team-mate":
 		return relationshipRoleID
+	case "parent":
+		return "child"
+	case "child":
+		return "parent"
 	}
 	return ""
 }
