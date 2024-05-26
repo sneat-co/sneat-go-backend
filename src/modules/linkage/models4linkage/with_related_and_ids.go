@@ -88,14 +88,27 @@ func (v *WithRelatedAndIDs) Validate() error {
 func (v *WithRelatedAndIDs) AddRelationshipsAndIDs(
 	/*recordRef*/ _ TeamModuleItemRef, // TODO: handle or remove
 	relatedTo TeamModuleItemRef,
-	relatedAs RelationshipRoles,
-	/*relatesAs*/ _ RelationshipRoles, // TODO: needs implementation
+	rolesOfItem RelationshipRoles,
+	rolesToItem RelationshipRoles, // TODO: needs implementation
 ) (updates []dal.Update, err error) {
 	link := Link{
 		TeamModuleItemRef: relatedTo,
 	}
-	for relatedAsID := range relatedAs {
-		link.Add.RolesToItem = append(link.Add.RolesToItem, relatedAsID)
+	if len(rolesToItem) > 0 {
+		if link.Add == nil {
+			link.Add = new(RolesCommand)
+		}
+		for roleOfItem := range rolesOfItem {
+			link.Add.RolesToItem = append(link.Add.RolesToItem, roleOfItem)
+		}
+	}
+	if len(rolesToItem) > 0 {
+		if link.Remove == nil {
+			link.Remove = new(RolesCommand)
+		}
+		for roleToItem := range rolesToItem {
+			link.Remove.RolesOfItem = append(link.Remove.RolesOfItem, roleToItem)
+		}
 	}
 	return v.AddRelationshipAndID(link)
 	//return nil, errors.New("not implemented yet - AddRelationshipsAndIDs")
@@ -145,12 +158,14 @@ func (v *WithRelatedAndIDs) RemoveRelatedAndID(ref TeamModuleItemRef) (updates [
 	return updates
 }
 
-// GetRelatesAsFromRelated returns relationship ID for the opposite direction
+// GetOppositeRole returns relationship ID for the opposite direction
 // TODO: Move to contactus module as relationships are not dedicated to contacts only?
-func GetRelatesAsFromRelated(relatedAs RelationshipRoleID) RelationshipRoleID {
-	switch relatedAs {
+func GetOppositeRole(relationshipRoleID RelationshipRoleID) RelationshipRoleID {
+	switch relationshipRoleID {
 	case "parent":
 		return "child"
+	case "child":
+		return "parent"
 	case "spouse":
 		return "spouse"
 	}

@@ -235,10 +235,17 @@ func (v *WithRelated) AddRelationship(link Link) (updates []dal.Update, err erro
 		v.Related = make(RelatedByModuleID, 1)
 	}
 
-	for _, linkRelatedAs := range link.Add.RolesToItem {
-		if relatesAs := GetRelatesAsFromRelated(linkRelatedAs); relatesAs != "" && !slice.Contains(link.Add.RolesToItem, relatesAs) {
-			link.Add.RolesToItem = append(link.Add.RolesToItem, "child")
+	if link.Add != nil {
+		addOppositeRoles := func(roles []RelationshipRoleID, oppositeRoles []RelationshipRoleID) []RelationshipRoleID {
+			for _, roleOfItem := range roles {
+				if oppositeRole := GetOppositeRole(roleOfItem); oppositeRole != "" && !slice.Contains(link.Add.RolesToItem, oppositeRole) {
+					oppositeRoles = append(oppositeRoles, oppositeRole)
+				}
+			}
+			return oppositeRoles
 		}
+		link.Add.RolesToItem = addOppositeRoles(link.Add.RolesOfItem, link.Add.RolesToItem)
+		link.Add.RolesOfItem = addOppositeRoles(link.Add.RolesToItem, link.Add.RolesOfItem)
 	}
 
 	relatedByCollectionID := v.Related[link.ModuleID]
@@ -280,8 +287,10 @@ func (v *WithRelated) AddRelationship(link Link) (updates []dal.Update, err erro
 		return relationships
 	}
 
-	relatedItem.RolesOfItem = addRelationship("rolesToItem", link.Add.RolesOfItem, relatedItem.RolesOfItem)
-	relatedItem.RolesToItem = addRelationship("rolesToItem", link.Add.RolesToItem, relatedItem.RolesToItem)
+	if link.Add != nil {
+		relatedItem.RolesOfItem = addRelationship("rolesOfItem", link.Add.RolesOfItem, relatedItem.RolesOfItem)
+		relatedItem.RolesToItem = addRelationship("rolesToItem", link.Add.RolesToItem, relatedItem.RolesToItem)
+	}
 
 	updates = append(updates, dal.Update{
 		Field: fmt.Sprintf("related.%s", link.ModuleCollectionPath()),

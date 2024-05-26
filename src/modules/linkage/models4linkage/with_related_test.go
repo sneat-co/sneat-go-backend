@@ -15,9 +15,8 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 	}
 	type args struct {
 		userID string
-		//recordRef TeamModuleItemRef
-		link Link
-		now  time.Time
+		link   Link
+		now    time.Time
 	}
 	now := time.Now()
 	tests := []struct {
@@ -53,14 +52,10 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 								{TeamID: "team1", ItemID: "c2"},
 							},
 							RolesOfItem: RelationshipRoles{
-								"parent": &RelationshipRole{
-									//CreatedField: with.CreatedField{
-									//	Created: with.Created{
-									//		By: "u1",
-									//		At: now.Format(time.DateTime),
-									//	},
-									//},
-								},
+								"parent": &RelationshipRole{},
+							},
+							RolesToItem: RelationshipRoles{
+								"child": &RelationshipRole{},
 							},
 						},
 					},
@@ -80,12 +75,6 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 			fields: fields{},
 			args: args{
 				userID: "u1",
-				//recordRef: TeamModuleItemRef{
-				//	TeamID:     "team1",
-				//	ModuleID:   const4contactus.ModuleID,
-				//	Collection: const4contactus.ContactsCollection,
-				//	ItemID:     "u1c",
-				//},
 				link: Link{
 					TeamModuleItemRef: TeamModuleItemRef{
 						TeamID:     "team1",
@@ -107,13 +96,10 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 								{TeamID: "team1", ItemID: "c2"},
 							},
 							RolesOfItem: RelationshipRoles{
-								"child": &RelationshipRole{
-									//CreatedField: with.CreatedField{
-									//	Created: with.Created{By: "u1",
-									//		At: now.Format(time.DateTime),
-									//	},
-									//},
-								},
+								"child": &RelationshipRole{},
+							},
+							RolesToItem: RelationshipRoles{
+								"parent": &RelationshipRole{},
 							},
 						},
 					},
