@@ -159,15 +159,11 @@ func (v *WithRelatedAndIDs) RemoveRelatedAndID(ref TeamModuleItemRef) (updates [
 }
 
 // GetOppositeRole returns relationship ID for the opposite direction
-// TODO: Move to contactus module as relationships are not dedicated to contacts only?
 func GetOppositeRole(relationshipRoleID RelationshipRoleID) RelationshipRoleID {
+	// TODO: Move to contactus module as this relationships are relevant to contacts only?
 	switch relationshipRoleID {
-	case "parent":
-		return "child"
-	case "child":
-		return "parent"
-	case "spouse":
-		return "spouse"
+	case "parent", "child", "sibling", "spouse", "partner", "team-mate":
+		return relationshipRoleID
 	}
 	return ""
 }
