@@ -44,7 +44,7 @@ func AddParticipantToHappening(ctx context.Context, user facade.User, request dt
 		if updates, err = params.Happening.Dbo.AddRelationshipAndID(
 			models4linkage.Link{
 				TeamModuleItemRef: contactFullRef,
-				RelatedAs:         []string{"participant"},
+				RolesOfItem:       []string{"participant"},
 			},
 		); err != nil {
 			return err
@@ -98,7 +98,7 @@ func addContactToHappeningBriefInTeamDto(
 	}
 	contactRef := models4linkage.NewTeamModuleDocRef(teamID, const4contactus.ModuleID, const4contactus.ContactsCollection, contactID)
 
-	updates, err = happeningBriefPointer.AddRelationship(models4linkage.Link{TeamModuleItemRef: contactRef, RelatedAs: []string{"participant"}})
+	updates, err = happeningBriefPointer.AddRelationship(models4linkage.Link{TeamModuleItemRef: contactRef, RolesOfItem: []string{"participant"}})
 	for i := range updates {
 		updates[i].Field = fmt.Sprintf("recurringHappenings.%s.%s", happening.ID, updates[i].Field)
 	}

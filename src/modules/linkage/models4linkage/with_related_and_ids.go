@@ -28,10 +28,10 @@ type WithRelatedAndIDs struct {
 	   				"contacts": { // Collection
 	   					"parent1": { // Item ID
 	   						relatedAs: {
-	   							"parent": {} // Relationship ID
+	   							"parent": {} // RelationshipRole ID
 	   						}
 	   						relatesAs: {
-	   							"child": {} // Relationship ID
+	   							"child": {} // RelationshipRole ID
 	   						},
 	   					},
 	   				}
@@ -88,14 +88,14 @@ func (v *WithRelatedAndIDs) Validate() error {
 func (v *WithRelatedAndIDs) AddRelationshipsAndIDs(
 	/*recordRef*/ _ TeamModuleItemRef, // TODO: handle or remove
 	relatedTo TeamModuleItemRef,
-	relatedAs Relationships,
-	/*relatesAs*/ _ Relationships, // TODO: needs implementation
+	relatedAs RelationshipRoles,
+	/*relatesAs*/ _ RelationshipRoles, // TODO: needs implementation
 ) (updates []dal.Update, err error) {
 	link := Link{
 		TeamModuleItemRef: relatedTo,
 	}
 	for relatedAsID := range relatedAs {
-		link.RelatesAs = append(link.RelatesAs, relatedAsID)
+		link.RolesToItem = append(link.RolesToItem, relatedAsID)
 	}
 	return v.AddRelationshipAndID(link)
 	//return nil, errors.New("not implemented yet - AddRelationshipsAndIDs")
@@ -147,7 +147,7 @@ func (v *WithRelatedAndIDs) RemoveRelatedAndID(ref TeamModuleItemRef) (updates [
 
 // GetRelatesAsFromRelated returns relationship ID for the opposite direction
 // TODO: Move to contactus module as relationships are not dedicated to contacts only?
-func GetRelatesAsFromRelated(relatedAs RelationshipID) RelationshipID {
+func GetRelatesAsFromRelated(relatedAs RelationshipRoleID) RelationshipRoleID {
 	switch relatedAs {
 	case "parent":
 		return "child"

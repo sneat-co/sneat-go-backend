@@ -63,10 +63,10 @@ func SetRelated[D models4linkage.Relatable](
 	if objectWithRelated.Related == nil {
 		objectWithRelated.Related = make(models4linkage.RelatedByModuleID, 1)
 	}
-	getRelationships := func(ids []string) (relationships models4linkage.Relationships) {
-		relationships = make(models4linkage.Relationships, len(ids))
+	getRelationships := func(ids []string) (relationships models4linkage.RelationshipRoles) {
+		relationships = make(models4linkage.RelationshipRoles, len(ids))
 		for _, r := range ids {
-			relationships[r] = &models4linkage.Relationship{
+			relationships[r] = &models4linkage.RelationshipRole{
 				//CreatedField: with.CreatedField{
 				//	Created: with.Created{
 				//		At: now.Format(time.DateOnly),
@@ -77,8 +77,8 @@ func SetRelated[D models4linkage.Relatable](
 		}
 		return
 	}
-	relatedAs := getRelationships(relatedTo.RelatedAs)
-	relatesAs := getRelationships(relatedTo.RelatesAs)
+	relatedAs := getRelationships(relatedTo.RolesOfItem)
+	relatesAs := getRelationships(relatedTo.RolesToItem)
 
 	if relUpdates, err = objectWithRelated.AddRelationshipsAndIDs(
 		objectRef,

@@ -78,8 +78,8 @@ func (v TeamModuleItemRef) Validate() error {
 type Link struct {
 	TeamModuleItemRef
 	//
-	RelatedAs []RelationshipID `json:"relatedAs,omitempty" firestore:"relatedAs,omitempty"`
-	RelatesAs []RelationshipID `json:"relatesAs,omitempty" firestore:"relatesAs,omitempty"`
+	RolesOfItem []RelationshipRoleID `json:"rolesOfItem,omitempty" firestore:"rolesOfItem,omitempty"`
+	RolesToItem []RelationshipRoleID `json:"rolesToItem,omitempty" firestore:"rolesToItem,omitempty"`
 }
 
 func (v Link) Validate() error {
@@ -95,10 +95,10 @@ func (v Link) Validate() error {
 		}
 		return nil
 	}
-	if err := valRelationIDs("relatedAs", v.RelatedAs); err != nil {
+	if err := valRelationIDs("rolesOfItem", v.RolesOfItem); err != nil {
 		return err
 	}
-	if err := valRelationIDs("relatesAs", v.RelatesAs); err != nil {
+	if err := valRelationIDs("rolesToItem", v.RolesToItem); err != nil {
 		return err
 	}
 	return nil

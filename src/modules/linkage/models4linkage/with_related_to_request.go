@@ -12,6 +12,6 @@ package models4linkage
 //}
 //
 //type RelationshipRequest struct {
-//	RelatedAs []string `json:"relatedAs,omitempty"`
-//	RelatesAs []string `json:"relatesAs,omitempty"`
+//	RolesOfItem []string `json:"relatedAs,omitempty"`
+//	RolesToItem []string `json:"relatesAs,omitempty"`
 //}

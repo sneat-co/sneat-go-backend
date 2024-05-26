@@ -35,7 +35,7 @@ func TestHttpAddMember(t *testing.T) {
 							Keys: []models4linkage.RelatedItemKey{
 								{TeamID: "team1", ItemID: "c1"},
 							},
-							RelatedAs: map[models4linkage.RelationshipID]*models4linkage.Relationship{
+							RolesOfItem: map[models4linkage.RelationshipRoleID]*models4linkage.RelationshipRole{
 								"spouse": {
 									//CreatedField: with.CreatedField{
 									//	Created: with.Created{

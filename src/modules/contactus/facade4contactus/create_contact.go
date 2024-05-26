@@ -94,7 +94,7 @@ func CreateContactTx(
 					}
 					switch userContactBrief.AgeGroup {
 					case "", dbmodels.AgeGroupUnknown:
-						for relatedAs := range relatedItem.RelatedAs {
+						for relatedAs := range relatedItem.RolesOfItem {
 							switch relatedAs {
 							case dbmodels.RelationshipSpouse, dbmodels.RelationshipChild:
 								userContactBrief.AgeGroup = dbmodels.AgeGroupAdult
@@ -267,8 +267,8 @@ func updateRelationshipsInRelatedItems(ctx context.Context, tx dal.ReadTransacti
 					if _, err = contactDbo.AddRelationshipsAndIDs(
 						contactDocRef, // TODO: not used, why passing?
 						itemRef,
-						relatedItem.RelatedAs,
-						relatedItem.RelatesAs, // TODO: not used, needs implementation
+						relatedItem.RolesOfItem,
+						relatedItem.RolesToItem, // TODO: not used, needs implementation
 					); err != nil {
 						return err
 					}
