@@ -235,9 +235,9 @@ func (v *WithRelated) AddRelationship(link Link) (updates []dal.Update, err erro
 		v.Related = make(RelatedByModuleID, 1)
 	}
 
-	for _, linkRelatedAs := range link.RolesToItem {
-		if relatesAs := GetRelatesAsFromRelated(linkRelatedAs); relatesAs != "" && !slice.Contains(link.RolesToItem, relatesAs) {
-			link.RolesToItem = append(link.RolesToItem, "child")
+	for _, linkRelatedAs := range link.Add.RolesToItem {
+		if relatesAs := GetRelatesAsFromRelated(linkRelatedAs); relatesAs != "" && !slice.Contains(link.Add.RolesToItem, relatesAs) {
+			link.Add.RolesToItem = append(link.Add.RolesToItem, "child")
 		}
 	}
 
@@ -280,8 +280,8 @@ func (v *WithRelated) AddRelationship(link Link) (updates []dal.Update, err erro
 		return relationships
 	}
 
-	relatedItem.RolesOfItem = addRelationship("rolesToItem", link.RolesOfItem, relatedItem.RolesOfItem)
-	relatedItem.RolesToItem = addRelationship("rolesToItem", link.RolesToItem, relatedItem.RolesToItem)
+	relatedItem.RolesOfItem = addRelationship("rolesToItem", link.Add.RolesOfItem, relatedItem.RolesOfItem)
+	relatedItem.RolesToItem = addRelationship("rolesToItem", link.Add.RolesToItem, relatedItem.RolesToItem)
 
 	updates = append(updates, dal.Update{
 		Field: fmt.Sprintf("related.%s", link.ModuleCollectionPath()),

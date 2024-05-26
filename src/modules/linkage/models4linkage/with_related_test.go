@@ -38,7 +38,9 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 						Collection: const4contactus.ContactsCollection,
 						ItemID:     "c2",
 					},
-					RolesOfItem: []RelationshipRoleID{"parent"},
+					Add: &RolesCommand{
+						RolesOfItem: []RelationshipRoleID{"parent"},
+					},
 				},
 				now: now,
 			},
@@ -91,7 +93,9 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 						Collection: const4contactus.ContactsCollection,
 						ItemID:     "c2",
 					},
-					RolesOfItem: []RelationshipRoleID{"child"},
+					Add: &RolesCommand{
+						RolesOfItem: []RelationshipRoleID{"child"},
+					},
 				},
 				now: now,
 			},

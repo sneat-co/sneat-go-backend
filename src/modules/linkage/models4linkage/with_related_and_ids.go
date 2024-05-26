@@ -95,7 +95,7 @@ func (v *WithRelatedAndIDs) AddRelationshipsAndIDs(
 		TeamModuleItemRef: relatedTo,
 	}
 	for relatedAsID := range relatedAs {
-		link.RolesToItem = append(link.RolesToItem, relatedAsID)
+		link.Add.RolesToItem = append(link.Add.RolesToItem, relatedAsID)
 	}
 	return v.AddRelationshipAndID(link)
 	//return nil, errors.New("not implemented yet - AddRelationshipsAndIDs")

@@ -77,8 +77,8 @@ func SetRelated[D models4linkage.Relatable](
 		}
 		return
 	}
-	relatedAs := getRelationships(relatedTo.RolesOfItem)
-	relatesAs := getRelationships(relatedTo.RolesToItem)
+	relatedAs := getRelationships(relatedTo.Add.RolesOfItem)
+	relatesAs := getRelationships(relatedTo.Add.RolesToItem)
 
 	if relUpdates, err = objectWithRelated.AddRelationshipsAndIDs(
 		objectRef,
