@@ -45,7 +45,7 @@ var RunOrderWorker = func(ctx context.Context, user facade.User, request dto4log
 	if err := request.Validate(); err != nil {
 		return fmt.Errorf("invalid order request: %w", err)
 	}
-	return dal4teamus.RunTeamWorker(ctx, user, request.TeamRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4teamus.TeamWorkerParams) (err error) {
+	return dal4teamus.RunTeamWorker(ctx, user, request.TeamID, func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4teamus.TeamWorkerParams) (err error) {
 		order := models4logist.NewOrder(teamWorkerParams.Team.ID, request.OrderID)
 		params := OrderWorkerParams{
 			TeamWorkerParams: teamWorkerParams,

@@ -34,7 +34,7 @@ func AddMetric(ctx context.Context, user facade.User, request AddTeamMetricReque
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4teamus.RunTeamWorker(ctx, user, request.TeamRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.TeamWorkerParams) (err error) {
+	err = dal4teamus.RunTeamWorker(ctx, user, request.TeamID, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.TeamWorkerParams) (err error) {
 		request.Metric.ID = strings.Replace(slug.Make(request.Metric.Title), "-", "_", -1)
 		for _, m := range params.Team.Data.Metrics {
 			if m.ID == request.Metric.ID {

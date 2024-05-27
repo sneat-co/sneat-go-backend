@@ -9,6 +9,7 @@ import (
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/slice"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -160,12 +161,12 @@ func RunModuleTeamWorker[D TeamModuleData](
 }
 
 // RunTeamWorker executes a team worker
-var RunTeamWorker = func(ctx context.Context, user facade.User, request dto4teamus.TeamRequest, worker teamWorker) (err error) {
+var RunTeamWorker = func(ctx context.Context, user facade.User, teamID string, worker teamWorker) (err error) {
 	if user == nil {
 		panic("user is nil")
 	}
-	if err := request.Validate(); err != nil {
-		return fmt.Errorf("team request is not valid: %w", err)
+	if strings.TrimSpace(teamID) == "" {
+		return fmt.Errorf("teamID is empty")
 	}
 	userID := user.GetID()
 	if userID == "" {
@@ -174,7 +175,7 @@ var RunTeamWorker = func(ctx context.Context, user facade.User, request dto4team
 	}
 	db := facade.GetDatabase(ctx)
 	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
-		params := NewTeamWorkerParams(userID, request.TeamID)
+		params := NewTeamWorkerParams(userID, teamID)
 		if err = tx.Get(ctx, params.Team.Record); err != nil {
 			return fmt.Errorf("failed to load team record: %w", err)
 		}

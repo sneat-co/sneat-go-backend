@@ -5,15 +5,15 @@ import (
 )
 
 type UpdateItemRequest struct {
-	ItemRef models4linkage.TeamModuleItemRef `json:"itemRef"`
+	models4linkage.TeamModuleItemRef `json:"itemRef"`
 	UpdateRelatedFieldRequest
 }
 
 func (v *UpdateItemRequest) Validate() error {
-	if err := v.UpdateRelatedFieldRequest.Validate(); err != nil {
+	if err := v.TeamModuleItemRef.Validate(); err != nil {
 		return err
 	}
-	if err := v.ItemRef.Validate(); err != nil {
+	if err := v.UpdateRelatedFieldRequest.Validate(); err != nil {
 		return err
 	}
 	return nil
