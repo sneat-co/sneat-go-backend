@@ -4,12 +4,17 @@ import (
 	"context"
 	"errors"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/models4linkage"
 	"github.com/strongo/random"
 )
 
 func NewTeamModuleItemKey[K comparable](teamID, moduleID, collection string, itemID K) *dal.Key {
 	teamModuleKey := NewTeamModuleKey(teamID, moduleID)
 	return dal.NewKeyWithParentAndID(teamModuleKey, collection, itemID)
+}
+
+func NewTeamModuleItemKeyFromItemRef(itemRef models4linkage.TeamModuleItemRef) *dal.Key {
+	return NewTeamModuleItemKey(itemRef.TeamID, itemRef.ModuleID, itemRef.Collection, itemRef.ItemID)
 }
 
 func GenerateNewTeamModuleItemKey(ctx context.Context, tx dal.ReadwriteTransaction, teamID, moduleID, collection string, length, maxAttempts int) (id string, key *dal.Key, err error) {
