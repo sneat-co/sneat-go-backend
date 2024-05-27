@@ -227,28 +227,28 @@ func (v *WithRelated) ValidateRelated(validateID func(relatedID string) error) e
 	return nil
 }
 
-func (v *WithRelated) AddRelationship(link Link) (updates []dal.Update, err error) {
-	if err := link.Validate(); err != nil {
+func (v *WithRelated) AddRelationship(itemRef TeamModuleItemRef, rolesCommand RelationshipRolesCommand) (updates []dal.Update, err error) {
+	if err := rolesCommand.Validate(); err != nil {
 		return nil, err
 	}
 	if v.Related == nil {
 		v.Related = make(RelatedByModuleID, 1)
 	}
 
-	if link.Add != nil {
+	if rolesCommand.Add != nil {
 		addOppositeRoles := func(roles []RelationshipRoleID, oppositeRoles []RelationshipRoleID) []RelationshipRoleID {
 			for _, roleOfItem := range roles {
-				if oppositeRole := GetOppositeRole(roleOfItem); oppositeRole != "" && !slice.Contains(link.Add.RolesToItem, oppositeRole) {
+				if oppositeRole := GetOppositeRole(roleOfItem); oppositeRole != "" && !slice.Contains(rolesCommand.Add.RolesToItem, oppositeRole) {
 					oppositeRoles = append(oppositeRoles, oppositeRole)
 				}
 			}
 			return oppositeRoles
 		}
-		link.Add.RolesToItem = addOppositeRoles(link.Add.RolesOfItem, link.Add.RolesToItem)
-		link.Add.RolesOfItem = addOppositeRoles(link.Add.RolesToItem, link.Add.RolesOfItem)
+		rolesCommand.Add.RolesToItem = addOppositeRoles(rolesCommand.Add.RolesOfItem, rolesCommand.Add.RolesToItem)
+		rolesCommand.Add.RolesOfItem = addOppositeRoles(rolesCommand.Add.RolesToItem, rolesCommand.Add.RolesOfItem)
 	}
 
-	relatedByCollectionID := v.Related[link.ModuleID]
+	relatedByCollectionID := v.Related[itemRef.ModuleID]
 	if relatedByCollectionID == nil {
 		relatedByCollectionID = make(RelatedByCollectionID, 1)
 		v.Related[const4contactus.ModuleID] = relatedByCollectionID
@@ -256,7 +256,7 @@ func (v *WithRelated) AddRelationship(link Link) (updates []dal.Update, err erro
 
 	relatedItems := relatedByCollectionID[const4contactus.ContactsCollection]
 
-	relatedItemKey := RelatedItemKey{TeamID: link.TeamID, ItemID: link.ItemID}
+	relatedItemKey := RelatedItemKey{TeamID: itemRef.TeamID, ItemID: itemRef.ItemID}
 	relatedItem := GetRelatedItemByKey(relatedItems, relatedItemKey)
 	if relatedItem == nil {
 		relatedItem = NewRelatedItem(relatedItemKey)
@@ -287,13 +287,13 @@ func (v *WithRelated) AddRelationship(link Link) (updates []dal.Update, err erro
 		return relationships
 	}
 
-	if link.Add != nil {
-		relatedItem.RolesOfItem = addRelationship("rolesOfItem", link.Add.RolesOfItem, relatedItem.RolesOfItem)
-		relatedItem.RolesToItem = addRelationship("rolesToItem", link.Add.RolesToItem, relatedItem.RolesToItem)
+	if rolesCommand.Add != nil {
+		relatedItem.RolesOfItem = addRelationship("rolesOfItem", rolesCommand.Add.RolesOfItem, relatedItem.RolesOfItem)
+		relatedItem.RolesToItem = addRelationship("rolesToItem", rolesCommand.Add.RolesToItem, relatedItem.RolesToItem)
 	}
 
 	updates = append(updates, dal.Update{
-		Field: fmt.Sprintf("related.%s", link.ModuleCollectionPath()),
+		Field: fmt.Sprintf("related.%s", itemRef.ModuleCollectionPath()),
 		Value: relatedItems,
 	})
 
@@ -302,7 +302,7 @@ func (v *WithRelated) AddRelationship(link Link) (updates []dal.Update, err erro
 
 //func (v *WithRelated) SetRelationshipToItem(
 //	userID string,
-//	link Link,
+//	link RelationshipRolesCommand,
 //	now time.Time,
 //) (updates []dal.Update, err error) {
 //	if err = link.Validate(); err != nil {

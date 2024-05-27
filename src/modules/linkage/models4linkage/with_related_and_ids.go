@@ -86,13 +86,11 @@ func (v *WithRelatedAndIDs) Validate() error {
 }
 
 func (v *WithRelatedAndIDs) AddRelationshipsAndIDs(
-	relatedTo TeamModuleItemRef,
+	itemRef TeamModuleItemRef,
 	rolesOfItem RelationshipRoles,
 	rolesToItem RelationshipRoles, // TODO: needs implementation
 ) (updates []dal.Update, err error) {
-	link := Link{
-		TeamModuleItemRef: relatedTo,
-	}
+	link := RelationshipRolesCommand{}
 	if len(rolesOfItem) > 0 {
 		if link.Add == nil {
 			link.Add = new(RolesCommand)
@@ -109,7 +107,7 @@ func (v *WithRelatedAndIDs) AddRelationshipsAndIDs(
 			link.Remove.RolesToItem = append(link.Remove.RolesToItem, roleToItem)
 		}
 	}
-	return v.AddRelationshipAndID(link)
+	return v.AddRelationshipAndID(itemRef, link)
 	//return nil, errors.New("not implemented yet - AddRelationshipsAndIDs")
 }
 
@@ -144,9 +142,10 @@ func (v *WithRelatedAndIDs) UpdateRelatedIDs() (updates []dal.Update) {
 }
 
 func (v *WithRelatedAndIDs) AddRelationshipAndID(
-	link Link,
+	itemRef TeamModuleItemRef,
+	link RelationshipRolesCommand,
 ) (updates []dal.Update, err error) {
-	updates, err = v.WithRelated.AddRelationship(link)
+	updates, err = v.WithRelated.AddRelationship(itemRef, link)
 	updates = append(updates, v.UpdateRelatedIDs()...)
 	return
 }

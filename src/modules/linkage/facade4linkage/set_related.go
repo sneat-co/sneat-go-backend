@@ -40,7 +40,8 @@ func SetRelated[D models4linkage.Relatable](
 	/*adapter*/ _ RelatableAdapter[D],
 	object record.DataWithID[string, D],
 	objectRef models4linkage.TeamModuleItemRef,
-	relatedTo models4linkage.Link,
+	itemRef models4linkage.TeamModuleItemRef,
+	rolesCommand models4linkage.RelationshipRolesCommand,
 ) (
 	itemUpdates []dal.Update,
 	teamModuleUpdates []dal.Update,
@@ -52,8 +53,8 @@ func SetRelated[D models4linkage.Relatable](
 		if err = objectRef.Validate(); err != nil {
 			return nil, nil, fmt.Errorf("%s `objectRef models4linkage.TeamModuleItemRef`: %w", invalidArgPrefix, err)
 		}
-		if err = relatedTo.Validate(); err != nil {
-			return nil, nil, fmt.Errorf("%s 'relatedTo models4linkage.Link': %w", invalidArgPrefix, err)
+		if err = rolesCommand.Validate(); err != nil {
+			return nil, nil, err
 		}
 	}
 
@@ -77,11 +78,11 @@ func SetRelated[D models4linkage.Relatable](
 		}
 		return
 	}
-	rolesOfItem := getRelationships(relatedTo.Add.RolesOfItem)
-	rolesToItem := getRelationships(relatedTo.Add.RolesToItem)
+	rolesOfItem := getRelationships(rolesCommand.Add.RolesOfItem)
+	rolesToItem := getRelationships(rolesCommand.Add.RolesToItem)
 
 	if relUpdates, err = objectWithRelated.AddRelationshipsAndIDs(
-		relatedTo.TeamModuleItemRef,
+		itemRef,
 		rolesOfItem,
 		rolesToItem,
 	); err != nil {

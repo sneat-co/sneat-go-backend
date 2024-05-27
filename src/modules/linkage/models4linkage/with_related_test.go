@@ -15,7 +15,8 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 	}
 	type args struct {
 		userID string
-		link   Link
+		item   TeamModuleItemRef
+		link   RelationshipRolesCommand
 		now    time.Time
 	}
 	now := time.Now()
@@ -30,13 +31,13 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 			fields: fields{},
 			args: args{
 				userID: "u1",
-				link: Link{
-					TeamModuleItemRef: TeamModuleItemRef{
-						TeamID:     "team1",
-						ModuleID:   const4contactus.ModuleID,
-						Collection: const4contactus.ContactsCollection,
-						ItemID:     "c2",
-					},
+				item: TeamModuleItemRef{
+					TeamID:     "team1",
+					ModuleID:   const4contactus.ModuleID,
+					Collection: const4contactus.ContactsCollection,
+					ItemID:     "c2",
+				},
+				link: RelationshipRolesCommand{
 					Add: &RolesCommand{
 						RolesOfItem: []RelationshipRoleID{"parent"},
 					},
@@ -75,13 +76,13 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 			fields: fields{},
 			args: args{
 				userID: "u1",
-				link: Link{
-					TeamModuleItemRef: TeamModuleItemRef{
-						TeamID:     "team1",
-						ModuleID:   const4contactus.ModuleID,
-						Collection: const4contactus.ContactsCollection,
-						ItemID:     "c2",
-					},
+				item: TeamModuleItemRef{
+					TeamID:     "team1",
+					ModuleID:   const4contactus.ModuleID,
+					Collection: const4contactus.ContactsCollection,
+					ItemID:     "c2",
+				},
+				link: RelationshipRolesCommand{
 					Add: &RolesCommand{
 						RolesOfItem: []RelationshipRoleID{"child"},
 					},
@@ -123,6 +124,7 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 				RelatedIDs: tt.fields.relatedIDs,
 			}
 			gotUpdates, gotErr := v.AddRelationshipAndID(
+				tt.args.item,
 				tt.args.link,
 			)
 			if gotErr != nil {

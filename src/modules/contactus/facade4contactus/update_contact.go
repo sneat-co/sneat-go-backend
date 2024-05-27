@@ -98,8 +98,14 @@ func updateContactTxWorker(
 		updatedContactFields = append(updatedContactFields, contactFieldsUpdated...)
 	}
 
-	if request.RelatedTo != nil {
-		if err = updateRelatedTo(ctx, tx, request, params); err != nil {
+	if request.Related != nil {
+		itemRef := models4linkage.TeamModuleItemRef{
+			ModuleID:   const4contactus.ModuleID,
+			Collection: const4contactus.ContactsCollection,
+			TeamID:     request.TeamID,
+			ItemID:     request.ContactID,
+		}
+		if err = updateRelatedField(ctx, tx, itemRef, request.UpdateRelatedRequest, params); err != nil {
 			return err
 		}
 	}
@@ -119,18 +125,13 @@ func updateContactTxWorker(
 	return nil
 }
 
-func updateRelatedTo(
+func updateRelatedField(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	request dto4contactus.UpdateContactRequest,
-	params *dal4contactus.ContactWorkerParams,
+	objectRef models4linkage.TeamModuleItemRef,
+	request dto4contactus.UpdateRelatedRequest,
+	params *dal4contactus.ContactWorkerParams, // TODO: needs abstraction
 ) (err error) {
-	recordRef := models4linkage.TeamModuleItemRef{
-		ModuleID:   const4contactus.ModuleID,
-		Collection: const4contactus.ContactsCollection,
-		TeamID:     request.TeamID,
-		ItemID:     request.ContactID,
-	}
 	relatableAdapted := facade4linkage.NewRelatableAdapter[*models4contactus.ContactDbo](func(ctx context.Context, tx dal.ReadTransaction, recordRef models4linkage.TeamModuleItemRef) (err error) {
 		// Verify contactID belongs to the same team
 		teamContactBriefID := recordRef.ItemID
@@ -142,10 +143,23 @@ func updateRelatedTo(
 		return nil
 	})
 	var itemUpdates, teamModuleUpdates []dal.Update
-	if itemUpdates, teamModuleUpdates, err = facade4linkage.SetRelated(ctx, tx, relatableAdapted, params.Contact, recordRef, *request.RelatedTo); err != nil {
-		return err
+
+	for itemID, itemRolesCommand := range request.Related {
+		itemRef := models4linkage.NewTeamModuleDocRefFromString(itemID)
+		if itemUpdates, teamModuleUpdates, err = facade4linkage.SetRelated(ctx, tx, relatableAdapted, params.Contact, objectRef, itemRef, *itemRolesCommand); err != nil {
+			return err
+		}
+		params.ContactUpdates = append(params.ContactUpdates, itemUpdates...)
+		params.TeamModuleUpdates = append(params.TeamModuleUpdates, teamModuleUpdates...)
 	}
-	params.ContactUpdates = append(params.ContactUpdates, itemUpdates...)
-	params.TeamModuleUpdates = append(params.TeamModuleUpdates, teamModuleUpdates...)
+
+	if err := updateRelatedRecord(); err != nil {
+		return fmt.Errorf("failed to update related record: %w", err)
+	}
+
+	return nil
+}
+
+func updateRelatedRecord() error {
 	return nil
 }

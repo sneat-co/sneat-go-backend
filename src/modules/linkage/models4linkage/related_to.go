@@ -81,16 +81,16 @@ type RolesCommand struct {
 	RolesToItem []RelationshipRoleID `json:"rolesToItem,omitempty" firestore:"rolesToItem,omitempty"`
 }
 
-type Link struct {
-	TeamModuleItemRef
+type RelationshipRolesCommand struct {
+	//TeamModuleItemRef
 	Add    *RolesCommand `json:"add,omitempty" firestore:"add,omitempty"`
 	Remove *RolesCommand `json:"remove,omitempty" firestore:"remove,omitempty"`
 }
 
-func (v Link) Validate() error {
-	if err := v.TeamModuleItemRef.Validate(); err != nil {
-		return err
-	}
+func (v RelationshipRolesCommand) Validate() error {
+	//if err := v.TeamModuleItemRef.Validate(); err != nil {
+	//	return err
+	//}
 	if err := v.Add.Validate(); err != nil {
 		return validation.NewErrBadRequestFieldValue("add", err.Error())
 	}
