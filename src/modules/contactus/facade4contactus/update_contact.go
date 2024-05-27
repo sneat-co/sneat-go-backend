@@ -8,7 +8,9 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dto4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/models4linkage"
+	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
+	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 )
 
 // UpdateContact sets contact fields
@@ -103,9 +105,19 @@ func updateContactTxWorker(
 			TeamID:     request.TeamID,
 			ItemID:     request.ContactID,
 		}
-		if err = updateRelatedField(ctx, tx, itemRef, request.UpdateRelatedRequest, params); err != nil {
+		var recordsUpdates []dal4teamus.RecordUpdates
+		recordsUpdates, err = updateRelatedField(ctx, tx,
+			itemRef, request.UpdateRelatedFieldRequest, &WithRelatedAndIDsAndUserID{
+				WithUserID:        dbmodels.WithUserID{UserID: params.Contact.Data.UserID},
+				WithRelatedAndIDs: &params.Contact.Data.WithRelatedAndIDs,
+			},
+			func(updates []dal.Update) {
+				params.ContactUpdates = append(params.ContactUpdates, updates...)
+			})
+		if err != nil {
 			return err
 		}
+		params.RecordUpdates = append(params.RecordUpdates, recordsUpdates...)
 	}
 
 	if len(params.ContactUpdates) > 0 {

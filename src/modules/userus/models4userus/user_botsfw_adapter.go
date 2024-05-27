@@ -8,11 +8,11 @@ import (
 var _ botsfwmodels.AppUserAdapter = (*userBotsFwAdapter)(nil)
 
 type userBotsFwAdapter struct {
-	*UserDto
+	*UserDbo
 }
 
-func (v *UserDto) BotsFwAdapter() botsfwmodels.AppUserAdapter {
-	return &userBotsFwAdapter{UserDto: v}
+func (v *UserDbo) BotsFwAdapter() botsfwmodels.AppUserAdapter {
+	return &userBotsFwAdapter{UserDbo: v}
 }
 
 func (u userBotsFwAdapter) SetNames(firstName, lastName, fullName string) error {

@@ -3,9 +3,10 @@ package dal4teamus
 import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
+	"github.com/sneat-co/sneat-go-backend/src/coremodels"
 )
 
-const TeamModulesCollection = "modules"
+const TeamModulesCollection = coremodels.ModulesCollection
 
 func NewTeamModuleKey(teamID, moduleID string) *dal.Key {
 	teamKey := NewTeamKey(teamID)

@@ -9,5 +9,5 @@ type ContactusTeamDbo struct {
 }
 
 func (v *ContactusTeamDbo) Validate() error {
-	return nil
+	return v.WithSingleTeamContactsWithoutContactIDs.Validate()
 }

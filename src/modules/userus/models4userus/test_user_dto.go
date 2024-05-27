@@ -11,7 +11,7 @@ import (
 
 func TestUserDtoValidate(t *testing.T) {
 	now := time.Now()
-	userDto := UserDto{
+	userDto := UserDbo{
 		CreatedFields: with.CreatedFields{
 			CreatedAtField: with.CreatedAtField{
 				CreatedAt: now,

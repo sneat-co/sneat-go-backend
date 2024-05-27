@@ -36,7 +36,7 @@ func TestCreateTeam(t *testing.T) { // TODO: Implement unit tests
 			switch record.Key().Collection() {
 			case models4userus.UsersCollection:
 				record.SetError(nil)
-				userDto := record.Data().(*models4userus.UserDto)
+				userDto := record.Data().(*models4userus.UserDbo)
 				userDto.CountryID = "--"
 				userDto.Status = "active"
 				userDto.Gender = dbmodels.GenderMale

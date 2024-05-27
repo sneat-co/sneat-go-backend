@@ -27,8 +27,9 @@ type TeamWorkerParams struct {
 	UserID  string
 	Started time.Time
 	//
-	Team        TeamContext
-	TeamUpdates []dal.Update
+	Team          TeamContext
+	TeamUpdates   []dal.Update
+	RecordUpdates []RecordUpdates
 }
 
 // GetRecords loads records from DB. If userID is passed, it will check for user permissions
@@ -185,6 +186,11 @@ var RunTeamWorker = func(ctx context.Context, user facade.User, request dto4team
 		}
 		if err = applyTeamUpdates(ctx, tx, params); err != nil {
 			return fmt.Errorf("team worker failed to apply team record updates: %w", err)
+		}
+		for _, record := range params.RecordUpdates {
+			if err = tx.Update(ctx, record.Key, record.Updates); err != nil {
+				return fmt.Errorf("failed to update record (key=%s): %w", record.Key, err)
+			}
 		}
 		return err
 	})

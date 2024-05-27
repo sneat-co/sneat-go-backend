@@ -208,7 +208,7 @@ func StartRetrospective(ctx context.Context, userContext facade.User, request St
 }
 
 type userRetroItems struct {
-	//user   *models4userus.UserDto
+	//user   *models4userus.UserDbo
 	byType models4retrospectus.RetroItemsByType
 }
 
@@ -220,10 +220,10 @@ func getUsersWithRetroItems(ctx context.Context, tx dal.ReadwriteTransaction, te
 		userIDs = append(userIDs, userID)
 	}
 	userKeys := models4userus.NewUserKeys(userIDs)
-	var usersRecords []dal.Record // []*models4userus.UserDto
-	users := make([]*models4userus.UserDto, len(userKeys))
+	var usersRecords []dal.Record // []*models4userus.UserDbo
+	users := make([]*models4userus.UserDbo, len(userKeys))
 	for i, userKey := range userKeys {
-		users[i] = new(models4userus.UserDto)
+		users[i] = new(models4userus.UserDbo)
 		usersRecords[i] = dal.NewRecordWithData(userKey, users)
 	}
 	err = facade4userus.TxGetUsers(ctx, tx, usersRecords)

@@ -2,28 +2,15 @@ package dto4contactus
 
 import (
 	"errors"
-	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/models4linkage"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dto4linkage"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
 	"strings"
 )
 
-type UpdateRelatedRequest struct {
-	Related map[string]*models4linkage.RelationshipRolesCommand `json:"related"`
-}
-
-func (v *UpdateRelatedRequest) Validate() error {
-	for id, rel := range v.Related {
-		if err := rel.Validate(); err != nil {
-			return validation.NewErrBadRequestFieldValue("related."+id, err.Error())
-		}
-	}
-	return nil
-}
-
 type UpdateContactRequest struct {
 	ContactRequest
-	UpdateRelatedRequest
+	dto4linkage.UpdateRelatedFieldRequest
 	Address   *dbmodels.Address `json:"address,omitempty"`
 	AgeGroup  string            `json:"ageGroup,omitempty"`
 	Roles     *SetRolesRequest  `json:"roles,omitempty"`
@@ -58,7 +45,7 @@ func (v UpdateContactRequest) Validate() error {
 
 	}
 	if v.Related != nil {
-		if err := v.UpdateRelatedRequest.Validate(); err != nil {
+		if err := v.UpdateRelatedFieldRequest.Validate(); err != nil {
 			return err
 		}
 	}

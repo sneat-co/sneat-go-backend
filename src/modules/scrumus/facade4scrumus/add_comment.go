@@ -41,7 +41,7 @@ func AddComment(ctx context.Context, userContext facade.User, request AddComment
 	uid := userContext.GetID()
 
 	userKey := models4userus.NewUserKey(uid)
-	var user models4userus.UserDto
+	var user models4userus.UserDbo
 	userRecord := dal.NewRecordWithData(userKey, &user)
 	if err = facade4userus.GetUserByID(ctx, db, userRecord); err != nil {
 		return nil, err
