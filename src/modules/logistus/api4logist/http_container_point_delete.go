@@ -13,8 +13,8 @@ var deleteContainerPoints = facade4logist.DeleteContainerPoints
 
 func httpDeleteContainerPoints(w http.ResponseWriter, r *http.Request) {
 	var request dto4logist.ContainerPointsRequest
-	handler := func(ctx context.Context, userCtx facade.User) (interface{}, error) {
-		return nil, deleteContainerPoints(ctx, userCtx, request)
-	}
-	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, handler, http.StatusNoContent, defaultJsonWithAuthRequired)
+	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, defaultJsonWithAuthRequired, http.StatusNoContent,
+		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
+			return nil, deleteContainerPoints(ctx, userCtx, request)
+		})
 }

@@ -37,19 +37,19 @@ func httpPostCreateAsset(w http.ResponseWriter, r *http.Request) {
 		apicore.ReturnError(r.Context(), w, r, fmt.Errorf("failed to set asset extra data: %w", err))
 		return
 	}
-	createAssetHttpHandler := func(ctx context.Context, userCtx facade.User) (interface{}, error) {
-		asset, err := facade4assetus.CreateAsset(ctx, userCtx, request)
-		if err != nil {
-			return nil, fmt.Errorf("failed to create asset: %w", err)
-		}
-		if asset.ID == "" {
-			return nil, errors.New("asset created by facade does not have an ContactID")
-		}
-		if err = asset.Data.Validate(); err != nil {
-			err = fmt.Errorf("asset created by facade is not valid: %w", err)
-			return asset, err
-		}
-		return asset, nil
-	}
-	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, createAssetHttpHandler, http.StatusCreated, verify.DefaultJsonWithAuthRequired)
+	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.DefaultJsonWithAuthRequired, http.StatusCreated,
+		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
+			asset, err := facade4assetus.CreateAsset(ctx, userCtx, request)
+			if err != nil {
+				return nil, fmt.Errorf("failed to create asset: %w", err)
+			}
+			if asset.ID == "" {
+				return nil, errors.New("asset created by facade does not have an ContactID")
+			}
+			if err = asset.Data.Validate(); err != nil {
+				err = fmt.Errorf("asset created by facade is not valid: %w", err)
+				return asset, err
+			}
+			return asset, nil
+		})
 }

@@ -12,8 +12,8 @@ import (
 
 func httpPostUpdateAsset(w http.ResponseWriter, r *http.Request) {
 	var request dto4assetus.UpdateAssetRequest
-	handler := func(ctx context.Context, userCtx facade.User) (interface{}, error) {
-		return nil, facade4assetus.UpdateAsset(ctx, userCtx, request)
-	}
-	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, handler, http.StatusCreated, verify.DefaultJsonWithAuthRequired)
+	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.DefaultJsonWithAuthRequired, http.StatusCreated,
+		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
+			return nil, facade4assetus.UpdateAsset(ctx, userCtx, request)
+		})
 }

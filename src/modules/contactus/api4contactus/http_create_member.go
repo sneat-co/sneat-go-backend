@@ -16,8 +16,8 @@ var createMember = facade4contactus.CreateMember
 // While is very similar to contactus/api4contactus/http_create_contact.go, it's not the same.
 func httpPostCreateMember(w http.ResponseWriter, r *http.Request) {
 	var request dal4contactus.CreateMemberRequest
-	handler := func(ctx context.Context, userCtx facade.User) (interface{}, error) {
-		return createMember(ctx, userCtx, request)
-	}
-	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, handler, http.StatusCreated, verify.DefaultJsonWithAuthRequired)
+	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.DefaultJsonWithAuthRequired, http.StatusCreated,
+		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
+			return createMember(ctx, userCtx, request)
+		})
 }

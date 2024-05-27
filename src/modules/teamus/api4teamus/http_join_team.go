@@ -14,7 +14,8 @@ var joinTeam = facade4invitus.JoinTeam
 // httpPostJoinTeam joins a members to a team
 func httpPostJoinTeam(w http.ResponseWriter, r *http.Request) {
 	var request facade4invitus.JoinTeamRequest
-	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, func(ctx context.Context, userCtx facade.User) (response interface{}, err error) {
-		return joinTeam(ctx, userCtx, request)
-	}, http.StatusOK, verify.DefaultJsonWithAuthRequired)
+	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.DefaultJsonWithAuthRequired, http.StatusOK,
+		func(ctx context.Context, userCtx facade.User) (response interface{}, err error) {
+			return joinTeam(ctx, userCtx, request)
+		})
 }

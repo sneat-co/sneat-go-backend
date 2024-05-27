@@ -13,15 +13,15 @@ import (
 // httpPostCreateTeam is an API endpoint that creates a new team
 func httpPostCreateTeam(w http.ResponseWriter, r *http.Request) {
 	var request dto4teamus.CreateTeamRequest
-	handler := func(ctx context.Context, userCtx facade.User) (interface{}, error) {
-		facadeResponse, err := facade4teamus.CreateTeam(ctx, userCtx, request)
-		if err != nil {
-			return nil, err
-		}
-		var apiResponse dto4teamus.CreateTeamResponse
-		apiResponse.Team.ID = facadeResponse.Team.ID
-		apiResponse.Team.Dto = *facadeResponse.Team.Data
-		return apiResponse, err
-	}
-	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, handler, http.StatusCreated, verify.DefaultJsonWithAuthRequired)
+	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.DefaultJsonWithAuthRequired, http.StatusCreated,
+		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
+			facadeResponse, err := facade4teamus.CreateTeam(ctx, userCtx, request)
+			if err != nil {
+				return nil, err
+			}
+			var apiResponse dto4teamus.CreateTeamResponse
+			apiResponse.Team.ID = facadeResponse.Team.ID
+			apiResponse.Team.Dto = *facadeResponse.Team.Data
+			return apiResponse, err
+		})
 }

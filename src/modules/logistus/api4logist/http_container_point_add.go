@@ -13,8 +13,8 @@ var addContainerPoints = facade4logist.AddContainerPoints
 
 func httpAddContainerPoints(w http.ResponseWriter, r *http.Request) {
 	var request dto4logist.AddContainerPointsRequest
-	handler := func(ctx context.Context, userCtx facade.User) (interface{}, error) {
-		return nil, addContainerPoints(ctx, userCtx, request)
-	}
-	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, handler, http.StatusNoContent, defaultJsonWithAuthRequired)
+	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, defaultJsonWithAuthRequired, http.StatusNoContent,
+		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
+			return nil, addContainerPoints(ctx, userCtx, request)
+		})
 }

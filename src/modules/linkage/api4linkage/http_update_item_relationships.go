@@ -15,5 +15,5 @@ func httpUpdateItemRelationships(w http.ResponseWriter, r *http.Request) {
 	handler := func(ctx context.Context, userCtx facade.User) (interface{}, error) {
 		return nil, facade4linkage.UpdateItemRelationships(ctx, userCtx, request)
 	}
-	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, handler, http.StatusNoContent, verify.DefaultJsonWithAuthRequired)
+	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.DefaultJsonWithAuthRequired, http.StatusNoContent, handler)
 }
