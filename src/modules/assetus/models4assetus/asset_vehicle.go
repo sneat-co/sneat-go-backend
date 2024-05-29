@@ -52,10 +52,13 @@ var _ AssetExtra = (*AssetVehicleExtra)(nil)
 type AssetVehicleExtra struct {
 	AssetExtraBase
 	EngineData
-	Vin string `json:"vin,omitempty" firestore:"vin"`
+	Vin string `json:"vin,omitempty" firestore:"vin,omitempty"`
 }
 
 func (v AssetVehicleExtra) Validate() error {
+	if err := v.AssetExtraBase.Validate(); err != nil {
+		return err
+	}
 	if err := v.EngineData.Validate(); err != nil {
 		return validation.NewErrBadRecordFieldValue("engineData", err.Error())
 	}
@@ -64,11 +67,11 @@ func (v AssetVehicleExtra) Validate() error {
 
 // EngineData is a struct for engine data
 type EngineData struct {
-	EngineType EngineType `json:"engineType" firestore:"engineType"`
-	EngineFuel FuelType   `json:"engineFuel" firestore:"engineFuel"`
-	EngineCC   int        `json:"engineCC" firestore:"engineCC"` // Engine volume in cubic centimetres
-	EngineKW   int        `json:"engineKW" firestore:"engineKW"` // Engine power in kilowatts
-	EngineNM   int        `json:"engineNM" firestore:"engineNM"` // Engine torque in Newton metres
+	EngineType EngineType `json:"engineType,omitempty" firestore:"engineType,omitempty"`
+	EngineFuel FuelType   `json:"engineFuel,omitempty" firestore:"engineFuel,omitempty"`
+	EngineCC   int        `json:"engineCC,omitempty" firestore:"engineCC,omitempty"` // Engine volume in cubic centimetres
+	EngineKW   int        `json:"engineKW,omitempty" firestore:"engineKW,omitempty"` // Engine power in kilowatts
+	EngineNM   int        `json:"engineNM,omitempty" firestore:"engineNM,omitempty"` // Engine torque in Newton metres
 }
 
 // Validate returns error if not valid

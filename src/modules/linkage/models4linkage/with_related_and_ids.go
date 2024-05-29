@@ -28,10 +28,10 @@ type WithRelatedAndIDs struct {
 	   				"contacts": { // Collection
 	   					"parent1": { // Item ID
 	   						relatedAs: {
-	   							"parent": {} // Relationship ID
+	   							"parent": {} // RelationshipRole ID
 	   						}
 	   						relatesAs: {
-	   							"child": {} // Relationship ID
+	   							"child": {} // RelationshipRole ID
 	   						},
 	   					},
 	   				}
@@ -86,16 +86,28 @@ func (v *WithRelatedAndIDs) Validate() error {
 }
 
 func (v *WithRelatedAndIDs) AddRelationshipsAndIDs(
-	/*recordRef*/ _ TeamModuleItemRef, // TODO: handle or remove
 	relatedTo TeamModuleItemRef,
-	relatedAs Relationships,
-	/*relatesAs*/ _ Relationships, // TODO: needs implementation
+	rolesOfItem RelationshipRoles,
+	rolesToItem RelationshipRoles, // TODO: needs implementation
 ) (updates []dal.Update, err error) {
 	link := Link{
 		TeamModuleItemRef: relatedTo,
 	}
-	for relatedAsID := range relatedAs {
-		link.RelatesAs = append(link.RelatesAs, relatedAsID)
+	if len(rolesOfItem) > 0 {
+		if link.Add == nil {
+			link.Add = new(RolesCommand)
+		}
+		for roleOfItem := range rolesOfItem {
+			link.Add.RolesOfItem = append(link.Add.RolesOfItem, roleOfItem)
+		}
+	}
+	if len(rolesToItem) > 0 {
+		if link.Remove == nil {
+			link.Remove = new(RolesCommand)
+		}
+		for roleToItem := range rolesToItem {
+			link.Remove.RolesToItem = append(link.Remove.RolesToItem, roleToItem)
+		}
 	}
 	return v.AddRelationshipAndID(link)
 	//return nil, errors.New("not implemented yet - AddRelationshipsAndIDs")
@@ -145,14 +157,16 @@ func (v *WithRelatedAndIDs) RemoveRelatedAndID(ref TeamModuleItemRef) (updates [
 	return updates
 }
 
-// GetRelatesAsFromRelated returns relationship ID for the opposite direction
-// TODO: Move to contactus module as relationships are not dedicated to contacts only?
-func GetRelatesAsFromRelated(relatedAs RelationshipID) RelationshipID {
-	switch relatedAs {
+// GetOppositeRole returns relationship ID for the opposite direction
+func GetOppositeRole(relationshipRoleID RelationshipRoleID) RelationshipRoleID {
+	// TODO: Move to contactus module as this relationships are relevant to contacts only?
+	switch relationshipRoleID {
+	case "sibling", "spouse", "partner", "team-mate":
+		return relationshipRoleID
 	case "parent":
 		return "child"
-	case "spouse":
-		return "spouse"
+	case "child":
+		return "parent"
 	}
 	return ""
 }

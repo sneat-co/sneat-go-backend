@@ -15,9 +15,8 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 	}
 	type args struct {
 		userID string
-		//recordRef TeamModuleItemRef
-		link Link
-		now  time.Time
+		link   Link
+		now    time.Time
 	}
 	now := time.Now()
 	tests := []struct {
@@ -38,7 +37,9 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 						Collection: const4contactus.ContactsCollection,
 						ItemID:     "c2",
 					},
-					RelatedAs: []RelationshipID{"parent"},
+					Add: &RolesCommand{
+						RolesOfItem: []RelationshipRoleID{"parent"},
+					},
 				},
 				now: now,
 			},
@@ -50,20 +51,16 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 							Keys: []RelatedItemKey{
 								{TeamID: "team1", ItemID: "c2"},
 							},
-							RelatedAs: Relationships{
-								"parent": &Relationship{
-									//CreatedField: with.CreatedField{
-									//	Created: with.Created{
-									//		By: "u1",
-									//		At: now.Format(time.DateTime),
-									//	},
-									//},
-								},
+							RolesOfItem: RelationshipRoles{
+								"parent": &RelationshipRole{},
+							},
+							RolesToItem: RelationshipRoles{
+								"child": &RelationshipRole{},
 							},
 						},
 					},
 				},
-				//{Field: "related.team1.contactus.contacts.c2.relatesAs.child", Value: &Relationship{WithCreatedField: dbmodels.WithCreatedField{Created: dbmodels.Created{By: "u1", On: now.Format(time.DateTime)}}}},
+				//{Field: "related.team1.contactus.contacts.c2.relatesAs.child", Value: &RelationshipRole{WithCreatedField: dbmodels.WithCreatedField{Created: dbmodels.Created{By: "u1", On: now.Format(time.DateTime)}}}},
 				{Field: "relatedIDs", Value: []string{
 					"*",
 					"contactus.*",
@@ -78,12 +75,6 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 			fields: fields{},
 			args: args{
 				userID: "u1",
-				//recordRef: TeamModuleItemRef{
-				//	TeamID:     "team1",
-				//	ModuleID:   const4contactus.ModuleID,
-				//	Collection: const4contactus.ContactsCollection,
-				//	ItemID:     "u1c",
-				//},
 				link: Link{
 					TeamModuleItemRef: TeamModuleItemRef{
 						TeamID:     "team1",
@@ -91,7 +82,9 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 						Collection: const4contactus.ContactsCollection,
 						ItemID:     "c2",
 					},
-					RelatedAs: []RelationshipID{"child"},
+					Add: &RolesCommand{
+						RolesOfItem: []RelationshipRoleID{"child"},
+					},
 				},
 				now: now,
 			},
@@ -102,14 +95,11 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 							Keys: []RelatedItemKey{
 								{TeamID: "team1", ItemID: "c2"},
 							},
-							RelatedAs: Relationships{
-								"child": &Relationship{
-									//CreatedField: with.CreatedField{
-									//	Created: with.Created{By: "u1",
-									//		At: now.Format(time.DateTime),
-									//	},
-									//},
-								},
+							RolesOfItem: RelationshipRoles{
+								"child": &RelationshipRole{},
+							},
+							RolesToItem: RelationshipRoles{
+								"parent": &RelationshipRole{},
 							},
 						},
 					},
@@ -167,11 +157,11 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 							if !reflect.DeepEqual(gotItem.Keys, wantItem.Keys) {
 								t.Errorf("SetRelationshipToItem()[%d]\nactual.Value[%d].Keys:\n\t%+v,\nwant.Value[%d].Keys:\n\t%+v", i, j, gotItem.Keys, j, wantItem.Keys)
 							}
-							if !reflect.DeepEqual(gotItem.RelatedAs, wantItem.RelatedAs) {
-								t.Errorf("SetRelationshipToItem()[%d]\nactual.Value[%d].RelatedAs:\n\t%+v,\nwant.Value[%d].RelatedAs:\n\t%+v", i, j, gotItem.RelatedAs, j, wantItem.RelatedAs)
+							if !reflect.DeepEqual(gotItem.RolesOfItem, wantItem.RolesOfItem) {
+								t.Errorf("SetRelationshipToItem()[%d]\nactual.Value[%d].RolesOfItem:\n\t%+v,\nwant.Value[%d].RolesOfItem:\n\t%+v", i, j, gotItem.RolesOfItem, j, wantItem.RolesOfItem)
 							}
-							if !reflect.DeepEqual(gotItem.RelatesAs, wantItem.RelatesAs) {
-								t.Errorf("SetRelationshipToItem()[%d]\nactual.Value[%d].RelatesAs:\n\t%+v,\nwant.Value[%d].RelatesAs:\n\t%+v", i, j, gotItem.RelatesAs, j, wantItem.RelatesAs)
+							if !reflect.DeepEqual(gotItem.RolesToItem, wantItem.RolesToItem) {
+								t.Errorf("SetRelationshipToItem()[%d]\nactual.Value[%d].RolesToItem:\n\t%+v,\nwant.Value[%d].RolesToItem:\n\t%+v", i, j, gotItem.RolesToItem, j, wantItem.RolesToItem)
 							}
 						}
 					}

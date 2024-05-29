@@ -94,7 +94,7 @@ func CreateContactTx(
 					}
 					switch userContactBrief.AgeGroup {
 					case "", dbmodels.AgeGroupUnknown:
-						for relatedAs := range relatedItem.RelatedAs {
+						for relatedAs := range relatedItem.RolesOfItem {
 							switch relatedAs {
 							case dbmodels.RelationshipSpouse, dbmodels.RelationshipChild:
 								userContactBrief.AgeGroup = dbmodels.AgeGroupAdult
@@ -240,19 +240,6 @@ func updateRelationshipsInRelatedItems(ctx context.Context, tx dal.ReadTransacti
 		}
 	}
 
-	//relatableAdapter := facade4linkage.NewRelatableAdapter[*models4contactus.ContactDbo](
-	//	func(ctx context.Context, tx dal.ReadTransaction, recordRef models4linkage.TeamModuleItemRef) (err error) {
-	//		return err
-	//	},
-	//)
-
-	contactDocRef := models4linkage.TeamModuleItemRef{
-		TeamID:     teamID,
-		ModuleID:   const4contactus.ModuleID,
-		Collection: const4contactus.ContactsCollection,
-		ItemID:     contactID,
-	}
-
 	for moduleID, relatedByCollection := range related {
 		for collection, relatedByItemID := range relatedByCollection {
 			for _, relatedItem := range relatedByItemID {
@@ -265,10 +252,9 @@ func updateRelationshipsInRelatedItems(ctx context.Context, tx dal.ReadTransacti
 					}
 
 					if _, err = contactDbo.AddRelationshipsAndIDs(
-						contactDocRef, // TODO: not used, why passing?
 						itemRef,
-						relatedItem.RelatedAs,
-						relatedItem.RelatesAs, // TODO: not used, needs implementation
+						relatedItem.RolesOfItem,
+						relatedItem.RolesToItem,
 					); err != nil {
 						return err
 					}

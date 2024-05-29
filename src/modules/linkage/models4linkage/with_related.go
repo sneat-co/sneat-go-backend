@@ -9,18 +9,18 @@ import (
 	"strings"
 )
 
-type RelationshipID = string
+type RelationshipRoleID = string
 
-type Relationship struct {
+type RelationshipRole struct {
 	//with.CreatedField
 }
 
-func (v Relationship) Validate() error {
+func (v RelationshipRole) Validate() error {
 	return nil
 	//return v.CreatedField.Validate()
 }
 
-type Relationships = map[RelationshipID]*Relationship
+type RelationshipRoles = map[RelationshipRoleID]*RelationshipRole
 
 type RelatedItemKey struct {
 	TeamID string `json:"teamID" firestore:"teamID"`
@@ -68,18 +68,18 @@ type RelatedItem struct {
 
 	Note string `json:"note,omitempty" firestore:"note,omitempty"`
 
-	// RelatedAs - if related contact is a child of the current contact, then relatedAs = {"child": ...}
-	RelatedAs Relationships `json:"relatedAs,omitempty" firestore:"relatedAs,omitempty"`
+	// RolesOfItem - if related item is a child of the current record, then relatedAs = {"child": ...}
+	RolesOfItem RelationshipRoles `json:"rolesOfItem,omitempty" firestore:"rolesOfItem,omitempty"`
 
-	// RelatesAs - if related contact is a child of the current contact, then relatesAs = {"parent": ...}
-	RelatesAs Relationships `json:"relatesAs,omitempty" firestore:"relatesAs,omitempty"`
+	// RolesToItem - if related item is a child of the current contact, then relatesAs = {"parent": ...}
+	RolesToItem RelationshipRoles `json:"rolesToItem,omitempty" firestore:"rolesToItem,omitempty"`
 }
 
 func (v *RelatedItem) String() string {
 	if v == nil {
 		return "nil"
 	}
-	return fmt.Sprintf("RelatedItem{RelatedAs=%+v, RelatesAs=%+v}", v.RelatedAs, v.RelatesAs)
+	return fmt.Sprintf("RelatedItem{RolesOfItem=%+v, RolesToItem=%+v}", v.RolesOfItem, v.RolesToItem)
 }
 
 func NewRelatedItem(key RelatedItemKey) *RelatedItem {
@@ -97,16 +97,16 @@ func (v *RelatedItem) Validate() error {
 			return validation.NewErrBadRequestFieldValue(fmt.Sprintf("keys[%d]", i), err.Error())
 		}
 	}
-	if err := v.validateRelationships(v.RelatedAs); err != nil {
-		return validation.NewErrBadRecordFieldValue("relatedAs", err.Error())
+	if err := v.validateRelationships(v.RolesOfItem); err != nil {
+		return validation.NewErrBadRecordFieldValue("rolesOfItem", err.Error())
 	}
-	if err := v.validateRelationships(v.RelatesAs); err != nil {
-		return validation.NewErrBadRecordFieldValue("relatesAs", err.Error())
+	if err := v.validateRelationships(v.RolesToItem); err != nil {
+		return validation.NewErrBadRecordFieldValue("rolesToItem", err.Error())
 	}
 	return nil
 }
 
-func (*RelatedItem) validateRelationships(related Relationships) error {
+func (*RelatedItem) validateRelationships(related RelationshipRoles) error {
 	for relationshipID, relationshipDetails := range related {
 		if strings.TrimSpace(relationshipID) == "" {
 			return validation.NewValidationError("relationship key is empty string")
@@ -235,10 +235,17 @@ func (v *WithRelated) AddRelationship(link Link) (updates []dal.Update, err erro
 		v.Related = make(RelatedByModuleID, 1)
 	}
 
-	for _, linkRelatedAs := range link.RelatesAs {
-		if relatesAs := GetRelatesAsFromRelated(linkRelatedAs); relatesAs != "" && !slice.Contains(link.RelatesAs, relatesAs) {
-			link.RelatesAs = append(link.RelatesAs, "child")
+	if link.Add != nil {
+		addOppositeRoles := func(roles []RelationshipRoleID, oppositeRoles []RelationshipRoleID) []RelationshipRoleID {
+			for _, roleOfItem := range roles {
+				if oppositeRole := GetOppositeRole(roleOfItem); oppositeRole != "" && !slice.Contains(link.Add.RolesToItem, oppositeRole) {
+					oppositeRoles = append(oppositeRoles, oppositeRole)
+				}
+			}
+			return oppositeRoles
 		}
+		link.Add.RolesToItem = addOppositeRoles(link.Add.RolesOfItem, link.Add.RolesToItem)
+		link.Add.RolesOfItem = addOppositeRoles(link.Add.RolesToItem, link.Add.RolesOfItem)
 	}
 
 	relatedByCollectionID := v.Related[link.ModuleID]
@@ -257,16 +264,16 @@ func (v *WithRelated) AddRelationship(link Link) (updates []dal.Update, err erro
 		relatedByCollectionID[const4contactus.ContactsCollection] = relatedItems
 	}
 
-	addRelationship := func(field string, relationshipIDs []RelationshipID, relationships Relationships) Relationships {
+	addRelationship := func(field string, relationshipIDs []RelationshipRoleID, relationships RelationshipRoles) RelationshipRoles {
 		if len(relationshipIDs) == 0 {
 			return relationships
 		}
 		if relationships == nil {
-			relationships = make(Relationships, len(relationshipIDs))
+			relationships = make(RelationshipRoles, len(relationshipIDs))
 		}
 		for _, relationshipID := range relationshipIDs {
 			if relationship := relationships[relationshipID]; relationship == nil {
-				relationship = &Relationship{
+				relationship = &RelationshipRole{
 					//CreatedField: with.CreatedField{
 					//	Created: with.Created{
 					//		By: userID,
@@ -280,8 +287,10 @@ func (v *WithRelated) AddRelationship(link Link) (updates []dal.Update, err erro
 		return relationships
 	}
 
-	relatedItem.RelatedAs = addRelationship("relatedAs", link.RelatedAs, relatedItem.RelatedAs)
-	relatedItem.RelatesAs = addRelationship("relatesAs", link.RelatesAs, relatedItem.RelatesAs)
+	if link.Add != nil {
+		relatedItem.RolesOfItem = addRelationship("rolesOfItem", link.Add.RolesOfItem, relatedItem.RolesOfItem)
+		relatedItem.RolesToItem = addRelationship("rolesToItem", link.Add.RolesToItem, relatedItem.RolesToItem)
+	}
 
 	updates = append(updates, dal.Update{
 		Field: fmt.Sprintf("related.%s", link.ModuleCollectionPath()),
@@ -326,14 +335,14 @@ func (v *WithRelated) AddRelationship(link Link) (updates []dal.Update, err erro
 //		changed = true
 //	}
 //
-//	//addIfNeeded := func(f string, itemRelationships Relationships, linkRelationshipIDs []RelationshipID) {
+//	//addIfNeeded := func(f string, itemRelationships RelationshipRoles, linkRelationshipIDs []RelationshipRoleID) {
 //	//	field := func() string {
 //	//		return fmt.Sprintf("%s.%s.%s", relatedField, link.ID(), f)
 //	//	}
 //	//	for _, linkRelationshipID := range linkRelationshipIDs {
 //	//		itemRelationship := itemRelationships[linkRelationshipID]
 //	//		if itemRelationship == nil {
-//	//			itemRelationships[linkRelationshipID] = &Relationship{
+//	//			itemRelationships[linkRelationshipID] = &RelationshipRole{
 //	//				CreatedField: with.CreatedField{
 //	//					Created: with.Created{
 //	//						By: userID,
@@ -345,8 +354,8 @@ func (v *WithRelated) AddRelationship(link Link) (updates []dal.Update, err erro
 //	//		}
 //	//	}
 //	//}
-//	//addIfNeeded("relatedAs", relatedItem.RelatedAs, link.RelatedAs)
-//	//addIfNeeded("relatesAs", relatedItem.RelatesAs, link.RelatesAs)
+//	//addIfNeeded("rolesOfItem", relatedItem.RolesOfItem, link.RolesOfItem)
+//	//addIfNeeded("rolesToItem", relatedItem.RolesToItem, link.RolesToItem)
 //
 //	var relationshipUpdate []dal.Update
 //	if relationshipUpdate, err = v.AddRelationshipAndID(userID, link, now); err != nil {

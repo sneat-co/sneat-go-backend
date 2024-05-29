@@ -3,6 +3,7 @@ package models4linkage
 import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-core/validate"
+	"github.com/strongo/slice"
 	"github.com/strongo/validation"
 	"strings"
 )
@@ -75,31 +76,58 @@ func (v TeamModuleItemRef) Validate() error {
 	return nil
 }
 
+type RolesCommand struct {
+	RolesOfItem []RelationshipRoleID `json:"rolesOfItem,omitempty" firestore:"rolesOfItem,omitempty"`
+	RolesToItem []RelationshipRoleID `json:"rolesToItem,omitempty" firestore:"rolesToItem,omitempty"`
+}
+
 type Link struct {
 	TeamModuleItemRef
-	//
-	RelatedAs []RelationshipID `json:"relatedAs,omitempty" firestore:"relatedAs,omitempty"`
-	RelatesAs []RelationshipID `json:"relatesAs,omitempty" firestore:"relatesAs,omitempty"`
+	Add    *RolesCommand `json:"add,omitempty" firestore:"add,omitempty"`
+	Remove *RolesCommand `json:"remove,omitempty" firestore:"remove,omitempty"`
 }
 
 func (v Link) Validate() error {
 	if err := v.TeamModuleItemRef.Validate(); err != nil {
 		return err
 	}
-	valRelationIDs := func(field string, relations []string) error {
+	if err := v.Add.Validate(); err != nil {
+		return validation.NewErrBadRequestFieldValue("add", err.Error())
+	}
+	if err := v.Remove.Validate(); err != nil {
+		return validation.NewErrBadRequestFieldValue("remove", err.Error())
+	}
+	return nil
+}
+func (v *RolesCommand) Validate() error {
+	if v == nil {
+		return nil
+	}
+	validateRelationIDs := func(field string, relations []string) error {
 		for i, s := range relations {
 			if strings.TrimSpace(s) != s {
 				return validation.NewErrBadRecordFieldValue(fmt.Sprintf("%s[%d]", field, i),
 					"must not have leading or trailing spaces")
 			}
+			if slice.Contains(relations[:i], s) {
+				return validation.NewErrBadRecordFieldValue(fmt.Sprintf("%s[%d]", field, i),
+					"duplicate relationship role value: "+s)
+			}
 		}
 		return nil
 	}
-	if err := valRelationIDs("relatedAs", v.RelatedAs); err != nil {
-		return err
+	if v.RolesToItem == nil && v.RolesOfItem == nil {
+		return validation.NewErrRecordIsMissingRequiredField("rolesOfItem|rolesToItem")
 	}
-	if err := valRelationIDs("relatesAs", v.RelatesAs); err != nil {
-		return err
+	if v.RolesToItem != nil {
+		if err := validateRelationIDs("rolesOfItem", v.RolesOfItem); err != nil {
+			return err
+		}
+	}
+	if v.RolesToItem != nil {
+		if err := validateRelationIDs("rolesToItem", v.RolesToItem); err != nil {
+			return err
+		}
 	}
 	return nil
 }

@@ -27,6 +27,14 @@ func (v *AssetExtraBase) GetType() AssetExtraType {
 	return v.Type
 }
 
+func (v *AssetExtraBase) Validate() error {
+	if v.Type == "" {
+		return validation.NewErrRecordIsMissingRequiredField("type")
+	}
+	return nil
+
+}
+
 func NewAssetNoExtra() AssetExtra {
 	return &assetNoExtra{AssetExtraBase{Type: "empty"}}
 }

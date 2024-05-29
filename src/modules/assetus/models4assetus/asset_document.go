@@ -14,6 +14,9 @@ type AssetDocumentExtra struct {
 }
 
 func (v *AssetDocumentExtra) Validate() (err error) {
+	if err := v.AssetExtraBase.Validate(); err != nil {
+		return err
+	}
 	if v.IssuedOn != "" {
 		if _, err = validate.DateString(v.IssuedOn); err != nil {
 			return validation.NewErrBadRecordFieldValue("issuedOn", err.Error())
