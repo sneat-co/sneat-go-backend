@@ -85,10 +85,16 @@ func (v *AssetBrief) Validate() error {
 	case "":
 		return validation.NewErrRecordIsMissingRequiredField("category")
 	case const4assetus.AssetCategoryVehicle:
+		if strings.TrimSpace(v.Make) == "" {
+			return validation.NewErrRecordIsMissingRequiredField("make")
+		}
+		if strings.TrimSpace(v.Model) == "" {
+			return validation.NewErrRecordIsMissingRequiredField("model")
+		}
 		if err := checkType(const4assetus.AssetVehicleTypes); err != nil {
 			return err
 		}
-	case const4assetus.AssetCategoryRealEstate:
+	case const4assetus.AssetCategoryDwelling:
 		if err := checkType(const4assetus.AssetRealEstateTypes); err != nil {
 			return err
 		}
@@ -103,13 +109,6 @@ func (v *AssetBrief) Validate() error {
 	default:
 		return validation.NewErrBadRecordFieldValue("category", "unknown asset category: "+string(v.Category))
 	}
-
-	// if strings.TrimSpace(v.Make) == "" {
-	// 	return validation.NewErrRecordIsMissingRequiredField("make")
-	// }
-	// if strings.TrimSpace(v.Model) == "" {
-	// 	return validation.NewErrRecordIsMissingRequiredField("model")
-	// }
 
 	if err := const4assetus.ValidateAssetPossession(v.Possession, true); err != nil {
 		return err

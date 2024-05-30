@@ -7,12 +7,12 @@ const (
 	// AssetCategoryVehicle = "vehicle
 	AssetCategoryVehicle AssetCategory = "vehicle"
 
-	// AssetCategoryRealEstate = "dwelling"
-	AssetCategoryRealEstate AssetCategory = "dwelling"
+	// AssetCategoryDwelling = "dwelling"
+	AssetCategoryDwelling AssetCategory = "dwelling"
 
 	// AssetCategorySportGear = "sport_gear"
-	AssetCategorySportGear = "sport_gear"
+	AssetCategorySportGear AssetCategory = "sport_gear"
 
 	// AssetCategoryDocument = "document"
-	AssetCategoryDocument = "document"
+	AssetCategoryDocument AssetCategory = "document"
 )
