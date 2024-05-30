@@ -57,7 +57,7 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 	}
 
 	if request.Title == "" {
-		teamID, _ := user.Dto.GetTeamBriefByType(request.Type)
+		teamID, _ := user.Dbo.GetTeamBriefByType(request.Type)
 		if teamID != "" {
 			response.Team.ID = teamID
 			if team, err := GetTeamByID(ctx, tx, teamID); err != nil {
@@ -69,7 +69,7 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 		}
 	}
 
-	userTeamContactID, err = person.GenerateIDFromNameOrRandom(user.Dto.Names, nil)
+	userTeamContactID, err = person.GenerateIDFromNameOrRandom(user.Dbo.Names, nil)
 	if err != nil {
 		return response, fmt.Errorf("failed to generate  member ID: %w", err)
 	}
@@ -111,7 +111,7 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 		},
 	}
 	teamDbo.IncreaseVersion(now, userID)
-	teamDbo.CountryID = user.Dto.CountryID
+	teamDbo.CountryID = user.Dbo.CountryID
 	if request.Type == "work" {
 		zero := 0
 		hundred := 100
@@ -150,15 +150,15 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 
 	teamContactus := dal4contactus.NewContactusTeamModuleEntry(teamID)
 
-	teamMember := user.Dto.ContactBrief // This should copy data from user's contact brief as it's not a pointer
+	teamMember := user.Dbo.ContactBrief // This should copy data from user's contact brief as it's not a pointer
 
 	teamMember.UserID = userID
 	teamMember.Roles = roles
 	if teamMember.Gender == "" {
 		teamMember.Gender = "unknown"
 	}
-	if user.Dto.Defaults != nil && len(user.Dto.Defaults.ShortNames) > 0 {
-		teamMember.ShortTitle = user.Dto.Defaults.ShortNames[0].Name
+	if user.Dbo.Defaults != nil && len(user.Dbo.Defaults.ShortNames) > 0 {
+		teamMember.ShortTitle = user.Dbo.Defaults.ShortNames[0].Name
 	}
 	//if len(teamMember.Emails) == 0 && len(user.Emails) > 0 {
 	//	teamMember.Emails = user.Emails
@@ -178,11 +178,14 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 		Roles:         roles,
 	}
 
-	if user.Dto.Teams == nil {
-		user.Dto.Teams = make(map[string]*models4userus.UserTeamBrief, 1)
+	if user.Dbo.Teams == nil {
+		user.Dbo.Teams = make(map[string]*models4userus.UserTeamBrief, 1)
 	}
-	updates := user.Dto.SetTeamBrief(teamID, &userTeamBrief)
-	if err = user.Dto.Validate(); err != nil {
+	updates := user.Dbo.SetTeamBrief(teamID, &userTeamBrief)
+
+	updates = append(updates, user.Dbo.UpdateRelatedIDs()...)
+
+	if err = user.Dbo.Validate(); err != nil {
 		return response, fmt.Errorf("user record is not valid after adding new team info: %v", err)
 	}
 	if user.Record.Exists() {

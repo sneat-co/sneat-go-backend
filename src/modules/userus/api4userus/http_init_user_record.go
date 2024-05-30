@@ -24,5 +24,5 @@ func httpInitUserRecord(w http.ResponseWriter, r *http.Request) {
 	request.RemoteClient = apicore.GetRemoteClientInfo(r)
 	var user models4userus.UserContext
 	user, err = initUserRecord(ctx, userContext, request)
-	apicore.ReturnJSON(ctx, w, r, http.StatusOK, err, user.Dto)
+	apicore.ReturnJSON(ctx, w, r, http.StatusOK, err, user.Dbo)
 }

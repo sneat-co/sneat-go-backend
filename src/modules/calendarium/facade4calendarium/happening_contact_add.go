@@ -98,7 +98,7 @@ func addContactToHappeningBriefInTeamDto(
 		//} else if happeningBriefPointer.Participants[string(teamContactID)] != nil {
 		//	return nil // Already added to happening brief in calendariumTeam record
 	}
-	contactRef := models4linkage.NewTeamModuleDocRef(teamID, const4contactus.ModuleID, const4contactus.ContactsCollection, contactID)
+	contactRef := models4linkage.NewTeamModuleItemRef(teamID, const4contactus.ModuleID, const4contactus.ContactsCollection, contactID)
 
 	updates, err = happeningBriefPointer.AddRelationship(
 		contactRef,

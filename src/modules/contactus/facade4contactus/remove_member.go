@@ -63,7 +63,7 @@ func removeTeamMemberTx(
 			return
 		}
 
-		update := updateUserRecordOnTeamMemberRemoved(memberUser.Dto, request.TeamID)
+		update := updateUserRecordOnTeamMemberRemoved(memberUser.Dbo, request.TeamID)
 		if update != nil {
 			if err = txUpdate(ctx, tx, userRef, []dal.Update{*update}); err != nil {
 				return err

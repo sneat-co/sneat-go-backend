@@ -52,6 +52,39 @@ func HasRelatedItem(relatedItems []*RelatedItem, key RelatedItemKey) bool {
 	return false
 }
 
+func GetRelatedItemByRef(related RelatedByModuleID, itemRef TeamModuleItemRef, createIfMissing bool) *RelatedItem {
+	relatedByCollection := related[itemRef.ModuleID]
+	if !createIfMissing && len(relatedByCollection) == 0 {
+		return nil
+	}
+	relatedByItem := relatedByCollection[itemRef.Collection]
+	if !createIfMissing && len(relatedByItem) == 0 {
+		return nil
+	}
+	for _, ri := range relatedByItem {
+		for _, k := range ri.Keys {
+			if k.TeamID == itemRef.TeamID && k.ItemID == itemRef.ItemID {
+				return ri
+			}
+
+		}
+	}
+	if createIfMissing {
+		relatedItem := NewRelatedItem(RelatedItemKey{TeamID: itemRef.TeamID, ItemID: itemRef.ItemID})
+		relatedByItem = append(relatedByItem, relatedItem)
+		if relatedByCollection == nil {
+			relatedByCollection = make(RelatedByCollectionID, 1)
+		}
+		relatedByCollection[itemRef.Collection] = relatedByItem
+		if related == nil {
+			related = make(RelatedByModuleID, 1)
+		}
+		related[itemRef.ModuleID] = relatedByCollection
+		return relatedItem
+	}
+	return nil
+}
+
 func GetRelatedItemByKey(relatedItems []*RelatedItem, key RelatedItemKey) *RelatedItem {
 	for _, relatedItem := range relatedItems {
 		for _, k := range relatedItem.Keys {
@@ -64,14 +97,14 @@ func GetRelatedItemByKey(relatedItems []*RelatedItem, key RelatedItemKey) *Relat
 }
 
 type RelatedItem struct {
-	Keys []RelatedItemKey `json:"keys" firestore:"keys"`
+	Keys []RelatedItemKey `json:"keys" firestore:"keys"` // TODO: document why we need multiple keys, provide a use case
 
 	Note string `json:"note,omitempty" firestore:"note,omitempty"`
 
-	// RolesOfItem - if related item is a child of the current record, then relatedAs = {"child": ...}
+	// RolesOfItem - if related item is a child of the current record, then rolesOfItem = {"child": ...}
 	RolesOfItem RelationshipRoles `json:"rolesOfItem,omitempty" firestore:"rolesOfItem,omitempty"`
 
-	// RolesToItem - if related item is a child of the current contact, then relatesAs = {"parent": ...}
+	// RolesToItem - if related item is a child of the current contact, then rolesToItem = {"parent": ...}
 	RolesToItem RelationshipRoles `json:"rolesToItem,omitempty" firestore:"rolesToItem,omitempty"`
 }
 
@@ -215,7 +248,7 @@ func (v *WithRelated) ValidateRelated(validateID func(relatedID string) error) e
 				}
 				for _, key := range relatedItem.Keys {
 					if validateID != nil {
-						relatedID := NewTeamModuleDocRef(key.TeamID, moduleID, collectionID, key.ItemID).ID()
+						relatedID := NewTeamModuleItemRef(key.TeamID, moduleID, collectionID, key.ItemID).ID()
 						if err := validateID(relatedID); err != nil {
 							return validation.NewErrBadRecordFieldValue(field, err.Error())
 						}

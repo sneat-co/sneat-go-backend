@@ -7,6 +7,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dto4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/facade4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/models4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -106,8 +107,8 @@ func updateContactTxWorker(
 			ItemID:     request.ContactID,
 		}
 		var recordsUpdates []dal4teamus.RecordUpdates
-		recordsUpdates, err = updateRelatedField(ctx, tx,
-			itemRef, request.UpdateRelatedFieldRequest, &WithRelatedAndIDsAndUserID{
+		recordsUpdates, err = facade4linkage.UpdateRelatedField(ctx, tx,
+			itemRef, request.UpdateRelatedFieldRequest, &models4linkage.WithRelatedAndIDsAndUserID{
 				WithUserID:        dbmodels.WithUserID{UserID: params.Contact.Data.UserID},
 				WithRelatedAndIDs: &params.Contact.Data.WithRelatedAndIDs,
 			},

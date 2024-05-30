@@ -30,7 +30,7 @@ type TeamModuleItemRef struct { // TODO: Move to sneat-go-core or document why n
 	ItemID     string `json:"itemID" firestore:"itemID"`
 }
 
-func NewTeamModuleDocRef(teamID, moduleID, collection, itemID string) TeamModuleItemRef {
+func NewTeamModuleItemRef(teamID, moduleID, collection, itemID string) TeamModuleItemRef {
 	return TeamModuleItemRef{
 		TeamID:     teamID,
 		ModuleID:   moduleID,
@@ -39,7 +39,7 @@ func NewTeamModuleDocRef(teamID, moduleID, collection, itemID string) TeamModule
 	}
 }
 
-func NewTeamModuleDocRefFromString(id string) TeamModuleItemRef {
+func NewTeamModuleItemRefFromString(id string) TeamModuleItemRef {
 	ids := strings.Split(id, ".")
 	if len(ids) != 4 {
 		panic(fmt.Sprintf("invalid ID: '%s'", id))

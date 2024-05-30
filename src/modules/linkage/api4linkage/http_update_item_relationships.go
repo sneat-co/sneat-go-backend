@@ -14,6 +14,7 @@ func httpUpdateItemRelationships(w http.ResponseWriter, r *http.Request) {
 	var request dto4linkage.UpdateItemRequest
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.DefaultJsonWithAuthRequired, http.StatusNoContent,
 		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
-			return nil, facade4linkage.UpdateItemRelationships(ctx, userCtx, request)
+			_, err := facade4linkage.UpdateItemRelationships(ctx, userCtx, request)
+			return nil, err
 		})
 }

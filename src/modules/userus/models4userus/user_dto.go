@@ -38,7 +38,7 @@ type UserDbo struct {
 	dbmodels.WithPreferredLocale
 	botsfwmodels.WithBotUserIDs
 
-	models4linkage.WithRelated
+	models4linkage.WithRelatedAndIDs
 
 	IsAnonymous bool `json:"isAnonymous" firestore:"isAnonymous"`
 	//Title string `json:"title,omitempty" firestore:"title,omitempty"`
@@ -119,6 +119,9 @@ func (v *UserDbo) Validate() error {
 	//}
 	if err := v.Created.Validate(); err != nil {
 		return validation.NewErrBadRecordFieldValue("created", err.Error())
+	}
+	if err := v.WithRelatedAndIDs.Validate(); err != nil {
+		return err
 	}
 	return nil
 }

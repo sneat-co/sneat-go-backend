@@ -54,7 +54,7 @@ func SetListItemsIsDone(ctx context.Context, userContext facade.User, request Li
 		}
 		listKey := list.Record.Key()
 		//log.Printf("Updating list with listKey=%v, item[0]: %+v; updates[0]: %+v",
-		//	listKey, list.Dto.Items[0], listUpdates[0].Value)
+		//	listKey, list.Dbo.Items[0], listUpdates[0].Value)
 		if err = tx.Update(ctx, listKey, listUpdates); err != nil {
 			return fmt.Errorf("failed to update list record: %w", err)
 		}

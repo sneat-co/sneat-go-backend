@@ -6,5 +6,5 @@ import (
 )
 
 func NewContactFullRef(teamID, contactID string) models4linkage.TeamModuleItemRef {
-	return models4linkage.NewTeamModuleDocRef(teamID, const4contactus.ModuleID, const4contactus.ContactsCollection, contactID)
+	return models4linkage.NewTeamModuleItemRef(teamID, const4contactus.ModuleID, const4contactus.ContactsCollection, contactID)
 }

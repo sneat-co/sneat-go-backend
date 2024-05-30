@@ -67,7 +67,7 @@ func (v *WithRelatedAndIDs) Validate() error {
 			// TODO: Validate search index values
 			continue
 		}
-		relatedRef := NewTeamModuleDocRefFromString(relatedID)
+		relatedRef := NewTeamModuleItemRefFromString(relatedID)
 
 		relatedByCollectionID := v.Related[relatedRef.ModuleID]
 		if relatedByCollectionID == nil {
@@ -125,7 +125,7 @@ func (v *WithRelatedAndIDs) UpdateRelatedIDs() (updates []dal.Update) {
 						teamIDs = append(teamIDs, k.TeamID)
 						searchIndex = append(searchIndex, fmt.Sprintf("%s.%s.%s.%s", moduleID, collectionID, k.TeamID, AnyRelatedID))
 					}
-					id := NewTeamModuleDocRef(k.TeamID, moduleID, collectionID, k.ItemID).ID()
+					id := NewTeamModuleItemRef(k.TeamID, moduleID, collectionID, k.ItemID).ID()
 					v.RelatedIDs = append(v.RelatedIDs, id)
 				}
 			}
@@ -156,16 +156,42 @@ func (v *WithRelatedAndIDs) RemoveRelatedAndID(ref TeamModuleItemRef) (updates [
 	return updates
 }
 
+const (
+	RelationshipRoleSpouse   = "spouse"
+	RelationshipRoleParent   = "parent"
+	RelationshipRoleChild    = "child"
+	RelationshipRoleCousin   = "cousin"
+	RelationshipRoleSibling  = "sibling"
+	RelationshipRolePartner  = "partner"
+	RelationshipRoleTeammate = "team-mate"
+)
+
+// Should provide a way for modules to register opposite roles?
+var oppositeRoles = map[RelationshipRoleID]RelationshipRoleID{
+	RelationshipRoleParent: RelationshipRoleChild,
+	RelationshipRoleChild:  RelationshipRoleParent,
+}
+
+// Should provide a way for modules to register reciprocal roles?
+var reciprocalRoles = []string{
+	RelationshipRoleSpouse,
+	RelationshipRoleSibling,
+	RelationshipRoleCousin,
+	RelationshipRolePartner,
+	RelationshipRoleTeammate,
+}
+
+func IsReciprocalRole(role RelationshipRoleID) bool {
+	return slice.Contains(reciprocalRoles, role)
+}
+
 // GetOppositeRole returns relationship ID for the opposite direction
 func GetOppositeRole(relationshipRoleID RelationshipRoleID) RelationshipRoleID {
-	// TODO: Move to contactus module as this relationships are relevant to contacts only?
-	switch relationshipRoleID {
-	case "sibling", "spouse", "partner", "team-mate":
-		return relationshipRoleID
-	case "parent":
-		return "child"
-	case "child":
-		return "parent"
+	if relationshipRoleID == "" {
+		return ""
 	}
-	return ""
+	if IsReciprocalRole(relationshipRoleID) {
+		return relationshipRoleID
+	}
+	return oppositeRoles[relationshipRoleID]
 }

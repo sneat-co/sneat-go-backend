@@ -210,7 +210,7 @@ func createOrUpdateUserRecord(
 	}
 	existingUser := user.Record.Exists()
 	if existingUser {
-		teamInfo := user.Dto.GetUserTeamInfoByID(request.TeamID)
+		teamInfo := user.Dbo.GetUserTeamInfoByID(request.TeamID)
 		if teamInfo != nil {
 			return nil
 		}
@@ -223,44 +223,44 @@ func createOrUpdateUserRecord(
 	if err = userTeamInfo.Validate(); err != nil {
 		return fmt.Errorf("invalid user team info: %w", err)
 	}
-	user.Dto.Teams[request.TeamID] = &userTeamInfo
-	user.Dto.TeamIDs = append(user.Dto.TeamIDs, request.TeamID)
+	user.Dbo.Teams[request.TeamID] = &userTeamInfo
+	user.Dbo.TeamIDs = append(user.Dbo.TeamIDs, request.TeamID)
 	if existingUser {
 		userUpdates := []dal.Update{
 			{
 				Field: "teams",
-				Value: user.Dto.Teams,
+				Value: user.Dbo.Teams,
 			},
 		}
-		userUpdates = updatePersonDetails(&user.Dto.ContactBase, request.Member.Data, teamMember, userUpdates)
-		if err = user.Dto.Validate(); err != nil {
+		userUpdates = updatePersonDetails(&user.Dbo.ContactBase, request.Member.Data, teamMember, userUpdates)
+		if err = user.Dbo.Validate(); err != nil {
 			return fmt.Errorf("user record prepared for update is not valid: %w", err)
 		}
 		if err = tx.Update(ctx, user.Key, userUpdates); err != nil {
 			return fmt.Errorf("failed to update user record: %w", err)
 		}
 	} else { // New user record
-		user.Dto.CreatedAt = now
-		user.Dto.Created.Client = request.RemoteClient
-		user.Dto.Type = briefs4contactus.ContactTypePerson
-		user.Dto.Names = request.Member.Data.Names
-		if user.Dto.Names.IsEmpty() && teamMember != nil {
-			user.Dto.Names = teamMember.Names
+		user.Dbo.CreatedAt = now
+		user.Dbo.Created.Client = request.RemoteClient
+		user.Dbo.Type = briefs4contactus.ContactTypePerson
+		user.Dbo.Names = request.Member.Data.Names
+		if user.Dbo.Names.IsEmpty() {
+			user.Dbo.Names = teamMember.Names
 		}
-		updatePersonDetails(&user.Dto.ContactBase, request.Member.Data, teamMember, nil)
-		if user.Dto.Gender == "" {
-			user.Dto.Gender = "unknown"
+		updatePersonDetails(&user.Dbo.ContactBase, request.Member.Data, teamMember, nil)
+		if user.Dbo.Gender == "" {
+			user.Dbo.Gender = "unknown"
 		}
-		if user.Dto.CountryID == "" {
-			user.Dto.CountryID = with.UnknownCountryID
+		if user.Dbo.CountryID == "" {
+			user.Dbo.CountryID = with.UnknownCountryID
 		}
 		if len(request.Member.Data.Emails) > 0 {
-			user.Dto.Emails = request.Member.Data.Emails
+			user.Dbo.Emails = request.Member.Data.Emails
 		}
 		if len(request.Member.Data.Phones) > 0 {
-			user.Dto.Phones = request.Member.Data.Phones
+			user.Dbo.Phones = request.Member.Data.Phones
 		}
-		if err = user.Dto.Validate(); err != nil {
+		if err = user.Dbo.Validate(); err != nil {
 			return fmt.Errorf("user record prepared for insert is not valid: %w", err)
 		}
 		if err = tx.Insert(ctx, user.Record); err != nil {
