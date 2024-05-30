@@ -3,12 +3,13 @@ package briefs4assetus
 import (
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 	"github.com/sneat-co/sneat-go-core/geo"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/slice"
 	"github.com/strongo/validation"
-	"strings"
 )
 
 // AssetBrief keeps main props of an asset
@@ -74,7 +75,7 @@ func (v *AssetBrief) Validate() error {
 		case "":
 			return validation.NewErrRecordIsMissingRequiredField("type")
 		default:
-			if slice.Index(const4assetus.AssetVehicleTypes, v.Type) < 0 {
+			if slice.Index(types, v.Type) < 0 {
 				return validation.NewErrBadRecordFieldValue("type", fmt.Sprintf("unknown %s type: %s", v.Category, v.Type))
 			}
 		}
@@ -84,10 +85,16 @@ func (v *AssetBrief) Validate() error {
 	case "":
 		return validation.NewErrRecordIsMissingRequiredField("category")
 	case const4assetus.AssetCategoryVehicle:
+		if strings.TrimSpace(v.Make) == "" {
+			return validation.NewErrRecordIsMissingRequiredField("make")
+		}
+		if strings.TrimSpace(v.Model) == "" {
+			return validation.NewErrRecordIsMissingRequiredField("model")
+		}
 		if err := checkType(const4assetus.AssetVehicleTypes); err != nil {
 			return err
 		}
-	case const4assetus.AssetCategoryRealEstate:
+	case const4assetus.AssetCategoryDwelling:
 		if err := checkType(const4assetus.AssetRealEstateTypes); err != nil {
 			return err
 		}
@@ -103,12 +110,6 @@ func (v *AssetBrief) Validate() error {
 		return validation.NewErrBadRecordFieldValue("category", "unknown asset category: "+string(v.Category))
 	}
 
-	if strings.TrimSpace(v.Make) == "" {
-		return validation.NewErrRecordIsMissingRequiredField("make")
-	}
-	if strings.TrimSpace(v.Model) == "" {
-		return validation.NewErrRecordIsMissingRequiredField("model")
-	}
 	if err := const4assetus.ValidateAssetPossession(v.Possession, true); err != nil {
 		return err
 	}
