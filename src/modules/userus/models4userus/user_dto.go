@@ -5,6 +5,7 @@ import (
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/models4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/core4teamus"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/slice"
@@ -27,18 +28,20 @@ func (v *WithUserIDs) SetUserID(teamID string, userID string) {
 	}
 }
 
-var _ botsfwmodels.AppUserData = (*UserDto)(nil)
+var _ botsfwmodels.AppUserData = (*UserDbo)(nil)
 var _ botsfwmodels.AppUserData = (*userBotsFwAdapter)(nil)
 
-// UserDto is a record that hold information about user
-type UserDto struct {
+// UserDbo is a record that holds information about user
+type UserDbo struct {
 	briefs4contactus.ContactBase
 	with.CreatedFields
 	dbmodels.WithPreferredLocale
 	botsfwmodels.WithBotUserIDs
 
+	models4linkage.WithRelatedAndIDs
+
 	IsAnonymous bool `json:"isAnonymous" firestore:"isAnonymous"`
-	//Title       string `json:"title,omitempty" firestore:"title,omitempty"`
+	//Title string `json:"title,omitempty" firestore:"title,omitempty"`
 
 	Timezone *dbmodels.Timezone `json:"timezone,omitempty" firestore:"timezone,omitempty"`
 
@@ -56,12 +59,12 @@ type UserDto struct {
 	//models.DatatugUser
 }
 
-func (v *UserDto) GetFullName() string {
+func (v *UserDbo) GetFullName() string {
 	return v.Names.GetFullName()
 }
 
 // SetTeamBrief sets team brief and adds teamID to the list of team IDs if needed
-func (v *UserDto) SetTeamBrief(teamID string, brief *UserTeamBrief) (updates []dal.Update) {
+func (v *UserDbo) SetTeamBrief(teamID string, brief *UserTeamBrief) (updates []dal.Update) {
 	if v.Teams == nil {
 		v.Teams = map[string]*UserTeamBrief{teamID: brief}
 	} else {
@@ -76,7 +79,7 @@ func (v *UserDto) SetTeamBrief(teamID string, brief *UserTeamBrief) (updates []d
 }
 
 // GetTeamBriefByType returns the first team brief that matches a specific type
-func (v *UserDto) GetTeamBriefByType(t core4teamus.TeamType) (teamID string, teamBrief *UserTeamBrief) {
+func (v *UserDbo) GetTeamBriefByType(t core4teamus.TeamType) (teamID string, teamBrief *UserTeamBrief) {
 	for id, brief := range v.Teams {
 		if brief.Type == t {
 			return id, brief
@@ -86,7 +89,7 @@ func (v *UserDto) GetTeamBriefByType(t core4teamus.TeamType) (teamID string, tea
 }
 
 // Validate validates user record
-func (v *UserDto) Validate() error {
+func (v *UserDbo) Validate() error {
 	if err := v.ContactBase.Validate(); err != nil {
 		return err
 	}
@@ -117,10 +120,13 @@ func (v *UserDto) Validate() error {
 	if err := v.Created.Validate(); err != nil {
 		return validation.NewErrBadRecordFieldValue("created", err.Error())
 	}
+	if err := v.WithRelatedAndIDs.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
-func (v *UserDto) validateEmails() error {
+func (v *UserDbo) validateEmails() error {
 	if strings.TrimSpace(v.Email) != v.Email {
 		return validation.NewErrBadRecordFieldValue("email", "contains leading or closing spaces")
 	}
@@ -150,7 +156,7 @@ func (v *UserDto) validateEmails() error {
 	return nil
 }
 
-func (v *UserDto) validateTeams() error {
+func (v *UserDbo) validateTeams() error {
 	if len(v.Teams) != len(v.TeamIDs) {
 		return validation.NewErrBadRecordFieldValue("teamIDs",
 			fmt.Sprintf("len(v.Teams) != len(v.TeamIDs): %d != %d", len(v.Teams), len(v.TeamIDs)))
@@ -182,6 +188,6 @@ func (v *UserDto) validateTeams() error {
 }
 
 // GetUserTeamInfoByID returns team info specific to the user by team ID
-func (v *UserDto) GetUserTeamInfoByID(teamID string) *UserTeamBrief {
+func (v *UserDbo) GetUserTeamInfoByID(teamID string) *UserTeamBrief {
 	return v.Teams[teamID]
 }

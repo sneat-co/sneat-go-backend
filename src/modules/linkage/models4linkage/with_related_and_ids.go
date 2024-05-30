@@ -67,7 +67,7 @@ func (v *WithRelatedAndIDs) Validate() error {
 			// TODO: Validate search index values
 			continue
 		}
-		relatedRef := NewTeamModuleDocRefFromString(relatedID)
+		relatedRef := NewTeamModuleItemRefFromString(relatedID)
 
 		relatedByCollectionID := v.Related[relatedRef.ModuleID]
 		if relatedByCollectionID == nil {
@@ -86,13 +86,11 @@ func (v *WithRelatedAndIDs) Validate() error {
 }
 
 func (v *WithRelatedAndIDs) AddRelationshipsAndIDs(
-	relatedTo TeamModuleItemRef,
+	itemRef TeamModuleItemRef,
 	rolesOfItem RelationshipRoles,
 	rolesToItem RelationshipRoles, // TODO: needs implementation
 ) (updates []dal.Update, err error) {
-	link := Link{
-		TeamModuleItemRef: relatedTo,
-	}
+	link := RelationshipRolesCommand{}
 	if len(rolesOfItem) > 0 {
 		if link.Add == nil {
 			link.Add = new(RolesCommand)
@@ -109,7 +107,7 @@ func (v *WithRelatedAndIDs) AddRelationshipsAndIDs(
 			link.Remove.RolesToItem = append(link.Remove.RolesToItem, roleToItem)
 		}
 	}
-	return v.AddRelationshipAndID(link)
+	return v.AddRelationshipAndID(itemRef, link)
 	//return nil, errors.New("not implemented yet - AddRelationshipsAndIDs")
 }
 
@@ -127,7 +125,7 @@ func (v *WithRelatedAndIDs) UpdateRelatedIDs() (updates []dal.Update) {
 						teamIDs = append(teamIDs, k.TeamID)
 						searchIndex = append(searchIndex, fmt.Sprintf("%s.%s.%s.%s", moduleID, collectionID, k.TeamID, AnyRelatedID))
 					}
-					id := NewTeamModuleDocRef(k.TeamID, moduleID, collectionID, k.ItemID).ID()
+					id := NewTeamModuleItemRef(k.TeamID, moduleID, collectionID, k.ItemID).ID()
 					v.RelatedIDs = append(v.RelatedIDs, id)
 				}
 			}
@@ -144,9 +142,10 @@ func (v *WithRelatedAndIDs) UpdateRelatedIDs() (updates []dal.Update) {
 }
 
 func (v *WithRelatedAndIDs) AddRelationshipAndID(
-	link Link,
+	itemRef TeamModuleItemRef,
+	link RelationshipRolesCommand,
 ) (updates []dal.Update, err error) {
-	updates, err = v.WithRelated.AddRelationship(link)
+	updates, err = v.WithRelated.AddRelationship(itemRef, link)
 	updates = append(updates, v.UpdateRelatedIDs()...)
 	return
 }
@@ -157,16 +156,42 @@ func (v *WithRelatedAndIDs) RemoveRelatedAndID(ref TeamModuleItemRef) (updates [
 	return updates
 }
 
+const (
+	RelationshipRoleSpouse   = "spouse"
+	RelationshipRoleParent   = "parent"
+	RelationshipRoleChild    = "child"
+	RelationshipRoleCousin   = "cousin"
+	RelationshipRoleSibling  = "sibling"
+	RelationshipRolePartner  = "partner"
+	RelationshipRoleTeammate = "team-mate"
+)
+
+// Should provide a way for modules to register opposite roles?
+var oppositeRoles = map[RelationshipRoleID]RelationshipRoleID{
+	RelationshipRoleParent: RelationshipRoleChild,
+	RelationshipRoleChild:  RelationshipRoleParent,
+}
+
+// Should provide a way for modules to register reciprocal roles?
+var reciprocalRoles = []string{
+	RelationshipRoleSpouse,
+	RelationshipRoleSibling,
+	RelationshipRoleCousin,
+	RelationshipRolePartner,
+	RelationshipRoleTeammate,
+}
+
+func IsReciprocalRole(role RelationshipRoleID) bool {
+	return slice.Contains(reciprocalRoles, role)
+}
+
 // GetOppositeRole returns relationship ID for the opposite direction
 func GetOppositeRole(relationshipRoleID RelationshipRoleID) RelationshipRoleID {
-	// TODO: Move to contactus module as this relationships are relevant to contacts only?
-	switch relationshipRoleID {
-	case "sibling", "spouse", "partner", "team-mate":
-		return relationshipRoleID
-	case "parent":
-		return "child"
-	case "child":
-		return "parent"
+	if relationshipRoleID == "" {
+		return ""
 	}
-	return ""
+	if IsReciprocalRole(relationshipRoleID) {
+		return relationshipRoleID
+	}
+	return oppositeRoles[relationshipRoleID]
 }

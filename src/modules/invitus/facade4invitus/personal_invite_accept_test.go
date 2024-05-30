@@ -181,7 +181,7 @@ func Test_createOrUpdateUserRecord(t *testing.T) {
 				}
 				return
 			}
-			userDto := tt.args.user.Dto
+			userDto := tt.args.user.Dbo
 			assert.Equal(t, now, userDto.CreatedAt, "CreatedAt")
 			assert.Equal(t, tt.args.request.Member.Data.Gender, userDto.Gender, "Gender")
 			assert.Equal(t, 1, len(userDto.Teams), "len(Teams)")

@@ -77,7 +77,7 @@ func Test_InitUserRecord(t *testing.T) {
 				t.Errorf("initUserRecordTxWorker() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			assert.Equal(t, tt.args.request.Email, gotUser.Dto.Email)
+			assert.Equal(t, tt.args.request.Email, gotUser.Dbo.Email)
 		})
 	}
 }

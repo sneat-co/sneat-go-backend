@@ -20,7 +20,7 @@ func NewProfile(id string, router *botsfw.WebhooksRouter) botsfw.BotProfile {
 			return nil
 		},
 		func() botsfwmodels.AppUserData {
-			return new(models4userus.UserDto)
+			return new(models4userus.UserDbo)
 		},
 		func(ctx context.Context, tx dal.ReadSession, botID string, appUserID string) (appUser record.DataWithID[string, botsfwmodels.AppUserData], err error) {
 			return

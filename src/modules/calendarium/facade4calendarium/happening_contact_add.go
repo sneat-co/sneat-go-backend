@@ -42,8 +42,8 @@ func AddParticipantToHappening(ctx context.Context, user facade.User, request dt
 		contactFullRef := models4contactus.NewContactFullRef(request.TeamID, request.Contact.ID)
 		var updates []dal.Update
 		if updates, err = params.Happening.Dbo.AddRelationshipAndID(
-			models4linkage.Link{
-				TeamModuleItemRef: contactFullRef,
+			contactFullRef,
+			models4linkage.RelationshipRolesCommand{
 				Add: &models4linkage.RolesCommand{
 					RolesOfItem: []string{"participant"},
 				},
@@ -98,14 +98,15 @@ func addContactToHappeningBriefInTeamDto(
 		//} else if happeningBriefPointer.Participants[string(teamContactID)] != nil {
 		//	return nil // Already added to happening brief in calendariumTeam record
 	}
-	contactRef := models4linkage.NewTeamModuleDocRef(teamID, const4contactus.ModuleID, const4contactus.ContactsCollection, contactID)
+	contactRef := models4linkage.NewTeamModuleItemRef(teamID, const4contactus.ModuleID, const4contactus.ContactsCollection, contactID)
 
-	updates, err = happeningBriefPointer.AddRelationship(models4linkage.Link{
-		TeamModuleItemRef: contactRef,
-		Add: &models4linkage.RolesCommand{
-			RolesOfItem: []string{"participant"},
-		},
-	})
+	updates, err = happeningBriefPointer.AddRelationship(
+		contactRef,
+		models4linkage.RelationshipRolesCommand{
+			Add: &models4linkage.RolesCommand{
+				RolesOfItem: []string{"participant"},
+			},
+		})
 	for i := range updates {
 		updates[i].Field = fmt.Sprintf("recurringHappenings.%s.%s", happening.ID, updates[i].Field)
 	}

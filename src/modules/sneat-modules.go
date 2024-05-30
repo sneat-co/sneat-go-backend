@@ -6,6 +6,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/generic"
 	"github.com/sneat-co/sneat-go-backend/src/modules/invitus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus"
@@ -17,6 +18,7 @@ import (
 
 func Modules() []modules.Module {
 	return []modules.Module{
+		linkage.Module(),
 		calendarium.Module(),
 		contactus.Module(),
 		invitus.Module(),

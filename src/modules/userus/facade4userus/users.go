@@ -130,7 +130,7 @@ func GetUserTeamContactID(ctx context.Context, tx dal.ReadSession, userID string
 
 	teamID := contactusTeamEntry.Key.Parent().ID.(string)
 
-	userTeamBrief := user.Dto.Teams[teamID]
+	userTeamBrief := user.Dbo.Teams[teamID]
 
 	if userTeamBrief == nil {
 		return "", errors.New("user's team brief is not found in user record")

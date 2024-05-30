@@ -19,11 +19,11 @@ func httpDeleteAsset(w http.ResponseWriter, r *http.Request) {
 	var request dal4teamus.TeamItemRequest
 	request.TeamID = q.Get("team")
 	request.ID = q.Get("id")
-	handler := func(ctx context.Context, userCtx facade.User) (interface{}, error) {
-		if err := deleteAsset(ctx, userCtx, request); err != nil {
-			return nil, fmt.Errorf("failed to delete asset: %w", err)
-		}
-		return nil, nil
-	}
-	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, handler, http.StatusNoContent, verify.NoContentAuthRequired)
+	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.NoContentAuthRequired, http.StatusNoContent,
+		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
+			if err := deleteAsset(ctx, userCtx, request); err != nil {
+				return nil, fmt.Errorf("failed to delete asset: %w", err)
+			}
+			return nil, nil
+		})
 }

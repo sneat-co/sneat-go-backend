@@ -14,7 +14,7 @@ func RemoveMetrics(ctx context.Context, user facade.User, request dto4teamus.Tea
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4teamus.RunTeamWorker(ctx, user, request.TeamRequest,
+	err = dal4teamus.RunTeamWorker(ctx, user, request.TeamID,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.TeamWorkerParams) (err error) {
 			changed := false
 			team := params.Team

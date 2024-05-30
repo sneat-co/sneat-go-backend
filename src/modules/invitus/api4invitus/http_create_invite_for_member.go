@@ -16,14 +16,14 @@ var createOrReuseInviteForMember = facade4invitus.CreateOrReuseInviteForMember
 // httpPostCreateOrReuseInviteForMember supports both POST & GET methods
 func httpPostCreateOrReuseInviteForMember(w http.ResponseWriter, r *http.Request) {
 	var request facade4invitus.InviteMemberRequest
-	handler := func(ctx context.Context, userCtx facade.User) (interface{}, error) {
-		if request.To.Channel == "link" {
-			return nil, fmt.Errorf("%w: link invites should be requested via GET", facade.ErrBadRequest)
-		}
-		request.RemoteClient = apicore.GetRemoteClientInfo(r)
-		return createOrReuseInviteForMember(ctx, userCtx, request)
-	}
-	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, handler, http.StatusCreated, verify.DefaultJsonWithAuthRequired)
+	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.DefaultJsonWithAuthRequired, http.StatusCreated,
+		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
+			if request.To.Channel == "link" {
+				return nil, fmt.Errorf("%w: link invites should be requested via GET", facade.ErrBadRequest)
+			}
+			request.RemoteClient = apicore.GetRemoteClientInfo(r)
+			return createOrReuseInviteForMember(ctx, userCtx, request)
+		})
 }
 
 // httpGetOrCreateInviteLink gets or creates an invitation link

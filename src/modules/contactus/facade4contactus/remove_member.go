@@ -63,7 +63,7 @@ func removeTeamMemberTx(
 			return
 		}
 
-		update := updateUserRecordOnTeamMemberRemoved(memberUser.Dto, request.TeamID)
+		update := updateUserRecordOnTeamMemberRemoved(memberUser.Dbo, request.TeamID)
 		if update != nil {
 			if err = txUpdate(ctx, tx, userRef, []dal.Update{*update}); err != nil {
 				return err
@@ -73,7 +73,7 @@ func removeTeamMemberTx(
 	return
 }
 
-func updateUserRecordOnTeamMemberRemoved(user *models4userus.UserDto, teamID string) *dal.Update {
+func updateUserRecordOnTeamMemberRemoved(user *models4userus.UserDbo, teamID string) *dal.Update {
 	delete(user.Teams, teamID)
 	user.TeamIDs = slice.RemoveInPlace(teamID, user.TeamIDs)
 	return &dal.Update{

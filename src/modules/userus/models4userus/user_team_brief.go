@@ -8,7 +8,7 @@ import (
 	"github.com/strongo/validation"
 )
 
-// UserTeamBrief hold info on a team in the UserDto record
+// UserTeamBrief hold info on a team in the UserDbo record
 type UserTeamBrief struct {
 	models4teamus.TeamBrief
 

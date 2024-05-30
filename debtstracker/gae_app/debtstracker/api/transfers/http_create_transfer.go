@@ -16,44 +16,44 @@ import (
 
 func HandleCreateTransfer(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
 	var request dto.CreateTransferRequest
-	handler := func(ctx context.Context, userCtx sneatfacade.User) (interface{}, error) {
-		var from, to *models.TransferCounterpartyInfo
+	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.DefaultJsonWithAuthRequired, http.StatusCreated,
+		func(ctx context.Context, userCtx sneatfacade.User) (interface{}, error) {
+			var from, to *models.TransferCounterpartyInfo
 
-		appUser, err := facade.User.GetUserByID(c, nil, authInfo.UserID)
-		if err != nil {
-			return nil, err
-		}
+			appUser, err := facade.User.GetUserByID(c, nil, authInfo.UserID)
+			if err != nil {
+				return nil, err
+			}
 
-		newTransfer := dto.NewTransferInput(api.GetEnvironment(r),
-			transferSourceSetToAPI{appPlatform: "api", createdOnID: r.Host},
-			appUser,
-			request,
-			from, to,
-		)
+			newTransfer := dto.NewTransferInput(api.GetEnvironment(r),
+				transferSourceSetToAPI{appPlatform: "api", createdOnID: r.Host},
+				appUser,
+				request,
+				from, to,
+			)
 
-		output, err := facade.Transfers.CreateTransfer(c, newTransfer)
-		if err != nil {
-			return nil, err
-		}
+			output, err := facade.Transfers.CreateTransfer(c, newTransfer)
+			if err != nil {
+				return nil, err
+			}
 
-		response := dto.CreateTransferResponse{
-			Transfer: dto.TransferToDto(authInfo.UserID, output.Transfer),
-		}
+			response := dto.CreateTransferResponse{
+				Transfer: dto.TransferToDto(authInfo.UserID, output.Transfer),
+			}
 
-		var counterparty models.Contact
-		switch output.Transfer.Data.CreatorUserID {
-		case output.Transfer.Data.From().UserID:
-			counterparty = output.To.Contact
-		case output.Transfer.Data.To().UserID:
-			counterparty = output.From.Contact
-		default:
-			panic("Unknown direction")
-		}
-		if counterparty.Data.BalanceJson != "" {
-			counterpartyBalance := json.RawMessage(counterparty.Data.BalanceJson)
-			response.CounterpartyBalance = &counterpartyBalance
-		}
-		return response, err
-	}
-	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, handler, http.StatusCreated, verify.DefaultJsonWithAuthRequired)
+			var counterparty models.Contact
+			switch output.Transfer.Data.CreatorUserID {
+			case output.Transfer.Data.From().UserID:
+				counterparty = output.To.Contact
+			case output.Transfer.Data.To().UserID:
+				counterparty = output.From.Contact
+			default:
+				panic("Unknown direction")
+			}
+			if counterparty.Data.BalanceJson != "" {
+				counterpartyBalance := json.RawMessage(counterparty.Data.BalanceJson)
+				response.CounterpartyBalance = &counterpartyBalance
+			}
+			return response, err
+		})
 }

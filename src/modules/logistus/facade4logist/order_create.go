@@ -24,7 +24,7 @@ func CreateOrder(
 ) (
 	orderBrief *models4logist.OrderBrief, err error,
 ) {
-	err = dal4teamus.RunTeamWorker(ctx, userContext, request.TeamRequest,
+	err = dal4teamus.RunTeamWorker(ctx, userContext, request.TeamID,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.TeamWorkerParams) (err error) {
 			orderBrief, err = createOrderTxWorker(ctx, tx, params, params.UserID, request)
 			return err

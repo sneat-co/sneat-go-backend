@@ -15,24 +15,24 @@ func NewUserKey(id string) *dal.Key {
 
 // UserContext defines implementation of `interface facade.UserContext`
 type UserContext struct {
-	Dto *UserDto
+	Dbo *UserDbo
 	record.WithID[string]
 }
 
-// ID returns user's ID
+// GetID returns user's ID
 func (v UserContext) GetID() string {
 	return v.WithID.ID
 }
 
 // NewUserContext creates new user context
 func NewUserContext(id string) (user UserContext) {
-	return NewUserContextWithDto(id, new(UserDto))
+	return NewUserContextWithDto(id, new(UserDbo))
 }
 
 // NewUserContextWithDto creates new user context with user DTO
-func NewUserContextWithDto(id string, dto *UserDto) (user UserContext) {
+func NewUserContextWithDto(id string, dto *UserDbo) (user UserContext) {
 	user.WithID.ID = id
-	user.Dto = dto
+	user.Dbo = dto
 	user.Key = NewUserKey(id)
 	user.Record = dal.NewRecordWithData(user.Key, dto)
 	return

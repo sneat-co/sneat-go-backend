@@ -98,7 +98,7 @@ UniqueID:
 func addRetroItemToUserRetro(ctx context.Context, userContext facade.User, request AddRetroItemRequest) (response AddRetroItemResponse, err error) {
 	uid := userContext.GetID()
 
-	user := new(models4userus.UserDto)
+	user := new(models4userus.UserDbo)
 	userKey := dal.NewKeyWithID(models4userus.UsersCollection, uid)
 	userRecord := dal.NewRecordWithData(userKey, user)
 
@@ -161,7 +161,7 @@ func addRetroItemToTeamRetro(ctx context.Context, userContext facade.User, reque
 	uid := userContext.GetID()
 	retrospectiveKey := getTeamRetroDocKey(request.TeamID, request.MeetingID)
 
-	user := new(models4userus.UserDto)
+	user := new(models4userus.UserDbo)
 	userKey := dal.NewKeyWithID(models4userus.UsersCollection, uid)
 	userRecord := dal.NewRecordWithData(userKey, user)
 

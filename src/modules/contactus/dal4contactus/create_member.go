@@ -16,7 +16,7 @@ type CreateMemberRequest struct {
 	dto4contactus.CreatePersonRequest
 	models4linkage.WithRelated
 	Message string `json:"message"`
-	//RelatedTo *models4linkage.Link `json:"relatedTo,omitempty"`
+	//RelatedTo *models4linkage.RelationshipRolesCommand `json:"relatedTo,omitempty"`
 }
 
 // Validate validates request

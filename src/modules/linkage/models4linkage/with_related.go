@@ -52,6 +52,39 @@ func HasRelatedItem(relatedItems []*RelatedItem, key RelatedItemKey) bool {
 	return false
 }
 
+func GetRelatedItemByRef(related RelatedByModuleID, itemRef TeamModuleItemRef, createIfMissing bool) *RelatedItem {
+	relatedByCollection := related[itemRef.ModuleID]
+	if !createIfMissing && len(relatedByCollection) == 0 {
+		return nil
+	}
+	relatedByItem := relatedByCollection[itemRef.Collection]
+	if !createIfMissing && len(relatedByItem) == 0 {
+		return nil
+	}
+	for _, ri := range relatedByItem {
+		for _, k := range ri.Keys {
+			if k.TeamID == itemRef.TeamID && k.ItemID == itemRef.ItemID {
+				return ri
+			}
+
+		}
+	}
+	if createIfMissing {
+		relatedItem := NewRelatedItem(RelatedItemKey{TeamID: itemRef.TeamID, ItemID: itemRef.ItemID})
+		relatedByItem = append(relatedByItem, relatedItem)
+		if relatedByCollection == nil {
+			relatedByCollection = make(RelatedByCollectionID, 1)
+		}
+		relatedByCollection[itemRef.Collection] = relatedByItem
+		if related == nil {
+			related = make(RelatedByModuleID, 1)
+		}
+		related[itemRef.ModuleID] = relatedByCollection
+		return relatedItem
+	}
+	return nil
+}
+
 func GetRelatedItemByKey(relatedItems []*RelatedItem, key RelatedItemKey) *RelatedItem {
 	for _, relatedItem := range relatedItems {
 		for _, k := range relatedItem.Keys {
@@ -64,14 +97,14 @@ func GetRelatedItemByKey(relatedItems []*RelatedItem, key RelatedItemKey) *Relat
 }
 
 type RelatedItem struct {
-	Keys []RelatedItemKey `json:"keys" firestore:"keys"`
+	Keys []RelatedItemKey `json:"keys" firestore:"keys"` // TODO: document why we need multiple keys, provide a use case
 
 	Note string `json:"note,omitempty" firestore:"note,omitempty"`
 
-	// RolesOfItem - if related item is a child of the current record, then relatedAs = {"child": ...}
+	// RolesOfItem - if related item is a child of the current record, then rolesOfItem = {"child": ...}
 	RolesOfItem RelationshipRoles `json:"rolesOfItem,omitempty" firestore:"rolesOfItem,omitempty"`
 
-	// RolesToItem - if related item is a child of the current contact, then relatesAs = {"parent": ...}
+	// RolesToItem - if related item is a child of the current contact, then rolesToItem = {"parent": ...}
 	RolesToItem RelationshipRoles `json:"rolesToItem,omitempty" firestore:"rolesToItem,omitempty"`
 }
 
@@ -215,7 +248,7 @@ func (v *WithRelated) ValidateRelated(validateID func(relatedID string) error) e
 				}
 				for _, key := range relatedItem.Keys {
 					if validateID != nil {
-						relatedID := NewTeamModuleDocRef(key.TeamID, moduleID, collectionID, key.ItemID).ID()
+						relatedID := NewTeamModuleItemRef(key.TeamID, moduleID, collectionID, key.ItemID).ID()
 						if err := validateID(relatedID); err != nil {
 							return validation.NewErrBadRecordFieldValue(field, err.Error())
 						}
@@ -227,28 +260,28 @@ func (v *WithRelated) ValidateRelated(validateID func(relatedID string) error) e
 	return nil
 }
 
-func (v *WithRelated) AddRelationship(link Link) (updates []dal.Update, err error) {
-	if err := link.Validate(); err != nil {
+func (v *WithRelated) AddRelationship(itemRef TeamModuleItemRef, rolesCommand RelationshipRolesCommand) (updates []dal.Update, err error) {
+	if err := rolesCommand.Validate(); err != nil {
 		return nil, err
 	}
 	if v.Related == nil {
 		v.Related = make(RelatedByModuleID, 1)
 	}
 
-	if link.Add != nil {
+	if rolesCommand.Add != nil {
 		addOppositeRoles := func(roles []RelationshipRoleID, oppositeRoles []RelationshipRoleID) []RelationshipRoleID {
 			for _, roleOfItem := range roles {
-				if oppositeRole := GetOppositeRole(roleOfItem); oppositeRole != "" && !slice.Contains(link.Add.RolesToItem, oppositeRole) {
+				if oppositeRole := GetOppositeRole(roleOfItem); oppositeRole != "" && !slice.Contains(rolesCommand.Add.RolesToItem, oppositeRole) {
 					oppositeRoles = append(oppositeRoles, oppositeRole)
 				}
 			}
 			return oppositeRoles
 		}
-		link.Add.RolesToItem = addOppositeRoles(link.Add.RolesOfItem, link.Add.RolesToItem)
-		link.Add.RolesOfItem = addOppositeRoles(link.Add.RolesToItem, link.Add.RolesOfItem)
+		rolesCommand.Add.RolesToItem = addOppositeRoles(rolesCommand.Add.RolesOfItem, rolesCommand.Add.RolesToItem)
+		rolesCommand.Add.RolesOfItem = addOppositeRoles(rolesCommand.Add.RolesToItem, rolesCommand.Add.RolesOfItem)
 	}
 
-	relatedByCollectionID := v.Related[link.ModuleID]
+	relatedByCollectionID := v.Related[itemRef.ModuleID]
 	if relatedByCollectionID == nil {
 		relatedByCollectionID = make(RelatedByCollectionID, 1)
 		v.Related[const4contactus.ModuleID] = relatedByCollectionID
@@ -256,7 +289,7 @@ func (v *WithRelated) AddRelationship(link Link) (updates []dal.Update, err erro
 
 	relatedItems := relatedByCollectionID[const4contactus.ContactsCollection]
 
-	relatedItemKey := RelatedItemKey{TeamID: link.TeamID, ItemID: link.ItemID}
+	relatedItemKey := RelatedItemKey{TeamID: itemRef.TeamID, ItemID: itemRef.ItemID}
 	relatedItem := GetRelatedItemByKey(relatedItems, relatedItemKey)
 	if relatedItem == nil {
 		relatedItem = NewRelatedItem(relatedItemKey)
@@ -287,13 +320,13 @@ func (v *WithRelated) AddRelationship(link Link) (updates []dal.Update, err erro
 		return relationships
 	}
 
-	if link.Add != nil {
-		relatedItem.RolesOfItem = addRelationship("rolesOfItem", link.Add.RolesOfItem, relatedItem.RolesOfItem)
-		relatedItem.RolesToItem = addRelationship("rolesToItem", link.Add.RolesToItem, relatedItem.RolesToItem)
+	if rolesCommand.Add != nil {
+		relatedItem.RolesOfItem = addRelationship("rolesOfItem", rolesCommand.Add.RolesOfItem, relatedItem.RolesOfItem)
+		relatedItem.RolesToItem = addRelationship("rolesToItem", rolesCommand.Add.RolesToItem, relatedItem.RolesToItem)
 	}
 
 	updates = append(updates, dal.Update{
-		Field: fmt.Sprintf("related.%s", link.ModuleCollectionPath()),
+		Field: fmt.Sprintf("related.%s", itemRef.ModuleCollectionPath()),
 		Value: relatedItems,
 	})
 
@@ -302,7 +335,7 @@ func (v *WithRelated) AddRelationship(link Link) (updates []dal.Update, err erro
 
 //func (v *WithRelated) SetRelationshipToItem(
 //	userID string,
-//	link Link,
+//	link RelationshipRolesCommand,
 //	now time.Time,
 //) (updates []dal.Update, err error) {
 //	if err = link.Validate(); err != nil {

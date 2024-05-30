@@ -22,7 +22,7 @@ func FixCounts(ctx context.Context, userContext facade.User, request FixCountsRe
 		team := dal4teamus.NewTeamContext(request.TeamID)
 		var retroTeam dal4retrospectus.RetroTeam
 		retroTeam, err = dal4retrospectus.GetRetroTeam(ctx, tx, request.TeamID)
-		user := new(models4userus.UserDto)
+		user := new(models4userus.UserDbo)
 		userRecord := dal.NewRecordWithData(userRef, user)
 
 		if err := tx.GetMulti(ctx, []dal.Record{userRecord, team.Record}); err != nil {

@@ -50,7 +50,7 @@ func JoinTeam(ctx context.Context, userContext facade.User, request JoinTeamRequ
 	err = dal4contactus.RunContactusTeamWorker(ctx, userContext, request.TeamRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusTeamWorkerParams) error {
 
 		userKey := models4userus.NewUserKey(uid)
-		userDto := new(models4userus.UserDto)
+		userDto := new(models4userus.UserDbo)
 		userRecord := dal.NewRecordWithData(userKey, userDto)
 
 		inviteKey := NewInviteKey(request.InviteID)
@@ -167,7 +167,7 @@ func onJoinUpdateInvite(
 func onJoinAddTeamToUser(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	userDto *models4userus.UserDto,
+	userDto *models4userus.UserDbo,
 	userRecord dal.Record,
 	teamID string,
 	team *models4teamus.TeamDbo,
@@ -238,7 +238,7 @@ func onJoinUpdateMemberBriefInTeamOrAddIfMissing(
 	inviterMemberID string,
 	member dal4contactus.ContactEntry,
 	uid string,
-	user *models4userus.UserDto,
+	user *models4userus.UserDbo,
 ) (err error) {
 	//var updates []dal.Update
 	if strings.TrimSpace(uid) == "" {

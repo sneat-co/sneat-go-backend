@@ -33,12 +33,12 @@ func InitUserRecord(ctx context.Context, userContext facade.User, request dto4us
 		return err
 	})
 	if err != nil {
-		user.Dto = nil
+		user.Dbo = nil
 		return user, fmt.Errorf("failet to init user record: %w", err)
 	}
 	if request.Team != nil {
 		var hasTeamOfSameType bool
-		for _, team := range user.Dto.Teams {
+		for _, team := range user.Dbo.Teams {
 			if team.Type == request.Team.Type {
 				hasTeamOfSameType = true
 				break
@@ -78,38 +78,38 @@ func initUserRecordTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, ui
 }
 
 func createUserRecordTx(ctx context.Context, tx dal.ReadwriteTransaction, request dto4userus.InitUserRecordRequest, user models4userus.UserContext, userInfo *sneatauth.AuthUserInfo) error {
-	user.Dto.Status = "active"
-	user.Dto.Type = briefs4contactus.ContactTypePerson
-	user.Dto.CountryID = with.UnknownCountryID
-	user.Dto.AgeGroup = "unknown"
-	user.Dto.Gender = "unknown"
+	user.Dbo.Status = "active"
+	user.Dbo.Type = briefs4contactus.ContactTypePerson
+	user.Dbo.CountryID = with.UnknownCountryID
+	user.Dbo.AgeGroup = "unknown"
+	user.Dbo.Gender = "unknown"
 
 	if request.Names != nil && !request.Names.IsEmpty() {
-		user.Dto.Names = request.Names
+		user.Dbo.Names = request.Names
 	}
 
-	if user.Dto.Names != nil && user.Dto.Names.FullName != "" && (user.Dto.Names.FirstName == "" || user.Dto.Names.LastName == "") {
-		firstName, lastName := person.DeductNamesFromFullName(user.Dto.Names.FullName)
-		if user.Dto.Names.FirstName == "" || firstName != "" {
-			user.Dto.Names.FirstName = firstName
+	if user.Dbo.Names != nil && user.Dbo.Names.FullName != "" && (user.Dbo.Names.FirstName == "" || user.Dbo.Names.LastName == "") {
+		firstName, lastName := person.DeductNamesFromFullName(user.Dbo.Names.FullName)
+		if user.Dbo.Names.FirstName == "" || firstName != "" {
+			user.Dbo.Names.FirstName = firstName
 		}
-		if user.Dto.Names.LastName == "" || lastName != "" {
-			user.Dto.Names.LastName = lastName
+		if user.Dbo.Names.LastName == "" || lastName != "" {
+			user.Dbo.Names.LastName = lastName
 		}
 	}
 
-	user.Dto.CreatedAt = time.Now()
-	user.Dto.CreatedBy = request.RemoteClient.HostOrApp
-	if i := strings.Index(user.Dto.CreatedBy, ":"); i > 0 {
-		user.Dto.CreatedBy = user.Dto.CreatedBy[:i]
+	user.Dbo.CreatedAt = time.Now()
+	user.Dbo.CreatedBy = request.RemoteClient.HostOrApp
+	if i := strings.Index(user.Dbo.CreatedBy, ":"); i > 0 {
+		user.Dbo.CreatedBy = user.Dbo.CreatedBy[:i]
 	}
-	user.Dto.Created.Client = request.RemoteClient
+	user.Dbo.Created.Client = request.RemoteClient
 	if request.Email != "" {
-		user.Dto.Email = request.Email
-		user.Dto.EmailVerified = request.EmailIsVerified
+		user.Dbo.Email = request.Email
+		user.Dbo.EmailVerified = request.EmailIsVerified
 	} else {
-		user.Dto.Email = userInfo.Email
-		user.Dto.EmailVerified = userInfo.EmailVerified
+		user.Dbo.Email = userInfo.Email
+		user.Dbo.EmailVerified = userInfo.EmailVerified
 	}
 	authProvider := request.AuthProvider
 	if authProvider == "" {
@@ -119,23 +119,24 @@ func createUserRecordTx(ctx context.Context, tx dal.ReadwriteTransaction, reques
 			authProvider = userInfo.ProviderID
 		}
 	}
-	user.Dto.Emails = []dbmodels.PersonEmail{
+	user.Dbo.Emails = []dbmodels.PersonEmail{
 		{
 			Type:         "primary",
-			Address:      user.Dto.Email,
-			Verified:     user.Dto.EmailVerified,
+			Address:      user.Dbo.Email,
+			Verified:     user.Dbo.EmailVerified,
 			AuthProvider: authProvider,
 		},
 	}
 	if request.IanaTimezone != "" {
-		user.Dto.Timezone = &dbmodels.Timezone{
+		user.Dbo.Timezone = &dbmodels.Timezone{
 			Iana: request.IanaTimezone,
 		}
 	}
-	if user.Dto.Title == "" && user.Dto.Names.IsEmpty() {
-		user.Dto.Title = user.Dto.Email
+	if user.Dbo.Title == "" && user.Dbo.Names.IsEmpty() {
+		user.Dbo.Title = user.Dbo.Email
 	}
-	if err := user.Dto.Validate(); err != nil {
+	_ = user.Dbo.UpdateRelatedIDs()
+	if err := user.Dbo.Validate(); err != nil {
 		return fmt.Errorf("user record prepared for insert is not valid: %w", err)
 	}
 	if err := tx.Insert(ctx, user.Record); err != nil {
@@ -153,22 +154,22 @@ func updateUserRecordWithInitData(ctx context.Context, tx dal.ReadwriteTransacti
 		if !name.IsEmpty() {
 			updates = append(updates, dal.Update{Field: "name", Value: name})
 		}
-		user.Dto.Names = name
+		user.Dbo.Names = name
 	}
 
-	if request.IanaTimezone != "" && (user.Dto.Timezone == nil || user.Dto.Timezone.Iana == "") {
-		if user.Dto.Timezone == nil {
-			user.Dto.Timezone = &dbmodels.Timezone{}
+	if request.IanaTimezone != "" && (user.Dbo.Timezone == nil || user.Dbo.Timezone.Iana == "") {
+		if user.Dbo.Timezone == nil {
+			user.Dbo.Timezone = &dbmodels.Timezone{}
 		}
-		user.Dto.Timezone.Iana = request.IanaTimezone
+		user.Dbo.Timezone.Iana = request.IanaTimezone
 		updates = append(updates, dal.Update{Field: "timezone.iana", Value: request.IanaTimezone})
 	}
-	if user.Dto.Title == user.Dto.Email && user.Dto.Names != nil && !user.Dto.Names.IsEmpty() {
-		user.Dto.Title = ""
+	if user.Dbo.Title == user.Dbo.Email && user.Dbo.Names != nil && !user.Dbo.Names.IsEmpty() {
+		user.Dbo.Title = ""
 		updates = append(updates, dal.Update{Field: "title", Value: dal.DeleteField})
 	}
 	if len(updates) > 0 {
-		if err := user.Dto.Validate(); err != nil {
+		if err := user.Dbo.Validate(); err != nil {
 			return fmt.Errorf("user record prepared for update is not valid: %w", err)
 		}
 		if err := tx.Update(ctx, user.Key, updates); err != nil {

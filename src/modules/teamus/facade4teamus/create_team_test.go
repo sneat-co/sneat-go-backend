@@ -36,7 +36,7 @@ func TestCreateTeam(t *testing.T) { // TODO: Implement unit tests
 			switch record.Key().Collection() {
 			case models4userus.UsersCollection:
 				record.SetError(nil)
-				userDto := record.Data().(*models4userus.UserDto)
+				userDto := record.Data().(*models4userus.UserDbo)
 				userDto.CountryID = "--"
 				userDto.Status = "active"
 				userDto.Gender = dbmodels.GenderMale
@@ -81,9 +81,9 @@ func TestCreateTeam(t *testing.T) { // TODO: Implement unit tests
 		assert.Equal(t, 1, response.Team.Data.Version)
 		//assert.Equal(t, 2, len(response.Team.Dbo.UserIDs))
 
-		assert.Nil(t, response.User.Dto.Validate())
-		assert.Equal(t, 1, len(response.User.Dto.TeamIDs))
-		assert.Equal(t, 1, len(response.User.Dto.Teams))
+		assert.Nil(t, response.User.Dbo.Validate())
+		assert.Equal(t, 1, len(response.User.Dbo.TeamIDs))
+		assert.Equal(t, 1, len(response.User.Dbo.Teams))
 	})
 
 }

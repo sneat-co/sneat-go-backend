@@ -13,8 +13,8 @@ var deleteContainer = facade4logist.DeleteContainer
 
 func httpDeleteContainer(w http.ResponseWriter, r *http.Request) {
 	var request dto4logist.ContainerRequest
-	handler := func(ctx context.Context, userCtx facade.User) (interface{}, error) {
-		return nil, deleteContainer(ctx, userCtx, request)
-	}
-	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, handler, http.StatusNoContent, defaultJsonWithAuthRequired)
+	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, defaultJsonWithAuthRequired, http.StatusNoContent,
+		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
+			return nil, deleteContainer(ctx, userCtx, request)
+		})
 }

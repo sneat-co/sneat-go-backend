@@ -30,7 +30,7 @@ type TeamModuleItemRef struct { // TODO: Move to sneat-go-core or document why n
 	ItemID     string `json:"itemID" firestore:"itemID"`
 }
 
-func NewTeamModuleDocRef(teamID, moduleID, collection, itemID string) TeamModuleItemRef {
+func NewTeamModuleItemRef(teamID, moduleID, collection, itemID string) TeamModuleItemRef {
 	return TeamModuleItemRef{
 		TeamID:     teamID,
 		ModuleID:   moduleID,
@@ -39,7 +39,7 @@ func NewTeamModuleDocRef(teamID, moduleID, collection, itemID string) TeamModule
 	}
 }
 
-func NewTeamModuleDocRefFromString(id string) TeamModuleItemRef {
+func NewTeamModuleItemRefFromString(id string) TeamModuleItemRef {
 	ids := strings.Split(id, ".")
 	if len(ids) != 4 {
 		panic(fmt.Sprintf("invalid ID: '%s'", id))
@@ -81,16 +81,16 @@ type RolesCommand struct {
 	RolesToItem []RelationshipRoleID `json:"rolesToItem,omitempty" firestore:"rolesToItem,omitempty"`
 }
 
-type Link struct {
-	TeamModuleItemRef
+type RelationshipRolesCommand struct {
+	//TeamModuleItemRef
 	Add    *RolesCommand `json:"add,omitempty" firestore:"add,omitempty"`
 	Remove *RolesCommand `json:"remove,omitempty" firestore:"remove,omitempty"`
 }
 
-func (v Link) Validate() error {
-	if err := v.TeamModuleItemRef.Validate(); err != nil {
-		return err
-	}
+func (v RelationshipRolesCommand) Validate() error {
+	//if err := v.TeamModuleItemRef.Validate(); err != nil {
+	//	return err
+	//}
 	if err := v.Add.Validate(); err != nil {
 		return validation.NewErrBadRequestFieldValue("add", err.Error())
 	}
