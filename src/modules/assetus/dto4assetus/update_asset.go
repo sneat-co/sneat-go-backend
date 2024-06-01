@@ -1,24 +1,20 @@
 package dto4assetus
 
 import (
-	"github.com/strongo/validation"
-	"strings"
+	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/models4assetus"
 )
 
 type UpdateAssetRequest struct {
 	AssetRequest
-	RegNumber *string `json:"regNumber,omitempty"`
+	Extra models4assetus.AssetExtra
 }
 
 func (v UpdateAssetRequest) Validate() error {
 	if err := v.AssetRequest.Validate(); err != nil {
 		return err
 	}
-	if v.RegNumber != nil {
-		regNumber := *v.RegNumber
-		if strings.TrimSpace(regNumber) != regNumber {
-			return validation.NewErrBadRequestFieldValue("regNumber", "should not have leading or trailing spaces")
-		}
+	if err := v.Extra.Validate(); err != nil {
+		return err
 	}
 	return nil
 }

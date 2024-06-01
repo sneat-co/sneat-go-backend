@@ -69,29 +69,13 @@ func runAssetWorker(ctx context.Context, tx dal.ReadwriteTransaction, user facad
 	)
 }
 
-func updateAssetTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, request dto4assetus.UpdateAssetRequest, params *AssetWorkerParams) (err error) {
+func updateAssetTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, _ dto4assetus.UpdateAssetRequest, params *AssetWorkerParams) (err error) {
 	if err = tx.Get(ctx, params.Asset.Record); err != nil {
 		return fmt.Errorf("failed to get asset record: %w", err)
 	}
 
 	if err := params.Asset.Data.Validate(); err != nil {
-		return fmt.Errorf("asset DTO is not valid after loading from DB: %w", err)
-	}
-
-	if request.RegNumber != nil {
-		regNumber := *request.RegNumber
-		params.Asset.Data.RegNumber = regNumber
-		params.AssetUpdates = append(params.AssetUpdates, dal.Update{Field: "regNumber", Value: regNumber})
-		assetBrief := params.TeamModuleEntry.Data.GetAssetBriefByID(params.Asset.ID)
-		if assetBrief != nil {
-			if assetBrief.RegNumber != regNumber {
-				assetBrief.RegNumber = regNumber
-				params.TeamModuleUpdates = append(params.TeamModuleUpdates, dal.Update{
-					Field: fmt.Sprintf("assets.%s.regNumber", params.Asset.ID),
-					Value: regNumber,
-				})
-			}
-		}
+		return fmt.Errorf("asset DBO is not valid after loading from DB: %w", err)
 	}
 	return err
 }

@@ -6,8 +6,24 @@ import (
 	"github.com/strongo/validation"
 )
 
+var assetExtraFactories = map[AssetExtraType]func() AssetExtra{}
+
+func RegisterAssetExtraFactory(t AssetExtraType, f func() AssetExtra) {
+	assetExtraFactories[t] = f
+}
+
+func NewAssetExtra(t AssetExtraType) AssetExtra {
+	if f, ok := assetExtraFactories[t]; ok {
+		return f()
+	}
+	return nil
+}
+
 type AssetExtra interface {
 	GetType() AssetExtraType
+	RequiredFields() []string
+	IndexedFields() []string
+	GetBrief() AssetExtra
 	Validate() error
 }
 
@@ -39,9 +55,23 @@ func NewAssetNoExtra() AssetExtra {
 	return &assetNoExtra{AssetExtraBase{Type: "empty"}}
 }
 
+var _ AssetExtra = (*assetNoExtra)(nil)
+
 // assetNoExtra is used if no extension data is required by an asset type
 type assetNoExtra struct {
 	AssetExtraBase
+}
+
+func (e assetNoExtra) RequiredFields() []string {
+	return nil
+}
+
+func (e assetNoExtra) IndexedFields() []string {
+	return nil
+}
+
+func (e assetNoExtra) GetBrief() AssetExtra {
+	return nil
 }
 
 // Validate always returns nil

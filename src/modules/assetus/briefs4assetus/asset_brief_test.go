@@ -29,7 +29,4 @@ func TestAssetBriefNoOmitEmpty(t *testing.T) {
 	assetEmptyFieldIsNotOmitted("category")
 	assetEmptyFieldIsNotOmitted("possession")
 	assetEmptyFieldIsNotOmitted("countryID")
-	assetEmptyFieldIsNotOmitted("make")
-	assetEmptyFieldIsNotOmitted("model")
-	assetEmptyFieldIsNotOmitted("regNumber")
 }

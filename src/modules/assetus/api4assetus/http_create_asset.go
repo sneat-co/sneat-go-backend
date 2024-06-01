@@ -6,10 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dto4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/facade4assetus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/models4assetus"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/apicore/verify"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -18,26 +16,11 @@ import (
 // httpPostCreateAsset creates an asset
 func httpPostCreateAsset(w http.ResponseWriter, r *http.Request) {
 	var request dto4assetus.CreateAssetRequest
-	assetCategory := r.URL.Query().Get("assetCategory")
-	var assetExtra models4assetus.AssetExtra
-	switch assetCategory {
-	case const4assetus.AssetCategoryVehicle:
-		assetExtra = new(models4assetus.AssetVehicleExtra)
-	case const4assetus.AssetCategoryDocument:
-		assetExtra = new(models4assetus.AssetDocumentExtra)
-	case const4assetus.AssetCategoryDwelling:
-		assetExtra = new(models4assetus.AssetDwellingExtra)
-	case "":
-		apicore.ReturnError(r.Context(), w, r, errors.New("GET parameter 'assetCategory' is required"))
-		return
-	default:
-		apicore.ReturnError(r.Context(), w, r, fmt.Errorf("unsupported asset category: %s", assetCategory))
-		return
+	assetDbo, err := createAssetBaseDbo(r)
+	if err != nil {
+		apicore.ReturnError(r.Context(), w, r, err)
 	}
-	if err := request.Asset.SetExtra(assetExtra); err != nil {
-		apicore.ReturnError(r.Context(), w, r, fmt.Errorf("failed to set asset extra data: %w", err))
-		return
-	}
+	request.Asset = assetDbo
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.DefaultJsonWithAuthRequired, http.StatusCreated,
 		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
 			asset, err := facade4assetus.CreateAsset(ctx, userCtx, request)

@@ -2,6 +2,14 @@ package models4assetus
 
 import "github.com/strongo/validation"
 
+func init() {
+	RegisterAssetExtraFactory(AssetExtraTypeDwelling, func() AssetExtra {
+		return new(AssetDwellingExtra)
+	})
+}
+
+var _ AssetExtra = (*AssetDwellingExtra)(nil)
+
 type AssetDwellingExtra struct {
 	AssetExtraBase
 	Address   string `json:"address,omitempty" firestore:"address,omitempty"`
@@ -11,6 +19,22 @@ type AssetDwellingExtra struct {
 	} `json:"rent_price,omitempty" firestore:"rent_price,omitempty"`
 	NumberOfBedrooms int `json:"numberOfBedrooms,omitempty" firestore:"numberOfBedrooms,omitempty"`
 	AreaSqM          int `json:"areaSqM,omitempty" firestore:"areaSqM,omitempty"`
+}
+
+func (v AssetDwellingExtra) GetBrief() AssetExtra {
+	return &AssetDwellingExtra{
+		AssetExtraBase:   v.AssetExtraBase,
+		NumberOfBedrooms: v.NumberOfBedrooms,
+		AreaSqM:          v.AreaSqM,
+	}
+}
+
+func (v AssetDwellingExtra) RequiredFields() []string {
+	return nil
+}
+
+func (v AssetDwellingExtra) IndexedFields() []string {
+	return nil
 }
 
 func (v AssetDwellingExtra) Validate() error {
