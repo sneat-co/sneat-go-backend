@@ -47,7 +47,6 @@ func createAssetTx(
 ) {
 	asset := dal4assetus.NewAssetEntry(request.TeamRequest.TeamID, random.ID(8)) // TODO: use DALgo random ID generator
 	asset.Data.AssetBaseDbo = request.Asset
-	asset.Data.AssetBaseDbo.IsRequest = false
 	asset.Data.UserIDs = []string{params.UserID}
 	asset.Data.TeamIDs = []string{request.TeamRequest.TeamID}
 	//asset.Data.ContactIDs = []string{"*"}

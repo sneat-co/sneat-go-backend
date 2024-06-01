@@ -81,9 +81,6 @@ func (v *AssetDbo) Validate() error {
 	if err := v.AssetBaseDbo.Validate(); err != nil {
 		return err
 	}
-	if v.IsRequest {
-		return validation.NewErrBadRecordFieldValue("isRequest", "should be false")
-	}
 	if err := v.WithModified.Validate(); err != nil {
 		return err
 	}

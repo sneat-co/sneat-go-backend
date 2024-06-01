@@ -6,15 +6,45 @@ import (
 	"time"
 )
 
+func init() {
+	RegisterAssetExtraFactory(AssetExtraTypeDocument, func() AssetExtra {
+		return new(AssetDocumentExtra)
+	})
+}
+
+var _ AssetExtra = (*AssetDocumentExtra)(nil)
+
 type AssetDocumentExtra struct {
 	AssetExtraBase
+	WithRegNumberField
 	IssuedOn      string `json:"issuedOn,omitempty" firestore:"issuedOn,omitempty"`
 	EffectiveFrom string `json:"effectiveFrom,omitempty" firestore:"effectiveFrom,omitempty"`
 	ExpiresOn     string `json:"expiresOn,omitempty" firestore:"expiresOn,omitempty"`
 }
 
+func (v *AssetDocumentExtra) RequiredFields() []string {
+	return []string{""}
+}
+
+func (v *AssetDocumentExtra) IndexedFields() []string {
+	return []string{"expiresOn", "effectiveFrom"}
+}
+
+func (v *AssetDocumentExtra) GetBrief() AssetExtra {
+	return &AssetDocumentExtra{
+		AssetExtraBase:     v.AssetExtraBase,
+		IssuedOn:           v.IssuedOn,
+		EffectiveFrom:      v.EffectiveFrom,
+		ExpiresOn:          v.ExpiresOn,
+		WithRegNumberField: v.WithRegNumberField,
+	}
+}
+
 func (v *AssetDocumentExtra) Validate() (err error) {
 	if err := v.AssetExtraBase.Validate(); err != nil {
+		return err
+	}
+	if err := v.WithRegNumberField.Validate(); err != nil {
 		return err
 	}
 	if v.IssuedOn != "" {
