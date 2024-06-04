@@ -7,7 +7,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/const4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/listus/models4listus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
@@ -23,8 +23,8 @@ func CreateList(ctx context.Context, user facade.User, request CreateListRequest
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4teamus.CreateTeamItem(ctx, user, "", request.TeamRequest, const4listus.ModuleID, new(models4listus.ListusTeamDto),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4listus.ListusTeamDto]) (err error) {
+	err = dal4teamus.CreateTeamItem(ctx, user, "", request.TeamRequest, const4listus.ModuleID, new(dbo4listus.ListusTeamDto),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4listus.ListusTeamDto]) (err error) {
 
 			for id, brief := range params.TeamModuleEntry.Data.Lists {
 				if brief.Title == request.Title {
@@ -54,7 +54,7 @@ func CreateList(ctx context.Context, user facade.User, request CreateListRequest
 				By: user.GetID(),
 				At: time.Now(),
 			}
-			list := models4listus.ListDto{
+			list := dbo4listus.ListDto{
 				WithModified: dbmodels.WithModified{
 					CreatedFields: with.CreatedFields{
 						CreatedAtField: with.CreatedAtField{
@@ -72,7 +72,7 @@ func CreateList(ctx context.Context, user facade.User, request CreateListRequest
 				WithTeamIDs: dbmodels.WithTeamIDs{
 					TeamIDs: []string{request.TeamID},
 				},
-				ListBase: models4listus.ListBase{
+				ListBase: dbo4listus.ListBase{
 					Type:  request.Type,
 					Title: request.Title,
 				},
@@ -86,10 +86,10 @@ func CreateList(ctx context.Context, user facade.User, request CreateListRequest
 				return fmt.Errorf("failed to insert list record")
 			}
 			if params.TeamModuleEntry.Data.Lists == nil {
-				params.TeamModuleEntry.Data.Lists = make(map[string]*models4listus.ListBrief, 1)
+				params.TeamModuleEntry.Data.Lists = make(map[string]*dbo4listus.ListBrief, 1)
 			}
-			listBrief := &models4listus.ListBrief{
-				ListBase: models4listus.ListBase{
+			listBrief := &dbo4listus.ListBrief{
+				ListBase: dbo4listus.ListBase{
 					Type:  request.Type,
 					Title: request.Type,
 				},

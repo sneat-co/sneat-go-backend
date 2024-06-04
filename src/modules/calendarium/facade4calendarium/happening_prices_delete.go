@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
+	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/models4calendarium"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/slice"
 )
@@ -23,7 +23,7 @@ func deleteHappeningPricesTx(ctx context.Context, tx dal.ReadwriteTransaction, _
 	}
 	happeningDbo := params.Happening.Dbo
 
-	prices := make([]*models4calendarium.HappeningPrice, 0, len(happeningDbo.Prices))
+	prices := make([]*dbo4calendarium.HappeningPrice, 0, len(happeningDbo.Prices))
 
 	for _, price := range happeningDbo.Prices {
 		if slice.Contains(request.PriceIDs, price.ID) {

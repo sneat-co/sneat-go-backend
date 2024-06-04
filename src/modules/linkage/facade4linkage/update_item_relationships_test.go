@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dto4linkage"
-	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/models4linkage"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"reflect"
 	"testing"
@@ -26,7 +26,7 @@ func TestUpdateItemRelationships(t *testing.T) {
 	tests := []struct {
 		name      string
 		args      args
-		wantItem  record.DataWithID[string, *models4linkage.WithRelatedAndIDsAndUserID]
+		wantItem  record.DataWithID[string, *dbo4linkage.WithRelatedAndIDsAndUserID]
 		wantErr   bool
 		wantPanic bool
 	}{
@@ -37,18 +37,18 @@ func TestUpdateItemRelationships(t *testing.T) {
 				ctx:     context.Background(),
 				userCtx: facade.NewUser(testUserID),
 				request: dto4linkage.UpdateItemRequest{
-					TeamModuleItemRef: models4linkage.TeamModuleItemRef{
+					TeamModuleItemRef: dbo4linkage.TeamModuleItemRef{
 						ModuleID:   const4contactus.ModuleID,
 						TeamID:     team1ID,
 						Collection: const4contactus.ContactsCollection,
 						ItemID:     item1ID,
 					},
 					UpdateRelatedFieldRequest: dto4linkage.UpdateRelatedFieldRequest{
-						Related: map[string]*models4linkage.RelationshipRolesCommand{
-							models4linkage.NewTeamModuleItemRef(team1ID, module1ID, collection1ID, item1ID).ID(): {
-								Add: &models4linkage.RolesCommand{
-									RolesOfItem: []models4linkage.RelationshipRoleID{
-										models4linkage.RelationshipRoleSpouse,
+						Related: map[string]*dbo4linkage.RelationshipRolesCommand{
+							dbo4linkage.NewTeamModuleItemRef(team1ID, module1ID, collection1ID, item1ID).ID(): {
+								Add: &dbo4linkage.RolesCommand{
+									RolesOfItem: []dbo4linkage.RelationshipRoleID{
+										dbo4linkage.RelationshipRoleSpouse,
 									},
 								},
 							},

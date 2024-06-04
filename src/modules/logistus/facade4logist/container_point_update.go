@@ -3,8 +3,8 @@ package facade4logist
 import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
@@ -30,32 +30,32 @@ func txUpdateContainerPoint(
 
 	if request.ArrivesDate != nil {
 		containerPoint.Arrival.ScheduledDate = *request.ArrivesDate
-		segmentKey := models4logist.ContainerSegmentKey{
+		segmentKey := dbo4logist.ContainerSegmentKey{
 			ContainerID: request.ContainerID,
-			To: models4logist.SegmentEndpoint{
+			To: dbo4logist.SegmentEndpoint{
 				ShippingPointID: request.ShippingPointID,
 			},
 		}
 		if segment := orderDto.GetSegmentByKey(segmentKey); segment != nil {
 			params.Changed.Segments = true
 			if segment.Dates == nil {
-				segment.Dates = &models4logist.SegmentDates{}
+				segment.Dates = &dbo4logist.SegmentDates{}
 			}
 			segment.Dates.Arrives = containerPoint.Arrival.ScheduledDate
 		}
 	}
 	if request.DepartsDate != nil {
 		containerPoint.Departure.ScheduledDate = *request.DepartsDate
-		segmentKey := models4logist.ContainerSegmentKey{
+		segmentKey := dbo4logist.ContainerSegmentKey{
 			ContainerID: request.ContainerID,
-			From: models4logist.SegmentEndpoint{
+			From: dbo4logist.SegmentEndpoint{
 				ShippingPointID: request.ShippingPointID,
 			},
 		}
 		if segment := orderDto.GetSegmentByKey(segmentKey); segment != nil {
 			params.Changed.Segments = true
 			if segment.Dates == nil {
-				segment.Dates = &models4logist.SegmentDates{}
+				segment.Dates = &dbo4logist.SegmentDates{}
 			}
 			segment.Dates.Departs = containerPoint.Departure.ScheduledDate
 		}

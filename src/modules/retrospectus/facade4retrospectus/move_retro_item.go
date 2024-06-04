@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/models4retrospectus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/models4userus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
@@ -14,14 +14,14 @@ func MoveRetroItem(ctx context.Context, userFacade facade.User, request MoveRetr
 	uid := userFacade.GetID()
 	var retrospectiveKey *dal.Key
 	if request.MeetingID == UpcomingRetrospectiveID {
-		retrospectiveKey = models4retrospectus.NewRetrospectiveKey(request.TeamID, models4userus.NewUserKey(uid))
+		retrospectiveKey = dbo4retrospectus.NewRetrospectiveKey(request.TeamID, dbo4userus.NewUserKey(uid))
 	} else {
-		retrospectiveKey = models4retrospectus.NewRetrospectiveKey(request.MeetingID, newTeamKey(request.TeamID))
+		retrospectiveKey = dbo4retrospectus.NewRetrospectiveKey(request.MeetingID, newTeamKey(request.TeamID))
 	}
 
 	db := facade.GetDatabase(ctx)
 	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
-		retrospective := new(models4retrospectus.Retrospective)
+		retrospective := new(dbo4retrospectus.Retrospective)
 		retrospectiveRecord := dal.NewRecordWithData(retrospectiveKey, retrospective)
 
 		err = tx.Get(ctx, retrospectiveRecord)
@@ -34,7 +34,7 @@ func MoveRetroItem(ctx context.Context, userFacade facade.User, request MoveRetr
 		} else if !retrospectiveRecord.Exists() {
 			return fmt.Errorf("retrospective not found by id: %v-%v", request.TeamID, request.MeetingID)
 		}
-		if err = models4retrospectus.MoveRetroItem(retrospective.Items, request.Item, request.From, request.To); err != nil {
+		if err = dbo4retrospectus.MoveRetroItem(retrospective.Items, request.Item, request.From, request.To); err != nil {
 			return err
 		}
 		if err = txUpdateRetrospective(ctx, tx, retrospectiveKey, retrospective, []dal.Update{

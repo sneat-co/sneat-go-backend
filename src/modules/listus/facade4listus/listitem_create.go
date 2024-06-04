@@ -7,7 +7,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/const4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/listus/models4listus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/slice"
@@ -18,14 +18,14 @@ func CreateListItems(ctx context.Context, userContext facade.User, request Creat
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4teamus.RunModuleTeamWorker(ctx, userContext, request.TeamRequest, const4listus.ModuleID, new(models4listus.ListusTeamDto),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4listus.ListusTeamDto]) error {
+	err = dal4teamus.RunModuleTeamWorker(ctx, userContext, request.TeamRequest, const4listus.ModuleID, new(dbo4listus.ListusTeamDto),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4listus.ListusTeamDto]) error {
 			return createListItemTxWorker(ctx, request, tx, params)
 		})
 	return
 }
 
-func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4listus.ListusTeamDto]) (err error) {
+func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4listus.ListusTeamDto]) (err error) {
 	if err = params.GetRecords(ctx, tx); err != nil {
 		return err
 	}
@@ -37,7 +37,7 @@ func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest,
 	listType := request.ListType()
 	listID := request.ListID
 	listKey := dal4listus.NewTeamListKey(request.TeamID, listID)
-	var listDto models4listus.ListDto
+	var listDto dbo4listus.ListDto
 	var listRecord = dal.NewRecordWithData(listKey, &listDto)
 	if err = tx.Get(ctx, listRecord); err != nil && !dal.IsNotFound(err) {
 		return fmt.Errorf("failed to get list record: %w", err)
@@ -46,8 +46,8 @@ func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest,
 	if !listRecord.Exists() {
 
 		isOkToAutoCreateList :=
-			request.ListID == models4listus.GetFullListID(models4listus.ListTypeToBuy, "groceries") ||
-				request.ListID == models4listus.GetFullListID(models4listus.ListTypeToWatch, "movies")
+			request.ListID == dbo4listus.GetFullListID(dbo4listus.ListTypeToBuy, "groceries") ||
+				request.ListID == dbo4listus.GetFullListID(dbo4listus.ListTypeToWatch, "movies")
 
 		if !isOkToAutoCreateList {
 			err = fmt.Errorf("list not found by ID=%s: %w", listID, err)
@@ -60,9 +60,9 @@ func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest,
 		listDto.Title = request.ListID
 		if listDto.Emoji == "" {
 			switch request.ListType() {
-			case models4listus.ListTypeToBuy:
+			case dbo4listus.ListTypeToBuy:
 				listDto.Emoji = "🛒"
-			case models4listus.ListTypeToWatch:
+			case dbo4listus.ListTypeToWatch:
 				listDto.Emoji = "📽️"
 			}
 		}
@@ -70,14 +70,14 @@ func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest,
 
 	listBrief, isExistingBrief := params.TeamModuleEntry.Data.Lists[listID]
 	if !isExistingBrief {
-		params.TeamModuleEntry.Data.Lists = make(map[string]*models4listus.ListBrief, 1)
-		listBrief = &models4listus.ListBrief{
-			ListBase: models4listus.ListBase{
+		params.TeamModuleEntry.Data.Lists = make(map[string]*dbo4listus.ListBrief, 1)
+		listBrief = &dbo4listus.ListBrief{
+			ListBase: dbo4listus.ListBase{
 				Type:  request.ListType(),
 				Title: request.ListID,
 			},
 		}
-		if listBrief.Type == models4listus.ListTypeToBuy && request.ListID == "groceries" {
+		if listBrief.Type == dbo4listus.ListTypeToBuy && request.ListID == "groceries" {
 			listBrief.Emoji = "🛒"
 		}
 		params.TeamModuleEntry.Data.Lists[listID] = listBrief
@@ -88,7 +88,7 @@ func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest,
 		if err != nil {
 			return fmt.Errorf("failed to generate random id for item #%d: %w", i, err)
 		}
-		listItem := models4listus.ListItemBrief{
+		listItem := dbo4listus.ListItemBrief{
 			ID:           id,
 			ListItemBase: item.ListItemBase,
 		}

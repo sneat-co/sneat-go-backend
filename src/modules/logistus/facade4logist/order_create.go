@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	dbmodels2 "github.com/sneat-co/sneat-go-core/models/dbmodels"
@@ -22,7 +22,7 @@ func CreateOrder(
 	userContext facade.User,
 	request dto4logist.CreateOrderRequest,
 ) (
-	orderBrief *models4logist.OrderBrief, err error,
+	orderBrief *dbo4logist.OrderBrief, err error,
 ) {
 	err = dal4teamus.RunTeamWorker(ctx, userContext, request.TeamID,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.TeamWorkerParams) (err error) {
@@ -37,8 +37,8 @@ func createOrderTxWorker(
 	ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.TeamWorkerParams,
 	userID string,
 	request dto4logist.CreateOrderRequest,
-) (orderBrief *models4logist.OrderBrief, err error) {
-	logistTeam := models4logist.NewLogistTeamContext(request.TeamID)
+) (orderBrief *dbo4logist.OrderBrief, err error) {
+	logistTeam := dbo4logist.NewLogistTeamContext(request.TeamID)
 	if err = tx.Get(ctx, logistTeam.Record); err != nil {
 		if dal.IsNotFound(err) {
 			err = nil // OK
@@ -48,7 +48,7 @@ func createOrderTxWorker(
 	}
 
 	if logistTeam.Dto.OrderCounters == nil {
-		logistTeam.Dto.OrderCounters = make(map[string]models4logist.OrderCounter, 1)
+		logistTeam.Dto.OrderCounters = make(map[string]dbo4logist.OrderCounter, 1)
 	}
 	const counterName = "all"
 	counter := logistTeam.Dto.OrderCounters[counterName]
@@ -60,7 +60,7 @@ func createOrderTxWorker(
 	}
 
 	orderNumberPrefixed := logistTeam.Dto.OrderCounters["all"].Prefix + strconv.Itoa(counter.LastNumber)
-	order := models4logist.NewOrder(params.Team.ID, orderNumberPrefixed)
+	order := dbo4logist.NewOrder(params.Team.ID, orderNumberPrefixed)
 	fillOrderDtoFromRequest(order.Dto, request, params, userID)
 
 	if err := addContactsFromCounterparties(ctx, tx, params.Team.ID, order.Dto); err != nil {
@@ -89,7 +89,7 @@ func createOrderTxWorker(
 		return nil, fmt.Errorf("failed to insert order record: %w", err)
 	}
 
-	orderBrief = &models4logist.OrderBrief{
+	orderBrief = &dbo4logist.OrderBrief{
 		ID:        order.Key.ID.(string),
 		OrderBase: order.Dto.OrderBase,
 	}
@@ -97,7 +97,7 @@ func createOrderTxWorker(
 	return orderBrief, err
 }
 
-func fillOrderDtoFromRequest(orderDto *models4logist.OrderDto, request dto4logist.CreateOrderRequest, params *dal4teamus.TeamWorkerParams, userID string) {
+func fillOrderDtoFromRequest(orderDto *dbo4logist.OrderDto, request dto4logist.CreateOrderRequest, params *dal4teamus.TeamWorkerParams, userID string) {
 	orderDto.OrderBase = request.Order
 
 	orderDto.Status = "active"
@@ -139,9 +139,9 @@ func fillOrderDtoFromRequest(orderDto *models4logist.OrderDto, request dto4logis
 	}
 	for size, count := range request.NumberOfContainers {
 		for i := 1; i <= count; i++ {
-			container := models4logist.OrderContainer{
+			container := dbo4logist.OrderContainer{
 				ID: fmt.Sprintf("%s%d", size, i),
-				OrderContainerBase: models4logist.OrderContainerBase{
+				OrderContainerBase: dbo4logist.OrderContainerBase{
 					Type: size,
 				},
 			}
@@ -150,7 +150,7 @@ func fillOrderDtoFromRequest(orderDto *models4logist.OrderDto, request dto4logis
 	}
 }
 
-func addContactsFromCounterparties(ctx context.Context, tx dal.ReadTransaction, teamID string, order *models4logist.OrderDto) error {
+func addContactsFromCounterparties(ctx context.Context, tx dal.ReadTransaction, teamID string, order *dbo4logist.OrderDto) error {
 	if len(order.Counterparties) == 0 {
 		panic("at least 1 counterparty should be added to a new order")
 	}
@@ -172,7 +172,7 @@ func addContactsFromCounterparties(ctx context.Context, tx dal.ReadTransaction, 
 	for _, contact := range contacts {
 		_, orderContact := order.GetContactByID(contact.ID)
 		if orderContact == nil {
-			orderContact = &models4logist.OrderContact{
+			orderContact = &dbo4logist.OrderContact{
 				ID:        contact.ID,
 				Type:      contact.Data.Type,
 				Title:     contact.Data.Title,

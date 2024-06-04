@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )
@@ -41,7 +41,7 @@ func addSegmentsTx(ctx context.Context, tx dal.ReadwriteTransaction, params *Ord
 	return nil
 }
 
-func updateContainerWithAddedSegment(orderDto *models4logist.OrderDto, containerData dto4logist.SegmentContainerData) error {
+func updateContainerWithAddedSegment(orderDto *dbo4logist.OrderDto, containerData dto4logist.SegmentContainerData) error {
 	_, container := orderDto.GetContainerByID(containerData.ID)
 
 	if container == nil {
@@ -69,12 +69,12 @@ func addSegment(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderW
 		return segmentChanges, fmt.Errorf("failed to update container with added segment: %w", err)
 	}
 
-	segmentKey := models4logist.ContainerSegmentKey{
+	segmentKey := dbo4logist.ContainerSegmentKey{
 		ContainerID: containerData.ID,
-		From: models4logist.SegmentEndpoint{
+		From: dbo4logist.SegmentEndpoint{
 			SegmentCounterparty: request.From.Counterparty,
 		},
-		To: models4logist.SegmentEndpoint{
+		To: dbo4logist.SegmentEndpoint{
 			SegmentCounterparty: request.To.Counterparty,
 		},
 	}
@@ -82,11 +82,11 @@ func addSegment(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderW
 	if segment != nil {
 		return segmentChanges, fmt.Errorf("segment already exists")
 	}
-	segment = &models4logist.ContainerSegment{
+	segment = &dbo4logist.ContainerSegment{
 		ContainerSegmentKey: segmentKey,
 	}
 	if request.From.Date != "" || request.To.Date != "" {
-		segment.Dates = &models4logist.SegmentDates{
+		segment.Dates = &dbo4logist.SegmentDates{
 			Departs: request.From.Date,
 			Arrives: request.To.Date,
 		}
@@ -130,19 +130,19 @@ func addSegment(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderW
 }
 
 func addContainerPoint(
-	orderDto *models4logist.OrderDto,
+	orderDto *dbo4logist.OrderDto,
 	shippingPointID string,
 	containerData dto4logist.SegmentContainerData,
-	containerEndpoints models4logist.ContainerEndpoints,
+	containerEndpoints dbo4logist.ContainerEndpoints,
 ) error {
 	containerPoint := orderDto.GetContainerPoint(containerData.ID, shippingPointID)
 	if containerPoint == nil {
-		containerPoint = &models4logist.ContainerPoint{
+		containerPoint = &dbo4logist.ContainerPoint{
 			ContainerID:     containerData.ID,
 			ShippingPointID: shippingPointID,
-			ShippingPointBase: models4logist.ShippingPointBase{
+			ShippingPointBase: dbo4logist.ShippingPointBase{
 				Status: "pending",
-				FreightPoint: models4logist.FreightPoint{
+				FreightPoint: dbo4logist.FreightPoint{
 					Tasks: containerData.Tasks,
 				},
 			},
@@ -153,7 +153,7 @@ func addContainerPoint(
 		if !containerData.ToUnload.IsEmpty() {
 			containerPoint.ToUnload = containerData.ToUnload
 		}
-		if containerEndpoints != (models4logist.ContainerEndpoints{}) {
+		if containerEndpoints != (dbo4logist.ContainerEndpoints{}) {
 			containerPoint.ContainerEndpoints = containerEndpoints
 		}
 		orderDto.ContainerPoints = append(orderDto.ContainerPoints, containerPoint)
@@ -166,7 +166,7 @@ func addContainerPoint(
 			containerPoint.ToUnload = containerData.ToUnload
 		}
 		{
-			if containerEndpoints != (models4logist.ContainerEndpoints{}) {
+			if containerEndpoints != (dbo4logist.ContainerEndpoints{}) {
 				containerPoint.ContainerEndpoints = containerEndpoints
 			}
 		}
@@ -174,7 +174,7 @@ func addContainerPoint(
 	return nil
 }
 
-//func updateContainerLoadForSegment(params *OrderWorkerParams, containerData dto4logist.SegmentContainerData, segment *models4logist.ContainerSegment) error {
+//func updateContainerLoadForSegment(params *OrderWorkerParams, containerData dto4logist.SegmentContainerData, segment *dbo4logist.ContainerSegment) error {
 //	orderDto := params.Order.Data
 //	containerPoint := orderDto.WithContainerPoints.GetContainerPoint(containerData.ID, segment.From.ShippingPointID)
 //	if containerPoint == nil {
@@ -187,8 +187,8 @@ func addOrUpdateShippingPoints(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	params *OrderWorkerParams,
-	orderDto *models4logist.OrderDto,
-	segment *models4logist.ContainerSegment,
+	orderDto *dbo4logist.OrderDto,
+	segment *dbo4logist.ContainerSegment,
 	containerData dto4logist.SegmentContainerData,
 ) error {
 	teamID := params.TeamWorkerParams.Team.ID
@@ -199,7 +199,7 @@ func addOrUpdateShippingPoints(
 	if fromShippingPoint != nil {
 		fromContainerData := containerData
 		fromContainerData.ToUnload = nil
-		var containerEndpoints models4logist.ContainerEndpoints
+		var containerEndpoints dbo4logist.ContainerEndpoints
 		if segment.Dates != nil {
 			containerEndpoints.Departure.ScheduledDate = segment.Dates.Departs
 		}
@@ -210,7 +210,7 @@ func addOrUpdateShippingPoints(
 	if toShippingPoint != nil {
 		toContainerData := containerData
 		toContainerData.ToLoad = nil
-		var containerDates models4logist.ContainerEndpoints
+		var containerDates dbo4logist.ContainerEndpoints
 		if segment.Dates != nil {
 			containerDates.Arrival.ScheduledDate = segment.Dates.Arrives
 		}
@@ -220,13 +220,13 @@ func addOrUpdateShippingPoints(
 	}
 	//if containerData.ToLoad != nil {
 	//	if fromShippingPoint.ToLoad == nil {
-	//		fromShippingPoint.ToLoad = &models4logist.FreightLoad{}
+	//		fromShippingPoint.ToLoad = &dbo4logist.FreightLoad{}
 	//	}
 	//	fromShippingPoint.ToLoad.Add(containerData.ToLoad)
 	//}
 	//if containerData.ToUnload != nil {
 	//	if toShippingPoint.ToUnload == nil {
-	//		toShippingPoint.ToUnload = &models4logist.FreightLoad{}
+	//		toShippingPoint.ToUnload = &dbo4logist.FreightLoad{}
 	//	}
 	//	toShippingPoint.ToUnload.Add(containerData.ToUnload)
 	//}
@@ -237,11 +237,11 @@ func addShippingPointsToOrderIfNeeded(
 	ctx context.Context,
 	tx dal.ReadTransaction,
 	teamID string,
-	orderDto *models4logist.OrderDto,
-	segment *models4logist.ContainerSegment,
-) (fromShippingPoint, toShippingPoint *models4logist.OrderShippingPoint, err error) {
-	add := func(end string, point *models4logist.SegmentEndpoint) (
-		shippingPoint *models4logist.OrderShippingPoint,
+	orderDto *dbo4logist.OrderDto,
+	segment *dbo4logist.ContainerSegment,
+) (fromShippingPoint, toShippingPoint *dbo4logist.OrderShippingPoint, err error) {
+	add := func(end string, point *dbo4logist.SegmentEndpoint) (
+		shippingPoint *dbo4logist.OrderShippingPoint,
 		err error,
 	) {
 		if shippingPoint, err = addShippingPointToOrderIfNeeded(ctx, tx, teamID, orderDto, end, point.SegmentCounterparty); err != nil {
@@ -264,11 +264,11 @@ func addShippingPointToOrderIfNeeded(
 	ctx context.Context,
 	tx dal.ReadTransaction,
 	teamID string,
-	orderDto *models4logist.OrderDto,
+	orderDto *dbo4logist.OrderDto,
 	end string,
-	segmentCounterparty models4logist.SegmentCounterparty,
+	segmentCounterparty dbo4logist.SegmentCounterparty,
 ) (
-	shippingPoint *models4logist.OrderShippingPoint,
+	shippingPoint *dbo4logist.OrderShippingPoint,
 	err error,
 ) {
 	_, shippingPoint = orderDto.GetShippingPointByContactID(segmentCounterparty.ContactID)
@@ -299,24 +299,24 @@ func addShippingPointToOrderIfNeeded(
 		return shippingPoint, fmt.Errorf("parent contact with ID=[%v] loaded from DB failed validation: %w", parent.ID, err)
 	}
 
-	shippingPoint = &models4logist.OrderShippingPoint{
+	shippingPoint = &dbo4logist.OrderShippingPoint{
 		ID: orderDto.NewOrderShippingPointID(),
-		ShippingPointBase: models4logist.ShippingPointBase{
+		ShippingPointBase: dbo4logist.ShippingPointBase{
 			Status: "pending",
 		},
 	}
 
 	switch segmentCounterparty.Role {
-	case models4logist.CounterpartyRoleDispatchPoint:
-		shippingPoint.Tasks = []models4logist.ShippingPointTask{models4logist.ShippingPointTaskLoad}
-	case models4logist.CounterpartyRoleReceivePoint:
-		shippingPoint.Tasks = []models4logist.ShippingPointTask{models4logist.ShippingPointTaskUnload}
-	case models4logist.CounterpartyRolePickPoint, models4logist.CounterpartyRoleDropPoint:
+	case dbo4logist.CounterpartyRoleDispatchPoint:
+		shippingPoint.Tasks = []dbo4logist.ShippingPointTask{dbo4logist.ShippingPointTaskLoad}
+	case dbo4logist.CounterpartyRoleReceivePoint:
+		shippingPoint.Tasks = []dbo4logist.ShippingPointTask{dbo4logist.ShippingPointTaskUnload}
+	case dbo4logist.CounterpartyRolePickPoint, dbo4logist.CounterpartyRoleDropPoint:
 		switch end {
 		case "from":
-			shippingPoint.Tasks = []models4logist.ShippingPointTask{models4logist.ShippingPointTaskPick}
+			shippingPoint.Tasks = []dbo4logist.ShippingPointTask{dbo4logist.ShippingPointTaskPick}
 		case "to":
-			shippingPoint.Tasks = []models4logist.ShippingPointTask{models4logist.ShippingPointTaskDrop}
+			shippingPoint.Tasks = []dbo4logist.ShippingPointTask{dbo4logist.ShippingPointTaskDrop}
 		case "":
 			panic("parameter `end` is required")
 		default:
@@ -326,16 +326,16 @@ func addShippingPointToOrderIfNeeded(
 
 	if parent.Data == nil {
 		panic(fmt.Sprintf("parent.Data is nil: %+v", parent))
-		//shippingPoint.Counterparty = models4logist.ShippingPointCounterparty{
+		//shippingPoint.Counterparty = dbo4logist.ShippingPointCounterparty{
 		//	ContactID: location.ID,
 		//	Title:     location.Data.Title,
 		//}
 	} else {
-		shippingPoint.Counterparty = models4logist.ShippingPointCounterparty{
+		shippingPoint.Counterparty = dbo4logist.ShippingPointCounterparty{
 			ContactID: parent.ID,
 			Title:     parent.Data.Title,
 		}
-		shippingPoint.Location = &models4logist.ShippingPointLocation{
+		shippingPoint.Location = &dbo4logist.ShippingPointLocation{
 			ContactID: location.ID,
 			Title:     location.Data.Title,
 			Address:   location.Data.Address,
@@ -350,7 +350,7 @@ func addCounterpartyToOrderIfNeeded(
 	ctx context.Context,
 	tx dal.ReadTransaction,
 	teamID string,
-	order *models4logist.OrderDto,
+	order *dbo4logist.OrderDto,
 	endpointType string, // Either "from", "to" or "by"
 	segmentEndpoint dto4logist.AddSegmentEndpoint,
 ) (changes OrderChanges, err error) {
@@ -372,7 +372,7 @@ func addCounterpartyToOrderIfNeeded(
 	}
 	_, orderContact := order.GetContactByID(contact.ID)
 	if orderContact == nil {
-		orderContact = &models4logist.OrderContact{
+		orderContact = &dbo4logist.OrderContact{
 			ID:        contact.ID,
 			Type:      contact.Data.Type,
 			ParentID:  contact.Data.ParentID,
@@ -394,7 +394,7 @@ func addCounterpartyToOrderIfNeeded(
 				if err := tx.Get(ctx, parentContact.Record); err != nil {
 					return changes, fmt.Errorf("failed to get parent contact: %w", err)
 				}
-				parentOrderContact = &models4logist.OrderContact{
+				parentOrderContact = &dbo4logist.OrderContact{
 					ID:        parentContact.ID,
 					Type:      parentContact.Data.Type,
 					ParentID:  parentContact.Data.ParentID,
@@ -410,13 +410,13 @@ func addCounterpartyToOrderIfNeeded(
 			}
 		}
 	}
-	counterparty := models4logist.OrderCounterparty{
+	counterparty := dbo4logist.OrderCounterparty{
 		ContactID: contact.ID,
 		Role:      counterpartyRole,
 		CountryID: contact.Data.CountryID,
 		Title:     contact.Data.Title,
 	}
-	if counterparty.Role != models4logist.CounterpartyRoleDispatchPoint {
+	if counterparty.Role != dbo4logist.CounterpartyRoleDispatchPoint {
 		counterparty.RefNumber = segmentEndpoint.RefNumber
 	}
 	order.Counterparties = append(order.Counterparties, &counterparty)
@@ -427,36 +427,36 @@ func addCounterpartyToOrderIfNeeded(
 			return changes, fmt.Errorf("failed to get parent contact by ID=[%s]: %w", contact.Data.ParentID, err)
 		}
 
-		var parentCounterpartyRole models4logist.CounterpartyRole
+		var parentCounterpartyRole dbo4logist.CounterpartyRole
 
 		switch counterpartyRole {
-		case models4logist.CounterpartyRoleDispatchPoint:
-			parentCounterpartyRole = models4logist.CounterpartyRoleDispatcher
-		case models4logist.CounterpartyRoleReceivePoint:
-			parentCounterpartyRole = models4logist.CounterpartyRoleReceiver
-		case models4logist.CounterpartyRolePickPoint:
-			parentCounterpartyRole = models4logist.CounterpartyRolePortFrom
-		case models4logist.CounterpartyRoleDropPoint:
-			parentCounterpartyRole = models4logist.CounterpartyRolePortTo
+		case dbo4logist.CounterpartyRoleDispatchPoint:
+			parentCounterpartyRole = dbo4logist.CounterpartyRoleDispatcher
+		case dbo4logist.CounterpartyRoleReceivePoint:
+			parentCounterpartyRole = dbo4logist.CounterpartyRoleReceiver
+		case dbo4logist.CounterpartyRolePickPoint:
+			parentCounterpartyRole = dbo4logist.CounterpartyRolePortFrom
+		case dbo4logist.CounterpartyRoleDropPoint:
+			parentCounterpartyRole = dbo4logist.CounterpartyRolePortTo
 		default:
 			return changes, fmt.Errorf("counterparty with role=%s references a contact with ID=%s that unexpectedely has non empty parentContactID=%s",
 				counterpartyRole, contact.ID, contact.Data.ParentID)
 		}
 
-		counterparty.Parent = &models4logist.CounterpartyParent{
+		counterparty.Parent = &dbo4logist.CounterpartyParent{
 			ContactID: contact.Data.ParentID,
 			Role:      parentCounterpartyRole,
 		}
 
 		if _, parentCounterparty := order.GetCounterpartyByRoleAndContactID(parentCounterpartyRole, parent.ID); parentCounterparty == nil {
-			parentCounterparty = &models4logist.OrderCounterparty{
+			parentCounterparty = &dbo4logist.OrderCounterparty{
 				ContactID: parent.ID,
 				Role:      parentCounterpartyRole,
 				Title:     parent.Data.Title,
 				CountryID: parent.Data.CountryID,
 			}
 			order.Counterparties = append(order.Counterparties, parentCounterparty)
-		} else if segmentEndpoint.RefNumber != "" && counterparty.Role == models4logist.CounterpartyRoleDispatchPoint && parentCounterparty.RefNumber == "" {
+		} else if segmentEndpoint.RefNumber != "" && counterparty.Role == dbo4logist.CounterpartyRoleDispatchPoint && parentCounterparty.RefNumber == "" {
 			parentCounterparty.RefNumber = segmentEndpoint.RefNumber
 		}
 	}

@@ -2,11 +2,11 @@ package dto4logist
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/strongo/validation"
 )
 
-type task = models4logist.ShippingPointTask
+type task = dbo4logist.ShippingPointTask
 
 type AddContainerPoint struct {
 	ID    string `json:"id"`    // container ID
@@ -17,7 +17,7 @@ func (v AddContainerPoint) Validate() error {
 	if err := validateContainerID("id", v.ID); err != nil {
 		return err
 	}
-	return models4logist.ValidateShippingPointTasksRequest(v.Tasks, true)
+	return dbo4logist.ValidateShippingPointTasksRequest(v.Tasks, true)
 }
 
 // AddOrderShippingPointRequest represents a request to create a new order shipping point.
@@ -34,7 +34,7 @@ func (v AddOrderShippingPointRequest) Validate() error {
 	if err := v.OrderRequest.Validate(); err != nil {
 		return err
 	}
-	if err := models4logist.ValidateShippingPointTasksRequest(v.Tasks, len(v.Containers) == 0); err != nil {
+	if err := dbo4logist.ValidateShippingPointTasksRequest(v.Tasks, len(v.Containers) == 0); err != nil {
 		return err
 	}
 	if v.LocationContactID == "" {

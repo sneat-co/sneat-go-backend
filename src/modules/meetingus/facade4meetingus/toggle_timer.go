@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/models4meetingus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/dbo4meetingus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
@@ -73,7 +73,7 @@ func ToggleTimer(ctx context.Context, userContext facade.User, params TogglePara
 			meeting := workerParams.Meeting.Data()
 			timer := meeting.Timer
 			if timer == nil {
-				timer = &models4meetingus.Timer{}
+				timer = &dbo4meetingus.Timer{}
 				meeting.Timer = timer
 			}
 

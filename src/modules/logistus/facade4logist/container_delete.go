@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
@@ -27,7 +27,7 @@ func deleteContainerTx(request dto4logist.ContainerRequest, params *OrderWorkerP
 	if !containerFound {
 		return nil
 	}
-	segmentsToDelete := orderDto.GetSegmentsByFilter(models4logist.SegmentsFilter{ContainerIDs: []string{request.ContainerID}})
+	segmentsToDelete := orderDto.GetSegmentsByFilter(dbo4logist.SegmentsFilter{ContainerIDs: []string{request.ContainerID}})
 	orderDto.Segments = orderDto.DeleteSegments(segmentsToDelete)
 	orderDto.ContainerPoints = orderDto.RemoveContainerPointsByContainerID(request.ContainerID)
 	params.Changed.Containers = true

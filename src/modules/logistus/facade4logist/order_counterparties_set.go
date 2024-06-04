@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/slice"
 	"github.com/strongo/strongoapp/with"
@@ -19,7 +19,7 @@ func SetOrderCounterparties(
 	ctx context.Context,
 	user facade.User,
 	request dto4logist.SetOrderCounterpartiesRequest,
-) (orderCounterparties []*models4logist.OrderCounterparty, err error) {
+) (orderCounterparties []*dbo4logist.OrderCounterparty, err error) {
 	//for i := range request.Counterparties {
 	//	request.Counterparties[i].Instructions = strings.TrimSpace(request.Counterparties[i].Instructions)
 	//}
@@ -36,7 +36,7 @@ func setOrderCounterpartyTxWorker(
 	tx dal.ReadwriteTransaction,
 	params *OrderWorkerParams,
 	request dto4logist.SetOrderCounterpartiesRequest,
-) (orderCounterparties []*models4logist.OrderCounterparty, err error) {
+) (orderCounterparties []*dbo4logist.OrderCounterparty, err error) {
 	if slice.Index(params.TeamWorkerParams.Team.Data.UserIDs, userID) < 0 {
 		return nil, facade.ErrUnauthorized
 	}
@@ -92,7 +92,7 @@ counterparties:
 		_, orderContact := order.Dto.GetContactByID(counterparty.ContactID)
 		isNewOrderContact := orderContact == nil
 		if isNewOrderContact {
-			orderContact = &models4logist.OrderContact{
+			orderContact = &dbo4logist.OrderContact{
 				ID:        counterparty.ContactID,
 				Type:      contact.Data.Type,
 				Title:     contact.Data.Title,
@@ -100,7 +100,7 @@ counterparties:
 				CountryID: contact.Data.CountryID,
 			}
 			if orderContact.CountryID == "" {
-				if counterparty.Role == models4logist.CounterpartyRoleShip {
+				if counterparty.Role == dbo4logist.CounterpartyRoleShip {
 					orderContact.CountryID = with.UnknownCountryID
 				} else {
 					return nil, validation.NewErrBadRecordFieldValue("contact.Data.CountryID", "only contacts with type=ship can have empty country ID")
@@ -113,7 +113,7 @@ counterparties:
 			params.Changed.Contacts = true
 
 		}
-		newCounterparty := &models4logist.OrderCounterparty{
+		newCounterparty := &dbo4logist.OrderCounterparty{
 			ContactID: contact.ID,
 			CountryID: contact.Data.CountryID,
 			Title:     contact.Data.Title,
@@ -131,7 +131,7 @@ counterparties:
 			if parentRole == "" {
 				return nil, fmt.Errorf("unsupported child counterparty role: %s", newCounterparty.Role)
 			}
-			newCounterparty.Parent = &models4logist.CounterpartyParent{
+			newCounterparty.Parent = &dbo4logist.CounterpartyParent{
 				ContactID: contact.Data.ParentID,
 				Role:      parentRole,
 			}
@@ -139,8 +139,8 @@ counterparties:
 
 		orderCounterparties = append(orderCounterparties, newCounterparty)
 		var i int
-		var oldCounterparty *models4logist.OrderCounterparty
-		if counterparty.Role != models4logist.CounterpartyRoleShippingLine {
+		var oldCounterparty *dbo4logist.OrderCounterparty
+		if counterparty.Role != dbo4logist.CounterpartyRoleShippingLine {
 			i, oldCounterparty = order.Dto.GetCounterpartyByRole(counterparty.Role)
 		}
 		if oldCounterparty != nil {
@@ -183,10 +183,10 @@ counterparties:
 	return orderCounterparties, nil
 }
 
-func getParentRoleByChildRole(childRole models4logist.CounterpartyRole) models4logist.CounterpartyRole {
+func getParentRoleByChildRole(childRole dbo4logist.CounterpartyRole) dbo4logist.CounterpartyRole {
 	switch childRole {
-	case models4logist.CounterpartyRoleShip:
-		return models4logist.CounterpartyRoleShippingLine
+	case dbo4logist.CounterpartyRoleShip:
+		return dbo4logist.CounterpartyRoleShippingLine
 	default:
 		return ""
 	}
@@ -194,9 +194,9 @@ func getParentRoleByChildRole(childRole models4logist.CounterpartyRole) models4l
 func setOrderCounterpartyParent(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	order models4logist.Order,
+	order dbo4logist.Order,
 	parentID string,
-	childCounterparty *models4logist.OrderCounterparty,
+	childCounterparty *dbo4logist.OrderCounterparty,
 ) error {
 	parentRole := getParentRoleByChildRole(childCounterparty.Role)
 	if parentRole == "" {
@@ -212,7 +212,7 @@ func setOrderCounterpartyParent(
 		if err := tx.Get(ctx, parentContact.Record); err != nil {
 			return fmt.Errorf("failed to get parent contact record: %w", err)
 		}
-		parentOrderContact = &models4logist.OrderContact{
+		parentOrderContact = &dbo4logist.OrderContact{
 			ID:        parentContact.ID,
 			Type:      parentContact.Data.Type,
 			Title:     parentContact.Data.Title,
@@ -220,7 +220,7 @@ func setOrderCounterpartyParent(
 		}
 		order.Dto.Contacts = append(order.Dto.Contacts, parentOrderContact)
 	}
-	order.Dto.Counterparties = append(order.Dto.Counterparties, &models4logist.OrderCounterparty{
+	order.Dto.Counterparties = append(order.Dto.Counterparties, &dbo4logist.OrderCounterparty{
 		ContactID: parentOrderContact.ID,
 		Role:      parentRole,
 		Title:     parentOrderContact.Title,

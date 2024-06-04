@@ -88,8 +88,8 @@ type TeamItemWorkerParams struct {
 //			Started: time.Now(),
 //		}
 //		if request.IsTeamRecordNeeded {
-//			params.TeamKey = dal.NewKeyWithID(models4teamus.TeamsCollection, request.InviteID)
-//			params.TeamID = new(models4teamus.TeamDto)
+//			params.TeamKey = dal.NewKeyWithID(dbo4teamus.TeamsCollection, request.InviteID)
+//			params.TeamID = new(dbo4teamus.TeamDto)
 //			teamRecord := dal.NewRecordWithData(params.TeamKey, params.TeamID)
 //			if err = tx.Get(ctx, teamRecord); err != nil {
 //				return

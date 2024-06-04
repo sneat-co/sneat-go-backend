@@ -1,8 +1,8 @@
 package facade4retrospectus
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/models4meetingus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/models4retrospectus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/dbo4meetingus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
 )
 
 // MeetingRecordFactory factory
@@ -15,6 +15,6 @@ func (MeetingRecordFactory) Collection() string {
 }
 
 // NewRecordData creates new api4meetingus record
-func (MeetingRecordFactory) NewRecordData() models4meetingus.MeetingInstance {
-	return &models4retrospectus.Retrospective{}
+func (MeetingRecordFactory) NewRecordData() dbo4meetingus.MeetingInstance {
+	return &dbo4retrospectus.Retrospective{}
 }

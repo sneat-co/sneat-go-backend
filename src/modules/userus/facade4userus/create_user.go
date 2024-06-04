@@ -6,7 +6,7 @@ package facade4userus
 //	"github.com/dal-go/dalgo/dal"
 //	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 //	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dto4userus"
-//	"github.com/sneat-co/sneat-go-backend/src/modules/userus/models4userus"
+//	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 //	"github.com/sneat-co/sneat-go-core/facade"
 //	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 //	"strings"
@@ -30,7 +30,7 @@ package facade4userus
 //}
 //
 //func createUserTx(ctx context.Context, tx dal.ReadwriteTransaction, userID string, request dto4userus.CreateUserRequestWithRemoteClientInfo) error {
-//	user := models4userus.NewUserContext(userID)
+//	user := dbo4userus.NewUserContext(userID)
 //	if err := TxGetUserByID(ctx, tx, user.Record); !dal.IsNotFound(err) {
 //		return err // Might be nil or not related to "record not found"
 //	}
@@ -45,7 +45,7 @@ package facade4userus
 //	{ // Set user's names
 //		user.Dbo.Names.Full = briefs4contactus.CleanTitle(request.Title)
 //		if strings.Contains(user.Dbo.Names.Full, " ") {
-//			user.Dbo.Defaults = &models4userus.UserDefaults{
+//			user.Dbo.Defaults = &dbo4userus.UserDefaults{
 //				ShortNames: briefs4contactus.GetShortNames(user.Dbo.Names.Full),
 //			}
 //		}

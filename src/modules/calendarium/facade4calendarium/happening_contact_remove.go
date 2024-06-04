@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
+	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/models4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/models4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dbo4contactus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
@@ -25,9 +25,9 @@ func RemoveParticipantFromHappening(ctx context.Context, user facade.User, reque
 		}
 		contactShortRef := dbmodels.NewTeamItemID(request.Contact.TeamID, request.Contact.ID)
 		switch params.Happening.Dbo.Type {
-		case models4calendarium.HappeningTypeSingle:
+		case dbo4calendarium.HappeningTypeSingle:
 			break // nothing to do
-		case models4calendarium.HappeningTypeRecurring:
+		case dbo4calendarium.HappeningTypeRecurring:
 			var updates []dal.Update
 			if updates, err = removeContactFromHappeningBriefInContactusTeamDbo(params.TeamModuleEntry, params.Happening, contactShortRef); err != nil {
 				return fmt.Errorf("failed to remove member from happening brief in team DBO: %w", err)
@@ -51,7 +51,7 @@ func RemoveParticipantFromHappening(ctx context.Context, user facade.User, reque
 
 func removeContactFromHappeningBriefInContactusTeamDbo(
 	calendariumTeam dal4calendarium.CalendariumTeamContext,
-	happening models4calendarium.HappeningContext,
+	happening dbo4calendarium.HappeningContext,
 	contactShortRef dbmodels.TeamItemID,
 ) (updates []dal.Update, err error) {
 	calendarHappeningBrief := calendariumTeam.Data.GetRecurringHappeningBrief(happening.ID)

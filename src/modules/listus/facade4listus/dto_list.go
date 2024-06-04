@@ -2,7 +2,7 @@ package facade4listus
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/listus/models4listus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
@@ -13,17 +13,17 @@ import (
 type ListRequest struct {
 	dto4teamus.TeamRequest
 	ListID   string `json:"listID"`
-	listType models4listus.ListType
+	listType dbo4listus.ListType
 }
 
-func (v *ListRequest) ListType() models4listus.ListType {
+func (v *ListRequest) ListType() dbo4listus.ListType {
 	if v.listType != "" {
 		return v.listType
 	}
 	if v.ListID == "" {
 		return ""
 	}
-	i := strings.Index(v.ListID, models4listus.ListIDSeparator)
+	i := strings.Index(v.ListID, dbo4listus.ListIDSeparator)
 	if i < 0 {
 		return ""
 	}

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/models4retrospectus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )
@@ -35,7 +35,7 @@ func VoteItem(ctx context.Context, userContext facade.User, request VoteItemRequ
 	uid := userContext.GetID()
 	err := runRetroWorker(ctx, uid, request.Request,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params facade4meetingus.WorkerParams) error {
-			retrospective := params.Meeting.Record.Data().(*models4retrospectus.Retrospective)
+			retrospective := params.Meeting.Record.Data().(*dbo4retrospectus.Retrospective)
 			nodesByID, err := retrospective.GetMapOfRetroItemsByID()
 			if err != nil {
 				return err

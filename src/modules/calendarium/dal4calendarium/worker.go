@@ -4,17 +4,17 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/models4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
-type CalendariumTeamWorkerParams = dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo]
+type CalendariumTeamWorkerParams = dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo]
 
 type HappeningWorkerParams struct {
 	*CalendariumTeamWorkerParams
-	Happening        models4calendarium.HappeningContext
+	Happening        dbo4calendarium.HappeningContext
 	HappeningUpdates []dal.Update
 }
 
@@ -29,11 +29,11 @@ func RunHappeningTeamWorker(
 	moduleTeamWorker := func(
 		ctx context.Context,
 		tx dal.ReadwriteTransaction,
-		moduleTeamParams *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo],
+		moduleTeamParams *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo],
 	) (err error) {
 		params := &HappeningWorkerParams{
 			CalendariumTeamWorkerParams: moduleTeamParams,
-			Happening:                   models4calendarium.NewHappeningContext(request.TeamID, request.HappeningID),
+			Happening:                   dbo4calendarium.NewHappeningContext(request.TeamID, request.HappeningID),
 		}
 		if err = tx.Get(ctx, params.Happening.Record); err != nil {
 			if dal.IsNotFound(err) {
@@ -51,7 +51,7 @@ func RunHappeningTeamWorker(
 				return fmt.Errorf("failed to update happening record: %w", err)
 			}
 		}
-		if len(params.TeamModuleUpdates) == 0 && params.Happening.Dbo.Type == models4calendarium.HappeningTypeRecurring && (len(params.HappeningUpdates) > 0 || params.Happening.Record.HasChanged()) {
+		if len(params.TeamModuleUpdates) == 0 && params.Happening.Dbo.Type == dbo4calendarium.HappeningTypeRecurring && (len(params.HappeningUpdates) > 0 || params.Happening.Record.HasChanged()) {
 			recurringHappening := params.TeamModuleEntry.Data.RecurringHappenings[params.Happening.ID]
 			recurringHappening.HappeningBrief = params.Happening.Dbo.HappeningBrief
 			recurringHappening.WithRelated = params.Happening.Dbo.WithRelated

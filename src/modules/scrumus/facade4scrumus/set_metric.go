@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/models4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dbo4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/models4scrumus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/models4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )
@@ -22,7 +22,7 @@ func SetMetric(ctx context.Context, userContext facade.User, request SetMetricRe
 	uid := userContext.GetID()
 	err = runScrumWorker(ctx, userContext, request.Request,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params facade4meetingus.WorkerParams) (err error) {
-			var teamMetric *models4teamus.TeamMetric
+			var teamMetric *dbo4teamus.TeamMetric
 			for _, m := range params.Team.Data.Metrics {
 				if m.ID == request.Metric {
 					teamMetric = m
@@ -36,7 +36,7 @@ func SetMetric(ctx context.Context, userContext facade.User, request SetMetricRe
 			p := setMetricParams{
 				uid:        uid,
 				request:    request,
-				scrum:      params.Meeting.Record.Data().(*models4scrumus.Scrum),
+				scrum:      params.Meeting.Record.Data().(*dbo4scrumus.Scrum),
 				teamMetric: teamMetric,
 			}
 			switch teamMetric.Mode {
@@ -64,12 +64,12 @@ func SetMetric(ctx context.Context, userContext facade.User, request SetMetricRe
 type setMetricParams struct {
 	uid        string
 	request    SetMetricRequest
-	scrum      *models4scrumus.Scrum
-	teamMetric *models4teamus.TeamMetric
+	scrum      *dbo4scrumus.Scrum
+	teamMetric *dbo4teamus.TeamMetric
 }
 
 func setPersonalMetric(p setMetricParams, contactusTeam *models4contactus.ContactusTeamDbo) (scrumUpdates []dal.Update, err error) {
-	var status *models4scrumus.MemberStatus
+	var status *dbo4scrumus.MemberStatus
 	var teamMember *briefs4contactus.ContactBrief
 	var teamMemberContactID string
 	for contactID, contact := range contactusTeam.Contacts {
@@ -89,12 +89,12 @@ func setPersonalMetric(p setMetricParams, contactusTeam *models4contactus.Contac
 			goto UpdateMember
 		}
 	}
-	status = &models4scrumus.MemberStatus{
-		Member: models4scrumus.ScrumMember{
+	status = &dbo4scrumus.MemberStatus{
+		Member: dbo4scrumus.ScrumMember{
 			ID:    teamMemberContactID,
 			Title: teamMember.Title,
 		},
-		Metrics: make([]*models4scrumus.MetricRecord, 0, 1),
+		Metrics: make([]*dbo4scrumus.MetricRecord, 0, 1),
 	}
 UpdateMember:
 	var changed bool
@@ -120,8 +120,8 @@ func setTeamMetric(p setMetricParams) (scrumUpdates []dal.Update, err error) {
 	return
 }
 
-func setMetric(p setMetricParams, metrics []*models4scrumus.MetricRecord) (changed bool, updatedMetrics []*models4scrumus.MetricRecord, scrumUpdates []dal.Update, err error) {
-	var metric *models4scrumus.MetricRecord
+func setMetric(p setMetricParams, metrics []*dbo4scrumus.MetricRecord) (changed bool, updatedMetrics []*dbo4scrumus.MetricRecord, scrumUpdates []dal.Update, err error) {
+	var metric *dbo4scrumus.MetricRecord
 	isExistingRecord := true
 
 	for _, m := range metrics {
@@ -130,10 +130,10 @@ func setMetric(p setMetricParams, metrics []*models4scrumus.MetricRecord) (chang
 			goto UpdateMetric
 		}
 	}
-	metric = &models4scrumus.MetricRecord{
+	metric = &dbo4scrumus.MetricRecord{
 		ID:          p.request.Metric,
 		UID:         p.uid,
-		MetricValue: models4scrumus.MetricValue{},
+		MetricValue: dbo4scrumus.MetricValue{},
 	}
 	isExistingRecord = false
 UpdateMetric:

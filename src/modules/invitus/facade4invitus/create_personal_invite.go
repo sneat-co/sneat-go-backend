@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/models4invitus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/dbo4invitus"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/sneat-co/sneat-go-core/models/dbprofile"
 	"github.com/strongo/random"
@@ -35,14 +35,14 @@ func createInviteForMember(
 	tx dal.ReadwriteTransaction,
 	uid string,
 	remoteClient dbmodels.RemoteClientInfo,
-	team models4invitus.InviteTeam,
-	from models4invitus.InviteFrom,
-	to models4invitus.InviteToMember,
+	team dbo4invitus.InviteTeam,
+	from dbo4invitus.InviteFrom,
+	to dbo4invitus.InviteToMember,
 	composeOnly bool,
 	inviterUserID,
 	message string,
 	toAvatar *dbprofile.Avatar,
-) (id string, personalInvite *models4invitus.PersonalInviteDto, err error) {
+) (id string, personalInvite *dbo4invitus.PersonalInviteDto, err error) {
 	if err = team.Validate(); err != nil {
 		err = fmt.Errorf("parameter 'team' is not valid: %w", err)
 		return
@@ -77,16 +77,16 @@ func createInviteForMember(
 		toAddressLower = strings.ToLower(toAddress.Address)
 	}
 	from.UserID = uid
-	personalInvite = &models4invitus.PersonalInviteDto{
-		InviteDto: models4invitus.InviteDto{
+	personalInvite = &dbo4invitus.PersonalInviteDto{
+		InviteDto: dbo4invitus.InviteDto{
 			Status: "active",
 			Pin:    randomPinCode(),
 			TeamID: teamID,
-			InviteBase: models4invitus.InviteBase{
+			InviteBase: dbo4invitus.InviteBase{
 				Type:    "personal",
 				Channel: to.Channel,
 				From:    from, // TODO: get user email
-				To: &models4invitus.InviteTo{
+				To: &dbo4invitus.InviteTo{
 					InviteContact: to.InviteContact,
 				},
 				ComposeOnly: composeOnly,

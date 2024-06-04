@@ -1,7 +1,7 @@
 package dto4logist
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -9,7 +9,7 @@ import (
 func TestDeleteSegmentsRequest_Validate(t *testing.T) {
 	type fields struct {
 		OrderRequest   OrderRequest
-		SegmentsFilter models4logist.SegmentsFilter
+		SegmentsFilter dbo4logist.SegmentsFilter
 	}
 	tests := []struct {
 		name    string

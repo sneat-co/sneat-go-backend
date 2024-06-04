@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/const4calendarium"
+	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/models4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
@@ -20,20 +20,20 @@ func RevokeHappeningCancellation(ctx context.Context, user facade.User, request 
 		return err
 	}
 
-	happening := models4calendarium.NewHappeningContext(request.TeamID, request.HappeningID)
+	happening := dbo4calendarium.NewHappeningContext(request.TeamID, request.HappeningID)
 	err = dal4teamus.RunModuleTeamWorker(ctx, user, request.TeamRequest,
 		const4calendarium.ModuleID,
-		new(models4calendarium.CalendariumTeamDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo]) (err error) {
+		new(dbo4calendarium.CalendariumTeamDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo]) (err error) {
 			if err = tx.Get(ctx, happening.Record); err != nil {
 				return fmt.Errorf("failed to get happening: %w", err)
 			}
 			switch happening.Dbo.Type {
 			case "":
 				return fmt.Errorf("happening record has no type: %w", validation.NewErrRecordIsMissingRequiredField("type"))
-			case models4calendarium.HappeningTypeSingle:
+			case dbo4calendarium.HappeningTypeSingle:
 				return revokeSingleHappeningCancellation(ctx, tx, happening)
-			case models4calendarium.HappeningTypeRecurring:
+			case dbo4calendarium.HappeningTypeRecurring:
 				return revokeRecurringHappeningCancellation(ctx, tx, params, happening, request.Date, request.SlotID)
 			default:
 				return validation.NewErrBadRecordFieldValue("type", "happening has unknown type: "+happening.Dbo.Type)
@@ -45,20 +45,20 @@ func RevokeHappeningCancellation(ctx context.Context, user facade.User, request 
 	return
 }
 
-func revokeSingleHappeningCancellation(ctx context.Context, tx dal.ReadwriteTransaction, happening models4calendarium.HappeningContext) error {
+func revokeSingleHappeningCancellation(ctx context.Context, tx dal.ReadwriteTransaction, happening dbo4calendarium.HappeningContext) error {
 	return removeCancellationFromHappeningRecord(ctx, tx, happening)
 }
 
 func revokeRecurringHappeningCancellation(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo],
-	happening models4calendarium.HappeningContext,
+	params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo],
+	happening dbo4calendarium.HappeningContext,
 	dateID string,
 	slotID string,
 ) error {
 	log.Printf("revokeRecurringHappeningCancellation(): teamID=%v, dateID=%v, happeningID=%v, slotID=%+v", params.Team.ID, dateID, happening.ID, slotID)
-	if happening.Dbo.Status == models4calendarium.HappeningStatusCanceled {
+	if happening.Dbo.Status == dbo4calendarium.HappeningStatusCanceled {
 		if err := removeCancellationFromHappeningRecord(ctx, tx, happening); err != nil {
 			return fmt.Errorf("failed to remove cancellation from happening record: %w", err)
 		}
@@ -73,13 +73,13 @@ func revokeRecurringHappeningCancellation(
 	return nil
 }
 
-func removeCancellationFromHappeningBrief(params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo], happening models4calendarium.HappeningContext) error {
+func removeCancellationFromHappeningBrief(params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo], happening dbo4calendarium.HappeningContext) error {
 	happeningBrief := params.TeamModuleEntry.Data.GetRecurringHappeningBrief(happening.ID)
 	if happeningBrief == nil {
 		return nil
 	}
-	if happeningBrief.Status == models4calendarium.HappeningStatusCanceled {
-		happeningBrief.Status = models4calendarium.HappeningStatusActive
+	if happeningBrief.Status == dbo4calendarium.HappeningStatusCanceled {
+		happeningBrief.Status = dbo4calendarium.HappeningStatusActive
 		happeningBrief.Canceled = nil
 		if err := happeningBrief.Validate(); err != nil {
 			return err
@@ -92,17 +92,17 @@ func removeCancellationFromHappeningBrief(params *dal4teamus.ModuleTeamWorkerPar
 	return nil
 }
 
-func removeCancellationFromHappeningRecord(ctx context.Context, tx dal.ReadwriteTransaction, happening models4calendarium.HappeningContext) error {
-	if happening.Dbo.Status != models4calendarium.HappeningStatusCanceled {
+func removeCancellationFromHappeningRecord(ctx context.Context, tx dal.ReadwriteTransaction, happening dbo4calendarium.HappeningContext) error {
+	if happening.Dbo.Status != dbo4calendarium.HappeningStatusCanceled {
 		return fmt.Errorf("not allowed to revoke cancelation for happening in status=" + happening.Dbo.Status)
 	}
-	happening.Dbo.Status = models4calendarium.HappeningStatusCanceled
+	happening.Dbo.Status = dbo4calendarium.HappeningStatusCanceled
 	happening.Dbo.Canceled = nil
 	if err := happening.Dbo.Validate(); err != nil {
 		return err
 	}
 	updates := []dal.Update{
-		{Field: "status", Value: models4calendarium.HappeningStatusActive},
+		{Field: "status", Value: dbo4calendarium.HappeningStatusActive},
 		{Field: "canceled", Value: dal.DeleteField},
 	}
 	if err := tx.Update(ctx, happening.Key, updates); err != nil {
@@ -117,7 +117,7 @@ func removeCancellationFromCalendarDay(ctx context.Context, tx dal.ReadwriteTran
 	if len(slotID) == 0 {
 		return validation.NewErrRequestIsMissingRequiredField("slotID")
 	}
-	calendarDay := models4calendarium.NewCalendarDayContext(teamID, dateID)
+	calendarDay := dbo4calendarium.NewCalendarDayContext(teamID, dateID)
 	if err := tx.Get(ctx, calendarDay.Record); err != nil {
 		if dal.IsNotFound(err) {
 			return nil

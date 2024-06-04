@@ -6,7 +6,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/models4invitus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/dbo4invitus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
@@ -34,7 +34,7 @@ func (v *GetPersonalInviteRequest) Validate() error {
 
 // PersonalInviteResponse holds response data for created personal invite
 type PersonalInviteResponse struct {
-	Invite  *models4invitus.PersonalInviteDto         `json:"invite,omitempty"`
+	Invite  *dbo4invitus.PersonalInviteDto            `json:"invite,omitempty"`
 	Members map[string]*briefs4contactus.ContactBrief `json:"members,omitempty"`
 }
 

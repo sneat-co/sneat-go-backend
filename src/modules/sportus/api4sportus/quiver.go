@@ -1,8 +1,8 @@
 package api4sportus
 
 import (
+	"github.com/sneat-co/sneat-go-backend/src/modules/sportus/dbo4sportus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/sportus/facade4sportus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/sportus/models4sportus"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/apicore/verify"
 	"github.com/sneat-co/sneat-go-core/httpserver"
@@ -27,7 +27,7 @@ func createWantedItem(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	wanted := models4sportus.Wanted{}
+	wanted := dbo4sportus.Wanted{}
 	request := facade4sportus.CreateWantedRequest{
 		Wanted: wanted,
 	}

@@ -2,7 +2,7 @@ package dto4logist
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
@@ -12,10 +12,10 @@ import (
 // SetLogistTeamSettingsRequest represents a request to set logistus team settings
 type SetLogistTeamSettingsRequest struct {
 	dto4teamus.TeamRequest
-	Roles             []models4logist.LogistTeamRole `json:"roles"`
-	Address           dbmodels.Address               `json:"address"`
-	VATNumber         string                         `json:"vatNumber,omitempty"`
-	OrderNumberPrefix string                         `json:"orderNumberPrefix,omitempty"`
+	Roles             []dbo4logist.LogistTeamRole `json:"roles"`
+	Address           dbmodels.Address            `json:"address"`
+	VATNumber         string                      `json:"vatNumber,omitempty"`
+	OrderNumberPrefix string                      `json:"orderNumberPrefix,omitempty"`
 }
 
 // Validate returns error if request is invalid
@@ -27,9 +27,9 @@ func (v SetLogistTeamSettingsRequest) Validate() error {
 		return validation.NewErrRequestIsMissingRequiredField("roles")
 	}
 	for i, role := range v.Roles {
-		if !models4logist.IsKnownLogistCompanyRole(role) {
+		if !dbo4logist.IsKnownLogistCompanyRole(role) {
 			return validation.NewErrBadRequestFieldValue(fmt.Sprintf("roles[%d]", i),
-				fmt.Sprintf("should be one of: %+v", models4logist.KnownLogistCompanyRoles))
+				fmt.Sprintf("should be one of: %+v", dbo4logist.KnownLogistCompanyRoles))
 		}
 	}
 	if err := v.Address.Validate(); err != nil {

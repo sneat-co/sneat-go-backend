@@ -1,12 +1,12 @@
 package facade4calendarium
 
-//var briefsAdapter = func(listType models4listus.ListType, listID string) facade4teamus.BriefsAdapter {
-//	getListGroupByListID := func(team *models4teamus.TeamDto) *models4listus.ListGroup {
+//var briefsAdapter = func(listType dbo4listus.ListType, listID string) facade4teamus.BriefsAdapter {
+//	getListGroupByListID := func(team *dbo4teamus.TeamDto) *dbo4listus.ListGroup {
 //		for _, lg := range team.ListGroups {
 //			for _, l := range lg.Lists {
 //				if l.ContactID == listID {
 //					if lg.Lists == nil {
-//						lg.Lists = make([]*models4listus.ListBrief, 0)
+//						lg.Lists = make([]*dbo4listus.ListBrief, 0)
 //					}
 //					return lg
 //				}
@@ -15,21 +15,21 @@ package facade4calendarium
 //		return nil
 //	}
 //
-//	getListGroupByID := func(team *models4teamus.TeamDto) *models4listus.ListGroup {
+//	getListGroupByID := func(team *dbo4teamus.TeamDto) *dbo4listus.ListGroup {
 //		for _, lg := range team.ListGroups {
 //			if lg.Role == listType {
 //				return lg
 //			}
 //		}
-//		lg := &models4listus.ListGroup{Role: listType}
+//		lg := &dbo4listus.ListGroup{Role: listType}
 //		team.ListGroups = append(team.ListGroups, lg)
 //		return lg
 //	}
 //
-//	var teamCache *models4teamus.TeamDto
-//	var listGroupCache *models4listus.ListGroup
+//	var teamCache *dbo4teamus.TeamDto
+//	var listGroupCache *dbo4listus.ListGroup
 //
-//	getListGroup := func(team *models4teamus.TeamDto) *models4listus.ListGroup {
+//	getListGroup := func(team *dbo4teamus.TeamDto) *dbo4listus.ListGroup {
 //		if team == nil {
 //			panic("team == nil")
 //		}
@@ -50,26 +50,26 @@ package facade4calendarium
 //
 //	return facade4teamus.BriefsAdapter{
 //		BriefsFieldName: "listGroups." + listType,
-//		BriefsValue: func(team *models4teamus.TeamDto) interface{} {
+//		BriefsValue: func(team *dbo4teamus.TeamDto) interface{} {
 //			lg := getListGroup(team)
 //			return lg.Lists
 //		},
-//		GetBriefsCount: func(team *models4teamus.TeamDto) int {
+//		GetBriefsCount: func(team *dbo4teamus.TeamDto) int {
 //			lg := getListGroup(team)
 //			return len(lg.Lists)
 //		},
-//		GetBriefItemID: func(team *models4teamus.TeamDto, i int) (id string) {
+//		GetBriefItemID: func(team *dbo4teamus.TeamDto, i int) (id string) {
 //			lg := getListGroup(team)
 //			return lg.Lists[i].ContactID
 //		},
-//		ShiftBriefs: func(team *models4teamus.TeamDto, from facade4teamus.SliceIndexes, to facade4teamus.SliceIndexes) {
+//		ShiftBriefs: func(team *dbo4teamus.TeamDto, from facade4teamus.SliceIndexes, to facade4teamus.SliceIndexes) {
 //			lg := getListGroup(team)
 //			copy(
 //				lg.Lists[to.Departs:to.Arrives],
 //				lg.Lists[from.Departs:from.Arrives],
 //			)
 //		},
-//		TrimBriefs: func(team *models4teamus.TeamDto, count int) {
+//		TrimBriefs: func(team *dbo4teamus.TeamDto, count int) {
 //			lg := getListGroup(team)
 //			lg.Lists = lg.Lists[:count]
 //		},

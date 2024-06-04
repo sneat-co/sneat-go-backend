@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/slice"
 	"github.com/strongo/validation"
@@ -35,7 +35,7 @@ func addOrderShippingPointTx(
 	request dto4logist.AddOrderShippingPointRequest,
 	params *OrderWorkerParams,
 ) (
-	shippingPoint *models4logist.OrderShippingPoint,
+	shippingPoint *dbo4logist.OrderShippingPoint,
 	err error,
 ) {
 	orderDto := params.Order.Dto
@@ -75,20 +75,20 @@ func addOrderShippingPointTx(
 			}
 		}
 	}
-	shippingPoint = &models4logist.OrderShippingPoint{
+	shippingPoint = &dbo4logist.OrderShippingPoint{
 		ID: orderDto.NewOrderShippingPointID(),
-		ShippingPointBase: models4logist.ShippingPointBase{
+		ShippingPointBase: dbo4logist.ShippingPointBase{
 			Status: "pending",
-			FreightPoint: models4logist.FreightPoint{
+			FreightPoint: dbo4logist.FreightPoint{
 				Tasks: request.Tasks,
 			},
 		},
-		Location: &models4logist.ShippingPointLocation{
+		Location: &dbo4logist.ShippingPointLocation{
 			ContactID: request.LocationContactID,
 			Title:     locationContact.Data.Title,
 			Address:   locationContact.Data.Address,
 		},
-		Counterparty: models4logist.ShippingPointCounterparty{
+		Counterparty: dbo4logist.ShippingPointCounterparty{
 			ContactID: counterpartyContact.ID,
 			Title:     counterpartyContact.Data.Title,
 		},
@@ -97,29 +97,29 @@ func addOrderShippingPointTx(
 	params.Changed.ShippingPoints = true
 
 	for _, task := range request.Tasks {
-		var counterpartyRole, locationRole models4logist.CounterpartyRole
+		var counterpartyRole, locationRole dbo4logist.CounterpartyRole
 		switch task {
-		case models4logist.ShippingPointTaskLoad:
-			counterpartyRole = models4logist.CounterpartyRoleDispatcher
-			locationRole = models4logist.CounterpartyRoleDispatchPoint
-		case models4logist.ShippingPointTaskUnload:
-			counterpartyRole = models4logist.CounterpartyRoleReceiver
-			locationRole = models4logist.CounterpartyRoleReceivePoint
+		case dbo4logist.ShippingPointTaskLoad:
+			counterpartyRole = dbo4logist.CounterpartyRoleDispatcher
+			locationRole = dbo4logist.CounterpartyRoleDispatchPoint
+		case dbo4logist.ShippingPointTaskUnload:
+			counterpartyRole = dbo4logist.CounterpartyRoleReceiver
+			locationRole = dbo4logist.CounterpartyRoleReceivePoint
 		}
 		if _, locationCounterparty := orderDto.GetCounterpartyByRoleAndContactID(locationRole, locationContact.ID); locationCounterparty == nil {
-			locationCounterparty = &models4logist.OrderCounterparty{
+			locationCounterparty = &dbo4logist.OrderCounterparty{
 				Role:      locationRole,
 				ContactID: locationContact.ID,
 				Title:     locationContact.Data.Title,
 				CountryID: locationContact.Data.CountryID,
-				Parent: &models4logist.CounterpartyParent{
+				Parent: &dbo4logist.CounterpartyParent{
 					ContactID: counterpartyContact.ID,
 					Role:      counterpartyRole,
 				},
 			}
 			_, locationOrderContact := orderDto.GetContactByID(locationContact.ID)
 			if locationOrderContact == nil {
-				locationOrderContact = &models4logist.OrderContact{
+				locationOrderContact = &dbo4logist.OrderContact{
 					ID:        locationContact.ID,
 					Type:      locationContact.Data.Type,
 					ParentID:  locationContact.Data.ParentID,
@@ -136,7 +136,7 @@ func addOrderShippingPointTx(
 			params.Changed.Counterparties = true
 		}
 		if _, counterparty := orderDto.GetCounterpartyByRoleAndContactID(counterpartyRole, counterpartyContact.ID); counterparty == nil {
-			counterparty = &models4logist.OrderCounterparty{
+			counterparty = &dbo4logist.OrderCounterparty{
 				Role:      counterpartyRole,
 				ContactID: counterpartyContact.ID,
 				Title:     counterpartyContact.Data.Title,
@@ -144,7 +144,7 @@ func addOrderShippingPointTx(
 			}
 			_, counterpartyOrderContact := orderDto.GetContactByID(counterpartyContact.ID)
 			if counterpartyOrderContact == nil {
-				counterpartyOrderContact = &models4logist.OrderContact{
+				counterpartyOrderContact = &dbo4logist.OrderContact{
 					ID:        counterpartyContact.ID,
 					Type:      counterpartyContact.Data.Type,
 					ParentID:  counterpartyContact.Data.ParentID,
@@ -167,7 +167,7 @@ func addOrderShippingPointTx(
 		if container == nil {
 			return nil, fmt.Errorf("container with ContactID=[%s] not found", container.ID)
 		}
-		containerPoint := &models4logist.ContainerPoint{
+		containerPoint := &dbo4logist.ContainerPoint{
 			ContainerID:       container.ID,
 			ShippingPointID:   shippingPoint.ID,
 			ShippingPointBase: shippingPoint.ShippingPointBase,

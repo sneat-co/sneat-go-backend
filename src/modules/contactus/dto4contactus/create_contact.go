@@ -3,8 +3,8 @@ package dto4contactus
 import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/models4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/models4linkage"
+	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dbo4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
@@ -28,7 +28,7 @@ type CreateContactRequest struct {
 	Location *CreateLocationRequest     `json:"location,omitempty"`
 	Basic    *CreateBasicContactRequest `json:"basic,omitempty"`
 
-	models4linkage.WithRelated
+	dbo4linkage.WithRelated
 
 	// Used for situation when we want a hard-coded contact number
 	// (e.g. a self-contact for a company team).

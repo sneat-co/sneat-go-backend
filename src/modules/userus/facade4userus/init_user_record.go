@@ -6,8 +6,8 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/facade4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dto4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/models4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/sneat-co/sneat-go-core/sneatauth"
@@ -18,7 +18,7 @@ import (
 )
 
 // InitUserRecord sets user title
-func InitUserRecord(ctx context.Context, userContext facade.User, request dto4userus.InitUserRecordRequest) (user models4userus.UserContext, err error) {
+func InitUserRecord(ctx context.Context, userContext facade.User, request dto4userus.InitUserRecordRequest) (user dbo4userus.UserContext, err error) {
 	if err = request.Validate(); err != nil {
 		err = fmt.Errorf("%w: %v", facade.ErrBadRequest, err)
 		return
@@ -55,9 +55,9 @@ func InitUserRecord(ctx context.Context, userContext facade.User, request dto4us
 	return
 }
 
-func initUserRecordTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, uid string, userInfo *sneatauth.AuthUserInfo, request dto4userus.InitUserRecordRequest) (user models4userus.UserContext, err error) {
+func initUserRecordTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, uid string, userInfo *sneatauth.AuthUserInfo, request dto4userus.InitUserRecordRequest) (user dbo4userus.UserContext, err error) {
 	var isNewUser bool
-	user = models4userus.NewUserContext(uid)
+	user = dbo4userus.NewUserContext(uid)
 	if err = TxGetUserByID(ctx, tx, user.Record); err != nil {
 		if dal.IsNotFound(err) {
 			isNewUser = true
@@ -77,7 +77,7 @@ func initUserRecordTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, ui
 	return
 }
 
-func createUserRecordTx(ctx context.Context, tx dal.ReadwriteTransaction, request dto4userus.InitUserRecordRequest, user models4userus.UserContext, userInfo *sneatauth.AuthUserInfo) error {
+func createUserRecordTx(ctx context.Context, tx dal.ReadwriteTransaction, request dto4userus.InitUserRecordRequest, user dbo4userus.UserContext, userInfo *sneatauth.AuthUserInfo) error {
 	user.Dbo.Status = "active"
 	user.Dbo.Type = briefs4contactus.ContactTypePerson
 	user.Dbo.CountryID = with.UnknownCountryID
@@ -145,7 +145,7 @@ func createUserRecordTx(ctx context.Context, tx dal.ReadwriteTransaction, reques
 	return nil
 }
 
-func updateUserRecordWithInitData(ctx context.Context, tx dal.ReadwriteTransaction, request dto4userus.InitUserRecordRequest, user models4userus.UserContext) error {
+func updateUserRecordWithInitData(ctx context.Context, tx dal.ReadwriteTransaction, request dto4userus.InitUserRecordRequest, user dbo4userus.UserContext) error {
 	var updates []dal.Update
 	if name := request.Names; name != nil {
 		if name.FullName == "" && !name.IsEmpty() {

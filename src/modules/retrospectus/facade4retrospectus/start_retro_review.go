@@ -6,7 +6,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/models4retrospectus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 	"time"
@@ -20,8 +20,8 @@ func StartRetroReview(ctx context.Context, userContext facade.User, request Retr
 	uid := userContext.GetID()
 	err = runRetroWorker(ctx, uid, request,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params facade4meetingus.WorkerParams) error {
-			retrospective := params.Meeting.Record.Data().(*models4retrospectus.Retrospective)
-			retrospective.Stage = models4retrospectus.StageReview
+			retrospective := params.Meeting.Record.Data().(*dbo4retrospectus.Retrospective)
+			retrospective.Stage = dbo4retrospectus.StageReview
 			now := time.Now()
 			retrospective.TimeLastAction = &now
 
@@ -48,13 +48,13 @@ func StartRetroReview(ctx context.Context, userContext facade.User, request Retr
 }
 
 func moveRetroItemsFromUsers(ctx context.Context, tx dal.ReadwriteTransaction, params facade4meetingus.WorkerParams) (teamRetrosUpdates []dal.Update, err error) {
-	retrospective := params.Meeting.Record.Data().(*models4retrospectus.Retrospective)
+	retrospective := params.Meeting.Record.Data().(*dbo4retrospectus.Retrospective)
 
 	//wg := sync.WaitGroup{}
 	userRetroRecords := make([]dal.Record, len(retrospective.Contacts))
 	for _, member := range retrospective.Contacts {
 		if member.UserID != "" && member.HasRole(const4contactus.TeamMemberRoleContributor) {
-			userRetroRecords = append(userRetroRecords, getUserRetroRecord(member.UserID, params.Team.ID, new(models4retrospectus.Retrospective)))
+			userRetroRecords = append(userRetroRecords, getUserRetroRecord(member.UserID, params.Team.ID, new(dbo4retrospectus.Retrospective)))
 		}
 		//}
 	}
@@ -68,7 +68,7 @@ func moveRetroItemsFromUsers(ctx context.Context, tx dal.ReadwriteTransaction, p
 		if ur == nil {
 			continue
 		}
-		userRetro := ur.Data().(*models4retrospectus.Retrospective)
+		userRetro := ur.Data().(*dbo4retrospectus.Retrospective)
 
 		if len(userRetro.Items) == 0 {
 			continue

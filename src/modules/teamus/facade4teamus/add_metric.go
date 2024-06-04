@@ -5,8 +5,8 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/gosimple/slug"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/models4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 	"strings"
@@ -15,7 +15,7 @@ import (
 // AddTeamMetricRequest request
 type AddTeamMetricRequest struct {
 	dto4teamus.TeamRequest
-	Metric models4teamus.TeamMetric `json:"metric"`
+	Metric dbo4teamus.TeamMetric `json:"metric"`
 }
 
 // Validate validates request

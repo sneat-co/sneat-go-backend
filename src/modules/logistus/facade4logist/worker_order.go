@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
@@ -35,7 +35,7 @@ func (v *OrderChanges) AddChanges(v2 OrderChanges) OrderChanges {
 // OrderWorkerParams passes data to a order worker
 type OrderWorkerParams struct {
 	TeamWorkerParams *dal4teamus.TeamWorkerParams
-	Order            models4logist.Order
+	Order            dbo4logist.Order
 	Changed          OrderChanges
 	// OrderUpdates     []dal.Update
 }
@@ -46,7 +46,7 @@ var RunOrderWorker = func(ctx context.Context, user facade.User, request dto4log
 		return fmt.Errorf("invalid order request: %w", err)
 	}
 	return dal4teamus.RunTeamWorker(ctx, user, request.TeamID, func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4teamus.TeamWorkerParams) (err error) {
-		order := models4logist.NewOrder(teamWorkerParams.Team.ID, request.OrderID)
+		order := dbo4logist.NewOrder(teamWorkerParams.Team.ID, request.OrderID)
 		params := OrderWorkerParams{
 			TeamWorkerParams: teamWorkerParams,
 			Order:            order,

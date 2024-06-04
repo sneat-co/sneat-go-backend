@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )
@@ -23,7 +23,7 @@ func addContainersTx(params *OrderWorkerParams, request dto4logist.AddContainers
 	}
 	for _, c := range request.Containers {
 		containerID := params.Order.Dto.WithOrderContainers.GenerateRandomContainerID()
-		containerBrief := models4logist.OrderContainer{
+		containerBrief := dbo4logist.OrderContainer{
 			ID:                 containerID,
 			OrderContainerBase: c.OrderContainerBase,
 		}
@@ -33,7 +33,7 @@ func addContainersTx(params *OrderWorkerParams, request dto4logist.AddContainers
 			if shippingPoint == nil {
 				return validation.NewErrBadRequestFieldValue(fmt.Sprintf("shippingPointIDs[%v]", j), "unknown shipping point ContactID")
 			}
-			containerPoint := models4logist.ContainerPoint{
+			containerPoint := dbo4logist.ContainerPoint{
 				ContainerID:       containerID,
 				ShippingPointID:   point.ShippingPointID,
 				ShippingPointBase: shippingPoint.ShippingPointBase,

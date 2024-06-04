@@ -2,12 +2,12 @@ package facade4invitus
 
 import (
 	"context"
-	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/models4invitus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/dbo4invitus"
 )
 
 // CreateMassInviteRequest parameters for creating a mass invite
 type CreateMassInviteRequest struct {
-	Invite models4invitus.MassInvite `json:"invite"`
+	Invite dbo4invitus.MassInvite `json:"invite"`
 }
 
 // Validate validates parameters for creating a mass invite

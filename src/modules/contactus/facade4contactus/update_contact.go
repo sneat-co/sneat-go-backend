@@ -7,8 +7,8 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dto4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/facade4linkage"
-	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/models4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
@@ -100,7 +100,7 @@ func updateContactTxWorker(
 	}
 
 	if request.Related != nil {
-		itemRef := models4linkage.TeamModuleItemRef{
+		itemRef := dbo4linkage.TeamModuleItemRef{
 			ModuleID:   const4contactus.ModuleID,
 			Collection: const4contactus.ContactsCollection,
 			TeamID:     request.TeamID,
@@ -108,7 +108,7 @@ func updateContactTxWorker(
 		}
 		var recordsUpdates []dal4teamus.RecordUpdates
 		recordsUpdates, err = facade4linkage.UpdateRelatedField(ctx, tx,
-			itemRef, request.UpdateRelatedFieldRequest, &models4linkage.WithRelatedAndIDsAndUserID{
+			itemRef, request.UpdateRelatedFieldRequest, &dbo4linkage.WithRelatedAndIDsAndUserID{
 				WithUserID:        dbmodels.WithUserID{UserID: params.Contact.Data.UserID},
 				WithRelatedAndIDs: &params.Contact.Data.WithRelatedAndIDs,
 			},

@@ -2,9 +2,9 @@ package facade4logist
 
 import (
 	"context"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/mocks4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -43,7 +43,7 @@ func TestDeleteContainerPoints(t *testing.T) {
 					ShippingPointIDs: []string{mocks4logist.ShippingPoint1WithSingleContainerID},
 				},
 				params: OrderWorkerParams{
-					Order: models4logist.NewOrderWithData("team1", "order1",
+					Order: dbo4logist.NewOrderWithData("team1", "order1",
 						mocks4logist.ValidOrderDto1(t)),
 				},
 			},
@@ -66,7 +66,7 @@ func TestDeleteContainerPoints(t *testing.T) {
 					ShippingPointIDs: []string{mocks4logist.ShippingPoint2With2ContainersID},
 				},
 				params: OrderWorkerParams{
-					Order: models4logist.NewOrderWithData("team1", "order1",
+					Order: dbo4logist.NewOrderWithData("team1", "order1",
 						mocks4logist.ValidOrderDto1(t)),
 				},
 			},

@@ -8,7 +8,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/core4teamus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/models4userus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/stretchr/testify/assert"
@@ -19,7 +19,7 @@ import (
 func TestCreateTeam(t *testing.T) { // TODO: Implement unit tests
 	ctx := context.Background()
 	user := facade.NewUser("TestUser")
-	//userKey := models4userus.NewUserKey(user.GetID())
+	//userKey := dbo4userus.NewUserKey(user.GetID())
 
 	t.Run("error on bad request", func(t *testing.T) {
 		response, err := CreateTeam(ctx, user, dto4teamus.CreateTeamRequest{})
@@ -34,9 +34,9 @@ func TestCreateTeam(t *testing.T) { // TODO: Implement unit tests
 		tx := mocks4dal.NewMockReadwriteTransaction(mockCtrl)
 		tx.EXPECT().Get(ctx, gomock.Any()).DoAndReturn(func(ctx context.Context, record dal.Record) error {
 			switch record.Key().Collection() {
-			case models4userus.UsersCollection:
+			case dbo4userus.UsersCollection:
 				record.SetError(nil)
-				userDto := record.Data().(*models4userus.UserDbo)
+				userDto := record.Data().(*dbo4userus.UserDbo)
 				userDto.CountryID = "--"
 				userDto.Status = "active"
 				userDto.Gender = dbmodels.GenderMale

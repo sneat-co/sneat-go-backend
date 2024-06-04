@@ -1,8 +1,8 @@
 package facade4scrumus
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/models4meetingus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/models4scrumus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/dbo4meetingus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus"
 )
 
 // MeetingRecordFactory factory
@@ -15,6 +15,6 @@ func (MeetingRecordFactory) Collection() string {
 }
 
 // NewRecordData create new api4meetingus record
-func (MeetingRecordFactory) NewRecordData() models4meetingus.MeetingInstance {
-	return &models4scrumus.Scrum{}
+func (MeetingRecordFactory) NewRecordData() dbo4meetingus.MeetingInstance {
+	return &dbo4scrumus.Scrum{}
 }

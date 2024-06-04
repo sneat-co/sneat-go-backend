@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/models4scrumus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/models4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/random"
@@ -30,7 +30,7 @@ func (v *AddCommentRequest) Validate() error {
 }
 
 // AddComment adds comment
-func AddComment(ctx context.Context, userContext facade.User, request AddCommentRequest) (comment *models4scrumus.Comment, err error) {
+func AddComment(ctx context.Context, userContext facade.User, request AddCommentRequest) (comment *dbo4scrumus.Comment, err error) {
 	if err = request.Validate(); err != nil {
 		err = fmt.Errorf("facade4retrospectus bad request: %v", err)
 		return
@@ -40,8 +40,8 @@ func AddComment(ctx context.Context, userContext facade.User, request AddComment
 
 	uid := userContext.GetID()
 
-	userKey := models4userus.NewUserKey(uid)
-	var user models4userus.UserDbo
+	userKey := dbo4userus.NewUserKey(uid)
+	var user dbo4userus.UserDbo
 	userRecord := dal.NewRecordWithData(userKey, &user)
 	if err = facade4userus.GetUserByID(ctx, db, userRecord); err != nil {
 		return nil, err
@@ -52,7 +52,7 @@ func AddComment(ctx context.Context, userContext facade.User, request AddComment
 			if params.task == nil {
 				return errors.New("task not found by ContactID: " + request.TaskRequest.Task)
 			}
-			comment = &models4scrumus.Comment{
+			comment = &dbo4scrumus.Comment{
 				ID:      random.ID(1),
 				Message: request.Message,
 				By: &dbmodels.ByUser{

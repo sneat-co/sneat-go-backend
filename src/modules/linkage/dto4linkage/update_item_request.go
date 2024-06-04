@@ -1,11 +1,11 @@
 package dto4linkage
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/models4linkage"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 )
 
 type UpdateItemRequest struct {
-	models4linkage.TeamModuleItemRef `json:"itemRef"`
+	dbo4linkage.TeamModuleItemRef `json:"itemRef"`
 	UpdateRelatedFieldRequest
 }
 

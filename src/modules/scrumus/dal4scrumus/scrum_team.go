@@ -4,13 +4,13 @@ import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
-	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/models4scrumus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 )
 
 const ScrumusModuleID = "scrumus"
 
-type ScrumTeam = record.DataWithID[string, *models4scrumus.ScrumTeamDto]
+type ScrumTeam = record.DataWithID[string, *dbo4scrumus.ScrumTeamDto]
 
 func NewScrumTeamKey(id string) *dal.Key {
 	teamKey := dal4teamus.NewTeamKey(id)
@@ -19,7 +19,7 @@ func NewScrumTeamKey(id string) *dal.Key {
 
 func NewScrumTeam(id string) ScrumTeam {
 	key := NewScrumTeamKey(id)
-	return record.NewDataWithID(id, key, new(models4scrumus.ScrumTeamDto))
+	return record.NewDataWithID(id, key, new(dbo4scrumus.ScrumTeamDto))
 }
 
 func GetScrumTeam(ctx context.Context, tx dal.ReadTransaction, id string) (ScrumTeam, error) {

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/models4retrospectus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/models4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/random"
@@ -81,7 +81,7 @@ func AddRetroItem(ctx context.Context, userContext facade.User, request AddRetro
 	return
 }
 
-func addItemWithUniqueID(item *models4retrospectus.RetroItem, items []*models4retrospectus.RetroItem) []*models4retrospectus.RetroItem {
+func addItemWithUniqueID(item *dbo4retrospectus.RetroItem, items []*dbo4retrospectus.RetroItem) []*dbo4retrospectus.RetroItem {
 UniqueID:
 	for {
 		item.ID = random.ID(5)
@@ -98,8 +98,8 @@ UniqueID:
 func addRetroItemToUserRetro(ctx context.Context, userContext facade.User, request AddRetroItemRequest) (response AddRetroItemResponse, err error) {
 	uid := userContext.GetID()
 
-	user := new(models4userus.UserDbo)
-	userKey := dal.NewKeyWithID(models4userus.UsersCollection, uid)
+	user := new(dbo4userus.UserDbo)
+	userKey := dal.NewKeyWithID(dbo4userus.UsersCollection, uid)
 	userRecord := dal.NewRecordWithData(userKey, user)
 
 	db := facade.GetDatabase(ctx)
@@ -124,7 +124,7 @@ func addRetroItemToUserRetro(ctx context.Context, userContext facade.User, reque
 		//if !existingType {
 		//	items = make([]*dbretro.RetroItem, 0, 1)
 		//}
-		item := models4retrospectus.RetroItem{
+		item := dbo4retrospectus.RetroItem{
 			Title:   request.Title,
 			Created: started,
 		}
@@ -161,8 +161,8 @@ func addRetroItemToTeamRetro(ctx context.Context, userContext facade.User, reque
 	uid := userContext.GetID()
 	retrospectiveKey := getTeamRetroDocKey(request.TeamID, request.MeetingID)
 
-	user := new(models4userus.UserDbo)
-	userKey := dal.NewKeyWithID(models4userus.UsersCollection, uid)
+	user := new(dbo4userus.UserDbo)
+	userKey := dal.NewKeyWithID(dbo4userus.UsersCollection, uid)
 	userRecord := dal.NewRecordWithData(userKey, user)
 
 	db := facade.GetDatabase(ctx)
@@ -173,7 +173,7 @@ func addRetroItemToTeamRetro(ctx context.Context, userContext facade.User, reque
 
 	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, transaction dal.ReadwriteTransaction) error {
 		now := time.Now()
-		retrospective := new(models4retrospectus.Retrospective)
+		retrospective := new(dbo4retrospectus.Retrospective)
 		retrospectiveRecord := dal.NewRecordWithData(retrospectiveKey, retrospective)
 		var isNew bool
 
@@ -182,15 +182,15 @@ func addRetroItemToTeamRetro(ctx context.Context, userContext facade.User, reque
 		} else if !retrospectiveRecord.Exists() {
 			isNew = true
 			response.TimeCreated = now
-			retrospective = new(models4retrospectus.Retrospective)
+			retrospective = new(dbo4retrospectus.Retrospective)
 			retrospective.TimeLastAction = &response.TimeCreated
 		}
 
 		if retrospective.Items == nil {
-			retrospective.Items = make([]*models4retrospectus.RetroItem, 0, 1)
+			retrospective.Items = make([]*dbo4retrospectus.RetroItem, 0, 1)
 		}
 
-		item := models4retrospectus.RetroItem{
+		item := dbo4retrospectus.RetroItem{
 			Title:   request.Title,
 			Type:    request.Type,
 			Created: now,
@@ -203,7 +203,7 @@ func addRetroItemToTeamRetro(ctx context.Context, userContext facade.User, reque
 			}
 
 			if request.MeetingID != UpcomingRetrospectiveID {
-				item.By = &models4retrospectus.RetroUser{
+				item.By = &dbo4retrospectus.RetroUser{
 					UserID: uid,
 					Title:  user.Names.FullName,
 				}

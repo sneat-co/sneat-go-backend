@@ -2,7 +2,7 @@ package dto4logist
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
 	"strings"
@@ -11,7 +11,7 @@ import (
 // SegmentContainerData represents a container for a segment
 type SegmentContainerData struct {
 	ID string `json:"id"`
-	models4logist.FreightPoint
+	dbo4logist.FreightPoint
 }
 
 // Validate returns nil if the SegmentContainerData is valid, otherwise returns the first error.
@@ -34,8 +34,8 @@ func (v SegmentContainerData) Validate() error {
 
 // AddSegmentParty represents a request to add a segment party to an order
 type AddSegmentParty struct {
-	Counterparty models4logist.SegmentCounterparty `json:"counterparty"`
-	RefNumber    string                            `json:"refNumber,omitempty"`
+	Counterparty dbo4logist.SegmentCounterparty `json:"counterparty"`
+	RefNumber    string                         `json:"refNumber,omitempty"`
 }
 
 // Validate returns nil if the AddSegmentParty request is valid, otherwise returns the first error.
@@ -89,7 +89,7 @@ func (v AddSegmentsRequest) Validate() error {
 		if err := v.By.Validate(); err != nil {
 			return validation.NewErrBadRequestFieldValue("by", err.Error())
 		}
-		if v.By.Counterparty.Role != models4logist.CounterpartyRoleTrucker {
+		if v.By.Counterparty.Role != dbo4logist.CounterpartyRoleTrucker {
 			return validation.NewErrBadRequestFieldValue("by.counterparty.role", fmt.Sprintf("expected to be `trucker`, got: %v", v.By.Counterparty.Role))
 		}
 	}

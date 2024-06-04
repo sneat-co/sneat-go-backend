@@ -4,13 +4,13 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/coremodels"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/models4userus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 )
 
 const UserModulesCollection = coremodels.ModulesCollection
 
 func NewUserModuleKey(userID, moduleID string) *dal.Key {
-	userKey := models4userus.NewUserKey(userID)
+	userKey := dbo4userus.NewUserKey(userID)
 	return dal.NewKeyWithParentAndID(userKey, UserModulesCollection, moduleID)
 }
 

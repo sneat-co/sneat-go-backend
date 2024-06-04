@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/dbo4invitus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/facade4invitus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/models4invitus"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/sneatauth"
 	"net/http"
@@ -16,22 +16,22 @@ import (
 
 func TestCreateMassInvite(t *testing.T) {
 	const teamID = "unit-test"
-	var invite models4invitus.MassInvite
+	var invite dbo4invitus.MassInvite
 	invite.Type = "mass"
 	invite.Channel = "email"
 	invite.Roles = []string{
 		"contributor",
 		"test-role1",
 	}
-	invite.From = models4invitus.InviteFrom{
-		InviteContact: models4invitus.InviteContact{
+	invite.From = dbo4invitus.InviteFrom{
+		InviteContact: dbo4invitus.InviteContact{
 			Channel:  "email",
 			Address:  "from@example.com",
 			Title:    "From Title",
 			MemberID: "f1",
 		},
 	}
-	//invite.To = &models4invitus.InviteTo{
+	//invite.To = &dbo4invitus.InviteTo{
 	//	Channel:      "email",
 	//	Address:      "to@example.com",
 	//	Title:        "To Title",

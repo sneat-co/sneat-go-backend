@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dal4retrospectus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/models4retrospectus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/models4userus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"time"
 )
@@ -18,18 +18,18 @@ func FixCounts(ctx context.Context, userContext facade.User, request FixCountsRe
 	db := facade.GetDatabase(ctx)
 	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		now := time.Now()
-		userRef := models4userus.NewUserKey(uid)
+		userRef := dbo4userus.NewUserKey(uid)
 		team := dal4teamus.NewTeamContext(request.TeamID)
 		var retroTeam dal4retrospectus.RetroTeam
 		retroTeam, err = dal4retrospectus.GetRetroTeam(ctx, tx, request.TeamID)
-		user := new(models4userus.UserDbo)
+		user := new(dbo4userus.UserDbo)
 		userRecord := dal.NewRecordWithData(userRef, user)
 
 		if err := tx.GetMulti(ctx, []dal.Record{userRecord, team.Record}); err != nil {
 			return err
 		}
 		if retroTeam.Data.UpcomingRetro == nil {
-			retroTeam.Data.UpcomingRetro = &models4retrospectus.RetrospectiveCounts{
+			retroTeam.Data.UpcomingRetro = &dbo4retrospectus.RetrospectiveCounts{
 				ItemsByUserAndType: make(map[string]map[string]int),
 			}
 		}

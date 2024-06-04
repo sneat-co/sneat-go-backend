@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/sportus/models4sportus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/sportus/dbo4sportus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 	"reflect"
@@ -13,7 +13,7 @@ import (
 
 // CreateWantedRequest defines request DTO
 type CreateWantedRequest struct {
-	models4sportus.Wanted
+	dbo4sportus.Wanted
 }
 
 // Validate returns error if not valid
@@ -51,7 +51,7 @@ func CreateWanted(ctx context.Context, userContext facade.User, request CreateWa
 		return "", err
 	}
 	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
-		record := dal.NewRecordWithIncompleteKey(models4sportus.QuiverWantedCollection, reflect.String, &request.Wanted)
+		record := dal.NewRecordWithIncompleteKey(dbo4sportus.QuiverWantedCollection, reflect.String, &request.Wanted)
 		request.Wanted.UserID = userContext.GetID()
 		if err := tx.Insert(ctx, record); err != nil {
 			return fmt.Errorf("failed to create wanted record: %w", err)
@@ -79,8 +79,8 @@ func (v *DeleteWantedRequest) Validate() error {
 func DeleteWanted(ctx context.Context, userContext facade.User, request DeleteWantedRequest) error {
 	db := facade.GetDatabase(ctx)
 	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
-		key := dal.NewKeyWithID(models4sportus.QuiverWantedCollection, request.ID)
-		var wanted models4sportus.Wanted
+		key := dal.NewKeyWithID(dbo4sportus.QuiverWantedCollection, request.ID)
+		var wanted dbo4sportus.Wanted
 		record := dal.NewRecordWithData(key, &wanted)
 		if err := tx.Get(ctx, record); err != nil {
 			return err

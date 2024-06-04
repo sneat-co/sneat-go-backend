@@ -6,15 +6,15 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dbo4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dto4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/facade4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/models4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/const4logistus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/models4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/slice"
 )
@@ -30,8 +30,8 @@ func SetLogistTeamSettings(
 	}
 	return dal4teamus.RunModuleTeamWorker(ctx, userContext, request.TeamRequest,
 		const4logistus.ModuleID,
-		new(models4logist.LogistTeamDto),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4teamus.ModuleTeamWorkerParams[*models4logist.LogistTeamDto]) (err error) {
+		new(dbo4logist.LogistTeamDto),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4teamus.ModuleTeamWorkerParams[*dbo4logist.LogistTeamDto]) (err error) {
 			return setLogistTeamSettingsTx(ctx /*userContext,*/, request, tx, teamWorkerParams)
 		},
 	)
@@ -42,7 +42,7 @@ func setLogistTeamSettingsTx(
 	//userContext facade.User,
 	request dto4logist.SetLogistTeamSettingsRequest,
 	tx dal.ReadwriteTransaction,
-	workerParams *dal4teamus.ModuleTeamWorkerParams[*models4logist.LogistTeamDto],
+	workerParams *dal4teamus.ModuleTeamWorkerParams[*dbo4logist.LogistTeamDto],
 ) (err error) {
 	if workerParams.Team.Data.CountryID != request.Address.CountryID {
 		workerParams.Team.Data.CountryID = request.Address.CountryID
@@ -52,7 +52,7 @@ func setLogistTeamSettingsTx(
 		})
 	}
 
-	logistTeam := models4logist.NewLogistTeamContext(request.TeamID)
+	logistTeam := dbo4logist.NewLogistTeamContext(request.TeamID)
 	if err = tx.Get(ctx, logistTeam.Record); err != nil {
 		if !dal.IsNotFound(err) {
 			return err
@@ -122,7 +122,7 @@ func setLogistTeamSettingsTx(
 	return nil
 }
 
-func updateLogistTeam(logistTeamDto *models4logist.LogistTeamDto, teamDto *models4teamus.TeamDbo, teamContact dal4contactus.ContactEntry, request dto4logist.SetLogistTeamSettingsRequest) (updates []dal.Update) {
+func updateLogistTeam(logistTeamDto *dbo4logist.LogistTeamDto, teamDto *dbo4teamus.TeamDbo, teamContact dal4contactus.ContactEntry, request dto4logist.SetLogistTeamSettingsRequest) (updates []dal.Update) {
 	if logistTeamDto.ContactID != teamContact.ID {
 		logistTeamDto.ContactID = teamContact.ID
 		updates = append(updates, dal.Update{Field: "contactID", Value: teamContact.ID})
@@ -131,8 +131,8 @@ func updateLogistTeam(logistTeamDto *models4logist.LogistTeamDto, teamDto *model
 		logistTeamDto.OrderNumberPrefix = request.OrderNumberPrefix
 		updates = append(updates, dal.Update{Field: "orderNumberPrefix", Value: request.OrderNumberPrefix})
 	}
-	if models4logist.RolesChanged(logistTeamDto.Roles, request.Roles) {
-		logistTeamDto.Roles = models4logist.ConvertLogistTeamRolesToStringSlice(request.Roles)
+	if dbo4logist.RolesChanged(logistTeamDto.Roles, request.Roles) {
+		logistTeamDto.Roles = dbo4logist.ConvertLogistTeamRolesToStringSlice(request.Roles)
 		updates = append(updates, dal.Update{Field: "roles", Value: request.Roles})
 	}
 	if !slice.SameUniqueValues(logistTeamDto.UserIDs, teamDto.UserIDs) {
@@ -147,8 +147,8 @@ func updateContact(contactDto *models4contactus.ContactDbo, request dto4logist.S
 		contactDto.VATNumber = request.VATNumber
 		updates = append(updates, dal.Update{Field: "vatNumber", Value: request.VATNumber})
 	}
-	if models4logist.RolesChanged(contactDto.Roles, request.Roles) {
-		contactDto.Roles = models4logist.ConvertLogistTeamRolesToStringSlice(request.Roles)
+	if dbo4logist.RolesChanged(contactDto.Roles, request.Roles) {
+		contactDto.Roles = dbo4logist.ConvertLogistTeamRolesToStringSlice(request.Roles)
 		updates = append(updates, dal.Update{Field: "roles", Value: request.Roles})
 	}
 	return

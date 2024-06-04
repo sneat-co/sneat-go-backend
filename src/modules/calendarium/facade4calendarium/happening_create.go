@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/const4calendarium"
+	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/models4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -26,10 +26,10 @@ func CreateHappening(
 		return
 	}
 	var counter string
-	if request.Happening.Type == models4calendarium.HappeningTypeRecurring {
+	if request.Happening.Type == dbo4calendarium.HappeningTypeRecurring {
 		counter = "recurringHappenings"
 	}
-	happeningDto := &models4calendarium.HappeningDbo{
+	happeningDto := &dbo4calendarium.HappeningDbo{
 		HappeningBrief: *request.Happening,
 		CreatedFields: with.CreatedFields{
 			CreatedByField: with.CreatedByField{
@@ -44,7 +44,7 @@ func CreateHappening(
 	}
 	//happeningDto.ContactIDs = append(happeningDto.ContactIDs, "*")
 
-	if happeningDto.Type == models4calendarium.HappeningTypeSingle {
+	if happeningDto.Type == dbo4calendarium.HappeningTypeSingle {
 		for _, slot := range happeningDto.Slots {
 			date := slot.Start.Date
 			if slice.Index(happeningDto.Dates, date) < 0 {
@@ -54,8 +54,8 @@ func CreateHappening(
 	}
 	err = dal4teamus.CreateTeamItem(ctx, user, counter, request.TeamRequest,
 		const4calendarium.ModuleID,
-		new(models4calendarium.CalendariumTeamDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo]) (err error) {
+		new(dbo4calendarium.CalendariumTeamDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo]) (err error) {
 			response, err = createHappeningTx(ctx, tx, happeningDto, params)
 			return
 		},
@@ -64,7 +64,7 @@ func CreateHappening(
 	return
 }
 
-func createHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, happeningDto *models4calendarium.HappeningDbo, params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo]) (
+func createHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, happeningDto *dbo4calendarium.HappeningDbo, params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo]) (
 	response dto4calendarium.CreateHappeningResponse, err error,
 ) {
 	happeningDto.CreatedAt = params.Started
@@ -75,7 +75,7 @@ func createHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, happeni
 
 	happeningDto.UserIDs = params.Team.Data.UserIDs
 	happeningDto.Status = "active"
-	if happeningDto.Type == models4calendarium.HappeningTypeSingle {
+	if happeningDto.Type == dbo4calendarium.HappeningTypeSingle {
 		date := happeningDto.Slots[0].Start.Date
 		happeningDto.Dates = []string{date}
 		happeningDto.DateMin = date
@@ -135,11 +135,11 @@ func createHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, happeni
 	if err = tx.Insert(ctx, record); err != nil {
 		return response, fmt.Errorf("failed to insert new happening record: %w", err)
 	}
-	if happeningDto.Type == models4calendarium.HappeningTypeRecurring {
+	if happeningDto.Type == dbo4calendarium.HappeningTypeRecurring {
 		if params.TeamModuleEntry.Data.RecurringHappenings == nil {
-			params.TeamModuleEntry.Data.RecurringHappenings = make(map[string]*models4calendarium.CalendarHappeningBrief)
+			params.TeamModuleEntry.Data.RecurringHappenings = make(map[string]*dbo4calendarium.CalendarHappeningBrief)
 		}
-		params.TeamModuleEntry.Data.RecurringHappenings[happeningID] = &models4calendarium.CalendarHappeningBrief{
+		params.TeamModuleEntry.Data.RecurringHappenings[happeningID] = &dbo4calendarium.CalendarHappeningBrief{
 			HappeningBrief: happeningDto.HappeningBrief,
 		}
 		params.TeamModuleUpdates = append(params.TeamUpdates, dal.Update{

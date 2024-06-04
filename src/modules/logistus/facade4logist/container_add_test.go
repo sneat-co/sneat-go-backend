@@ -1,9 +1,9 @@
 package facade4logist
 
 import (
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/mocks4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
@@ -36,28 +36,28 @@ func Test_addContainersTx(t *testing.T) {
 			name: "single_container_with_2_points",
 			args: args{
 				params: &OrderWorkerParams{
-					Order: models4logist.NewOrderWithData("team1", "order1", mocks4logist.ValidOrderDto1(t)),
+					Order: dbo4logist.NewOrderWithData("team1", "order1", mocks4logist.ValidOrderDto1(t)),
 				},
 				request: dto4logist.AddContainersRequest{
 					OrderRequest: dto4logist.NewOrderRequest("team1", "order1"),
 					Containers: []dto4logist.NewContainer{
 						{
-							OrderContainerBase: models4logist.OrderContainerBase{
+							OrderContainerBase: dbo4logist.OrderContainerBase{
 								Type:   "20ft",
 								Number: "C111",
 							},
 							Points: []dto4logist.PointOfNewContainer{
 								{
 									ShippingPointID: mocks4logist.ShippingPoint1WithSingleContainerID,
-									Tasks: []models4logist.ShippingPointTask{
-										models4logist.ShippingPointTaskLoad,
+									Tasks: []dbo4logist.ShippingPointTask{
+										dbo4logist.ShippingPointTaskLoad,
 									},
 								},
 								{
 									ShippingPointID: mocks4logist.ShippingPoint1WithSingleContainerID,
-									Tasks: []models4logist.ShippingPointTask{
-										models4logist.ShippingPointTaskLoad,
-										models4logist.ShippingPointTaskUnload,
+									Tasks: []dbo4logist.ShippingPointTask{
+										dbo4logist.ShippingPointTaskLoad,
+										dbo4logist.ShippingPointTaskUnload,
 									},
 								},
 							},

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
+	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/models4calendarium"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )
@@ -29,8 +29,8 @@ func deleteHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, user fa
 	switch happening.Dbo.Type {
 	case "":
 		return fmt.Errorf("unknown happening type: %w", validation.NewErrRecordIsMissingRequiredField("type"))
-	case models4calendarium.HappeningTypeSingle:
-	case models4calendarium.HappeningTypeRecurring:
+	case dbo4calendarium.HappeningTypeSingle:
+	case dbo4calendarium.HappeningTypeRecurring:
 		happeningBrief := params.TeamModuleEntry.Data.GetRecurringHappeningBrief(request.HappeningID)
 
 		if happeningBrief != nil {

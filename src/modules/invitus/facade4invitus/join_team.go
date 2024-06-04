@@ -6,10 +6,10 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/models4invitus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/dbo4invitus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/models4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/models4userus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/strongoapp/with"
 	"github.com/strongo/validation"
@@ -39,7 +39,7 @@ func (v *JoinTeamRequest) Validate() error {
 }
 
 // JoinTeam joins team
-func JoinTeam(ctx context.Context, userContext facade.User, request JoinTeamRequest) (team *models4teamus.TeamDbo, err error) {
+func JoinTeam(ctx context.Context, userContext facade.User, request JoinTeamRequest) (team *dbo4teamus.TeamDbo, err error) {
 	if err = request.Validate(); err != nil {
 		err = fmt.Errorf("invalid request: %w", err)
 		return
@@ -49,12 +49,12 @@ func JoinTeam(ctx context.Context, userContext facade.User, request JoinTeamRequ
 	// We intentionally do not use team worker to query both team & user records in parallel
 	err = dal4contactus.RunContactusTeamWorker(ctx, userContext, request.TeamRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusTeamWorkerParams) error {
 
-		userKey := models4userus.NewUserKey(uid)
-		userDto := new(models4userus.UserDbo)
+		userKey := dbo4userus.NewUserKey(uid)
+		userDto := new(dbo4userus.UserDbo)
 		userRecord := dal.NewRecordWithData(userKey, userDto)
 
 		inviteKey := NewInviteKey(request.InviteID)
-		inviteDto := new(models4invitus.InviteDto)
+		inviteDto := new(dbo4invitus.InviteDto)
 		inviteRecord := dal.NewRecordWithData(inviteKey, inviteDto)
 
 		if err = params.GetRecords(ctx, tx, userRecord, inviteRecord); err != nil {
@@ -121,7 +121,7 @@ func JoinTeam(ctx context.Context, userContext facade.User, request JoinTeamRequ
 	return
 }
 
-//func joinAddUserToLastScrum(ctx context.Context, tx dal.ReadwriteTransaction, teamKey *dal.Key, team models4teamus.TeamDbo, uID string) (err error) {
+//func joinAddUserToLastScrum(ctx context.Context, tx dal.ReadwriteTransaction, teamKey *dal.Key, team dbo4teamus.TeamDbo, uID string) (err error) {
 //	scrumKey := dal.NewKeyWithID("scrums", team.Last.Scrum.ID, dal.WithParentKey(teamKey))
 //	scrum := new(dbscrum.Scrum)
 //	scrumRecord := dal.NewRecordWithData(scrumKey, scrum)
@@ -148,7 +148,7 @@ func onJoinUpdateInvite(
 	tx dal.ReadwriteTransaction,
 	uid string,
 	inviteKey *dal.Key,
-	inviteDto *models4invitus.InviteDto,
+	inviteDto *dbo4invitus.InviteDto,
 ) (err error) {
 	inviteDto.To.UserID = uid
 	if err = inviteDto.Validate(); err != nil {
@@ -167,10 +167,10 @@ func onJoinUpdateInvite(
 func onJoinAddTeamToUser(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	userDto *models4userus.UserDbo,
+	userDto *dbo4userus.UserDbo,
 	userRecord dal.Record,
 	teamID string,
-	team *models4teamus.TeamDbo,
+	team *dbo4teamus.TeamDbo,
 	member dal4contactus.ContactEntry,
 ) (err error) {
 	var updates []dal.Update
@@ -185,7 +185,7 @@ func onJoinAddTeamToUser(
 	}
 	teamInfo := userDto.GetUserTeamInfoByID(teamID)
 	if teamInfo == nil {
-		teamInfo = &models4userus.UserTeamBrief{
+		teamInfo = &dbo4userus.UserTeamBrief{
 			TeamBrief: team.TeamBrief,
 			Roles:     member.Data.Roles,
 			//MemberType:   "", // TODO: populate?
@@ -238,7 +238,7 @@ func onJoinUpdateMemberBriefInTeamOrAddIfMissing(
 	inviterMemberID string,
 	member dal4contactus.ContactEntry,
 	uid string,
-	user *models4userus.UserDbo,
+	user *dbo4userus.UserDbo,
 ) (err error) {
 	//var updates []dal.Update
 	if strings.TrimSpace(uid) == "" {

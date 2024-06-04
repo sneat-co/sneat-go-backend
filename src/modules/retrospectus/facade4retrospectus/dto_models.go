@@ -3,7 +3,7 @@ package facade4retrospectus
 import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/models4retrospectus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )
@@ -16,9 +16,9 @@ var _ facade.Request = (*MoveRetroItemRequest)(nil)
 // MoveRetroItemRequest parameters
 type MoveRetroItemRequest struct {
 	facade4meetingus.Request
-	Item string                           `json:"item"`
-	From models4retrospectus.TreePosition `json:"from"`
-	To   models4retrospectus.TreePosition `json:"to"`
+	Item string                        `json:"item"`
+	From dbo4retrospectus.TreePosition `json:"from"`
+	To   dbo4retrospectus.TreePosition `json:"to"`
 }
 
 // Validate validates request
@@ -69,8 +69,8 @@ func (v *StartRetrospectiveRequest) Validate() error {
 
 // RetrospectiveResponse response
 type RetrospectiveResponse struct {
-	ID   string                             `json:"id"`
-	Data *models4retrospectus.Retrospective `json:"data"`
+	ID   string                          `json:"id"`
+	Data *dbo4retrospectus.Retrospective `json:"data"`
 }
 
 // FixCountsRequest request

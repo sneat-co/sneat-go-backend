@@ -7,8 +7,8 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/models4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/strongoapp/person"
@@ -67,7 +67,7 @@ func AcceptPersonalInvite(ctx context.Context, userContext facade.User, request 
 				return fmt.Errorf("%w: pin code does not match", facade.ErrBadRequest)
 			}
 
-			user := models4userus.NewUserContext(uid)
+			user := dbo4userus.NewUserContext(uid)
 			if err = facade4userus.GetUserByID(ctx, tx, user.Record); err != nil {
 				if !dal.IsNotFound(err) {
 					return err
@@ -199,7 +199,7 @@ func createOrUpdateUserRecord(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	now time.Time,
-	user models4userus.UserContext,
+	user dbo4userus.UserContext,
 	request AcceptPersonalInviteRequest,
 	params *dal4contactus.ContactusTeamWorkerParams,
 	teamMember *briefs4contactus.ContactBase,
@@ -216,7 +216,7 @@ func createOrUpdateUserRecord(
 		}
 	}
 
-	userTeamInfo := models4userus.UserTeamBrief{
+	userTeamInfo := dbo4userus.UserTeamBrief{
 		TeamBrief: params.Team.Data.TeamBrief,
 		Roles:     invite.Dto.Roles, // TODO: Validate roles?
 	}

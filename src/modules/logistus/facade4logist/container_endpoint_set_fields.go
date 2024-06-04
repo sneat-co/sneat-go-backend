@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/facade4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 	"strings"
@@ -49,16 +49,16 @@ func txSetContainerEndpointFields(
 			scheduledDatesDiff = departs.Sub(arrives)
 		}
 	}
-	var endpoint *models4logist.ContainerEndpoint
+	var endpoint *dbo4logist.ContainerEndpoint
 	switch request.Side {
-	case models4logist.EndpointSideArrival:
+	case dbo4logist.EndpointSideArrival:
 		if containerPoint.Arrival == nil {
-			containerPoint.Arrival = &models4logist.ContainerEndpoint{}
+			containerPoint.Arrival = &dbo4logist.ContainerEndpoint{}
 		}
 		endpoint = containerPoint.Arrival
-	case models4logist.EndpointSideDeparture:
+	case dbo4logist.EndpointSideDeparture:
 		if containerPoint.Departure == nil {
-			containerPoint.Departure = &models4logist.ContainerEndpoint{}
+			containerPoint.Departure = &dbo4logist.ContainerEndpoint{}
 		}
 		endpoint = containerPoint.Departure
 	case "":
@@ -75,7 +75,7 @@ func txSetContainerEndpointFields(
 				if err != nil {
 					return fmt.Errorf("failed to load 'by' contact: %w", err)
 				}
-				orderContact = &models4logist.OrderContact{
+				orderContact = &dbo4logist.OrderContact{
 					ID:   byContactID,
 					Type: byContact.Data.Type,
 					//CountryID: byContact.Data.CountryID,
@@ -88,10 +88,10 @@ func txSetContainerEndpointFields(
 				orderDto.Contacts = append(orderDto.Contacts, orderContact)
 				params.Changed.Contacts = true
 			}
-			const roleTrucker = models4logist.CounterpartyRoleTrucker
+			const roleTrucker = dbo4logist.CounterpartyRoleTrucker
 			_, truckerCounterparty := orderDto.WithCounterparties.GetCounterpartyByRoleAndContactID(roleTrucker, byContactID)
 			if truckerCounterparty == nil {
-				truckerCounterparty = &models4logist.OrderCounterparty{
+				truckerCounterparty = &dbo4logist.OrderCounterparty{
 					Role:      roleTrucker,
 					ContactID: byContactID,
 					CountryID: orderContact.CountryID,
@@ -126,22 +126,22 @@ func txSetContainerEndpointFields(
 	if endpoint.IsEmpty() {
 		endpoint = nil
 		switch request.Side {
-		case models4logist.EndpointSideArrival:
+		case dbo4logist.EndpointSideArrival:
 			containerPoint.Arrival = endpoint
-		case models4logist.EndpointSideDeparture:
+		case dbo4logist.EndpointSideDeparture:
 			containerPoint.Departure = endpoint
 		}
 	}
-	if request.Side == models4logist.EndpointSideArrival {
+	if request.Side == dbo4logist.EndpointSideArrival {
 		if request.ByContactID != nil && containerPoint.Arrival.ByContactID != "" && (containerPoint.Departure == nil || containerPoint.Departure.ByContactID == "") {
 			if containerPoint.Departure == nil {
-				containerPoint.Departure = &models4logist.ContainerEndpoint{}
+				containerPoint.Departure = &dbo4logist.ContainerEndpoint{}
 			}
 			containerPoint.Departure.ByContactID = containerPoint.Arrival.ByContactID
 		}
 		if request.Dates["scheduledDate"] != "" && (containerPoint.Departure == nil || (containerPoint.Departure.ScheduledDate == "" || containerPoint.Departure.ScheduledDate < containerPoint.Arrival.ScheduledDate)) {
 			if containerPoint.Departure == nil {
-				containerPoint.Departure = &models4logist.ContainerEndpoint{}
+				containerPoint.Departure = &dbo4logist.ContainerEndpoint{}
 			}
 			// Ignore error as it was validated before
 			arrives, _ := time.Parse(time.DateOnly, containerPoint.Arrival.ScheduledDate)

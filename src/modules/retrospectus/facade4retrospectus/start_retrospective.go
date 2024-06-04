@@ -7,13 +7,13 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/models4meetingus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/dbo4meetingus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dal4retrospectus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/models4retrospectus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/models4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/models4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 )
@@ -24,7 +24,7 @@ func StartRetrospective(ctx context.Context, userContext facade.User, request St
 
 	teamKey := newTeamKey(request.TeamID)
 
-	retrospective := new(models4retrospectus.Retrospective)
+	retrospective := new(dbo4retrospectus.Retrospective)
 
 	err = dal4contactus.RunContactusTeamWorker(ctx, userContext, request.TeamRequest,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusTeamWorkerParams) (err error) {
@@ -59,7 +59,7 @@ func StartRetrospective(ctx context.Context, userContext facade.User, request St
 				if activeRetroID == "" {
 					request.MeetingID = params.Started.Format("2006-01-02")
 
-					retroTeam.Data.Active = &models4teamus.TeamMeetingInfo{
+					retroTeam.Data.Active = &dbo4teamus.TeamMeetingInfo{
 						ID:      request.MeetingID,
 						Started: &params.Started,
 					}
@@ -71,7 +71,7 @@ func StartRetrospective(ctx context.Context, userContext facade.User, request St
 			} else if activeRetrospective := retroTeam.Data.ActiveRetro(); activeRetrospective.ID == request.MeetingID {
 				return nil
 			} else if activeRetrospective.ID == "" {
-				retroTeam.Data.Active = &models4teamus.TeamMeetingInfo{
+				retroTeam.Data.Active = &dbo4teamus.TeamMeetingInfo{
 					ID:      request.MeetingID,
 					Started: &params.Started,
 				}
@@ -81,13 +81,13 @@ func StartRetrospective(ctx context.Context, userContext facade.User, request St
 			}
 
 			byUser := dbmodels.ByUser{UID: uid}
-			timer := models4meetingus.Timer{
+			timer := dbo4meetingus.Timer{
 				By:     byUser,
 				At:     params.Started,
-				Status: models4meetingus.TimerStatusActive,
+				Status: dbo4meetingus.TimerStatusActive,
 			}
 
-			retrospectiveKey := models4retrospectus.NewRetrospectiveKey(request.MeetingID, teamKey)
+			retrospectiveKey := dbo4retrospectus.NewRetrospectiveKey(request.MeetingID, teamKey)
 			retrospectiveRecord := dal.NewRecordWithData(retrospectiveKey, retrospective)
 			if err = tx.Get(ctx, retrospectiveRecord); err != nil {
 				if dal.IsNotFound(err) {
@@ -130,24 +130,24 @@ func StartRetrospective(ctx context.Context, userContext facade.User, request St
 			var retrospectiveUpdates []dal.Update
 
 			if isNewRetrospective {
-				retrospective = &models4retrospectus.Retrospective{
-					Stage:          models4retrospectus.StageFeedback,
+				retrospective = &dbo4retrospectus.Retrospective{
+					Stage:          dbo4retrospectus.StageFeedback,
 					StartedBy:      &byUser,
 					TimeStarted:    &params.Started,
 					TimeLastAction: &params.Started,
-					Meeting: models4meetingus.Meeting{
+					Meeting: dbo4meetingus.Meeting{
 						Version: 1,
 						WithUserIDs: dbmodels.WithUserIDs{
 							UserIDs: team.Data.UserIDs,
 						},
 						Timer: &timer,
 					},
-					Settings: models4retrospectus.RetrospectiveSettings{
-						MaxVotesPerUser: models4retrospectus.DefaultMaxVotesPerUser,
+					Settings: dbo4retrospectus.RetrospectiveSettings{
+						MaxVotesPerUser: dbo4retrospectus.DefaultMaxVotesPerUser,
 					},
 				}
 				for contactID, contact := range params.TeamModuleEntry.Data.GetContactBriefsByRoles(const4contactus.TeamMemberRoleMember) {
-					retrospective.AddContact(team.ID, contactID, &models4meetingus.MeetingMemberBrief{
+					retrospective.AddContact(team.ID, contactID, &dbo4meetingus.MeetingMemberBrief{
 						ContactBrief: *contact,
 					})
 				}
@@ -156,11 +156,11 @@ func StartRetrospective(ctx context.Context, userContext facade.User, request St
 					return nil
 				}
 				if retrospective == nil {
-					retrospective = &models4retrospectus.Retrospective{}
+					retrospective = &dbo4retrospectus.Retrospective{}
 				}
 				retrospective.Timer = &timer
 				retrospective.StartedBy = &byUser
-				retrospective.Stage = models4retrospectus.StageFeedback
+				retrospective.Stage = dbo4retrospectus.StageFeedback
 
 				retrospectiveUpdates = []dal.Update{
 					{Field: "stage", Value: retrospective.Stage},
@@ -208,8 +208,8 @@ func StartRetrospective(ctx context.Context, userContext facade.User, request St
 }
 
 type userRetroItems struct {
-	//user   *models4userus.UserDbo
-	byType models4retrospectus.RetroItemsByType
+	//user   *dbo4userus.UserDbo
+	byType dbo4retrospectus.RetroItemsByType
 }
 
 func getUsersWithRetroItems(ctx context.Context, tx dal.ReadwriteTransaction, team dal4teamus.TeamContext, retroTeam dal4retrospectus.RetroTeam) (usersWithRetroItemByUserID map[string]userRetroItems, err error) {
@@ -219,11 +219,11 @@ func getUsersWithRetroItems(ctx context.Context, tx dal.ReadwriteTransaction, te
 	for userID := range retroTeam.Data.UpcomingRetro.ItemsByUserAndType {
 		userIDs = append(userIDs, userID)
 	}
-	userKeys := models4userus.NewUserKeys(userIDs)
-	var usersRecords []dal.Record // []*models4userus.UserDbo
-	users := make([]*models4userus.UserDbo, len(userKeys))
+	userKeys := dbo4userus.NewUserKeys(userIDs)
+	var usersRecords []dal.Record // []*dbo4userus.UserDbo
+	users := make([]*dbo4userus.UserDbo, len(userKeys))
 	for i, userKey := range userKeys {
-		users[i] = new(models4userus.UserDbo)
+		users[i] = new(dbo4userus.UserDbo)
 		usersRecords[i] = dal.NewRecordWithData(userKey, users)
 	}
 	err = facade4userus.TxGetUsers(ctx, tx, usersRecords)

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/models4scrumus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
@@ -20,7 +20,7 @@ func ReorderTask(ctx context.Context, userContext facade.User, request ReorderTa
 	db := facade.GetDatabase(ctx)
 	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		var params facade4meetingus.WorkerParams
-		scrum := models4scrumus.Scrum{}
+		scrum := dbo4scrumus.Scrum{}
 		if params, err = facade4meetingus.GetMeetingAndTeam(ctx, tx, uid, request.TeamID, request.MeetingID, MeetingRecordFactory{}); err != nil {
 			return
 		}

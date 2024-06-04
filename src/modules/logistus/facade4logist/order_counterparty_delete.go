@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/sneat-co/sneat-go-core"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/slice"
@@ -26,26 +26,26 @@ func DeleteOrderCounterparty(
 	return err
 }
 
-func deleteCounterpartyAndChildren(params *OrderWorkerParams, role models4logist.CounterpartyRole, contactID string) {
-	if err := models4logist.ValidateOrderCounterpartyRoles("role", role); err != nil {
+func deleteCounterpartyAndChildren(params *OrderWorkerParams, role dbo4logist.CounterpartyRole, contactID string) {
+	if err := dbo4logist.ValidateOrderCounterpartyRoles("role", role); err != nil {
 		panic(fmt.Errorf("invalid role: %w", err))
 	}
 	if strings.TrimSpace(contactID) == "" {
 		panic("contactID is empty")
 	}
 	order := params.Order.Dto
-	counterparties := make([]*models4logist.OrderCounterparty, 0, len(order.Counterparties))
+	counterparties := make([]*dbo4logist.OrderCounterparty, 0, len(order.Counterparties))
 	for _, cp := range order.Counterparties {
 		if cp.ContactID == contactID && cp.Role == role {
 			params.Changed.Counterparties = true
-			remainingSPs, _ := core.Filter(order.ShippingPoints, func(sp *models4logist.OrderShippingPoint) bool {
+			remainingSPs, _ := core.Filter(order.ShippingPoints, func(sp *dbo4logist.OrderShippingPoint) bool {
 				return sp.Counterparty.ContactID != contactID
 			})
 			if len(remainingSPs) != len(order.ShippingPoints) {
 				order.ShippingPoints = remainingSPs
 				params.Changed.ShippingPoints = true
 			}
-			order.ContainerPoints, _ = core.Filter(order.ContainerPoints, func(cp *models4logist.ContainerPoint) bool {
+			order.ContainerPoints, _ = core.Filter(order.ContainerPoints, func(cp *dbo4logist.ContainerPoint) bool {
 				for _, sp := range remainingSPs {
 					if sp.ID == cp.ShippingPointID {
 						return true
@@ -68,7 +68,7 @@ func deleteCounterpartyAndChildren(params *OrderWorkerParams, role models4logist
 }
 
 func RemoveUnusedContacts(params *OrderWorkerParams) {
-	contacts := make([]*models4logist.OrderContact, 0, len(params.Order.Dto.Contacts))
+	contacts := make([]*dbo4logist.OrderContact, 0, len(params.Order.Dto.Contacts))
 	for _, contact := range params.Order.Dto.Contacts {
 		i, _ := params.Order.Dto.WithCounterparties.GetCounterpartyByContactID(contact.ID)
 		if i < 0 {
@@ -89,10 +89,10 @@ func deleteOrderCounterpartyTxWorker(
 
 	deletedShippingPointIDs := make([]string, 0, len(order.Dto.ShippingPoints))
 	{ // Delete relevant shipping points
-		shippingPoints := make([]*models4logist.OrderShippingPoint, 0, len(order.Dto.ShippingPoints))
+		shippingPoints := make([]*dbo4logist.OrderShippingPoint, 0, len(order.Dto.ShippingPoints))
 		for _, sp := range order.Dto.ShippingPoints {
-			if request.Role == models4logist.CounterpartyRoleDispatchPoint && sp.Location.ContactID == request.ContactID ||
-				request.Role == models4logist.CounterpartyRoleDispatcher && sp.Counterparty.ContactID == request.ContactID {
+			if request.Role == dbo4logist.CounterpartyRoleDispatchPoint && sp.Location.ContactID == request.ContactID ||
+				request.Role == dbo4logist.CounterpartyRoleDispatcher && sp.Counterparty.ContactID == request.ContactID {
 				deletedShippingPointIDs = append(deletedShippingPointIDs, sp.ID)
 				continue
 			}
@@ -105,7 +105,7 @@ func deleteOrderCounterpartyTxWorker(
 	}
 
 	{ // Delete relevant container points
-		containerPoints := make([]*models4logist.ContainerPoint, 0, len(order.Dto.ContainerPoints))
+		containerPoints := make([]*dbo4logist.ContainerPoint, 0, len(order.Dto.ContainerPoints))
 		for _, cp := range order.Dto.ContainerPoints {
 			if slice.Index(deletedShippingPointIDs, cp.ShippingPointID) >= 0 {
 				continue
@@ -119,9 +119,9 @@ func deleteOrderCounterpartyTxWorker(
 	}
 
 	{ // Delete relevant segments
-		segments := make([]*models4logist.ContainerSegment, 0, len(order.Dto.Segments))
+		segments := make([]*dbo4logist.ContainerSegment, 0, len(order.Dto.Segments))
 		for _, segment := range order.Dto.Segments {
-			if request.Role == models4logist.CounterpartyRoleTrucker &&
+			if request.Role == dbo4logist.CounterpartyRoleTrucker &&
 				segment.ByContactID == request.ContactID ||
 				slice.Index(deletedShippingPointIDs, segment.From.ShippingPointID) >= 0 ||
 				slice.Index(deletedShippingPointIDs, segment.To.ShippingPointID) >= 0 {
@@ -137,7 +137,7 @@ func deleteOrderCounterpartyTxWorker(
 
 	//{ // Clear truckers
 	//	for _, counterparty := range order.Data.Counterparties {
-	//		if counterparty.Role == models4logist.CounterpartyRoleTrucker {
+	//		if counterparty.Role == dbo4logist.CounterpartyRoleTrucker {
 	//			hasSegments := false
 	//			for _, segment := range order.Data.Segments {
 	//				if segment.By != nil && segment.By.ContactID == counterparty.ContactID {

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/models4userus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"log"
 	"time"
@@ -78,7 +78,7 @@ func TxGetUsers(ctx context.Context, tx dal.ReadwriteTransaction, users []dal.Re
 // UserWorkerParams passes data to a team worker
 type UserWorkerParams struct {
 	Started     time.Time
-	User        models4userus.User
+	User        dbo4userus.User
 	UserUpdates []dal.Update
 }
 
@@ -89,7 +89,7 @@ var RunUserWorker = func(ctx context.Context, db dal.DB, user facade.User, worke
 		panic("user == nil")
 	}
 	params := UserWorkerParams{
-		User:    models4userus.NewUser(user.GetID()),
+		User:    dbo4userus.NewUser(user.GetID()),
 		Started: time.Now(),
 	}
 	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
@@ -122,7 +122,7 @@ func GetUserTeamContactID(ctx context.Context, tx dal.ReadSession, userID string
 		return userContactID, nil
 	}
 
-	user := models4userus.NewUserContext(userID)
+	user := dbo4userus.NewUserContext(userID)
 
 	if err = GetUserByID(ctx, tx, user.Record); err != nil || !user.Record.Exists() {
 		return "", err

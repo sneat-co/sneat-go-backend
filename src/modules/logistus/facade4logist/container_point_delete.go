@@ -3,8 +3,8 @@ package facade4logist
 import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/slice"
 )
@@ -36,8 +36,8 @@ func txDeleteContainerPoints(_ context.Context, _ dal.ReadwriteTransaction, para
 	return nil
 }
 
-func deleteContainerPoints(request dto4logist.ContainerPointsRequest, orderDto *models4logist.OrderDto, params *OrderWorkerParams) error {
-	containerPoints := make([]*models4logist.ContainerPoint, 0, len(orderDto.ContainerPoints))
+func deleteContainerPoints(request dto4logist.ContainerPointsRequest, orderDto *dbo4logist.OrderDto, params *OrderWorkerParams) error {
+	containerPoints := make([]*dbo4logist.ContainerPoint, 0, len(orderDto.ContainerPoints))
 	for _, cp := range orderDto.ContainerPoints {
 		if cp.ContainerID == request.ContainerID && slice.Index(request.ShippingPointIDs, cp.ShippingPointID) >= 0 {
 			continue
@@ -52,13 +52,13 @@ func deleteContainerPoints(request dto4logist.ContainerPointsRequest, orderDto *
 	return nil
 }
 
-//func deleteRefsToContainerPointsFromShippingPoints(request dto4logist.ContainerPointsRequest, orderDto *models4logist.OrderDto, params *OrderWorkerParams) error {
+//func deleteRefsToContainerPointsFromShippingPoints(request dto4logist.ContainerPointsRequest, orderDto *dbo4logist.OrderDto, params *OrderWorkerParams) error {
 //	orderDto.GetShippingPointByID()
 //	return nil
 //}
 
-func deleteContainerSegments(request dto4logist.ContainerPointsRequest, orderDto *models4logist.OrderDto, params *OrderWorkerParams) error {
-	segments := make([]*models4logist.ContainerSegment, 0, len(orderDto.Segments))
+func deleteContainerSegments(request dto4logist.ContainerPointsRequest, orderDto *dbo4logist.OrderDto, params *OrderWorkerParams) error {
+	segments := make([]*dbo4logist.ContainerSegment, 0, len(orderDto.Segments))
 	for _, segment := range orderDto.Segments {
 		if segment.ContainerID == request.ContainerID {
 			if slice.Index(request.ShippingPointIDs, segment.From.ShippingPointID) >= 0 ||

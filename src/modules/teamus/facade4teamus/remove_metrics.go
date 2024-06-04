@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/models4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
@@ -19,7 +19,7 @@ func RemoveMetrics(ctx context.Context, user facade.User, request dto4teamus.Tea
 			changed := false
 			team := params.Team
 
-			metrics := make([]*models4teamus.TeamMetric, 0, len(team.Data.Metrics))
+			metrics := make([]*dbo4teamus.TeamMetric, 0, len(team.Data.Metrics))
 		Metrics:
 			for _, metric := range team.Data.Metrics {
 				for i, metricID := range request.Metrics {

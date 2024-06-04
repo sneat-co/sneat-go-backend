@@ -3,8 +3,8 @@ package facade4logist
 import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )
@@ -24,11 +24,11 @@ func txSetContainerPointFields(
 ) error {
 	containerPoint := params.Order.Dto.GetContainerPoint(request.ContainerID, request.ShippingPointID)
 	if containerPoint == nil {
-		containerPoint = &models4logist.ContainerPoint{
+		containerPoint = &dbo4logist.ContainerPoint{
 			ContainerID:     request.ContainerID,
 			ShippingPointID: request.ShippingPointID,
-			ShippingPointBase: models4logist.ShippingPointBase{
-				Status: models4logist.ShippingPointStatusPending,
+			ShippingPointBase: dbo4logist.ShippingPointBase{
+				Status: dbo4logist.ShippingPointStatusPending,
 			},
 		}
 	}

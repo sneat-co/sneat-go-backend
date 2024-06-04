@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/listus/models4listus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 	"log"
@@ -29,8 +29,8 @@ func ReorderListItem(ctx context.Context, userContext facade.User, request Reord
 			return fmt.Errorf("failed to get a list for reordering of list items: %w", err)
 		}
 		//listUpdates := make([]dal.Update, 0, len(request.ItemIDs))
-		itemsToMove := make([]*models4listus.ListItemBrief, 0, len(request.ItemIDs))
-		otherItems := make([]*models4listus.ListItemBrief, 0, len(list.Dto.Items)-len(request.ItemIDs))
+		itemsToMove := make([]*dbo4listus.ListItemBrief, 0, len(request.ItemIDs))
+		otherItems := make([]*dbo4listus.ListItemBrief, 0, len(list.Dto.Items)-len(request.ItemIDs))
 
 		for _, item := range list.Dto.Items {
 			isItemToMove := false
@@ -52,7 +52,7 @@ func ReorderListItem(ctx context.Context, userContext facade.User, request Reord
 		} else if len(otherItems) < toIndex {
 			toIndex = len(otherItems) - 1
 		}
-		items := make([]*models4listus.ListItemBrief, toIndex, len(list.Dto.Items))
+		items := make([]*dbo4listus.ListItemBrief, toIndex, len(list.Dto.Items))
 		for i := 0; i < toIndex; i++ {
 			items[i] = otherItems[i]
 		}

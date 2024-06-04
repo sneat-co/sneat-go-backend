@@ -2,12 +2,12 @@ package dto4logist
 
 import (
 	"errors"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 )
 
 // OrderResponse is a response to an order modification request.
 type OrderResponse struct {
-	OrderDto *models4logist.OrderDto `json:"order"`
+	OrderDto *dbo4logist.OrderDto `json:"order"`
 }
 
 // Validate returns an error if the response is invalid.

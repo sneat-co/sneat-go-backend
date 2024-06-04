@@ -1,7 +1,7 @@
 package dto4calendarium
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/models4calendarium"
+	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
 	"strings"
@@ -10,8 +10,8 @@ import (
 // HappeningSlotDateRequest updates slot
 type HappeningSlotDateRequest struct {
 	HappeningRequest
-	Slot models4calendarium.HappeningSlot `json:"slot"`
-	Date string                           `json:"date"`
+	Slot dbo4calendarium.HappeningSlot `json:"slot"`
+	Date string                        `json:"date"`
 }
 
 // Validate returns error if not valid

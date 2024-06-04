@@ -3,9 +3,9 @@ package facade4logist
 import (
 	"context"
 	"fmt"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/mocks4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -38,7 +38,7 @@ func Test_txDeleteShippingPoint(t *testing.T) {
 			name: "should_pass",
 			args: args{
 				params: &OrderWorkerParams{
-					Order: models4logist.NewOrderWithData("team1", "order1", mocks4logist.ValidOrderDto1(t)),
+					Order: dbo4logist.NewOrderWithData("team1", "order1", mocks4logist.ValidOrderDto1(t)),
 				},
 				request: dto4logist.OrderShippingPointRequest{
 					ShippingPointID: mocks4logist.ShippingPoint1WithSingleContainerID,

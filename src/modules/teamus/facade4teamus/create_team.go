@@ -9,9 +9,9 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/models4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/models4userus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/random"
@@ -22,8 +22,8 @@ import (
 )
 
 type CreateTeamResult struct {
-	Team dal4teamus.TeamContext    `json:"-"`
-	User models4userus.UserContext `json:"-"`
+	Team dal4teamus.TeamContext `json:"-"`
+	User dbo4userus.UserContext `json:"-"`
 }
 
 // CreateTeam creates TeamIDs record
@@ -49,7 +49,7 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 	}
 	var userTeamContactID string
 
-	user := models4userus.NewUserContext(userID)
+	user := dbo4userus.NewUserContext(userID)
 	response.User = user
 
 	if err = tx.Get(ctx, user.Record); err != nil {
@@ -87,8 +87,8 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 	if request.Type == "family" && request.Title == "" {
 		request.Title = "Family"
 	}
-	teamDbo := &models4teamus.TeamDbo{
-		TeamBrief: models4teamus.TeamBrief{
+	teamDbo := &dbo4teamus.TeamDbo{
+		TeamBrief: dbo4teamus.TeamBrief{
 			Type:   request.Type,
 			Title:  request.Title,
 			Status: dbmodels.StatusActive,
@@ -115,15 +115,15 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 	if request.Type == "work" {
 		zero := 0
 		hundred := 100
-		teamDbo.Metrics = []*models4teamus.TeamMetric{
+		teamDbo.Metrics = []*dbo4teamus.TeamMetric{
 			{ID: "cc", Title: "Code coverage", Type: "int", Mode: "TeamIDs", Min: &zero, Max: &hundred},
-			{ID: "bb", Title: "Build is broken", Type: "bool", Mode: "TeamIDs", Bool: &models4teamus.BoolMetric{
-				True:  &models4teamus.BoolMetricVal{Label: "Yes", Color: "danger"},
-				False: &models4teamus.BoolMetricVal{Label: "No", Color: "success"},
+			{ID: "bb", Title: "Build is broken", Type: "bool", Mode: "TeamIDs", Bool: &dbo4teamus.BoolMetric{
+				True:  &dbo4teamus.BoolMetricVal{Label: "Yes", Color: "danger"},
+				False: &dbo4teamus.BoolMetricVal{Label: "No", Color: "success"},
 			}},
-			{ID: "wfh", Title: "Working From Home", Type: "bool", Mode: "personal", Bool: &models4teamus.BoolMetric{
-				True:  &models4teamus.BoolMetricVal{Label: "Yes", Color: "tertiary"},
-				False: &models4teamus.BoolMetricVal{Label: "No", Color: "secondary"},
+			{ID: "wfh", Title: "Working From Home", Type: "bool", Mode: "personal", Bool: &dbo4teamus.BoolMetric{
+				True:  &dbo4teamus.BoolMetricVal{Label: "Yes", Color: "tertiary"},
+				False: &dbo4teamus.BoolMetricVal{Label: "No", Color: "secondary"},
 			}},
 		}
 	}
@@ -172,14 +172,14 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 		return response, fmt.Errorf("failed to insert a new teamDbo contactus record: %w", err)
 	}
 
-	userTeamBrief := models4userus.UserTeamBrief{
+	userTeamBrief := dbo4userus.UserTeamBrief{
 		TeamBrief:     teamDbo.TeamBrief,
 		UserContactID: userTeamContactID,
 		Roles:         roles,
 	}
 
 	if user.Dbo.Teams == nil {
-		user.Dbo.Teams = make(map[string]*models4userus.UserTeamBrief, 1)
+		user.Dbo.Teams = make(map[string]*dbo4userus.UserTeamBrief, 1)
 	}
 	updates := user.Dbo.SetTeamBrief(teamID, &userTeamBrief)
 

@@ -4,13 +4,13 @@ import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dto4linkage"
-	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/models4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
-func UpdateItemRelationships(ctx context.Context, userCtx facade.User, request dto4linkage.UpdateItemRequest) (item record.DataWithID[string, *models4linkage.WithRelatedAndIDsAndUserID], err error) {
+func UpdateItemRelationships(ctx context.Context, userCtx facade.User, request dto4linkage.UpdateItemRequest) (item record.DataWithID[string, *dbo4linkage.WithRelatedAndIDsAndUserID], err error) {
 	if err = dal4teamus.RunTeamWorker(ctx, userCtx, request.TeamID, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.TeamWorkerParams) (err error) {
 		item, err = txUpdateItemRelationships(ctx, tx, params, request)
 		return err
@@ -27,9 +27,9 @@ func txUpdateItemRelationships(
 	ctx context.Context, tx dal.ReadwriteTransaction,
 	params *dal4teamus.TeamWorkerParams,
 	request dto4linkage.UpdateItemRequest,
-) (item record.DataWithID[string, *models4linkage.WithRelatedAndIDsAndUserID], err error) {
+) (item record.DataWithID[string, *dbo4linkage.WithRelatedAndIDsAndUserID], err error) {
 	key := dal4teamus.NewTeamModuleItemKey(request.TeamID, request.ModuleID, request.Collection, request.ItemID)
-	item = record.NewDataWithID[string, *models4linkage.WithRelatedAndIDsAndUserID](request.ItemID, key, new(models4linkage.WithRelatedAndIDsAndUserID))
+	item = record.NewDataWithID[string, *dbo4linkage.WithRelatedAndIDsAndUserID](request.ItemID, key, new(dbo4linkage.WithRelatedAndIDsAndUserID))
 	if err = tx.Get(ctx, item.Record); err != nil {
 		return item, err
 	}

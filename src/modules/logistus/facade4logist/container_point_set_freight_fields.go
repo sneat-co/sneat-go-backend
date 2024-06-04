@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
@@ -26,9 +26,9 @@ func txSetContainerPointFreightFields(
 	if containerPoint == nil {
 		return errors.New("container point not found byt containerID & shippingPointID")
 	}
-	setNumber := func(freightLoad *models4logist.FreightLoad) (*models4logist.FreightLoad, error) {
+	setNumber := func(freightLoad *dbo4logist.FreightLoad) (*dbo4logist.FreightLoad, error) {
 		if freightLoad == nil {
-			freightLoad = &models4logist.FreightLoad{}
+			freightLoad = &dbo4logist.FreightLoad{}
 		}
 		for name, value := range request.Integers {
 			switch name {
@@ -59,9 +59,9 @@ func txSetContainerPointFreightFields(
 	var err error = nil
 	if len(request.Integers) > 0 {
 		switch request.Task {
-		case models4logist.ShippingPointTaskLoad:
+		case dbo4logist.ShippingPointTaskLoad:
 			containerPoint.ToLoad, err = setNumber(containerPoint.ToLoad)
-		case models4logist.ShippingPointTaskUnload:
+		case dbo4logist.ShippingPointTaskUnload:
 			containerPoint.ToUnload, err = setNumber(containerPoint.ToUnload)
 		}
 	}

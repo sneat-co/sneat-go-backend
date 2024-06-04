@@ -5,7 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/models4invitus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/dbo4invitus"
 	"github.com/sneat-co/sneat-go-core"
 	"github.com/sneat-co/sneat-go-core/capturer"
 	"github.com/sneat-co/sneat-go-core/emails"
@@ -35,7 +35,7 @@ const inviteEmailTemplateText = `
 
 var inviteEmailTemplate = template.Must(template.New("inviteEmail").Parse(inviteEmailTemplateText))
 
-func sendInviteEmail(ctx context.Context, id string, invite *models4invitus.PersonalInviteDto) (messageID string, err error) {
+func sendInviteEmail(ctx context.Context, id string, invite *dbo4invitus.PersonalInviteDto) (messageID string, err error) {
 	if invite.To.Address == "" {
 		return "", errors.New("missing required field: invite.To.Address")
 	}

@@ -1,7 +1,7 @@
 package dto4logist
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/strongo/validation"
 	"strings"
 )
@@ -9,7 +9,7 @@ import (
 // SetOrderStatusRequest is a request to set status of an order
 type SetOrderStatusRequest struct {
 	OrderRequest
-	Status models4logist.OrderStatus `json:"status"`
+	Status dbo4logist.OrderStatus `json:"status"`
 }
 
 // Validate returns error if request is invalid

@@ -2,7 +2,7 @@ package dto4calendarium
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/models4calendarium"
+	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
 	"github.com/strongo/validation"
 )
@@ -10,7 +10,7 @@ import (
 // CreateHappeningRequest DTO
 type CreateHappeningRequest struct {
 	dto4teamus.TeamRequest
-	Happening *models4calendarium.HappeningBrief `json:"happening"`
+	Happening *dbo4calendarium.HappeningBrief `json:"happening"`
 }
 
 // Validate returns error if not valid
@@ -29,8 +29,8 @@ func (v CreateHappeningRequest) Validate() error {
 
 // CreateHappeningResponse DTO
 type CreateHappeningResponse struct {
-	ID  string                          `json:"id"`
-	Dto models4calendarium.HappeningDbo `json:"dto"`
+	ID  string                       `json:"id"`
+	Dto dbo4calendarium.HappeningDbo `json:"dto"`
 }
 
 // Validate returns error if not valid

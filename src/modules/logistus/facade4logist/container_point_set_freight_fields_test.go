@@ -1,9 +1,9 @@
 package facade4logist
 
 import (
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/mocks4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -27,7 +27,7 @@ func Test_txSetContainerPointFreightFields(t *testing.T) {
 				},
 			},
 			params: &OrderWorkerParams{
-				Order: models4logist.Order{
+				Order: dbo4logist.Order{
 					Dto: mocks4logist.ValidOrderDto1(t),
 				},
 			},
@@ -41,11 +41,11 @@ func Test_txSetContainerPointFreightFields(t *testing.T) {
 		if !assert.Equal(t, 1, len(containerPoint.Tasks)) {
 			panic("unexpected container point tasks")
 		}
-		if !assert.Equal(t, models4logist.ShippingPointTaskLoad, containerPoint.Tasks[0]) {
+		if !assert.Equal(t, dbo4logist.ShippingPointTaskLoad, containerPoint.Tasks[0]) {
 			panic("unexpected container point task")
 		}
 	}
-	postAssertContainerPoint := func(t *testing.T, args args, err error) (*models4logist.ContainerPoint, bool) {
+	postAssertContainerPoint := func(t *testing.T, args args, err error) (*dbo4logist.ContainerPoint, bool) {
 		assert.Nil(t, err)
 		assert.True(t, args.params.Changed.ContainerPoints)
 		containerPoint := args.params.Order.Dto.GetContainerPoint(args.request.ContainerID, args.request.ShippingPointID)
@@ -64,7 +64,7 @@ func Test_txSetContainerPointFreightFields(t *testing.T) {
 	}{
 		{
 			name: "set_load_pallets",
-			args: setArgs(mocks4logist.Container1ID, mocks4logist.ShippingPoint2With2ContainersID, models4logist.ShippingPointTaskLoad, "numberOfPallets", 3),
+			args: setArgs(mocks4logist.Container1ID, mocks4logist.ShippingPoint2With2ContainersID, dbo4logist.ShippingPointTaskLoad, "numberOfPallets", 3),
 			preAssert: func(t *testing.T, args args) {
 				preAssert(t, args)
 			},
@@ -78,7 +78,7 @@ func Test_txSetContainerPointFreightFields(t *testing.T) {
 		},
 		{
 			name: "set_load_weight",
-			args: setArgs(mocks4logist.Container1ID, mocks4logist.ShippingPoint2With2ContainersID, models4logist.ShippingPointTaskLoad, "grossWeightKg", 132),
+			args: setArgs(mocks4logist.Container1ID, mocks4logist.ShippingPoint2With2ContainersID, dbo4logist.ShippingPointTaskLoad, "grossWeightKg", 132),
 			preAssert: func(t *testing.T, args args) {
 				preAssert(t, args)
 			},
@@ -92,7 +92,7 @@ func Test_txSetContainerPointFreightFields(t *testing.T) {
 		},
 		{
 			name: "set_load_volume",
-			args: setArgs(mocks4logist.Container1ID, mocks4logist.ShippingPoint2With2ContainersID, models4logist.ShippingPointTaskLoad, "volumeM3", 4),
+			args: setArgs(mocks4logist.Container1ID, mocks4logist.ShippingPoint2With2ContainersID, dbo4logist.ShippingPointTaskLoad, "volumeM3", 4),
 			preAssert: func(t *testing.T, args args) {
 				preAssert(t, args)
 			},

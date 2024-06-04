@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/models4meetingus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/models4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/dbo4meetingus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )
@@ -31,9 +31,9 @@ type WorkerTeam struct {
 	workerItem
 }
 
-// Data returns *models4teamus.TeamDbo
-func (v WorkerTeam) Data() *models4teamus.TeamDbo {
-	return v.Record.Data().(*models4teamus.TeamDbo)
+// Data returns *dbo4teamus.TeamDbo
+func (v WorkerTeam) Data() *dbo4teamus.TeamDbo {
+	return v.Record.Data().(*dbo4teamus.TeamDbo)
 }
 
 // WorkerMeeting a worker for a meeting
@@ -41,9 +41,9 @@ type WorkerMeeting struct {
 	workerItem
 }
 
-// Data returns *models4meetingus.Meeting
-func (v WorkerMeeting) Data() *models4meetingus.Meeting {
-	return v.Record.Data().(models4meetingus.MeetingInstance).BaseMeeting()
+// Data returns *dbo4meetingus.Meeting
+func (v WorkerMeeting) Data() *dbo4meetingus.Meeting {
+	return v.Record.Data().(dbo4meetingus.MeetingInstance).BaseMeeting()
 }
 
 // RecordFactory a factory to create an api4meetingus record
@@ -52,7 +52,7 @@ type RecordFactory interface {
 	Collection() string
 
 	// NewRecordData creates an instance of api4meetingus record
-	NewRecordData() models4meetingus.MeetingInstance
+	NewRecordData() dbo4meetingus.MeetingInstance
 }
 
 // Worker is a api4meetingus worker
@@ -125,7 +125,7 @@ var GetMeetingAndTeam = func(ctx context.Context, tx dal.ReadwriteTransaction, u
 		meeting.UserIDs = team.UserIDs
 		for contactID, teamMember := range contactusTeam.Data.Contacts {
 			if teamMember.IsTeamMember() {
-				meeting.AddContact(teamID, contactID, &models4meetingus.MeetingMemberBrief{ContactBrief: *teamMember})
+				meeting.AddContact(teamID, contactID, &dbo4meetingus.MeetingMemberBrief{ContactBrief: *teamMember})
 			}
 		}
 	}

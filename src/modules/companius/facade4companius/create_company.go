@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/models4userus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
@@ -35,7 +35,7 @@ func CreateCompany(ctx context.Context, request CreateCompanyRequest) (response 
 		if err = tx.Insert(ctx, company); err != nil {
 			return fmt.Errorf("failed to create company record: %v", err)
 		}
-		userKey := models4userus.NewUserKey(userID)
+		userKey := dbo4userus.NewUserKey(userID)
 		userData := make(map[string]interface{})
 		userRecord := dal.NewRecordWithData(userKey, userData)
 		if err = tx.Get(ctx, userRecord); err != nil {

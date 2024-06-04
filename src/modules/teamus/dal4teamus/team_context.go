@@ -2,17 +2,17 @@ package dal4teamus
 
 import (
 	"github.com/dal-go/dalgo/record"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/models4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
 )
 
-type TeamContext = record.DataWithID[string, *models4teamus.TeamDbo]
+type TeamContext = record.DataWithID[string, *dbo4teamus.TeamDbo]
 
 func NewTeamContext(id string) (team TeamContext) {
-	teamDto := new(models4teamus.TeamDbo)
+	teamDto := new(dbo4teamus.TeamDbo)
 	return NewTeamContextWithDto(id, teamDto)
 }
 
-func NewTeamContextWithDto(id string, dto *models4teamus.TeamDbo) (team TeamContext) {
+func NewTeamContextWithDto(id string, dto *dbo4teamus.TeamDbo) (team TeamContext) {
 	if dto == nil {
 		panic("required parameter dto is nil")
 	}

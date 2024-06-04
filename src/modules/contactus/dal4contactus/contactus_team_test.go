@@ -2,7 +2,7 @@ package dal4contactus
 
 import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/models4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dbo4contactus"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

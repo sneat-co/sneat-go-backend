@@ -4,30 +4,30 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/models4linkage"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 )
 
-//type RelatableAdapter[D models4linkage.Relatable] interface {
-//	VerifyItem(ctx context.Context, tx dal.ReadTransaction, recordRef models4linkage.TeamModuleItemRef) (err error)
-//	//GetRecord(ctx context.Context, tx dal.ReadTransaction, recordRef models4linkage.TeamModuleItemRef) (record.DataWithID[string, D], error)
+//type RelatableAdapter[D dbo4linkage.Relatable] interface {
+//	VerifyItem(ctx context.Context, tx dal.ReadTransaction, recordRef dbo4linkage.TeamModuleItemRef) (err error)
+//	//GetRecord(ctx context.Context, tx dal.ReadTransaction, recordRef dbo4linkage.TeamModuleItemRef) (record.DataWithID[string, D], error)
 //}
-//type relatableAdapter[D models4linkage.Relatable] struct {
-//	verifyItem func(ctx context.Context, tx dal.ReadTransaction, recordRef models4linkage.TeamModuleItemRef) (err error)
+//type relatableAdapter[D dbo4linkage.Relatable] struct {
+//	verifyItem func(ctx context.Context, tx dal.ReadTransaction, recordRef dbo4linkage.TeamModuleItemRef) (err error)
 //}
 //
-//func (v relatableAdapter[D]) VerifyItem(ctx context.Context, tx dal.ReadTransaction, recordRef models4linkage.TeamModuleItemRef) (err error) {
+//func (v relatableAdapter[D]) VerifyItem(ctx context.Context, tx dal.ReadTransaction, recordRef dbo4linkage.TeamModuleItemRef) (err error) {
 //	return v.verifyItem(ctx, tx, recordRef)
 //}
 //
-//func NewRelatableAdapter[D models4linkage.Relatable](
-//	verifyItem func(ctx context.Context, tx dal.ReadTransaction, recordRef models4linkage.TeamModuleItemRef) (err error),
+//func NewRelatableAdapter[D dbo4linkage.Relatable](
+//	verifyItem func(ctx context.Context, tx dal.ReadTransaction, recordRef dbo4linkage.TeamModuleItemRef) (err error),
 //) RelatableAdapter[D] {
 //	return relatableAdapter[D]{
 //		verifyItem: verifyItem,
 //	}
 //}
 
-//func (relatableAdapter[D]) GetRecord(ctx context.Context, tx dal.ReadTransaction, recordRef models4linkage.TeamModuleItemRef) (record.DataWithID[string, D], error) {
+//func (relatableAdapter[D]) GetRecord(ctx context.Context, tx dal.ReadTransaction, recordRef dbo4linkage.TeamModuleItemRef) (record.DataWithID[string, D], error) {
 //	return nil, nil
 //}
 
@@ -39,10 +39,10 @@ type SetRelatedResult struct {
 func SetRelated(
 	_ context.Context,
 	_ dal.ReadwriteTransaction,
-	object models4linkage.Relatable,
-	objectRef models4linkage.TeamModuleItemRef,
-	itemRef models4linkage.TeamModuleItemRef,
-	rolesCommand models4linkage.RelationshipRolesCommand,
+	object dbo4linkage.Relatable,
+	objectRef dbo4linkage.TeamModuleItemRef,
+	itemRef dbo4linkage.TeamModuleItemRef,
+	rolesCommand dbo4linkage.RelationshipRolesCommand,
 ) (
 	result SetRelatedResult,
 	//teamModuleUpdates []dal.Update,
@@ -52,7 +52,7 @@ func SetRelated(
 	{
 		const invalidArgPrefix = "facade4linkage.SetRelated got invalid argument"
 		if err = objectRef.Validate(); err != nil {
-			err = fmt.Errorf("%s `objectRef models4linkage.TeamModuleItemRef`: %w", invalidArgPrefix, err)
+			err = fmt.Errorf("%s `objectRef dbo4linkage.TeamModuleItemRef`: %w", invalidArgPrefix, err)
 			return
 		}
 		if err = rolesCommand.Validate(); err != nil {
@@ -64,12 +64,12 @@ func SetRelated(
 
 	objectWithRelated := object.GetRelated()
 	if objectWithRelated.Related == nil {
-		objectWithRelated.Related = make(models4linkage.RelatedByModuleID, 1)
+		objectWithRelated.Related = make(dbo4linkage.RelatedByModuleID, 1)
 	}
-	getRelationships := func(ids []string) (relationships models4linkage.RelationshipRoles) {
-		relationships = make(models4linkage.RelationshipRoles, len(ids))
+	getRelationships := func(ids []string) (relationships dbo4linkage.RelationshipRoles) {
+		relationships = make(dbo4linkage.RelationshipRoles, len(ids))
 		for _, r := range ids {
-			relationships[r] = &models4linkage.RelationshipRole{
+			relationships[r] = &dbo4linkage.RelationshipRole{
 				//CreatedField: with.CreatedField{
 				//	Created: with.Created{
 				//		At: now.Format(time.DateOnly),

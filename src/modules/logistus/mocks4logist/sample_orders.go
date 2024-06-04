@@ -2,7 +2,7 @@ package mocks4logist
 
 import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	dbmodels2 "github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/stretchr/testify/assert"
 	"github.com/strongo/strongoapp/with"
@@ -61,10 +61,10 @@ const (
 )
 
 // ValidOrderDto1 returns a valid order with 3 containers, 3 shipping points, 4 container points and 1 port
-func ValidOrderDto1(t *testing.T) (order *models4logist.OrderDto) {
+func ValidOrderDto1(t *testing.T) (order *dbo4logist.OrderDto) {
 	order = ValidEmptyOrder(t)
 
-	order.Contacts = append(order.Contacts, []*models4logist.OrderContact{
+	order.Contacts = append(order.Contacts, []*dbo4logist.OrderContact{
 		{
 			ID:        Port2ContactID,
 			Type:      briefs4contactus.ContactTypeCompany,
@@ -133,100 +133,100 @@ func ValidOrderDto1(t *testing.T) (order *models4logist.OrderDto) {
 		},
 	}...)
 
-	order.Counterparties = append(order.Counterparties, []*models4logist.OrderCounterparty{
-		{ContactID: Port2ContactID, Role: models4logist.CounterpartyRolePortFrom},
-		{ContactID: Port2dock1ContactID, Role: models4logist.CounterpartyRolePickPoint},
-		{ContactID: Port2dock1ContactID, Role: models4logist.CounterpartyRoleDropPoint},
-		{ContactID: Port2dock2ContactID, Role: models4logist.CounterpartyRolePickPoint},
-		{ContactID: Port2dock2ContactID, Role: models4logist.CounterpartyRoleDropPoint},
-		{ContactID: Port1ContactID, Role: models4logist.CounterpartyRolePortTo},
-		{ContactID: Port1dock1ContactID, Role: models4logist.CounterpartyRoleDropPoint},
-		{ContactID: Dispatcher1ContactID, Role: models4logist.CounterpartyRoleDispatcher},
-		{ContactID: Dispatcher1warehouse1ContactID, Role: models4logist.CounterpartyRoleDispatchPoint},
-		{ContactID: Dispatcher2ContactID, Role: models4logist.CounterpartyRoleDispatcher},
-		{ContactID: Dispatcher2warehouse1ContactID, Role: models4logist.CounterpartyRoleDispatchPoint},
-		{ContactID: Dispatcher2warehouse2ContactID, Role: models4logist.CounterpartyRoleDispatchPoint},
+	order.Counterparties = append(order.Counterparties, []*dbo4logist.OrderCounterparty{
+		{ContactID: Port2ContactID, Role: dbo4logist.CounterpartyRolePortFrom},
+		{ContactID: Port2dock1ContactID, Role: dbo4logist.CounterpartyRolePickPoint},
+		{ContactID: Port2dock1ContactID, Role: dbo4logist.CounterpartyRoleDropPoint},
+		{ContactID: Port2dock2ContactID, Role: dbo4logist.CounterpartyRolePickPoint},
+		{ContactID: Port2dock2ContactID, Role: dbo4logist.CounterpartyRoleDropPoint},
+		{ContactID: Port1ContactID, Role: dbo4logist.CounterpartyRolePortTo},
+		{ContactID: Port1dock1ContactID, Role: dbo4logist.CounterpartyRoleDropPoint},
+		{ContactID: Dispatcher1ContactID, Role: dbo4logist.CounterpartyRoleDispatcher},
+		{ContactID: Dispatcher1warehouse1ContactID, Role: dbo4logist.CounterpartyRoleDispatchPoint},
+		{ContactID: Dispatcher2ContactID, Role: dbo4logist.CounterpartyRoleDispatcher},
+		{ContactID: Dispatcher2warehouse1ContactID, Role: dbo4logist.CounterpartyRoleDispatchPoint},
+		{ContactID: Dispatcher2warehouse2ContactID, Role: dbo4logist.CounterpartyRoleDispatchPoint},
 	}...)
 	fixCounterpartiesFromContacts(order)
-	order.Containers = []*models4logist.OrderContainer{
+	order.Containers = []*dbo4logist.OrderContainer{
 		{
 			ID: Container1ID,
-			OrderContainerBase: models4logist.OrderContainerBase{
+			OrderContainerBase: dbo4logist.OrderContainerBase{
 				Type:   Container1Type,
 				Number: Container1Number,
 			},
 		},
 		{
 			ID: Container2ID,
-			OrderContainerBase: models4logist.OrderContainerBase{
+			OrderContainerBase: dbo4logist.OrderContainerBase{
 				Type:   Container2Type,
 				Number: Container2Number,
 			},
 		},
 		{
 			ID: Container3ID,
-			OrderContainerBase: models4logist.OrderContainerBase{
+			OrderContainerBase: dbo4logist.OrderContainerBase{
 				Type:   Container3Type,
 				Number: Container3Number,
 			},
 		},
 	}
-	order.Segments = []*models4logist.ContainerSegment{
+	order.Segments = []*dbo4logist.ContainerSegment{
 		{
-			Dates: &models4logist.SegmentDates{
+			Dates: &dbo4logist.SegmentDates{
 				Arrives: "2020-12-31",
 			},
-			ContainerSegmentKey: models4logist.ContainerSegmentKey{
+			ContainerSegmentKey: dbo4logist.ContainerSegmentKey{
 				ContainerID: Container2ID,
-				From: models4logist.SegmentEndpoint{
+				From: dbo4logist.SegmentEndpoint{
 					ShippingPointID: Port2dock2shippingPointID,
-					SegmentCounterparty: models4logist.SegmentCounterparty{
+					SegmentCounterparty: dbo4logist.SegmentCounterparty{
 						ContactID: Port2dock1ContactID,
-						Role:      models4logist.CounterpartyRolePickPoint,
+						Role:      dbo4logist.CounterpartyRolePickPoint,
 					},
 				},
-				To: models4logist.SegmentEndpoint{
+				To: dbo4logist.SegmentEndpoint{
 					ShippingPointID: ShippingPoint1WithSingleContainerID,
-					SegmentCounterparty: models4logist.SegmentCounterparty{
+					SegmentCounterparty: dbo4logist.SegmentCounterparty{
 						ContactID: Dispatcher1warehouse1ContactID,
-						Role:      models4logist.CounterpartyRoleDispatchPoint,
+						Role:      dbo4logist.CounterpartyRoleDispatchPoint,
 					},
 				},
 			},
 		},
 	}
-	order.ContainerPoints = []*models4logist.ContainerPoint{
+	order.ContainerPoints = []*dbo4logist.ContainerPoint{
 		{
 			ContainerID:     Container1ID,
 			ShippingPointID: Port2dock1shippingPointID,
-			ShippingPointBase: models4logist.ShippingPointBase{
-				Status: models4logist.ShippingPointStatusPending,
-				FreightPoint: models4logist.FreightPoint{
-					Tasks: []models4logist.ShippingPointTask{models4logist.ShippingPointTaskPick},
+			ShippingPointBase: dbo4logist.ShippingPointBase{
+				Status: dbo4logist.ShippingPointStatusPending,
+				FreightPoint: dbo4logist.FreightPoint{
+					Tasks: []dbo4logist.ShippingPointTask{dbo4logist.ShippingPointTaskPick},
 				},
 			},
 		},
 		{
 			ContainerID:     Container2ID,
 			ShippingPointID: Port2dock2shippingPointID,
-			ShippingPointBase: models4logist.ShippingPointBase{
-				Status: models4logist.ShippingPointStatusPending,
-				FreightPoint: models4logist.FreightPoint{
-					Tasks: []models4logist.ShippingPointTask{models4logist.ShippingPointTaskPick},
+			ShippingPointBase: dbo4logist.ShippingPointBase{
+				Status: dbo4logist.ShippingPointStatusPending,
+				FreightPoint: dbo4logist.FreightPoint{
+					Tasks: []dbo4logist.ShippingPointTask{dbo4logist.ShippingPointTaskPick},
 				},
 			},
 		},
 		{
 			ContainerID:     Container2ID,
 			ShippingPointID: ShippingPoint1WithSingleContainerID,
-			ShippingPointBase: models4logist.ShippingPointBase{
-				Status: models4logist.ShippingPointStatusPending,
-				FreightPoint: models4logist.FreightPoint{
-					Tasks: []models4logist.ShippingPointTask{models4logist.ShippingPointTaskLoad},
+			ShippingPointBase: dbo4logist.ShippingPointBase{
+				Status: dbo4logist.ShippingPointStatusPending,
+				FreightPoint: dbo4logist.FreightPoint{
+					Tasks: []dbo4logist.ShippingPointTask{dbo4logist.ShippingPointTaskLoad},
 				},
 			},
-			ContainerEndpoints: models4logist.ContainerEndpoints{
-				Arrival: &models4logist.ContainerEndpoint{
+			ContainerEndpoints: dbo4logist.ContainerEndpoints{
+				Arrival: &dbo4logist.ContainerEndpoint{
 					ScheduledDate: "2020-12-31",
 				},
 			},
@@ -234,38 +234,38 @@ func ValidOrderDto1(t *testing.T) (order *models4logist.OrderDto) {
 		{
 			ContainerID:     Container2ID,
 			ShippingPointID: ShippingPoint2With2ContainersID,
-			ShippingPointBase: models4logist.ShippingPointBase{
-				Status: models4logist.ShippingPointStatusPending,
-				FreightPoint: models4logist.FreightPoint{
-					Tasks: []models4logist.ShippingPointTask{models4logist.ShippingPointTaskLoad, models4logist.ShippingPointTaskUnload},
+			ShippingPointBase: dbo4logist.ShippingPointBase{
+				Status: dbo4logist.ShippingPointStatusPending,
+				FreightPoint: dbo4logist.FreightPoint{
+					Tasks: []dbo4logist.ShippingPointTask{dbo4logist.ShippingPointTaskLoad, dbo4logist.ShippingPointTaskUnload},
 				},
 			},
 		},
 		{
 			ContainerID:     Container1ID,
 			ShippingPointID: ShippingPoint2With2ContainersID,
-			ShippingPointBase: models4logist.ShippingPointBase{
-				Status: models4logist.ShippingPointStatusPending,
-				FreightPoint: models4logist.FreightPoint{
-					Tasks: []models4logist.ShippingPointTask{models4logist.ShippingPointTaskLoad},
+			ShippingPointBase: dbo4logist.ShippingPointBase{
+				Status: dbo4logist.ShippingPointStatusPending,
+				FreightPoint: dbo4logist.FreightPoint{
+					Tasks: []dbo4logist.ShippingPointTask{dbo4logist.ShippingPointTaskLoad},
 				},
 			},
 		},
 	}
-	order.ShippingPoints = []*models4logist.OrderShippingPoint{
+	order.ShippingPoints = []*dbo4logist.OrderShippingPoint{
 		{
 			ID: Port2dock1shippingPointID,
-			ShippingPointBase: models4logist.ShippingPointBase{
-				Status: models4logist.ShippingPointStatusCompleted,
-				FreightPoint: models4logist.FreightPoint{
-					Tasks: []string{models4logist.ShippingPointTaskPick, models4logist.ShippingPointTaskDrop},
+			ShippingPointBase: dbo4logist.ShippingPointBase{
+				Status: dbo4logist.ShippingPointStatusCompleted,
+				FreightPoint: dbo4logist.FreightPoint{
+					Tasks: []string{dbo4logist.ShippingPointTaskPick, dbo4logist.ShippingPointTaskDrop},
 				},
 			},
-			Counterparty: models4logist.ShippingPointCounterparty{
+			Counterparty: dbo4logist.ShippingPointCounterparty{
 				ContactID: Port2ContactID,
 				Title:     Port2ContactTitle,
 			},
-			Location: &models4logist.ShippingPointLocation{
+			Location: &dbo4logist.ShippingPointLocation{
 				ContactID: Port2dock1ContactID,
 				Title:     "Port 2 dock 1",
 				Address: &dbmodels2.Address{
@@ -276,17 +276,17 @@ func ValidOrderDto1(t *testing.T) (order *models4logist.OrderDto) {
 		},
 		{
 			ID: Port2dock2shippingPointID,
-			ShippingPointBase: models4logist.ShippingPointBase{
-				Status: models4logist.ShippingPointStatusCompleted,
-				FreightPoint: models4logist.FreightPoint{
-					Tasks: []string{models4logist.ShippingPointTaskPick, models4logist.ShippingPointTaskDrop},
+			ShippingPointBase: dbo4logist.ShippingPointBase{
+				Status: dbo4logist.ShippingPointStatusCompleted,
+				FreightPoint: dbo4logist.FreightPoint{
+					Tasks: []string{dbo4logist.ShippingPointTaskPick, dbo4logist.ShippingPointTaskDrop},
 				},
 			},
-			Counterparty: models4logist.ShippingPointCounterparty{
+			Counterparty: dbo4logist.ShippingPointCounterparty{
 				ContactID: Port2ContactID,
 				Title:     Port2ContactTitle,
 			},
-			Location: &models4logist.ShippingPointLocation{
+			Location: &dbo4logist.ShippingPointLocation{
 				ContactID: Port2dock2ContactID,
 				Title:     Port2dock2ContactTitle,
 				Address: &dbmodels2.Address{
@@ -297,39 +297,39 @@ func ValidOrderDto1(t *testing.T) (order *models4logist.OrderDto) {
 		},
 		{
 			ID: ShippingPoint1WithSingleContainerID,
-			ShippingPointBase: models4logist.ShippingPointBase{
-				Status: models4logist.ShippingPointStatusPending,
-				FreightPoint: models4logist.FreightPoint{
-					Tasks: []string{models4logist.ShippingPointTaskLoad},
+			ShippingPointBase: dbo4logist.ShippingPointBase{
+				Status: dbo4logist.ShippingPointStatusPending,
+				FreightPoint: dbo4logist.FreightPoint{
+					Tasks: []string{dbo4logist.ShippingPointTaskLoad},
 				},
 			},
-			Counterparty: models4logist.ShippingPointCounterparty{
+			Counterparty: dbo4logist.ShippingPointCounterparty{
 				ContactID: Dispatcher1ContactID,
 				Title:     "WarehouseOperator 1",
 			},
 		},
 		{
 			ID: ShippingPoint2With2ContainersID,
-			ShippingPointBase: models4logist.ShippingPointBase{
-				Status: models4logist.ShippingPointStatusPending,
-				FreightPoint: models4logist.FreightPoint{
-					Tasks: []string{models4logist.ShippingPointTaskLoad},
+			ShippingPointBase: dbo4logist.ShippingPointBase{
+				Status: dbo4logist.ShippingPointStatusPending,
+				FreightPoint: dbo4logist.FreightPoint{
+					Tasks: []string{dbo4logist.ShippingPointTaskLoad},
 				},
 			},
-			Counterparty: models4logist.ShippingPointCounterparty{
+			Counterparty: dbo4logist.ShippingPointCounterparty{
 				ContactID: Dispatcher2warehouse1ContactID,
 				Title:     "WarehouseOperator 2",
 			},
 		},
 		{
 			ID: ShippingPoint3WithoutContainersID,
-			ShippingPointBase: models4logist.ShippingPointBase{
-				Status: models4logist.ShippingPointStatusPending,
-				FreightPoint: models4logist.FreightPoint{
-					Tasks: []string{models4logist.ShippingPointTaskLoad},
+			ShippingPointBase: dbo4logist.ShippingPointBase{
+				Status: dbo4logist.ShippingPointStatusPending,
+				FreightPoint: dbo4logist.FreightPoint{
+					Tasks: []string{dbo4logist.ShippingPointTaskLoad},
 				},
 			},
-			Counterparty: models4logist.ShippingPointCounterparty{
+			Counterparty: dbo4logist.ShippingPointCounterparty{
 				ContactID: Dispatcher2ContactID,
 				Title:     Dispatcher2ContactTitle,
 			},
@@ -341,20 +341,20 @@ func ValidOrderDto1(t *testing.T) (order *models4logist.OrderDto) {
 	}
 	assert.Equal(t, 13, len(order.Counterparties))
 	assert.Equal(t, Dto1ShippingPointsCount, len(order.ShippingPoints))
-	assert.Equal(t, 1, len(order.GetCounterpartiesByRole(models4logist.CounterpartyRolePortFrom)))
-	assert.Equal(t, 1, len(order.GetCounterpartiesByRole(models4logist.CounterpartyRolePortTo)))
-	assert.Equal(t, 1, len(order.GetCounterpartiesByRole(models4logist.CounterpartyRolePortTo)))
+	assert.Equal(t, 1, len(order.GetCounterpartiesByRole(dbo4logist.CounterpartyRolePortFrom)))
+	assert.Equal(t, 1, len(order.GetCounterpartiesByRole(dbo4logist.CounterpartyRolePortTo)))
+	assert.Equal(t, 1, len(order.GetCounterpartiesByRole(dbo4logist.CounterpartyRolePortTo)))
 	return order
 }
 
-func fixCounterpartiesFromContacts(order *models4logist.OrderDto) {
+func fixCounterpartiesFromContacts(order *dbo4logist.OrderDto) {
 	for _, cp := range order.Counterparties {
 		contact := order.MustGetContactByID(cp.ContactID)
 		cp.CountryID = contact.CountryID
 		cp.Title = contact.Title
 		if contact.ParentID != "" {
 			_, parent := order.WithCounterparties.GetCounterpartyByContactID(contact.ParentID)
-			cp.Parent = &models4logist.CounterpartyParent{
+			cp.Parent = &dbo4logist.CounterpartyParent{
 				ContactID: parent.ContactID,
 				Role:      parent.Role,
 			}
@@ -363,26 +363,26 @@ func fixCounterpartiesFromContacts(order *models4logist.OrderDto) {
 }
 
 // ValidOrderWith3UnassignedContainers returns a valid order with 3 unassigned containers
-func ValidOrderWith3UnassignedContainers(t *testing.T) (order *models4logist.OrderDto) {
+func ValidOrderWith3UnassignedContainers(t *testing.T) (order *dbo4logist.OrderDto) {
 	order = ValidEmptyOrder(t)
-	order.Containers = []*models4logist.OrderContainer{
+	order.Containers = []*dbo4logist.OrderContainer{
 		{
 			ID: Container1ID,
-			OrderContainerBase: models4logist.OrderContainerBase{
+			OrderContainerBase: dbo4logist.OrderContainerBase{
 				Type:   Container1Type,
 				Number: "C1",
 			},
 		},
 		{
 			ID: Container2ID,
-			OrderContainerBase: models4logist.OrderContainerBase{
+			OrderContainerBase: dbo4logist.OrderContainerBase{
 				Type:   Container2Type,
 				Number: "C2",
 			},
 		},
 		{
 			ID: Container3ID,
-			OrderContainerBase: models4logist.OrderContainerBase{
+			OrderContainerBase: dbo4logist.OrderContainerBase{
 				Type:   Container3Type,
 				Number: "C4",
 			},
@@ -395,13 +395,13 @@ func ValidOrderWith3UnassignedContainers(t *testing.T) (order *models4logist.Ord
 }
 
 // ValidEmptyOrder returns a valid empty order
-func ValidEmptyOrder(t *testing.T) (order *models4logist.OrderDto) {
+func ValidEmptyOrder(t *testing.T) (order *dbo4logist.OrderDto) {
 	modified := dbmodels2.Modified{
 		By: "unit-test",
 		At: time.Now(),
 	}
 
-	order = &models4logist.OrderDto{
+	order = &dbo4logist.OrderDto{
 		WithModified: dbmodels2.WithModified{
 			CreatedFields: with.CreatedFields{
 				CreatedAtField: with.CreatedAtField{
@@ -425,8 +425,8 @@ func ValidEmptyOrder(t *testing.T) (order *models4logist.OrderDto) {
 		WithUserIDs: dbmodels2.WithUserIDs{
 			UserIDs: []string{"user-1", "user-2"},
 		},
-		WithOrderContacts: models4logist.WithOrderContacts{
-			Contacts: []*models4logist.OrderContact{
+		WithOrderContacts: dbo4logist.WithOrderContacts{
+			Contacts: []*dbo4logist.OrderContact{
 				{
 					ID:        "buyer1",
 					Type:      "company",
@@ -435,11 +435,11 @@ func ValidEmptyOrder(t *testing.T) (order *models4logist.OrderDto) {
 				},
 			},
 		},
-		OrderBase: models4logist.OrderBase{
+		OrderBase: dbo4logist.OrderBase{
 			Status:    "active",
 			Direction: "export",
-			WithCounterparties: models4logist.WithCounterparties{
-				Counterparties: []*models4logist.OrderCounterparty{
+			WithCounterparties: dbo4logist.WithCounterparties{
+				Counterparties: []*dbo4logist.OrderCounterparty{
 					{
 						ContactID: "buyer1",
 						Role:      "buyer",

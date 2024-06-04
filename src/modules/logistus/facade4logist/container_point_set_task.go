@@ -3,8 +3,8 @@ package facade4logist
 import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/slice"
 )
@@ -25,11 +25,11 @@ func txSetContainerPointTask(
 	containerPoint := params.Order.Dto.GetContainerPoint(request.ContainerID, request.ShippingPointID)
 	changed := false
 	if containerPoint == nil {
-		containerPoint = &models4logist.ContainerPoint{
+		containerPoint = &dbo4logist.ContainerPoint{
 			ContainerID:     request.ContainerID,
 			ShippingPointID: request.ShippingPointID,
-			ShippingPointBase: models4logist.ShippingPointBase{
-				Status: models4logist.ShippingPointStatusPending,
+			ShippingPointBase: dbo4logist.ShippingPointBase{
+				Status: dbo4logist.ShippingPointStatusPending,
 			},
 		}
 		params.Order.Dto.ContainerPoints = append(params.Order.Dto.ContainerPoints, containerPoint)
@@ -42,7 +42,7 @@ func txSetContainerPointTask(
 		}
 	} else {
 		if slice.Index(containerPoint.Tasks, request.Task) >= 0 {
-			tasks := make([]models4logist.ShippingPointTask, 0, len(containerPoint.Tasks)-1)
+			tasks := make([]dbo4logist.ShippingPointTask, 0, len(containerPoint.Tasks)-1)
 			for _, task := range containerPoint.Tasks {
 				if task != request.Task {
 					tasks = append(tasks, task)
@@ -50,9 +50,9 @@ func txSetContainerPointTask(
 			}
 			containerPoint.Tasks = tasks
 			switch request.Task {
-			case models4logist.ShippingPointTaskLoad:
+			case dbo4logist.ShippingPointTaskLoad:
 				containerPoint.ToLoad = nil
-			case models4logist.ShippingPointTaskUnload:
+			case dbo4logist.ShippingPointTaskUnload:
 				containerPoint.ToUnload = nil
 			}
 			changed = true

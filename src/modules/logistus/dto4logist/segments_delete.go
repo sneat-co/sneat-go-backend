@@ -1,13 +1,13 @@
 package dto4logist
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 )
 
 // DeleteSegmentsRequest represents a request to delete segments
 type DeleteSegmentsRequest struct {
 	OrderRequest
-	models4logist.SegmentsFilter
+	dbo4logist.SegmentsFilter
 }
 
 // Validate returns an error if the request is invalid.

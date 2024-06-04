@@ -7,12 +7,12 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/models4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/models4invitus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dbo4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/dbo4invitus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/models4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/models4userus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/stretchr/testify/assert"
@@ -81,7 +81,7 @@ func TestAcceptPersonalInviteRequest_Validate(t *testing.T) {
 func Test_createOrUpdateUserRecord(t *testing.T) {
 	ctx := context.Background()
 	type args struct {
-		user              models4userus.UserContext
+		user              dbo4userus.UserContext
 		userRecordError   error
 		teamRecordError   error
 		inviteRecordError error
@@ -99,10 +99,10 @@ func Test_createOrUpdateUserRecord(t *testing.T) {
 		{
 			name: "nil_params",
 			args: args{
-				user:            models4userus.NewUserContext("test_user_id"),
+				user:            dbo4userus.NewUserContext("test_user_id"),
 				userRecordError: dal.ErrRecordNotFound,
-				team: dal4teamus.NewTeamContextWithDto("testteamid", &models4teamus.TeamDbo{
-					TeamBrief: models4teamus.TeamBrief{
+				team: dal4teamus.NewTeamContextWithDto("testteamid", &dbo4teamus.TeamDbo{
+					TeamBrief: dbo4teamus.TeamBrief{
 						RequiredCountryID: with.RequiredCountryID{
 							CountryID: with.UnknownCountryID,
 						},
@@ -125,8 +125,8 @@ func Test_createOrUpdateUserRecord(t *testing.T) {
 						//WithRequiredCountryID: dbmodels.WithRequiredCountryID{
 					},
 				},
-				invite: NewPersonalInviteContextWithDto("test_personal_invite_id", &models4invitus.PersonalInviteDto{
-					InviteDto: models4invitus.InviteDto{
+				invite: NewPersonalInviteContextWithDto("test_personal_invite_id", &dbo4invitus.PersonalInviteDto{
+					InviteDto: dbo4invitus.InviteDto{
 						Roles: []string{"contributor"},
 					},
 				}),
@@ -210,13 +210,13 @@ func Test_updateInviteRecord(t *testing.T) {
 			name: "should_pass",
 			args: args{
 				status: "accepted",
-				invite: NewPersonalInviteContextWithDto("test_invite_id1", &models4invitus.PersonalInviteDto{
+				invite: NewPersonalInviteContextWithDto("test_invite_id1", &dbo4invitus.PersonalInviteDto{
 					ToTeamMemberID: "to_member_id2",
 					Address:        "to.test.user@example.com",
-					InviteDto: models4invitus.InviteDto{
+					InviteDto: dbo4invitus.InviteDto{
 						Pin:    "1234",
 						TeamID: "testteamid1",
-						Team: models4invitus.InviteTeam{
+						Team: dbo4invitus.InviteTeam{
 							ID:    "testteamid1",
 							Type:  "family",
 							Title: "Family",
@@ -228,18 +228,18 @@ func Test_updateInviteRecord(t *testing.T) {
 								RemoteAddr: "127.0.0.1",
 							},
 						},
-						InviteBase: models4invitus.InviteBase{
+						InviteBase: dbo4invitus.InviteBase{
 							Type:    "personal",
 							Channel: "email",
-							From: models4invitus.InviteFrom{
-								InviteContact: models4invitus.InviteContact{
+							From: dbo4invitus.InviteFrom{
+								InviteContact: dbo4invitus.InviteContact{
 									UserID:   "from_user_id1",
 									MemberID: "from_member_id1",
 									Title:    "From ID 1",
 								},
 							},
-							To: &models4invitus.InviteTo{
-								InviteContact: models4invitus.InviteContact{
+							To: &dbo4invitus.InviteTo{
+								InviteContact: dbo4invitus.InviteContact{
 									Title:    "To ID 2",
 									MemberID: "to_member_id2",
 									Channel:  "email",
@@ -293,8 +293,8 @@ func Test_updateTeamRecord(t *testing.T) {
 			args: args{
 				uid:      "test_user_id",
 				memberID: "test_member_id1",
-				team: dal4teamus.NewTeamContextWithDto("testteamid", &models4teamus.TeamDbo{
-					TeamBrief: models4teamus.TeamBrief{
+				team: dal4teamus.NewTeamContextWithDto("testteamid", &dbo4teamus.TeamDbo{
+					TeamBrief: dbo4teamus.TeamBrief{
 						Type:  "family",
 						Title: "Family",
 					},

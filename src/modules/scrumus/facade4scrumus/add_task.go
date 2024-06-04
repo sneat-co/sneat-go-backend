@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/models4scrumus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"math/rand"
 	"strconv"
@@ -21,7 +21,7 @@ var addTaskInTransaction = func(
 ) (response *AddTaskResponse, err error) {
 	contactusTeam := params.TeamModuleEntry
 	params.Meeting.Record.SetError(nil)
-	scrum := params.Meeting.Record.Data().(*models4scrumus.Scrum)
+	scrum := params.Meeting.Record.Data().(*dbo4scrumus.Scrum)
 
 	scrumUpdates := make([]dal.Update, 0, 6)
 
@@ -35,9 +35,9 @@ var addTaskInTransaction = func(
 		return
 	}
 
-	var tasks []*models4scrumus.Task
+	var tasks []*dbo4scrumus.Task
 	if tasks = status.ByType[request.Type]; tasks == nil {
-		tasks = make([]*models4scrumus.Task, 0, 1)
+		tasks = make([]*dbo4scrumus.Task, 0, 1)
 	} else {
 		// Make sure duplicate calls are discarded
 		for _, task := range tasks {
@@ -61,7 +61,7 @@ var addTaskInTransaction = func(
 		return nil, err
 	}
 
-	tasks = append(tasks, &models4scrumus.Task{ID: request.Task, Title: request.Title})
+	tasks = append(tasks, &dbo4scrumus.Task{ID: request.Task, Title: request.Title})
 	if params.Meeting.Record.Exists() {
 		scrumUpdates = append(scrumUpdates,
 			dal.Update{
@@ -97,7 +97,7 @@ var addTaskInTransaction = func(
 			scrum.RisksCount = 1
 		}
 		if status.ByType == nil {
-			status.ByType = make(models4scrumus.TasksByType, 1)
+			status.ByType = make(dbo4scrumus.TasksByType, 1)
 		}
 		status.ByType[request.Type] = tasks
 		if err = scrum.Validate(); err != nil {

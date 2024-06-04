@@ -3,7 +3,7 @@ package facade4retrospectus
 import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/models4retrospectus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 )
 
@@ -19,7 +19,7 @@ var txUpdate = func(ctx context.Context, updater dal.ReadwriteTransaction, key *
 
 var txUpdateTeam = dal4teamus.TxUpdateTeam
 
-var txCreateRetrospective = func(ctx context.Context, tx dal.ReadwriteTransaction, key *dal.Key, retrospective *models4retrospectus.Retrospective) error {
+var txCreateRetrospective = func(ctx context.Context, tx dal.ReadwriteTransaction, key *dal.Key, retrospective *dbo4retrospectus.Retrospective) error {
 	if retrospective.Version == 0 {
 		retrospective.Version = 1
 	}
@@ -30,7 +30,7 @@ var txCreateRetrospective = func(ctx context.Context, tx dal.ReadwriteTransactio
 	return txCreate(ctx, tx, record)
 }
 
-var txUpdateRetrospective = func(ctx context.Context, tx dal.ReadwriteTransaction, key *dal.Key, retrospective *models4retrospectus.Retrospective, updates []dal.Update, opts ...dal.Precondition) error {
+var txUpdateRetrospective = func(ctx context.Context, tx dal.ReadwriteTransaction, key *dal.Key, retrospective *dbo4retrospectus.Retrospective, updates []dal.Update, opts ...dal.Precondition) error {
 	retrospective.Version++
 	return txUpdate(ctx, tx, key, append(updates, dal.Update{Field: "v", Value: retrospective.Version}), opts...)
 }

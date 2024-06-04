@@ -4,13 +4,13 @@ import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
-	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/models4retrospectus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 )
 
 const RetrospectusModuleID = "retrospectus"
 
-type RetroTeam = record.DataWithID[string, *models4retrospectus.RetroTeamDto]
+type RetroTeam = record.DataWithID[string, *dbo4retrospectus.RetroTeamDto]
 
 func NewRetroTeamKey(id string) *dal.Key {
 	teamKey := dal4teamus.NewTeamKey(id)
@@ -19,7 +19,7 @@ func NewRetroTeamKey(id string) *dal.Key {
 
 func NewRetroTeam(id string) RetroTeam {
 	key := NewRetroTeamKey(id)
-	return record.NewDataWithID(id, key, new(models4retrospectus.RetroTeamDto))
+	return record.NewDataWithID(id, key, new(dbo4retrospectus.RetroTeamDto))
 }
 
 func GetRetroTeam(ctx context.Context, tx dal.ReadTransaction, id string) (RetroTeam, error) {

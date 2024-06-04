@@ -3,7 +3,7 @@ package facade4scrumus
 import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/models4scrumus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 	"strings"
@@ -82,7 +82,7 @@ type SetMetricRequest struct {
 	facade4meetingus.Request
 	Metric string `json:"metric"`
 	Member string `json:"members,omitempty"`
-	models4scrumus.MetricValue
+	dbo4scrumus.MetricValue
 }
 
 // Validate validates request

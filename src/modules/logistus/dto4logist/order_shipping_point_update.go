@@ -1,11 +1,11 @@
 package dto4logist
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/strongo/validation"
 )
 
-type shippingPointTask = models4logist.ShippingPointTask
+type shippingPointTask = dbo4logist.ShippingPointTask
 
 // UpdateShippingPointRequest represents a request to update a shipping point of an order.
 type UpdateShippingPointRequest struct {
@@ -19,7 +19,7 @@ func (v UpdateShippingPointRequest) Validate() error {
 	if err := v.OrderShippingPointRequest.Validate(); err != nil {
 		return validation.NewErrBadRequestFieldValue("OrderRequest", err.Error())
 	}
-	if err := models4logist.ValidateShippingPointTasksRequest(v.Tasks, false); err != nil {
+	if err := dbo4logist.ValidateShippingPointTasksRequest(v.Tasks, false); err != nil {
 		return err
 	}
 	if err := v.SetFieldsRequest.Validate(); err != nil {

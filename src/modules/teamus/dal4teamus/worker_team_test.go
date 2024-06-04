@@ -6,8 +6,8 @@ import (
 	"github.com/dal-go/mocks4dalgo/mocks4dal"
 	"github.com/golang/mock/gomock"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/core4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/models4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/stretchr/testify/assert"
@@ -51,7 +51,7 @@ func TestRunModuleTeamWorker(t *testing.T) {
 				for _, record := range records {
 					record.SetError(nil)
 					if record.Key().Collection() == "teams" {
-						teamData := record.Data().(*models4teamus.TeamDbo)
+						teamData := record.Data().(*dbo4teamus.TeamDbo)
 						teamData.CreatedAt = time.Now()
 						teamData.CreatedBy = "test"
 						teamData.IncreaseVersion(teamData.CreatedAt, teamData.CreatedBy)

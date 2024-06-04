@@ -4,14 +4,14 @@ import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/models4scrumus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
 type taskWorkerParams struct {
 	facade4meetingus.WorkerParams
-	tasks     models4scrumus.Tasks
-	task      *models4scrumus.Task
+	tasks     dbo4scrumus.Tasks
+	task      *dbo4scrumus.Task
 	taskIndex int
 }
 
@@ -24,7 +24,7 @@ func runTaskWorker(ctx context.Context, userContext facade.User, request TaskReq
 				WorkerParams: params,
 			}
 
-			scrum := params.Meeting.Record.Data().(*models4scrumus.Scrum)
+			scrum := params.Meeting.Record.Data().(*dbo4scrumus.Scrum)
 
 			status := scrum.Statuses[request.ContactID]
 			if status == nil {

@@ -2,9 +2,9 @@ package facade4logist
 
 import (
 	"context"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/mocks4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -22,38 +22,38 @@ func TestAddSegmentsTx(t *testing.T) { // TODO: create few test cases
 		Containers: []dto4logist.SegmentContainerData{
 			{
 				ID: mocks4logist.Container1ID,
-				FreightPoint: models4logist.FreightPoint{
-					Tasks:  []models4logist.ShippingPointTask{models4logist.ShippingPointTaskLoad},
-					ToLoad: &models4logist.FreightLoad{NumberOfPallets: 3, GrossWeightKg: 1300, VolumeM3: 2},
+				FreightPoint: dbo4logist.FreightPoint{
+					Tasks:  []dbo4logist.ShippingPointTask{dbo4logist.ShippingPointTaskLoad},
+					ToLoad: &dbo4logist.FreightLoad{NumberOfPallets: 3, GrossWeightKg: 1300, VolumeM3: 2},
 				},
 			},
 			{
 				ID: mocks4logist.Container3ID,
-				FreightPoint: models4logist.FreightPoint{
-					Tasks: []models4logist.ShippingPointTask{models4logist.ShippingPointTaskLoad},
+				FreightPoint: dbo4logist.FreightPoint{
+					Tasks: []dbo4logist.ShippingPointTask{dbo4logist.ShippingPointTaskLoad},
 				},
 			},
 		},
 		From: dto4logist.AddSegmentEndpoint{
 			AddSegmentParty: dto4logist.AddSegmentParty{
-				Counterparty: models4logist.SegmentCounterparty{
+				Counterparty: dbo4logist.SegmentCounterparty{
 					ContactID: mocks4logist.Port2dock1ContactID,
-					Role:      models4logist.CounterpartyRolePickPoint,
+					Role:      dbo4logist.CounterpartyRolePickPoint,
 				},
 			},
 		},
 		To: dto4logist.AddSegmentEndpoint{
 			AddSegmentParty: dto4logist.AddSegmentParty{
-				Counterparty: models4logist.SegmentCounterparty{
+				Counterparty: dbo4logist.SegmentCounterparty{
 					ContactID: mocks4logist.Dispatcher1warehouse1ContactID,
-					Role:      models4logist.CounterpartyRoleDispatchPoint,
+					Role:      dbo4logist.CounterpartyRoleDispatchPoint,
 				},
 			},
 		},
 		By: &dto4logist.AddSegmentParty{
-			Counterparty: models4logist.SegmentCounterparty{
+			Counterparty: dbo4logist.SegmentCounterparty{
 				ContactID: "trucker1",
-				Role:      models4logist.CounterpartyRoleTrucker,
+				Role:      dbo4logist.CounterpartyRoleTrucker,
 			},
 		},
 	}
@@ -62,7 +62,7 @@ func TestAddSegmentsTx(t *testing.T) { // TODO: create few test cases
 		TeamWorkerParams: &dal4teamus.TeamWorkerParams{
 			Team: dal4teamus.NewTeamContext("team1"),
 		},
-		Order: models4logist.NewOrderWithData("team1", "order1", order),
+		Order: dbo4logist.NewOrderWithData("team1", "order1", order),
 	}
 
 	{ // Pre-checks
@@ -99,8 +99,8 @@ func TestAddSegmentsTx(t *testing.T) { // TODO: create few test cases
 	for _, shippingPoint := range order.ShippingPoints {
 		assert.Equal(t, 1, len(shippingPoint.Tasks))
 	}
-	assert.Equal(t, models4logist.ShippingPointTaskPick, order.ShippingPoints[0].Tasks[0])
-	assert.Equal(t, models4logist.ShippingPointTaskLoad, order.ShippingPoints[1].Tasks[0])
+	assert.Equal(t, dbo4logist.ShippingPointTaskPick, order.ShippingPoints[0].Tasks[0])
+	assert.Equal(t, dbo4logist.ShippingPointTaskLoad, order.ShippingPoints[1].Tasks[0])
 }
 
 func TestAddCounterpartyToOrderIfNeeded(t *testing.T) {
@@ -108,9 +108,9 @@ func TestAddCounterpartyToOrderIfNeeded(t *testing.T) {
 
 	order := mocks4logist.ValidEmptyOrder(t)
 
-	segmentCounterparty := models4logist.SegmentCounterparty{
+	segmentCounterparty := dbo4logist.SegmentCounterparty{
 		ContactID: mocks4logist.Dispatcher1warehouse1ContactID,
-		Role:      models4logist.CounterpartyRoleDispatchPoint,
+		Role:      dbo4logist.CounterpartyRoleDispatchPoint,
 	}
 
 	tx := mocks4logist.MockTx(t)

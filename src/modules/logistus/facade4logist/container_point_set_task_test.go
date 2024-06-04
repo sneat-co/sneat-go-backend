@@ -1,9 +1,9 @@
 package facade4logist
 
 import (
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/mocks4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/stretchr/testify/assert"
 	"github.com/strongo/slice"
 	"testing"
@@ -26,7 +26,7 @@ func Test_txSetContainerPointTask(t *testing.T) {
 				Value: value,
 			},
 			params: &OrderWorkerParams{
-				Order: models4logist.Order{
+				Order: dbo4logist.Order{
 					Dto: mocks4logist.ValidOrderDto1(t),
 				},
 			},
@@ -47,7 +47,7 @@ func Test_txSetContainerPointTask(t *testing.T) {
 	}{
 		{
 			name: "adds_to_non_existing_container_point",
-			args: setArgs(mocks4logist.Container1ID, mocks4logist.ShippingPoint1WithSingleContainerID, models4logist.ShippingPointTaskLoad, true),
+			args: setArgs(mocks4logist.Container1ID, mocks4logist.ShippingPoint1WithSingleContainerID, dbo4logist.ShippingPointTaskLoad, true),
 			preAssert: func(t *testing.T, args args) {
 				if !preAssert(t, args) {
 					t.Fail()
@@ -71,7 +71,7 @@ func Test_txSetContainerPointTask(t *testing.T) {
 		},
 		{
 			name: "adds_to_existing_container_point_second_task",
-			args: setArgs(mocks4logist.Container1ID, mocks4logist.ShippingPoint2With2ContainersID, models4logist.ShippingPointTaskUnload, true),
+			args: setArgs(mocks4logist.Container1ID, mocks4logist.ShippingPoint2With2ContainersID, dbo4logist.ShippingPointTaskUnload, true),
 			preAssert: func(t *testing.T, args args) {
 				if !preAssert(t, args) {
 					t.Fail()
@@ -83,7 +83,7 @@ func Test_txSetContainerPointTask(t *testing.T) {
 				if !assert.Equal(t, 1, len(containerPoint.Tasks)) {
 					panic("unexpected container point tasks")
 				}
-				if !assert.Equal(t, models4logist.ShippingPointTaskLoad, containerPoint.Tasks[0]) {
+				if !assert.Equal(t, dbo4logist.ShippingPointTaskLoad, containerPoint.Tasks[0]) {
 					panic("unexpected container point task")
 				}
 			},
@@ -96,14 +96,14 @@ func Test_txSetContainerPointTask(t *testing.T) {
 					return
 				}
 				assert.Equal(t, 2, len(containerPoint.Tasks))
-				assert.True(t, slice.Index(containerPoint.Tasks, models4logist.ShippingPointTaskLoad) >= 0)
-				assert.True(t, slice.Index(containerPoint.Tasks, models4logist.ShippingPointTaskUnload) >= 0)
-				assert.Equal(t, models4logist.ShippingPointTaskUnload, containerPoint.Tasks[1])
+				assert.True(t, slice.Index(containerPoint.Tasks, dbo4logist.ShippingPointTaskLoad) >= 0)
+				assert.True(t, slice.Index(containerPoint.Tasks, dbo4logist.ShippingPointTaskUnload) >= 0)
+				assert.Equal(t, dbo4logist.ShippingPointTaskUnload, containerPoint.Tasks[1])
 			},
 		},
 		{
 			name: "try_to_adds_to_existing_container_point_existing_task",
-			args: setArgs(mocks4logist.Container1ID, mocks4logist.ShippingPoint2With2ContainersID, models4logist.ShippingPointTaskLoad, true),
+			args: setArgs(mocks4logist.Container1ID, mocks4logist.ShippingPoint2With2ContainersID, dbo4logist.ShippingPointTaskLoad, true),
 			preAssert: func(t *testing.T, args args) {
 				if !preAssert(t, args) {
 					t.Fail()
@@ -115,7 +115,7 @@ func Test_txSetContainerPointTask(t *testing.T) {
 				if !assert.Equal(t, 1, len(containerPoint.Tasks)) {
 					panic("unexpected container point tasks")
 				}
-				if !assert.Equal(t, models4logist.ShippingPointTaskLoad, containerPoint.Tasks[0]) {
+				if !assert.Equal(t, dbo4logist.ShippingPointTaskLoad, containerPoint.Tasks[0]) {
 					panic("unexpected container point task")
 				}
 			},
@@ -128,7 +128,7 @@ func Test_txSetContainerPointTask(t *testing.T) {
 		},
 		{
 			name: "remove_task_from_existing_container_point",
-			args: setArgs(mocks4logist.Container2ID, mocks4logist.ShippingPoint2With2ContainersID, models4logist.ShippingPointTaskUnload, false),
+			args: setArgs(mocks4logist.Container2ID, mocks4logist.ShippingPoint2With2ContainersID, dbo4logist.ShippingPointTaskUnload, false),
 			preAssert: func(t *testing.T, args args) {
 				if !preAssert(t, args) {
 					t.Fail()
@@ -140,10 +140,10 @@ func Test_txSetContainerPointTask(t *testing.T) {
 				if !assert.Equal(t, 2, len(containerPoint.Tasks)) {
 					panic("unexpected container point tasks")
 				}
-				if !assert.True(t, slice.Index(containerPoint.Tasks, models4logist.ShippingPointTaskLoad) >= 0) {
+				if !assert.True(t, slice.Index(containerPoint.Tasks, dbo4logist.ShippingPointTaskLoad) >= 0) {
 					panic("missing load task")
 				}
-				if !assert.True(t, slice.Index(containerPoint.Tasks, models4logist.ShippingPointTaskUnload) >= 0) {
+				if !assert.True(t, slice.Index(containerPoint.Tasks, dbo4logist.ShippingPointTaskUnload) >= 0) {
 					panic("missing unload task")
 				}
 			},
@@ -156,7 +156,7 @@ func Test_txSetContainerPointTask(t *testing.T) {
 					return
 				}
 				assert.Equal(t, 1, len(containerPoint.Tasks))
-				assert.Equal(t, models4logist.ShippingPointTaskLoad, containerPoint.Tasks[0])
+				assert.Equal(t, dbo4logist.ShippingPointTaskLoad, containerPoint.Tasks[0])
 			},
 		},
 	}

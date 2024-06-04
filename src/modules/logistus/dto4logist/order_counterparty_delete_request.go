@@ -1,7 +1,7 @@
 package dto4logist
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/strongo/validation"
 	"strings"
 )
@@ -9,8 +9,8 @@ import (
 // DeleteOrderCounterpartyRequest is a request to delete a counterparty from an order
 type DeleteOrderCounterpartyRequest struct {
 	OrderRequest
-	Role      models4logist.CounterpartyRole `json:"role"`
-	ContactID string                         `json:"contactID"`
+	Role      dbo4logist.CounterpartyRole `json:"role"`
+	ContactID string                      `json:"contactID"`
 }
 
 // Validate returns error if request is invalid

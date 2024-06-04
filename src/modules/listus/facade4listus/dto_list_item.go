@@ -2,7 +2,7 @@ package facade4listus
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/listus/models4listus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
 	"strings"
@@ -29,7 +29,7 @@ func (v CreateListItemsRequest) Validate() error {
 
 type CreateListItemRequest struct {
 	ID string `json:"id"`
-	models4listus.ListItemBase
+	dbo4listus.ListItemBase
 }
 
 func (v CreateListItemRequest) Validate() error {

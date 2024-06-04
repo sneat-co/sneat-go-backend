@@ -1,9 +1,9 @@
 package facade4logist
 
 import (
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/mocks4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -39,13 +39,13 @@ func Test_txAddContainerPoints(t *testing.T) {
 			args: args{
 				request: dto4logist.AddContainerPointsRequest{
 					OrderRequest: dto4logist.NewOrderRequest("team1", "order1"),
-					ContainerPoints: []models4logist.ContainerPoint{
+					ContainerPoints: []dbo4logist.ContainerPoint{
 						{
 							ContainerID:     mocks4logist.Container1ID,
 							ShippingPointID: mocks4logist.ShippingPoint1WithSingleContainerID,
-							ShippingPointBase: models4logist.ShippingPointBase{
+							ShippingPointBase: dbo4logist.ShippingPointBase{
 								Status: "pending",
-								FreightPoint: models4logist.FreightPoint{
+								FreightPoint: dbo4logist.FreightPoint{
 									Tasks: []string{"load"},
 								},
 							},
@@ -53,7 +53,7 @@ func Test_txAddContainerPoints(t *testing.T) {
 					},
 				},
 				params: &OrderWorkerParams{
-					Order: models4logist.NewOrderWithData("team1", "order1", mocks4logist.ValidOrderDto1(t)),
+					Order: dbo4logist.NewOrderWithData("team1", "order1", mocks4logist.ValidOrderDto1(t)),
 				},
 			},
 			preAssert: func(t *testing.T, args args) {

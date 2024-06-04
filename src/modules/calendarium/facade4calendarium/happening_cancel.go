@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/const4calendarium"
+	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/models4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
@@ -23,20 +23,20 @@ func CancelHappening(ctx context.Context, user facade.User, request dto4calendar
 		return
 	}
 
-	happening := models4calendarium.NewHappeningContext(request.TeamID, request.HappeningID)
+	happening := dbo4calendarium.NewHappeningContext(request.TeamID, request.HappeningID)
 	err = dal4teamus.RunModuleTeamWorker(ctx, user, request.TeamRequest,
 		const4calendarium.ModuleID,
-		new(models4calendarium.CalendariumTeamDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo]) (err error) {
+		new(dbo4calendarium.CalendariumTeamDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo]) (err error) {
 			if err = tx.Get(ctx, happening.Record); err != nil {
 				return fmt.Errorf("failed to get happening: %w", err)
 			}
 			switch happening.Dbo.Type {
 			case "":
 				return fmt.Errorf("happening record has no type: %w", validation.NewErrRecordIsMissingRequiredField("type"))
-			case models4calendarium.HappeningTypeSingle:
+			case dbo4calendarium.HappeningTypeSingle:
 				return cancelSingleHappening(ctx, tx, params.UserID, happening)
-			case models4calendarium.HappeningTypeRecurring:
+			case dbo4calendarium.HappeningTypeRecurring:
 				return cancelRecurringHappening(ctx, tx, params, params.UserID, happening, request)
 			default:
 				return validation.NewErrBadRecordFieldValue("type", "happening has unknown type: "+happening.Dbo.Type)
@@ -48,13 +48,13 @@ func CancelHappening(ctx context.Context, user facade.User, request dto4calendar
 	return
 }
 
-func cancelSingleHappening(ctx context.Context, tx dal.ReadwriteTransaction, userID string, happening models4calendarium.HappeningContext) error {
+func cancelSingleHappening(ctx context.Context, tx dal.ReadwriteTransaction, userID string, happening dbo4calendarium.HappeningContext) error {
 	switch happening.Dbo.Status {
 	case "":
 		return validation.NewErrRecordIsMissingRequiredField("status")
-	case models4calendarium.HappeningStatusActive:
-		happening.Dbo.Status = models4calendarium.HappeningStatusCanceled
-		happening.Dbo.Canceled = &models4calendarium.Canceled{
+	case dbo4calendarium.HappeningStatusActive:
+		happening.Dbo.Status = dbo4calendarium.HappeningStatusCanceled
+		happening.Dbo.Canceled = &dbo4calendarium.Canceled{
 			At: time.Now(),
 			By: dbmodels.ByUser{UID: userID},
 		}
@@ -68,7 +68,7 @@ func cancelSingleHappening(ctx context.Context, tx dal.ReadwriteTransaction, use
 		if err := tx.Update(ctx, happening.Key, happeningUpdates); err != nil {
 			return err
 		}
-	case models4calendarium.HappeningStatusDeleted:
+	case dbo4calendarium.HappeningStatusDeleted:
 		// Nothing to do
 	default:
 		return fmt.Errorf("only active happening can be canceled but happening is in status=[%v]", happening.Dbo.Status)
@@ -80,9 +80,9 @@ func cancelSingleHappening(ctx context.Context, tx dal.ReadwriteTransaction, use
 func cancelRecurringHappening(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	params *dal4teamus.ModuleTeamWorkerParams[*models4calendarium.CalendariumTeamDbo],
+	params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo],
 	uid string,
-	happening models4calendarium.HappeningContext,
+	happening dbo4calendarium.HappeningContext,
 	request dto4calendarium.CancelHappeningRequest,
 ) error {
 	happeningBrief := params.TeamModuleEntry.Data.GetRecurringHappeningBrief(happening.ID)
@@ -94,7 +94,7 @@ func cancelRecurringHappening(
 		if err := markRecurringHappeningRecordAsCanceled(ctx, tx, uid, happening, request); err != nil {
 			return err
 		}
-		happeningBrief.Status = models4calendarium.HappeningStatusCanceled
+		happeningBrief.Status = dbo4calendarium.HappeningStatusCanceled
 		happeningBrief.Canceled = createCanceled(uid, request.Reason)
 		if err := happeningBrief.Validate(); err != nil {
 			return fmt.Errorf("happening brief in team record is not valid: %w", err)
@@ -104,7 +104,7 @@ func cancelRecurringHappening(
 			Value: params.TeamModuleEntry.Data.RecurringHappenings,
 		})
 	} else {
-		calendarDay := models4calendarium.NewCalendarDayContext(params.Team.ID, request.Date)
+		calendarDay := dbo4calendarium.NewCalendarDayContext(params.Team.ID, request.Date)
 
 		var isNewRecord bool
 		if err := tx.Get(ctx, calendarDay.Record); err != nil {
@@ -122,10 +122,10 @@ func cancelRecurringHappening(
 			if slot == nil {
 				return fmt.Errorf("%w: slot not found by ContactID=%v", facade.ErrBadRequest, request.SlotID)
 			}
-			adjustment = &models4calendarium.HappeningAdjustment{
+			adjustment = &dbo4calendarium.HappeningAdjustment{
 				HappeningID: happening.ID,
 				Slot:        *slot,
-				Canceled: &models4calendarium.Canceled{
+				Canceled: &dbo4calendarium.Canceled{
 					At:     time.Now(),
 					By:     dbmodels.ByUser{UID: uid},
 					Reason: request.Reason,
@@ -143,7 +143,7 @@ func cancelRecurringHappening(
 		if adjustment.Slot.ID == request.SlotID {
 			if strings.TrimSpace(request.Reason) != "" && (adjustment.Canceled == nil || request.Reason != adjustment.Canceled.Reason) {
 				if adjustment.Canceled == nil {
-					adjustment.Canceled = &models4calendarium.Canceled{
+					adjustment.Canceled = &dbo4calendarium.Canceled{
 						At:     time.Now(),
 						By:     dbmodels.ByUser{UID: uid},
 						Reason: request.Reason,
@@ -158,7 +158,7 @@ func cancelRecurringHappening(
 				return fmt.Errorf("%w: unknown slot ContactID=%v", facade.ErrBadRequest, request.SlotID)
 			}
 			adjustment.Slot = *slot
-			adjustment.Canceled = &models4calendarium.Canceled{
+			adjustment.Canceled = &dbo4calendarium.Canceled{
 				At:     time.Now(),
 				By:     dbmodels.ByUser{UID: uid},
 				Reason: request.Reason,
@@ -187,8 +187,8 @@ func cancelRecurringHappening(
 	return nil
 }
 
-func createCanceled(uid, reason string) *models4calendarium.Canceled {
-	return &models4calendarium.Canceled{
+func createCanceled(uid, reason string) *dbo4calendarium.Canceled {
+	return &dbo4calendarium.Canceled{
 		At:     time.Now(),
 		By:     dbmodels.ByUser{UID: uid},
 		Reason: strings.TrimSpace(reason),
@@ -198,11 +198,11 @@ func markRecurringHappeningRecordAsCanceled(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	uid string,
-	happening models4calendarium.HappeningContext,
+	happening dbo4calendarium.HappeningContext,
 	request dto4calendarium.CancelHappeningRequest,
 ) error {
 	var happeningUpdates []dal.Update
-	happening.Dbo.Status = models4calendarium.HappeningStatusCanceled
+	happening.Dbo.Status = dbo4calendarium.HappeningStatusCanceled
 	if happening.Dbo.Canceled == nil {
 		happening.Dbo.Canceled = createCanceled(uid, request.Reason)
 	} else if reason := strings.TrimSpace(request.Reason); reason != "" {

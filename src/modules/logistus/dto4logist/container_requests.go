@@ -2,7 +2,7 @@ package dto4logist
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/strongo/validation"
 	"strings"
 )
@@ -10,7 +10,7 @@ import (
 // PointOfNewContainer is used in NewContainer
 type PointOfNewContainer struct {
 	ShippingPointID string `json:"shippingPointID"`
-	Tasks           []models4logist.ShippingPointTask
+	Tasks           []dbo4logist.ShippingPointTask
 }
 
 func (v PointOfNewContainer) Validate() error {
@@ -22,7 +22,7 @@ func (v PointOfNewContainer) Validate() error {
 
 // NewContainer defines a new container
 type NewContainer struct {
-	models4logist.OrderContainerBase
+	dbo4logist.OrderContainerBase
 	Points []PointOfNewContainer `json:"points"`
 }
 

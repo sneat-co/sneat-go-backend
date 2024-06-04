@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
+	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/models4calendarium"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/slice"
 )
@@ -19,9 +19,9 @@ func AdjustSlot(ctx context.Context, user facade.User, request dto4calendarium.H
 
 	var worker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
 		switch params.Happening.Dbo.Type {
-		case models4calendarium.HappeningTypeSingle:
+		case dbo4calendarium.HappeningTypeSingle:
 			return errors.New("only recurring happenings can be adjusted, single happenings should be updated")
-		case models4calendarium.HappeningTypeRecurring:
+		case dbo4calendarium.HappeningTypeRecurring:
 			if err = adjustRecurringSlot(ctx, tx, params.Happening, request); err != nil {
 				return fmt.Errorf("failed to adjust recurring happening: %w", err)
 			}
@@ -36,7 +36,7 @@ func AdjustSlot(ctx context.Context, user facade.User, request dto4calendarium.H
 	return nil
 }
 
-func adjustRecurringSlot(ctx context.Context, tx dal.ReadwriteTransaction, happening models4calendarium.HappeningContext, request dto4calendarium.HappeningSlotDateRequest) (err error) {
+func adjustRecurringSlot(ctx context.Context, tx dal.ReadwriteTransaction, happening dbo4calendarium.HappeningContext, request dto4calendarium.HappeningSlotDateRequest) (err error) {
 	//for _, teamID := range happening.Dbo.TeamIDs { // TODO: run in parallel in go routine if > 1
 	if err := adjustSlotInCalendarDay(ctx, tx, request.TeamID, happening.ID, request); err != nil {
 		return fmt.Errorf("failed to adjust slot in calendar day record for teamID=%v: %w", request.TeamID, err)
@@ -46,7 +46,7 @@ func adjustRecurringSlot(ctx context.Context, tx dal.ReadwriteTransaction, happe
 }
 
 func adjustSlotInCalendarDay(ctx context.Context, tx dal.ReadwriteTransaction, teamID, happeningID string, request dto4calendarium.HappeningSlotDateRequest) error {
-	calendarDay := models4calendarium.NewCalendarDayContext(teamID, request.Date)
+	calendarDay := dbo4calendarium.NewCalendarDayContext(teamID, request.Date)
 	if err := tx.Get(ctx, calendarDay.Record); err != nil {
 		if !dal.IsNotFound(err) {
 			return fmt.Errorf("failed to get calendar day record: %w", err)
@@ -54,7 +54,7 @@ func adjustSlotInCalendarDay(ctx context.Context, tx dal.ReadwriteTransaction, t
 	}
 	_, adjustment := calendarDay.Dto.GetAdjustment(happeningID, request.Slot.ID)
 	if adjustment == nil {
-		adjustment = &models4calendarium.HappeningAdjustment{
+		adjustment = &dbo4calendarium.HappeningAdjustment{
 			HappeningID: happeningID,
 		}
 		calendarDay.Dto.HappeningAdjustments = append(calendarDay.Dto.HappeningAdjustments, adjustment)

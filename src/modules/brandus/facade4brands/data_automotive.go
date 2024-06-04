@@ -1,10 +1,10 @@
 package facade4brands
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/brandus/models4brands"
+	"github.com/sneat-co/sneat-go-backend/src/modules/brandus/dbo4brands"
 )
 
-var autoMakers = map[string]models4brands.Maker{
+var autoMakers = map[string]dbo4brands.Maker{
 	"audi": {
 		Title: "Audi",
 	},

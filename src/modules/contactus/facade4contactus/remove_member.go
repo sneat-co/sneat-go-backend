@@ -7,9 +7,9 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dto4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/models4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/models4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/slice"
 )
@@ -58,7 +58,7 @@ func removeTeamMemberTx(
 		var (
 			userRef *dal.Key
 		)
-		memberUser := models4userus.NewUserContext(memberUserID)
+		memberUser := dbo4userus.NewUserContext(memberUserID)
 		if err = facade4userus.TxGetUserByID(ctx, tx, memberUser.Record); err != nil {
 			return
 		}
@@ -73,7 +73,7 @@ func removeTeamMemberTx(
 	return
 }
 
-func updateUserRecordOnTeamMemberRemoved(user *models4userus.UserDbo, teamID string) *dal.Update {
+func updateUserRecordOnTeamMemberRemoved(user *dbo4userus.UserDbo, teamID string) *dal.Update {
 	delete(user.Teams, teamID)
 	user.TeamIDs = slice.RemoveInPlace(teamID, user.TeamIDs)
 	return &dal.Update{
@@ -91,8 +91,8 @@ func removeMemberFromTeamRecord(
 		params.Team.Data.UserIDs = slice.RemoveInPlace(contactUserID, params.Team.Data.UserIDs)
 		params.TeamUpdates = append(params.TeamUpdates, dal.Update{Field: "userIDs", Value: params.Team.Data.UserIDs})
 	}
-	if params.Team.Data.NumberOf[models4teamus.NumberOfMembersFieldName] != membersCount {
-		params.TeamUpdates = append(params.TeamUpdates, params.Team.Data.SetNumberOf(models4teamus.NumberOfMembersFieldName, membersCount))
+	if params.Team.Data.NumberOf[dbo4teamus.NumberOfMembersFieldName] != membersCount {
+		params.TeamUpdates = append(params.TeamUpdates, params.Team.Data.SetNumberOf(dbo4teamus.NumberOfMembersFieldName, membersCount))
 	}
 }
 

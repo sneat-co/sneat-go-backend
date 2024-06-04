@@ -1,13 +1,13 @@
 package dto4calendarium
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/models4calendarium"
+	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 )
 
 // HappeningSlotRequest updates slot
 type HappeningSlotRequest struct {
 	HappeningRequest
-	Slot models4calendarium.HappeningSlot `json:"slot"`
+	Slot dbo4calendarium.HappeningSlot `json:"slot"`
 }
 
 // Validate returns error if not valid

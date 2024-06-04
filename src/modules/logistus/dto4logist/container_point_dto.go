@@ -2,8 +2,8 @@ package dto4logist
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/models4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
+	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
 )
@@ -34,7 +34,7 @@ func (v ContainerPointsRequest) Validate() error {
 		return validation.NewErrRequestIsMissingRequiredField("shippingPointIDs")
 	}
 	for i, shippingPointID := range v.ShippingPointIDs {
-		if err := models4teamus.ValidateShippingPointID(shippingPointID); err != nil {
+		if err := dbo4teamus.ValidateShippingPointID(shippingPointID); err != nil {
 			return validation.NewErrBadRequestFieldValue(fmt.Sprintf("shippingPointIDs[%v]", i), err.Error())
 		}
 	}
@@ -49,7 +49,7 @@ func (v ContainerPointRequest) Validate() error {
 	if err := validateContainerID("containerID", v.ContainerID); err != nil {
 		return validation.NewBadRequestError(err)
 	}
-	if err := models4teamus.ValidateShippingPointID(v.ShippingPointID); err != nil {
+	if err := dbo4teamus.ValidateShippingPointID(v.ShippingPointID); err != nil {
 		return validation.NewErrBadRequestFieldValue("shippingPointID", err.Error())
 	}
 	return nil
@@ -58,7 +58,7 @@ func (v ContainerPointRequest) Validate() error {
 // AddContainerPointsRequest is a request to add a container point to an order
 type AddContainerPointsRequest struct {
 	OrderRequest
-	ContainerPoints []models4logist.ContainerPoint `json:"containerPoints"`
+	ContainerPoints []dbo4logist.ContainerPoint `json:"containerPoints"`
 }
 
 // Validate returns error if request is invalid
@@ -77,7 +77,7 @@ func (v AddContainerPointsRequest) Validate() error {
 // UpdateContainerPointRequest is a request to update a container point in an order
 type UpdateContainerPointRequest struct {
 	ContainerPointRequest
-	models4logist.FreightPoint
+	dbo4logist.FreightPoint
 	ArrivesDate *string `json:"arrivesDate,omitempty"`
 	DepartsDate *string `json:"departsDate,omitempty"`
 }
@@ -87,7 +87,7 @@ func (v UpdateContainerPointRequest) Validate() error {
 	if err := v.OrderRequest.Validate(); err != nil {
 		return err
 	}
-	if err := models4teamus.ValidateShippingPointID(v.ShippingPointID); err != nil {
+	if err := dbo4teamus.ValidateShippingPointID(v.ShippingPointID); err != nil {
 		return validation.NewErrBadRequestFieldValue("shippingPointID", err.Error())
 	}
 	if err := validateContainerID("containerID", v.ContainerID); err != nil {
@@ -102,8 +102,8 @@ func (v UpdateContainerPointRequest) Validate() error {
 // SetContainerPointTaskRequest is a request to set container point task
 type SetContainerPointTaskRequest struct {
 	ContainerPointRequest
-	Task  models4logist.ShippingPointTask `json:"task"`
-	Value bool                            `json:"value"`
+	Task  dbo4logist.ShippingPointTask `json:"task"`
+	Value bool                         `json:"value"`
 }
 
 // Validate returns error if SetContainerPointTaskRequest is invalid
@@ -111,8 +111,8 @@ func (v SetContainerPointTaskRequest) Validate() error {
 	if err := v.ContainerPointRequest.Validate(); err != nil {
 		return err
 	}
-	return models4logist.ValidateShippingPointTask(v.Task,
-		models4logist.ValidatingRequest,
+	return dbo4logist.ValidateShippingPointTask(v.Task,
+		dbo4logist.ValidatingRequest,
 		func() string {
 			return "task"
 		},
@@ -122,10 +122,10 @@ func (v SetContainerPointTaskRequest) Validate() error {
 // SetContainerEndpointFieldsRequest is a request to set container point dates
 type SetContainerEndpointFieldsRequest struct {
 	ContainerPointRequest
-	Side        models4logist.EndpointSide `json:"side"`
-	Dates       map[string]string          `json:"dates"`
-	Times       map[string]string          `json:"times"`
-	ByContactID *string                    `json:"byContactID,omitempty"`
+	Side        dbo4logist.EndpointSide `json:"side"`
+	Dates       map[string]string       `json:"dates"`
+	Times       map[string]string       `json:"times"`
+	ByContactID *string                 `json:"byContactID,omitempty"`
 }
 
 // Validate returns error if SetContainerEndpointFieldsRequest is invalid
@@ -134,7 +134,7 @@ func (v SetContainerEndpointFieldsRequest) Validate() error {
 		return err
 	}
 	switch v.Side {
-	case models4logist.EndpointSideArrival, models4logist.EndpointSideDeparture:
+	case dbo4logist.EndpointSideArrival, dbo4logist.EndpointSideDeparture:
 	// OK
 	case "":
 		return validation.NewErrRequestIsMissingRequiredField("side")
@@ -202,8 +202,8 @@ func (v SetContainerPointFieldsRequest) Validate() error {
 // SetContainerPointFreightFieldsRequest is a request to set container point freight fields
 type SetContainerPointFreightFieldsRequest struct {
 	ContainerPointRequest
-	Task     models4logist.ShippingPointTask `json:"task"`
-	Integers map[string]*int                 `json:"integers"`
+	Task     dbo4logist.ShippingPointTask `json:"task"`
+	Integers map[string]*int              `json:"integers"`
 }
 
 // Validate returns error if SetContainerPointFreightFieldsRequest is invalid
@@ -216,8 +216,8 @@ func (v SetContainerPointFreightFieldsRequest) Validate() error {
 			return validation.NewErrBadRequestFieldValue(fmt.Sprintf("integers.%s", name), fmt.Sprintf("must be >= 0, got: %d", *value))
 		}
 	}
-	if err := models4logist.ValidateShippingPointTask(v.Task,
-		models4logist.ValidatingRequest,
+	if err := dbo4logist.ValidateShippingPointTask(v.Task,
+		dbo4logist.ValidatingRequest,
 		func() string {
 			return "task"
 		},

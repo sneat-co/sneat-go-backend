@@ -1,7 +1,7 @@
 package facade4meetingus
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/models4meetingus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/dbo4meetingus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
@@ -44,8 +44,8 @@ func (v ToggleTimerRequest) Validate() error {
 
 // ToggleTimerResponse response
 type ToggleTimerResponse struct {
-	Timer   *models4meetingus.Timer `json:"timer,omitempty"`
-	Message string                  `json:"message,omitempty"`
+	Timer   *dbo4meetingus.Timer `json:"timer,omitempty"`
+	Message string               `json:"message,omitempty"`
 }
 
 // Validate validates response

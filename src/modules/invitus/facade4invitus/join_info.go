@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/models4invitus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/dbo4invitus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
@@ -35,11 +35,11 @@ func (v *JoinInfoRequest) Validate() error {
 }
 
 type InviteInfo struct {
-	Created time.Time                 `json:"created"`
-	Status  string                    `json:"status"`
-	From    models4invitus.InviteFrom `json:"from"`
-	To      *models4invitus.InviteTo  `json:"to"`
-	Message string                    `json:"message,omitempty"`
+	Created time.Time              `json:"created"`
+	Status  string                 `json:"status"`
+	From    dbo4invitus.InviteFrom `json:"from"`
+	To      *dbo4invitus.InviteTo  `json:"to"`
+	Message string                 `json:"message,omitempty"`
 }
 
 func (v InviteInfo) Validate() error {
@@ -60,7 +60,7 @@ func (v InviteInfo) Validate() error {
 
 // JoinInfoResponse response
 type JoinInfoResponse struct {
-	Team   models4invitus.InviteTeam                           `json:"team"`
+	Team   dbo4invitus.InviteTeam                              `json:"team"`
 	Invite InviteInfo                                          `json:"invite"`
 	Member *dbmodels.DtoWithID[*briefs4contactus.ContactBrief] `json:"member"`
 }
@@ -88,7 +88,7 @@ func GetTeamJoinInfo(ctx context.Context, request JoinInfoRequest) (response Joi
 	}
 	db := facade.GetDatabase(ctx)
 
-	var inviteDto *models4invitus.InviteDto
+	var inviteDto *dbo4invitus.InviteDto
 	inviteDto, _, err = GetInviteByID(ctx, db, request.InviteID)
 	if err != nil {
 		err = fmt.Errorf("failed to get invite record by ID=%s: %w", request.InviteID, err)

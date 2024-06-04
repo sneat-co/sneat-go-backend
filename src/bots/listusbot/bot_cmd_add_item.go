@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/bots/listusbot/dal4listusbot"
+	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/facade4listus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/listus/models4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/core4teamus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/models4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"strings"
 )
@@ -38,7 +38,7 @@ var addBuyItemCommand = botsfw.Command{
 		text = text[strings.Index(text, " ")+1:]
 		userCtx := facade.NewUser(whc.AppUserID())
 
-		user := models4userus.NewUser(userCtx.GetID())
+		user := dbo4userus.NewUser(userCtx.GetID())
 		if err = facade4userus.GetUserByID(ctx, facade.GetDatabase(ctx), user.Record); err != nil {
 			return m, err
 		}
@@ -56,14 +56,14 @@ var addBuyItemCommand = botsfw.Command{
 
 		request := facade4listus.CreateListItemsRequest{
 			ListRequest: facade4listus.ListRequest{
-				ListID: models4listus.GetFullListID(models4listus.ListTypeToBuy, "groceries"),
+				ListID: dbo4listus.GetFullListID(dbo4listus.ListTypeToBuy, "groceries"),
 				TeamRequest: dto4teamus.TeamRequest{
 					TeamID: teamID,
 				},
 			},
 			Items: []facade4listus.CreateListItemRequest{
 				{
-					ListItemBase: models4listus.ListItemBase{
+					ListItemBase: dbo4listus.ListItemBase{
 						Title: text,
 					},
 				},

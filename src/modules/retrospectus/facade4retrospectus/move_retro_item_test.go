@@ -2,7 +2,7 @@ package facade4retrospectus
 
 import (
 	"context"
-	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/models4retrospectus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"testing"
@@ -24,8 +24,8 @@ func TestMoveRetroItem(t *testing.T) {
 					},
 				},
 				Item: "good1",
-				From: models4retrospectus.TreePosition{Parent: "goods", Index: 0},
-				To:   models4retrospectus.TreePosition{Parent: "goods", Index: 2},
+				From: dbo4retrospectus.TreePosition{Parent: "goods", Index: 0},
+				To:   dbo4retrospectus.TreePosition{Parent: "goods", Index: 2},
 			}
 
 			ctx := context.Background()
@@ -51,8 +51,8 @@ func TestMoveRetroItem(t *testing.T) {
 		t.Run("moving within same parent", func(t *testing.T) {
 			t.Skip("TODO: re-enable")
 			request.Item = "g1"
-			request.From = models4retrospectus.TreePosition{Parent: "goods", Index: 0}
-			request.To = models4retrospectus.TreePosition{Parent: "goods", Index: 1}
+			request.From = dbo4retrospectus.TreePosition{Parent: "goods", Index: 0}
+			request.To = dbo4retrospectus.TreePosition{Parent: "goods", Index: 1}
 
 			if err := MoveRetroItem(context.Background(), facade.NewUser("user1"), request); err != nil {
 				t.Fatalf("failed to move retro item: %v", err)

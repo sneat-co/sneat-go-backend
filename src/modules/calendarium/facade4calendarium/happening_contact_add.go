@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
+	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/models4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/models4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/models4linkage"
+	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dbo4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )
@@ -26,9 +26,9 @@ func AddParticipantToHappening(ctx context.Context, user facade.User, request dt
 		}
 
 		switch params.Happening.Dbo.Type {
-		case models4calendarium.HappeningTypeSingle:
+		case dbo4calendarium.HappeningTypeSingle:
 			break // No special processing needed
-		case models4calendarium.HappeningTypeRecurring:
+		case dbo4calendarium.HappeningTypeRecurring:
 			var updates []dal.Update
 			if updates, err = addContactToHappeningBriefInTeamDto(ctx, tx, params.TeamModuleEntry, params.Happening, request.Contact.ID); err != nil {
 				return fmt.Errorf("failed to add member to happening brief in team DTO: %w", err)
@@ -43,8 +43,8 @@ func AddParticipantToHappening(ctx context.Context, user facade.User, request dt
 		var updates []dal.Update
 		if updates, err = params.Happening.Dbo.AddRelationshipAndID(
 			contactFullRef,
-			models4linkage.RelationshipRolesCommand{
-				Add: &models4linkage.RolesCommand{
+			dbo4linkage.RelationshipRolesCommand{
+				Add: &dbo4linkage.RolesCommand{
 					RolesOfItem: []string{"participant"},
 				},
 			},
@@ -53,7 +53,7 @@ func AddParticipantToHappening(ctx context.Context, user facade.User, request dt
 		}
 		params.HappeningUpdates = append(params.HappeningUpdates, updates...)
 
-		//if params.Happening.Dbo.Type == models4calendarium.HappeningTypeRecurring {
+		//if params.Happening.Dbo.Type == dbo4calendarium.HappeningTypeRecurring {
 		//	recurringHappening := params.TeamModuleEntry.Data.RecurringHappenings[params.Happening.ID]
 		//	if recurringHappening != nil {
 		//		recurringHappening.Related = params.Happening.Dbo.Related
@@ -82,28 +82,28 @@ func addContactToHappeningBriefInTeamDto(
 	_ context.Context,
 	_ dal.ReadwriteTransaction,
 	calendariumTeam dal4calendarium.CalendariumTeamContext,
-	happening models4calendarium.HappeningContext,
+	happening dbo4calendarium.HappeningContext,
 	contactID string,
 ) (updates []dal.Update, err error) {
 	teamID := calendariumTeam.Key.Parent().ID.(string)
 	happeningBriefPointer := calendariumTeam.Data.GetRecurringHappeningBrief(happening.ID)
 	//teamContactID := dbmodels.NewTeamItemID(teamID, contactID)
-	var happeningBrief models4calendarium.HappeningBrief
+	var happeningBrief dbo4calendarium.HappeningBrief
 	if happeningBriefPointer == nil {
 		happeningBrief = happening.Dbo.HappeningBrief // Make copy so we do not affect the DTO object
-		happeningBriefPointer = &models4calendarium.CalendarHappeningBrief{
+		happeningBriefPointer = &dbo4calendarium.CalendarHappeningBrief{
 			HappeningBrief: happeningBrief,
 			WithRelated:    happening.Dbo.WithRelated,
 		}
 		//} else if happeningBriefPointer.Participants[string(teamContactID)] != nil {
 		//	return nil // Already added to happening brief in calendariumTeam record
 	}
-	contactRef := models4linkage.NewTeamModuleItemRef(teamID, const4contactus.ModuleID, const4contactus.ContactsCollection, contactID)
+	contactRef := dbo4linkage.NewTeamModuleItemRef(teamID, const4contactus.ModuleID, const4contactus.ContactsCollection, contactID)
 
 	updates, err = happeningBriefPointer.AddRelationship(
 		contactRef,
-		models4linkage.RelationshipRolesCommand{
-			Add: &models4linkage.RolesCommand{
+		dbo4linkage.RelationshipRolesCommand{
+			Add: &dbo4linkage.RolesCommand{
 				RolesOfItem: []string{"participant"},
 			},
 		})
@@ -112,13 +112,13 @@ func addContactToHappeningBriefInTeamDto(
 	}
 
 	//if happeningBriefPointer.Participants == nil {
-	//	happeningBriefPointer.Participants = make(map[string]*models4calendarium.HappeningParticipant)
+	//	happeningBriefPointer.Participants = make(map[string]*dbo4calendarium.HappeningParticipant)
 	//}
 	//if happeningBriefPointer.Participants[string(teamContactID)] == nil {
-	//	happeningBriefPointer.Participants[string(teamContactID)] = &models4calendarium.HappeningParticipant{}
+	//	happeningBriefPointer.Participants[string(teamContactID)] = &dbo4calendarium.HappeningParticipant{}
 	//}
 	//if calendariumTeam.Data.RecurringHappenings == nil {
-	//	calendariumTeam.Data.RecurringHappenings = make(map[string]*models4calendarium.CalendarHappeningBrief, 1)
+	//	calendariumTeam.Data.RecurringHappenings = make(map[string]*dbo4calendarium.CalendarHappeningBrief, 1)
 	//}
 	calendariumTeam.Data.RecurringHappenings[happening.ID] = happeningBriefPointer
 	//teamUpdates := []dal.Update{

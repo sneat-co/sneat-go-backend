@@ -1,7 +1,7 @@
 package dto4calendarium
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/models4calendarium"
+	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/strongo/validation"
 	"strconv"
 )
@@ -9,7 +9,7 @@ import (
 // HappeningPricesRequest adds prices to happening
 type HappeningPricesRequest struct {
 	HappeningRequest
-	models4calendarium.WithHappeningPrices
+	dbo4calendarium.WithHappeningPrices
 }
 
 // Validate returns error if not valid

@@ -2,7 +2,7 @@ package dto4calendarium
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/models4calendarium"
+	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
 	"strings"
@@ -27,9 +27,9 @@ func (v CancelHappeningRequest) Validate() error {
 	if v.Date != "" && strings.TrimSpace(v.SlotID) == "" {
 		return validation.NewErrRequestIsMissingRequiredField("slotIDs")
 	}
-	if len(v.Reason) > models4calendarium.ReasonMaxLen {
+	if len(v.Reason) > dbo4calendarium.ReasonMaxLen {
 		return validation.NewErrBadRequestFieldValue("reason",
-			fmt.Sprintf("maximum length of reason is %v, got %v", models4calendarium.ReasonMaxLen, len(v.Reason)))
+			fmt.Sprintf("maximum length of reason is %v, got %v", dbo4calendarium.ReasonMaxLen, len(v.Reason)))
 	}
 	return nil
 }

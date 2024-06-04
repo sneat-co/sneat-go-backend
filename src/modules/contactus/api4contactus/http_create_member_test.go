@@ -5,9 +5,9 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dbo4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dto4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/models4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/models4linkage"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/apicore/httpmock"
@@ -27,15 +27,15 @@ func TestHttpAddMember(t *testing.T) {
 		TeamRequest: dto4teamus.TeamRequest{
 			TeamID: teamID,
 		},
-		WithRelated: models4linkage.WithRelated{
-			Related: models4linkage.RelatedByModuleID{
-				const4contactus.ModuleID: models4linkage.RelatedByCollectionID{
-					const4contactus.ContactsCollection: []*models4linkage.RelatedItem{
+		WithRelated: dbo4linkage.WithRelated{
+			Related: dbo4linkage.RelatedByModuleID{
+				const4contactus.ModuleID: dbo4linkage.RelatedByCollectionID{
+					const4contactus.ContactsCollection: []*dbo4linkage.RelatedItem{
 						{
-							Keys: []models4linkage.RelatedItemKey{
+							Keys: []dbo4linkage.RelatedItemKey{
 								{TeamID: "team1", ItemID: "c1"},
 							},
-							RolesOfItem: map[models4linkage.RelationshipRoleID]*models4linkage.RelationshipRole{
+							RolesOfItem: map[dbo4linkage.RelationshipRoleID]*dbo4linkage.RelationshipRole{
 								"spouse": {
 									//CreatedField: with.CreatedField{
 									//	Created: with.Created{

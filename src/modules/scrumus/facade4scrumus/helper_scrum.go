@@ -6,8 +6,8 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dal4scrumus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/models4scrumus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/models4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
@@ -26,7 +26,7 @@ func UpdateLastScrumIDIfNeeded(
 
 	scrumTeamUpdates := make([]dal.Update, 0, 1)
 	scrumID := params.Meeting.GetID()
-	scrum := params.Meeting.Record.Data().(*models4scrumus.Scrum)
+	scrum := params.Meeting.Record.Data().(*dbo4scrumus.Scrum)
 
 	var scrumTeam dal4scrumus.ScrumTeam
 	scrumTeam, err = dal4scrumus.GetScrumTeam(ctx, tx, params.Team.ID)
@@ -35,11 +35,11 @@ func UpdateLastScrumIDIfNeeded(
 	}
 	if lastScrum := scrumTeam.Data.Last; lastScrum != nil && lastScrum.ID != "" && lastScrum.ID < scrumID {
 		if scrum.ScrumIDs == nil {
-			scrum.ScrumIDs = &models4scrumus.ScrumIDs{}
+			scrum.ScrumIDs = &dbo4scrumus.ScrumIDs{}
 		}
 		scrum.ScrumIDs.Prev = lastScrum.ID
 		prevScrumKey := dal.NewKeyWithParentAndID(params.Team.Key, "api4meetingus", lastScrum.ID)
-		prevScrum := new(models4scrumus.Scrum)
+		prevScrum := new(dbo4scrumus.Scrum)
 		prevScrumRecord := dal.NewRecordWithData(prevScrumKey, prevScrum)
 		if err = tx.Get(ctx, prevScrumRecord); err != nil {
 			return
@@ -55,7 +55,7 @@ func UpdateLastScrumIDIfNeeded(
 		}
 	}
 	if scrumTeam.Data.Last == nil || scrumTeam.Data.Last.ID < scrumID {
-		scrumTeam.Data.Last = &models4teamus.TeamMeetingInfo{
+		scrumTeam.Data.Last = &dbo4teamus.TeamMeetingInfo{
 			ID:       scrumID,
 			Stage:    "planning",
 			Started:  scrum.Started,

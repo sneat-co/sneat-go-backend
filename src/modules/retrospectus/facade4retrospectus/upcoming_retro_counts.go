@@ -17,7 +17,7 @@ package facade4retrospectus
 //		return errors.New("now is a required parameter")
 //	}
 //	teamKey := newTeamKey(teamID)
-//	var team models4teamus.TeamContext
+//	var team dbo4teamus.TeamContext
 //	var teamRecord dal.Record
 //	if team, err = txGetTeamByID(ctx, tx, teamID); err != nil {
 //		return err

@@ -2,9 +2,9 @@ package facade4meetingus
 
 import (
 	"context"
-	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/models4meetingus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/dbo4meetingus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/models4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"testing"
@@ -20,8 +20,8 @@ func (recordFactory) Collection() string {
 }
 
 // NewRecord creates new record
-func (recordFactory) NewRecordData() models4meetingus.MeetingInstance {
-	return &models4meetingus.Meeting{}
+func (recordFactory) NewRecordData() dbo4meetingus.MeetingInstance {
+	return &dbo4meetingus.Meeting{}
 }
 
 func TestToggleTimer(t *testing.T) { // TODO(help-wanted): add more test cases
@@ -45,10 +45,10 @@ func TestToggleTimer(t *testing.T) { // TODO(help-wanted): add more test cases
 		request ToggleTimerRequest,
 		timestamps []dbmodels.Timestamp,
 		expected expecting,
-		initMeeting func(meeting *models4meetingus.Meeting),
-		assert func(response ToggleTimerResponse, meeting models4meetingus.Meeting, team models4teamus.TeamDbo),
+		initMeeting func(meeting *dbo4meetingus.Meeting),
+		assert func(response ToggleTimerResponse, meeting dbo4meetingus.Meeting, team dbo4teamus.TeamDbo),
 	) {
-		assertTimer := func(source string, timer *models4meetingus.Timer) {
+		assertTimer := func(source string, timer *dbo4meetingus.Timer) {
 			if timer == nil {
 				t.Fatalf(source + ".Timer == nil")
 			}
@@ -103,14 +103,14 @@ func TestToggleTimer(t *testing.T) { // TODO(help-wanted): add more test cases
 				request := newRequest(TimerOpPause, "")
 				testToggleTimer(t, true, request, nil,
 					expecting{status: TimerStatusPaused},
-					func(meeting *models4meetingus.Meeting) {
+					func(meeting *dbo4meetingus.Meeting) {
 						if meeting == nil {
-							panic("required parameter 'api4meetingus *models4meetingus.MeetingID' is nil")
+							panic("required parameter 'api4meetingus *dbo4meetingus.MeetingID' is nil")
 						}
 						now := time.Now()
 						meeting.Started = &now
 						meeting.Version = 1
-						meeting.Timer = &models4meetingus.Timer{
+						meeting.Timer = &dbo4meetingus.Timer{
 							By: dbmodels.ByUser{
 								UID: "u1",
 							},
@@ -132,10 +132,10 @@ func TestToggleTimer(t *testing.T) { // TODO(help-wanted): add more test cases
 				request := newRequest("start", "m1")
 				testToggleTimer(t, true, request, nil,
 					expecting{status: TimerStatusActive},
-					func(meeting *models4meetingus.Meeting) {
+					func(meeting *dbo4meetingus.Meeting) {
 
 					},
-					func(response ToggleTimerResponse, meeting models4meetingus.Meeting, team models4teamus.TeamDbo) {
+					func(response ToggleTimerResponse, meeting dbo4meetingus.Meeting, team dbo4teamus.TeamDbo) {
 						if meeting.Timer.ActiveMemberID != request.Member {
 							t.Errorf("api4meetingus.Timer.ActiveMemberID !== request.MemberDto: %v != %v", meeting.Timer.ActiveMemberID, request.Member)
 						}

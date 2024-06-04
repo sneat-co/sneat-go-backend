@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
-	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/models4linkage"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/strongo/validation"
@@ -14,11 +14,11 @@ import (
 func updateRelatedItem(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	objectRef models4linkage.TeamModuleItemRef,
-	related map[string]*models4linkage.RelationshipRolesCommand,
+	objectRef dbo4linkage.TeamModuleItemRef,
+	related map[string]*dbo4linkage.RelationshipRolesCommand,
 ) (recordsUpdates []dal4teamus.RecordUpdates, err error) {
 	itemKey := dal4teamus.NewTeamModuleItemKeyFromItemRef(objectRef)
-	object := record.NewDataWithID(objectRef.ItemID, itemKey, new(models4linkage.WithRelatedAndIDsAndUserID))
+	object := record.NewDataWithID(objectRef.ItemID, itemKey, new(dbo4linkage.WithRelatedAndIDsAndUserID))
 	if err := tx.Get(ctx, object.Record); err != nil {
 		return recordsUpdates, fmt.Errorf("failed to get object record: %w", err)
 	}
@@ -26,7 +26,7 @@ func updateRelatedItem(
 		return recordsUpdates, fmt.Errorf("record is not valid after loading from DB: %w", err)
 	}
 	for itemID /*, itemRolesCommand*/ := range related {
-		itemRef := models4linkage.NewTeamModuleItemRefFromString(itemID)
+		itemRef := dbo4linkage.NewTeamModuleItemRefFromString(itemID)
 		if objectRef == itemRef {
 			return recordsUpdates, validation.NewErrBadRequestFieldValue("itemRef", fmt.Sprintf("objectRef and itemRef are the same: %+v", objectRef))
 		}

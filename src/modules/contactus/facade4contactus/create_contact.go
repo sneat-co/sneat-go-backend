@@ -8,9 +8,9 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dbo4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dto4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/models4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/models4linkage"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/core4teamus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
@@ -85,7 +85,7 @@ func CreateContactTx(
 			if len(relatedItems) > 0 {
 				var isRelatedByUserID bool
 				for _, relatedItem := range relatedItems {
-					isRelatedByUserID = models4linkage.HasRelatedItem(relatedItems, models4linkage.RelatedItemKey{TeamID: params.Team.ID, ItemID: params.UserID})
+					isRelatedByUserID = dbo4linkage.HasRelatedItem(relatedItems, dbo4linkage.RelatedItemKey{TeamID: params.Team.ID, ItemID: params.UserID})
 					if !isRelatedByUserID {
 						contactID := relatedItem.Keys[0].ItemID
 						if contactBrief := params.TeamModuleEntry.Data.GetContactBriefByContactID(contactID); contactBrief == nil {
@@ -113,7 +113,7 @@ func CreateContactTx(
 					}
 				}
 				if isRelatedByUserID {
-					userRelatedItem := models4linkage.GetRelatedItemByKey(relatedItems, models4linkage.RelatedItemKey{TeamID: params.Team.ID, ItemID: params.UserID})
+					userRelatedItem := dbo4linkage.GetRelatedItemByKey(relatedItems, dbo4linkage.RelatedItemKey{TeamID: params.Team.ID, ItemID: params.UserID})
 					userRelatedItem.Keys[0].ItemID = userContactID
 				}
 			}
@@ -228,7 +228,7 @@ func updateRelationshipsInRelatedItems(ctx context.Context, tx dal.ReadTransacti
 	userID, userContactID, teamID, contactID string,
 	contactusTeamEntry dal4contactus.ContactusTeamModuleEntry,
 	contactDbo *models4contactus.ContactDbo,
-	related models4linkage.RelatedByModuleID,
+	related dbo4linkage.RelatedByModuleID,
 ) (err error) {
 	if userContactID == "" { // Why we get it 2nd time? Previous is up in stack in CreateContactTx()
 		if userContactID, err = facade4userus.GetUserTeamContactID(ctx, tx, userID, contactusTeamEntry); err != nil {
@@ -244,7 +244,7 @@ func updateRelationshipsInRelatedItems(ctx context.Context, tx dal.ReadTransacti
 		for collection, relatedByItemID := range relatedByCollection {
 			for _, relatedItem := range relatedByItemID {
 				for _, key := range relatedItem.Keys {
-					itemRef := models4linkage.TeamModuleItemRef{
+					itemRef := dbo4linkage.TeamModuleItemRef{
 						TeamID:     teamID,
 						ModuleID:   moduleID,
 						Collection: collection,

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/models4scrumus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
@@ -20,7 +20,7 @@ func DeleteTask(ctx context.Context, userContext facade.User, request DeleteTask
 				//err = errors.New("task not found by ContactID: " + request.Task)
 				return
 			}
-			tasks := make([]*models4scrumus.Task, 0, len(params.tasks))
+			tasks := make([]*dbo4scrumus.Task, 0, len(params.tasks))
 			for _, task := range params.tasks {
 				if task.ID != request.Task {
 					tasks = append(tasks, task)
@@ -33,7 +33,7 @@ func DeleteTask(ctx context.Context, userContext facade.User, request DeleteTask
 			if len(tasks) == 0 {
 				updateValue = dal.DeleteField
 			} else {
-				if err = models4scrumus.ValidateTasks(tasks); err != nil {
+				if err = dbo4scrumus.ValidateTasks(tasks); err != nil {
 					return err
 				}
 				updateValue = tasks

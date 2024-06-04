@@ -3,8 +3,8 @@ package facade4logist
 import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/models4logist"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
@@ -19,10 +19,10 @@ func txDeleteShippingPoint(_ context.Context, _ dal.ReadwriteTransaction, params
 	orderDto := params.Order.Dto
 
 	var contactID string
-	//var counterpartyRole models4logist.Role
+	//var counterpartyRole dbo4logist.Role
 
 	{ // Remove shipping point from order
-		shippingPoints := make([]*models4logist.OrderShippingPoint, 0, len(orderDto.ShippingPoints))
+		shippingPoints := make([]*dbo4logist.OrderShippingPoint, 0, len(orderDto.ShippingPoints))
 		for _, sp := range orderDto.ShippingPoints {
 			if sp.ID == request.ShippingPointID {
 				if sp.Location != nil {
@@ -40,11 +40,11 @@ func txDeleteShippingPoint(_ context.Context, _ dal.ReadwriteTransaction, params
 	}
 
 	if contactID != "" {
-		deleteCounterpartyAndChildren(params, models4logist.CounterpartyRoleDispatchPoint, contactID) // TODO: Why role is hardcoded?
+		deleteCounterpartyAndChildren(params, dbo4logist.CounterpartyRoleDispatchPoint, contactID) // TODO: Why role is hardcoded?
 	}
 
 	{ // Remove segments related to the deleted shipping point
-		segments := make([]*models4logist.ContainerSegment, 0, len(orderDto.Segments))
+		segments := make([]*dbo4logist.ContainerSegment, 0, len(orderDto.Segments))
 		for _, segment := range orderDto.Segments {
 			if segment.ContainerSegmentKey.From.ShippingPointID == request.ShippingPointID || segment.ContainerSegmentKey.To.ShippingPointID == request.ShippingPointID {
 				continue
@@ -58,7 +58,7 @@ func txDeleteShippingPoint(_ context.Context, _ dal.ReadwriteTransaction, params
 	}
 
 	{ // Remove container points related to the deleted shipping point
-		containerPoints := make([]*models4logist.ContainerPoint, 0, len(orderDto.ContainerPoints))
+		containerPoints := make([]*dbo4logist.ContainerPoint, 0, len(orderDto.ContainerPoints))
 		for _, cp := range orderDto.ContainerPoints {
 			if cp.ShippingPointID == request.ShippingPointID {
 				continue
