@@ -1,4 +1,4 @@
-package models4assetus
+package dbo4assetus
 
 import "github.com/sneat-co/sneat-go-backend/src/modules/assetus/briefs4assetus"
 

@@ -1,7 +1,8 @@
-package models4assetus
+package dbo4assetus
 
 import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/briefs4assetus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/extras4assetus"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/strongoapp/with"
@@ -26,7 +27,7 @@ type AssetBaseDboExtension interface {
 // AssetBaseDbo is used in both AssetDbo and a request to create an asset,
 type AssetBaseDbo struct {
 	briefs4assetus.AssetBrief
-	WithAssetExtraField
+	extras4assetus.WithAssetExtraField
 	briefs4assetus.WithAssetusTeamBriefs[*briefs4assetus.AssetBrief]
 	with.TagsField
 	//briefs4contactus.WithMultiTeamContactIDs

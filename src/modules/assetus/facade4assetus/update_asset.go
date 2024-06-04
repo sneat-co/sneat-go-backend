@@ -6,8 +6,9 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dto4assetus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/models4assetus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/extras4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
@@ -28,24 +29,24 @@ func UpdateAssetTx(ctx context.Context, tx dal.ReadwriteTransaction, user facade
 	}
 	switch request.AssetCategory {
 	case "vehicle":
-		return runAssetWorker(ctx, tx, user, request, new(models4assetus.AssetVehicleExtra))
+		return runAssetWorker(ctx, tx, user, request, new(extras4assetus.AssetVehicleExtra))
 	case "dwelling":
-		return runAssetWorker(ctx, tx, user, request, new(models4assetus.AssetDwellingExtra))
+		return runAssetWorker(ctx, tx, user, request, new(extras4assetus.AssetDwellingExtra))
 	default:
-		return runAssetWorker(ctx, tx, user, request, models4assetus.NewAssetNoExtra())
+		return runAssetWorker(ctx, tx, user, request, extras4assetus.NewAssetNoExtra())
 	}
 }
 
 type AssetWorkerParams struct {
-	*dal4teamus.ModuleTeamWorkerParams[*models4assetus.AssetusTeamDto]
-	Asset        record.DataWithID[string, *models4assetus.AssetDbo]
+	*dal4teamus.ModuleTeamWorkerParams[*dbo4assetus.AssetusTeamDto]
+	Asset        record.DataWithID[string, *dbo4assetus.AssetDbo]
 	AssetUpdates []dal.Update
 }
 
-func runAssetWorker(ctx context.Context, tx dal.ReadwriteTransaction, user facade.User, request dto4assetus.UpdateAssetRequest, assetExtra models4assetus.AssetExtra) (err error) {
+func runAssetWorker(ctx context.Context, tx dal.ReadwriteTransaction, user facade.User, request dto4assetus.UpdateAssetRequest, assetExtra extras4assetus.AssetExtra) (err error) {
 	// TODO: Replace with future RunTeamModuleItemWorkerTx
-	return dal4teamus.RunModuleTeamWorkerTx[*models4assetus.AssetusTeamDto](ctx, tx, user, request.TeamRequest, const4assetus.ModuleID, new(models4assetus.AssetusTeamDto),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4teamus.ModuleTeamWorkerParams[*models4assetus.AssetusTeamDto]) (err error) {
+	return dal4teamus.RunModuleTeamWorkerTx[*dbo4assetus.AssetusTeamDto](ctx, tx, user, request.TeamRequest, const4assetus.ModuleID, new(dbo4assetus.AssetusTeamDto),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4teamus.ModuleTeamWorkerParams[*dbo4assetus.AssetusTeamDto]) (err error) {
 			params := AssetWorkerParams{
 				Asset:                  NewAsset("", assetExtra),
 				ModuleTeamWorkerParams: teamWorkerParams,

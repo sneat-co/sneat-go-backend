@@ -6,8 +6,8 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dal4assetus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dto4assetus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/models4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
@@ -16,8 +16,8 @@ import (
 
 // CreateAssetResponse DTO
 type CreateAssetResponse struct {
-	ID   string                      `json:"id"`
-	Data models4assetus.AssetBaseDbo `json:"data"`
+	ID   string                   `json:"id"`
+	Data dbo4assetus.AssetBaseDbo `json:"data"`
 }
 
 // CreateAsset creates an asset
@@ -25,8 +25,8 @@ func CreateAsset(ctx context.Context, user facade.User, request dto4assetus.Crea
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4teamus.CreateTeamItem(ctx, user, "assets", request.TeamRequest, const4assetus.ModuleID, new(models4assetus.AssetusTeamDto),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4assetus.AssetusTeamDto]) (err error) {
+	err = dal4teamus.CreateTeamItem(ctx, user, "assets", request.TeamRequest, const4assetus.ModuleID, new(dbo4assetus.AssetusTeamDto),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4assetus.AssetusTeamDto]) (err error) {
 			if err = params.GetRecords(ctx, tx); err != nil {
 				return err
 			}
@@ -41,7 +41,7 @@ func createAssetTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	request dto4assetus.CreateAssetRequest,
-	params *dal4teamus.ModuleTeamWorkerParams[*models4assetus.AssetusTeamDto],
+	params *dal4teamus.ModuleTeamWorkerParams[*dbo4assetus.AssetusTeamDto],
 ) (
 	response CreateAssetResponse, err error,
 ) {

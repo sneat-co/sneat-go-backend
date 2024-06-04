@@ -1,4 +1,4 @@
-package models4assetus
+package extras4assetus
 
 import (
 	"github.com/sneat-co/sneat-go-core/validate"

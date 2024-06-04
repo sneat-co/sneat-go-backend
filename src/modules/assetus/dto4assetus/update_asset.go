@@ -1,12 +1,12 @@
 package dto4assetus
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/models4assetus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/extras4assetus"
 )
 
 type UpdateAssetRequest struct {
 	AssetRequest
-	Extra models4assetus.AssetExtra
+	Extra extras4assetus.AssetExtra
 }
 
 func (v UpdateAssetRequest) Validate() error {

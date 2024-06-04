@@ -3,17 +3,18 @@ package api4assetus
 import (
 	"errors"
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/models4assetus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/extras4assetus"
 	"net/http"
 )
 
-func createAssetBaseDbo(r *http.Request) (assetDbo models4assetus.AssetBaseDbo, err error) {
-	assetCategory := (models4assetus.AssetExtraType)(r.URL.Query().Get("assetCategory"))
+func createAssetBaseDbo(r *http.Request) (assetDbo dbo4assetus.AssetBaseDbo, err error) {
+	assetCategory := (extras4assetus.AssetExtraType)(r.URL.Query().Get("assetCategory"))
 	if assetCategory == "" {
 		err = errors.New("GET parameter 'assetCategory' is required")
 		return
 	}
-	assetExtra := models4assetus.NewAssetExtra(assetCategory)
+	assetExtra := extras4assetus.NewAssetExtra(assetCategory)
 	if assetExtra == nil {
 		err = fmt.Errorf("unsupported asset category: %s", assetCategory)
 		return

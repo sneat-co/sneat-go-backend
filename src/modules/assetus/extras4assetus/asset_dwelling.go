@@ -1,6 +1,8 @@
-package models4assetus
+package extras4assetus
 
-import "github.com/strongo/validation"
+import (
+	"github.com/strongo/validation"
+)
 
 func init() {
 	RegisterAssetExtraFactory(AssetExtraTypeDwelling, func() AssetExtra {

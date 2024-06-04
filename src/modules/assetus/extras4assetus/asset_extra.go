@@ -1,23 +1,10 @@
-package models4assetus
+package extras4assetus
 
 import (
 	"encoding/json"
 	"fmt"
 	"github.com/strongo/validation"
 )
-
-var assetExtraFactories = map[AssetExtraType]func() AssetExtra{}
-
-func RegisterAssetExtraFactory(t AssetExtraType, f func() AssetExtra) {
-	assetExtraFactories[t] = f
-}
-
-func NewAssetExtra(t AssetExtraType) AssetExtra {
-	if f, ok := assetExtraFactories[t]; ok {
-		return f()
-	}
-	return nil
-}
 
 type AssetExtra interface {
 	GetType() AssetExtraType
@@ -26,14 +13,6 @@ type AssetExtra interface {
 	GetBrief() AssetExtra
 	Validate() error
 }
-
-type AssetExtraType string
-
-const (
-	AssetExtraTypeVehicle  AssetExtraType = "vehicle"
-	AssetExtraTypeDwelling AssetExtraType = "dwelling"
-	AssetExtraTypeDocument AssetExtraType = "document"
-)
 
 type AssetExtraBase struct {
 	Type AssetExtraType `json:"type" firestore:"type"`
