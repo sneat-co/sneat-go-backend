@@ -34,7 +34,7 @@ func CreateContact(
 		return response, fmt.Errorf("invalid CreateContactRequest: %w", err)
 	}
 
-	err = dal4teamus.CreateTeamItem(ctx, userContext, const4contactus.ContactsCollection, request.TeamRequest, const4contactus.ModuleID, new(models4contactus.ContactusTeamDbo),
+	err = dal4teamus.CreateTeamItem(ctx, userContext, request.TeamRequest, const4contactus.ModuleID, new(models4contactus.ContactusTeamDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4contactus.ContactusTeamDbo]) (err error) {
 			var contact dal4contactus.ContactEntry
 			if contact, err = CreateContactTx(ctx, tx, userCanBeNonTeamMember, request, params); err != nil {
@@ -198,7 +198,7 @@ func CreateContactTx(
 		}
 	}
 
-	params.TeamUpdates = append(params.TeamUpdates, params.Team.Data.UpdateNumberOf(const4contactus.ContactsField, len(params.TeamModuleEntry.Data.Contacts)))
+	//params.TeamUpdates = append(params.TeamUpdates, params.Team.Data.UpdateNumberOf(const4contactus.ContactsField, len(params.TeamModuleEntry.Data.Contacts)))
 
 	if request.Related != nil {
 		if err = updateRelationshipsInRelatedItems(ctx, tx, params.UserID, userContactID, params.Team.ID, contactID, params.TeamModuleEntry, contactDbo, request.Related); err != nil {

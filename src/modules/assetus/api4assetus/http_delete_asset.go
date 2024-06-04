@@ -11,8 +11,6 @@ import (
 	"net/http"
 )
 
-var deleteAsset = facade4assetus.DeleteAsset
-
 // httpDeleteAsset deletes assets
 func httpDeleteAsset(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
@@ -21,7 +19,7 @@ func httpDeleteAsset(w http.ResponseWriter, r *http.Request) {
 	request.ID = q.Get("id")
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.NoContentAuthRequired, http.StatusNoContent,
 		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
-			if err := deleteAsset(ctx, userCtx, request); err != nil {
+			if err := facade4assetus.DeleteAsset(ctx, userCtx, request); err != nil {
 				return nil, fmt.Errorf("failed to delete asset: %w", err)
 			}
 			return nil, nil

@@ -3,7 +3,6 @@ package dbo4teamus
 import (
 	"errors"
 	"fmt"
-	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/core4teamus"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/slice"
@@ -156,7 +155,7 @@ type TeamDbo struct {
 	dbmodels.WithUpdatedAndVersion
 	dbmodels.WithUserIDs
 
-	NumberOf map[string]int `json:"numberOf,omitempty" firestore:"numberOf,omitempty"`
+	//NumberOf map[string]int `json:"numberOf,omitempty" firestore:"numberOf,omitempty"`
 	//
 	//Contacts   []*briefs4contactus.ContactBrief `json:"contacts,omitempty" firestore:"contacts,omitempty"`
 
@@ -166,16 +165,16 @@ type TeamDbo struct {
 	Metrics []*TeamMetric `json:"metrics,omitempty" firestore:"metrics,omitempty"`
 }
 
-func (v *TeamDbo) SetNumberOf(name string, value int) (update dal.Update) {
-	if v.NumberOf == nil {
-		v.NumberOf = make(map[string]int)
-	}
-	v.NumberOf[name] = value
-	return dal.Update{
-		Field: "numberOf." + name,
-		Value: value,
-	}
-}
+//func (v *TeamDbo) SetNumberOf(name string, value int) (update dal.Update) {
+//	if v.NumberOf == nil {
+//		v.NumberOf = make(map[string]int)
+//	}
+//	v.NumberOf[name] = value
+//	return dal.Update{
+//		Field: "numberOf." + name,
+//		Value: value,
+//	}
+//}
 
 // IncreaseVersion increases record version and sets timestamp
 func (v *TeamDbo) IncreaseVersion(timestamp time.Time, updatedBy string) int {
@@ -221,12 +220,12 @@ func (v *TeamDbo) Validate() error {
 		//	return nil
 		//}
 
-		for name, value := range v.NumberOf {
-			if value < 0 {
-				return validation.NewErrBadRecordFieldValue("numberOf."+name,
-					fmt.Sprintf("should be positive, got: %d", value))
-			}
-		}
+		//for name, value := range v.NumberOf {
+		//	if value < 0 {
+		//		return validation.NewErrBadRecordFieldValue("numberOf."+name,
+		//			fmt.Sprintf("should be positive, got: %d", value))
+		//	}
+		//}
 	}
 
 	return nil
@@ -237,14 +236,14 @@ func (v *TeamDbo) HasUser(uid string) bool {
 	return slice.Index(v.UserIDs, uid) >= 0
 }
 
-func NumberOfUpdateField(name string) string {
-	return "numberOf." + name
-}
+//func NumberOfUpdateField(name string) string {
+//	return "numberOf." + name
+//}
 
-func (v *TeamDbo) UpdateNumberOf(name string, value int) dal.Update {
-	v.NumberOf[name] = value
-	return dal.Update{
-		Field: NumberOfUpdateField(name),
-		Value: value,
-	}
-}
+//func (v *TeamDbo) UpdateNumberOf(name string, value int) dal.Update {
+//	v.NumberOf[name] = value
+//	return dal.Update{
+//		Field: NumberOfUpdateField(name),
+//		Value: value,
+//	}
+//}

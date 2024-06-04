@@ -29,11 +29,15 @@ func (v *WithMakeModelFields) GenerateTitleFromMakeModelAndRegNumber(reNumber st
 }
 
 func (v *WithMakeModelFields) Validate() error {
-	if strings.TrimSpace(v.Make) == "" {
+	if makeValue := strings.TrimSpace(v.Make); makeValue == "" {
 		return validation.NewErrRecordIsMissingRequiredField("make")
+	} else if makeValue != v.Make {
+		return validation.NewErrBadRecordFieldValue("make", "should not have leading or trailing spaces")
 	}
-	if strings.TrimSpace(v.Model) == "" {
+	if model := strings.TrimSpace(v.Model); model == "" {
 		return validation.NewErrRecordIsMissingRequiredField("model")
+	} else if model != v.Model {
+		return validation.NewErrBadRecordFieldValue("model", "should not have leading or trailing spaces")
 	}
 	return nil
 }

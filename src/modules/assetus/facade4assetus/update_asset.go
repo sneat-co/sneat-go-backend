@@ -38,15 +38,15 @@ func UpdateAssetTx(ctx context.Context, tx dal.ReadwriteTransaction, user facade
 }
 
 type AssetWorkerParams struct {
-	*dal4teamus.ModuleTeamWorkerParams[*dbo4assetus.AssetusTeamDto]
+	*dal4teamus.ModuleTeamWorkerParams[*dbo4assetus.AssetusTeamDbo]
 	Asset        record.DataWithID[string, *dbo4assetus.AssetDbo]
 	AssetUpdates []dal.Update
 }
 
 func runAssetWorker(ctx context.Context, tx dal.ReadwriteTransaction, user facade.User, request dto4assetus.UpdateAssetRequest, assetExtra extras4assetus.AssetExtra) (err error) {
 	// TODO: Replace with future RunTeamModuleItemWorkerTx
-	return dal4teamus.RunModuleTeamWorkerTx[*dbo4assetus.AssetusTeamDto](ctx, tx, user, request.TeamRequest, const4assetus.ModuleID, new(dbo4assetus.AssetusTeamDto),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4teamus.ModuleTeamWorkerParams[*dbo4assetus.AssetusTeamDto]) (err error) {
+	return dal4teamus.RunModuleTeamWorkerTx[*dbo4assetus.AssetusTeamDbo](ctx, tx, user, request.TeamRequest, const4assetus.ModuleID, new(dbo4assetus.AssetusTeamDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4teamus.ModuleTeamWorkerParams[*dbo4assetus.AssetusTeamDbo]) (err error) {
 			params := AssetWorkerParams{
 				Asset:                  NewAsset("", assetExtra),
 				ModuleTeamWorkerParams: teamWorkerParams,

@@ -7,7 +7,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dto4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -91,9 +90,9 @@ func removeMemberFromTeamRecord(
 		params.Team.Data.UserIDs = slice.RemoveInPlace(contactUserID, params.Team.Data.UserIDs)
 		params.TeamUpdates = append(params.TeamUpdates, dal.Update{Field: "userIDs", Value: params.Team.Data.UserIDs})
 	}
-	if params.Team.Data.NumberOf[dbo4teamus.NumberOfMembersFieldName] != membersCount {
-		params.TeamUpdates = append(params.TeamUpdates, params.Team.Data.SetNumberOf(dbo4teamus.NumberOfMembersFieldName, membersCount))
-	}
+	//if params.Team.Data.NumberOf[dbo4teamus.NumberOfMembersFieldName] != membersCount {
+	//	params.TeamUpdates = append(params.TeamUpdates, params.Team.Data.SetNumberOf(dbo4teamus.NumberOfMembersFieldName, membersCount))
+	//}
 }
 
 func removeContactBrief(

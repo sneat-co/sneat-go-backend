@@ -85,7 +85,7 @@ func setContactStatusTxWorker(
 		if err := params.Team.Data.Validate(); err != nil {
 			return err
 		}
-		params.TeamUpdates = append(params.TeamUpdates, updateTeamDtoWithNumberOfContact(len(params.TeamModuleEntry.Data.Contacts)))
+		//params.TeamUpdates = append(params.TeamUpdates, updateTeamDtoWithNumberOfContact(len(params.TeamModuleEntry.Data.Contacts)))
 	}
 	if status == "active" {
 		params.TeamModuleEntry.Data.AddContact(contact.ID, &contact.Data.ContactBrief)

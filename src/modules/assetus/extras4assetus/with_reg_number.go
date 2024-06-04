@@ -11,7 +11,9 @@ type WithRegNumberField struct {
 
 // Validate validates WitRegNumberField
 func (v *WithRegNumberField) Validate() error {
-	if strings.TrimSpace(v.RegNumber) != v.RegNumber {
+	if regNumber := strings.TrimSpace(v.RegNumber); regNumber == "" {
+		return validation.NewErrRecordIsMissingRequiredField("regNumber")
+	} else if regNumber != v.RegNumber {
 		return validation.NewErrBadRecordFieldValue("regNumber", "should not have leading or trailing spaces")
 	}
 	return nil

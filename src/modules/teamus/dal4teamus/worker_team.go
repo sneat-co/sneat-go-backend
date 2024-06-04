@@ -231,7 +231,6 @@ func applyTeamModuleUpdates[D TeamModuleData](ctx context.Context, tx dal.Readwr
 func CreateTeamItem[D TeamModuleData](
 	ctx context.Context,
 	user facade.User,
-	counter string,
 	teamRequest dto4teamus.TeamRequest,
 	moduleID string,
 	data D,
@@ -252,11 +251,11 @@ func CreateTeamItem[D TeamModuleData](
 			if err := worker(ctx, tx, params); err != nil {
 				return fmt.Errorf("failed to execute team worker passed to CreateTeamItem: %w", err)
 			}
-			if counter != "" {
-				if err = incrementCounter(params.TeamWorkerParams, counter); err != nil {
-					return fmt.Errorf("failed to incement teams counter=%s: %w", counter, err)
-				}
-			}
+			//if counter != "" {
+			//	if err = incrementCounter(params.TeamWorkerParams, moduleID, counter); err != nil {
+			//		return fmt.Errorf("failed to incement teams counter=%s: %w", counter, err)
+			//	}
+			//}
 			if err = params.Team.Data.Validate(); err != nil {
 				return fmt.Errorf("team record is not valid after performing worker: %w", err)
 			}

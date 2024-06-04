@@ -106,9 +106,9 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 		},
 		//WithUpdated: dbmodels.WithUpdated{}, // This is updated by IncreaseVersion()
 		//WithMembers: models4memberus.WithMembers{}, // Moved to contactus module
-		NumberOf: map[string]int{
-			"members": 1,
-		},
+		//NumberOf: map[string]int{
+		//	"members": 1,
+		//},
 	}
 	teamDbo.IncreaseVersion(now, userID)
 	teamDbo.CountryID = user.Dbo.CountryID

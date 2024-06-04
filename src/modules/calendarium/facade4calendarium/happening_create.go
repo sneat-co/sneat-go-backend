@@ -25,10 +25,10 @@ func CreateHappening(
 	if err = request.Validate(); err != nil {
 		return
 	}
-	var counter string
-	if request.Happening.Type == dbo4calendarium.HappeningTypeRecurring {
-		counter = "recurringHappenings"
-	}
+	//var counter string
+	//if request.Happening.Type == dbo4calendarium.HappeningTypeRecurring {
+	//	counter = "recurringHappenings"
+	//}
 	happeningDto := &dbo4calendarium.HappeningDbo{
 		HappeningBrief: *request.Happening,
 		CreatedFields: with.CreatedFields{
@@ -52,7 +52,7 @@ func CreateHappening(
 			}
 		}
 	}
-	err = dal4teamus.CreateTeamItem(ctx, user, counter, request.TeamRequest,
+	err = dal4teamus.CreateTeamItem(ctx, user, request.TeamRequest,
 		const4calendarium.ModuleID,
 		new(dbo4calendarium.CalendariumTeamDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo]) (err error) {

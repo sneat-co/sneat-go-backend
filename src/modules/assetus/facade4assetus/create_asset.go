@@ -25,8 +25,9 @@ func CreateAsset(ctx context.Context, user facade.User, request dto4assetus.Crea
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4teamus.CreateTeamItem(ctx, user, "assets", request.TeamRequest, const4assetus.ModuleID, new(dbo4assetus.AssetusTeamDto),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4assetus.AssetusTeamDto]) (err error) {
+	err = dal4teamus.CreateTeamItem(ctx, user,
+		request.TeamRequest, const4assetus.ModuleID, new(dbo4assetus.AssetusTeamDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4assetus.AssetusTeamDbo]) (err error) {
 			if err = params.GetRecords(ctx, tx); err != nil {
 				return err
 			}
@@ -41,7 +42,7 @@ func createAssetTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	request dto4assetus.CreateAssetRequest,
-	params *dal4teamus.ModuleTeamWorkerParams[*dbo4assetus.AssetusTeamDto],
+	params *dal4teamus.ModuleTeamWorkerParams[*dbo4assetus.AssetusTeamDbo],
 ) (
 	response CreateAssetResponse, err error,
 ) {

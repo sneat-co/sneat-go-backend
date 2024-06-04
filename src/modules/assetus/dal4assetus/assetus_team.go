@@ -8,7 +8,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 )
 
-type AssetusTeamContext = record.DataWithID[string, *dbo4assetus.AssetusTeamDto]
+type AssetusTeamContext = record.DataWithID[string, *dbo4assetus.AssetusTeamDbo]
 
 // AssetsCollection is a name of a collection in DB
 const AssetsCollection = "assets"

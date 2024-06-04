@@ -49,7 +49,7 @@ func deleteContactTxWorker(
 		return err
 	}
 
-	params.TeamUpdates = append(params.TeamUpdates, updateTeamDtoWithNumberOfContact(len(params.TeamModuleEntry.Data.Contacts)))
+	//params.TeamUpdates = append(params.TeamUpdates, updateTeamDtoWithNumberOfContact(len(params.TeamModuleEntry.Data.Contacts)))
 
 	contactKeysToDelete := make([]*dal.Key, 0, len(subContacts)+1)
 	contactKeysToDelete = append(contactKeysToDelete, contact.Key)

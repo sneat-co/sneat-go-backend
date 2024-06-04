@@ -5,7 +5,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 )
 
-var briefsAdapter = func(listType dbo4listus.ListType, listID string) dal4teamus.BriefsAdapter[*dbo4listus.ListusTeamDto] {
+var briefsAdapter = func(listType dbo4listus.ListType, listID string) *dal4teamus.BriefsAdapter[*dbo4listus.ListusTeamDto] {
 	getListGroupByListID := func(moduleTeam *dbo4listus.ListusTeamDto) *dbo4listus.ListGroup {
 		//for _, lg := range moduleTeam.ListGroups {
 		//	for _, l := range lg.Lists {
@@ -54,7 +54,7 @@ var briefsAdapter = func(listType dbo4listus.ListType, listID string) dal4teamus
 		return listGroupCache
 	}
 
-	return dal4teamus.BriefsAdapter[*dbo4listus.ListusTeamDto]{
+	return &dal4teamus.BriefsAdapter[*dbo4listus.ListusTeamDto]{
 		BriefsFieldName: "listGroups." + listType,
 		BriefsValue: func(team *dbo4listus.ListusTeamDto) interface{} {
 			lg := getListGroup(team)
