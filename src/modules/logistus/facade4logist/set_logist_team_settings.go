@@ -30,8 +30,8 @@ func SetLogistTeamSettings(
 	}
 	return dal4teamus.RunModuleTeamWorker(ctx, userContext, request.TeamRequest,
 		const4logistus.ModuleID,
-		new(dbo4logist.LogistTeamDto),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4teamus.ModuleTeamWorkerParams[*dbo4logist.LogistTeamDto]) (err error) {
+		new(dbo4logist.LogistTeamDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4teamus.ModuleTeamWorkerParams[*dbo4logist.LogistTeamDbo]) (err error) {
 			return setLogistTeamSettingsTx(ctx /*userContext,*/, request, tx, teamWorkerParams)
 		},
 	)
@@ -42,7 +42,7 @@ func setLogistTeamSettingsTx(
 	//userContext facade.User,
 	request dto4logist.SetLogistTeamSettingsRequest,
 	tx dal.ReadwriteTransaction,
-	workerParams *dal4teamus.ModuleTeamWorkerParams[*dbo4logist.LogistTeamDto],
+	workerParams *dal4teamus.ModuleTeamWorkerParams[*dbo4logist.LogistTeamDbo],
 ) (err error) {
 	if workerParams.Team.Data.CountryID != request.Address.CountryID {
 		workerParams.Team.Data.CountryID = request.Address.CountryID
@@ -52,12 +52,12 @@ func setLogistTeamSettingsTx(
 		})
 	}
 
-	logistTeam := dbo4logist.NewLogistTeamContext(request.TeamID)
+	logistTeam := dbo4logist.NewLogistTeamEntry(request.TeamID)
 	if err = tx.Get(ctx, logistTeam.Record); err != nil {
 		if !dal.IsNotFound(err) {
 			return err
 		}
-	} else if err = logistTeam.Dto.Validate(); err != nil {
+	} else if err = logistTeam.Data.Validate(); err != nil {
 		return fmt.Errorf("loaded logistus team recod is not valid: %w", err)
 	}
 	var teamContact dal4contactus.ContactEntry
@@ -105,10 +105,10 @@ func setLogistTeamSettingsTx(
 		}
 	}
 
-	updates := updateLogistTeam(logistTeam.Dto, workerParams.Team.Data, teamContact, request)
+	updates := updateLogistTeam(logistTeam.Data, workerParams.Team.Data, teamContact, request)
 
 	if len(updates) > 0 {
-		if err = logistTeam.Dto.Validate(); err != nil {
+		if err = logistTeam.Data.Validate(); err != nil {
 			return fmt.Errorf("logistus team recod is not valid before saving: %w", err)
 		}
 		if logistTeam.Record.Exists() {
@@ -122,7 +122,7 @@ func setLogistTeamSettingsTx(
 	return nil
 }
 
-func updateLogistTeam(logistTeamDto *dbo4logist.LogistTeamDto, teamDto *dbo4teamus.TeamDbo, teamContact dal4contactus.ContactEntry, request dto4logist.SetLogistTeamSettingsRequest) (updates []dal.Update) {
+func updateLogistTeam(logistTeamDto *dbo4logist.LogistTeamDbo, teamDto *dbo4teamus.TeamDbo, teamContact dal4contactus.ContactEntry, request dto4logist.SetLogistTeamSettingsRequest) (updates []dal.Update) {
 	if logistTeamDto.ContactID != teamContact.ID {
 		logistTeamDto.ContactID = teamContact.ID
 		updates = append(updates, dal.Update{Field: "contactID", Value: teamContact.ID})

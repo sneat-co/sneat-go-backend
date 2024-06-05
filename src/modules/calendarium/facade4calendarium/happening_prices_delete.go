@@ -21,7 +21,7 @@ func deleteHappeningPricesTx(ctx context.Context, tx dal.ReadwriteTransaction, _
 	if err = params.GetRecords(ctx, tx); err != nil {
 		return err
 	}
-	happeningDbo := params.Happening.Dbo
+	happeningDbo := params.Happening.Data
 
 	prices := make([]*dbo4calendarium.HappeningPrice, 0, len(happeningDbo.Prices))
 

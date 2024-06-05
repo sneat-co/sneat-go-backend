@@ -27,8 +27,8 @@ func (v OrderCounter) Validate() error {
 	return nil
 }
 
-// LogistTeamDto is a DTO for LogistTeam
-type LogistTeamDto struct {
+// LogistTeamDbo is a DTO for LogistTeam
+type LogistTeamDbo struct {
 	dbmodels.WithUserIDs
 	Roles             []string
 	ContactID         string `json:"contactID,omitempty" firestore:"contactID,omitempty"`
@@ -38,7 +38,7 @@ type LogistTeamDto struct {
 }
 
 // Validate returns error if invalid
-func (v LogistTeamDto) Validate() error {
+func (v LogistTeamDbo) Validate() error {
 	if err := v.WithUserIDs.Validate(); err != nil {
 		return validation.NewErrBadRecordFieldValue("WithUserIDs", err.Error())
 	}
@@ -68,10 +68,10 @@ func (v LogistTeamDto) Validate() error {
 	return nil
 }
 
-// LogistTeamContext is a context for LogistTeam
-type LogistTeamContext struct {
+// LogistTeamEntry is a context for LogistTeam
+type LogistTeamEntry struct {
 	record.WithID[string]
-	Dto *LogistTeamDto
+	Data *LogistTeamDbo
 }
 
 func newLogistTeamKey(teamID string) *dal.Key {
@@ -79,11 +79,11 @@ func newLogistTeamKey(teamID string) *dal.Key {
 	return dal.NewKeyWithParentAndID(teamKey, dal4teamus.TeamModulesCollection, ModuleID)
 }
 
-// NewLogistTeamContext creates new LogistTeamContext
-func NewLogistTeamContext(teamID string) (logistTeam LogistTeamContext) {
+// NewLogistTeamEntry creates new LogistTeamEntry
+func NewLogistTeamEntry(teamID string) (logistTeam LogistTeamEntry) {
 	logistTeam.ID = teamID
 	logistTeam.Key = newLogistTeamKey(teamID)
-	logistTeam.Dto = new(LogistTeamDto)
-	logistTeam.Record = dal.NewRecordWithData(logistTeam.Key, logistTeam.Dto)
+	logistTeam.Data = new(LogistTeamDbo)
+	logistTeam.Record = dal.NewRecordWithData(logistTeam.Key, logistTeam.Data)
 	return logistTeam
 }

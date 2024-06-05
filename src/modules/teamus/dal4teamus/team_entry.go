@@ -5,14 +5,14 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
 )
 
-type TeamContext = record.DataWithID[string, *dbo4teamus.TeamDbo]
+type TeamEntry = record.DataWithID[string, *dbo4teamus.TeamDbo]
 
-func NewTeamContext(id string) (team TeamContext) {
+func NewTeamEntry(id string) (team TeamEntry) {
 	teamDto := new(dbo4teamus.TeamDbo)
-	return NewTeamContextWithDto(id, teamDto)
+	return NewTeamEntryWithDto(id, teamDto)
 }
 
-func NewTeamContextWithDto(id string, dto *dbo4teamus.TeamDbo) (team TeamContext) {
+func NewTeamEntryWithDto(id string, dto *dbo4teamus.TeamDbo) (team TeamEntry) {
 	if dto == nil {
 		panic("required parameter dto is nil")
 	}

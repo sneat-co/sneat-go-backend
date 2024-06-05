@@ -20,7 +20,7 @@ func httpGetTeam(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	var team dal4teamus.TeamContext
+	var team dal4teamus.TeamEntry
 	team, err = getTeam(ctx, userContext, id)
 	apicore.ReturnJSON(ctx, w, r, http.StatusOK, err, team.Data)
 }

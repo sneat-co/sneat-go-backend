@@ -22,8 +22,8 @@ import (
 )
 
 type CreateTeamResult struct {
-	Team dal4teamus.TeamContext `json:"-"`
-	User dbo4userus.UserContext `json:"-"`
+	Team dal4teamus.TeamEntry `json:"-"`
+	User dbo4userus.UserEntry `json:"-"`
 }
 
 // CreateTeam creates TeamIDs record
@@ -49,7 +49,7 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 	}
 	var userTeamContactID string
 
-	user := dbo4userus.NewUserContext(userID)
+	user := dbo4userus.NewUserEntry(userID)
 	response.User = user
 
 	if err = tx.Get(ctx, user.Record); err != nil {
@@ -57,7 +57,7 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 	}
 
 	if request.Title == "" {
-		teamID, _ := user.Dbo.GetTeamBriefByType(request.Type)
+		teamID, _ := user.Data.GetTeamBriefByType(request.Type)
 		if teamID != "" {
 			response.Team.ID = teamID
 			if team, err := GetTeamByID(ctx, tx, teamID); err != nil {
@@ -69,7 +69,7 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 		}
 	}
 
-	userTeamContactID, err = person.GenerateIDFromNameOrRandom(user.Dbo.Names, nil)
+	userTeamContactID, err = person.GenerateIDFromNameOrRandom(user.Data.Names, nil)
 	if err != nil {
 		return response, fmt.Errorf("failed to generate  member ID: %w", err)
 	}
@@ -111,7 +111,7 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 		//},
 	}
 	teamDbo.IncreaseVersion(now, userID)
-	teamDbo.CountryID = user.Dbo.CountryID
+	teamDbo.CountryID = user.Data.CountryID
 	if request.Type == "work" {
 		zero := 0
 		hundred := 100
@@ -150,21 +150,21 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 
 	teamContactus := dal4contactus.NewContactusTeamModuleEntry(teamID)
 
-	teamMember := user.Dbo.ContactBrief // This should copy data from user's contact brief as it's not a pointer
+	teamMember := user.Data.ContactBrief // This should copy data from user's contact brief as it's not a pointer
 
 	teamMember.UserID = userID
 	teamMember.Roles = roles
 	if teamMember.Gender == "" {
 		teamMember.Gender = "unknown"
 	}
-	if user.Dbo.Defaults != nil && len(user.Dbo.Defaults.ShortNames) > 0 {
-		teamMember.ShortTitle = user.Dbo.Defaults.ShortNames[0].Name
+	if user.Data.Defaults != nil && len(user.Data.Defaults.ShortNames) > 0 {
+		teamMember.ShortTitle = user.Data.Defaults.ShortNames[0].Name
 	}
 	//if len(teamMember.Emails) == 0 && len(user.Emails) > 0 {
 	//	teamMember.Emails = user.Emails
 	//}
-	//if len(teamMember.Phones) == 0 && len(user.Dbo.Phones) > 0 {
-	//	teamMember.Phones = user.Dbo.Phones
+	//if len(teamMember.Phones) == 0 && len(user.Data.Phones) > 0 {
+	//	teamMember.Phones = user.Data.Phones
 	//}
 	teamContactus.Data.AddContact(userTeamContactID, &teamMember)
 
@@ -178,14 +178,14 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 		Roles:         roles,
 	}
 
-	if user.Dbo.Teams == nil {
-		user.Dbo.Teams = make(map[string]*dbo4userus.UserTeamBrief, 1)
+	if user.Data.Teams == nil {
+		user.Data.Teams = make(map[string]*dbo4userus.UserTeamBrief, 1)
 	}
-	updates := user.Dbo.SetTeamBrief(teamID, &userTeamBrief)
+	updates := user.Data.SetTeamBrief(teamID, &userTeamBrief)
 
-	updates = append(updates, user.Dbo.UpdateRelatedIDs()...)
+	updates = append(updates, user.Data.UpdateRelatedIDs()...)
 
-	if err = user.Dbo.Validate(); err != nil {
+	if err = user.Data.Validate(); err != nil {
 		return response, fmt.Errorf("user record is not valid after adding new team info: %v", err)
 	}
 	if user.Record.Exists() {

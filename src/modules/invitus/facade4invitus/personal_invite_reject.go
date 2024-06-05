@@ -39,8 +39,8 @@ func RejectPersonalInvite(ctx context.Context, userContext facade.User, request 
 	if err = request.Validate(); err != nil {
 		return err
 	}
-	team := dal4teamus.NewTeamContext(request.TeamID)
-	invite := NewPersonalInviteContext(request.InviteID)
+	team := dal4teamus.NewTeamEntry(request.TeamID)
+	invite := NewPersonalInviteEntry(request.InviteID)
 	uid := userContext.GetID()
 
 	db := facade.GetDatabase(ctx)
@@ -50,7 +50,7 @@ func RejectPersonalInvite(ctx context.Context, userContext facade.User, request 
 		if err != nil {
 			return err
 		}
-		if invite.Dto.Pin != request.Pin {
+		if invite.Data.Pin != request.Pin {
 			return fmt.Errorf("%w: pin code does not match", facade.ErrBadRequest)
 		}
 		now := time.Now()

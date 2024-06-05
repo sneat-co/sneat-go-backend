@@ -37,7 +37,7 @@ func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest,
 	listType := request.ListType()
 	listID := request.ListID
 	listKey := dal4listus.NewTeamListKey(request.TeamID, listID)
-	var listDto dbo4listus.ListDto
+	var listDto dbo4listus.ListDbo
 	var listRecord = dal.NewRecordWithData(listKey, &listDto)
 	if err = tx.Get(ctx, listRecord); err != nil && !dal.IsNotFound(err) {
 		return fmt.Errorf("failed to get list record: %w", err)

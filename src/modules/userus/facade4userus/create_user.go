@@ -35,32 +35,32 @@ package facade4userus
 //		return err // Might be nil or not related to "record not found"
 //	}
 //
-//	user.Dbo.Created.Client = request.RemoteClient
-//	user.Dbo.CreatedAt = time.Now()
-//	user.Dbo.CreatedBy = request.RemoteClient.HostOrApp
-//	if i := strings.Index(user.Dbo.CreatedBy, ":"); i > 0 {
-//		user.Dbo.CreatedBy = user.Dbo.CreatedBy[:i]
+//	user.Data.Created.Client = request.RemoteClient
+//	user.Data.CreatedAt = time.Now()
+//	user.Data.CreatedBy = request.RemoteClient.HostOrApp
+//	if i := strings.Index(user.Data.CreatedBy, ":"); i > 0 {
+//		user.Data.CreatedBy = user.Data.CreatedBy[:i]
 //	}
 //
 //	{ // Set user's names
-//		user.Dbo.Names.Full = briefs4contactus.CleanTitle(request.Title)
-//		if strings.Contains(user.Dbo.Names.Full, " ") {
-//			user.Dbo.Defaults = &dbo4userus.UserDefaults{
-//				ShortNames: briefs4contactus.GetShortNames(user.Dbo.Names.Full),
+//		user.Data.Names.Full = briefs4contactus.CleanTitle(request.Title)
+//		if strings.Contains(user.Data.Names.Full, " ") {
+//			user.Data.Defaults = &dbo4userus.UserDefaults{
+//				ShortNames: briefs4contactus.GetShortNames(user.Data.Names.Full),
 //			}
 //		}
 //	}
-//	user.Dbo.Email = strings.TrimSpace(request.Email)
-//	user.Dbo.Emails = []dbmodels.PersonEmail{
-//		{Type: "primary", Address: user.Dbo.Email},
+//	user.Data.Email = strings.TrimSpace(request.Email)
+//	user.Data.Emails = []dbmodels.PersonEmail{
+//		{Type: "primary", Address: user.Data.Email},
 //	}
-//	if user.Dbo.Gender == "" {
-//		user.Dbo.Gender = "unknown"
+//	if user.Data.Gender == "" {
+//		user.Data.Gender = "unknown"
 //	}
-//	if user.Dbo.AgeGroup == "" {
-//		user.Dbo.AgeGroup = "unknown"
+//	if user.Data.AgeGroup == "" {
+//		user.Data.AgeGroup = "unknown"
 //	}
-//	if err := user.Dbo.Validate(); err != nil {
+//	if err := user.Data.Validate(); err != nil {
 //		return fmt.Errorf("not able to create user record: %w", err)
 //	}
 //	if err := tx.Insert(ctx, user.Record); err != nil {

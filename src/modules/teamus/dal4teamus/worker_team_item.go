@@ -76,7 +76,7 @@ func (v TeamItemRunnerInput[D]) Validate() error {
 type TeamItemWorkerParams struct {
 	//Counter     string
 	Started     time.Time
-	Team        TeamContext
+	Team        TeamEntry
 	TeamKey     *dal.Key
 	TeamUpdates []dal.Update
 	TeamItem    dal.Record
@@ -183,7 +183,7 @@ func DeleteTeamItem[D TeamModuleData](
 				//Counter:  "",
 			}
 			if input.IsTeamRecordNeeded {
-				params.Team = NewTeamContext(input.TeamID)
+				params.Team = NewTeamEntry(input.TeamID)
 				if err = tx.Get(ctx, params.Team.Record); err != nil {
 					return
 				}

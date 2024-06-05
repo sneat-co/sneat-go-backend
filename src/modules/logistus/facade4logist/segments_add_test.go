@@ -60,7 +60,7 @@ func TestAddSegmentsTx(t *testing.T) { // TODO: create few test cases
 
 	params := &OrderWorkerParams{
 		TeamWorkerParams: &dal4teamus.TeamWorkerParams{
-			Team: dal4teamus.NewTeamContext("team1"),
+			Team: dal4teamus.NewTeamEntry("team1"),
 		},
 		Order: dbo4logist.NewOrderWithData("team1", "order1", order),
 	}

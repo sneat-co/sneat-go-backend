@@ -34,12 +34,12 @@ func (v *GetPersonalInviteRequest) Validate() error {
 
 // PersonalInviteResponse holds response data for created personal invite
 type PersonalInviteResponse struct {
-	Invite  *dbo4invitus.PersonalInviteDto            `json:"invite,omitempty"`
+	Invite  *dbo4invitus.PersonalInviteDbo            `json:"invite,omitempty"`
 	Members map[string]*briefs4contactus.ContactBrief `json:"members,omitempty"`
 }
 
 func getPersonalInviteRecords(ctx context.Context, getter dal.ReadSession, params *dal4contactus.ContactusTeamWorkerParams, inviteID, memberID string) (
-	invite PersonalInviteContext,
+	invite PersonalInviteEntry,
 	member dal4contactus.ContactEntry,
 	err error,
 ) {
@@ -47,7 +47,7 @@ func getPersonalInviteRecords(ctx context.Context, getter dal.ReadSession, param
 		err = validation.NewErrRequestIsMissingRequiredField("inviteID")
 		return
 	}
-	invite = NewPersonalInviteContext(inviteID)
+	invite = NewPersonalInviteEntry(inviteID)
 
 	records := []dal.Record{invite.Record}
 	if memberID != "" {
@@ -89,9 +89,9 @@ func GetPersonal(ctx context.Context, user facade.User, request GetPersonalInvit
 		if err != nil {
 			return err
 		}
-		invite.Dto.Pin = "" // Hide PIN code from visitor
+		invite.Data.Pin = "" // Hide PIN code from visitor
 		response = PersonalInviteResponse{
-			Invite:  invite.Dto,
+			Invite:  invite.Data,
 			Members: make(map[string]*briefs4contactus.ContactBrief, len(params.TeamModuleEntry.Data.Contacts)),
 		}
 		// TODO: Is this is a security breach in current implementation?

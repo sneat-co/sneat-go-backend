@@ -79,11 +79,11 @@ func TestCreateTeam(t *testing.T) { // TODO: Implement unit tests
 		assert.Nil(t, response.Team.Data.Validate())
 		assert.Equal(t, 1, len(response.Team.Data.UserIDs))
 		assert.Equal(t, 1, response.Team.Data.Version)
-		//assert.Equal(t, 2, len(response.Team.Dbo.UserIDs))
+		//assert.Equal(t, 2, len(response.Team.Data.UserIDs))
 
-		assert.Nil(t, response.User.Dbo.Validate())
-		assert.Equal(t, 1, len(response.User.Dbo.TeamIDs))
-		assert.Equal(t, 1, len(response.User.Dbo.Teams))
+		assert.Nil(t, response.User.Data.Validate())
+		assert.Equal(t, 1, len(response.User.Data.TeamIDs))
+		assert.Equal(t, 1, len(response.User.Data.Teams))
 	})
 
 }

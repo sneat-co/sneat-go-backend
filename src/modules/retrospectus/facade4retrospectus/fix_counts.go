@@ -19,7 +19,7 @@ func FixCounts(ctx context.Context, userContext facade.User, request FixCountsRe
 	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		now := time.Now()
 		userRef := dbo4userus.NewUserKey(uid)
-		team := dal4teamus.NewTeamContext(request.TeamID)
+		team := dal4teamus.NewTeamEntry(request.TeamID)
 		var retroTeam dal4retrospectus.RetroTeam
 		retroTeam, err = dal4retrospectus.GetRetroTeam(ctx, tx, request.TeamID)
 		user := new(dbo4userus.UserDbo)

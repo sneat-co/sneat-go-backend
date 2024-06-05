@@ -8,9 +8,11 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 )
 
-type ListContext struct {
+//type ListEntry = record.DataWithID[string, *dbo4listus.ListDbo]
+
+type ListEntry struct {
 	record.WithID[string]
-	Dto *dbo4listus.ListDto
+	Data *dbo4listus.ListDbo
 }
 
 // NewTeamListKey creates new list key
@@ -19,12 +21,12 @@ func NewTeamListKey(teamID, id string) *dal.Key {
 	return dal.NewKeyWithParentAndID(teamModuleKey, dbo4listus.ListsCollection, id)
 }
 
-func NewTeamListContext(teamID, listID string) (list ListContext) {
+func NewTeamListEntry(teamID, listID string) (list ListEntry) {
 	key := NewTeamListKey(teamID, listID)
 	list.ID = listID
 	list.FullID = teamID + dbo4listus.ListIDSeparator + listID
 	list.Key = key
-	list.Dto = new(dbo4listus.ListDto)
-	list.Record = dal.NewRecordWithData(key, list.Dto)
+	list.Data = new(dbo4listus.ListDbo)
+	list.Record = dal.NewRecordWithData(key, list.Data)
 	return
 }

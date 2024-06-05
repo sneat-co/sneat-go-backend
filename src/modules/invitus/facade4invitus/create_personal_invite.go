@@ -42,7 +42,7 @@ func createInviteForMember(
 	inviterUserID,
 	message string,
 	toAvatar *dbprofile.Avatar,
-) (id string, personalInvite *dbo4invitus.PersonalInviteDto, err error) {
+) (id string, personalInvite *dbo4invitus.PersonalInviteDbo, err error) {
 	if err = team.Validate(); err != nil {
 		err = fmt.Errorf("parameter 'team' is not valid: %w", err)
 		return
@@ -77,7 +77,7 @@ func createInviteForMember(
 		toAddressLower = strings.ToLower(toAddress.Address)
 	}
 	from.UserID = uid
-	personalInvite = &dbo4invitus.PersonalInviteDto{
+	personalInvite = &dbo4invitus.PersonalInviteDbo{
 		InviteDto: dbo4invitus.InviteDto{
 			Status: "active",
 			Pin:    randomPinCode(),

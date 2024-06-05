@@ -54,7 +54,7 @@ func CreateList(ctx context.Context, user facade.User, request CreateListRequest
 				By: user.GetID(),
 				At: time.Now(),
 			}
-			list := dbo4listus.ListDto{
+			list := dbo4listus.ListDbo{
 				WithModified: dbmodels.WithModified{
 					CreatedFields: with.CreatedFields{
 						CreatedAtField: with.CreatedAtField{

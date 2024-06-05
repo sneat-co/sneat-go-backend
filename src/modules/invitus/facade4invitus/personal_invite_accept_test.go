@@ -81,14 +81,14 @@ func TestAcceptPersonalInviteRequest_Validate(t *testing.T) {
 func Test_createOrUpdateUserRecord(t *testing.T) {
 	ctx := context.Background()
 	type args struct {
-		user              dbo4userus.UserContext
+		user              dbo4userus.UserEntry
 		userRecordError   error
 		teamRecordError   error
 		inviteRecordError error
 		request           AcceptPersonalInviteRequest
-		team              dal4teamus.TeamContext
+		team              dal4teamus.TeamEntry
 		teamMember        dbmodels.DtoWithID[*briefs4contactus.ContactBase]
-		invite            PersonalInviteContext
+		invite            PersonalInviteEntry
 	}
 
 	tests := []struct {
@@ -99,9 +99,9 @@ func Test_createOrUpdateUserRecord(t *testing.T) {
 		{
 			name: "nil_params",
 			args: args{
-				user:            dbo4userus.NewUserContext("test_user_id"),
+				user:            dbo4userus.NewUserEntry("test_user_id"),
 				userRecordError: dal.ErrRecordNotFound,
-				team: dal4teamus.NewTeamContextWithDto("testteamid", &dbo4teamus.TeamDbo{
+				team: dal4teamus.NewTeamEntryWithDto("testteamid", &dbo4teamus.TeamDbo{
 					TeamBrief: dbo4teamus.TeamBrief{
 						RequiredCountryID: with.RequiredCountryID{
 							CountryID: with.UnknownCountryID,
@@ -125,7 +125,7 @@ func Test_createOrUpdateUserRecord(t *testing.T) {
 						//WithRequiredCountryID: dbmodels.WithRequiredCountryID{
 					},
 				},
-				invite: NewPersonalInviteContextWithDto("test_personal_invite_id", &dbo4invitus.PersonalInviteDto{
+				invite: NewPersonalInviteEntryWithDto("test_personal_invite_id", &dbo4invitus.PersonalInviteDbo{
 					InviteDto: dbo4invitus.InviteDto{
 						Roles: []string{"contributor"},
 					},
@@ -174,14 +174,14 @@ func Test_createOrUpdateUserRecord(t *testing.T) {
 				tx.EXPECT().Insert(gomock.Any(), tt.args.user.Record).Return(nil)
 			}
 			now := time.Now()
-			params := dal4contactus.NewContactusTeamWorkerParams(tt.args.user.GetID(), tt.args.team.ID)
+			params := dal4contactus.NewContactusTeamWorkerParams(tt.args.user.ID, tt.args.team.ID)
 			if err := createOrUpdateUserRecord(ctx, tx, now, tt.args.user, tt.args.request, params, tt.args.teamMember.Data, tt.args.invite); err != nil {
 				if !tt.wantErr {
 					t.Errorf("createOrUpdateUserRecord() error = %v, wantErr %v", err, tt.wantErr)
 				}
 				return
 			}
-			userDto := tt.args.user.Dbo
+			userDto := tt.args.user.Data
 			assert.Equal(t, now, userDto.CreatedAt, "CreatedAt")
 			assert.Equal(t, tt.args.request.Member.Data.Gender, userDto.Gender, "Gender")
 			assert.Equal(t, 1, len(userDto.Teams), "len(Teams)")
@@ -197,7 +197,7 @@ func Test_updateInviteRecord(t *testing.T) {
 	ctx := context.Background()
 	type args struct {
 		uid    string
-		invite PersonalInviteContext
+		invite PersonalInviteEntry
 		status string
 	}
 	now := time.Now()
@@ -210,7 +210,7 @@ func Test_updateInviteRecord(t *testing.T) {
 			name: "should_pass",
 			args: args{
 				status: "accepted",
-				invite: NewPersonalInviteContextWithDto("test_invite_id1", &dbo4invitus.PersonalInviteDto{
+				invite: NewPersonalInviteEntryWithDto("test_invite_id1", &dbo4invitus.PersonalInviteDbo{
 					ToTeamMemberID: "to_member_id2",
 					Address:        "to.test.user@example.com",
 					InviteDto: dbo4invitus.InviteDto{
@@ -258,12 +258,12 @@ func Test_updateInviteRecord(t *testing.T) {
 			mockCtrl := gomock.NewController(t)
 			tx := mocks4dal.NewMockReadwriteTransaction(mockCtrl)
 			tx.EXPECT().Update(ctx, tt.args.invite.Key, gomock.Any()).Return(nil)
-			assert.Equal(t, "", tt.args.invite.Dto.To.UserID)
+			assert.Equal(t, "", tt.args.invite.Data.To.UserID)
 			if err := updateInviteRecord(ctx, tx, tt.args.uid, now, tt.args.invite, tt.args.status); (err != nil) != tt.wantErr {
 				t.Errorf("updateInviteRecord() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			assert.Equal(t, tt.args.status, tt.args.invite.Dto.Status)
-			assert.Equal(t, tt.args.uid, tt.args.invite.Dto.To.UserID)
+			assert.Equal(t, tt.args.status, tt.args.invite.Data.Status)
+			assert.Equal(t, tt.args.uid, tt.args.invite.Data.To.UserID)
 		})
 	}
 }
@@ -272,7 +272,7 @@ func Test_updateTeamRecord(t *testing.T) {
 	type args struct {
 		uid           string
 		memberID      string
-		team          dal4teamus.TeamContext
+		team          dal4teamus.TeamEntry
 		contactusTeam dal4contactus.ContactusTeamModuleEntry
 		requestMember dbmodels.DtoWithID[*briefs4contactus.ContactBase]
 	}
@@ -293,7 +293,7 @@ func Test_updateTeamRecord(t *testing.T) {
 			args: args{
 				uid:      "test_user_id",
 				memberID: "test_member_id1",
-				team: dal4teamus.NewTeamContextWithDto("testteamid", &dbo4teamus.TeamDbo{
+				team: dal4teamus.NewTeamEntryWithDto("testteamid", &dbo4teamus.TeamDbo{
 					TeamBrief: dbo4teamus.TeamBrief{
 						Type:  "family",
 						Title: "Family",

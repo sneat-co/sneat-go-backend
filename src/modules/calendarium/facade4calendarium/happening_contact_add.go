@@ -25,7 +25,7 @@ func AddParticipantToHappening(ctx context.Context, user facade.User, request dt
 			return err
 		}
 
-		switch params.Happening.Dbo.Type {
+		switch params.Happening.Data.Type {
 		case dbo4calendarium.HappeningTypeSingle:
 			break // No special processing needed
 		case dbo4calendarium.HappeningTypeRecurring:
@@ -37,11 +37,11 @@ func AddParticipantToHappening(ctx context.Context, user facade.User, request dt
 		default:
 			return fmt.Errorf("invalid happenning record: %w",
 				validation.NewErrBadRecordFieldValue("type",
-					fmt.Sprintf("unknown value: [%v]", params.Happening.Dbo.Type)))
+					fmt.Sprintf("unknown value: [%v]", params.Happening.Data.Type)))
 		}
 		contactFullRef := models4contactus.NewContactFullRef(request.TeamID, request.Contact.ID)
 		var updates []dal.Update
-		if updates, err = params.Happening.Dbo.AddRelationshipAndID(
+		if updates, err = params.Happening.Data.AddRelationshipAndID(
 			contactFullRef,
 			dbo4linkage.RelationshipRolesCommand{
 				Add: &dbo4linkage.RolesCommand{
@@ -53,10 +53,10 @@ func AddParticipantToHappening(ctx context.Context, user facade.User, request dt
 		}
 		params.HappeningUpdates = append(params.HappeningUpdates, updates...)
 
-		//if params.Happening.Dbo.Type == dbo4calendarium.HappeningTypeRecurring {
+		//if params.Happening.Data.Type == dbo4calendarium.HappeningTypeRecurring {
 		//	recurringHappening := params.TeamModuleEntry.Data.RecurringHappenings[params.Happening.ID]
 		//	if recurringHappening != nil {
-		//		recurringHappening.Related = params.Happening.Dbo.Related
+		//		recurringHappening.Related = params.Happening.Data.Related
 		//		if err = recurringHappening.Validate(); err != nil {
 		//			return fmt.Errorf("failed to validate recurring happening: %w", err)
 		//		}
@@ -81,8 +81,8 @@ func AddParticipantToHappening(ctx context.Context, user facade.User, request dt
 func addContactToHappeningBriefInTeamDto(
 	_ context.Context,
 	_ dal.ReadwriteTransaction,
-	calendariumTeam dal4calendarium.CalendariumTeamContext,
-	happening dbo4calendarium.HappeningContext,
+	calendariumTeam dal4calendarium.CalendariumTeamEntry,
+	happening dbo4calendarium.HappeningEntry,
 	contactID string,
 ) (updates []dal.Update, err error) {
 	teamID := calendariumTeam.Key.Parent().ID.(string)
@@ -90,10 +90,10 @@ func addContactToHappeningBriefInTeamDto(
 	//teamContactID := dbmodels.NewTeamItemID(teamID, contactID)
 	var happeningBrief dbo4calendarium.HappeningBrief
 	if happeningBriefPointer == nil {
-		happeningBrief = happening.Dbo.HappeningBrief // Make copy so we do not affect the DTO object
+		happeningBrief = happening.Data.HappeningBrief // Make copy so we do not affect the DTO object
 		happeningBriefPointer = &dbo4calendarium.CalendarHappeningBrief{
 			HappeningBrief: happeningBrief,
-			WithRelated:    happening.Dbo.WithRelated,
+			WithRelated:    happening.Data.WithRelated,
 		}
 		//} else if happeningBriefPointer.Participants[string(teamContactID)] != nil {
 		//	return nil // Already added to happening brief in calendariumTeam record

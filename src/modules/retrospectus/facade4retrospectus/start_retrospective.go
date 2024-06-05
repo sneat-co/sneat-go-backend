@@ -212,7 +212,7 @@ type userRetroItems struct {
 	byType dbo4retrospectus.RetroItemsByType
 }
 
-func getUsersWithRetroItems(ctx context.Context, tx dal.ReadwriteTransaction, team dal4teamus.TeamContext, retroTeam dal4retrospectus.RetroTeam) (usersWithRetroItemByUserID map[string]userRetroItems, err error) {
+func getUsersWithRetroItems(ctx context.Context, tx dal.ReadwriteTransaction, team dal4teamus.TeamEntry, retroTeam dal4retrospectus.RetroTeam) (usersWithRetroItemByUserID map[string]userRetroItems, err error) {
 	teamUsersCount := len(team.Data.UserIDs)
 	usersWithRetroItemByUserID = make(map[string]userRetroItems, teamUsersCount)
 	userIDs := make([]string, 0, teamUsersCount)

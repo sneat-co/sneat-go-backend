@@ -112,8 +112,8 @@ func (v ListBrief) Validate() error {
 	return nil
 }
 
-// ListDto DTO
-type ListDto struct {
+// ListDbo DTO
+type ListDbo struct {
 	ListBase
 	dbmodels.WithModified
 	dbmodels.WithUserIDs
@@ -124,7 +124,7 @@ type ListDto struct {
 }
 
 // Validate returns error if not valid
-func (v ListDto) Validate() error {
+func (v ListDbo) Validate() error {
 	if err := v.WithTeamIDs.Validate(); err != nil {
 		return err
 	}

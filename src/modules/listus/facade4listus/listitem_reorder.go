@@ -23,16 +23,16 @@ func ReorderListItem(ctx context.Context, userContext facade.User, request Reord
 	db := facade.GetDatabase(ctx)
 	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		listID := request.ListID
-		list := dal4listus.NewTeamListContext(request.TeamID, listID)
+		list := dal4listus.NewTeamListEntry(request.TeamID, listID)
 
 		if err = GetListForUpdate(ctx, tx, list); err != nil {
 			return fmt.Errorf("failed to get a list for reordering of list items: %w", err)
 		}
 		//listUpdates := make([]dal.Update, 0, len(request.ItemIDs))
 		itemsToMove := make([]*dbo4listus.ListItemBrief, 0, len(request.ItemIDs))
-		otherItems := make([]*dbo4listus.ListItemBrief, 0, len(list.Dto.Items)-len(request.ItemIDs))
+		otherItems := make([]*dbo4listus.ListItemBrief, 0, len(list.Data.Items)-len(request.ItemIDs))
 
-		for _, item := range list.Dto.Items {
+		for _, item := range list.Data.Items {
 			isItemToMove := false
 			for _, id := range request.ItemIDs {
 				log.Println("item.InviteID", item.ID, "requestItemID", id)
@@ -47,12 +47,12 @@ func ReorderListItem(ctx context.Context, userContext facade.User, request Reord
 			}
 		}
 		var toIndex = request.ToIndex
-		if toIndex >= len(list.Dto.Items) {
-			toIndex = len(list.Dto.Items) - 1
+		if toIndex >= len(list.Data.Items) {
+			toIndex = len(list.Data.Items) - 1
 		} else if len(otherItems) < toIndex {
 			toIndex = len(otherItems) - 1
 		}
-		items := make([]*dbo4listus.ListItemBrief, toIndex, len(list.Dto.Items))
+		items := make([]*dbo4listus.ListItemBrief, toIndex, len(list.Data.Items))
 		for i := 0; i < toIndex; i++ {
 			items[i] = otherItems[i]
 		}
@@ -62,16 +62,16 @@ func ReorderListItem(ctx context.Context, userContext facade.User, request Reord
 		for i := toIndex; i < len(otherItems); i++ {
 			items = append(items, otherItems[i])
 		}
-		list.Dto.Items = items
+		list.Data.Items = items
 		listUpdates := []dal.Update{
 			{
 				Field: "items",
-				Value: list.Dto.Items,
+				Value: list.Data.Items,
 			},
 		}
 		listKey := list.Record.Key()
 		log.Printf("Updating list with listKey=%v, item[1]: %+v; updates[0]: %+v",
-			listKey, list.Dto.Items[1], listUpdates[0].Value)
+			listKey, list.Data.Items[1], listUpdates[0].Value)
 		if err = tx.Update(ctx, listKey, listUpdates); err != nil {
 			return fmt.Errorf("failed to update list record: %w", err)
 		}

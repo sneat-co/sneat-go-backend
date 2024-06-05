@@ -67,7 +67,7 @@ func CreateOrReuseInviteForMember(ctx context.Context, user facade.User, request
 			}
 			var (
 				inviteID       string
-				personalInvite *dbo4invitus.PersonalInviteDto
+				personalInvite *dbo4invitus.PersonalInviteDbo
 			)
 
 			fromContact := dal4contactus.NewContactEntry(request.TeamID, fromContactID)
@@ -124,7 +124,7 @@ func createPersonalInvite(
 	param *dal4contactus.ContactusTeamWorkerParams,
 	fromMember dal4contactus.ContactEntry,
 ) (
-	inviteID string, personalInvite *dbo4invitus.PersonalInviteDto, err error,
+	inviteID string, personalInvite *dbo4invitus.PersonalInviteDbo, err error,
 ) {
 
 	toMember := param.TeamModuleEntry.Data.Contacts[request.To.MemberID]

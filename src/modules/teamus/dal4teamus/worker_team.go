@@ -18,7 +18,7 @@ type teamWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, teamWor
 func NewTeamWorkerParams(userID, teamID string) *TeamWorkerParams {
 	return &TeamWorkerParams{
 		UserID:  userID,
-		Team:    NewTeamContext(teamID),
+		Team:    NewTeamEntry(teamID),
 		Started: time.Now(),
 	}
 }
@@ -28,7 +28,7 @@ type TeamWorkerParams struct {
 	UserID  string
 	Started time.Time
 	//
-	Team          TeamContext
+	Team          TeamEntry
 	TeamUpdates   []dal.Update
 	RecordUpdates []RecordUpdates
 }

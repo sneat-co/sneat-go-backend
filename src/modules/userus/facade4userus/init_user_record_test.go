@@ -24,13 +24,13 @@ func Test_InitUserRecord(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantUser dbo4userus.UserContext
+		wantUser dbo4userus.UserEntry
 		wantErr  bool
 	}{
 		{
 			name: "should_create_user_record",
 			args: args{
-				user: dbo4userus.NewUserContext("test_user_1"),
+				user: dbo4userus.NewUserEntry("test_user_1"),
 				request: dto4userus.InitUserRecordRequest{
 					AuthProvider: "password",
 					Names: &person.NameFields{
@@ -77,7 +77,7 @@ func Test_InitUserRecord(t *testing.T) {
 				t.Errorf("initUserRecordTxWorker() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			assert.Equal(t, tt.args.request.Email, gotUser.Dbo.Email)
+			assert.Equal(t, tt.args.request.Email, gotUser.Data.Email)
 		})
 	}
 }

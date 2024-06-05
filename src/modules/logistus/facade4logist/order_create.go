@@ -38,7 +38,7 @@ func createOrderTxWorker(
 	userID string,
 	request dto4logist.CreateOrderRequest,
 ) (orderBrief *dbo4logist.OrderBrief, err error) {
-	logistTeam := dbo4logist.NewLogistTeamContext(request.TeamID)
+	logistTeam := dbo4logist.NewLogistTeamEntry(request.TeamID)
 	if err = tx.Get(ctx, logistTeam.Record); err != nil {
 		if dal.IsNotFound(err) {
 			err = nil // OK
@@ -47,19 +47,19 @@ func createOrderTxWorker(
 		}
 	}
 
-	if logistTeam.Dto.OrderCounters == nil {
-		logistTeam.Dto.OrderCounters = make(map[string]dbo4logist.OrderCounter, 1)
+	if logistTeam.Data.OrderCounters == nil {
+		logistTeam.Data.OrderCounters = make(map[string]dbo4logist.OrderCounter, 1)
 	}
 	const counterName = "all"
-	counter := logistTeam.Dto.OrderCounters[counterName]
+	counter := logistTeam.Data.OrderCounters[counterName]
 	counter.LastNumber++
-	logistTeam.Dto.OrderCounters[counterName] = counter
+	logistTeam.Data.OrderCounters[counterName] = counter
 
-	if err := logistTeam.Dto.Validate(); err != nil {
+	if err := logistTeam.Data.Validate(); err != nil {
 		return nil, fmt.Errorf("logistus team record is not valid: %w", err)
 	}
 
-	orderNumberPrefixed := logistTeam.Dto.OrderCounters["all"].Prefix + strconv.Itoa(counter.LastNumber)
+	orderNumberPrefixed := logistTeam.Data.OrderCounters["all"].Prefix + strconv.Itoa(counter.LastNumber)
 	order := dbo4logist.NewOrder(params.Team.ID, orderNumberPrefixed)
 	fillOrderDtoFromRequest(order.Dto, request, params, userID)
 

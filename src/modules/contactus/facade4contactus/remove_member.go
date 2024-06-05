@@ -57,12 +57,12 @@ func removeTeamMemberTx(
 		var (
 			userRef *dal.Key
 		)
-		memberUser := dbo4userus.NewUserContext(memberUserID)
+		memberUser := dbo4userus.NewUserEntry(memberUserID)
 		if err = facade4userus.TxGetUserByID(ctx, tx, memberUser.Record); err != nil {
 			return
 		}
 
-		update := updateUserRecordOnTeamMemberRemoved(memberUser.Dbo, request.TeamID)
+		update := updateUserRecordOnTeamMemberRemoved(memberUser.Data, request.TeamID)
 		if update != nil {
 			if err = txUpdate(ctx, tx, userRef, []dal.Update{*update}); err != nil {
 				return err

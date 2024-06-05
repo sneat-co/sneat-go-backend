@@ -9,7 +9,7 @@ import (
 )
 
 // GetTeam loads team record
-func GetTeam(ctx context.Context, userContext facade.User, id string) (team dal4teamus.TeamContext, err error) {
+func GetTeam(ctx context.Context, userContext facade.User, id string) (team dal4teamus.TeamEntry, err error) {
 	db := facade.GetDatabase(ctx)
 	var record dal.Record
 	team, err = GetTeamByID(ctx, db, id)
@@ -31,12 +31,12 @@ func GetTeam(ctx context.Context, userContext facade.User, id string) (team dal4
 }
 
 // GetTeamByID return TeamIDs record
-func GetTeamByID(ctx context.Context, getter dal.ReadSession, id string) (team dal4teamus.TeamContext, err error) {
-	team = dal4teamus.NewTeamContext(id)
+func GetTeamByID(ctx context.Context, getter dal.ReadSession, id string) (team dal4teamus.TeamEntry, err error) {
+	team = dal4teamus.NewTeamEntry(id)
 	return team, getter.Get(ctx, team.Record)
 }
 
 // TxGetTeamByID returns TeamIDs record in transaction
-func TxGetTeamByID(ctx context.Context, tx dal.ReadwriteTransaction, id string) (team dal4teamus.TeamContext, err error) {
+func TxGetTeamByID(ctx context.Context, tx dal.ReadwriteTransaction, id string) (team dal4teamus.TeamEntry, err error) {
 	return GetTeamByID(ctx, tx, id)
 }

@@ -13,7 +13,7 @@ var txUpdate = func(ctx context.Context, tx dal.ReadwriteTransaction, key *dal.K
 	return db.TxUpdate(ctx, tx, key, data, opts...)
 }
 
-func txUpdateTeam(ctx context.Context, tx dal.ReadwriteTransaction, timestamp time.Time, team TeamContext, data []dal.Update, opts ...dal.Precondition) error {
+func txUpdateTeam(ctx context.Context, tx dal.ReadwriteTransaction, timestamp time.Time, team TeamEntry, data []dal.Update, opts ...dal.Precondition) error {
 	if err := team.Data.Validate(); err != nil {
 		return fmt.Errorf("team record is not valid: %w", err)
 	}

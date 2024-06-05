@@ -9,20 +9,16 @@ import (
 // InvitesCollection table name
 const InvitesCollection = "invites"
 
-type PersonalInviteContext struct {
-	ID  string
-	Dto *dbo4invitus.PersonalInviteDto
-	record.WithID[string]
+type PersonalInviteEntry = record.DataWithID[string, *dbo4invitus.PersonalInviteDbo]
+
+func NewPersonalInviteEntry(id string) (invite PersonalInviteEntry) {
+	return NewPersonalInviteEntryWithDto(id, new(dbo4invitus.PersonalInviteDbo))
 }
 
-func NewPersonalInviteContext(id string) (invite PersonalInviteContext) {
-	return NewPersonalInviteContextWithDto(id, new(dbo4invitus.PersonalInviteDto))
-}
-
-func NewPersonalInviteContextWithDto(id string, dto *dbo4invitus.PersonalInviteDto) (invite PersonalInviteContext) {
+func NewPersonalInviteEntryWithDto(id string, dbo *dbo4invitus.PersonalInviteDbo) (invite PersonalInviteEntry) {
 	invite.ID = id
 	invite.Key = NewInviteKey(id)
-	invite.Dto = dto
-	invite.Record = dal.NewRecordWithData(invite.Key, invite.Dto)
+	invite.Data = dbo
+	invite.Record = dal.NewRecordWithData(invite.Key, invite.Data)
 	return
 }

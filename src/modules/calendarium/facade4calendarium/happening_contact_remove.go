@@ -24,7 +24,7 @@ func RemoveParticipantFromHappening(ctx context.Context, user facade.User, reque
 			return err
 		}
 		contactShortRef := dbmodels.NewTeamItemID(request.Contact.TeamID, request.Contact.ID)
-		switch params.Happening.Dbo.Type {
+		switch params.Happening.Data.Type {
 		case dbo4calendarium.HappeningTypeSingle:
 			break // nothing to do
 		case dbo4calendarium.HappeningTypeRecurring:
@@ -36,10 +36,10 @@ func RemoveParticipantFromHappening(ctx context.Context, user facade.User, reque
 		default:
 			return fmt.Errorf("invalid happenning record: %w",
 				validation.NewErrBadRecordFieldValue("type",
-					fmt.Sprintf("unknown value: [%v]", params.Happening.Dbo.Type)))
+					fmt.Sprintf("unknown value: [%v]", params.Happening.Data.Type)))
 		}
 		contactFullRef := models4contactus.NewContactFullRef(contactShortRef.TeamID(), contactShortRef.ItemID())
-		params.HappeningUpdates = append(params.HappeningUpdates, params.Happening.Dbo.RemoveRelatedAndID(contactFullRef)...)
+		params.HappeningUpdates = append(params.HappeningUpdates, params.Happening.Data.RemoveRelatedAndID(contactFullRef)...)
 		return err
 	}
 
@@ -50,8 +50,8 @@ func RemoveParticipantFromHappening(ctx context.Context, user facade.User, reque
 }
 
 func removeContactFromHappeningBriefInContactusTeamDbo(
-	calendariumTeam dal4calendarium.CalendariumTeamContext,
-	happening dbo4calendarium.HappeningContext,
+	calendariumTeam dal4calendarium.CalendariumTeamEntry,
+	happening dbo4calendarium.HappeningEntry,
 	contactShortRef dbmodels.TeamItemID,
 ) (updates []dal.Update, err error) {
 	calendarHappeningBrief := calendariumTeam.Data.GetRecurringHappeningBrief(happening.ID)

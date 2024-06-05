@@ -43,14 +43,14 @@ func IsKnownHappeningStatus(status string) bool {
 	return false
 }
 
-func NewHappeningContext(teamID, happeningID string) (v HappeningContext) {
+func NewHappeningContext(teamID, happeningID string) (v HappeningEntry) {
 	return NewHappeningContextWithDto(teamID, happeningID, new(HappeningDbo))
 }
 
-func NewHappeningContextWithDto(teamID, happeningID string, dto *HappeningDbo) (v HappeningContext) {
+func NewHappeningContextWithDto(teamID, happeningID string, dto *HappeningDbo) (v HappeningEntry) {
 	v.ID = happeningID
 	v.Key = NewHappeningKey(teamID, happeningID)
-	v.Dbo = dto
+	v.Data = dto
 	v.Record = dal.NewRecordWithData(v.Key, dto)
 	return
 }

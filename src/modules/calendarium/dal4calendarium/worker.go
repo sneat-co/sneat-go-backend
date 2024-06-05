@@ -14,7 +14,7 @@ type CalendariumTeamWorkerParams = dal4teamus.ModuleTeamWorkerParams[*dbo4calend
 
 type HappeningWorkerParams struct {
 	*CalendariumTeamWorkerParams
-	Happening        dbo4calendarium.HappeningContext
+	Happening        dbo4calendarium.HappeningEntry
 	HappeningUpdates []dal.Update
 }
 
@@ -37,7 +37,7 @@ func RunHappeningTeamWorker(
 		}
 		if err = tx.Get(ctx, params.Happening.Record); err != nil {
 			if dal.IsNotFound(err) {
-				params.Happening.Dbo.Type = request.HappeningType
+				params.Happening.Data.Type = request.HappeningType
 			} else {
 				return fmt.Errorf("failed to get happening: %w", err)
 			}
@@ -51,13 +51,13 @@ func RunHappeningTeamWorker(
 				return fmt.Errorf("failed to update happening record: %w", err)
 			}
 		}
-		if len(params.TeamModuleUpdates) == 0 && params.Happening.Dbo.Type == dbo4calendarium.HappeningTypeRecurring && (len(params.HappeningUpdates) > 0 || params.Happening.Record.HasChanged()) {
+		if len(params.TeamModuleUpdates) == 0 && params.Happening.Data.Type == dbo4calendarium.HappeningTypeRecurring && (len(params.HappeningUpdates) > 0 || params.Happening.Record.HasChanged()) {
 			recurringHappening := params.TeamModuleEntry.Data.RecurringHappenings[params.Happening.ID]
-			recurringHappening.HappeningBrief = params.Happening.Dbo.HappeningBrief
-			recurringHappening.WithRelated = params.Happening.Dbo.WithRelated
+			recurringHappening.HappeningBrief = params.Happening.Data.HappeningBrief
+			recurringHappening.WithRelated = params.Happening.Data.WithRelated
 			moduleTeamParams.TeamModuleUpdates = append(moduleTeamParams.TeamModuleUpdates, dal.Update{
 				Field: "recurringHappenings." + request.HappeningID,
-				Value: params.Happening.Dbo.HappeningBrief,
+				Value: params.Happening.Data.HappeningBrief,
 			})
 		}
 		return nil

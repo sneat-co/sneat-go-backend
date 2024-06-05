@@ -21,33 +21,33 @@ func DeleteListItems(ctx context.Context, userContext facade.User, request ListI
 	db := facade.GetDatabase(ctx)
 	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		listID := request.ListID
-		list := dal4listus.NewTeamListContext(request.TeamID, listID)
+		list := dal4listus.NewTeamListEntry(request.TeamID, listID)
 
 		if err := GetListForUpdate(ctx, tx, list); err != nil {
 			return err
 		}
 		var found int
 	nextItem:
-		for i, item := range list.Dto.Items {
+		for i, item := range list.Data.Items {
 			for _, id := range request.ItemIDs {
 				if item.ID == id {
 					found++
 					continue nextItem
 				}
 			}
-			list.Dto.Items[i-found] = item
+			list.Data.Items[i-found] = item
 		}
 		if found > 0 {
-			list.Dto.Items = list.Dto.Items[:len(list.Dto.Items)-found]
+			list.Data.Items = list.Data.Items[:len(list.Data.Items)-found]
 		}
 		listUpdates := []dal.Update{
 			{
 				Field: "items",
-				Value: list.Dto.Items,
+				Value: list.Data.Items,
 			},
 			{
 				Field: "count",
-				Value: len(list.Dto.Items),
+				Value: len(list.Data.Items),
 			},
 		}
 		if err = tx.Update(ctx, list.Record.Key(), listUpdates); err != nil {

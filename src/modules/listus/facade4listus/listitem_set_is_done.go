@@ -22,7 +22,7 @@ func SetListItemsIsDone(ctx context.Context, userContext facade.User, request Li
 	db := facade.GetDatabase(ctx)
 	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		listID := request.ListID
-		list := dal4listus.NewTeamListContext(request.TeamID, listID)
+		list := dal4listus.NewTeamListEntry(request.TeamID, listID)
 
 		if err := GetListForUpdate(ctx, tx, list); err != nil {
 			if dal.IsNotFound(err) {
@@ -32,7 +32,7 @@ func SetListItemsIsDone(ctx context.Context, userContext facade.User, request Li
 		}
 		//listUpdates := make([]dal.Update, 0, len(request.ItemIDs))
 		changed := 0
-		for _, item := range list.Dto.Items {
+		for _, item := range list.Data.Items {
 			for _, id := range request.ItemIDs {
 				log.Println("item.InviteID", item.ID, "requestItemID", id)
 				if item.ID == id && item.IsDone != request.IsDone {
@@ -49,12 +49,12 @@ func SetListItemsIsDone(ctx context.Context, userContext facade.User, request Li
 		listUpdates := []dal.Update{
 			{
 				Field: "items",
-				Value: list.Dto.Items,
+				Value: list.Data.Items,
 			},
 		}
 		listKey := list.Record.Key()
 		//log.Printf("Updating list with listKey=%v, item[0]: %+v; updates[0]: %+v",
-		//	listKey, list.Dbo.Items[0], listUpdates[0].Value)
+		//	listKey, list.Data.Items[0], listUpdates[0].Value)
 		if err = tx.Update(ctx, listKey, listUpdates); err != nil {
 			return fmt.Errorf("failed to update list record: %w", err)
 		}

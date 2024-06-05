@@ -29,12 +29,12 @@ func DeleteSlots(ctx context.Context, user facade.User, request dto4calendarium.
 			if err = tx.Get(ctx, happening.Record); err != nil {
 				if dal.IsNotFound(err) {
 					hasHappeningRecord = false
-					happening.Dbo.Type = request.HappeningType
+					happening.Data.Type = request.HappeningType
 				} else {
 					return fmt.Errorf("failed to get happening: %w", err)
 				}
 			}
-			switch happening.Dbo.Type {
+			switch happening.Data.Type {
 			case "":
 				return fmt.Errorf("unknown happening type: %w", validation.NewErrRecordIsMissingRequiredField("type"))
 			case dbo4calendarium.HappeningTypeSingle:
@@ -46,9 +46,9 @@ func DeleteSlots(ctx context.Context, user facade.User, request dto4calendarium.
 					return fmt.Errorf("failed to delete slot from recurrign happening: %w", err)
 				}
 			default:
-				return validation.NewErrBadRecordFieldValue("type", "happening has unknown type: "+happening.Dbo.Type)
+				return validation.NewErrBadRecordFieldValue("type", "happening has unknown type: "+happening.Data.Type)
 			}
-			if request.SlotID == "" && hasHappeningRecord || len(happening.Dbo.Slots) == 0 {
+			if request.SlotID == "" && hasHappeningRecord || len(happening.Data.Slots) == 0 {
 				if err = tx.Delete(ctx, happening.Key); err != nil {
 					return fmt.Errorf("faield to delete happening record: %w", err)
 				}
@@ -64,7 +64,7 @@ func DeleteSlots(ctx context.Context, user facade.User, request dto4calendarium.
 func removeSlotFromSingleHappening(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	happening dbo4calendarium.HappeningContext,
+	happening dbo4calendarium.HappeningEntry,
 	request dto4calendarium.DeleteHappeningSlotRequest,
 ) error {
 	if err := removeSlotFromHappeningDto(ctx, tx, happening, request); err != nil {
@@ -77,7 +77,7 @@ func removeSlotFromRecurringHappening(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo],
-	happening dbo4calendarium.HappeningContext,
+	happening dbo4calendarium.HappeningEntry,
 	request dto4calendarium.DeleteHappeningSlotRequest,
 ) error {
 	if err := removeSlotFromHappeningDto(ctx, tx, happening, request); err != nil {
@@ -92,39 +92,39 @@ func removeSlotFromRecurringHappening(
 func removeSlotFromHappeningDto(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	happening dbo4calendarium.HappeningContext,
+	happening dbo4calendarium.HappeningEntry,
 	request dto4calendarium.DeleteHappeningSlotRequest,
 ) error {
 	log.Printf("removeSlotFromHappeningDto() %+v", request)
-	if len(happening.Dbo.Slots) == 0 {
+	if len(happening.Data.Slots) == 0 {
 		return nil
 	}
 	var updates []dal.Update
 	if request.Weekday == "" {
-		slots := removeSlots(happening.Dbo.Slots, []string{request.SlotID})
-		if len(slots) < len(happening.Dbo.Slots) {
+		slots := removeSlots(happening.Data.Slots, []string{request.SlotID})
+		if len(slots) < len(happening.Data.Slots) {
 			if len(slots) == 0 {
-				happening.Dbo.Status = dbo4calendarium.HappeningStatusDeleted
+				happening.Data.Status = dbo4calendarium.HappeningStatusDeleted
 				updates = append(updates, dal.Update{
-					Field: "status", Value: happening.Dbo.Status,
+					Field: "status", Value: happening.Data.Status,
 				})
 			} else {
-				happening.Dbo.Slots = slots
+				happening.Data.Slots = slots
 				updates = append(updates, dal.Update{
-					Field: "slots", Value: happening.Dbo.Slots,
+					Field: "slots", Value: happening.Data.Slots,
 				})
 			}
 		}
 	} else {
-		_, slot := happening.Dbo.GetSlot(request.SlotID)
+		_, slot := happening.Data.GetSlot(request.SlotID)
 		if changed := removeWeekday(slot, request.Weekday); changed {
 			updates = append(updates, dal.Update{
 				Field: "slots",
-				Value: happening.Dbo.Slots,
+				Value: happening.Data.Slots,
 			})
 		}
 	}
-	if err := happening.Dbo.Validate(); err != nil {
+	if err := happening.Data.Validate(); err != nil {
 		return fmt.Errorf("happening record is not valid after removal of slots: %w", err)
 	}
 	if len(updates) > 0 {
@@ -137,7 +137,7 @@ func removeSlotFromHappeningDto(
 
 func removeSlotFromHappeningBriefInTeamRecord(
 	params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo],
-	happening dbo4calendarium.HappeningContext,
+	happening dbo4calendarium.HappeningEntry,
 	request dto4calendarium.DeleteHappeningSlotRequest,
 ) error {
 	brief := params.TeamModuleEntry.Data.GetRecurringHappeningBrief(happening.ID)

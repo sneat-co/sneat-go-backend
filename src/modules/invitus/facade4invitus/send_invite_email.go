@@ -35,7 +35,7 @@ const inviteEmailTemplateText = `
 
 var inviteEmailTemplate = template.Must(template.New("inviteEmail").Parse(inviteEmailTemplateText))
 
-func sendInviteEmail(ctx context.Context, id string, invite *dbo4invitus.PersonalInviteDto) (messageID string, err error) {
+func sendInviteEmail(ctx context.Context, id string, invite *dbo4invitus.PersonalInviteDbo) (messageID string, err error) {
 	if invite.To.Address == "" {
 		return "", errors.New("missing required field: invite.To.Address")
 	}

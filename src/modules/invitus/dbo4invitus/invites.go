@@ -224,7 +224,7 @@ func NewInviteBriefFromDto(id string, dto InviteDto) InviteBrief {
 	return InviteBrief{ID: id, From: &from, To: &to}
 }
 
-// InviteDto record - used in PersonalInviteDto and MassInvite
+// InviteDto record - used in PersonalInviteDbo and MassInvite
 type InviteDto struct {
 	InviteBase
 	Status    string               `json:"status" firestore:"status" `
@@ -300,8 +300,8 @@ func (v InviteDto) validateType(expected string) error {
 
 var _ core.Validatable = (*InviteDto)(nil)
 
-// PersonalInviteDto record
-type PersonalInviteDto struct {
+// PersonalInviteDbo record
+type PersonalInviteDbo struct {
 	InviteDto
 	Address string `json:"address,omitempty" firestore:"address,omitempty"` // Can be empty for channel=link
 
@@ -313,7 +313,7 @@ type PersonalInviteDto struct {
 }
 
 // Validate validates record
-func (v PersonalInviteDto) Validate() error {
+func (v PersonalInviteDbo) Validate() error {
 	if err := v.InviteDto.Validate(); err != nil {
 		return err
 	}

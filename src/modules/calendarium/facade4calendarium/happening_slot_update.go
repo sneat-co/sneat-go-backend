@@ -18,12 +18,12 @@ func UpdateSlot(ctx context.Context, user facade.User, request dto4calendarium.H
 		if err = params.GetRecords(ctx, tx); err != nil {
 			return err
 		}
-		if params.Happening.Dbo.Type == dbo4calendarium.HappeningTypeSingle {
-			params.Happening.Dbo.Slots[0] = &request.Slot
+		if params.Happening.Data.Type == dbo4calendarium.HappeningTypeSingle {
+			params.Happening.Data.Slots[0] = &request.Slot
 			params.HappeningUpdates = []dal.Update{
 				{
 					Field: "slots",
-					Value: params.Happening.Dbo.Slots,
+					Value: params.Happening.Data.Slots,
 				},
 			}
 		}

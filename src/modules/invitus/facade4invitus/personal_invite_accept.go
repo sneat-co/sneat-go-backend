@@ -59,15 +59,15 @@ func AcceptPersonalInvite(ctx context.Context, userContext facade.User, request 
 			if err != nil {
 				return err
 			}
-			if invite.Dto.Status != "active" {
-				return fmt.Errorf("invite status is not equal to 'active', got '%s'", invite.Dto.Status)
+			if invite.Data.Status != "active" {
+				return fmt.Errorf("invite status is not equal to 'active', got '%s'", invite.Data.Status)
 			}
 
-			if invite.Dto.Pin != request.Pin {
+			if invite.Data.Pin != request.Pin {
 				return fmt.Errorf("%w: pin code does not match", facade.ErrBadRequest)
 			}
 
-			user := dbo4userus.NewUserContext(uid)
+			user := dbo4userus.NewUserEntry(uid)
 			if err = facade4userus.GetUserByID(ctx, tx, user.Record); err != nil {
 				if !dal.IsNotFound(err) {
 					return err
@@ -81,7 +81,7 @@ func AcceptPersonalInvite(ctx context.Context, userContext facade.User, request 
 			}
 
 			var teamMember *briefs4contactus.ContactBase
-			if teamMember, err = updateTeamRecord(uid, invite.Dto.ToTeamMemberID, params, request.Member); err != nil {
+			if teamMember, err = updateTeamRecord(uid, invite.Data.ToTeamMemberID, params, request.Member); err != nil {
 				return fmt.Errorf("failed to update team record: %w", err)
 			}
 
@@ -104,27 +104,27 @@ func updateInviteRecord(
 	tx dal.ReadwriteTransaction,
 	uid string,
 	now time.Time,
-	invite PersonalInviteContext,
+	invite PersonalInviteEntry,
 	status string,
 ) (err error) {
-	invite.Dto.Status = status
-	invite.Dto.To.UserID = uid
+	invite.Data.Status = status
+	invite.Data.To.UserID = uid
 	inviteUpdates := []dal.Update{
 		{Field: "status", Value: status},
 		{Field: "to.userID", Value: uid},
 	}
 	switch status {
 	case "active":
-		if invite.Dto.Claimed != nil {
-			invite.Dto.Claimed = nil
+		if invite.Data.Claimed != nil {
+			invite.Data.Claimed = nil
 			inviteUpdates = append(inviteUpdates, dal.Update{Field: "claimed", Value: dal.DeleteField})
 		}
 	case "expired": // Do nothing
 	default:
-		invite.Dto.Claimed = &now
+		invite.Data.Claimed = &now
 		inviteUpdates = append(inviteUpdates, dal.Update{Field: "claimed", Value: now})
 	}
-	if err := invite.Dto.Validate(); err != nil {
+	if err := invite.Data.Validate(); err != nil {
 		return fmt.Errorf("personal invite record is not valid: %w", err)
 	}
 	if err = tx.Update(ctx, invite.Key, inviteUpdates); err != nil {
@@ -199,18 +199,18 @@ func createOrUpdateUserRecord(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	now time.Time,
-	user dbo4userus.UserContext,
+	user dbo4userus.UserEntry,
 	request AcceptPersonalInviteRequest,
 	params *dal4contactus.ContactusTeamWorkerParams,
 	teamMember *briefs4contactus.ContactBase,
-	invite PersonalInviteContext,
+	invite PersonalInviteEntry,
 ) (err error) {
 	if teamMember == nil {
 		panic("teamMember == nil")
 	}
 	existingUser := user.Record.Exists()
 	if existingUser {
-		teamInfo := user.Dbo.GetUserTeamInfoByID(request.TeamID)
+		teamInfo := user.Data.GetUserTeamInfoByID(request.TeamID)
 		if teamInfo != nil {
 			return nil
 		}
@@ -218,49 +218,49 @@ func createOrUpdateUserRecord(
 
 	userTeamInfo := dbo4userus.UserTeamBrief{
 		TeamBrief: params.Team.Data.TeamBrief,
-		Roles:     invite.Dto.Roles, // TODO: Validate roles?
+		Roles:     invite.Data.Roles, // TODO: Validate roles?
 	}
 	if err = userTeamInfo.Validate(); err != nil {
 		return fmt.Errorf("invalid user team info: %w", err)
 	}
-	user.Dbo.Teams[request.TeamID] = &userTeamInfo
-	user.Dbo.TeamIDs = append(user.Dbo.TeamIDs, request.TeamID)
+	user.Data.Teams[request.TeamID] = &userTeamInfo
+	user.Data.TeamIDs = append(user.Data.TeamIDs, request.TeamID)
 	if existingUser {
 		userUpdates := []dal.Update{
 			{
 				Field: "teams",
-				Value: user.Dbo.Teams,
+				Value: user.Data.Teams,
 			},
 		}
-		userUpdates = updatePersonDetails(&user.Dbo.ContactBase, request.Member.Data, teamMember, userUpdates)
-		if err = user.Dbo.Validate(); err != nil {
+		userUpdates = updatePersonDetails(&user.Data.ContactBase, request.Member.Data, teamMember, userUpdates)
+		if err = user.Data.Validate(); err != nil {
 			return fmt.Errorf("user record prepared for update is not valid: %w", err)
 		}
 		if err = tx.Update(ctx, user.Key, userUpdates); err != nil {
 			return fmt.Errorf("failed to update user record: %w", err)
 		}
 	} else { // New user record
-		user.Dbo.CreatedAt = now
-		user.Dbo.Created.Client = request.RemoteClient
-		user.Dbo.Type = briefs4contactus.ContactTypePerson
-		user.Dbo.Names = request.Member.Data.Names
-		if user.Dbo.Names.IsEmpty() {
-			user.Dbo.Names = teamMember.Names
+		user.Data.CreatedAt = now
+		user.Data.Created.Client = request.RemoteClient
+		user.Data.Type = briefs4contactus.ContactTypePerson
+		user.Data.Names = request.Member.Data.Names
+		if user.Data.Names.IsEmpty() {
+			user.Data.Names = teamMember.Names
 		}
-		updatePersonDetails(&user.Dbo.ContactBase, request.Member.Data, teamMember, nil)
-		if user.Dbo.Gender == "" {
-			user.Dbo.Gender = "unknown"
+		updatePersonDetails(&user.Data.ContactBase, request.Member.Data, teamMember, nil)
+		if user.Data.Gender == "" {
+			user.Data.Gender = "unknown"
 		}
-		if user.Dbo.CountryID == "" {
-			user.Dbo.CountryID = with.UnknownCountryID
+		if user.Data.CountryID == "" {
+			user.Data.CountryID = with.UnknownCountryID
 		}
 		if len(request.Member.Data.Emails) > 0 {
-			user.Dbo.Emails = request.Member.Data.Emails
+			user.Data.Emails = request.Member.Data.Emails
 		}
 		if len(request.Member.Data.Phones) > 0 {
-			user.Dbo.Phones = request.Member.Data.Phones
+			user.Data.Phones = request.Member.Data.Phones
 		}
-		if err = user.Dbo.Validate(); err != nil {
+		if err = user.Data.Validate(); err != nil {
 			return fmt.Errorf("user record prepared for insert is not valid: %w", err)
 		}
 		if err = tx.Insert(ctx, user.Record); err != nil {
