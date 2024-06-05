@@ -74,7 +74,7 @@ func (v TeamItemRunnerInput[D]) Validate() error {
 
 // TeamItemWorkerParams defines params for team item worker
 type TeamItemWorkerParams struct {
-	Counter     string
+	//Counter     string
 	Started     time.Time
 	Team        TeamContext
 	TeamKey     *dal.Key
@@ -178,7 +178,9 @@ func DeleteTeamItem[D TeamModuleData](
 	return RunModuleTeamWorker(ctx, user, input.TeamRequest, moduleID, data,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, moduleWorkerParams *ModuleTeamWorkerParams[D]) (err error) {
 			params := TeamItemWorkerParams{
-				Started: time.Now(),
+				Started:  time.Now(),
+				TeamItem: input.TeamItem,
+				//Counter:  "",
 			}
 			if input.IsTeamRecordNeeded {
 				params.Team = NewTeamContext(input.TeamID)
