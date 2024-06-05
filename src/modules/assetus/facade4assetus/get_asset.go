@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
+	"github.com/sneat-co/sneat-go-backend/src/coremodels/extra"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dal4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/extras4assetus"
 	"reflect"
 )
 
 type Asset = record.DataWithID[string, *dbo4assetus.AssetDbo]
 
-func NewAsset(id string, extra extras4assetus.AssetExtra) Asset {
+func NewAsset(id string, extra extra.Data) Asset {
 	var key *dal.Key
 	if id == "" {
 		key = dal.NewIncompleteKey(dal4assetus.AssetsCollection, reflect.String, nil)

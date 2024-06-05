@@ -3,14 +3,13 @@ package dal4assetus
 import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	core "github.com/sneat-co/sneat-go-core"
 )
 
-func NewAssetEntry(teamID, assetID string) (asset record.DataWithID[string, *dbo4assetus.AssetDbo]) {
+func NewAssetEntry(teamID, assetID string) (asset dbo4assetus.AssetEntry) {
 	key := NewAssetKey(teamID, assetID)
 	asset.ID = assetID
 	asset.FullID = teamID + ":" + assetID

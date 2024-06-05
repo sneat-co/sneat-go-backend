@@ -1,28 +1,29 @@
 package extras4assetus
 
 import (
+	"github.com/sneat-co/sneat-go-backend/src/coremodels/extra"
 	"github.com/strongo/validation"
 )
 
 func init() {
-	RegisterAssetExtraFactory(AssetExtraTypeVehicle, func() AssetExtra {
+	RegisterAssetExtraFactory(AssetExtraTypeVehicle, func() extra.Data {
 		return new(AssetVehicleExtra)
 	})
 }
 
-var _ AssetExtra = (*AssetVehicleExtra)(nil)
+var _ extra.Data = (*AssetVehicleExtra)(nil)
 
 // AssetVehicleExtra is an extension of asset data for vehicles
 type AssetVehicleExtra struct {
-	AssetExtraBase
+	extra.BaseData
 	WithMakeModelRegNumberFields
 	WithEngineData
 	Vin string `json:"vin,omitempty" firestore:"vin,omitempty"`
 }
 
-func (v AssetVehicleExtra) GetBrief() AssetExtra {
+func (v AssetVehicleExtra) GetBrief() extra.Data {
 	return &AssetVehicleExtra{
-		AssetExtraBase:               v.AssetExtraBase,
+		BaseData:                     v.BaseData,
 		WithMakeModelRegNumberFields: v.WithMakeModelRegNumberFields,
 		Vin:                          v.Vin,
 	}
@@ -37,7 +38,7 @@ func (v AssetVehicleExtra) IndexedFields() []string {
 }
 
 func (v AssetVehicleExtra) Validate() error {
-	if err := v.AssetExtraBase.Validate(); err != nil {
+	if err := v.BaseData.Validate(); err != nil {
 		return err
 	}
 	if err := v.WithMakeModelRegNumberFields.Validate(); err != nil {

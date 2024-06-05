@@ -1,21 +1,22 @@
 package extras4assetus
 
 import (
+	"github.com/sneat-co/sneat-go-backend/src/coremodels/extra"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
 	"time"
 )
 
 func init() {
-	RegisterAssetExtraFactory(AssetExtraTypeDocument, func() AssetExtra {
+	RegisterAssetExtraFactory(AssetExtraTypeDocument, func() extra.Data {
 		return new(AssetDocumentExtra)
 	})
 }
 
-var _ AssetExtra = (*AssetDocumentExtra)(nil)
+var _ extra.Data = (*AssetDocumentExtra)(nil)
 
 type AssetDocumentExtra struct {
-	AssetExtraBase
+	extra.BaseData
 	WithRegNumberField
 	IssuedOn      string `json:"issuedOn,omitempty" firestore:"issuedOn,omitempty"`
 	EffectiveFrom string `json:"effectiveFrom,omitempty" firestore:"effectiveFrom,omitempty"`
@@ -30,9 +31,9 @@ func (v *AssetDocumentExtra) IndexedFields() []string {
 	return []string{"expiresOn", "effectiveFrom"}
 }
 
-func (v *AssetDocumentExtra) GetBrief() AssetExtra {
+func (v *AssetDocumentExtra) GetBrief() extra.Data {
 	return &AssetDocumentExtra{
-		AssetExtraBase:     v.AssetExtraBase,
+		BaseData:           v.BaseData,
 		IssuedOn:           v.IssuedOn,
 		EffectiveFrom:      v.EffectiveFrom,
 		ExpiresOn:          v.ExpiresOn,
@@ -41,7 +42,7 @@ func (v *AssetDocumentExtra) GetBrief() AssetExtra {
 }
 
 func (v *AssetDocumentExtra) Validate() (err error) {
-	if err := v.AssetExtraBase.Validate(); err != nil {
+	if err := v.BaseData.Validate(); err != nil {
 		return err
 	}
 	if err := v.WithRegNumberField.Validate(); err != nil {

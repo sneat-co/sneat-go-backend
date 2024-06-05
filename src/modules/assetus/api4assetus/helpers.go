@@ -3,13 +3,14 @@ package api4assetus
 import (
 	"errors"
 	"fmt"
+	"github.com/sneat-co/sneat-go-backend/src/coremodels/extra"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/extras4assetus"
 	"net/http"
 )
 
 func createAssetBaseDbo(r *http.Request) (assetDbo dbo4assetus.AssetBaseDbo, err error) {
-	assetCategory := (extras4assetus.AssetExtraType)(r.URL.Query().Get("assetCategory"))
+	assetCategory := (extra.Type)(r.URL.Query().Get("assetCategory"))
 	if assetCategory == "" {
 		err = errors.New("GET parameter 'assetCategory' is required")
 		return

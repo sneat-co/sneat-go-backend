@@ -3,7 +3,7 @@ package briefs4assetus
 import (
 	"errors"
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/extras4assetus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodels/extra"
 	"strings"
 
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
@@ -21,7 +21,7 @@ type AssetBrief struct {
 	Type       const4assetus.AssetType       `json:"type" firestore:"type"`             // required field
 	Possession const4assetus.AssetPossession `json:"possession" firestore:"possession"` // required field
 	CountryID  geo.CountryAlpha2             `json:"countryID"  firestore:"countryID"`  // intentionally not omitempty so can be used in queries
-	extras4assetus.WithAssetExtraField
+	extra.WithExtraField
 	dbmodels.WithOptionalRelatedAs
 }
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/briefs4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dal4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
@@ -65,7 +66,15 @@ func createAssetTx(
 
 	response.ID = asset.ID
 
-	assetusTeamModuleUpdates := params.TeamModuleEntry.Data.WithAssets.AddAsset(response.ID, &asset.Data.AssetBrief)
+	var assetBrief briefs4assetus.AssetBrief
+	if assetBrief, err = asset.Data.GetAssetBrief(); err != nil {
+		return
+	}
+
+	var assetusTeamModuleUpdates []dal.Update
+	if assetusTeamModuleUpdates, err = params.TeamModuleEntry.Data.AddAssetBrief(asset.ID, assetBrief); err != nil {
+		return
+	}
 
 	if err = params.TeamModuleEntry.Data.Validate(); err != nil {
 		return response, fmt.Errorf("assetus team module record is not valid before saving to db: %w", err)

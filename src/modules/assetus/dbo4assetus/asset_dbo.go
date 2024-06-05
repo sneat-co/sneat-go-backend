@@ -1,8 +1,9 @@
 package dbo4assetus
 
 import (
+	"github.com/dal-go/dalgo/record"
+	"github.com/sneat-co/sneat-go-backend/src/coremodels/extra"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/briefs4assetus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/extras4assetus"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/strongoapp/with"
@@ -27,19 +28,31 @@ type AssetBaseDboExtension interface {
 // AssetBaseDbo is used in both AssetDbo and a request to create an asset,
 type AssetBaseDbo struct {
 	briefs4assetus.AssetBrief
-	extras4assetus.WithAssetExtraField
-	briefs4assetus.WithAssetusTeamBriefs[*briefs4assetus.AssetBrief]
+	WithAssetTeams
 	with.TagsField
 	//briefs4contactus.WithMultiTeamContactIDs
 	dbmodels.WithCustomFields
 	AssetDates
 }
 
+func (v *AssetBaseDbo) GetAssetBrief() (assetBrief briefs4assetus.AssetBrief, err error) {
+	var extraData extra.Data
+	if extraData, err = v.GetExtraData(); err != nil {
+		return
+	}
+	assetBrief = v.AssetBrief
+	extraData = extraData.GetBrief()
+	if err = assetBrief.SetExtra(extraData); err != nil {
+		return
+	}
+	return
+}
+
 func (v *AssetBaseDbo) Validate() error {
 	if err := v.AssetBrief.Validate(); err != nil {
 		return err
 	}
-	if err := v.WithAssetusTeamBriefs.Validate(); err != nil {
+	if err := v.WithAssetTeams.Validate(); err != nil {
 		return err
 	}
 	if err := v.TagsField.Validate(); err != nil {
@@ -54,7 +67,7 @@ func (v *AssetBaseDbo) Validate() error {
 	if err := v.AssetDates.Validate(); err != nil {
 		return err
 	}
-	if extra, err := v.GetExtra(); err != nil {
+	if extra, err := v.GetExtraData(); err != nil {
 		return err
 	} else if extra2, ok := extra.(WithAssetValidator); ok {
 		if err := extra2.ValidateWithAsset(v); err != nil {
@@ -65,6 +78,8 @@ func (v *AssetBaseDbo) Validate() error {
 	}
 	return nil
 }
+
+type AssetEntry = record.DataWithID[string, *AssetDbo]
 
 // AssetDbo defines fields on an asset record that are not passed in create asset request
 type AssetDbo struct {

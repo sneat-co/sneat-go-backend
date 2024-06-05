@@ -1,19 +1,20 @@
 package extras4assetus
 
 import (
+	"github.com/sneat-co/sneat-go-backend/src/coremodels/extra"
 	"github.com/strongo/validation"
 )
 
 func init() {
-	RegisterAssetExtraFactory(AssetExtraTypeDwelling, func() AssetExtra {
+	RegisterAssetExtraFactory(AssetExtraTypeDwelling, func() extra.Data {
 		return new(AssetDwellingExtra)
 	})
 }
 
-var _ AssetExtra = (*AssetDwellingExtra)(nil)
+var _ extra.Data = (*AssetDwellingExtra)(nil)
 
 type AssetDwellingExtra struct {
-	AssetExtraBase
+	extra.BaseData
 	Address   string `json:"address,omitempty" firestore:"address,omitempty"`
 	RentPrice struct {
 		Value    float64 `json:"value,omitempty" firestore:"value,omitempty"`
@@ -23,9 +24,9 @@ type AssetDwellingExtra struct {
 	AreaSqM          int `json:"areaSqM,omitempty" firestore:"areaSqM,omitempty"`
 }
 
-func (v AssetDwellingExtra) GetBrief() AssetExtra {
+func (v AssetDwellingExtra) GetBrief() extra.Data {
 	return &AssetDwellingExtra{
-		AssetExtraBase:   v.AssetExtraBase,
+		BaseData:         v.BaseData,
 		NumberOfBedrooms: v.NumberOfBedrooms,
 		AreaSqM:          v.AreaSqM,
 	}
@@ -40,7 +41,7 @@ func (v AssetDwellingExtra) IndexedFields() []string {
 }
 
 func (v AssetDwellingExtra) Validate() error {
-	if err := v.AssetExtraBase.Validate(); err != nil {
+	if err := v.BaseData.Validate(); err != nil {
 		return err
 	}
 	if v.NumberOfBedrooms < 0 {
