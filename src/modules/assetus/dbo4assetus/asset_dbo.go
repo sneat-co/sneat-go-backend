@@ -42,7 +42,7 @@ func (v *AssetBaseDbo) GetAssetBrief() (assetBrief briefs4assetus.AssetBrief, er
 	}
 	assetBrief = v.AssetBrief
 	extraData = extraData.GetBrief()
-	if err = assetBrief.SetExtra(extraData); err != nil {
+	if err = assetBrief.SetExtra(v.ExtraType, extraData); err != nil {
 		return
 	}
 	return
@@ -67,14 +67,14 @@ func (v *AssetBaseDbo) Validate() error {
 	if err := v.AssetDates.Validate(); err != nil {
 		return err
 	}
-	if extra, err := v.GetExtraData(); err != nil {
+	if extraData, err := v.GetExtraData(); err != nil {
 		return err
-	} else if extra2, ok := extra.(WithAssetValidator); ok {
+	} else if extra2, ok := extraData.(WithAssetValidator); ok {
 		if err := extra2.ValidateWithAsset(v); err != nil {
-			return validation.NewErrBadRecordFieldValue("extra", err.Error())
+			return validation.NewErrBadRecordFieldValue("extraData", err.Error())
 		}
-	} else if err := extra.Validate(); err != nil {
-		return validation.NewErrBadRecordFieldValue("extra", err.Error())
+	} else if err := extraData.Validate(); err != nil {
+		return validation.NewErrBadRecordFieldValue("extraData", err.Error())
 	}
 	return nil
 }

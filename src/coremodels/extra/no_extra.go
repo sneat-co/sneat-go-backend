@@ -1,19 +1,10 @@
 package extra
 
-import (
-	"fmt"
-	"github.com/strongo/validation"
-)
-
-func NewDataNoExtra() Data {
-	return &noExtra{BaseData{Type: "empty"}}
-}
-
 var _ Data = (*noExtra)(nil)
 
 // noExtra is used if no extension data is required by an asset type
 type noExtra struct {
-	BaseData
+	//BaseData
 }
 
 func (noExtra) RequiredFields() []string {
@@ -30,8 +21,8 @@ func (noExtra) GetBrief() Data {
 
 // Validate always returns nil
 func (v noExtra) Validate() error {
-	if v.Type != "" {
-		return validation.NewErrBadRecordFieldValue("type", fmt.Sprintf("unexpected value: %s", v.Type))
-	}
+	//if v.ExtraType != "" {
+	//	return validation.NewErrBadRecordFieldValue("type", fmt.Sprintf("unexpected value: %s", v.ExtraType))
+	//}
 	return nil
 }

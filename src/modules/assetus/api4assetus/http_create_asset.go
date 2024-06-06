@@ -15,12 +15,17 @@ import (
 
 // httpPostCreateAsset creates an asset
 func httpPostCreateAsset(w http.ResponseWriter, r *http.Request) {
-	var request dto4assetus.CreateAssetRequest
-	assetDbo, err := createAssetBaseDbo(r)
-	if err != nil {
+	var (
+		request dto4assetus.CreateAssetRequest
+		err     error
+	)
+
+	// Create asset base DBO with a specific extra data based on the asset category
+	assetCategory := r.URL.Query().Get("assetCategory")
+	if request.Asset, err = createAssetBaseDbo(assetCategory); err != nil {
 		apicore.ReturnError(r.Context(), w, r, err)
 	}
-	request.Asset = assetDbo
+
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.DefaultJsonWithAuthRequired, http.StatusCreated,
 		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
 			asset, err := facade4assetus.CreateAsset(ctx, userCtx, request)
@@ -35,5 +40,6 @@ func httpPostCreateAsset(w http.ResponseWriter, r *http.Request) {
 				return asset, err
 			}
 			return asset, nil
-		})
+		},
+	)
 }

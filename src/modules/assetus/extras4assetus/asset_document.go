@@ -16,8 +16,8 @@ func init() {
 var _ extra.Data = (*AssetDocumentExtra)(nil)
 
 type AssetDocumentExtra struct {
-	extra.BaseData
-	WithRegNumberField
+	//extra.BaseData
+	WithOptionalRegNumberField
 	IssuedOn      string `json:"issuedOn,omitempty" firestore:"issuedOn,omitempty"`
 	EffectiveFrom string `json:"effectiveFrom,omitempty" firestore:"effectiveFrom,omitempty"`
 	ExpiresOn     string `json:"expiresOn,omitempty" firestore:"expiresOn,omitempty"`
@@ -33,19 +33,19 @@ func (v *AssetDocumentExtra) IndexedFields() []string {
 
 func (v *AssetDocumentExtra) GetBrief() extra.Data {
 	return &AssetDocumentExtra{
-		BaseData:           v.BaseData,
-		IssuedOn:           v.IssuedOn,
-		EffectiveFrom:      v.EffectiveFrom,
-		ExpiresOn:          v.ExpiresOn,
-		WithRegNumberField: v.WithRegNumberField,
+		//BaseData:           v.BaseData,
+		IssuedOn:                   v.IssuedOn,
+		EffectiveFrom:              v.EffectiveFrom,
+		ExpiresOn:                  v.ExpiresOn,
+		WithOptionalRegNumberField: v.WithOptionalRegNumberField,
 	}
 }
 
 func (v *AssetDocumentExtra) Validate() (err error) {
-	if err := v.BaseData.Validate(); err != nil {
-		return err
-	}
-	if err := v.WithRegNumberField.Validate(); err != nil {
+	//if err := v.BaseData.Validate(); err != nil {
+	//	return err
+	//}
+	if err := v.WithOptionalRegNumberField.Validate(); err != nil {
 		return err
 	}
 	if v.IssuedOn != "" {

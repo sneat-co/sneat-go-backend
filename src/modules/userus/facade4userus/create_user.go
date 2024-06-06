@@ -52,7 +52,7 @@ package facade4userus
 //	}
 //	user.Data.Email = strings.TrimSpace(request.Email)
 //	user.Data.Emails = []dbmodels.PersonEmail{
-//		{Type: "primary", Address: user.Data.Email},
+//		{ExtraType: "primary", Address: user.Data.Email},
 //	}
 //	if user.Data.Gender == "" {
 //		user.Data.Gender = "unknown"

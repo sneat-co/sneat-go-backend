@@ -15,7 +15,7 @@ package dtb_fbm
 //		log.Debugf(c, "FbmGetStartedCommand.CallbackAction() => callbackUrl: %v", callbackUrl)
 //		//m.Text = "Welcome!"
 //		m.FbmAttachment = &fbmbotapi.RequestAttachment{
-//			Type: fbmbotapi.RequestAttachmentTypeTemplate,
+//			ExtraType: fbmbotapi.RequestAttachmentTypeTemplate,
 //		}
 //
 //		if whc.ChatData().GetPreferredLanguage() == "" {
@@ -40,7 +40,7 @@ package dtb_fbm
 //		log.Debugf(c, "FbmMainMenuCommand.CallbackAction() => callbackUrl: %v", callbackUrl)
 //
 //		m.FbmAttachment = &fbmbotapi.RequestAttachment{
-//			Type: fbmbotapi.RequestAttachmentTypeTemplate,
+//			ExtraType: fbmbotapi.RequestAttachmentTypeTemplate,
 //			Payload: fbmbotapi.NewGenericTemplate(
 //				mainMenuCard(whc),
 //				debtsCard(whc),
@@ -60,7 +60,7 @@ package dtb_fbm
 //		log.Debugf(c, "FbmDebtsCommand.CallbackAction() => callbackUrl: %v", callbackUrl)
 //
 //		m.FbmAttachment = &fbmbotapi.RequestAttachment{
-//			Type: fbmbotapi.RequestAttachmentTypeTemplate,
+//			ExtraType: fbmbotapi.RequestAttachmentTypeTemplate,
 //			Payload: fbmbotapi.NewGenericTemplate(
 //				debtsCard(whc),
 //			),
@@ -77,7 +77,7 @@ package dtb_fbm
 //		log.Debugf(c, "FbmBillsCommand.CallbackAction() => callbackUrl: %v", callbackUrl)
 //		//m.Text = "Welcome!"
 //		m.FbmAttachment = &fbmbotapi.RequestAttachment{
-//			Type: fbmbotapi.RequestAttachmentTypeTemplate,
+//			ExtraType: fbmbotapi.RequestAttachmentTypeTemplate,
 //			Payload: fbmbotapi.NewGenericTemplate(
 //				billsCard(whc),
 //			),
@@ -93,7 +93,7 @@ package dtb_fbm
 //		c := whc.Context()
 //		log.Debugf(c, "FbmSettingsCommand.CallbackAction() => callbackUrl: %v", callbackUrl)
 //		m.FbmAttachment = &fbmbotapi.RequestAttachment{
-//			Type: fbmbotapi.RequestAttachmentTypeTemplate,
+//			ExtraType: fbmbotapi.RequestAttachmentTypeTemplate,
 //			Payload: fbmbotapi.NewGenericTemplate(
 //				settingsCard(whc),
 //			),

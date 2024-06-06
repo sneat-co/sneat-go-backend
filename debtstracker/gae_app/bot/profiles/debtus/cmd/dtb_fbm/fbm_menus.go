@@ -54,7 +54,7 @@ package dtb_fbm
 ////			emoji.MEMO_ICON + EM_SPACE + "Debts",
 ////			"Track your debts",
 ////			fbm_api.RequestDefaultAction{
-////				Type: fbm_api.
+////				ExtraType: fbm_api.
 ////				newPostbackButton(emoji.MEMO_ICON, "Debts", FbmDebtsCommand.Code)
 ////			},
 ////		),

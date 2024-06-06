@@ -23,11 +23,11 @@ var briefsAdapter = func(listType dbo4listus.ListType, listID string) *dal4teamu
 	getListGroupByID := func(moduleTeam *dbo4listus.ListusTeamDto) *dbo4listus.ListGroup {
 		panic("not implemented")
 		//for _, lg := range moduleTeam.ListGroups {
-		//	if lg.Type == listType {
+		//	if lg.ExtraType == listType {
 		//		return lg
 		//	}
 		//}
-		//lg := &dbo4listus.ListGroup{Type: listType}
+		//lg := &dbo4listus.ListGroup{ExtraType: listType}
 		//moduleTeam.ListGroups = append(moduleTeam.ListGroups, lg)
 		//return lg
 	}

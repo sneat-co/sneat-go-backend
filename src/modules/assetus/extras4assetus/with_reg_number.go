@@ -5,12 +5,12 @@ import (
 	"strings"
 )
 
-type WithRegNumberField struct {
-	RegNumber string `json:"regNumber" firestore:"regNumber"` // intentionally not omitempty so can be used in queries
+type WithOptionalRegNumberField struct {
+	RegNumber string `json:"regNumber,omitempty" firestore:"regNumber,omitempty"`
 }
 
 // Validate validates WitRegNumberField
-func (v *WithRegNumberField) Validate() error {
+func (v *WithOptionalRegNumberField) Validate() error {
 	if regNumber := strings.TrimSpace(v.RegNumber); regNumber == "" {
 		return validation.NewErrRecordIsMissingRequiredField("regNumber")
 	} else if regNumber != v.RegNumber {

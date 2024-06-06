@@ -15,32 +15,32 @@ var _ extra.Data = (*AssetVehicleExtra)(nil)
 
 // AssetVehicleExtra is an extension of asset data for vehicles
 type AssetVehicleExtra struct {
-	extra.BaseData
+	//extra.BaseData
 	WithMakeModelRegNumberFields
 	WithEngineData
 	Vin string `json:"vin,omitempty" firestore:"vin,omitempty"`
 }
 
-func (v AssetVehicleExtra) GetBrief() extra.Data {
+func (v *AssetVehicleExtra) GetBrief() extra.Data {
 	return &AssetVehicleExtra{
-		BaseData:                     v.BaseData,
+		//BaseData:                     v.BaseData,
 		WithMakeModelRegNumberFields: v.WithMakeModelRegNumberFields,
 		Vin:                          v.Vin,
 	}
 }
 
-func (v AssetVehicleExtra) RequiredFields() []string {
+func (v *AssetVehicleExtra) RequiredFields() []string {
 	return nil
 }
 
-func (v AssetVehicleExtra) IndexedFields() []string {
+func (v *AssetVehicleExtra) IndexedFields() []string {
 	return []string{"make", "model", "make+model", "regNumber", "vin"}
 }
 
-func (v AssetVehicleExtra) Validate() error {
-	if err := v.BaseData.Validate(); err != nil {
-		return err
-	}
+func (v *AssetVehicleExtra) Validate() error {
+	//if err := v.BaseData.Validate(); err != nil {
+	//	return err
+	//}
 	if err := v.WithMakeModelRegNumberFields.Validate(); err != nil {
 		return err
 	}

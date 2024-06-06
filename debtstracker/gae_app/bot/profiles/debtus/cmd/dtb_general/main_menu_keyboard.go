@@ -24,7 +24,7 @@ type mainMenuParams struct {
 	showReturn            bool
 }
 
-func getMainMenuParams(whc botsfw.WebhookContext, onReceiptAck bool) (params mainMenuParams) {
+func getMainMenuParams(_ botsfw.WebhookContext, onReceiptAck bool) (params mainMenuParams) {
 	//var (
 	//	user *models.DebutsAppUserDataOBSOLETE
 	//	isAppUser bool
@@ -96,7 +96,7 @@ func SetMainMenuKeyboard(whc botsfw.WebhookContext, m *botsfw.MessageFromBot) {
 
 //func mainMenuFbmAttachment(whc botsfw.WebhookContext, params mainMenuParams) *fbmbotapi.RequestAttachment {
 //	attachment := &fbmbotapi.RequestAttachment{
-//		Type: fbmbotapi.RequestAttachmentTypeTemplate,
+//		ExtraType: fbmbotapi.RequestAttachmentTypeTemplate,
 //		Payload: fbmbotapi.NewListTemplate(
 //			fbmbotapi.TopElementStyleCompact,
 //			fbmbotapi.NewRequestElementWithDefaultAction(
@@ -129,9 +129,9 @@ func SetMainMenuKeyboard(whc botsfw.WebhookContext, m *botsfw.MessageFromBot) {
 //	return attachment
 //}
 
-const (
-	UTM_CAMPAIGN_BOT_MAIN_MENU = "bot-main-menu"
-)
+//const (
+//	UTM_CAMPAIGN_BOT_MAIN_MENU = "bot-main-menu"
+//)
 
 //func mainMenuViberKeyboard(whc botsfw.WebhookContext, params mainMenuParams) *viberinterface.Keyboard {
 //	var buttons []viberinterface.Button

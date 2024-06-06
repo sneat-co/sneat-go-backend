@@ -32,7 +32,7 @@ package common
 //	return models.AppUserKind
 //}
 //
-//func (appCtx DebtusAppContext) AppUserEntityType() reflect.Type {
+//func (appCtx DebtusAppContext) AppUserEntityType() reflect.ExtraType {
 //	return reflect.TypeOf(&models.DebutsAppUserDataOBSOLETE{})
 //}
 //

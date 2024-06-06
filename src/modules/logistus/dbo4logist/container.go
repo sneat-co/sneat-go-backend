@@ -24,7 +24,7 @@ type OrderContainerBase struct {
 
 // String returns string representation of the container
 func (v OrderContainerBase) String() string {
-	return fmt.Sprintf("{Type=%s,Number=%s}", v.Type, v.Number)
+	return fmt.Sprintf("{ExtraType=%s,Number=%s}", v.Type, v.Number)
 }
 
 // Validate returns nil if valid, or error if not
@@ -64,7 +64,7 @@ type OrderContainer struct {
 
 // String returns string representation of the OrderContainer
 func (v OrderContainer) String() string {
-	return fmt.Sprintf("OrderContainer{ID=%s,Type=%s,Number=%s}", v.ID, v.Type, v.Number)
+	return fmt.Sprintf("OrderContainer{ID=%s,ExtraType=%s,Number=%s}", v.ID, v.Type, v.Number)
 }
 
 func validateContainerID(field, id string) error {

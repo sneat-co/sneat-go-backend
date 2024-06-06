@@ -67,7 +67,7 @@ package dtb_fbm
 //		buffer.WriteString("Enabled 'Persistent menu'\n")
 //	}
 //	log.Debugf(c, buffer.String())
-//	w.Header().Set("Content-Type", "text/plain")
+//	w.Header().Set("Content-ExtraType", "text/plain")
 //	w.Write(buffer.Bytes())
 //	w.Write([]byte(fmt.Sprintf("OK! %v", time.Now())))
 //}

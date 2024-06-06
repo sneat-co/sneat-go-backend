@@ -44,14 +44,14 @@ func (v *WithMakeModelFields) Validate() error {
 
 type WithMakeModelRegNumberFields struct {
 	WithMakeModelFields
-	WithRegNumberField
+	WithOptionalRegNumberField
 }
 
 func (v *WithMakeModelRegNumberFields) Validate() error {
 	if err := v.WithMakeModelFields.Validate(); err != nil {
 		return err
 	}
-	if err := v.WithRegNumberField.Validate(); err != nil {
+	if err := v.WithOptionalRegNumberField.Validate(); err != nil {
 		return err
 	}
 	return nil

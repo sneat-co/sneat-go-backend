@@ -26,7 +26,7 @@ func CreateHappening(
 		return
 	}
 	//var counter string
-	//if request.Happening.Type == dbo4calendarium.HappeningTypeRecurring {
+	//if request.Happening.ExtraType == dbo4calendarium.HappeningTypeRecurring {
 	//	counter = "recurringHappenings"
 	//}
 	happeningDto := &dbo4calendarium.HappeningDbo{

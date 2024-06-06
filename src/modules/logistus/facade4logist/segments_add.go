@@ -379,7 +379,7 @@ func addCounterpartyToOrderIfNeeded(
 			CountryID: contact.Data.CountryID,
 			Title:     contact.Data.Title,
 		}
-		//if orderContact.Type == dbmodels.ContactTypeLocation {
+		//if orderContact.ExtraType == dbmodels.ContactTypeLocation {
 		//	orderContact.Address = *contact.Data.Address
 		//} else {
 		//	orderContact.Address.CountryID = contact.Data.CountryID
@@ -401,7 +401,7 @@ func addCounterpartyToOrderIfNeeded(
 					CountryID: contact.Data.CountryID,
 					Title:     parentContact.Data.Title,
 				}
-				//if parentOrderContact.Type == dbmodels.ContactTypeLocation {
+				//if parentOrderContact.ExtraType == dbmodels.ContactTypeLocation {
 				//	parentOrderContact.Address = *parentContact.Data.Address
 				//} else {
 				//	parentOrderContact.Address.CountryID = parentContact.Data.CountryID

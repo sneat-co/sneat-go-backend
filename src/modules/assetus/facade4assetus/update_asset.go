@@ -9,7 +9,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dto4assetus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/extras4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
@@ -28,14 +27,8 @@ func UpdateAssetTx(ctx context.Context, tx dal.ReadwriteTransaction, user facade
 	if err = request.Validate(); err != nil {
 		return
 	}
-	switch request.AssetCategory {
-	case "vehicle":
-		return runAssetWorker(ctx, tx, user, request, new(extras4assetus.AssetVehicleExtra))
-	case "dwelling":
-		return runAssetWorker(ctx, tx, user, request, new(extras4assetus.AssetDwellingExtra))
-	default:
-		return runAssetWorker(ctx, tx, user, request, extra.NewDataNoExtra())
-	}
+	extraData := extra.NewExtraData(extra.Type(request.AssetCategory))
+	return runAssetWorker(ctx, tx, user, request, extraData)
 }
 
 type AssetWorkerParams struct {
@@ -44,12 +37,13 @@ type AssetWorkerParams struct {
 	AssetUpdates []dal.Update
 }
 
-func runAssetWorker(ctx context.Context, tx dal.ReadwriteTransaction, user facade.User, request dto4assetus.UpdateAssetRequest, assetExtra extra.Data) (err error) {
+func runAssetWorker(ctx context.Context, tx dal.ReadwriteTransaction, user facade.User, request dto4assetus.UpdateAssetRequest, extraData extra.Data) (err error) {
 	// TODO: Replace with future RunTeamModuleItemWorkerTx
 	return dal4teamus.RunModuleTeamWorkerTx[*dbo4assetus.AssetusTeamDbo](ctx, tx, user, request.TeamRequest, const4assetus.ModuleID, new(dbo4assetus.AssetusTeamDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4teamus.ModuleTeamWorkerParams[*dbo4assetus.AssetusTeamDbo]) (err error) {
+			extraType := extra.Type(request.AssetCategory)
 			params := AssetWorkerParams{
-				Asset:                  NewAsset("", assetExtra),
+				Asset:                  NewAsset("", extraType, extraData),
 				ModuleTeamWorkerParams: teamWorkerParams,
 			}
 			if err := tx.Get(ctx, params.Asset.Record); err != nil {

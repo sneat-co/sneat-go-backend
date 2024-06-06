@@ -53,7 +53,7 @@ func AddParticipantToHappening(ctx context.Context, user facade.User, request dt
 		}
 		params.HappeningUpdates = append(params.HappeningUpdates, updates...)
 
-		//if params.Happening.Data.Type == dbo4calendarium.HappeningTypeRecurring {
+		//if params.Happening.Data.ExtraType == dbo4calendarium.HappeningTypeRecurring {
 		//	recurringHappening := params.TeamModuleEntry.Data.RecurringHappenings[params.Happening.ID]
 		//	if recurringHappening != nil {
 		//		recurringHappening.Related = params.Happening.Data.Related

@@ -14,7 +14,7 @@ func init() {
 var _ extra.Data = (*AssetDwellingExtra)(nil)
 
 type AssetDwellingExtra struct {
-	extra.BaseData
+	//extra.BaseData
 	Address   string `json:"address,omitempty" firestore:"address,omitempty"`
 	RentPrice struct {
 		Value    float64 `json:"value,omitempty" firestore:"value,omitempty"`
@@ -26,7 +26,7 @@ type AssetDwellingExtra struct {
 
 func (v AssetDwellingExtra) GetBrief() extra.Data {
 	return &AssetDwellingExtra{
-		BaseData:         v.BaseData,
+		//BaseData:         v.BaseData,
 		NumberOfBedrooms: v.NumberOfBedrooms,
 		AreaSqM:          v.AreaSqM,
 	}
@@ -41,9 +41,9 @@ func (v AssetDwellingExtra) IndexedFields() []string {
 }
 
 func (v AssetDwellingExtra) Validate() error {
-	if err := v.BaseData.Validate(); err != nil {
-		return err
-	}
+	//if err := v.BaseData.Validate(); err != nil {
+	//	return err
+	//}
 	if v.NumberOfBedrooms < 0 {
 		return validation.NewErrBadRecordFieldValue("numberOfBedrooms", "negative value")
 	}

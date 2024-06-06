@@ -38,7 +38,7 @@ func (v WithOrderContacts) Validate() error {
 				return fmt.Errorf("parent contact not found in `contacts` by ID=[%s]", contact.ParentID)
 			}
 		}
-		//if contact.Type == dbmodels.ContactTypeLocation && strings.TrimSpace(contact.Address.Lines) == "" {
+		//if contact.ExtraType == dbmodels.ContactTypeLocation && strings.TrimSpace(contact.Address.Lines) == "" {
 		//	return validation.NewErrRecordIsMissingRequiredField("address.lines")
 		//}
 	}
@@ -103,7 +103,7 @@ type OrderContact struct {
 }
 
 func (v OrderContact) String() string {
-	return fmt.Sprintf(`OrderContact{ID=%s, Type=%s, ParentID=%s, Title=%s}`, v.ID, v.Type, v.ParentID, v.Title)
+	return fmt.Sprintf(`OrderContact{ID=%s, ExtraType=%s, ParentID=%s, Title=%s}`, v.ID, v.Type, v.ParentID, v.Title)
 }
 
 // Validate returns error if OrderContact is not valid
@@ -127,7 +127,7 @@ func (v OrderContact) Validate() error {
 	//if err := v.Address.Validate(); err != nil {
 	//	return validation.NewErrBadRecordFieldValue("address", err.Error())
 	//}
-	//if v.Type == dbmodels.ContactTypeLocation && len(strings.TrimSpace(v.Address.Lines)) == 0 {
+	//if v.ExtraType == dbmodels.ContactTypeLocation && len(strings.TrimSpace(v.Address.Lines)) == 0 {
 	//	return validation.NewErrRecordIsMissingRequiredField("address.lines")
 	//}
 	return nil

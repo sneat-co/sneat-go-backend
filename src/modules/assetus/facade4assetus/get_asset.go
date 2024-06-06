@@ -12,7 +12,7 @@ import (
 
 type Asset = record.DataWithID[string, *dbo4assetus.AssetDbo]
 
-func NewAsset(id string, extra extra.Data) Asset {
+func NewAsset(id string, extraType extra.Type, extraData extra.Data) Asset {
 	var key *dal.Key
 	if id == "" {
 		key = dal.NewIncompleteKey(dal4assetus.AssetsCollection, reflect.String, nil)
@@ -20,7 +20,7 @@ func NewAsset(id string, extra extra.Data) Asset {
 		key = dal.NewKeyWithID(dal4assetus.AssetsCollection, id)
 	}
 	dbo := new(dbo4assetus.AssetDbo)
-	if err := dbo.SetExtra(extra); err != nil {
+	if err := dbo.SetExtra(extraType, extraData); err != nil {
 		panic(fmt.Errorf("failed to set asset extra data: %w", err))
 	}
 	return record.NewDataWithID(id, key, dbo)

@@ -6,21 +6,22 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/coremodels/extra"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/extras4assetus"
-	"net/http"
 )
 
-func createAssetBaseDbo(r *http.Request) (assetDbo dbo4assetus.AssetBaseDbo, err error) {
-	assetCategory := (extra.Type)(r.URL.Query().Get("assetCategory"))
+func createAssetBaseDbo(assetCategory string) (assetDbo dbo4assetus.AssetBaseDbo, err error) {
 	if assetCategory == "" {
 		err = errors.New("GET parameter 'assetCategory' is required")
 		return
 	}
-	assetExtra := extras4assetus.NewAssetExtra(assetCategory)
+	extraType := (extra.Type)(assetCategory)
+
+	assetExtra := extras4assetus.NewAssetExtra(extraType)
 	if assetExtra == nil {
-		err = fmt.Errorf("unsupported asset category: %s", assetCategory)
+		err = fmt.Errorf("unsupported asset extra type: %s", extraType)
 		return
 	}
-	if err = assetDbo.SetExtra(assetExtra); err != nil {
+
+	if err = assetDbo.SetExtra(extraType, assetExtra); err != nil {
 		err = fmt.Errorf("failed to set asset extra data: %w", err)
 		return
 	}
