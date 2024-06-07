@@ -39,7 +39,7 @@ func (h transfersPage) transfersPageHandler(w http.ResponseWriter, r *http.Reque
 
 	var (
 		user                          models.AppUser
-		contact                       models.Contact
+		contact                       models.ContactEntry
 		transfers                     []models.TransferEntry
 		transfersTotalWithoutInterest decimal.Decimal64p2
 	)

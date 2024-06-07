@@ -128,7 +128,7 @@ func (reminderDalGae ReminderDalGae) RescheduleReminder(_ context.Context, remin
 	return models.Reminder{}, models.Reminder{}, errors.New("not implemented - needs to be refactored")
 	//var (
 	//	newReminderKey    *datastore.Key
-	//	newReminderEntity *models.ReminderEntity
+	//	newReminderEntity *models.ReminderDbo
 	//)
 	//var db dal.DB
 	//if db, err = facade.GetDatabase(c); err != nil {
@@ -145,14 +145,14 @@ func (reminderDalGae ReminderDalGae) RescheduleReminder(_ context.Context, remin
 	//	}
 	//	reminder := models.NewReminder(reminderID)
 	//	if remindInDuration == time.Duration(0) {
-	//		if _, err = tx.Set(tc, reminderKey, oldReminder.ReminderEntity); err != nil {
+	//		if _, err = tx.Set(tc, reminderKey, oldReminder.ReminderDbo); err != nil {
 	//			return err
 	//		}
 	//	} else {
 	//		nextReminderOn := time.Now().Add(remindInDuration)
 	//		newReminderEntity = oldReminder.ScheduleNextReminder(reminderID, nextReminderOn)
 	//		newReminderKey = NewReminderIncompleteKey(tc)
-	//		keys, err := gaedb.PutMulti(tc, []*datastore.Key{reminderKey, newReminderKey}, []interface{}{oldReminder.ReminderEntity, newReminderEntity})
+	//		keys, err := gaedb.PutMulti(tc, []*datastore.Key{reminderKey, newReminderKey}, []interface{}{oldReminder.ReminderDbo, newReminderEntity})
 	//		if err != nil {
 	//			err = fmt.Errorf("failed to reschedule oldReminder: %w", err)
 	//		}
@@ -169,7 +169,7 @@ func (reminderDalGae ReminderDalGae) RescheduleReminder(_ context.Context, remin
 	//if newReminderKey != nil && newReminderEntity != nil {
 	//	newReminder = models.Reminder{
 	//		IntegerID:      db.NewIntID(newReminderKey.IntID()),
-	//		ReminderEntity: newReminderEntity,
+	//		ReminderDbo: newReminderEntity,
 	//	}
 	//}
 	//return

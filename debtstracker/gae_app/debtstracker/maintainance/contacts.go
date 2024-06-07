@@ -8,13 +8,13 @@ import (
 
 //type contactsAsyncJob struct {
 //	//asyncMapper
-//	entity *models.DebtusContactData
+//	entity *models.DebtusContactDbo
 //}
 
 //var _ mapper.JobEntity = (*contactsAsyncJob)(nil)
 
 //func (m *contactsAsyncJob) Make() interface{} {
-//	m.entity = new(models.DebtusContactData)
+//	m.entity = new(models.DebtusContactDbo)
 //	return m.entity
 //}
 //
@@ -23,7 +23,7 @@ import (
 //	//return applyIDAndUserFilters(r, "contactsAsyncJob", models.DebtusContactsCollection, filterByIntID, "UserID")
 //}
 //
-//func (m *contactsAsyncJob) Contact(key *datastore.Key) (contact models.Contact) {
+//func (m *contactsAsyncJob) ContactEntry(key *datastore.Key) (contact models.ContactEntry) {
 //	contact = models.NewDebtusContact(key.StringID(), nil)
 //	if m.entity != nil {
 //		entity := *m.entity
@@ -32,11 +32,11 @@ import (
 //	return
 //}
 
-type ContactWorker func(c context.Context, counters any /* *asyncCounters*/, contact models.Contact) error
+type ContactWorker func(c context.Context, counters any /* *asyncCounters*/, contact models.ContactEntry) error
 
 //func (m *contactsAsyncJob) startContactWorker(c context.Context, counters mapper.Counters, key *datastore.Key, contactWorker ContactWorker) error {
 //	//log.Debugf(c, "*contactsAsyncJob.startContactWorker()")
-//	contact := m.Contact(key)
+//	contact := m.ContactEntry(key)
 //	createContactWorker := func() Worker {
 //		//log.Debugf(c, "createContactWorker()")
 //		return func(counters *asyncCounters) error {

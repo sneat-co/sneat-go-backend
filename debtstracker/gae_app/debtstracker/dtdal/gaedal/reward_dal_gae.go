@@ -16,11 +16,11 @@ type rewardDalGae struct {
 
 var _ dtdal.RewardDal = (*rewardDalGae)(nil)
 
-func (rewardDalGae) InsertReward(c context.Context, tx dal.ReadwriteTransaction, rewardEntity *models.RewardData) (reward models.Reward, err error) {
+func (rewardDalGae) InsertReward(c context.Context, tx dal.ReadwriteTransaction, rewardEntity *models.RewardDbo) (reward models.Reward, err error) {
 	reward = models.NewRewardWithIncompleteKey(nil)
 	if err = tx.Insert(c, reward.Record); err != nil {
 		return
 	}
-	reward.ID = reward.Record.Key().ID.(int)
+	reward.ID = reward.Record.Key().ID.(string)
 	return
 }

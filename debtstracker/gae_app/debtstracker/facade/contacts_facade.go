@@ -14,7 +14,7 @@ import (
 	"strconv"
 )
 
-func ChangeContactStatus(c context.Context, contactID string, newStatus string) (contact models.Contact, err error) {
+func ChangeContactStatus(c context.Context, contactID string, newStatus string) (contact models.ContactEntry, err error) {
 	err = RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		if contact, err = GetContactByID(c, tx, contactID); err != nil {
 			return err
@@ -43,8 +43,8 @@ func createContactWithinTransaction(
 	counterpartyUserID string,
 	contactDetails models.ContactDetails,
 ) (
-	contact models.Contact,
-	counterpartyContact models.Contact,
+	contact models.ContactEntry,
+	counterpartyContact models.ContactEntry,
 	err error,
 ) {
 	if tx == nil {
@@ -69,10 +69,10 @@ func createContactWithinTransaction(
 		panic(fmt.Sprintf("appUser.ID == counterpartyUserID: %v", counterpartyUserID))
 	}
 	if counterpartyContact.Data != nil && counterpartyContact.ID == "" {
-		panic(fmt.Sprintf("counterpartyContact.DebtusContactData != nil && counterpartyContact.ID == 0: %v", litter.Sdump(counterpartyContact)))
+		panic(fmt.Sprintf("counterpartyContact.DebtusContactDbo != nil && counterpartyContact.ID == 0: %v", litter.Sdump(counterpartyContact)))
 	}
 
-	contact.Data = models.NewDebtusContactData(appUser.ID, contactDetails)
+	contact.Data = models.NewDebtusContactDbo(appUser.ID, contactDetails)
 	if counterpartyContact.ID != "" {
 		if counterpartyContact.Data == nil {
 			if counterpartyContact, err = GetContactByID(tc, tx, counterpartyContact.ID); err != nil {
@@ -165,10 +165,10 @@ func createContactWithinTransaction(
 type createContactDbChanges struct {
 	dal.Changes
 	user                *models.AppUser
-	counterpartyContact *models.Contact
+	counterpartyContact *models.ContactEntry
 }
 
-func CreateContact(c context.Context, tx dal.ReadwriteTransaction, userID string, contactDetails models.ContactDetails) (contact models.Contact, user models.AppUser, err error) {
+func CreateContact(c context.Context, tx dal.ReadwriteTransaction, userID string, contactDetails models.ContactDetails) (contact models.ContactEntry, user models.AppUser, err error) {
 	var db dal.DB
 	if db, err = GetDatabase(c); err != nil {
 		return
@@ -185,7 +185,7 @@ func CreateContact(c context.Context, tx dal.ReadwriteTransaction, userID string
 			}
 			changes := &createContactDbChanges{
 				user:                &user,
-				counterpartyContact: new(models.Contact),
+				counterpartyContact: new(models.ContactEntry),
 			}
 			if contact, _, err = createContactWithinTransaction(tc, tx, changes, "", contactDetails); err != nil {
 				err = fmt.Errorf("failed to create contact within transaction: %w", err)
@@ -230,7 +230,7 @@ func CreateContact(c context.Context, tx dal.ReadwriteTransaction, userID string
 	}
 }
 
-func UpdateContact(c context.Context, contactID string, values map[string]string) (contactEntity *models.DebtusContactData, err error) {
+func UpdateContact(c context.Context, contactID string, values map[string]string) (contactEntity *models.DebtusContactDbo, err error) {
 	var db dal.DB
 	if db, err = GetDatabase(c); err != nil {
 		return
@@ -301,11 +301,11 @@ func DeleteContact(c context.Context, contactID string) (user models.AppUser, er
 	if db, err = GetDatabase(c); err != nil {
 		return
 	}
-	var contact models.Contact
+	var contact models.ContactEntry
 	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		if contact, err = GetContactByID(c, tx, contactID); err != nil {
 			if dal.IsNotFound(err) {
-				log.Warningf(c, "Contact not found by ID: %v", contactID)
+				log.Warningf(c, "ContactEntry not found by ID: %v", contactID)
 				err = nil
 			}
 			return
@@ -347,7 +347,7 @@ func DeleteContact(c context.Context, contactID string) (user models.AppUser, er
 	return
 }
 
-func SaveContact(c context.Context, contact models.Contact) error {
+func SaveContact(c context.Context, contact models.ContactEntry) error {
 	db, err := GetDatabase(c)
 	if err != nil {
 		return err
@@ -357,7 +357,7 @@ func SaveContact(c context.Context, contact models.Contact) error {
 	})
 }
 
-func GetContactsByIDs(c context.Context, tx dal.ReadSession, contactsIDs []string) (contacts []models.Contact, err error) {
+func GetContactsByIDs(c context.Context, tx dal.ReadSession, contactsIDs []string) (contacts []models.ContactEntry, err error) {
 	if tx == nil {
 		if tx, err = GetDatabase(c); err != nil {
 			return
@@ -368,7 +368,7 @@ func GetContactsByIDs(c context.Context, tx dal.ReadSession, contactsIDs []strin
 	return contacts, tx.GetMulti(c, records)
 }
 
-func GetContactByID(c context.Context, tx dal.ReadSession, contactID string) (contact models.Contact, err error) {
+func GetContactByID(c context.Context, tx dal.ReadSession, contactID string) (contact models.ContactEntry, err error) {
 	contact = models.NewDebtusContact(contactID, nil)
 	if tx == nil {
 		tx, err = GetDatabase(c)

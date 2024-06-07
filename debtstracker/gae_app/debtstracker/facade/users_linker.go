@@ -12,7 +12,7 @@ import (
 )
 
 type usersLinker struct {
-	// Groups methods for linking 2 users via Contact
+	// Groups methods for linking 2 users via ContactEntry
 	changes *usersLinkingDbChanges
 }
 
@@ -39,7 +39,7 @@ func (linker usersLinker) linkUsersWithinTransaction(
 	}
 	inviterContact, invitedContact := changes.inviterContact, changes.invitedContact
 	if invitedContact == nil {
-		invitedContact = new(models.Contact)
+		invitedContact = new(models.ContactEntry)
 		changes.invitedContact = invitedContact
 	}
 
@@ -87,7 +87,7 @@ func (linker usersLinker) linkUsersWithinTransaction(
 	{
 		invitedContact.Data.MustMatchCounterparty(*inviterContact)
 
-		addContactJSON := func(user *models.AppUser, contact *models.Contact) (contactJSON *models.UserContactJson) {
+		addContactJSON := func(user *models.AppUser, contact *models.ContactEntry) (contactJSON *models.UserContactJson) {
 			contactJSON = user.Data.ContactByID(invitedContact.ID)
 			if contactJSON == nil {
 				// err = fmt.Errorf("invitedUserContact == nil, ID=%v", invitedContact.ID)
@@ -112,7 +112,7 @@ func (linker usersLinker) linkUsersWithinTransaction(
 
 func (linker usersLinker) validateInput(
 	inviterUser, invitedUser *models.AppUser,
-	inviterContact *models.Contact,
+	inviterContact *models.ContactEntry,
 ) error {
 	if inviterUser.ID == "" {
 		panic("inviterUser.ID == 0")
@@ -145,7 +145,7 @@ func (linker usersLinker) getOrCreateInvitedContactByInviterUserAndInviterContac
 		panic(fmt.Sprintf("inviterUser.ID == invitedUser.ID: %v", inviterUser.ID))
 	}
 
-	var invitedContact models.Contact
+	var invitedContact models.ContactEntry
 	if changes.invitedContact != nil && changes.invitedContact.ID != "" {
 		invitedContact = *changes.invitedContact
 	} else {
@@ -153,7 +153,7 @@ func (linker usersLinker) getOrCreateInvitedContactByInviterUserAndInviterContac
 	}
 
 	if invitedUser.Data.ContactsCount > 0 {
-		var invitedUserContacts []models.Contact
+		var invitedUserContacts []models.ContactEntry
 		// Use non transaction context
 		invitedUserContacts, err = GetContactsByIDs(tc, tx, invitedUser.Data.ContactIDs())
 		if err != nil {
@@ -221,7 +221,7 @@ func (linker usersLinker) getOrCreateInvitedContactByInviterUserAndInviterContac
 
 func (linker usersLinker) updateInvitedUser(c context.Context,
 	invitedUser models.AppUser,
-	inviterUserID string, inviterContact models.Contact,
+	inviterUserID string, inviterContact models.ContactEntry,
 ) (err error) {
 	log.Debugf(c, "usersLinker.updateInvitedUser()")
 	var invitedUserChanged bool
@@ -247,7 +247,7 @@ func (linker usersLinker) updateInvitedUser(c context.Context,
 func (linker usersLinker) updateInviterContact(
 	tc context.Context,
 	inviterUser, invitedUser models.AppUser,
-	inviterContact, invitedContact *models.Contact,
+	inviterContact, invitedContact *models.ContactEntry,
 	linkedBy string,
 ) (
 	isJustConnected bool, err error,
@@ -299,7 +299,7 @@ func (linker usersLinker) updateInviterContact(
 	}
 	switch inviterContact.Data.CounterpartyUserID {
 	case "":
-		log.Debugf(tc, "Updating inviterUser.Contact* fields...")
+		log.Debugf(tc, "Updating inviterUser.ContactEntry* fields...")
 		isJustConnected = true
 		inviterContactChanged = true
 		inviterContact.Data.CounterpartyUserID = invitedUser.ID

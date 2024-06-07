@@ -31,7 +31,7 @@ func (f *TransferFixer) needFixCounterpartyCounterpartyName() bool {
 //	if f.needFixCounterpartyCounterpartyName() {
 //		log.Debugf(c, "%v: needFixCounterpartyCounterpartyName=true", f.transferKey.IntegerID())
 //		if f.transfer.Creator().CounterpartyID != 0 {
-//			var counterpartyCounterparty models.DebtusContactData
+//			var counterpartyCounterparty models.DebtusContactDbo
 //			err := gaedb.Get(c, NewCounterpartyKey(c, f.transfer.Creator().CounterpartyID), &counterpartyCounterparty)
 //			if err != nil {
 //				return err

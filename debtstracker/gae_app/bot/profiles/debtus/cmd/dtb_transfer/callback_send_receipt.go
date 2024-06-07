@@ -157,7 +157,7 @@ func showLinkForReceiptInTelegram(whc botsfw.WebhookContext, transfer models.Tra
 	return
 }
 
-func IsTransferNotificationsBlockedForChannel(counterparty *models.DebtusContactData, channel string) bool {
+func IsTransferNotificationsBlockedForChannel(counterparty *models.DebtusContactDbo, channel string) bool {
 	for _, blockedBy := range counterparty.NoTransferUpdatesBy {
 		if blockedBy == channel {
 			return true

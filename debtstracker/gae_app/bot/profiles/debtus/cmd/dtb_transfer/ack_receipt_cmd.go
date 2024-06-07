@@ -95,7 +95,7 @@ func AcknowledgeReceipt(whc botsfw.WebhookContext, receiptID, operation string) 
 		// Seems we can edit message just once after callback :(
 		//if transferEntity.CounterpartyTgReceiptInlineMessageID != "" {
 		//	mt = common.TextReceiptForTransfer(whc, transferID, transferEntity, transferEntity.CounterpartyCounterpartyID)
-		//	editMessage := tgbotapi.NewEditMessageTextByInlineMessageID(transferEntity.CounterpartyTgReceiptInlineMessageID, mt + fmt.Sprintf("\n\n Acknowledged by %v", transferEntity.Contact().ContactName))
+		//	editMessage := tgbotapi.NewEditMessageTextByInlineMessageID(transferEntity.CounterpartyTgReceiptInlineMessageID, mt + fmt.Sprintf("\n\n Acknowledged by %v", transferEntity.ContactEntry().ContactName))
 		//
 		//	if values, err := editMessage.Values(); err != nil {
 		//		log.Errorf(c, "Failed to get values for editMessage: %v", err)

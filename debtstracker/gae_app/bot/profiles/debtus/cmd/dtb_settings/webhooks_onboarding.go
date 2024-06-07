@@ -260,7 +260,7 @@ func TextCommand(on string, message []string, icon, replyIcon string, hideKeyboa
 //					case SmsChannelCommand.code:
 //						return OnboardingTellAboutInviteCodeAction(whc)
 //					default:
-//						return m, fmt.Errorf("Unhandled Contact message by %v command", cmd.code)
+//						return m, fmt.Errorf("Unhandled ContactEntry message by %v command", cmd.code)
 //					}
 //
 //				case strings.HasSuffix(awaitingReplyTo, cmd.code) && !altOption:

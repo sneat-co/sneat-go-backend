@@ -13,7 +13,7 @@ package dtb_transfer
 //	"github.com/strongo/strongoapp"
 //)
 //
-//func ClaimInviteOnTransfer(ec strongoapp.ExecutionContext, inviteCode string, invite *invites.Invite) (transferID int, transfer *models.Transfer, counterpartyID int64, counterparty *models.Contact, err error) {
+//func ClaimInviteOnTransfer(ec strongoapp.ExecutionContext, inviteCode string, invite *invites.Invite) (transferID int, transfer *models.Transfer, counterpartyID int64, counterparty *models.ContactEntry, err error) {
 //	c := ec.Context()
 //
 //	//if transferID, err = invite.RelatedIntID(); err != nil {
@@ -48,7 +48,7 @@ package dtb_transfer
 //			err = errors.New("This is your own transfer") // TODO: What do we do?
 //			return err
 //		}
-//		if transfer.Contact().UserID == 0 {
+//		if transfer.ContactEntry().UserID == 0 {
 //			user := new(models.AppUser)
 //			if err = nds.Get(tc, userKey, user); err != nil {
 //				return errors.Wrapf(err, "Failed to get user by ID=%v", userKey.IntID())
@@ -61,7 +61,7 @@ package dtb_transfer
 //			keysToPut := []*datastore.Key{transferKey, userKey, inviteKey, inviteClaimKey}
 //			entitiesToPut := []interface{}{transfer, user, invite, inviteClaim}
 //
-//			var updateTransferWithCounterpartyDetails = func(counterpartyCounterpartyID int64, counterpartyKey *datastore.Key, counterparty *models.Contact) {
+//			var updateTransferWithCounterpartyDetails = func(counterpartyCounterpartyID int64, counterpartyKey *datastore.Key, counterparty *models.ContactEntry) {
 //				log.Debugf(c, "updateTransferWithCounterpartyDetails(counterpartyCounterpartyID=%v)", counterpartyCounterpartyID)
 //				counterpartyID = counterpartyCounterpartyID
 //				transfer.CounterpartyCounterparty().CounterpartyID = counterpartyCounterpartyID
@@ -79,7 +79,7 @@ package dtb_transfer
 //				keysToPut = append(keysToPut, counterpartyKey)
 //				entitiesToPut = append(entitiesToPut, counterparty)
 //			}
-//			transfer.Contact().UserID = userID
+//			transfer.ContactEntry().UserID = userID
 //			if transfer.CounterpartyCounterparty().CounterpartyID != 0 {
 //				// Cleaning just in case
 //				transfer.CounterpartyCounterparty().CounterpartyID = 0
@@ -90,15 +90,15 @@ package dtb_transfer
 //				log.Errorf(c, "Failed to load transferCreatorUser by ID (%v): %err", transfer.CreatorUserID, err)
 //				return err
 //			}
-//			creatorCounterpartyKey, creatorCounterparty, err := gaedal.GetCounterpartyByID(tc, transfer.Contact().CounterpartyID)
+//			creatorCounterpartyKey, creatorCounterparty, err := gaedal.GetCounterpartyByID(tc, transfer.ContactEntry().CounterpartyID)
 //			if err != nil {
-//				return errors.Wrapf(err, "Failed to call GetCounterpartyByID(%v)", transfer.Contact().CounterpartyID)
+//				return errors.Wrapf(err, "Failed to call GetCounterpartyByID(%v)", transfer.ContactEntry().CounterpartyID)
 //			}
 //
 //			if user.CounterpartiesCount == 0 {
 //				var counterpartKey *datastore.Key
 //				counterpartKey, counterparty, err = gaedal.CreateCounterpartyWithinTransaction(tc,
-//					userID, transfer.CreatorUserID, transfer.Contact().CounterpartyID, transferCreatorUser.ContactDetails)
+//					userID, transfer.CreatorUserID, transfer.ContactEntry().CounterpartyID, transferCreatorUser.ContactDetails)
 //				counterparty.CountOfTransfers = creatorCounterparty.CountOfTransfers
 //				if err != nil {
 //					return errors.Wrapf(err, "Failed to call CreateCounterpartyWithinTransaction(userID=%v)", userID)
@@ -125,7 +125,7 @@ package dtb_transfer
 //					}
 //				}
 //				if !counterpartyFound {
-//					log.Infof(c, "Contact not found by userID=%v, len(counterparties)=%v", userID, len(counterparties))
+//					log.Infof(c, "ContactEntry not found by userID=%v, len(counterparties)=%v", userID, len(counterparties))
 //					counterparty = nil
 //				}
 //			}
@@ -161,7 +161,7 @@ package dtb_transfer
 //				entitiesToPut = append(entitiesToPut, creatorCounterparty)
 //				// TODO: Queue task to update all existing transfers
 //				if creatorCounterparty.CountOfTransfers > 1 {
-//					if err = delayUpdateTransfersWithCounterparty(tc, transfer.CreatorUserID, transfer.Contact().CounterpartyID, models.TransferCounterpartyInfo{
+//					if err = delayUpdateTransfersWithCounterparty(tc, transfer.CreatorUserID, transfer.ContactEntry().CounterpartyID, models.TransferCounterpartyInfo{
 //						UserID:           userID,
 //						CounterpartyID:   counterpartyID,
 //						Name: counterparty.GetFullName(),
@@ -180,7 +180,7 @@ package dtb_transfer
 //				return err
 //			}
 //		}
-//		if err = gaedal.DelayUpdateUserHasDueTransfers(tc, transfer.Contact().UserID); err != nil {
+//		if err = gaedal.DelayUpdateUserHasDueTransfers(tc, transfer.ContactEntry().UserID); err != nil {
 //			return err
 //		}
 //		if transfer.DtDueOn.After(time.Now()) {

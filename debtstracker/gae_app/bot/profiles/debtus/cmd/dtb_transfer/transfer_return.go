@@ -40,7 +40,7 @@ var StartReturnWizardCommand = botsfw.Command{
 	},
 }
 
-func askIfReturnedInFull(whc botsfw.WebhookContext, counterparty models.Contact, currency money.CurrencyCode, value decimal.Decimal64p2) (m botsfw.MessageFromBot, err error) {
+func askIfReturnedInFull(whc botsfw.WebhookContext, counterparty models.ContactEntry, currency money.CurrencyCode, value decimal.Decimal64p2) (m botsfw.MessageFromBot, err error) {
 	amount := money.Amount{Currency: money.CurrencyCode(currency), Value: value}
 	var mt string
 	switch {
@@ -85,7 +85,7 @@ var AskReturnCounterpartyCommand = CreateAskTransferCounterpartyCommand(
 		AskIfReturnedInFullCommand,
 	},
 	botsfw.Command{}, //newContactCommand - We do not allow to create a new contact on return
-	func(whc botsfw.WebhookContext, counterparty models.Contact) (m botsfw.MessageFromBot, err error) {
+	func(whc botsfw.WebhookContext, counterparty models.ContactEntry) (m botsfw.MessageFromBot, err error) {
 		c := whc.Context()
 
 		log.Debugf(c, "StartReturnWizardCommand.onCounterpartySelectedAction(counterparty.ID=%v)", counterparty.ID)
@@ -130,7 +130,7 @@ func askToChooseDebt(whc botsfw.WebhookContext, buttons [][]string) (m botsfw.Me
 	return m
 }
 
-func _debtAmountButtonText(whc botsfw.WebhookContext, currency money.CurrencyCode, value decimal.Decimal64p2, counterparty models.Contact) string {
+func _debtAmountButtonText(whc botsfw.WebhookContext, currency money.CurrencyCode, value decimal.Decimal64p2, counterparty models.ContactEntry) string {
 	amount := money.Amount{Currency: currency, Value: value.Abs()}
 	var mt string
 	switch {
@@ -222,7 +222,7 @@ func processReturnCommand(whc botsfw.WebhookContext, returnValue decimal.Decimal
 		}
 		return CreateReturnAndShowReceipt(whc, transferID, counterpartyID, direction, money.NewAmount(currency, returnValue))
 	} else {
-		return m, fmt.Errorf("Contact has no currency in balance. counterpartyID=%v,  currency='%v'", counterpartyID, currency)
+		return m, fmt.Errorf("ContactEntry has no currency in balance. counterpartyID=%v,  currency='%v'", counterpartyID, currency)
 	}
 }
 
@@ -270,7 +270,7 @@ var AskToChooseDebtToReturnCommand = botsfw.Command{
 		c := whc.Context()
 		counterpartyID, _, _ := getReturnWizardParams(whc)
 		var (
-			theCounterparty models.Contact
+			theCounterparty models.ContactEntry
 			balance         money.Balance
 		)
 		if counterpartyID == "" {
@@ -286,7 +286,7 @@ var AskToChooseDebtToReturnCommand = botsfw.Command{
 			//	return m, err
 			//}
 			//user := botAppUser.(*models.DebutsAppUserDataOBSOLETE)
-			var counterparties []models.Contact
+			var counterparties []models.ContactEntry
 			if counterparties, err = dtdal.Contact.GetLatestContacts(whc, nil, 10, -1); err != nil {
 				return m, err
 			}
@@ -310,7 +310,7 @@ var AskToChooseDebtToReturnCommand = botsfw.Command{
 				return m, nil
 			}
 		} else {
-			var counterparty models.Contact
+			var counterparty models.ContactEntry
 			if counterparty, err = getCounterparty(whc, counterpartyID); err != nil {
 				return m, err
 			}
@@ -376,8 +376,8 @@ func getReturnWizardParams(whc botsfw.WebhookContext) (counterpartyID string, tr
 	return
 }
 
-func getCounterparty(whc botsfw.WebhookContext, counterpartyID string) (counterparty models.Contact, err error) {
-	//counterparty = new(models.Contact)
+func getCounterparty(whc botsfw.WebhookContext, counterpartyID string) (counterparty models.ContactEntry, err error) {
+	//counterparty = new(models.ContactEntry)
 	if counterparty, err = facade.GetContactByID(whc.Context(), nil, counterpartyID); err != nil {
 		return
 	}

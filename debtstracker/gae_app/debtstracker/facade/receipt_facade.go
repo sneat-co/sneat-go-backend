@@ -16,7 +16,7 @@ type usersLinkingDbChanges struct {
 	// use pointer as we pass it to FlagAsChanged() and IsChanged()
 	dal.Changes
 	inviterUser, invitedUser       *models.AppUser
-	inviterContact, invitedContact *models.Contact
+	inviterContact, invitedContact *models.ContactEntry
 }
 
 func newUsersLinkingDbChanges() *usersLinkingDbChanges {
@@ -36,7 +36,7 @@ func newReceiptDbChanges() *receiptDbChanges {
 	}
 }
 
-func workaroundReinsertContact(c context.Context, receipt models.Receipt, invitedContact models.Contact, changes *receiptDbChanges) (err error) {
+func workaroundReinsertContact(c context.Context, receipt models.Receipt, invitedContact models.ContactEntry, changes *receiptDbChanges) (err error) {
 	if _, err = GetContactByID(c, nil, invitedContact.ID); err != nil {
 		if dal.IsNotFound(err) {
 			log.Warningf(c, "workaroundReinsertContact(invitedContact.ID=%s) => %v", invitedContact.ID, err)
@@ -74,7 +74,7 @@ func AcknowledgeReceipt(c context.Context, receiptID, currentUserID string, oper
 		return
 	}
 
-	var invitedContact models.Contact
+	var invitedContact models.ContactEntry
 
 	var db dal.DB
 	if db, err = GetDatabase(c); err != nil {
@@ -83,7 +83,7 @@ func AcknowledgeReceipt(c context.Context, receiptID, currentUserID string, oper
 
 	err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
 		var inviterUser, invitedUser models.AppUser
-		var inviterContact models.Contact
+		var inviterContact models.ContactEntry
 
 		receipt, transfer, inviterUser, invitedUser, err = getReceiptTransferAndUsers(tc, tx, receiptID, currentUserID)
 		if err != nil {

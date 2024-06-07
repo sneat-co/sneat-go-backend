@@ -75,7 +75,7 @@ func delayedDeleteContactTransfers(c context.Context, contactID string, cursor s
 	return
 }
 
-func (ContactDalGae) SaveContact(c context.Context, tx dal.ReadwriteTransaction, contact models.Contact) error {
+func (ContactDalGae) SaveContact(c context.Context, tx dal.ReadwriteTransaction, contact models.ContactEntry) error {
 	if err := tx.Set(c, contact.Record); err != nil {
 		return fmt.Errorf("failed to SaveContact(): %w", err)
 	}
@@ -90,22 +90,22 @@ func newUserContactsQuery(userID string) dal.QueryBuilder {
 	return dal.From(models.DebtusContactsCollection).WhereField("UserID", dal.Equal, userID)
 }
 
-func (ContactDalGae) GetContactsWithDebts(c context.Context, tx dal.ReadSession, userID string) (counterparties []models.Contact, err error) {
+func (ContactDalGae) GetContactsWithDebts(c context.Context, tx dal.ReadSession, userID string) (counterparties []models.ContactEntry, err error) {
 	query := newUserContactsQuery(userID).
 		WhereField("BalanceCount", dal.GreaterThen, 0).
 		SelectInto(models.NewDebtusContactRecord)
 	//var (
-	//	counterpartyEntities []*models.DebtusContactData
+	//	counterpartyEntities []*models.DebtusContactDbo
 	//)
 	records, err := tx.QueryAllRecords(c, query)
-	counterparties = make([]models.Contact, len(records))
+	counterparties = make([]models.ContactEntry, len(records))
 	for i, record := range records {
-		counterparties[i] = models.NewDebtusContact(record.Key().ID.(string), record.Data().(*models.DebtusContactData))
+		counterparties[i] = models.NewDebtusContact(record.Key().ID.(string), record.Data().(*models.DebtusContactDbo))
 	}
 	return
 }
 
-func (ContactDalGae) GetLatestContacts(whc botsfw.WebhookContext, tx dal.ReadSession, limit, totalCount int) (counterparties []models.Contact, err error) {
+func (ContactDalGae) GetLatestContacts(whc botsfw.WebhookContext, tx dal.ReadSession, limit, totalCount int) (counterparties []models.ContactEntry, err error) {
 	c := whc.Context()
 	appUserID := whc.AppUserID()
 	query := newUserActiveContactsQuery(appUserID).
@@ -130,9 +130,9 @@ func (ContactDalGae) GetLatestContacts(whc botsfw.WebhookContext, tx dal.ReadSes
 			return
 		}
 	}
-	counterparties = make([]models.Contact, len(records))
+	counterparties = make([]models.ContactEntry, len(records))
 	for i, record := range records {
-		counterparties[i] = models.NewDebtusContact(record.Key().ID.(string), record.Data().(*models.DebtusContactData))
+		counterparties[i] = models.NewDebtusContact(record.Key().ID.(string), record.Data().(*models.DebtusContactDbo))
 	}
 	return
 }
@@ -159,19 +159,19 @@ func (contactDalGae ContactDalGae) GetContactIDsByTitle(c context.Context, tx da
 	return
 }
 
-//func zipCounterparty(keys []*datastore.Key, entities []*models.DebtusContactData) (contacts []models.Contact) {
+//func zipCounterparty(keys []*datastore.Key, entities []*models.DebtusContactDbo) (contacts []models.ContactEntry) {
 //	if len(keys) != len(entities) {
 //		panic(fmt.Sprintf("len(keys):%d != len(entities):%d", len(keys), len(entities)))
 //	}
-//	contacts = make([]models.Contact, len(entities))
+//	contacts = make([]models.ContactEntry, len(entities))
 //	for i, entity := range entities {
 //		contacts[i] = models.NewDebtusContact(keys[i].IntID(), entity)
 //	}
 //	return
 //}
 
-func (contactDalGae ContactDalGae) InsertContact(c context.Context, tx dal.ReadwriteTransaction, contactEntity *models.DebtusContactData) (
-	contact models.Contact, err error,
+func (contactDalGae ContactDalGae) InsertContact(c context.Context, tx dal.ReadwriteTransaction, contactEntity *models.DebtusContactDbo) (
+	contact models.ContactEntry, err error,
 ) {
 	contact.Data = contactEntity
 	if err = tx.Insert(c, contact.Record); err != nil {

@@ -324,7 +324,7 @@ func (billFacade) CreateBill(c context.Context, tx dal.ReadwriteTransaction, bil
 		}
 
 		// Load counterparties so we can get respective userIDs
-		var counterparties []models.Contact
+		var counterparties []models.ContactEntry
 		// Use non transactional context
 		counterparties, err = GetContactsByIDs(c, tx, contactIDs)
 		if err != nil {

@@ -180,7 +180,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			txUser.Data.ContactsJson = ""
 			for _, counterpartyRecord := range userCounterpartyRecords {
-				counterpartyEntity := counterpartyRecord.Data().(*models.DebtusContactData)
+				counterpartyEntity := counterpartyRecord.Data().(*models.DebtusContactDbo)
 				counterpartyID := counterpartyRecord.Key().ID.(string)
 				if counterpartyTransfersInfo, ok := transfersInfoByCounterparty[counterpartyID]; ok {
 					counterpartyEntity.LastTransferAt = counterpartyTransfersInfo.LastAt
@@ -229,9 +229,9 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 	log.Infof(c, "OK - User ContactsJson is OK")
 
 	// We need counterparties by ID to check balance against transfers
-	counterpartiesByID := make(map[int64]*models.DebtusContactData, len(counterpartyIDs))
+	counterpartiesByID := make(map[int64]*models.DebtusContactDbo, len(counterpartyIDs))
 	for _, counterpartyRecord := range userCounterpartyRecords {
-		counterpartiesByID[counterpartyRecord.Key().ID.(int64)] = counterpartyRecord.Data().(*models.DebtusContactData)
+		counterpartiesByID[counterpartyRecord.Key().ID.(int64)] = counterpartyRecord.Data().(*models.DebtusContactDbo)
 	}
 
 	if len(transferRecords) > 0 && user.Data.LastTransferID == "" {
@@ -281,7 +281,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 		case transferData.Counterparty().UserID:
 			counterpartyID = transferData.Creator().ContactID
 		default:
-			log.Errorf(c, "userID=%v is NOT equal to transferData.CreatorUserID=%v or transferData.Contact().UserID=%v", userID, transferData.CreatorUserID, transferData.Counterparty().UserID)
+			log.Errorf(c, "userID=%v is NOT equal to transferData.CreatorUserID=%v or transferData.ContactEntry().UserID=%v", userID, transferData.CreatorUserID, transferData.Counterparty().UserID)
 			return
 		}
 		transfersCounterpartyBalance, ok := transfersBalanceByCounterpartyID[counterpartyID]
@@ -392,7 +392,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 	for _, counterpartyRecord := range userCounterpartyRecords {
 		counterpartyKey := counterpartyRecord.Key()
 		counterpartyID := counterpartyKey.ID.(string)
-		counterparty := counterpartyRecord.Data().(*models.DebtusContactData)
+		counterparty := counterpartyRecord.Data().(*models.DebtusContactDbo)
 		counterpartyBalance := counterparty.Balance()
 
 		if transfersCounterpartyBalance := transfersBalanceByCounterpartyID[counterpartyID]; (len(transfersCounterpartyBalance) == 0 && len(counterpartyBalance) == 0) || reflect.DeepEqual(transfersCounterpartyBalance, counterpartyBalance) {
@@ -428,9 +428,9 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		} else {
 			counterpartyIDsWithNonMatchingBalance = append(counterpartyIDsWithNonMatchingBalance, counterpartyID)
-			log.Warningf(c, "Contact ID=%v has balance not matching transfers' balance:\n\tContact: %v\n\tTransfers: %v", counterpartyID, counterpartyBalance, transfersCounterpartyBalance)
+			log.Warningf(c, "ContactEntry ID=%v has balance not matching transfers' balance:\n\tContactEntry: %v\n\tTransfers: %v", counterpartyID, counterpartyBalance, transfersCounterpartyBalance)
 			if doFixes {
-				//var txCounterparty models.Contact
+				//var txCounterparty models.ContactEntry
 				var db dal.DB
 				if db, err = facade.GetDatabase(c); err != nil {
 					log.Errorf(c, "Failed to get database: %v", err)

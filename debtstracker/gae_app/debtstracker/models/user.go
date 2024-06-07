@@ -198,7 +198,7 @@ func userContactsByStatus(contacts []UserContactJson) (active, archived []UserCo
 			contact.Status = ""
 			archived = append(archived, contact)
 		case "":
-			panic("Contact status is not set")
+			panic("ContactEntry status is not set")
 		default:
 			panic("Unknown status: " + contact.Status)
 		}
@@ -265,9 +265,9 @@ func (entity *DebutsAppUserDataOBSOLETE) RemoveContact(contactID string) (change
 	return false
 }
 
-func AddOrUpdateContact(u *AppUser, c Contact) (contactJson UserContactJson, changed bool) {
+func AddOrUpdateContact(u *AppUser, c ContactEntry) (contactJson UserContactJson, changed bool) {
 	if c.Data == nil {
-		panic("c.DebtusContactData == nil")
+		panic("c.DebtusContactDbo == nil")
 	}
 	contactJson = NewUserContactJson(c.ID, c.Data.Status, c.Data.FullName(), c.Data.Balanced)
 	contactJson.Transfers = c.Data.GetTransfersInfo()

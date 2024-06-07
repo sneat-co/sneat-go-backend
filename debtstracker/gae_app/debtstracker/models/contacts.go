@@ -7,8 +7,8 @@ import (
 )
 
 type PhoneContact struct {
-	// Part of ContactDetails => Part of User|Contact
-	// Contact details
+	// Part of ContactDetails => Part of User|ContactEntry
+	// ContactEntry details
 	PhoneNumber            int64 `datastore:",omitempty"`
 	PhoneNumberConfirmed   bool
 	PhoneNumberIsConfirmed bool `datastore:",noindex"` // Deprecated

@@ -88,7 +88,7 @@ func (f refererFacade) AddTelegramReferrer(c context.Context, userID string, tgU
 			}
 
 			referer := models.Referer{
-				Data: &models.RefererEntity{
+				Data: &models.RefererDbo{
 					Platform:   "tg",
 					ReferredTo: botID,
 					DtCreated:  now,
@@ -189,7 +189,7 @@ func (f refererFacade) TopTelegramReferrers(c context.Context, botID string, lim
 			OrderBy(dal.DescendingField("t")).
 			Limit(100).
 			SelectInto(func() dal.Record {
-				return dal.NewRecordWithIncompleteKey(models.RefererKind, reflect.String, new(models.RefererEntity))
+				return dal.NewRecordWithIncompleteKey(models.RefererKind, reflect.String, new(models.RefererDbo))
 			})
 		var reader dal.Reader
 		if reader, err = dtdal.DB.QueryReader(c, q); err != nil {
@@ -204,7 +204,7 @@ func (f refererFacade) TopTelegramReferrers(c context.Context, botID string, lim
 				}
 				return
 			}
-			tgUsernames = append(tgUsernames, record.Data().(*models.RefererEntity).ReferredBy)
+			tgUsernames = append(tgUsernames, record.Data().(*models.RefererDbo).ReferredBy)
 		}
 		if !isLockItem() {
 			if item, err = memcache.Get(c, lastTgReferrers); err == nil && isLockItem() {

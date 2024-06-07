@@ -9,15 +9,12 @@ import (
 
 const RewardKind = "Reward"
 
-type Reward struct {
-	record.WithID[int]
-	Data *RewardData
-}
+type Reward = record.DataWithID[string, *RewardDbo]
 
-func NewReward(id int, data *RewardData) Reward {
+func NewReward(id string, data *RewardDbo) Reward {
 	key := dal.NewKeyWithID(RewardKind, id)
 	if data == nil {
-		data = new(RewardData)
+		data = new(RewardDbo)
 	}
 	return Reward{
 		WithID: record.NewWithID(id, key, data),
@@ -25,10 +22,10 @@ func NewReward(id int, data *RewardData) Reward {
 	}
 }
 
-func NewRewardWithIncompleteKey(data *RewardData) Reward {
+func NewRewardWithIncompleteKey(data *RewardDbo) Reward {
 	key := dal.NewIncompleteKey(RewardKind, reflect.Int, nil)
 	return Reward{
-		WithID: record.NewWithID(0, key, data),
+		WithID: record.NewWithID("", key, data),
 		Data:   data,
 	}
 }
@@ -40,7 +37,7 @@ const (
 	RewardReasonFriendOfInvitedUserJoined RewardReason = "FriendOfInvitedUserJoined"
 )
 
-type RewardData struct {
+type RewardDbo struct {
 	UserID       int64
 	DtCreated    time.Time
 	Reason       RewardReason `datastore:",noindex"`

@@ -213,7 +213,7 @@ type TransferData struct {
 	FromJson string `datastore:"C_From,noindex"`
 	ToJson   string `datastore:"C_To,noindex"`
 
-	// ** New properties to replace Creator/Contact set of props **
+	// ** New properties to replace Creator/ContactEntry set of props **
 	// FromUserID           int64  `datastore:",noindex"`
 	// FromUserName         string `datastore:",noindex"`
 	// FromCounterpartyID   int64  `datastore:",noindex"`
@@ -264,7 +264,7 @@ func (t *TransferData) AmountReturned() decimal.Decimal64p2 {
 
 func (t *TransferData) String() string {
 	return fmt.Sprintf(
-		"TransferData{DtCreated: %v, Direction: %v, GetAmount(): %v, AmoutInCentsReturned: %v, IsReturn: %v, ReturnToTransferIDs: %v, CreatorUserID: %s, Creator: %v, Contact: %v, BothUserIDs: %v, BothCounterpartyIDs: %v, From: %v, To: %v}",
+		"TransferData{DtCreated: %v, Direction: %v, GetAmount(): %v, AmoutInCentsReturned: %v, IsReturn: %v, ReturnToTransferIDs: %v, CreatorUserID: %s, Creator: %v, ContactEntry: %v, BothUserIDs: %v, BothCounterpartyIDs: %v, From: %v, To: %v}",
 		t.DtCreated, t.Direction(), t.GetAmount(), t.AmountInCentsReturned, t.IsReturn, t.ReturnToTransferIDs, t.CreatorUserID, t.Creator(), t.Counterparty(), t.BothUserIDs, t.BothCounterpartyIDs, t.From(), t.To())
 }
 

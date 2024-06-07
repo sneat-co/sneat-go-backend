@@ -8,7 +8,7 @@ package maintainance
 //	return m.startContactWorker(c, counters, key, m.processContact)
 //}
 //
-//func (m *verifyContactTransfers) processContact(c context.Context, counters *asyncCounters, contact models.Contact) (err error) {
+//func (m *verifyContactTransfers) processContact(c context.Context, counters *asyncCounters, contact models.ContactEntry) (err error) {
 //	//log.Debugf(c, "processContact(contact.ID=%v)", contact.ID)
 //	buf := new(bytes.Buffer)
 //	now := time.Now()
@@ -37,7 +37,7 @@ package maintainance
 //			}
 //			logFunc(c,
 //				fmt.Sprintf(
-//					"Contact(id=%v, name=%v): has %v warning, %v transfers\n"+
+//					"ContactEntry(id=%v, name=%v): has %v warning, %v transfers\n"+
 //						"\tcontact.Balance: %v\n"+
 //						"\tUser(id=%v, name=%v)",
 //					contact.ID,
@@ -248,7 +248,7 @@ package maintainance
 //	}
 //
 //	if !needsFixingContactOrUser && contact.Data.CounterpartyCounterpartyID != 0 {
-//		var counterpartyContact models.Contact
+//		var counterpartyContact models.ContactEntry
 //		if counterpartyContact, err = facade.GetContactByID(c, nil, contact.Data.CounterpartyCounterpartyID); err != nil {
 //			return
 //		}
@@ -288,7 +288,7 @@ package maintainance
 //	return nil
 //}
 //
-//func (m *verifyContactTransfers) assertTotals(buf *bytes.Buffer, counters *asyncCounters, contact models.Contact, transfersBalance money.Balance) (valid bool, warningsCount int) {
+//func (m *verifyContactTransfers) assertTotals(buf *bytes.Buffer, counters *asyncCounters, contact models.ContactEntry, transfersBalance money.Balance) (valid bool, warningsCount int) {
 //	valid = true
 //	contactBalance := contact.Data.Balance()
 //	for currency, transfersTotal := range transfersBalance {
@@ -313,7 +313,7 @@ package maintainance
 //	return
 //}
 //
-//func (m *verifyContactTransfers) fixContactAndUser(c context.Context, buf *bytes.Buffer, counters *asyncCounters, contactID int64, transfersBalance money.Balance, transfersCount int, lastTransfer models.Transfer) (contact models.Contact, user models.AppUser, err error) {
+//func (m *verifyContactTransfers) fixContactAndUser(c context.Context, buf *bytes.Buffer, counters *asyncCounters, contactID int64, transfersBalance money.Balance, transfersCount int, lastTransfer models.Transfer) (contact models.ContactEntry, user models.AppUser, err error) {
 //	var db dal.DB
 //	if db, err = facade.GetDatabase(c); err != nil {
 //		return
@@ -334,7 +334,7 @@ package maintainance
 //	return
 //}
 //
-//func (m *verifyContactTransfers) fixContactAndUserWithinTransaction(c context.Context, tx dal.ReadwriteTransaction, buf *bytes.Buffer, counters *asyncCounters, contactID int64, transfersBalance money.Balance, transfersCount int, lastTransfer models.Transfer) (contact models.Contact, user models.AppUser, err error) {
+//func (m *verifyContactTransfers) fixContactAndUserWithinTransaction(c context.Context, tx dal.ReadwriteTransaction, buf *bytes.Buffer, counters *asyncCounters, contactID int64, transfersBalance money.Balance, transfersCount int, lastTransfer models.Transfer) (contact models.ContactEntry, user models.AppUser, err error) {
 //	fmt.Fprintf(buf, "Fixing contact %v...\n", contactID)
 //	if contact, err = facade.GetContactByID(c, tx, contactID); err != nil {
 //		return
@@ -390,7 +390,7 @@ package maintainance
 //				goto contactFound
 //			}
 //		}
-//		// Contact not found
+//		// ContactEntry not found
 //		if _, changed := user.AddOrUpdateContact(contact); changed {
 //			userChanged = true
 //		}
@@ -452,7 +452,7 @@ package maintainance
 //	return
 //}
 //
-//func (m *verifyContactTransfers) fixTransfers(c context.Context, now time.Time, buf *bytes.Buffer, contact models.Contact, transfers []models.Transfer) (
+//func (m *verifyContactTransfers) fixTransfers(c context.Context, now time.Time, buf *bytes.Buffer, contact models.ContactEntry, transfers []models.Transfer) (
 //	transfersByCurrency map[money.CurrencyCode][]models.Transfer,
 //	transfersToSave map[int]*models.TransferData,
 //) {

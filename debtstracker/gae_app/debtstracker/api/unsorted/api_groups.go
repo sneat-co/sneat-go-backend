@@ -327,7 +327,7 @@ func HandlerSetContactsToGroup(c context.Context, w http.ResponseWriter, r *http
 	}
 
 	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-		var contacts2add []models.Contact
+		var contacts2add []models.ContactEntry
 		if contacts2add, err = facade.GetContactsByIDs(c, tx, addContactIDs); err != nil {
 			return err
 		}

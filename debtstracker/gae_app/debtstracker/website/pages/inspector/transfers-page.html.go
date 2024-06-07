@@ -11,7 +11,7 @@ import (
 	"io"
 )
 
-func renderTransfersPage(contact models.Contact, currency money.CurrencyCode, balancesWithoutInterest, balancesWithInterest balanceRow, transfers []models.TransferEntry, w io.Writer) {
+func renderTransfersPage(contact models.ContactEntry, currency money.CurrencyCode, balancesWithoutInterest, balancesWithInterest balanceRow, transfers []models.TransferEntry, w io.Writer) {
 	_buffer := hero.GetBuffer()
 	defer hero.PutBuffer(_buffer)
 	_buffer.WriteString(`<!DOCTYPE html>
@@ -19,7 +19,7 @@ func renderTransfersPage(contact models.Contact, currency money.CurrencyCode, ba
 <head>
     <meta charset="UTF-8">
     <title>`)
-	_buffer.WriteString(`Contact # `)
+	_buffer.WriteString(`ContactEntry # `)
 	hero.EscapeHTML(contact.ID, _buffer)
 	_buffer.WriteString(`: `)
 	hero.EscapeHTML(fmt.Sprintf("%v", currency), _buffer)
@@ -38,7 +38,7 @@ func renderTransfersPage(contact models.Contact, currency money.CurrencyCode, ba
 	_buffer.WriteString(`
 
 <div class="row">
-    <h1>Contact # `)
+    <h1>ContactEntry # `)
 	hero.EscapeHTML(contact.ID, _buffer)
 	_buffer.WriteString(`: `)
 	hero.EscapeHTML(fmt.Sprintf("%v", currency), _buffer)
@@ -52,7 +52,7 @@ func renderTransfersPage(contact models.Contact, currency money.CurrencyCode, ba
             <th scope="col">Balances</th>
             <th scope="col">Currency</th>
             <th scope="col" class=d>User</th>
-            <th scope="col" class=d>Contact</th>
+            <th scope="col" class=d>ContactEntry</th>
             <th scope="col" class=d>Transfers</th>
         </tr>
         </thead>

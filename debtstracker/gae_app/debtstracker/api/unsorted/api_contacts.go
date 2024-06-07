@@ -67,7 +67,7 @@ func HandleCreateCounterparty(c context.Context, w http.ResponseWriter, r *http.
 		api.InternalError(c, w, err)
 		return
 	}
-	var counterparty models.Contact
+	var counterparty models.ContactEntry
 	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		counterparty, _, err = facade.CreateContact(c, tx, authInfo.UserID, contactDetails)
 		return err
@@ -105,7 +105,7 @@ func HandleGetContact(c context.Context, w http.ResponseWriter, r *http.Request,
 	contactToResponse(c, w, authInfo, counterparty)
 }
 
-func contactToResponse(c context.Context, w http.ResponseWriter, authInfo auth.AuthInfo, contact models.Contact) {
+func contactToResponse(c context.Context, w http.ResponseWriter, authInfo auth.AuthInfo, contact models.ContactEntry) {
 	if !authInfo.IsAdmin && contact.Data.UserID != authInfo.UserID {
 		w.WriteHeader(http.StatusForbidden)
 		return
@@ -193,7 +193,7 @@ func HandleDeleteContact(c context.Context, w http.ResponseWriter, r *http.Reque
 		api.InternalError(c, w, err)
 		return
 	}
-	log.Infof(c, "Contact deleted: %v", contactID)
+	log.Infof(c, "ContactEntry deleted: %v", contactID)
 }
 
 func HandleArchiveCounterparty(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {

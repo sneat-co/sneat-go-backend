@@ -67,7 +67,7 @@ package maintainance
 //	for _, contactID := range transfer.Data.BothCounterpartyIDs {
 //		if contactID != 0 {
 //			if _, err2 := facade.GetContactByID(c, tx, contactID); dal.IsNotFound(err2) {
-//				counters.Increment(fmt.Sprintf("Contact:%d", contactID), 1)
+//				counters.Increment(fmt.Sprintf("ContactEntry:%d", contactID), 1)
 //				_, _ = fmt.Fprintf(buf, "Unknown contact %d\n", contactID)
 //			} else if err2 != nil {
 //				err = fmt.Errorf("failed to get contact by ID=%v: %w", contactID, err2)

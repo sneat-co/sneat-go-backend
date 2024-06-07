@@ -65,9 +65,9 @@ func TestCreateTransfer(t *testing.T) {
 
 	/* Test CreateTransfer that should succeed  - new counterparty by name */
 	{
-		// counterparty, err := dtdal.Contact.CreateContact(c, user.ID, 0, 0, models.ContactDetails{
+		// counterparty, err := dtdal.ContactEntry.CreateContact(c, user.ID, 0, 0, models.ContactDetails{
 		// 	FirstName: "First",
-		// 	LastName:  "Contact",
+		// 	LastName:  "ContactEntry",
 		// })
 
 		from := &models.TransferCounterpartyInfo{
@@ -120,7 +120,7 @@ func TestCreateTransfer(t *testing.T) {
 		}
 
 		if toCounterparty.Data == nil {
-			t.Error("toCounterparty.DebtusContactData == nil")
+			t.Error("toCounterparty.DebtusContactDbo == nil")
 			return
 		}
 		if fromUser.Data == nil {
@@ -131,10 +131,10 @@ func TestCreateTransfer(t *testing.T) {
 			t.Errorf("transfer.CreatorUserID:%v != userID:%v", transfer.Data.CreatorUserID, userID)
 		}
 		if transfer.Data.Counterparty().ContactID != to.ContactID {
-			t.Errorf("transfer.Contact().ContactID:%v != to.ContactID:%v", transfer.Data.Counterparty().ContactID, to.ContactID)
+			t.Errorf("transfer.ContactEntry().ContactID:%v != to.ContactID:%v", transfer.Data.Counterparty().ContactID, to.ContactID)
 		}
 		if transfer.Data.Counterparty().ContactName == "" {
-			t.Error("transfer.Contact().ContactName is empty string")
+			t.Error("transfer.ContactEntry().ContactName is empty string")
 		}
 
 		transfer2, err := Transfers.GetTransferByID(c, nil, transfer.ID)
@@ -157,10 +157,10 @@ func TestCreateTransfer(t *testing.T) {
 			t.Error("toUser.ID != 0 && toUser.DebutsAppUserDataOBSOLETE == nil")
 		}
 		if toCounterparty.ID != "" && toCounterparty.Data == nil {
-			t.Error("fromCounterparty.DebtusContactData == nil")
+			t.Error("fromCounterparty.DebtusContactDbo == nil")
 		}
 		if fromCounterparty.ID != "" && fromCounterparty.Data == nil {
-			t.Error("fromCounterparty.ID != 0 && fromCounterparty.DebtusContactData == nil")
+			t.Error("fromCounterparty.ID != 0 && fromCounterparty.DebtusContactDbo == nil")
 		}
 	}
 }
@@ -456,7 +456,7 @@ func testCreateTransfer(t *testing.T, testCase createTransferTestCase) {
 		testCase.steps[i].createdTransferID = output.Transfer.ID
 
 		var (
-			contact models.Contact
+			contact models.ContactEntry
 		)
 		switch step.input.direction {
 		case models.TransferDirectionUser2Counterparty:
@@ -499,7 +499,7 @@ func testCreateTransfer(t *testing.T, testCase createTransferTestCase) {
 			}
 		}
 
-		var dbContact models.Contact
+		var dbContact models.ContactEntry
 		if dbContact, err = GetContactByID(c, nil, contact.ID); err != nil {
 			t.Errorf("step #%v: %v", i+1, err)
 			break

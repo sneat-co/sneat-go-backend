@@ -88,7 +88,7 @@ func HandleCreateBill(c context.Context, w http.ResponseWriter, r *http.Request,
 		}
 	}
 
-	var contacts []models.Contact
+	var contacts []models.ContactEntry
 	if len(contactIDs) > 0 {
 		if contacts, err = facade.GetContactsByIDs(c, nil, contactIDs); err != nil {
 			api.InternalError(c, w, err)

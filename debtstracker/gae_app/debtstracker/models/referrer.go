@@ -7,34 +7,9 @@ import (
 
 const RefererKind = "Referer"
 
-type Referer struct {
-	record.WithID[int]
-	Data *RefererEntity
-}
+type Referer = record.DataWithID[string, *RefererDbo]
 
-//var _ db.EntityHolder = (*Referer)(nil)
-
-//func (Referer) Kind() string {
-//	return RefererKind
-//}
-
-//func (r Referer) Entity() interface{} {
-//	return r.RefererEntity
-//}
-//
-//func (Referer) NewEntity() interface{} {
-//	return new(RefererEntity)
-//}
-//
-//func (r *Referer) SetEntity(entity interface{}) {
-//	if entity == nil {
-//		r.RefererEntity = nil
-//	} else {
-//		r.RefererEntity = entity.(*RefererEntity)
-//	}
-//}
-
-type RefererEntity struct {
+type RefererDbo struct {
 	Platform   string    `datastore:"p"`
 	ReferredTo string    `datastore:"to"`
 	ReferredBy string    `datastore:"by"`

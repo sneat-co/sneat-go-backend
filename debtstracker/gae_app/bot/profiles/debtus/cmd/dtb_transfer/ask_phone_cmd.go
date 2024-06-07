@@ -137,7 +137,7 @@ var AskPhoneNumberForReceiptCommand = botsfw.Command{
 const SMS_STATUS_MESSAGE_ID_PARAM_NAME = "SmsStatusMessageId"
 const SMS_STATUS_MESSAGE_UPDATES_COUNT_PARAM_NAME = "SmsStatusUpdatesCount"
 
-func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, phoneContact models.PhoneContact, transfer models.TransferEntry, counterparty models.Contact) (m botsfw.MessageFromBot, err error) {
+func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, phoneContact models.PhoneContact, transfer models.TransferEntry, counterparty models.ContactEntry) (m botsfw.MessageFromBot, err error) {
 	c := whc.Context()
 
 	if transfer.Data == nil {
@@ -296,7 +296,7 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, ph
 			return
 		}
 		if counterparty.Data.PhoneNumber == phoneContact.PhoneNumber {
-			var counterparty models.Contact
+			var counterparty models.ContactEntry
 			counterparty, err = facade.GetContactByID(c, tx, transfer.Data.Counterparty().ContactID)
 			if err != nil {
 				return

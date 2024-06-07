@@ -21,10 +21,10 @@ package maintainance
 //	return m.startContactWorker(c, counters, key, m.processContact)
 //}
 //
-//func (m *verifyContacts) processContact(c context.Context, counters *asyncCounters, contact models.Contact) (err error) {
+//func (m *verifyContacts) processContact(c context.Context, counters *asyncCounters, contact models.ContactEntry) (err error) {
 //	if _, err = facade.User.GetUserByID(c, nil, contact.Data.UserID); dal.IsNotFound(err) {
 //		counters.Increment("wrong_UserID", 1)
-//		log.Warningf(c, "Contact %d reference unknown user %d", contact.ID, contact.Data.UserID)
+//		log.Warningf(c, "ContactEntry %d reference unknown user %d", contact.ID, contact.Data.UserID)
 //	} else if err != nil {
 //		log.Errorf(c, err.Error())
 //		return
@@ -40,9 +40,9 @@ package maintainance
 //	return
 //}
 //
-//func (m *verifyContacts) verifyLinking(c context.Context, counters *asyncCounters, contact models.Contact) (err error) {
+//func (m *verifyContacts) verifyLinking(c context.Context, counters *asyncCounters, contact models.ContactEntry) (err error) {
 //	if contact.Data.CounterpartyCounterpartyID != 0 {
-//		var counterpartyContact models.Contact
+//		var counterpartyContact models.ContactEntry
 //		if counterpartyContact, err = facade.GetContactByID(c, nil, contact.Data.CounterpartyCounterpartyID); err != nil {
 //			log.Errorf(c, err.Error())
 //			return
@@ -62,8 +62,8 @@ package maintainance
 //	return
 //}
 //
-//func (m *verifyContacts) linkContacts(c context.Context, counters *asyncCounters, contact models.Contact) (err error) {
-//	var counterpartyContact models.Contact
+//func (m *verifyContacts) linkContacts(c context.Context, counters *asyncCounters, contact models.ContactEntry) (err error) {
+//	var counterpartyContact models.ContactEntry
 //	var db dal.DB
 //	if db, err = facade.GetDatabase(c); err != nil {
 //		return
@@ -100,7 +100,7 @@ package maintainance
 //	return
 //}
 //
-//func (m *verifyContacts) verifyBalance(c context.Context, counters *asyncCounters, contact models.Contact) (err error) {
+//func (m *verifyContacts) verifyBalance(c context.Context, counters *asyncCounters, contact models.ContactEntry) (err error) {
 //	balance := contact.Data.Balance()
 //	if FixBalanceCurrencies(balance) {
 //		if err = nds.RunInTransaction(c, func(c context.Context) (err error) {

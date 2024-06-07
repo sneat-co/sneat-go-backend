@@ -107,7 +107,7 @@ func HandleAdminMergeUserContacts(c context.Context, w http.ResponseWriter, r *h
 		if err := tx.Delete(c, models.NewDebtusContactKey(deleteID)); err != nil {
 			return err
 		} else {
-			log.Warningf(c, "Contact %d has been deleted from DB (non revocable)", deleteID)
+			log.Warningf(c, "ContactEntry %d has been deleted from DB (non revocable)", deleteID)
 		}
 		return nil
 	}); err != nil {

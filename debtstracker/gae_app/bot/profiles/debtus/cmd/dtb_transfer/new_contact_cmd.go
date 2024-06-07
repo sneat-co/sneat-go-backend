@@ -35,7 +35,7 @@ func NewCounterpartyCommand(nextCommand botsfw.Command) botsfw.Command {
 				input := whc.Input()
 				input.LogRequest()
 
-				var contact models.Contact
+				var contact models.ContactEntry
 
 				var (
 					contactDetails  models.ContactDetails
@@ -139,7 +139,7 @@ func NewCounterpartyCommand(nextCommand botsfw.Command) botsfw.Command {
 				}
 				chatEntity.AddWizardParam(WIZARD_PARAM_COUNTERPARTY, contact.ID)
 				return nextCommand.Action(whc)
-				//m = whc.NewMessageByCode(fmt.Sprintf("Contact Created: %v", counterpartyKey))
+				//m = whc.NewMessageByCode(fmt.Sprintf("ContactEntry Created: %v", counterpartyKey))
 			} else {
 				m = whc.NewMessageByCode(trans.MESSAGE_TEXT_ASK_NEW_COUNTERPARTY_NAME)
 				m.Format = botsfw.MessageFormatHTML

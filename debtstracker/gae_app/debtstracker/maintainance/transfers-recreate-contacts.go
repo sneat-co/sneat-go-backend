@@ -64,7 +64,7 @@ package maintainance
 //		}
 //		err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
 //			log.Debugf(c, "Recreating contact # %v", contactInfo.ContactID)
-//			var counterpartyContact models.Contact
+//			var counterpartyContact models.ContactEntry
 //			if counterpartyContact, err = facade.GetContactByID(c, tx, counterpartyInfo.ContactID); err != nil {
 //				return
 //			}
@@ -88,7 +88,7 @@ package maintainance
 //			}
 //
 //			if contactUserContactJson.ID == 0 {
-//				log.Errorf(c, "Contact %v info not found in user %v contacts json", contactInfo.ContactID, counterpartyInfo.UserID)
+//				log.Errorf(c, "ContactEntry %v info not found in user %v contacts json", contactInfo.ContactID, counterpartyInfo.UserID)
 //				return
 //			}
 //

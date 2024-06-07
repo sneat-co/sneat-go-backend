@@ -163,7 +163,7 @@ const ASK_DUE_DATE_COMMAND = "ask-due-date"
 //}
 
 func _transferAskDueDate(c botsfw.Command) _onContactSelectedAction {
-	return func(whc botsfw.WebhookContext, counterparty models.Contact) (m botsfw.MessageFromBot, err error) {
+	return func(whc botsfw.WebhookContext, counterparty models.ContactEntry) (m botsfw.MessageFromBot, err error) {
 		return c.Action(whc)
 	}
 }

@@ -30,7 +30,7 @@ func (h contactPage) contactPageHandler(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
-	var contact models.Contact
+	var contact models.ContactEntry
 	var err error
 
 	if contact, err = facade.GetContactByID(c, nil, contactID); err != nil {
@@ -39,7 +39,7 @@ func (h contactPage) contactPageHandler(w http.ResponseWriter, r *http.Request, 
 	}
 
 	//var user, counterpartyUser models.AppUser
-	//var counterpartyContact models.Contact
+	//var counterpartyContact models.ContactEntry
 	//
 
 	wg := new(sync.WaitGroup)
@@ -123,6 +123,6 @@ func (contactPage) verifyTransfers(c context.Context, contactID string) (
 //
 //}
 //
-//func renderCounterparty(w http.ResponseWriter, counterpartyUser models.AppUser, counterpartyContact models.Contact) {
+//func renderCounterparty(w http.ResponseWriter, counterpartyUser models.AppUser, counterpartyContact models.ContactEntry) {
 //
 //}

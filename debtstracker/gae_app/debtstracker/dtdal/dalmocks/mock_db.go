@@ -32,7 +32,7 @@ package dalmocks
 // 		//TaskQueueMock: NewTaskQueueDalMock(),
 // 	}
 //
-// 	dtdal.Contact = mockDB.ContactMock
+// 	dtdal.ContactEntry = mockDB.ContactMock
 // 	dtdal.Bill = mockDB.BillMock
 // 	dtdal.User = mockDB.UserMock
 // 	dtdal.Transfer = mockDB.TransferMock

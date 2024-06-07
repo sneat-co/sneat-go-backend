@@ -44,7 +44,7 @@ package maintainance
 //	var err error
 //	for i, userContact := range userContacts {
 //		contactID := userContact.ID
-//		var contact models.Contact
+//		var contact models.ContactEntry
 //		if contact, err = facade.GetContactByID(c, nil, contactID); err != nil {
 //			if dal.IsNotFound(err) {
 //				if err = m.createContact(c, buf, counters, user, userContact); err != nil {
@@ -92,7 +92,7 @@ package maintainance
 //}
 //
 //func (m *verifyUsers) createContact(c context.Context, buf *bytes.Buffer, counters *asyncCounters, user models.AppUser, userContact models.UserContactJson) (err error) {
-//	var contact models.Contact
+//	var contact models.ContactEntry
 //	var db dal.DB
 //	if db, err = facade.GetDatabase(c); err != nil {
 //		return

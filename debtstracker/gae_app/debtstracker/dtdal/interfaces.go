@@ -41,7 +41,7 @@ type TransferReturnUpdate struct {
 
 type RewardDal interface {
 	//GetRewardByID(c context.Context, rewardID int64) (reward models.Reward, err error)
-	InsertReward(c context.Context, tx dal.ReadwriteTransaction, rewardEntity *models.RewardData) (reward models.Reward, err error)
+	InsertReward(c context.Context, tx dal.ReadwriteTransaction, rewardEntity *models.RewardDbo) (reward models.Reward, err error)
 }
 
 type TransferDal interface {
@@ -136,13 +136,13 @@ type FeedbackDal interface {
 }
 
 type ContactDal interface {
-	GetLatestContacts(whc botsfw.WebhookContext, tx dal.ReadSession, limit, totalCount int) (contacts []models.Contact, err error)
-	InsertContact(c context.Context, tx dal.ReadwriteTransaction, contactEntity *models.DebtusContactData) (contact models.Contact, err error)
-	//CreateContact(c context.Context, userID int64, contactDetails models.ContactDetails) (contact models.Contact, user models.AppUser, err error)
-	//CreateContactWithinTransaction(c context.Context, user models.AppUser, contactUserID, counterpartyCounterpartyID int64, contactDetails models.ContactDetails, balanced money.Balanced) (contact models.Contact, err error)
-	//UpdateContact(c context.Context, contactID int64, values map[string]string) (contactEntity *models.DebtusContactData, err error)
+	GetLatestContacts(whc botsfw.WebhookContext, tx dal.ReadSession, limit, totalCount int) (contacts []models.ContactEntry, err error)
+	InsertContact(c context.Context, tx dal.ReadwriteTransaction, contactEntity *models.DebtusContactDbo) (contact models.ContactEntry, err error)
+	//CreateContact(c context.Context, userID int64, contactDetails models.ContactDetails) (contact models.ContactEntry, user models.AppUser, err error)
+	//CreateContactWithinTransaction(c context.Context, user models.AppUser, contactUserID, counterpartyCounterpartyID int64, contactDetails models.ContactDetails, balanced money.Balanced) (contact models.ContactEntry, err error)
+	//UpdateContact(c context.Context, contactID int64, values map[string]string) (contactEntity *models.DebtusContactDbo, err error)
 	GetContactIDsByTitle(c context.Context, tx dal.ReadSession, userID string, title string, caseSensitive bool) (contactIDs []string, err error)
-	GetContactsWithDebts(c context.Context, tx dal.ReadSession, userID string) (contacts []models.Contact, err error)
+	GetContactsWithDebts(c context.Context, tx dal.ReadSession, userID string) (contacts []models.ContactEntry, err error)
 }
 
 type BillsHolderGetter func(c context.Context) (billsHolder dal.Record, err error)

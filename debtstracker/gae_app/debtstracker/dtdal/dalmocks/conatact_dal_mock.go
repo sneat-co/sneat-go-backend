@@ -19,12 +19,12 @@ package dalmocks
 //	return &ContactDalMock{Contacts: make(map[int64]*models.ContactEntity)}
 //}
 //
-//func (mock *ContactDalMock) GetLatestContacts(whc botsfw.WebhookContext, limit, totalCount int) (contacts []models.Contact, err error) {
+//func (mock *ContactDalMock) GetLatestContacts(whc botsfw.WebhookContext, limit, totalCount int) (contacts []models.ContactEntry, err error) {
 //	_, _, _ = whc, limit, totalCount
 //	return
 //}
 //
-//func (mock *ContactDalMock) InsertContact(_ context.Context, contactEntity *models.ContactEntity) (contact models.Contact, err error) {
+//func (mock *ContactDalMock) InsertContact(_ context.Context, contactEntity *models.ContactEntity) (contact models.ContactEntry, err error) {
 //	if contactEntity == nil {
 //		panic("contactEntity == nil")
 //	}
@@ -35,11 +35,11 @@ package dalmocks
 //	return
 //}
 //
-////CreateContact(c context.Context, userID int64, contactDetails models.ContactDetails) (contact models.Contact, user models.AppUser, err error)
-////CreateContactWithinTransaction(c context.Context, user models.AppUser, contactUserID, counterpartyCounterpartyID int64, contactDetails models.ContactDetails, balanced money.Balanced) (contact models.Contact, err error)
+////CreateContact(c context.Context, userID int64, contactDetails models.ContactDetails) (contact models.ContactEntry, user models.AppUser, err error)
+////CreateContactWithinTransaction(c context.Context, user models.AppUser, contactUserID, counterpartyCounterpartyID int64, contactDetails models.ContactDetails, balanced money.Balanced) (contact models.ContactEntry, err error)
 ////UpdateContact(c context.Context, contactID int64, values map[string]string) (contactEntity *models.ContactEntity, err error)
 //
-//func (mock *ContactDalMock) SaveContact(c context.Context, contact models.Contact) (err error) {
+//func (mock *ContactDalMock) SaveContact(c context.Context, contact models.ContactEntry) (err error) {
 //	mock.Contacts[contact.ID] = contact.Data
 //	return
 //}
@@ -53,6 +53,6 @@ package dalmocks
 //	return
 //}
 //
-//func (mock *ContactDalMock) GetContactsWithDebts(c context.Context, userID int64) (contacts []models.Contact, err error) {
+//func (mock *ContactDalMock) GetContactsWithDebts(c context.Context, userID int64) (contacts []models.ContactEntry, err error) {
 //	return
 //}

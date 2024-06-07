@@ -131,7 +131,7 @@ var ParseTransferCommand = botsfw.Command{
 			//TODO: Convert to time.Time
 			buffer.WriteString(" " + when)
 		}
-		var counterparty models.Contact
+		var counterparty models.ContactEntry
 		switch direction {
 		case models.TransferDirectionUser2Counterparty:
 			counterparty = output.To.Contact

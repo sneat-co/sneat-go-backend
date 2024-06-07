@@ -182,7 +182,7 @@ func delayedUpdateTransferWithCounterparty(c context.Context, transferID string,
 				changed = true
 			}
 			log.Debugf(c, "transferCounterparty after: %v", transferCounterparty)
-			log.Debugf(c, "transfer.Contact() after: %v", transfer.Data.Counterparty())
+			log.Debugf(c, "transfer.ContactEntry() after: %v", transfer.Data.Counterparty())
 		}
 		log.Debugf(c, "transfer.From() after: %v", transfer.Data.From())
 		log.Debugf(c, "transfer.To() after: %v", transfer.Data.To())

@@ -20,7 +20,7 @@ type WithRelatedAndIDs struct {
 
 	//	Example of related field as a JSON and relevant relatedIDs field:
 	/*
-	   Contact(id="child1") {
+	   ContactEntry(id="child1") {
 	   	relatedIDs: ["team1:parent1:contactus:contacts:parent"],
 	   	related: {
 	   		"team1": { // Team ID

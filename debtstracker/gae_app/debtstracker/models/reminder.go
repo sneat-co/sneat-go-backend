@@ -33,17 +33,17 @@ var ReminderStatuses = []string{
 
 const ReminderKind = "Reminder"
 
-//var _ datastore.PropertyLoadSaver = (*ReminderEntity)(nil)
+//var _ datastore.PropertyLoadSaver = (*ReminderDbo)(nil)
 
-type Reminder = record.DataWithID[string, *ReminderEntity]
+type Reminder = record.DataWithID[string, *ReminderDbo]
 
 //var _ db.EntityHolder = (*Reminder)(nil)
 
-func NewReminder(id string, entity *ReminderEntity) Reminder {
+func NewReminder(id string, entity *ReminderDbo) Reminder {
 	return record.NewDataWithID(id, nil, entity)
 }
 
-type ReminderEntity struct {
+type ReminderDbo struct {
 	ParentReminderID    int  `datastore:",omitempty"`
 	IsAutomatic         bool `datastore:",noindex,omitempty"`
 	IsRescheduled       bool `datastore:",noindex,omitempty"`
@@ -69,7 +69,7 @@ type ReminderEntity struct {
 	ErrDetails          string    `datastore:",noindex,omitempty"`
 }
 
-//func (r *ReminderEntity) Save() (properties []datastore.Property, err error) {
+//func (r *ReminderDbo) Save() (properties []datastore.Property, err error) {
 //	if err = r.validate(); err != nil {
 //		return nil, err
 //	}
@@ -100,7 +100,7 @@ type ReminderEntity struct {
 //	return
 //}
 
-func (r *ReminderEntity) Validate() (err error) {
+func (r *ReminderDbo) Validate() (err error) {
 	if err = validateString("Unknown reminder.Status", r.Status, ReminderStatuses); err != nil {
 		return err
 	}
@@ -125,8 +125,8 @@ func (r *ReminderEntity) Validate() (err error) {
 	return nil
 }
 
-func NewReminderViaTelegram(botID string, chatID int64, userID, transferID string, isAutomatic bool, next time.Time) (reminder *ReminderEntity) {
-	return &ReminderEntity{
+func NewReminderViaTelegram(botID string, chatID int64, userID, transferID string, isAutomatic bool, next time.Time) (reminder *ReminderDbo) {
+	return &ReminderDbo{
 		Status:      ReminderStatusCreated,
 		SentVia:     telegram.PlatformID,
 		BotID:       botID,
@@ -139,7 +139,7 @@ func NewReminderViaTelegram(botID string, chatID int64, userID, transferID strin
 	}
 }
 
-func (r *ReminderEntity) ScheduleNextReminder(parentReminderID int, next time.Time) *ReminderEntity {
+func (r *ReminderDbo) ScheduleNextReminder(parentReminderID int, next time.Time) *ReminderDbo {
 	reminder := *r
 	reminder.ParentReminderID = parentReminderID
 	reminder.Status = ReminderStatusRescheduled

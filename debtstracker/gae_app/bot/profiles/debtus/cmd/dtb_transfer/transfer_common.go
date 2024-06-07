@@ -233,7 +233,7 @@ func AskTransferAmountCommand(code, messageTextFormat string, nextCommand botsfw
 	}
 }
 
-type _onContactSelectedAction func(whc botsfw.WebhookContext, counterparty models.Contact) (m botsfw.MessageFromBot, err error)
+type _onContactSelectedAction func(whc botsfw.WebhookContext, counterparty models.ContactEntry) (m botsfw.MessageFromBot, err error)
 
 func CreateAskTransferCounterpartyCommand(
 	isReturn bool,
@@ -285,7 +285,7 @@ func CreateAskTransferCounterpartyCommand(
 						case 1:
 							contactID := contactIDs[0]
 							chatEntity.AddWizardParam(WIZARD_PARAM_COUNTERPARTY, contactID)
-							var contact models.Contact
+							var contact models.ContactEntry
 							if contact, err = facade.GetContactByID(c, nil, contactID); err != nil {
 								return
 							}

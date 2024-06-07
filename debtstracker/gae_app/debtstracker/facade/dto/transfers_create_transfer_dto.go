@@ -72,7 +72,7 @@ type CreateTransferInput struct {
 
 type CreateTransferOutputCounterparty struct {
 	User    models.AppUser
-	Contact models.Contact
+	Contact models.ContactEntry
 }
 
 type CreateTransferOutput struct {

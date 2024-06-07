@@ -102,7 +102,7 @@ func removeFromOutstandingWithInterest(c context.Context, tx dal.ReadwriteTransa
 		removeFromUser := func() (err error) {
 			var (
 				user models.AppUser
-				//contact models.Contact
+				//contact models.ContactEntry
 			)
 
 			if user, err = facade.User.GetUserByID(c, tx, userID); err != nil {
@@ -125,7 +125,7 @@ func removeFromOutstandingWithInterest(c context.Context, tx dal.ReadwriteTransa
 		}
 		removeFromContact := func() (err error) {
 			var (
-				contact models.Contact
+				contact models.ContactEntry
 			)
 			if contact, err = facade.GetContactByID(c, tx, contactID); err != nil {
 				return

@@ -52,7 +52,7 @@ func ShowReceipt(whc botsfw.WebhookContext, receiptID string) (m botsfw.MessageF
 
 	var (
 		mt           string
-		counterparty models.Contact
+		counterparty models.ContactEntry
 	)
 	counterpartyCounterparty := transfer.Data.Creator()
 
@@ -62,7 +62,7 @@ func ShowReceipt(whc botsfw.WebhookContext, receiptID string) (m botsfw.MessageF
 		if user, err := facade.User.GetUserByID(c, nil, transfer.Data.CreatorUserID); err != nil {
 			return m, err
 		} else {
-			counterparty.Data = &models.DebtusContactData{}
+			counterparty.Data = &models.DebtusContactDbo{}
 			counterparty.Data.FirstName = user.Data.FirstName
 			counterparty.Data.LastName = user.Data.LastName
 		}
@@ -210,7 +210,7 @@ func viewReceiptCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) 
 //			mt := getInlineReceiptMessage(whc, true, fmt.Sprintf("%v %v", sender.GetFirstName(), sender.GetLastName()))
 //			editedMessage := tgbotapi.NewEditMessageTextByInlineMessageID(
 //				whc.InputCallbackQuery().GetInlineMessageID(),
-//				mt+"\n\n"+whc.Translate(trans.MESSAGE_TEXT_FOR_COUNTERPARTY_ONLY, transfer.Contact().ContactName),
+//				mt+"\n\n"+whc.Translate(trans.MESSAGE_TEXT_FOR_COUNTERPARTY_ONLY, transfer.ContactEntry().ContactName),
 //			)
 //			editedMessage.ParseMode = "HTML"
 //			editedMessage.ReplyMarkup = tgbotapi.InlineKeyboardMarkup{

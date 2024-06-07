@@ -10,7 +10,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 )
 
-func RenderContactPage(contact models.Contact, w io.Writer) {
+func RenderContactPage(contact models.ContactEntry, w io.Writer) {
 	_buffer := hero.GetBuffer()
 	defer hero.PutBuffer(_buffer)
 	_buffer.WriteString(`<!DOCTYPE html>
@@ -18,7 +18,7 @@ func RenderContactPage(contact models.Contact, w io.Writer) {
 <head>
     <meta charset="UTF-8">
     <title>`)
-	_buffer.WriteString(`Contact # `)
+	_buffer.WriteString(`ContactEntry # `)
 	hero.EscapeHTML(contact.ID, _buffer)
 
 	_buffer.WriteString(`</title>
@@ -35,7 +35,7 @@ func RenderContactPage(contact models.Contact, w io.Writer) {
 	_buffer.WriteString(`
 
         <div class="row">
-            <h1>Contact # `)
+            <h1>ContactEntry # `)
 	hero.EscapeHTML(contact.ID, _buffer)
 	_buffer.WriteString(`</h1>
         </div>

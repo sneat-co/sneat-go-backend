@@ -147,7 +147,7 @@ func updateUserWithContact(c context.Context, userID, contactID string) (err err
 		return
 	}
 	return db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-		var contact models.Contact
+		var contact models.ContactEntry
 		if contact, err = facade.GetContactByID(c, tx, contactID); err != nil {
 			if dal.IsNotFound(err) {
 				log.Warningf(c, "contact not found: %v", err)

@@ -19,7 +19,7 @@ func TestUsersLinker_LinkUsersWithinTransaction(t *testing.T) {
 	var (
 		err                            error
 		inviterUser, invitedUser       models.AppUser
-		inviterContact, invitedContact models.Contact
+		inviterContact, invitedContact models.ContactEntry
 	)
 
 	if inviterUser, err = User.GetUserByID(c, nil, "1"); err != nil {
@@ -87,7 +87,7 @@ func TestUsersLinker_LinkUsersWithinTransaction(t *testing.T) {
 	}
 
 	if invitedContact.Data == nil {
-		t.Error("invitedContact.DebtusContactData == nil")
+		t.Error("invitedContact.DebtusContactDbo == nil")
 		return
 	}
 

@@ -39,7 +39,7 @@ func (linker *ReceiptUsersLinker) LinkReceiptUsers(c context.Context, receiptID,
 		log.Debugf(c, "A new user, will wait for half a seconds to cleanup previous transaction")
 		time.Sleep(time.Second / 2)
 	}
-	var invitedContact models.Contact
+	var invitedContact models.ContactEntry
 	attempt := 0
 	err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
 		if attempt += 1; attempt > 1 {
@@ -110,7 +110,7 @@ func (linker *ReceiptUsersLinker) linkUsersByReceiptWithinTransaction(
 	receipt := changes.receipt
 	transfer := changes.transfer
 	inviterUser, invitedUser := *changes.inviterUser, *changes.invitedUser
-	var invitedContact, inviterContact models.Contact
+	var invitedContact, inviterContact models.ContactEntry
 	if changes.inviterContact != nil {
 		inviterContact = *changes.inviterContact
 	}
@@ -253,7 +253,7 @@ func (linker *ReceiptUsersLinker) updateTransfer() (err error) {
 		if transfer.ID == "" || transfer.Data == nil {
 			panic(fmt.Sprintf("Invalid parameter: transfer: %v", transfer))
 		}
-		validateSide := func(side string, user models.AppUser, contact models.Contact) {
+		validateSide := func(side string, user models.AppUser, contact models.ContactEntry) {
 			if user.ID == "" || user.Data == nil {
 				panic(fmt.Sprintf("ReceiptUsersLinker.updateTransfer() => %vUser: %v", side, user))
 			}
@@ -274,7 +274,7 @@ func (linker *ReceiptUsersLinker) updateTransfer() (err error) {
 
 	if transferCounterparty.UserID != invitedUser.ID {
 		if transferCounterparty.UserID != "" {
-			err = fmt.Errorf("transfer.Contact().UserID != counterpartyUserID : %s != %s",
+			err = fmt.Errorf("transfer.ContactEntry().UserID != counterpartyUserID : %s != %s",
 				transfer.Data.Counterparty().UserID, invitedUser.ID)
 			return
 		}
@@ -286,7 +286,7 @@ func (linker *ReceiptUsersLinker) updateTransfer() (err error) {
 		side string,
 		counterparty *models.TransferCounterpartyInfo,
 		user models.AppUser,
-		contact models.Contact,
+		contact models.ContactEntry,
 	) {
 		if contact.Data.UserID == user.ID {
 			panic(fmt.Sprintf(

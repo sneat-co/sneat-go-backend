@@ -18,7 +18,7 @@ import (
 )
 
 type contactWithBalances struct {
-	models.Contact
+	models.ContactEntry
 	transfersCount int
 	balances       balances
 }
@@ -28,11 +28,11 @@ type transfersInfo struct {
 	balance money.Balance
 }
 
-func newContactWithBalances(c context.Context, now time.Time, contact models.Contact) contactWithBalances {
+func newContactWithBalances(c context.Context, now time.Time, contact models.ContactEntry) contactWithBalances {
 	balanceWithInterest, err := contact.Data.BalanceWithInterest(c, now)
 	result := contactWithBalances{
-		Contact:  contact,
-		balances: newBalances("contact", contact.Data.Balance(), balanceWithInterest),
+		ContactEntry: contact,
+		balances:     newBalances("contact", contact.Data.Balance(), balanceWithInterest),
 	}
 	result.balances.withInterest.err = err
 	return result
@@ -130,7 +130,7 @@ func validateContacts(c context.Context,
 	contactsTotalWithoutInterest := make(money.Balance, len(userBalances.withoutInterest.byCurrency))
 	contactsTotalWithInterest := make(money.Balance, len(userBalances.withInterest.byCurrency))
 
-	updateBalance := func(contact models.Contact) (ci contactWithBalances, err error) {
+	updateBalance := func(contact models.ContactEntry) (ci contactWithBalances, err error) {
 		contactBalanceWithoutInterest := contact.Data.Balance()
 		contactBalanceWithInterest, err := contact.Data.BalanceWithInterest(c, now)
 		if err == nil {
@@ -167,7 +167,7 @@ func validateContacts(c context.Context,
 	}
 
 	for i, userContactInfo := range userContactsJson {
-		var contact models.Contact
+		var contact models.ContactEntry
 		if contact, err = facade.GetContactByID(c, nil, userContactInfo.ID); err != nil {
 			if dal.IsNotFound(err) {
 				contactInfosNotFoundInDb = append(contactInfosNotFoundInDb, userContactInfo)
@@ -206,7 +206,7 @@ func validateContacts(c context.Context,
 		if contactInfo, ok := contactInfosByID[key.StringID()]; ok {
 			matchedContacts = append(matchedContacts, contactInfo)
 		} else {
-			var contact models.Contact
+			var contact models.ContactEntry
 			if contact, err = facade.GetContactByID(c, nil, key.StringID()); err != nil {
 				return
 			}

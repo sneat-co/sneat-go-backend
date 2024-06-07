@@ -38,7 +38,7 @@ func TestRegisterDal(t *testing.T) {
 		t.Error("dtdal.Bill == nil")
 	}
 	if dtdal.Contact == nil {
-		t.Error("dtdal.Contact == nil")
+		t.Error("dtdal.ContactEntry == nil")
 	}
 	if dtdal.Receipt == nil {
 		t.Error("dtdal.Receipt == nil")

@@ -28,7 +28,7 @@ func CounterpartyPage(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 		return
 	}
 	_, _ = w.Write([]byte(fmt.Sprintf(`<html>
-	<head><title>Contact: %v</title>
+	<head><title>ContactEntry: %v</title>
 	<meta name="description" content="Transfered amount: %v">
 	<link rel="canonical" href="./counterparty?id=%v" />
 	<style>
@@ -39,7 +39,7 @@ func CounterpartyPage(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 	<body>
 	<header><a href="/">DebtsTracker.io</a></header>
 	<hr>
-	<h1>Contact: %v</h1>
+	<h1>ContactEntry: %v</h1>
 
 	<footer style="margin-top:50px; border-top: 1px solid lightgrey; padding-top:10px">
 	<small style="color:grey">2016 &copy; Powered by <a href="https://golang.org/" target="_blank">Go lang</a> & <a href="https://cloud.google.com/appengine/" target="_blank">AppEngine</a></small>

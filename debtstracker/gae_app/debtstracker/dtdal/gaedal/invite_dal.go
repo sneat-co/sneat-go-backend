@@ -212,7 +212,7 @@ func (InviteDalGae) ClaimInvite2(c context.Context, inviteCode string, invite mo
 					return fmt.Errorf("ailed to get invite creator user: %w", err)
 				}
 
-				counterparty := models.NewDebtusContact("", models.NewDebtusContactData(claimedByUserID, models.ContactDetails{
+				counterparty := models.NewDebtusContact("", models.NewDebtusContactDbo(claimedByUserID, models.ContactDetails{
 					FirstName:    inviteCreator.Data.FirstName,
 					LastName:     inviteCreator.Data.LastName,
 					Username:     inviteCreator.Data.Username,

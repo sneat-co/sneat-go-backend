@@ -193,7 +193,7 @@ func discardReminder(c context.Context, tx dal.ReadwriteTransaction, reminderID,
 
 	var (
 		transfer = models.NewTransfer(transferID, nil)
-		reminder = models.NewReminder(reminderID, new(models.ReminderEntity))
+		reminder = models.NewReminder(reminderID, new(models.ReminderDbo))
 	)
 
 	if returnTransferID > "" {
@@ -279,7 +279,7 @@ func discardReminder(c context.Context, tx dal.ReadwriteTransaction, reminderID,
 	return err
 }
 
-func GetTranslatorForReminder(c context.Context, reminder *models.ReminderEntity) i18n.SingleLocaleTranslator {
+func GetTranslatorForReminder(c context.Context, reminder *models.ReminderDbo) i18n.SingleLocaleTranslator {
 	return i18n.NewSingleMapTranslator(i18n.GetLocaleByCode5(reminder.Locale), i18n.NewMapTranslator(c, trans.TRANS))
 }
 

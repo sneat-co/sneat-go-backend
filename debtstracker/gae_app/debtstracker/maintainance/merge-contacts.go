@@ -49,7 +49,7 @@ func mergeContacts(c context.Context, tx dal.ReadwriteTransaction, targetContact
 	}
 
 	var (
-		targetContact models.Contact
+		targetContact models.ContactEntry
 		user          models.AppUser
 	)
 
@@ -76,7 +76,7 @@ func mergeContacts(c context.Context, tx dal.ReadwriteTransaction, targetContact
 			err = fmt.Errorf("sourceContactID == targetContactID: %v", sourceContactID)
 			return
 		}
-		var sourceContact models.Contact
+		var sourceContact models.ContactEntry
 		if sourceContact, err = facade.GetContactByID(c, tx, sourceContactID); err != nil {
 			if dal.IsNotFound(err) {
 				continue
@@ -126,7 +126,7 @@ func mergeContacts(c context.Context, tx dal.ReadwriteTransaction, targetContact
 					for currency, value := range contact.Balance() {
 						targetContactBalance.Add(money.NewAmount(currency, value))
 					}
-					var sourceContact models.Contact
+					var sourceContact models.ContactEntry
 					if sourceContact, err = facade.GetContactByID(c, tx, sourceContactID); err != nil {
 						if !dal.IsNotFound(err) {
 							return
@@ -138,7 +138,7 @@ func mergeContacts(c context.Context, tx dal.ReadwriteTransaction, targetContact
 							targetContact.Data.LastTransferID = sourceContact.Data.LastTransferID
 						}
 						if sourceContact.Data.CounterpartyCounterpartyID != "" {
-							var counterpartyContact models.Contact
+							var counterpartyContact models.ContactEntry
 							if counterpartyContact, err = facade.GetContactByID(c, tx, sourceContact.Data.CounterpartyCounterpartyID); err != nil {
 								if !dal.IsNotFound(err) {
 									return

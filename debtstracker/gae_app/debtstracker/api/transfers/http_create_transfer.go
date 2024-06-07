@@ -41,7 +41,7 @@ func HandleCreateTransfer(c context.Context, w http.ResponseWriter, r *http.Requ
 				Transfer: dto.TransferToDto(authInfo.UserID, output.Transfer),
 			}
 
-			var counterparty models.Contact
+			var counterparty models.ContactEntry
 			switch output.Transfer.Data.CreatorUserID {
 			case output.Transfer.Data.From().UserID:
 				counterparty = output.To.Contact
