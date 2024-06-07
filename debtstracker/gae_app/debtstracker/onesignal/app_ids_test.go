@@ -2,6 +2,7 @@ package onesignal
 
 import "testing"
 
+//goland:noinspection ALL
 func TestConstants(t *testing.T) {
 	if APP_ID_LOCAL == "" {
 		t.Error("APP_ID_LOCAL is not set")
