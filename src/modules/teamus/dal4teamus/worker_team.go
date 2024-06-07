@@ -49,7 +49,7 @@ func (v TeamWorkerParams) GetRecords(ctx context.Context, tx dal.ReadSession, re
 }
 
 // ModuleTeamWorkerParams passes data to a team worker
-type ModuleTeamWorkerParams[D TeamModuleData] struct {
+type ModuleTeamWorkerParams[D TeamModuleDbo] struct {
 	*TeamWorkerParams
 	TeamModuleEntry   record.DataWithID[string, D]
 	TeamModuleUpdates []dal.Update
@@ -59,13 +59,13 @@ func (v ModuleTeamWorkerParams[D]) GetRecords(ctx context.Context, tx dal.ReadSe
 	return v.TeamWorkerParams.GetRecords(ctx, tx, append(records, v.TeamModuleEntry.Record)...)
 }
 
-type ModuleData interface {
+type ModuleDbo interface {
 	Validate() error
 }
 
-type TeamModuleData = ModuleData
+type TeamModuleDbo = ModuleDbo
 
-func RunModuleTeamWorkerTx[D TeamModuleData](
+func RunModuleTeamWorkerTx[D TeamModuleDbo](
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	user facade.User,
@@ -82,7 +82,7 @@ func RunModuleTeamWorkerTx[D TeamModuleData](
 	return runModuleTeamWorkerReadwriteTx(ctx, tx, params, worker)
 }
 
-func NewTeamModuleWorkerParams[D TeamModuleData](
+func NewTeamModuleWorkerParams[D TeamModuleDbo](
 	moduleID string,
 	teamWorkerParams *TeamWorkerParams,
 	data D,
@@ -96,7 +96,7 @@ func NewTeamModuleWorkerParams[D TeamModuleData](
 	}
 }
 
-func runModuleTeamWorkerReadonlyTx[D TeamModuleData](
+func runModuleTeamWorkerReadonlyTx[D TeamModuleDbo](
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	params *ModuleTeamWorkerParams[D],
@@ -108,7 +108,7 @@ func runModuleTeamWorkerReadonlyTx[D TeamModuleData](
 	return nil
 }
 
-func runModuleTeamWorkerReadwriteTx[D TeamModuleData](
+func runModuleTeamWorkerReadwriteTx[D TeamModuleDbo](
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	params *ModuleTeamWorkerParams[D],
@@ -126,7 +126,7 @@ func runModuleTeamWorkerReadwriteTx[D TeamModuleData](
 	return nil
 }
 
-func RunReadonlyModuleTeamWorker[D TeamModuleData](
+func RunReadonlyModuleTeamWorker[D TeamModuleDbo](
 	ctx context.Context,
 	user facade.User,
 	request dto4teamus.TeamRequest,
@@ -143,7 +143,7 @@ func RunReadonlyModuleTeamWorker[D TeamModuleData](
 	})
 }
 
-func RunModuleTeamWorker[D TeamModuleData](
+func RunModuleTeamWorker[D TeamModuleDbo](
 	ctx context.Context,
 	user facade.User,
 	request dto4teamus.TeamRequest,
@@ -209,7 +209,7 @@ func applyTeamUpdates(ctx context.Context, tx dal.ReadwriteTransaction, params *
 	return err
 }
 
-func applyTeamModuleUpdates[D TeamModuleData](ctx context.Context, tx dal.ReadwriteTransaction, params *ModuleTeamWorkerParams[D]) (err error) {
+func applyTeamModuleUpdates[D TeamModuleDbo](ctx context.Context, tx dal.ReadwriteTransaction, params *ModuleTeamWorkerParams[D]) (err error) {
 	if len(params.TeamModuleUpdates) > 0 {
 		if err = params.TeamModuleEntry.Data.Validate(); err != nil {
 			return fmt.Errorf("team module record is not valid before applying team module updates: %w", err)
@@ -228,7 +228,7 @@ func applyTeamModuleUpdates[D TeamModuleData](ctx context.Context, tx dal.Readwr
 }
 
 // CreateTeamItem creates a team item
-func CreateTeamItem[D TeamModuleData](
+func CreateTeamItem[D TeamModuleDbo](
 	ctx context.Context,
 	user facade.User,
 	teamRequest dto4teamus.TeamRequest,

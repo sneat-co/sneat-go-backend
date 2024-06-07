@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/const4listus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -23,14 +22,34 @@ func DeleteList(ctx context.Context, user facade.User, request ListRequest) (err
 	}
 	listType := request.ListType()
 	id := dbo4listus.GetFullListID(listType, request.ListID)
-	key := dal4listus.NewTeamListKey(request.TeamID, id)
-	input := dal4teamus.TeamItemRunnerInput[*dbo4listus.ListusTeamDto]{
-		Counter:       "lists",
-		TeamItem:      dal.NewRecord(key),
-		BriefsAdapter: briefsAdapter(listType, request.ListID),
+	briefsAdapter := dal4teamus.NewMapBriefsAdapter(
+		func(teamModuleDbo *dbo4listus.ListusTeamDbo) int {
+			return len(teamModuleDbo.Lists)
+		},
+		func(teamModuleDbo *dbo4listus.ListusTeamDbo, id string) ([]dal.Update, error) {
+			delete(teamModuleDbo.Lists, id)
+			return []dal.Update{{Field: "lists." + id, Value: dal.DeleteField}}, teamModuleDbo.Validate()
+		},
+	)
+	teamItemRequest := dal4teamus.TeamItemRequest{
+		TeamRequest: request.TeamRequest,
+		ID:          id,
 	}
-	err = dal4teamus.DeleteTeamItem(ctx, user, input, const4listus.ModuleID, new(dbo4listus.ListusTeamDto), func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.TeamItemWorkerParams) (err error) {
-		return errors.New("not implemented")
-	})
+	err = dal4teamus.DeleteTeamItem(
+		ctx,
+		user,
+		teamItemRequest,
+		const4listus.ModuleID,
+		new(dbo4listus.ListusTeamDbo),
+		dbo4listus.ListsCollection,
+		new(dbo4listus.ListDbo),
+		briefsAdapter,
+		deleteListTxWorker,
+	)
+
 	return
+}
+
+func deleteListTxWorker(_ context.Context, _ dal.ReadwriteTransaction, _ *dal4teamus.TeamItemWorkerParams[*dbo4listus.ListusTeamDbo, *dbo4listus.ListDbo]) (err error) {
+	return errors.New("not implemented")
 }

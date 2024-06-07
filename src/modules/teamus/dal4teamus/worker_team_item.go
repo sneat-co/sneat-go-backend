@@ -8,15 +8,11 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
-	"strings"
-	"time"
 )
 
-type teamItemWorker = func(
-	ctx context.Context,
-	tx dal.ReadwriteTransaction,
-	params *TeamItemWorkerParams,
-) (err error)
+type TeamItemDbo = interface {
+	Validate() error
+}
 
 // TeamItemRequest DTO
 type TeamItemRequest struct {
@@ -41,45 +37,73 @@ type SliceIndexes struct {
 	End   int
 }
 
-// BriefsAdapter defines brief adapters
-type BriefsAdapter[D TeamModuleData] struct {
-	BriefsFieldName string
-	BriefsValue     func(team D) interface{}
-	GetBriefsCount  func(team D) int
-	GetBriefItemID  func(team D, i int) (id string)
-	ShiftBriefs     func(team D, from SliceIndexes, end SliceIndexes)
-	TrimBriefs      func(team D, count int)
+type Brief = interface {
+	Validate()
 }
 
-// TeamItemRunnerInput request
-type TeamItemRunnerInput[D TeamModuleData] struct {
-	dto4teamus.TeamRequest
-	IsTeamRecordNeeded bool
-	TeamItem           dal.Record
-	ShortID            string
-	Counter            string
-	*BriefsAdapter[D]
+type BriefsAdapter[ModuleDbo TeamModuleDbo] interface {
+	DeleteBrief(team ModuleDbo, id string) ([]dal.Update, error)
+	GetBriefsCount(team ModuleDbo) int
 }
 
-// Validate validates request
-func (v TeamItemRunnerInput[D]) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
-		return err
+type mapBriefsAdapter[ModuleDbo TeamModuleDbo] struct {
+	getBriefsCount func(team ModuleDbo) int
+	deleteBrief    func(team ModuleDbo, id string) ([]dal.Update, error)
+}
+
+func (v mapBriefsAdapter[ModuleDbo]) DeleteBrief(teamModuleDbo ModuleDbo, id string) ([]dal.Update, error) {
+	return v.deleteBrief(teamModuleDbo, id)
+}
+
+func (v mapBriefsAdapter[ModuleDbo]) GetBriefsCount(teamModuleDbo ModuleDbo) int {
+	return v.getBriefsCount(teamModuleDbo)
+}
+
+func NewMapBriefsAdapter[ModuleDbo TeamModuleDbo](
+	getBriefsCount func(teamModuleDbo ModuleDbo) int,
+	deleteBrief func(teamModuleDbo ModuleDbo, id string) ([]dal.Update, error),
+) BriefsAdapter[ModuleDbo] {
+	return mapBriefsAdapter[ModuleDbo]{
+		getBriefsCount: getBriefsCount,
+		deleteBrief:    deleteBrief,
 	}
-	if strings.TrimSpace(v.ShortID) == "" {
-		return validation.NewErrRequestIsMissingRequiredField("shortID")
-	}
-	return nil
 }
 
 // TeamItemWorkerParams defines params for team item worker
-type TeamItemWorkerParams struct {
-	//Counter     string
-	Started     time.Time
-	Team        TeamEntry
-	TeamKey     *dal.Key
-	TeamUpdates []dal.Update
-	TeamItem    dal.Record
+type TeamItemWorkerParams[ModuleDbo TeamModuleDbo, ItemDbo TeamItemDbo] struct {
+	*ModuleTeamWorkerParams[ModuleDbo]
+	TeamItem        record.DataWithID[string, ItemDbo]
+	TeamItemUpdates []dal.Update
+}
+
+func RunTeamItemWorker[ModuleDbo TeamModuleDbo, ItemDbo TeamItemDbo](
+	ctx context.Context,
+	user facade.User,
+	request TeamItemRequest,
+	moduleID string,
+	teamModuleData ModuleDbo,
+	teamItemCollection string,
+	teamItemDbo ItemDbo,
+	worker func(ctx context.Context, tx dal.ReadwriteTransaction, params *TeamItemWorkerParams[ModuleDbo, ItemDbo]) (err error),
+) (err error) {
+	return RunModuleTeamWorker(ctx, user, request.TeamRequest, moduleID, teamModuleData,
+		func(ctx context.Context, tx dal.ReadwriteTransaction, moduleTeamWorkerParams *ModuleTeamWorkerParams[ModuleDbo]) (err error) {
+			teamItemKey := dal.NewKeyWithParentAndID(moduleTeamWorkerParams.TeamModuleEntry.Key, teamItemCollection, request.ID)
+			params := TeamItemWorkerParams[ModuleDbo, ItemDbo]{
+				ModuleTeamWorkerParams: moduleTeamWorkerParams,
+				TeamItem:               record.NewDataWithID(request.ID, teamItemKey, teamItemDbo),
+			}
+			if err = worker(ctx, tx, &params); err != nil {
+				return err
+			}
+			if len(params.TeamItemUpdates) > 0 {
+				if err = tx.Update(ctx, teamItemKey, params.TeamItemUpdates); err != nil {
+					return fmt.Errorf("failed to update team item record: %w", err)
+				}
+			}
+			return nil
+		},
+	)
 }
 
 //var RunTeamItemWorker = func(ctx context.Context, db dal.DB, request TeamItemRunnerInput, worker teamItemWorker) (err error) {
@@ -161,92 +185,72 @@ type TeamItemWorkerParams struct {
 //}
 
 // DeleteTeamItem deletes team item
-func DeleteTeamItem[D TeamModuleData](
+func DeleteTeamItem[ModuleDbo TeamModuleDbo, ItemDbo TeamItemDbo](
 	ctx context.Context,
 	user facade.User,
-	input TeamItemRunnerInput[D],
+	request TeamItemRequest,
 	moduleID string,
-	data D,
-	worker teamItemWorker,
+	moduleData ModuleDbo,
+	teamItemCollection string,
+	teamItemDbo ItemDbo,
+	briefsAdapter BriefsAdapter[ModuleDbo],
+	worker func(ctx context.Context, tx dal.ReadwriteTransaction, params *TeamItemWorkerParams[ModuleDbo, ItemDbo]) (err error),
 ) (err error) {
-	if err := input.Validate(); err != nil {
-		return err
-	}
-	if input.Counter != "" && worker == nil {
-		return validation.NewErrBadRequestFieldValue("counter", "input specifies counter but worker was not provided")
-	}
-	return RunModuleTeamWorker(ctx, user, input.TeamRequest, moduleID, data,
-		func(ctx context.Context, tx dal.ReadwriteTransaction, moduleWorkerParams *ModuleTeamWorkerParams[D]) (err error) {
-			params := TeamItemWorkerParams{
-				Started:  time.Now(),
-				TeamItem: input.TeamItem,
-				//Counter:  "",
-			}
-			if input.IsTeamRecordNeeded {
-				params.Team = NewTeamEntry(input.TeamID)
-				if err = tx.Get(ctx, params.Team.Record); err != nil {
-					return
-				}
-			}
-			if worker != nil {
-				if err = tx.Get(ctx, input.TeamItem); err != nil {
-					return err
-				}
-				err = worker(ctx, tx, &params)
-				if err != nil {
-					return fmt.Errorf("failed to execute teamItemWorker: %w", err)
-				}
-			}
-			//if err = decrementCounter(&params); err != nil {
-			//	return err
-			//}
-			if len(moduleWorkerParams.TeamUpdates) > 0 {
-				if input.IsTeamRecordNeeded {
-					if err = TxUpdateTeam(ctx, tx, moduleWorkerParams.Started, moduleWorkerParams.Team, moduleWorkerParams.TeamUpdates); err != nil {
-						return fmt.Errorf("failed to update team record: %w", err)
-					}
-				} else {
-					return fmt.Errorf("got %d team updates but input indicated team record is not required", len(params.TeamUpdates))
-				}
-			}
-			moduleWorkerParams.TeamModuleUpdates = deleteBrief[D](moduleWorkerParams.TeamModuleEntry, input.ShortID, input.BriefsAdapter, params.TeamUpdates)
-			teamItemKey := params.TeamItem.Key()
-			if err = tx.Delete(ctx, teamItemKey); err != nil {
-				return fmt.Errorf("failed to delete team item record by key=%v: %w", teamItemKey, err)
-			}
-			return err
-		})
+	return RunTeamItemWorker(ctx, user, request, moduleID, moduleData, teamItemCollection, teamItemDbo,
+		func(ctx context.Context, tx dal.ReadwriteTransaction, teamItemWorkerParams *TeamItemWorkerParams[ModuleDbo, ItemDbo]) (err error) {
+			return deleteTeamItemTxWorker[ModuleDbo](ctx, tx, teamItemWorkerParams, briefsAdapter, worker)
+		},
+	)
 }
 
-func deleteBrief[D TeamModuleData](team record.DataWithID[string, D], itemID string, adapter *BriefsAdapter[D], updates []dal.Update) []dal.Update {
-	if adapter == nil {
-		return updates
+func deleteTeamItemTxWorker[ModuleDbo TeamModuleDbo, ItemDbo TeamItemDbo](
+	ctx context.Context,
+	tx dal.ReadwriteTransaction,
+	params *TeamItemWorkerParams[ModuleDbo, ItemDbo],
+	briefsAdapter BriefsAdapter[ModuleDbo],
+	worker func(ctx context.Context, tx dal.ReadwriteTransaction, p *TeamItemWorkerParams[ModuleDbo, ItemDbo]) error,
+) (err error) {
+	if err = tx.Get(ctx, params.Team.Record); err != nil {
+		return
 	}
-	count := adapter.GetBriefsCount(team.Data)
-	briefIndex := -1
-	for i := 0; i < count; i++ {
-		if id := adapter.GetBriefItemID(team.Data, i); id == itemID {
-			briefIndex = i
-			break
+	if err = tx.Get(ctx, params.TeamItem.Record); err != nil && !dal.IsNotFound(err) {
+		return err
+	}
+	if err = tx.Get(ctx, params.TeamModuleEntry.Record); err != nil {
+		return
+	}
+	if worker != nil {
+		if err = worker(ctx, tx, params); err != nil {
+			return fmt.Errorf("failed to execute teamItemWorker: %w", err)
 		}
 	}
-	if briefIndex > 0 { // remove brief
-		adapter.ShiftBriefs(team.Data, // shift all elements after found item to the left
-			SliceIndexes{Start: briefIndex, End: count - 1}, // destination
-			SliceIndexes{Start: briefIndex + 1, End: count}, // source
-		)
-		// trim list to account for the shift
-		adapter.TrimBriefs(team.Data, count-1)
+	//if err = decrementCounter(&params); err != nil {
+	//	return err
+	//}
+	if len(params.TeamUpdates) > 0 {
+		if err = TxUpdateTeam(ctx, tx, params.Started, params.Team, params.TeamUpdates); err != nil {
+			return fmt.Errorf("failed to update team record: %w", err)
+		}
+	}
+	var teamModuleUpdates []dal.Update
+	if teamModuleUpdates, err = deleteBrief[ModuleDbo](params.TeamModuleEntry, params.TeamItem.ID, briefsAdapter, params.TeamModuleUpdates); err != nil {
+		return err
+	} else {
+		params.TeamModuleUpdates = append(params.TeamModuleUpdates, teamModuleUpdates...)
 
-		// update record
-		var value interface{}
-		if count > 0 {
-			value = adapter.BriefsValue
-		}
-		updates = append(updates,
-			dal.Update{Field: adapter.BriefsFieldName, Value: value},
-			// No need to specify counter update, created by the `facade4teamus.DeleteTeamItem`
-		)
 	}
-	return updates
+
+	if params.TeamItem.Record.Exists() {
+		if err = tx.Delete(ctx, params.TeamItem.Key); err != nil {
+			return fmt.Errorf("failed to delete team item record by key=%v: %w", params.TeamItem.Key, err)
+		}
+	}
+	return err
+}
+
+func deleteBrief[D TeamModuleDbo](teamModuleEntry record.DataWithID[string, D], itemID string, adapter BriefsAdapter[D], updates []dal.Update) ([]dal.Update, error) {
+	if adapter == nil {
+		return updates, nil
+	}
+	return adapter.DeleteBrief(teamModuleEntry.Data, itemID)
 }

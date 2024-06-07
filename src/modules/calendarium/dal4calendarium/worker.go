@@ -33,7 +33,7 @@ func RunHappeningTeamWorker(
 	) (err error) {
 		params := &HappeningWorkerParams{
 			CalendariumTeamWorkerParams: moduleTeamParams,
-			Happening:                   dbo4calendarium.NewHappeningContext(request.TeamID, request.HappeningID),
+			Happening:                   dbo4calendarium.NewHappeningEntry(request.TeamID, request.HappeningID),
 		}
 		if err = tx.Get(ctx, params.Happening.Record); err != nil {
 			if dal.IsNotFound(err) {

@@ -23,8 +23,8 @@ func CreateList(ctx context.Context, user facade.User, request CreateListRequest
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4teamus.CreateTeamItem(ctx, user, request.TeamRequest, const4listus.ModuleID, new(dbo4listus.ListusTeamDto),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4listus.ListusTeamDto]) (err error) {
+	err = dal4teamus.CreateTeamItem(ctx, user, request.TeamRequest, const4listus.ModuleID, new(dbo4listus.ListusTeamDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4listus.ListusTeamDbo]) (err error) {
 
 			for id, brief := range params.TeamModuleEntry.Data.Lists {
 				if brief.Title == request.Title {

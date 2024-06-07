@@ -25,7 +25,7 @@ func txUpdateTeam(ctx context.Context, tx dal.ReadwriteTransaction, timestamp ti
 	return txUpdate(ctx, tx, team.Key, data, opts...)
 }
 
-func txUpdateTeamModule[D TeamModuleData](ctx context.Context, tx dal.ReadwriteTransaction, timestamp time.Time, teamModule record.DataWithID[string, D], data []dal.Update, opts ...dal.Precondition) error {
+func txUpdateTeamModule[D TeamModuleDbo](ctx context.Context, tx dal.ReadwriteTransaction, _ time.Time, teamModule record.DataWithID[string, D], data []dal.Update, opts ...dal.Precondition) error {
 	if err := teamModule.Data.Validate(); err != nil {
 		return fmt.Errorf("team module record is not valid: %s: %w", teamModule.ID, err)
 	}

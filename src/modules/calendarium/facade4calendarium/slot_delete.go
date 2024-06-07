@@ -24,7 +24,7 @@ func DeleteSlots(ctx context.Context, user facade.User, request dto4calendarium.
 		const4calendarium.ModuleID,
 		new(dbo4calendarium.CalendariumTeamDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo]) (err error) {
-			happening := dbo4calendarium.NewHappeningContext(request.TeamID, request.HappeningID)
+			happening := dbo4calendarium.NewHappeningEntry(request.TeamID, request.HappeningID)
 			hasHappeningRecord := true
 			if err = tx.Get(ctx, happening.Record); err != nil {
 				if dal.IsNotFound(err) {

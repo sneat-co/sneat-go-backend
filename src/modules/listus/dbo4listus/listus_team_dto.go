@@ -5,13 +5,13 @@ import (
 	"github.com/strongo/validation"
 )
 
-type ListusTeamDto struct {
+type ListusTeamDbo struct {
 	with.CreatedFields
 	Lists map[string]*ListBrief `json:"lists,omitempty" firestore:"lists,omitempty"`
 	//ListGroups []*ListGroup          `json:"listGroups,omitempty" firestore:"listGroups,omitempty"`
 }
 
-func (v ListusTeamDto) Validate() error {
+func (v ListusTeamDbo) Validate() error {
 	if err := validateListBriefs(v.Lists); err != nil {
 		return validation.NewErrBadRecordFieldValue("lists", err.Error())
 	}

@@ -18,14 +18,14 @@ func CreateListItems(ctx context.Context, userContext facade.User, request Creat
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4teamus.RunModuleTeamWorker(ctx, userContext, request.TeamRequest, const4listus.ModuleID, new(dbo4listus.ListusTeamDto),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4listus.ListusTeamDto]) error {
+	err = dal4teamus.RunModuleTeamWorker(ctx, userContext, request.TeamRequest, const4listus.ModuleID, new(dbo4listus.ListusTeamDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4listus.ListusTeamDbo]) error {
 			return createListItemTxWorker(ctx, request, tx, params)
 		})
 	return
 }
 
-func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4listus.ListusTeamDto]) (err error) {
+func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4listus.ListusTeamDbo]) (err error) {
 	if err = params.GetRecords(ctx, tx); err != nil {
 		return err
 	}

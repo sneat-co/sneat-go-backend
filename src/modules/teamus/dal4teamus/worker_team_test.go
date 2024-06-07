@@ -69,16 +69,16 @@ func TestRunModuleTeamWorker(t *testing.T) {
 	}
 	err := RunModuleTeamWorker(ctx, user, request, moduleID, new(fooModuleTeamData), assertTxWorker)
 	assert.Nil(t, err)
-	//type args[D TeamModuleData] struct {
+	//type args[ModuleDbo TeamModuleDbo] struct {
 	//	ctx      context.Context
 	//	user     facade.User
 	//	request  dto4teamus.TeamRequest
 	//	moduleID string
-	//	worker   func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *ModuleTeamWorkerParams[D]) (err error)
+	//	worker   func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *ModuleTeamWorkerParams[ModuleDbo]) (err error)
 	//}
-	//type testCase[D TeamModuleData] struct {
+	//type testCase[ModuleDbo TeamModuleDbo] struct {
 	//	name    string
-	//	args    args[D]
+	//	args    args[ModuleDbo]
 	//	wantErr bool
 	//}
 	//tests := []testCase[ /* TODO: Insert concrete types here */ ]{

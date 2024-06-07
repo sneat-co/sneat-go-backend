@@ -5,4 +5,4 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 )
 
-type ListusTeamEntry = record.DataWithID[string, *dbo4listus.ListusTeamDto]
+type ListusTeamEntry = record.DataWithID[string, *dbo4listus.ListusTeamDbo]

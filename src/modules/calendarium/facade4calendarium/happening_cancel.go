@@ -23,7 +23,7 @@ func CancelHappening(ctx context.Context, user facade.User, request dto4calendar
 		return
 	}
 
-	happening := dbo4calendarium.NewHappeningContext(request.TeamID, request.HappeningID)
+	happening := dbo4calendarium.NewHappeningEntry(request.TeamID, request.HappeningID)
 	err = dal4teamus.RunModuleTeamWorker(ctx, user, request.TeamRequest,
 		const4calendarium.ModuleID,
 		new(dbo4calendarium.CalendariumTeamDbo),

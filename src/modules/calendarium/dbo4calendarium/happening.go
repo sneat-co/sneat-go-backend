@@ -6,9 +6,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 )
 
-// HappeningsCollection defines recurring happening's collection name
-const HappeningsCollection = "happenings"
-
 //const SingleHappeningsCollection = "single_happenings"
 
 // NewHappeningKey creates a new happening key
@@ -43,11 +40,11 @@ func IsKnownHappeningStatus(status string) bool {
 	return false
 }
 
-func NewHappeningContext(teamID, happeningID string) (v HappeningEntry) {
-	return NewHappeningContextWithDto(teamID, happeningID, new(HappeningDbo))
+func NewHappeningEntry(teamID, happeningID string) (v HappeningEntry) {
+	return NewHappeningEntryWithDbo(teamID, happeningID, new(HappeningDbo))
 }
 
-func NewHappeningContextWithDto(teamID, happeningID string, dto *HappeningDbo) (v HappeningEntry) {
+func NewHappeningEntryWithDbo(teamID, happeningID string, dto *HappeningDbo) (v HappeningEntry) {
 	v.ID = happeningID
 	v.Key = NewHappeningKey(teamID, happeningID)
 	v.Data = dto
