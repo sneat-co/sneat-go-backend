@@ -17,7 +17,7 @@ var _bots botsfw.SettingsBy
 
 const DefaultLocale = i18n.LocaleCodeEnUS
 
-const DebtusBotToken = "467112035:AAG9Hij0ofnI6GGXyuc6zol0F4XGQ4OK5Tk"
+var DebtusBotToken = ""
 
 func newTelegramBot(
 	mode string,
