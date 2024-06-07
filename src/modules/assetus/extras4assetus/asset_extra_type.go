@@ -1,7 +1,7 @@
 package extras4assetus
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/coremodels/extra"
+	"github.com/sneat-co/sneat-go-backend/src/core/extra"
 )
 
 const (

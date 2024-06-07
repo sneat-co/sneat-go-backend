@@ -3,7 +3,7 @@ package dal4teamus
 import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
-	"github.com/sneat-co/sneat-go-backend/src/coremodels"
+	"github.com/sneat-co/sneat-go-backend/src/core/coremodels"
 )
 
 const TeamModulesCollection = coremodels.ModulesCollection

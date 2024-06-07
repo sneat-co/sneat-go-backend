@@ -8,7 +8,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/pquerna/ffjson/ffjson"
-	"github.com/sneat-co/sneat-go-backend/src/coremodels"
+	"github.com/sneat-co/sneat-go-backend/src/core/coremodels"
 	"github.com/strongo/i18n"
 	"github.com/strongo/strongoapp/appuser"
 	"net/http"

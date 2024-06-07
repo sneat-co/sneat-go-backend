@@ -3,7 +3,7 @@ package dal4userus
 import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
-	"github.com/sneat-co/sneat-go-backend/src/coremodels"
+	"github.com/sneat-co/sneat-go-backend/src/core/coremodels"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 )
 
