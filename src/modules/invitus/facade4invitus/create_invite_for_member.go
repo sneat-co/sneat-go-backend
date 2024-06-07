@@ -104,7 +104,7 @@ func CreateOrReuseInviteForMember(ctx context.Context, user facade.User, request
 					return fmt.Errorf("failed to create personal invite record: %w", err)
 				}
 			}
-			response.Invite = dbo4invitus.NewInviteBriefFromDto(inviteID, personalInvite.InviteDto)
+			response.Invite = dbo4invitus.NewInviteBriefFromDto(inviteID, personalInvite.InviteDbo)
 			if !request.Send {
 				response.Invite.Pin = personalInvite.Pin
 			}

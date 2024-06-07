@@ -10,7 +10,7 @@ import (
 	"github.com/strongo/log"
 )
 
-func CheckTransferCreatorNameAndFixIfNeeded(c context.Context, tx dal.ReadwriteTransaction, transfer models.Transfer) (err error) {
+func CheckTransferCreatorNameAndFixIfNeeded(c context.Context, tx dal.ReadwriteTransaction, transfer models.TransferEntry) (err error) {
 	if transfer.Data.Creator().UserName == "" {
 		user, err := User.GetUserByID(c, tx, transfer.Data.CreatorUserID)
 		if err != nil {

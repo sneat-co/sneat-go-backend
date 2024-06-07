@@ -25,13 +25,13 @@ type Sms struct {
 
 const TwilioSmsKind = "TwilioSms"
 
-type TwilioSms struct {
-	record.WithID[string]
-	Data *TwilioSmsData
+type TwilioSmsDbo struct {
+	TwilioSmsData
 }
+type TwilioSms = record.DataWithID[string, *TwilioSmsDbo]
 
 func NewTwilioSmsRecord() dal.Record {
-	return dal.NewRecordWithIncompleteKey(TwilioSmsKind, reflect.String, new(TwilioSmsData))
+	return dal.NewRecordWithIncompleteKey(TwilioSmsKind, reflect.String, new(TwilioSmsDbo))
 }
 
 func NewTwilioSmsFromRecord(r dal.Record) TwilioSms {
@@ -42,7 +42,7 @@ func NewTwilioSmsFromRecord(r dal.Record) TwilioSms {
 			Key:    key,
 			Record: r,
 		},
-		Data: r.Data().(*TwilioSmsData),
+		Data: r.Data().(*TwilioSmsDbo),
 	}
 }
 
@@ -54,10 +54,10 @@ func NewTwilioSmsFromRecords(r []dal.Record) []TwilioSms {
 	return result
 }
 
-func NewTwilioSms(smsID string, data *TwilioSmsData) TwilioSms {
+func NewTwilioSms(smsID string, data *TwilioSmsDbo) TwilioSms {
 	key := dal.NewKeyWithID(TwilioSmsKind, smsID)
 	if data == nil {
-		data = new(TwilioSmsData)
+		data = new(TwilioSmsDbo)
 	}
 	return TwilioSms{
 		WithID: record.WithID[string]{

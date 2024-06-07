@@ -542,7 +542,7 @@ func testCreateTransfer(t *testing.T, testCase createTransferTestCase) {
 				}
 			}
 			for j, expectedTransfer := range step.expects.transfers {
-				var previousTransfer models.Transfer
+				var previousTransfer models.TransferEntry
 				if previousTransfer, err = Transfers.GetTransferByID(c, nil, testCase.steps[j].createdTransferID); err != nil {
 					t.Fatalf("step #%v: %v",
 						i+1, err)

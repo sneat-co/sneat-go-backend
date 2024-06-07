@@ -37,7 +37,7 @@ var AskEmailForReceiptCommand = botsfw.Command{
 	},
 }
 
-func sendReceiptByEmail(whc botsfw.WebhookContext, toEmail, toName string, transfer models.Transfer) (m botsfw.MessageFromBot, err error) {
+func sendReceiptByEmail(whc botsfw.WebhookContext, toEmail, toName string, transfer models.TransferEntry) (m botsfw.MessageFromBot, err error) {
 	c := whc.Context()
 	receiptEntity := models.NewReceiptEntity(whc.AppUserID(), transfer.ID, transfer.Data.Counterparty().UserID, whc.Locale().Code5, string(models.InviteByEmail), toEmail, general.CreatedOn{
 		CreatedOnPlatform: whc.BotPlatform().ID(),

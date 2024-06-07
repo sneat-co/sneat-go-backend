@@ -21,7 +21,7 @@ import (
 const joinGroupCommanCode = "join-group"
 
 var joinGroupCommand = shared_group.GroupCallbackCommand(joinGroupCommanCode,
-	func(whc botsfw.WebhookContext, callbackUrl *url.URL, group models.Group) (m botsfw.MessageFromBot, err error) {
+	func(whc botsfw.WebhookContext, callbackUrl *url.URL, group models.GroupEntry) (m botsfw.MessageFromBot, err error) {
 		c := whc.Context()
 
 		userID := whc.AppUserID()
@@ -78,7 +78,7 @@ var joinGroupCommand = shared_group.GroupCallbackCommand(joinGroupCommanCode,
 						return err
 					}
 				} else {
-					log.Debugf(c, "Group member not changed")
+					log.Debugf(c, "GroupEntry member not changed")
 				}
 				if userChanged := appUser.Data.AddGroup(group, whc.GetBotCode()); userChanged {
 					if err = facade.User.SaveUser(c, tx, appUser); err != nil {

@@ -7,7 +7,7 @@ import (
 	"github.com/strongo/validation"
 )
 
-// WithCounterparties is a base type that defines Counterparties for OrderDto
+// WithCounterparties is a base type that defines Counterparties for OrderDbo
 type WithCounterparties struct {
 	Counterparties []*OrderCounterparty `json:"counterparties" firestore:"counterparties"`
 }

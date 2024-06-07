@@ -159,7 +159,7 @@ func (v InviteTeam) Validate() error {
 	return nil
 }
 
-// InviteBase base data about invite to be used in InviteBrief & InviteDto
+// InviteBase base data about invite to be used in InviteBrief & InviteDbo
 type InviteBase struct {
 	Type        string     `json:"type" firestore:"type"` // either "personal" or "mass"
 	Channel     string     `json:"channel" firestore:"channel"`
@@ -218,14 +218,14 @@ func (v InviteBrief) Validate() error {
 }
 
 // NewInviteBriefFromDto creates brief from DTO
-func NewInviteBriefFromDto(id string, dto InviteDto) InviteBrief {
+func NewInviteBriefFromDto(id string, dto InviteDbo) InviteBrief {
 	from := dto.From
 	to := *dto.To
 	return InviteBrief{ID: id, From: &from, To: &to}
 }
 
-// InviteDto record - used in PersonalInviteDbo and MassInvite
-type InviteDto struct {
+// InviteDbo record - used in PersonalInviteDbo and MassInvite
+type InviteDbo struct {
 	InviteBase
 	Status    string               `json:"status" firestore:"status" `
 	Pin       string               `json:"pin,omitempty" firestore:"pin,omitempty"`
@@ -246,7 +246,7 @@ type InviteDto struct {
 }
 
 // Validate validates record
-func (v InviteDto) Validate() error {
+func (v InviteDbo) Validate() error {
 	if err := v.InviteBase.Validate(); err != nil {
 		return err
 	}
@@ -288,7 +288,7 @@ func (v InviteDto) Validate() error {
 	return nil
 }
 
-func (v InviteDto) validateType(expected string) error {
+func (v InviteDbo) validateType(expected string) error {
 	if v.Type == "" {
 		return validation.NewErrRecordIsMissingRequiredField("type")
 	}
@@ -298,11 +298,11 @@ func (v InviteDto) validateType(expected string) error {
 	return nil
 }
 
-var _ core.Validatable = (*InviteDto)(nil)
+var _ core.Validatable = (*InviteDbo)(nil)
 
 // PersonalInviteDbo record
 type PersonalInviteDbo struct {
-	InviteDto
+	InviteDbo
 	Address string `json:"address,omitempty" firestore:"address,omitempty"` // Can be empty for channel=link
 
 	// in format "<TEAM_ID>:<MEMBER_ID>"
@@ -314,10 +314,10 @@ type PersonalInviteDbo struct {
 
 // Validate validates record
 func (v PersonalInviteDbo) Validate() error {
-	if err := v.InviteDto.Validate(); err != nil {
+	if err := v.InviteDbo.Validate(); err != nil {
 		return err
 	}
-	if err := v.InviteDto.validateType("personal"); err != nil {
+	if err := v.InviteDbo.validateType("personal"); err != nil {
 		return err
 	}
 	if v.ToTeamMemberID == "" {
@@ -357,16 +357,16 @@ func (v PersonalInviteDbo) Validate() error {
 
 // MassInvite record
 type MassInvite struct {
-	InviteDto
+	InviteDbo
 	Joiners Joiners `json:"joiners" firestore:"joiners"`
 }
 
 // Validate returns error if not valid
 func (v MassInvite) Validate() error {
-	if err := v.InviteDto.Validate(); err != nil {
+	if err := v.InviteDbo.Validate(); err != nil {
 		return err
 	}
-	if err := v.InviteDto.validateType("mass"); err != nil {
+	if err := v.InviteDbo.validateType("mass"); err != nil {
 		return err
 	}
 	if err := v.Joiners.Validate(); err != nil {

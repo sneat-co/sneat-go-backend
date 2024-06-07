@@ -3,7 +3,7 @@ package models
 import "testing"
 
 func TestGroupEntity_ApplyBillBalanceDifference(t *testing.T) {
-	groupEntity := GroupEntity{}
+	groupEntity := GroupDbo{}
 
 	{ // Try to apply empty difference
 		if changed, err := groupEntity.ApplyBillBalanceDifference("EUR", BillBalanceDifference{}); err != nil {
@@ -44,6 +44,6 @@ func TestGroupEntity_ApplyBillBalanceDifference(t *testing.T) {
 	}
 
 	{ // test splti first + paid then
-		groupEntity = GroupEntity{}
+		groupEntity = GroupDbo{}
 	}
 }

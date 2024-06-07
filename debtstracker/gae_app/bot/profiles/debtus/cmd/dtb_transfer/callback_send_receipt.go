@@ -36,7 +36,7 @@ func CallbackSendReceipt(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 	return m, db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		var (
 			transferID string
-			transfer   models.Transfer
+			transfer   models.TransferEntry
 		)
 		transferID = q.Get(WIZARD_PARAM_TRANSFER)
 		if transferID == "" {
@@ -141,7 +141,7 @@ func CallbackSendReceipt(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 	})
 }
 
-func showLinkForReceiptInTelegram(whc botsfw.WebhookContext, transfer models.Transfer) (m botsfw.MessageFromBot, err error) {
+func showLinkForReceiptInTelegram(whc botsfw.WebhookContext, transfer models.TransferEntry) (m botsfw.MessageFromBot, err error) {
 	receiptData := models.NewReceiptEntity(whc.AppUserID(), transfer.ID, transfer.Data.Counterparty().UserID, whc.Locale().Code5, "link", "telegram", general.CreatedOn{
 		CreatedOnPlatform: whc.BotPlatform().ID(),
 		CreatedOnID:       whc.GetBotCode(),

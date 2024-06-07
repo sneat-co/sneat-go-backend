@@ -436,7 +436,7 @@ func (entity *DebutsAppUserDataOBSOLETE) ActiveContactsWithBalance() (contacts [
 	return
 }
 
-func (entity *DebutsAppUserDataOBSOLETE) AddGroup(group Group, tgBot string) (changed bool) {
+func (entity *DebutsAppUserDataOBSOLETE) AddGroup(group GroupEntry, tgBot string) (changed bool) {
 	groups := entity.ActiveGroups()
 	for i, g := range groups {
 		if g.ID == group.ID {

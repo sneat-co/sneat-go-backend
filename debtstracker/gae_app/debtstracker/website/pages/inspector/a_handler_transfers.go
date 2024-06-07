@@ -40,7 +40,7 @@ func (h transfersPage) transfersPageHandler(w http.ResponseWriter, r *http.Reque
 	var (
 		user                          models.AppUser
 		contact                       models.Contact
-		transfers                     []models.Transfer
+		transfers                     []models.TransferEntry
 		transfersTotalWithoutInterest decimal.Decimal64p2
 	)
 
@@ -102,11 +102,11 @@ func (h transfersPage) transfersPageHandler(w http.ResponseWriter, r *http.Reque
 }
 
 func (h transfersPage) processTransfers(c context.Context, tx dal.ReadSession, contactID string, currency money.CurrencyCode) (
-	transfers []models.Transfer,
+	transfers []models.TransferEntry,
 	balanceWithoutInterest decimal.Decimal64p2,
 	err error,
 ) {
-	query := dal.From(models.TransferKind).
+	query := dal.From(models.TransfersCollection).
 		Where(
 			dal.Field("BothCounterpartyIDs").EqualTo(contactID),
 			dal.Field("Currency").EqualTo(currency),

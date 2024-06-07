@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func sendReminderByEmail(c context.Context, reminder models.Reminder, emailTo string, transfer models.Transfer, user models.DebutsAppUserDataOBSOLETE) (err error) {
+func sendReminderByEmail(c context.Context, reminder models.Reminder, emailTo string, transfer models.TransferEntry, user models.DebutsAppUserDataOBSOLETE) (err error) {
 	log.Debugf(c, "sendReminderByEmail(reminder.ID=%v, emailTo=%v)", reminder.ID, emailTo)
 
 	emailMessage := emails.Email{

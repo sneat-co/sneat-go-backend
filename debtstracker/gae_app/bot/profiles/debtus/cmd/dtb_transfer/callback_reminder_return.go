@@ -71,7 +71,7 @@ var EnableReminderAgainCallbackCommand = botsfw.NewCallbackCommand(commandCodeEn
 	q := callbackUrl.Query()
 	var (
 		reminderID string
-		transfer   models.Transfer
+		transfer   models.TransferEntry
 	)
 	if reminderID = q.Get("reminder"); reminderID == "" {
 		err = fmt.Errorf("parameter 'reminder' is empty")
@@ -89,7 +89,7 @@ var EnableReminderAgainCallbackCommand = botsfw.NewCallbackCommand(commandCodeEn
 	return askWhenToRemindAgain(whc, reminderID, transfer)
 })
 
-func ProcessFullReturn(whc botsfw.WebhookContext, transfer models.Transfer) (m botsfw.MessageFromBot, err error) {
+func ProcessFullReturn(whc botsfw.WebhookContext, transfer models.TransferEntry) (m botsfw.MessageFromBot, err error) {
 	amountValue := transfer.Data.GetOutstandingValue(time.Now())
 	if amountValue == 0 {
 		return dtb_general.EditReminderMessage(whc, transfer, whc.Translate(trans.MESSAGE_TEXT_TRANSFER_ALREADY_FULLY_RETURNED))
@@ -144,7 +144,7 @@ func ProcessFullReturn(whc botsfw.WebhookContext, transfer models.Transfer) (m b
 	return m, err
 }
 
-func ProcessPartialReturn(whc botsfw.WebhookContext, transfer models.Transfer) (botsfw.MessageFromBot, error) {
+func ProcessPartialReturn(whc botsfw.WebhookContext, transfer models.TransferEntry) (botsfw.MessageFromBot, error) {
 	var counterpartyID string
 	switch whc.AppUserID() {
 	case transfer.Data.CreatorUserID:
@@ -166,7 +166,7 @@ func ProcessPartialReturn(whc botsfw.WebhookContext, transfer models.Transfer) (
 	return AskHowMuchHaveBeenReturnedCommand.Action(whc)
 }
 
-func askWhenToRemindAgain(whc botsfw.WebhookContext, reminderID string, transfer models.Transfer) (m botsfw.MessageFromBot, err error) {
+func askWhenToRemindAgain(whc botsfw.WebhookContext, reminderID string, transfer models.TransferEntry) (m botsfw.MessageFromBot, err error) {
 	if m, err = dtb_general.EditReminderMessage(whc, transfer, whc.Translate(trans.MESSAGE_TEXT_ASK_WHEN_TO_REMIND_AGAIN)); err != nil {
 		return
 	}
@@ -209,7 +209,7 @@ func askWhenToRemindAgain(whc botsfw.WebhookContext, reminderID string, transfer
 	return
 }
 
-func ProcessNoReturn(whc botsfw.WebhookContext, reminderID string, transfer models.Transfer) (m botsfw.MessageFromBot, err error) {
+func ProcessNoReturn(whc botsfw.WebhookContext, reminderID string, transfer models.TransferEntry) (m botsfw.MessageFromBot, err error) {
 	return askWhenToRemindAgain(whc, reminderID, transfer)
 }
 

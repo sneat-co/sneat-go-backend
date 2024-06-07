@@ -10,7 +10,7 @@ import (
 
 const RetrospectusModuleID = "retrospectus"
 
-type RetroTeam = record.DataWithID[string, *dbo4retrospectus.RetroTeamDto]
+type RetroTeam = record.DataWithID[string, *dbo4retrospectus.RetroTeamDbo]
 
 func NewRetroTeamKey(id string) *dal.Key {
 	teamKey := dal4teamus.NewTeamKey(id)
@@ -19,7 +19,7 @@ func NewRetroTeamKey(id string) *dal.Key {
 
 func NewRetroTeam(id string) RetroTeam {
 	key := NewRetroTeamKey(id)
-	return record.NewDataWithID(id, key, new(dbo4retrospectus.RetroTeamDto))
+	return record.NewDataWithID(id, key, new(dbo4retrospectus.RetroTeamDbo))
 }
 
 func GetRetroTeam(ctx context.Context, tx dal.ReadTransaction, id string) (RetroTeam, error) {

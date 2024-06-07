@@ -58,7 +58,7 @@ func billCallbackAction(f billCallbackActionHandler) func(whc botsfw.WebhookCont
 			}
 			if bill.Data.GetUserGroupID() == "" {
 				if whc.IsInGroup() {
-					var group models.Group
+					var group models.GroupEntry
 					if group.ID, err = shared_group.GetUserGroupID(whc); err != nil {
 						return
 					}

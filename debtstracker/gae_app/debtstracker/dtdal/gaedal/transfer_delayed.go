@@ -51,7 +51,7 @@ func delayedUpdateTransfersWithCounterparty(c context.Context, creatorCounterpar
 	if db, err = facade.GetDatabase(c); err != nil {
 		return fmt.Errorf("failed to create database: %w", err)
 	}
-	query := dal.From(models.TransferKind).
+	query := dal.From(models.TransfersCollection).
 		WhereField("BothCounterpartyIDs", dal.Equal, creatorCounterpartyID).WhereField("BothCounterpartyIDs", dal.Equal, 0).
 		OrderBy(dal.DescendingField("DtCreated")).
 		SelectKeysOnly(reflect.Int)
@@ -72,7 +72,7 @@ func delayedUpdateTransfersWithCounterparty(c context.Context, creatorCounterpar
 			delayDuration += 10 * time.Microsecond
 		}
 	} else {
-		query := dal.From(models.TransferKind).
+		query := dal.From(models.TransfersCollection).
 			WhereField("BothCounterpartyIDs", dal.Equal, creatorCounterpartyID).WhereField("BothCounterpartyIDs", dal.Equal, counterpartyCounterpartyID).
 			Limit(1).
 			SelectKeysOnly(reflect.Int)
@@ -203,7 +203,7 @@ func delayedUpdateTransferWithCounterparty(c context.Context, transferID string,
 					}
 				}
 			}
-			log.Infof(c, "Transfer saved to datastore")
+			log.Infof(c, "TransferEntry saved to datastore")
 			return nil
 		} else {
 			log.Infof(c, "No changes for the transfer")
@@ -243,7 +243,7 @@ func delayedUpdateTransfersWithCreatorName(c context.Context, userID string) (er
 
 	userName := user.Data.FullName()
 
-	query := dal.From(models.TransferKind).
+	query := dal.From(models.TransfersCollection).
 		WhereField("BothUserIDs", dal.Equal, userID).
 		SelectInto(models.NewTransferRecord)
 
@@ -286,7 +286,7 @@ func delayedUpdateTransfersWithCreatorName(c context.Context, userID string) (er
 						changed = true
 					}
 				default:
-					log.Infof(c, "Transfer(%d) creator is not a counterparty")
+					log.Infof(c, "TransferEntry(%d) creator is not a counterparty")
 				}
 				if changed {
 					if err = facade.Transfers.SaveTransfer(c, tx, transfer); err != nil {

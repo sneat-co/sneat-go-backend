@@ -10,9 +10,9 @@ import (
 	"time"
 )
 
-const UserEmailKind = "UserEmail"
+const UserEmailKind = "UserEmailEntry"
 
-type UserEmailData struct {
+type UserEmailDbo struct {
 	appuser.AccountDataBase
 	appuser.OwnedByUserWithID
 	person.NameFields
@@ -21,35 +21,34 @@ type UserEmailData struct {
 	Providers          []string `datastore:",noindex"` // E.g. facebook, vk, user
 }
 
-type UserEmail struct {
-	record.WithID[string]
-	Data *UserEmailData
+type UserEmailEntry struct {
+	record.DataWithID[string, *UserEmailDbo]
 }
 
-//var _ user.AccountRecord = (*UserEmail)(nil)
+//var _ user.AccountRecord = (*UserEmailEntry)(nil)
 
-func (userEmail UserEmail) UserAccount() appuser.AccountKey {
+func (userEmail UserEmailEntry) UserAccount() appuser.AccountKey {
 	return appuser.AccountKey{Provider: "email", ID: userEmail.ID}
 }
 
-func (userEmail UserEmail) Kind() string {
+func (userEmail UserEmailEntry) Kind() string {
 	return UserEmailKind
 }
 
-func (UserEmail) NewEntity() interface{} {
-	return new(UserEmailData)
+func (UserEmailEntry) NewEntity() interface{} {
+	return new(UserEmailDbo)
 }
 
 func GetEmailID(email string) string {
 	return strings.ToLower(strings.TrimSpace(email))
 }
 
-func (userEmail UserEmail) GetEmail() string {
+func (userEmail UserEmailEntry) GetEmail() string {
 	return userEmail.ID
 }
 
-func NewUserEmailData(userID int64, isConfirmed bool, provider string) *UserEmailData {
-	entity := &UserEmailData{
+func NewUserEmailData(userID int64, isConfirmed bool, provider string) *UserEmailDbo {
+	entity := &UserEmailDbo{
 		OwnedByUserWithID: appuser.NewOwnedByUserWithID(strconv.FormatInt(userID, 10), time.Now()),
 		IsConfirmed:       isConfirmed,
 	}
@@ -59,16 +58,16 @@ func NewUserEmailData(userID int64, isConfirmed bool, provider string) *UserEmai
 
 const pwdSole = "85d80e53-"
 
-func (entity *UserEmailData) CheckPassword(password string) error {
+func (entity *UserEmailDbo) CheckPassword(password string) error {
 	return bcrypt.CompareHashAndPassword(entity.PasswordBcryptHash, []byte(pwdSole+password))
 }
 
-func (entity *UserEmailData) SetPassword(password string) (err error) {
+func (entity *UserEmailDbo) SetPassword(password string) (err error) {
 	entity.PasswordBcryptHash, err = bcrypt.GenerateFromPassword([]byte(pwdSole+password), 0)
 	return
 }
 
-func (entity *UserEmailData) AddProvider(v string) (changed bool) {
+func (entity *UserEmailDbo) AddProvider(v string) (changed bool) {
 	for _, p := range entity.Providers {
 		if p == v {
 			return
@@ -79,11 +78,11 @@ func (entity *UserEmailData) AddProvider(v string) (changed bool) {
 	return
 }
 
-//func (entity *UserEmailData) Load(ps []datastore.Property) error {
+//func (entity *UserEmailDbo) Load(ps []datastore.Property) error {
 //	return datastore.LoadStruct(entity, ps)
 //}
 
-//func (entity *UserEmailData) Save() (properties []datastore.Property, err error) {
+//func (entity *UserEmailDbo) Save() (properties []datastore.Property, err error) {
 //	if properties, err = datastore.SaveStruct(entity); err != nil {
 //		return
 //	}

@@ -7,7 +7,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 )
 
-func CreateConfirmationEmailAndQueueForSending(c context.Context, user models.AppUser, userEmail models.UserEmail) error {
+func CreateConfirmationEmailAndQueueForSending(c context.Context, user models.AppUser, userEmail models.UserEmailEntry) error {
 	emailEntity := &models.EmailData{
 		From:    "Alex @ DebtsTracker.io <alex@debtstracker.io>",
 		To:      userEmail.ID,

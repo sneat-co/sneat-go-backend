@@ -27,7 +27,7 @@ var setBillCurrencyCommand = billCallbackCommand(setBillCurrencyCommandCode,
 			}
 
 			if bill.Data.GetUserGroupID() != "" {
-				var group models.Group
+				var group models.GroupEntry
 				if group, err = dtdal.Group.GetGroupByID(c, tx, bill.Data.GetUserGroupID()); err != nil {
 					return
 				}

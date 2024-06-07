@@ -47,7 +47,7 @@ func Settle2members(c context.Context, groupID, debtorID, sponsorID string, curr
 
 	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		var (
-			group                     models.Group
+			group                     models.GroupEntry
 			groupDebtor, groupSponsor models.GroupMemberJson
 		)
 		if group, err = dtdal.Group.GetGroupByID(c, tx, groupID); err != nil {
@@ -55,7 +55,7 @@ func Settle2members(c context.Context, groupID, debtorID, sponsorID string, curr
 		}
 
 		billsSettlement := models.BillsHistory{
-			Data: &models.BillsHistoryEntity{
+			Data: &models.BillsHistoryDbo{
 				Action:                 models.BillHistoryActionSettled,
 				Currency:               currency,
 				GroupMembersJsonBefore: group.Data.MembersJson,
@@ -195,7 +195,7 @@ func Settle2members(c context.Context, groupID, debtorID, sponsorID string, curr
 				}
 			}
 			if changed := group.Data.SetGroupMembers(groupMembers); !changed {
-				panic("Group members not changed - something wrong")
+				panic("GroupEntry members not changed - something wrong")
 			}
 			if err = tx.SetMulti(c, toSave); err != nil {
 				return

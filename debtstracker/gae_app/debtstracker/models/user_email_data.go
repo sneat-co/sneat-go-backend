@@ -12,24 +12,23 @@ func NewUserEmailKey(email string) *dal.Key {
 	return dal.NewKeyWithID(UserEmailKind, GetEmailID(email))
 }
 
-func NewUserEmail(email string, data *UserEmailData) UserEmail {
+func NewUserEmail(email string, data *UserEmailDbo) UserEmailEntry {
 	id := GetEmailID(email)
 	if data == nil {
-		data = new(UserEmailData)
+		data = new(UserEmailDbo)
 	}
-	return UserEmail{
-		WithID: record.NewWithID(id, NewUserEmailKey(email), data),
-		Data:   data,
+	return UserEmailEntry{
+		DataWithID: record.NewDataWithID(id, NewUserEmailKey(email), data),
 	}
 }
 
-var _ appuser.AccountData = (*UserEmailData)(nil)
+var _ appuser.AccountData = (*UserEmailDbo)(nil)
 
-func (entity *UserEmailData) GetNames() person.NameFields {
+func (entity *UserEmailDbo) GetNames() person.NameFields {
 	return entity.NameFields
 }
 
-func (entity *UserEmailData) ConfirmationPin() string {
+func (entity *UserEmailDbo) ConfirmationPin() string {
 	pin := base64.RawURLEncoding.EncodeToString(entity.PasswordBcryptHash)
 	//if len(pin) > 20 {
 	//	pin = pin[:20]
@@ -37,6 +36,6 @@ func (entity *UserEmailData) ConfirmationPin() string {
 	return pin
 }
 
-func (entity *UserEmailData) IsEmailConfirmed() bool {
+func (entity *UserEmailDbo) IsEmailConfirmed() bool {
 	return entity.IsConfirmed
 }

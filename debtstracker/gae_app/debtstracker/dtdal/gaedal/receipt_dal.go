@@ -61,7 +61,7 @@ func (receiptDalGae ReceiptDalGae) MarkReceiptAsSent(c context.Context, receiptI
 	//return dtdal.DB.RunInTransaction(c, func(c context.Context) (err error) {
 	//	var (
 	//		receipt     models.Receipt
-	//		transfer    models.Transfer
+	//		transfer    models.TransferEntry
 	//		transferKey *datastore.Key
 	//	)
 	//	receiptKey := NewReceiptKey(c, receiptID)

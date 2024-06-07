@@ -38,7 +38,7 @@ func (TwilioDalGae) GetLastTwilioSmsesForUser(c context.Context, tx dal.ReadSess
 func (TwilioDalGae) SaveTwilioSms(
 	c context.Context,
 	smsResponse *gotwilio.SmsResponse,
-	transfer models.Transfer,
+	transfer models.TransferEntry,
 	phoneContact models.PhoneContact,
 	userID string,
 	tgChatID int64,

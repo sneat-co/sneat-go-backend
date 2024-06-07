@@ -45,7 +45,7 @@ func (h contactPage) contactPageHandler(w http.ResponseWriter, r *http.Request, 
 	wg := new(sync.WaitGroup)
 	wg.Add(1)
 	go func() {
-		//var transfers []models.Transfer
+		//var transfers []models.TransferEntry
 		if _, err = h.verifyTransfers(c, contactID); err != nil {
 			panic(err)
 		}
@@ -81,7 +81,7 @@ func (h contactPage) contactPageHandler(w http.ResponseWriter, r *http.Request, 
 }
 
 func (contactPage) verifyTransfers(c context.Context, contactID string) (
-	transfers []models.Transfer, err error,
+	transfers []models.TransferEntry, err error,
 ) {
 
 	var db dal.DB
@@ -89,9 +89,9 @@ func (contactPage) verifyTransfers(c context.Context, contactID string) (
 		return
 	}
 	//select := dal.Select{
-	//	From: &dal.CollectionRef{Name: models.TransferKind},
+	//	From: &dal.CollectionRef{Name: models.TransfersCollection},
 	//}
-	query := dal.From(models.TransferKind).
+	query := dal.From(models.TransfersCollection).
 		Where(dal.Field("BothCounterpartyIDs").EqualTo(contactID)).
 		SelectInto(models.NewTransferRecord)
 

@@ -35,7 +35,7 @@ const (
 type receiptTextBuilder struct {
 	//whc botsfw.WebhookContext
 	translator    i18n.SingleLocaleTranslator
-	transfer      models.Transfer
+	transfer      models.TransferEntry
 	showReceiptTo ShowReceiptTo
 	viewerUserID  string
 	partyAction   ReceiptPartyAction
@@ -45,7 +45,7 @@ type receiptTextBuilder struct {
 	//showAds        bool
 }
 
-func newReceiptTextBuilder(translator i18n.SingleLocaleTranslator, transfer models.Transfer, showReceiptTo ShowReceiptTo) receiptTextBuilder {
+func newReceiptTextBuilder(translator i18n.SingleLocaleTranslator, transfer models.TransferEntry, showReceiptTo ShowReceiptTo) receiptTextBuilder {
 	if transfer.ID == "" {
 		panic("transferID == 0")
 	}
@@ -115,7 +115,7 @@ func (r receiptTextBuilder) receiptCommonFooter(buffer *bytes.Buffer) {
 	//		case TransferDirectionUser2Counterparty:
 	//			buffer.WriteString(whc.Translate(trans.MESSAGE_TEXT_ON_RETURN_USER_DOES_NOT_OWE_ANYTHING_TO_COUNTERPARTY_ANYMORE, counterpartyLink))
 	//		default:
-	//			panic(fmt.Sprintf("Transfer %v has unkown direction: [%v]", tm.transferID, transfer.Direction))
+	//			panic(fmt.Sprintf("TransferEntry %v has unkown direction: [%v]", tm.transferID, transfer.Direction))
 	//		}
 	//	} else {
 	//		r.addBalance(whc, buffer, counterpartyID, counterparty, counterpartyBalance, utmParams)
@@ -130,7 +130,7 @@ func (r receiptTextBuilder) receiptCommonFooter(buffer *bytes.Buffer) {
 	//}
 }
 
-func TextReceiptForTransfer(c context.Context, translator i18n.SingleLocaleTranslator, transfer models.Transfer, showToUserID string, showReceiptTo ShowReceiptTo, utmParams UtmParams) string {
+func TextReceiptForTransfer(c context.Context, translator i18n.SingleLocaleTranslator, transfer models.TransferEntry, showToUserID string, showReceiptTo ShowReceiptTo, utmParams UtmParams) string {
 	log.Debugf(c, "TextReceiptForTransfer(transferID=%v, showToUserID=%v, showReceiptTo=%v)", transfer.ID, showToUserID, showReceiptTo)
 
 	if transfer.ID == "" {
@@ -232,7 +232,7 @@ func (r receiptTextBuilder) WriteReceiptText(buffer *bytes.Buffer, utmParams Utm
 	}
 }
 
-func WriteTransferInterest(buffer *bytes.Buffer, transfer models.Transfer, translator i18n.SingleLocaleTranslator) {
+func WriteTransferInterest(buffer *bytes.Buffer, transfer models.TransferEntry, translator i18n.SingleLocaleTranslator) {
 	buffer.WriteString(translator.Translate(trans.MESSAGE_TEXT_INTEREST, transfer.Data.InterestPercent, days(translator, int(transfer.Data.InterestPeriod))))
 	if transfer.Data.InterestMinimumPeriod > 1 {
 		buffer.WriteString(", " + translator.Translate(trans.MESSAGE_TEXT_INTEREST_MIN_PERIOD, days(translator, transfer.Data.InterestMinimumPeriod)))

@@ -29,7 +29,7 @@ func dueReturnsCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.M
 
 	userID := whc.AppUserID()
 	var (
-		overdueTransfers, dueTransfers []models.Transfer
+		overdueTransfers, dueTransfers []models.TransferEntry
 	)
 
 	er := make(chan error, 2)
@@ -74,7 +74,7 @@ func dueReturnsCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.M
 		var buffer bytes.Buffer
 
 		now := time.Now()
-		listTransfers := func(header string, transfers []models.Transfer) {
+		listTransfers := func(header string, transfers []models.TransferEntry) {
 			if len(transfers) == 0 {
 				return
 			}

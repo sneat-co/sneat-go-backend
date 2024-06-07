@@ -62,7 +62,7 @@ func (AdminDalGae) DeleteAll(c context.Context, botCode, botChatID string) error
 	//	models.InviteClaimKind,
 	//	models.FeedbackKind,
 	//	models.AppUserKind,
-	//	models.TransferKind,
+	//	models.TransfersCollection,
 	//	models.DebtusContactsCollection,
 	//	models.ReminderKind,
 	//	models.ReceiptKind,

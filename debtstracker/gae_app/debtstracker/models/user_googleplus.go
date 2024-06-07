@@ -23,29 +23,4 @@ type UserGooglePlusEntity struct {
 	EmailVerified bool   `datastore:",noindex"`
 }
 
-type UserGooglePlus struct {
-	record.WithID[string]
-	*UserGooglePlusEntity
-}
-
-func (UserGooglePlus) Kind() string {
-	return UserGooglePlusKind
-}
-
-func (userGooglePlus UserGooglePlus) Entity() interface{} {
-	return userGooglePlus.UserGooglePlusEntity
-}
-
-func (UserGooglePlus) NewEntity() interface{} {
-	return new(UserGooglePlusEntity)
-}
-
-func (userGooglePlus *UserGooglePlus) SetEntity(entity interface{}) {
-	if entity == nil {
-		userGooglePlus.UserGooglePlusEntity = nil
-	} else {
-		userGooglePlus.UserGooglePlusEntity = entity.(*UserGooglePlusEntity)
-	}
-}
-
-//var _ db.EntityHolder = (*UserGooglePlus)(nil)
+type UserGooglePlus = record.DataWithID[string, *UserGooglePlusEntity]

@@ -22,7 +22,7 @@ type CreateMassInviteResponse struct {
 
 // CreateMassInvite creates a mass invite
 func CreateMassInvite(_ context.Context, _ CreateMassInviteRequest) (response CreateMassInviteResponse, err error) {
-	//request.InviteDto.TeamIDs.InviteID
+	//request.InviteDbo.TeamIDs.InviteID
 	response.ID = ""
 	return
 }

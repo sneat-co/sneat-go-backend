@@ -124,10 +124,10 @@ func removeCancellationFromCalendarDay(ctx context.Context, tx dal.ReadwriteTran
 		}
 		return fmt.Errorf("failed to get calendar day record by ContactID")
 	}
-	if i, adjustment := calendarDay.Dto.GetAdjustment(happeningID, slotID); adjustment != nil && adjustment.Canceled != nil {
-		a := calendarDay.Dto.HappeningAdjustments
-		calendarDay.Dto.HappeningAdjustments = append(a[:i], a[i+1:]...)
-		if len(calendarDay.Dto.HappeningAdjustments) == 0 {
+	if i, adjustment := calendarDay.Data.GetAdjustment(happeningID, slotID); adjustment != nil && adjustment.Canceled != nil {
+		a := calendarDay.Data.HappeningAdjustments
+		calendarDay.Data.HappeningAdjustments = append(a[:i], a[i+1:]...)
+		if len(calendarDay.Data.HappeningAdjustments) == 0 {
 			if err := tx.Delete(ctx, calendarDay.Key); err != nil {
 				return fmt.Errorf("failed to delete calendar day record: %w", err)
 			}

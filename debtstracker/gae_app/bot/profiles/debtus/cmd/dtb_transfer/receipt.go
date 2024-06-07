@@ -59,7 +59,7 @@ func InlineSendReceipt(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err 
 	if transferID == "" {
 		return m, fmt.Errorf("missing transfer ID")
 	}
-	var transfer models.Transfer
+	var transfer models.TransferEntry
 	transfer, err = facade.Transfers.GetTransferByID(c, nil, transferID)
 	if err != nil {
 		log.Infof(c, "Faield to get transfer by ID: %v", transferID)

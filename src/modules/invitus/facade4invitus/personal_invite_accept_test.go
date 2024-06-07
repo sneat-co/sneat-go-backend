@@ -126,7 +126,7 @@ func Test_createOrUpdateUserRecord(t *testing.T) {
 					},
 				},
 				invite: NewPersonalInviteEntryWithDto("test_personal_invite_id", &dbo4invitus.PersonalInviteDbo{
-					InviteDto: dbo4invitus.InviteDto{
+					InviteDbo: dbo4invitus.InviteDbo{
 						Roles: []string{"contributor"},
 					},
 				}),
@@ -213,7 +213,7 @@ func Test_updateInviteRecord(t *testing.T) {
 				invite: NewPersonalInviteEntryWithDto("test_invite_id1", &dbo4invitus.PersonalInviteDbo{
 					ToTeamMemberID: "to_member_id2",
 					Address:        "to.test.user@example.com",
-					InviteDto: dbo4invitus.InviteDto{
+					InviteDbo: dbo4invitus.InviteDbo{
 						Pin:    "1234",
 						TeamID: "testteamid1",
 						Team: dbo4invitus.InviteTeam{

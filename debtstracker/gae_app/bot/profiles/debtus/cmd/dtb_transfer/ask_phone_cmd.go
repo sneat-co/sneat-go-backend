@@ -137,7 +137,7 @@ var AskPhoneNumberForReceiptCommand = botsfw.Command{
 const SMS_STATUS_MESSAGE_ID_PARAM_NAME = "SmsStatusMessageId"
 const SMS_STATUS_MESSAGE_UPDATES_COUNT_PARAM_NAME = "SmsStatusUpdatesCount"
 
-func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, phoneContact models.PhoneContact, transfer models.Transfer, counterparty models.Contact) (m botsfw.MessageFromBot, err error) {
+func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, phoneContact models.PhoneContact, transfer models.TransferEntry, counterparty models.Contact) (m botsfw.MessageFromBot, err error) {
 	c := whc.Context()
 
 	if transfer.Data == nil {
@@ -173,7 +173,7 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, ph
 	receiptUrl := common.GetReceiptUrl(receipt.ID, common.GetWebsiteHost(receiptData.CreatedOnID))
 
 	if counterparty.Data.CounterpartyUserID == "" {
-		//related := fmt.Sprintf("%v=%v", models.TransferKind, transferID)
+		//related := fmt.Sprintf("%v=%v", models.TransfersCollection, transferID)
 		//inviteKey, invite, err := invites.CreatePersonalInvite(whc, whc.AppUserID(), invites.InviteBySms, strconv.FormatInt(phoneContact.PhoneNumber, 10), whc.BotPlatform().ID(), whc.GetBotCode(), related)
 		//if err != nil {
 		//	log.Errorf(c, "Failed to create invite: %v", err)

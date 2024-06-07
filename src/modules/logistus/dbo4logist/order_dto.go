@@ -13,8 +13,8 @@ import (
 
 const OrdersCollection = "orders"
 
-// OrderDto is a DTO for an order
-type OrderDto struct {
+// OrderDbo is a DTO for an order
+type OrderDbo struct {
 	dbmodels.WithModified
 	dbmodels.WithTeamID  // Owner of an order
 	dbmodels.WithTeamIDs // Teams that can access an order
@@ -33,8 +33,8 @@ type OrderDto struct {
 	Steps []*OrderStep `json:"steps,omitempty" firestore:"steps,omitempty"`
 }
 
-// Validate validates OrderDto
-func (v *OrderDto) Validate() error {
+// Validate validates OrderDbo
+func (v *OrderDbo) Validate() error {
 	//{ // This block should be run just in case before validation
 	//	v.UpdateKeys()
 	//	if err := v.WithKeys.Validate(); err != nil {
@@ -159,13 +159,13 @@ func (v *OrderDto) Validate() error {
 }
 
 // UpdateDates updates dates related to an order
-func (v *OrderDto) UpdateDates() {
+func (v *OrderDbo) UpdateDates() {
 	for _, cp := range v.ShippingPoints {
 		v.updateDatesFromShippingPoint(cp)
 	}
 }
 
-func (v *OrderDto) updateDatesFromShippingPoint(p *OrderShippingPoint) {
+func (v *OrderDbo) updateDatesFromShippingPoint(p *OrderShippingPoint) {
 	if p.ScheduledStartDate != "" && slice.Index(v.Dates, p.ScheduledStartDate) < 0 {
 		v.DatesFields.AddDate(p.ScheduledStartDate)
 	}
@@ -174,14 +174,14 @@ func (v *OrderDto) updateDatesFromShippingPoint(p *OrderShippingPoint) {
 	}
 }
 
-// UpdateCalculatedFields updates calculated fields in OrderDto - calls UpdateKeys and UpdateDates
-func (v *OrderDto) UpdateCalculatedFields() {
+// UpdateCalculatedFields updates calculated fields in OrderDbo - calls UpdateKeys and UpdateDates
+func (v *OrderDbo) UpdateCalculatedFields() {
 	v.UpdateKeys()
 	v.UpdateDates()
 }
 
-// UpdateKeys updates keys field in OrderDto
-func (v *OrderDto) UpdateKeys() {
+// UpdateKeys updates keys field in OrderDbo
+func (v *OrderDbo) UpdateKeys() {
 	keys := make([]string, 0, len(v.CountryIDs)+len(v.Counterparties)*2)
 	for _, counterparty := range v.Counterparties {
 		contactKey := getContactKey(counterparty.ContactID)
@@ -284,7 +284,7 @@ func (v *WithShippingPoints) DeleteShippingPoint(pointType, contactID string) (d
 	return deletedShippingPointID, shippingPoints
 }
 
-func (v *OrderDto) validateDtoCounterparties() error {
+func (v *OrderDbo) validateDtoCounterparties() error {
 	for _, counterparty := range v.Counterparties {
 		key := getContactKey(counterparty.ContactID)
 		if slice.Index(v.Keys, key) < 0 {
@@ -294,7 +294,7 @@ func (v *OrderDto) validateDtoCounterparties() error {
 	return nil
 }
 
-func (v *OrderDto) validateDtoContacts() error {
+func (v *OrderDbo) validateDtoContacts() error {
 	for i, contact := range v.Contacts {
 		_, counterparty := v.GetCounterpartyByContactID(contact.ID)
 		if counterparty == nil {
@@ -308,7 +308,7 @@ func (v *OrderDto) validateDtoContacts() error {
 	return nil
 }
 
-func (v *OrderDto) validateDtoShippingPoints() error {
+func (v *OrderDbo) validateDtoShippingPoints() error {
 	for i, sp := range v.ShippingPoints {
 		for _, task := range sp.Tasks {
 			var role CounterpartyRole
@@ -335,7 +335,7 @@ func (v *OrderDto) validateDtoShippingPoints() error {
 	return nil
 }
 
-func (v *OrderDto) validateDtoKeys() error {
+func (v *OrderDbo) validateDtoKeys() error {
 	for _, key := range v.Keys {
 		if isContactKey(key) {
 			contactID := getContactIdFromOrderKey(key)

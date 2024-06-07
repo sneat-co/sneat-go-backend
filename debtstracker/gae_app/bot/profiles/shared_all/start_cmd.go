@@ -150,7 +150,7 @@ func onStartCallbackCommand(params BotParams) botsfw.Command {
 			}
 
 			//if whc.IsInGroup() {
-			//	var group models.Group
+			//	var group models.GroupEntry
 			//	if group, err = GetGroup(whc, callbackUrl); err != nil {
 			//		return
 			//	}

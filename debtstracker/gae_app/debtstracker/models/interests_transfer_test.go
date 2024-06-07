@@ -54,7 +54,7 @@ func TestTransferEntity_GetInterestValue(t *testing.T) {
 	}
 
 	if transfer.Data.IsOutstanding {
-		t.Error("Transfer should be NOT outstanding")
+		t.Error("TransferEntry should be NOT outstanding")
 	}
 }
 

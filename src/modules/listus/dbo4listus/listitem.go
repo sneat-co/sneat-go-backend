@@ -42,7 +42,7 @@ func (v ListItemBrief) Validate() error {
 	return nil
 }
 
-// ListItemDto DTO
-type ListItemDto struct {
+// ListItemDbo DTO
+type ListItemDbo struct {
 	ListItemBase
 }

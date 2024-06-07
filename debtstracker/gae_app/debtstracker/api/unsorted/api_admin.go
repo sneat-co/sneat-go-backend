@@ -119,7 +119,7 @@ func HandleAdminMergeUserContacts(c context.Context, w http.ResponseWriter, r *h
 func DelayedChangeTransfersCounterparty(c context.Context, oldID, newID int64, cursor string) (err error) {
 	log.Debugf(c, "delayedChangeTransfersCounterparty(oldID=%d, newID=%d)", oldID, newID)
 
-	var q = dal.From(models.TransferKind).
+	var q = dal.From(models.TransfersCollection).
 		WhereField("BothCounterpartyIDs", dal.Equal, oldID).
 		Limit(100).
 		SelectKeysOnly(reflect.Int)

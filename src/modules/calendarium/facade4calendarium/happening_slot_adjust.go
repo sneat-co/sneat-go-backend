@@ -52,30 +52,30 @@ func adjustSlotInCalendarDay(ctx context.Context, tx dal.ReadwriteTransaction, t
 			return fmt.Errorf("failed to get calendar day record: %w", err)
 		}
 	}
-	_, adjustment := calendarDay.Dto.GetAdjustment(happeningID, request.Slot.ID)
+	_, adjustment := calendarDay.Data.GetAdjustment(happeningID, request.Slot.ID)
 	if adjustment == nil {
 		adjustment = &dbo4calendarium.HappeningAdjustment{
 			HappeningID: happeningID,
 		}
-		calendarDay.Dto.HappeningAdjustments = append(calendarDay.Dto.HappeningAdjustments, adjustment)
+		calendarDay.Data.HappeningAdjustments = append(calendarDay.Data.HappeningAdjustments, adjustment)
 	}
 	adjustment.Slot = request.Slot
 	var happeningIDsChanged bool
-	if happeningIDsChanged = slice.Index(calendarDay.Dto.HappeningIDs, happeningID) < 0; happeningIDsChanged {
-		calendarDay.Dto.HappeningIDs = append(calendarDay.Dto.HappeningIDs, happeningID)
+	if happeningIDsChanged = slice.Index(calendarDay.Data.HappeningIDs, happeningID) < 0; happeningIDsChanged {
+		calendarDay.Data.HappeningIDs = append(calendarDay.Data.HappeningIDs, happeningID)
 	}
 
-	if err := calendarDay.Dto.Validate(); err != nil {
+	if err := calendarDay.Data.Validate(); err != nil {
 		return fmt.Errorf("calednar day record is not valid: %w", err)
 	}
 
 	if calendarDay.Record.Exists() {
 		updates := []dal.Update{
-			{Field: "happeningAdjustments", Value: calendarDay.Dto.HappeningAdjustments},
+			{Field: "happeningAdjustments", Value: calendarDay.Data.HappeningAdjustments},
 		}
 		if happeningIDsChanged {
 			updates = append(updates, dal.Update{
-				Field: "happeningIDs", Value: calendarDay.Dto.HappeningIDs,
+				Field: "happeningIDs", Value: calendarDay.Data.HappeningIDs,
 			})
 		}
 		if err := tx.Update(ctx, calendarDay.Key, updates); err != nil {

@@ -281,7 +281,7 @@ func onReceiptSendFail(c context.Context, receiptID string, tgChatID int64, tgMs
 
 // func getTranslatorAndTgChatID(c context.Context, userID int64) (translator i18n.SingleLocaleTranslator, tgChatID int64, err error) {
 // 	var (
-// 		//transfer models.Transfer
+// 		//transfer models.TransferEntry
 // 		user models.AppUser
 // 	)
 // 	if user, err = facade.User.GetUserByID(c, userID); err != nil {
@@ -381,7 +381,7 @@ func sendReceiptToCounterpartyByTelegram(c context.Context, receiptID string, tg
 			return
 		}
 
-		var transfer models.Transfer
+		var transfer models.TransferEntry
 		if transfer, err = facade.Transfers.GetTransferByID(c, tx, receipt.Data.TransferID); err != nil {
 			log.Errorf(c, err.Error())
 			if dal.IsNotFound(err) {
@@ -475,7 +475,7 @@ func sendReceiptToCounterpartyByTelegram(c context.Context, receiptID string, tg
 	return err
 }
 
-func sendReceiptToTelegramChat(c context.Context, receipt models.Receipt, transfer models.Transfer, tgChat models.DebtusTelegramChat) (err error) {
+func sendReceiptToTelegramChat(c context.Context, receipt models.Receipt, transfer models.TransferEntry, tgChat models.DebtusTelegramChat) (err error) {
 	var messageToTranslate string
 	switch transfer.Data.Direction() {
 	case models.TransferDirectionUser2Counterparty:
@@ -649,7 +649,7 @@ func delayedUpdateUserHasDueTransfers(c context.Context, userID string) (err err
 		return nil
 	}
 
-	q := dal.From(models.TransferKind).
+	q := dal.From(models.TransfersCollection).
 		WhereField("BothUserIDs", dal.Equal, userID).
 		WhereField("IsOutstanding", dal.Equal, true).
 		WhereField("DtDueOn", dal.GreaterThen, time.Time{}).

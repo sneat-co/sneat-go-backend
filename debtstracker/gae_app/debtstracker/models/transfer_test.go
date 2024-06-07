@@ -26,8 +26,8 @@ package models
 //	if err != nil {
 //		t.Error(err)
 //	} else if len(saved) == 1 {
-//		if saved[0].kind != TransferKind {
-//			t.Errorf("saved[0].kind:'%v' != '%v'", saved[0].kind, TransferKind)
+//		if saved[0].kind != TransfersCollection {
+//			t.Errorf("saved[0].kind:'%v' != '%v'", saved[0].kind, TransfersCollection)
 //		}
 //		for _, p := range properties {
 //			if p.Name == "AcknowledgeTime" {

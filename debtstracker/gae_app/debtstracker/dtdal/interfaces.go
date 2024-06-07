@@ -45,14 +45,14 @@ type RewardDal interface {
 }
 
 type TransferDal interface {
-	GetTransfersByID(c context.Context, tx dal.ReadSession, transferIDs []string) ([]models.Transfer, error)
-	LoadTransfersByUserID(c context.Context, userID string, offset, limit int) (transfers []models.Transfer, hasMore bool, err error)
-	LoadTransfersByContactID(c context.Context, contactID string, offset, limit int) (transfers []models.Transfer, hasMore bool, err error)
+	GetTransfersByID(c context.Context, tx dal.ReadSession, transferIDs []string) ([]models.TransferEntry, error)
+	LoadTransfersByUserID(c context.Context, userID string, offset, limit int) (transfers []models.TransferEntry, hasMore bool, err error)
+	LoadTransfersByContactID(c context.Context, contactID string, offset, limit int) (transfers []models.TransferEntry, hasMore bool, err error)
 	LoadTransferIDsByContactID(c context.Context, contactID string, limit int, startCursor string) (transferIDs []string, endCursor string, err error)
-	LoadOverdueTransfers(c context.Context, tx dal.ReadSession, userID string, limit int) (transfers []models.Transfer, err error)
-	LoadOutstandingTransfers(c context.Context, tx dal.ReadSession, periodEnds time.Time, userID, contactID string, currency money.CurrencyCode, direction models.TransferDirection) (transfers []models.Transfer, err error)
-	LoadDueTransfers(c context.Context, tx dal.ReadSession, userID string, limit int) (transfers []models.Transfer, err error)
-	LoadLatestTransfers(c context.Context, offset, limit int) ([]models.Transfer, error)
+	LoadOverdueTransfers(c context.Context, tx dal.ReadSession, userID string, limit int) (transfers []models.TransferEntry, err error)
+	LoadOutstandingTransfers(c context.Context, tx dal.ReadSession, periodEnds time.Time, userID, contactID string, currency money.CurrencyCode, direction models.TransferDirection) (transfers []models.TransferEntry, err error)
+	LoadDueTransfers(c context.Context, tx dal.ReadSession, userID string, limit int) (transfers []models.TransferEntry, err error)
+	LoadLatestTransfers(c context.Context, offset, limit int) ([]models.TransferEntry, error)
 	DelayUpdateTransferWithCreatorReceiptTgMessageID(c context.Context, botCode string, transferID string, creatorTgChatID, creatorTgReceiptMessageID int64) error
 	DelayUpdateTransfersWithCounterparty(c context.Context, creatorCounterpartyID, counterpartyCounterpartyID string) error
 	DelayUpdateTransfersOnReturn(c context.Context, returnTransferID string, transferReturnUpdates []TransferReturnUpdate) (err error)
@@ -169,9 +169,9 @@ type BillScheduleDal interface {
 }
 
 type GroupDal interface {
-	GetGroupByID(c context.Context, tx dal.ReadSession, groupID string) (group models.Group, err error)
-	InsertGroup(c context.Context, tx dal.ReadwriteTransaction, groupEntity *models.GroupEntity) (group models.Group, err error)
-	SaveGroup(c context.Context, tx dal.ReadwriteTransaction, group models.Group) (err error)
+	GetGroupByID(c context.Context, tx dal.ReadSession, groupID string) (group models.GroupEntry, err error)
+	InsertGroup(c context.Context, tx dal.ReadwriteTransaction, groupEntity *models.GroupDbo) (group models.GroupEntry, err error)
+	SaveGroup(c context.Context, tx dal.ReadwriteTransaction, group models.GroupEntry) (err error)
 	DelayUpdateGroupWithBill(c context.Context, groupID, billID string) error
 }
 
@@ -192,8 +192,8 @@ type UserVkDal interface {
 }
 
 type UserEmailDal interface {
-	GetUserEmailByID(c context.Context, tx dal.ReadSession, email string) (userEmail models.UserEmail, err error)
-	SaveUserEmail(c context.Context, tx dal.ReadwriteTransaction, userEmail models.UserEmail) (err error)
+	GetUserEmailByID(c context.Context, tx dal.ReadSession, email string) (userEmail models.UserEmailEntry, err error)
+	SaveUserEmail(c context.Context, tx dal.ReadwriteTransaction, userEmail models.UserEmailEntry) (err error)
 }
 
 type UserGooglePlusDal interface {
@@ -224,7 +224,7 @@ type TwilioDal interface {
 	SaveTwilioSms(
 		c context.Context,
 		smsResponse *gotwilio.SmsResponse,
-		transfer models.Transfer,
+		transfer models.TransferEntry,
 		phoneContact models.PhoneContact,
 		userID string,
 		tgChatID int64,

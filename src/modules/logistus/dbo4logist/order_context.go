@@ -8,7 +8,7 @@ import (
 // Order is a context for an order
 type Order struct {
 	record.WithID[string]
-	Dto *OrderDto
+	Dto *OrderDbo
 }
 
 // NewOrderKey create new order key
@@ -26,7 +26,7 @@ func NewOrderKey(teamID, orderID string) *dal.Key {
 // NewOrder creates new order context
 func NewOrder(teamID, orderID string) (order Order) {
 	key := NewOrderKey(teamID, orderID)
-	dto := new(OrderDto)
+	dto := new(OrderDbo)
 	order.ID = orderID
 	order.FullID = getOrderFullShortID(teamID, orderID)
 	order.Key = key
@@ -39,7 +39,7 @@ func getOrderFullShortID(teamID, orderID string) string {
 	return teamID + ":" + orderID
 }
 
-func NewOrderWithData(teamID, orderID string, dto *OrderDto) (order Order) {
+func NewOrderWithData(teamID, orderID string, dto *OrderDbo) (order Order) {
 	key := NewOrderKey(teamID, orderID)
 	order.ID = orderID
 	order.Key = key

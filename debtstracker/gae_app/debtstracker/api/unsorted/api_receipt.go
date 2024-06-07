@@ -27,7 +27,7 @@ import (
 	"github.com/strongo/log"
 )
 
-func NewReceiptTransferDto(c context.Context, transfer models.Transfer) dto.ApiReceiptTransferDto {
+func NewReceiptTransferDto(c context.Context, transfer models.TransferEntry) dto.ApiReceiptTransferDto {
 	creator := transfer.Data.Creator()
 	transferDto := dto.ApiReceiptTransferDto{
 		ID:             transfer.ID,
@@ -76,14 +76,14 @@ func HandleGetReceipt(c context.Context, w http.ResponseWriter, r *http.Request)
 		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
-	var transfer models.Transfer
+	var transfer models.TransferEntry
 	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		transfer, err = facade.Transfers.GetTransferByID(c, tx, receipt.Data.TransferID)
-		if api.HasError(c, w, err, models.TransferKind, receipt.Data.TransferID, http.StatusInternalServerError) {
+		if api.HasError(c, w, err, models.TransfersCollection, receipt.Data.TransferID, http.StatusInternalServerError) {
 			return
 		}
 
-		if err = facade.CheckTransferCreatorNameAndFixIfNeeded(c, tx, transfer); api.HasError(c, w, err, models.TransferKind, receipt.Data.TransferID, http.StatusInternalServerError) {
+		if err = facade.CheckTransferCreatorNameAndFixIfNeeded(c, tx, transfer); api.HasError(c, w, err, models.TransfersCollection, receipt.Data.TransferID, http.StatusInternalServerError) {
 			return
 		}
 		return nil
@@ -224,7 +224,7 @@ func HandleSendReceipt(c context.Context, w http.ResponseWriter, r *http.Request
 	}
 }
 
-func updateReceiptAndTransferOnSent(c context.Context, receiptID string, channel, sentTo, lang string) (receipt models.Receipt, transfer models.Transfer, err error) {
+func updateReceiptAndTransferOnSent(c context.Context, receiptID string, channel, sentTo, lang string) (receipt models.Receipt, transfer models.TransferEntry, err error) {
 	var db dal.DB
 	if db, err = facade.GetDatabase(c); err != nil {
 		return

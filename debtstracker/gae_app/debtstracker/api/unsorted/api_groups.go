@@ -31,7 +31,7 @@ func HandlerCreateGroup(c context.Context, w http.ResponseWriter, r *http.Reques
 	name := strings.TrimSpace(r.PostForm.Get("name"))
 	note := strings.TrimSpace(r.PostForm.Get("note"))
 
-	groupEntity := models.GroupEntity{
+	groupEntity := models.GroupDbo{
 		CreatorUserID: authInfo.UserID,
 		Name:          name,
 	}
@@ -44,7 +44,7 @@ func HandlerCreateGroup(c context.Context, w http.ResponseWriter, r *http.Reques
 		api.ErrorAsJson(c, w, http.StatusInternalServerError, err)
 		return
 	}
-	log.Infof(c, "Group created, ID: %v", group.ID)
+	log.Infof(c, "GroupEntry created, ID: %v", group.ID)
 	if err = groupToResponse(c, w, group, user); err != nil {
 		api.ErrorAsJson(c, w, http.StatusInternalServerError, err)
 		return
@@ -73,8 +73,8 @@ func HandlerGetGroup(c context.Context, w http.ResponseWriter, r *http.Request, 
 	}
 }
 
-func groupToResponse(c context.Context, w http.ResponseWriter, group models.Group, user models.AppUser) error {
-	if jsons, err := groupsToJson([]models.Group{group}, user); err != nil {
+func groupToResponse(c context.Context, w http.ResponseWriter, group models.GroupEntry, user models.AppUser) error {
+	if jsons, err := groupsToJson([]models.GroupEntry{group}, user); err != nil {
 		return err
 	} else {
 		api.MarkResponseAsJson(w.Header())
@@ -83,7 +83,7 @@ func groupToResponse(c context.Context, w http.ResponseWriter, group models.Grou
 	}
 }
 
-func groupsToJson(groups []models.Group, user models.AppUser) (result [][]byte, err error) {
+func groupsToJson(groups []models.GroupEntry, user models.AppUser) (result [][]byte, err error) {
 	result = make([][]byte, len(groups))
 
 	groupStatuses := make(map[string]string, len(groups))
@@ -145,7 +145,7 @@ func HandleJoinGroups(c context.Context, w http.ResponseWriter, r *http.Request,
 		return
 	}
 
-	groups := make([]models.Group, len(groupIDs))
+	groups := make([]models.GroupEntry, len(groupIDs))
 	var user models.AppUser
 
 	db, err := facade.GetDatabase(c)
@@ -164,7 +164,7 @@ func HandleJoinGroups(c context.Context, w http.ResponseWriter, r *http.Request,
 		errs := make([]error, len(groupIDs))
 		for i, groupID := range groupIDs {
 			go func(i int, groupID string) {
-				var group models.Group
+				var group models.GroupEntry
 				if group, errs[i] = dtdal.Group.GetGroupByID(c, tx, groupID); errs[i] != nil {
 					waitGroup.Done()
 					return
@@ -231,7 +231,7 @@ func HandlerUpdateGroup(c context.Context, w http.ResponseWriter, r *http.Reques
 
 	var (
 		user  models.AppUser
-		group models.Group
+		group models.GroupEntry
 		err   error
 	)
 
@@ -277,7 +277,7 @@ func HandlerUpdateGroup(c context.Context, w http.ResponseWriter, r *http.Reques
 			return
 		}
 
-		if err = facade.User.UpdateUserWithGroups(c, tx, user, []models.Group{group}, nil); err != nil {
+		if err = facade.User.UpdateUserWithGroups(c, tx, user, []models.GroupEntry{group}, nil); err != nil {
 			return
 		}
 
@@ -304,7 +304,7 @@ func HandlerSetContactsToGroup(c context.Context, w http.ResponseWriter, r *http
 
 	var (
 		groupID string
-		group   models.Group
+		group   models.GroupEntry
 		err     error
 	)
 
@@ -402,7 +402,7 @@ func HandlerSetContactsToGroup(c context.Context, w http.ResponseWriter, r *http
 			if user, err = facade.User.GetUserByID(c, tx, user.ID); err != nil {
 				return err
 			}
-			if err = facade.User.UpdateUserWithGroups(c, tx, user, []models.Group{group}, []string{}); err != nil {
+			if err = facade.User.UpdateUserWithGroups(c, tx, user, []models.GroupEntry{group}, []string{}); err != nil {
 				return err
 			}
 

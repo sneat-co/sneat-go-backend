@@ -139,7 +139,7 @@ func (t TransferDto) String() string {
 	}
 }
 
-func TransfersToDto(userID string, transfers []models.Transfer) []*TransferDto {
+func TransfersToDto(userID string, transfers []models.TransferEntry) []*TransferDto {
 	transfersDto := make([]*TransferDto, len(transfers))
 	for i, transfer := range transfers {
 		transfersDto[i] = TransferToDto(userID, transfer)
@@ -154,7 +154,7 @@ type CreateTransferResponse struct {
 	UserBalance         *json.RawMessage `json:",omitempty"`
 }
 
-func TransferToDto(userID string, transfer models.Transfer) *TransferDto {
+func TransferToDto(userID string, transfer models.TransferEntry) *TransferDto {
 	transferDto := TransferDto{
 		Id:            transfer.ID,
 		Amount:        transfer.Data.GetAmount(),

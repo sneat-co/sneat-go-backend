@@ -61,7 +61,7 @@ const (
 )
 
 // ValidOrderDto1 returns a valid order with 3 containers, 3 shipping points, 4 container points and 1 port
-func ValidOrderDto1(t *testing.T) (order *dbo4logist.OrderDto) {
+func ValidOrderDto1(t *testing.T) (order *dbo4logist.OrderDbo) {
 	order = ValidEmptyOrder(t)
 
 	order.Contacts = append(order.Contacts, []*dbo4logist.OrderContact{
@@ -347,7 +347,7 @@ func ValidOrderDto1(t *testing.T) (order *dbo4logist.OrderDto) {
 	return order
 }
 
-func fixCounterpartiesFromContacts(order *dbo4logist.OrderDto) {
+func fixCounterpartiesFromContacts(order *dbo4logist.OrderDbo) {
 	for _, cp := range order.Counterparties {
 		contact := order.MustGetContactByID(cp.ContactID)
 		cp.CountryID = contact.CountryID
@@ -363,7 +363,7 @@ func fixCounterpartiesFromContacts(order *dbo4logist.OrderDto) {
 }
 
 // ValidOrderWith3UnassignedContainers returns a valid order with 3 unassigned containers
-func ValidOrderWith3UnassignedContainers(t *testing.T) (order *dbo4logist.OrderDto) {
+func ValidOrderWith3UnassignedContainers(t *testing.T) (order *dbo4logist.OrderDbo) {
 	order = ValidEmptyOrder(t)
 	order.Containers = []*dbo4logist.OrderContainer{
 		{
@@ -395,13 +395,13 @@ func ValidOrderWith3UnassignedContainers(t *testing.T) (order *dbo4logist.OrderD
 }
 
 // ValidEmptyOrder returns a valid empty order
-func ValidEmptyOrder(t *testing.T) (order *dbo4logist.OrderDto) {
+func ValidEmptyOrder(t *testing.T) (order *dbo4logist.OrderDbo) {
 	modified := dbmodels2.Modified{
 		By: "unit-test",
 		At: time.Now(),
 	}
 
-	order = &dbo4logist.OrderDto{
+	order = &dbo4logist.OrderDbo{
 		WithModified: dbmodels2.WithModified{
 			CreatedFields: with.CreatedFields{
 				CreatedAtField: with.CreatedAtField{

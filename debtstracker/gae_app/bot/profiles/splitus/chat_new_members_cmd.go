@@ -69,7 +69,7 @@ var newChatMembersCommand = botsfw.Command{
 			}
 		}
 
-		var group models.Group
+		var group models.GroupEntry
 		if group, err = shared_group.GetGroup(whc, nil); err != nil {
 			return
 		}

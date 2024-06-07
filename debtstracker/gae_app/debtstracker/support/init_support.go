@@ -131,7 +131,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	//slices.Sort(counterpartyIDs)
 
-	query = dal.From(models.TransferKind).WhereField("BothUserIDs", dal.Equal, userID).OrderBy(dal.AscendingField("DtCreated")).SelectInto(func() dal.Record {
+	query = dal.From(models.TransfersCollection).WhereField("BothUserIDs", dal.Equal, userID).OrderBy(dal.AscendingField("DtCreated")).SelectInto(func() dal.Record {
 		return dal.NewRecordWithIncompleteKey(models.AppUserKind, reflect.Int64, new(models.DebutsAppUserDataOBSOLETE))
 	})
 
@@ -297,7 +297,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 		case models.TransferDirectionCounterparty2User:
 			transfersCounterpartyBalance[currency] -= value
 		default:
-			log.Errorf(c, "Transfer %v has unknown direction: %v", transferRecords[i].Key().ID, transferData.DirectionForUser(userID))
+			log.Errorf(c, "TransferEntry %v has unknown direction: %v", transferRecords[i].Key().ID, transferData.DirectionForUser(userID))
 			return
 		}
 	}

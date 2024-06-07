@@ -15,7 +15,7 @@ import (
 
 const inviteEmailTemplateText = `
 <p>
-	InviteDto from: <i>{{.fromHTML}}</i>
+	InviteDbo from: <i>{{.fromHTML}}</i>
 </p>
 
 <p>

@@ -20,7 +20,7 @@ import (
 	"strconv"
 )
 
-func GetGroup(whc botsfw.WebhookContext, callbackUrl *url.URL) (group models.Group, err error) {
+func GetGroup(whc botsfw.WebhookContext, callbackUrl *url.URL) (group models.GroupEntry, err error) {
 	if callbackUrl != nil {
 		group.ID = callbackUrl.Query().Get("group")
 	}
@@ -69,7 +69,7 @@ func GetUserGroupID(whc botsfw.WebhookContext) (groupID string, err error) {
 	return
 }
 
-func createGroupFromTelegram(c context.Context, whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, chatData *models.DebtusTelegramChatData, tgChat *tgbotapi.Chat) (group models.Group, err error) {
+func createGroupFromTelegram(c context.Context, whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, chatData *models.DebtusTelegramChatData, tgChat *tgbotapi.Chat) (group models.GroupEntry, err error) {
 	log.Debugf(c, "createGroupFromTelegram()")
 	var user *models.DebutsAppUserDataOBSOLETE
 	if user, err = shared_all.GetUser(whc); err != nil {
@@ -89,7 +89,7 @@ func createGroupFromTelegram(c context.Context, whc botsfw.WebhookContext, tx da
 	}
 
 	userID := whc.AppUserID()
-	groupEntity := models.GroupEntity{
+	groupEntity := models.GroupDbo{
 		CreatorUserID: userID,
 		Name:          tgChat.Title,
 	}
@@ -102,7 +102,7 @@ func createGroupFromTelegram(c context.Context, whc botsfw.WebhookContext, tx da
 	})
 
 	hasTgGroupEntity := false
-	beforeGroupInsert := func(c context.Context, groupEntity *models.GroupEntity) (group models.Group, err error) {
+	beforeGroupInsert := func(c context.Context, groupEntity *models.GroupDbo) (group models.GroupEntry, err error) {
 		log.Debugf(c, "beforeGroupInsert()")
 		var tgGroup models.TgGroup
 		if tgGroup, err = dtdal.TgGroup.GetTgGroupByID(c, nil, tgChat.ID); err != nil {
@@ -123,7 +123,7 @@ func createGroupFromTelegram(c context.Context, whc botsfw.WebhookContext, tx da
 		return
 	}
 
-	afterGroupInsert := func(c context.Context, group models.Group, user models.AppUser) (err error) {
+	afterGroupInsert := func(c context.Context, group models.GroupEntry, user models.AppUser) (err error) {
 		log.Debugf(c, "afterGroupInsert()")
 		if !hasTgGroupEntity {
 			data := &models.TgGroupData{

@@ -20,11 +20,11 @@ type groupFacade struct {
 var Group = groupFacade{}
 
 func (groupFacade groupFacade) CreateGroup(c context.Context,
-	groupEntity *models.GroupEntity,
+	groupEntity *models.GroupDbo,
 	tgBotCode string,
-	beforeGroupInsert func(tc context.Context, groupEntity *models.GroupEntity) (group models.Group, err error),
-	afterGroupInsert func(c context.Context, group models.Group, user models.AppUser) (err error),
-) (group models.Group, groupMember models.GroupMember, err error) {
+	beforeGroupInsert func(tc context.Context, groupEntity *models.GroupDbo) (group models.GroupEntry, err error),
+	afterGroupInsert func(c context.Context, group models.GroupEntry, user models.AppUser) (err error),
+) (group models.GroupEntry, groupMember models.GroupMember, err error) {
 	var db dal.DB
 	if db, err = GetDatabase(c); err != nil {
 		return
@@ -98,7 +98,7 @@ func (groupFacade groupFacade) CreateGroup(c context.Context,
 	}, dal.TxWithCrossGroup()); err != nil {
 		return
 	}
-	log.Infof(c, "Group created, ID=%v", group.ID)
+	log.Infof(c, "GroupEntry created, ID=%v", group.ID)
 	return
 }
 
@@ -108,7 +108,7 @@ type NewUser struct {
 	ChatMember botsfw.WebhookActor
 }
 
-func (groupFacade) AddUsersToTheGroupAndOutstandingBills(c context.Context, groupID string, newUsers []NewUser) (models.Group, []NewUser, error) {
+func (groupFacade) AddUsersToTheGroupAndOutstandingBills(c context.Context, groupID string, newUsers []NewUser) (models.GroupEntry, []NewUser, error) {
 	log.Debugf(c, "groupFacade.AddUsersToTheGroupAndOutstandingBills(groupID=%v, newUsers=%v)", groupID, newUsers)
 	if groupID == "" {
 		panic("groupID is empty string")
@@ -116,7 +116,7 @@ func (groupFacade) AddUsersToTheGroupAndOutstandingBills(c context.Context, grou
 	if len(newUsers) == 0 {
 		panic("len(newUsers) == 0")
 	}
-	var group models.Group
+	var group models.GroupEntry
 	var db dal.DB
 	var err error
 	if db, err = GetDatabase(c); err != nil {
@@ -198,7 +198,7 @@ func delayedUpdateUserWithGroups(c context.Context, userID string, groupIDs2add,
 		return
 	}
 	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-		groups2add := make([]models.Group, len(groupIDs2add))
+		groups2add := make([]models.GroupEntry, len(groupIDs2add))
 		for i, groupID := range groupIDs2add {
 			if groups2add[i], err = dtdal.Group.GetGroupByID(c, tx, groupID); err != nil {
 				return
@@ -215,7 +215,7 @@ func delayedUpdateUserWithGroups(c context.Context, userID string, groupIDs2add,
 	return err
 }
 
-func (userFacade) UpdateUserWithGroups(c context.Context, tx dal.ReadwriteTransaction, user models.AppUser, groups2add []models.Group, groups2remove []string) (err error) {
+func (userFacade) UpdateUserWithGroups(c context.Context, tx dal.ReadwriteTransaction, user models.AppUser, groups2add []models.GroupEntry, groups2remove []string) (err error) {
 	log.Debugf(c, "updateUserWithGroup(user.ID=%d, len(groups2add)=%d, groups2remove=%v)", user.ID, len(groups2add), groups2remove)
 	groups := user.Data.ActiveGroups()
 	updated := false
@@ -282,7 +282,7 @@ func (userFacade) UpdateContactWithGroups(c context.Context, contactID string, a
 
 var ErrAttemptToLeaveUnsettledGroup = errors.New("an attept to leave unsettled group")
 
-func (groupFacade) LeaveGroup(c context.Context, groupID string, userID string) (group models.Group, user models.AppUser, err error) {
+func (groupFacade) LeaveGroup(c context.Context, groupID string, userID string) (group models.GroupEntry, user models.AppUser, err error) {
 	var db dal.DB
 	if db, err = GetDatabase(c); err != nil {
 		return
@@ -293,7 +293,7 @@ func (groupFacade) LeaveGroup(c context.Context, groupID string, userID string) 
 		if err = tx.GetMulti(c, []dal.Record{group.Record, user.Record}); err != nil {
 			return
 		}
-		//if group, err = dtdal.Group.GetGroupByID(c, groupID); err != nil {
+		//if group, err = dtdal.GroupEntry.GetGroupByID(c, groupID); err != nil {
 		//	return
 		//}
 		//if user, err = dtdal.User.GetUserByStrID(c, userID); err != nil {

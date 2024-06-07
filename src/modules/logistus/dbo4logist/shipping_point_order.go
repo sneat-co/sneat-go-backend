@@ -127,7 +127,7 @@ func (v *WithShippingPoints) Updates() []dal.Update {
 	}
 }
 
-func (v *WithShippingPoints) validateOrder(orderDto OrderDto) error {
+func (v *WithShippingPoints) validateOrder(orderDto OrderDbo) error {
 	if err := v.Validate(); err != nil {
 		return err
 	}
@@ -139,7 +139,7 @@ func (v *WithShippingPoints) validateOrder(orderDto OrderDto) error {
 	return nil
 }
 
-func (v *WithShippingPoints) validateShippingPoint(i int, shippingPoint *OrderShippingPoint, orderDto OrderDto) error {
+func (v *WithShippingPoints) validateShippingPoint(i int, shippingPoint *OrderShippingPoint, orderDto OrderDbo) error {
 	field := func() string {
 		return fmt.Sprintf("shippingPoints[%v]", i)
 	}

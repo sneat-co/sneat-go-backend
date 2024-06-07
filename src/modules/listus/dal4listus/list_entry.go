@@ -8,12 +8,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 )
 
-//type ListEntry = record.DataWithID[string, *dbo4listus.ListDbo]
-
-type ListEntry struct {
-	record.WithID[string]
-	Data *dbo4listus.ListDbo
-}
+type ListEntry = record.DataWithID[string, *dbo4listus.ListDbo]
 
 // NewTeamListKey creates new list key
 func NewTeamListKey(teamID, id string) *dal.Key {

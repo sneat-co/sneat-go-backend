@@ -69,10 +69,7 @@ func (v LogistTeamDbo) Validate() error {
 }
 
 // LogistTeamEntry is a context for LogistTeam
-type LogistTeamEntry struct {
-	record.WithID[string]
-	Data *LogistTeamDbo
-}
+type LogistTeamEntry = record.DataWithID[string, *LogistTeamDbo]
 
 func newLogistTeamKey(teamID string) *dal.Key {
 	teamKey := dal4teamus.NewTeamKey(teamID)

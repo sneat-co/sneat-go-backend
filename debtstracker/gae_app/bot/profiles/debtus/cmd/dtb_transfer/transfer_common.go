@@ -734,7 +734,7 @@ func sendReceiptByTelegramButton(transferID string, translator i18n.SingleLocale
 	)
 }
 
-func createSendReceiptOptionsMessage(whc botsfw.WebhookContext, transfer models.Transfer) (m botsfw.MessageFromBot, err error) {
+func createSendReceiptOptionsMessage(whc botsfw.WebhookContext, transfer models.TransferEntry) (m botsfw.MessageFromBot, err error) {
 	c := whc.Context()
 
 	log.Debugf(c, "createSendReceiptOptionsMessage(transferID=%v)", transfer.ID)

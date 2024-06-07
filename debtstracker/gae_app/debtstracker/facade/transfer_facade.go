@@ -56,7 +56,7 @@ type TransfersFacade struct {
 
 var Transfers = TransfersFacade{}
 
-func (TransfersFacade) SaveTransfer(c context.Context, tx dal.ReadwriteTransaction, transfer models.Transfer) error {
+func (TransfersFacade) SaveTransfer(c context.Context, tx dal.ReadwriteTransaction, transfer models.TransferEntry) error {
 	return tx.Set(c, transfer.Record)
 }
 
@@ -165,7 +165,7 @@ func (transferFacade TransfersFacade) CreateTransfer(c context.Context, input dt
 	}
 
 	if input.Request.ReturnToTransferID != "" {
-		var transferToReturn models.Transfer
+		var transferToReturn models.TransferEntry
 		if transferToReturn, err = Transfers.GetTransferByID(c, db, input.Request.ReturnToTransferID); err != nil {
 			err = fmt.Errorf("failed to get returnToTransferID=%s: %w", input.Request.ReturnToTransferID, err)
 			return
@@ -215,7 +215,7 @@ func (transferFacade TransfersFacade) CreateTransfer(c context.Context, input dt
 func (transferFacade TransfersFacade) checkOutstandingTransfersForReturns(c context.Context, now time.Time, input dto.CreateTransferInput) (returnToTransferIDs []string, err error) {
 	log.Debugf(c, "TransfersFacade.checkOutstandingTransfersForReturns()")
 	var (
-		outstandingTransfers []models.Transfer
+		outstandingTransfers []models.TransferEntry
 	)
 
 	creatorUserID := input.CreatorUser.ID
@@ -237,7 +237,7 @@ func (transferFacade TransfersFacade) checkOutstandingTransfersForReturns(c cont
 		return
 	}
 
-	log.Debugf(c, "facade.checkOutstandingTransfersForReturns() => dtdal.Transfer.LoadOutstandingTransfers(userID=%v, currency=%v) => %d transfers", input.CreatorUser.ID, input.Request.Amount.Currency, len(outstandingTransfers))
+	log.Debugf(c, "facade.checkOutstandingTransfersForReturns() => dtdal.TransferEntry.LoadOutstandingTransfers(userID=%v, currency=%v) => %d transfers", input.CreatorUser.ID, input.Request.Amount.Currency, len(outstandingTransfers))
 
 	if outstandingTransfersCount := len(outstandingTransfers); outstandingTransfersCount > 0 { // Assign the return to specific transfers
 		var (
@@ -437,7 +437,7 @@ func (transferFacade TransfersFacade) createTransferWithinTransaction(
 	transferData.TransferInterest = *input.Request.Interest
 
 	type TransferReturnInfo struct {
-		Transfer       models.Transfer
+		Transfer       models.TransferEntry
 		ReturnedAmount decimal.Decimal64p2
 	}
 
@@ -464,13 +464,13 @@ func (transferFacade TransfersFacade) createTransferWithinTransaction(
 			//returnToTransfer := returnToTransfer.Data().(*models.TransferData)
 			returnToTransferOutstandingValue := returnToTransfer.Data.GetOutstandingValue(dtCreated)
 			if !returnToTransfer.Data.IsOutstanding {
-				log.Warningf(c, "Transfer(%v).IsOutstanding: false, returnToTransferOutstandingValue: %v", returnToTransfer.ID, returnToTransferOutstandingValue)
+				log.Warningf(c, "TransferEntry(%v).IsOutstanding: false, returnToTransferOutstandingValue: %v", returnToTransfer.ID, returnToTransferOutstandingValue)
 				continue
 			} else if returnToTransferOutstandingValue == 0 {
-				log.Warningf(c, "Transfer(%v) => returnToTransferOutstandingValue == 0", returnToTransfer.ID, returnToTransferOutstandingValue)
+				log.Warningf(c, "TransferEntry(%v) => returnToTransferOutstandingValue == 0", returnToTransfer.ID, returnToTransferOutstandingValue)
 				continue
 			} else if returnToTransferOutstandingValue < 0 {
-				panic(fmt.Sprintf("Transfer(%v) => returnToTransferOutstandingValue:%d <= 0", returnToTransfer.ID, returnToTransferOutstandingValue))
+				panic(fmt.Sprintf("TransferEntry(%v) => returnToTransferOutstandingValue:%d <= 0", returnToTransfer.ID, returnToTransferOutstandingValue))
 			}
 			var amountReturnedToTransfer decimal.Decimal64p2
 			if amountToAssign < returnToTransferOutstandingValue {
@@ -525,7 +525,7 @@ func (transferFacade TransfersFacade) createTransferWithinTransaction(
 					transferData.IsReturn = true
 					// transferData.AmountInCentsOutstanding = 0
 					// transferData.AmountInCentsReturned = 0
-					log.Debugf(c, "Transfer marked IsReturn=true as it's amount less or equal to outstanding debt(s)")
+					log.Debugf(c, "TransferEntry marked IsReturn=true as it's amount less or equal to outstanding debt(s)")
 				}
 				// if returnedValue != input.Amount.Value {
 				// 	// transferData.AmountInCentsOutstanding = input.Amount.Value - returnedAmount
@@ -590,7 +590,7 @@ func (transferFacade TransfersFacade) createTransferWithinTransaction(
 		panic(fmt.Sprintf("Can't proceed creating transfer as InsertTransfer() returned transfer.ID == 0, err: %v", err))
 	}
 
-	log.Infof(c, "Transfer inserted to DB with ID=%d, %+v", output.Transfer.ID, createdTransfer.Data)
+	log.Infof(c, "TransferEntry inserted to DB with ID=%d, %+v", output.Transfer.ID, createdTransfer.Data)
 
 	if len(transferReturnInfos) > 2 {
 		transferReturnUpdates := make([]dtdal.TransferReturnUpdate, len(transferReturnInfos))
@@ -706,7 +706,7 @@ func (transferFacade TransfersFacade) createTransferWithinTransaction(
 	return
 }
 
-func (TransfersFacade) GetTransferByID(c context.Context, tx dal.ReadSession, id string) (transfer models.Transfer, err error) {
+func (TransfersFacade) GetTransferByID(c context.Context, tx dal.ReadSession, id string) (transfer models.TransferEntry, err error) {
 	if tx == nil {
 		if tx, err = GetDatabase(c); err != nil {
 			return
@@ -720,7 +720,7 @@ func (TransfersFacade) GetTransferByID(c context.Context, tx dal.ReadSession, id
 func (TransfersFacade) updateUserAndCounterpartyWithTransferInfo(
 	c context.Context,
 	amount money.Amount,
-	transfer models.Transfer,
+	transfer models.TransferEntry,
 	user models.AppUser,
 	contact models.Contact,
 	closedTransferIDs []string,
@@ -753,7 +753,7 @@ func updateUserWithTransferInfo(
 	c context.Context,
 	val decimal.Decimal64p2,
 	// curr money.CurrencyCode,
-	transfer models.Transfer,
+	transfer models.TransferEntry,
 	user models.AppUser,
 	contact models.Contact,
 	// contact models.Contact,
@@ -783,7 +783,7 @@ func updateUserWithTransferInfo(
 func updateContactWithTransferInfo(
 	c context.Context,
 	val decimal.Decimal64p2,
-	transfer models.Transfer,
+	transfer models.TransferEntry,
 	contact models.Contact,
 	closedTransferIDs []string,
 ) (err error) {
@@ -874,13 +874,13 @@ func removeClosedTransfersFromOutstandingWithInterest(
 	return transfersWithInterest[:i]
 }
 
-func InsertTransfer(c context.Context, tx dal.ReadwriteTransaction, transferEntity *models.TransferData) (transfer models.Transfer, err error) {
+func InsertTransfer(c context.Context, tx dal.ReadwriteTransaction, transferEntity *models.TransferData) (transfer models.TransferEntry, err error) {
 	transfer = models.NewTransfer("", transferEntity)
 	err = tx.Insert(c, transfer.Record)
 	return
 }
 
-func (TransfersFacade) UpdateTransferOnReturn(c context.Context, tx dal.ReadwriteTransaction, returnTransfer, transfer models.Transfer, returnedAmount decimal.Decimal64p2) (err error) {
+func (TransfersFacade) UpdateTransferOnReturn(c context.Context, tx dal.ReadwriteTransaction, returnTransfer, transfer models.TransferEntry, returnedAmount decimal.Decimal64p2) (err error) {
 	log.Debugf(c, "UpdateTransferOnReturn(\n\treturnTransfer=%v,\n\ttransfer=%v,\n\treturnedAmount=%v)", litter.Sdump(returnTransfer), litter.Sdump(transfer), returnedAmount)
 
 	if returnTransfer.Data.Currency != transfer.Data.Currency {
@@ -888,14 +888,14 @@ func (TransfersFacade) UpdateTransferOnReturn(c context.Context, tx dal.Readwrit
 	} else if cID := returnTransfer.Data.From().ContactID; cID != "" && cID != transfer.Data.To().ContactID {
 		if transfer.Data.To().ContactID == "" && returnTransfer.Data.From().UserID == transfer.Data.To().UserID {
 			transfer.Data.To().ContactID = cID
-			log.Warningf(c, "Fixed Transfer(%v).To().ContactID: 0 => %v", transfer.ID, cID)
+			log.Warningf(c, "Fixed TransferEntry(%v).To().ContactID: 0 => %v", transfer.ID, cID)
 		} else {
 			panic(fmt.Sprintf("returnTransfer(id=%v).From().ContactID != transfer.To().ContactID => %v != %v", returnTransfer.ID, cID, transfer.Data.To().ContactID))
 		}
 	} else if cID := returnTransfer.Data.To().ContactID; cID != "" && cID != transfer.Data.From().ContactID {
 		if transfer.Data.From().ContactID == "" && returnTransfer.Data.To().UserID == transfer.Data.From().UserID {
 			transfer.Data.From().ContactID = cID
-			log.Warningf(c, "Fixed Transfer(%v).From().ContactID: 0 => %v", transfer.ID, cID)
+			log.Warningf(c, "Fixed TransferEntry(%v).From().ContactID: 0 => %v", transfer.ID, cID)
 		} else {
 			panic(fmt.Errorf("returnTransfer(id=%v).To().ContactID != transfer.From().ContactID => %v != %v", returnTransfer.ID, cID, transfer.Data.From().ContactID))
 		}
@@ -903,7 +903,7 @@ func (TransfersFacade) UpdateTransferOnReturn(c context.Context, tx dal.Readwrit
 
 	for _, previousReturn := range transfer.Data.GetReturns() {
 		if previousReturn.TransferID == returnTransfer.ID {
-			log.Infof(c, "Transfer already has information about return transfer")
+			log.Infof(c, "TransferEntry already has information about return transfer")
 			return
 		}
 	}

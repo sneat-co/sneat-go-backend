@@ -8,7 +8,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 )
 
-func EditReminderMessage(whc botsfw.WebhookContext, transfer models.Transfer, message string) (m botsfw.MessageFromBot, err error) {
+func EditReminderMessage(whc botsfw.WebhookContext, transfer models.TransferEntry, message string) (m botsfw.MessageFromBot, err error) {
 	utm := common.NewUtmParams(whc, common.UTM_CAMPAIGN_REMINDER)
 	appUserID := whc.AppUserID()
 	mt := fmt.Sprintf(

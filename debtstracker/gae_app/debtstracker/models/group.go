@@ -15,17 +15,14 @@ import (
 
 const GroupKind = "Group"
 
-type Group struct {
-	record.WithID[string]
-	Data *GroupEntity
-}
+type GroupEntry = record.DataWithID[string, *GroupDbo]
 
-func NewGroup(id string, data *GroupEntity) Group {
+func NewGroup(id string, data *GroupDbo) GroupEntry {
 	key := NewGroupKey(id)
 	if data == nil {
-		data = new(GroupEntity)
+		data = new(GroupDbo)
 	}
-	return Group{
+	return GroupEntry{
 		WithID: record.WithID[string]{
 			ID:     id,
 			Key:    key,
@@ -46,7 +43,7 @@ func NewGroupKey(id string) *dal.Key {
 	return dal.NewKeyWithID(GroupKind, id)
 }
 
-type GroupEntity struct {
+type GroupDbo struct {
 	CreatorUserID string
 	//IsUser2User         bool   `datastore:",noindex"`
 	Name                string             `datastore:",noindex"`
@@ -61,7 +58,7 @@ type GroupEntity struct {
 	billsHolder
 }
 
-func (entity *GroupEntity) ApplyBillBalanceDifference(currency money.CurrencyCode, diff BillBalanceDifference) (changed bool, err error) {
+func (entity *GroupDbo) ApplyBillBalanceDifference(currency money.CurrencyCode, diff BillBalanceDifference) (changed bool, err error) {
 	if currency == "" {
 		panic("currency parameter is required")
 	}
@@ -117,7 +114,7 @@ func (entity *GroupEntity) ApplyBillBalanceDifference(currency money.CurrencyCod
 	return entity.SetGroupMembers(groupMembers), err
 }
 
-func (entity *GroupEntity) GetTelegramGroups() (tgGroups []GroupTgChatJson, err error) {
+func (entity *GroupDbo) GetTelegramGroups() (tgGroups []GroupTgChatJson, err error) {
 	if entity.telegramGroups != nil {
 		return entity.telegramGroups, nil
 	}
@@ -133,7 +130,7 @@ func (entity *GroupEntity) GetTelegramGroups() (tgGroups []GroupTgChatJson, err 
 	return
 }
 
-func (entity *GroupEntity) SetTelegramGroups(tgGroups []GroupTgChatJson) (changed bool) {
+func (entity *GroupDbo) SetTelegramGroups(tgGroups []GroupTgChatJson) (changed bool) {
 	if data, err := ffjson.Marshal(tgGroups); err != nil {
 		panic(err.Error())
 	} else {
@@ -149,7 +146,7 @@ func (entity *GroupEntity) SetTelegramGroups(tgGroups []GroupTgChatJson) (change
 	return
 }
 
-func (entity *GroupEntity) AddOrGetMember(userID, contactID, name string) (isNew, changed bool, index int, member GroupMemberJson, groupMembers []GroupMemberJson) {
+func (entity *GroupDbo) AddOrGetMember(userID, contactID, name string) (isNew, changed bool, index int, member GroupMemberJson, groupMembers []GroupMemberJson) {
 	if userID == "" {
 		panic(userID == "")
 	}
@@ -229,7 +226,7 @@ func addOrGetMember(members []MemberJson, memberID, userID, contactID, name stri
 	return len(members), member, true, true
 }
 
-func (entity *GroupEntity) GetGroupMembers() []GroupMemberJson {
+func (entity *GroupDbo) GetGroupMembers() []GroupMemberJson {
 	members := make([]GroupMemberJson, entity.MembersCount)
 	if entity.members != nil && len(entity.members) == entity.MembersCount {
 		copy(members, entity.members)
@@ -248,7 +245,7 @@ func (entity *GroupEntity) GetGroupMembers() []GroupMemberJson {
 	return members
 }
 
-func (entity *GroupEntity) GetGroupMemberByID(id string) (GroupMemberJson, error) {
+func (entity *GroupDbo) GetGroupMemberByID(id string) (GroupMemberJson, error) {
 	if id == "" {
 		return GroupMemberJson{}, fmt.Errorf("%w: empty id", dal.ErrRecordNotFound)
 	}
@@ -260,7 +257,7 @@ func (entity *GroupEntity) GetGroupMemberByID(id string) (GroupMemberJson, error
 	return GroupMemberJson{}, fmt.Errorf("%w: unknown id="+id, dal.ErrRecordNotFound)
 }
 
-func (entity *GroupEntity) GetGroupMemberByUserID(userID string) (GroupMemberJson, error) {
+func (entity *GroupDbo) GetGroupMemberByUserID(userID string) (GroupMemberJson, error) {
 	if userID == "" {
 		return GroupMemberJson{}, fmt.Errorf("%w: empty id", dal.ErrRecordNotFound)
 	}
@@ -272,7 +269,7 @@ func (entity *GroupEntity) GetGroupMemberByUserID(userID string) (GroupMemberJso
 	return GroupMemberJson{}, fmt.Errorf("%w: unknown userID=%s", dal.ErrRecordNotFound, userID)
 }
 
-func (entity *GroupEntity) GetMembers() (members []MemberJson) {
+func (entity *GroupDbo) GetMembers() (members []MemberJson) {
 	groupMembers := entity.GetGroupMembers()
 	members = make([]MemberJson, len(groupMembers))
 	for i, gm := range groupMembers {
@@ -281,7 +278,7 @@ func (entity *GroupEntity) GetMembers() (members []MemberJson) {
 	return
 }
 
-func (entity *GroupEntity) GetSplitMode() SplitMode {
+func (entity *GroupDbo) GetSplitMode() SplitMode {
 	if entity.MembersCount == 0 {
 		return SplitModeEqually
 	}
@@ -300,14 +297,14 @@ func (entity *GroupEntity) GetSplitMode() SplitMode {
 	return SplitModeShare
 }
 
-func (entity *GroupEntity) TotalShares() (n int) {
+func (entity *GroupDbo) TotalShares() (n int) {
 	for _, m := range entity.GetGroupMembers() {
 		n += m.Shares
 	}
 	return
 }
 
-func (entity *GroupEntity) UserIsMember(userID string) bool {
+func (entity *GroupDbo) UserIsMember(userID string) bool {
 	for _, m := range entity.GetGroupMembers() {
 		if m.UserID == userID {
 			return true
@@ -316,7 +313,7 @@ func (entity *GroupEntity) UserIsMember(userID string) bool {
 	return false
 }
 
-func (entity *GroupEntity) SetGroupMembers(members []GroupMemberJson) (changed bool) {
+func (entity *GroupDbo) SetGroupMembers(members []GroupMemberJson) (changed bool) {
 	if len(members) == 0 {
 		if changed = entity.MembersJson != ""; changed {
 			entity.members = make([]GroupMemberJson, 0)
@@ -350,7 +347,7 @@ func (entity *GroupEntity) SetGroupMembers(members []GroupMemberJson) (changed b
 	return
 }
 
-func (entity *GroupEntity) validateMembers(members []GroupMemberJson, membersCount int) error {
+func (entity *GroupDbo) validateMembers(members []GroupMemberJson, membersCount int) error {
 	if membersCount != len(members) {
 		return fmt.Errorf("entity.MembersCount != len(members), %d != %d", entity.MembersCount, len(members))
 	}
@@ -408,7 +405,7 @@ func (entity *GroupEntity) validateMembers(members []GroupMemberJson, membersCou
 	return nil
 }
 
-//func (entity *GroupEntity) Load(ps []datastore.Property) (err error) {
+//func (entity *GroupDbo) Load(ps []datastore.Property) (err error) {
 //	if ps, err = gaedb.CleanProperties(ps, map[string]gaedb.IsOkToRemove{
 //		"Status": gaedb.IsObsolete,
 //	}); err != nil {
@@ -432,7 +429,7 @@ func (entity *GroupEntity) validateMembers(members []GroupMemberJson, membersCou
 //	"TgGroupsJson":          gaedb.IsEmptyJSON,
 //}
 
-func (entity *GroupEntity) Validate() error {
+func (entity *GroupDbo) Validate() error {
 	if entity.CreatorUserID == "" {
 		return validation.NewErrRecordIsMissingRequiredField("CreatorUserID")
 	}
@@ -444,13 +441,13 @@ func (entity *GroupEntity) Validate() error {
 	}
 	//ps, err := datastore.SaveStruct(entity)
 	//if ps, err = gaedb.CleanProperties(ps, groupPropertiesToClean); err != nil {
-	//	return ps, fmt.Errorf("%w: failed to clean properties for *GroupEntity", err)
+	//	return ps, fmt.Errorf("%w: failed to clean properties for *GroupDbo", err)
 	//}
 	//checkHasProperties(GroupKind, ps)
 	return nil
 }
 
-func (entity *GroupEntity) AddBill(bill Bill) (changed bool, err error) {
+func (entity *GroupDbo) AddBill(bill Bill) (changed bool, err error) {
 	outstandingBills := entity.GetOutstandingBills()
 
 	for i, b := range outstandingBills {

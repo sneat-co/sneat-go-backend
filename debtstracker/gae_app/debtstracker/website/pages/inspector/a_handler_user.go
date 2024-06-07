@@ -68,7 +68,7 @@ func (bs balancesByCurrency) SetBalance(setter func(bs balancesByCurrency)) {
 func validateTransfers(c context.Context, userID string, userBalances balances) (
 	byContactWithoutInterest map[string]transfersInfo, err error,
 ) {
-	query := datastore.NewQuery(models.TransferKind).Filter("BothUserIDs=", userID)
+	query := datastore.NewQuery(models.TransfersCollection).Filter("BothUserIDs=", userID)
 
 	byContactWithoutInterest = make(map[string]transfersInfo)
 

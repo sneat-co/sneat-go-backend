@@ -13,11 +13,11 @@ func NewUserEmailGaeDal() UserEmailGaeDal {
 	return UserEmailGaeDal{}
 }
 
-func (UserEmailGaeDal) GetUserEmailByID(c context.Context, tx dal.ReadSession, email string) (userEmail models.UserEmail, err error) {
+func (UserEmailGaeDal) GetUserEmailByID(c context.Context, tx dal.ReadSession, email string) (userEmail models.UserEmailEntry, err error) {
 	userEmail = models.NewUserEmail(email, nil)
 	return userEmail, tx.Get(c, userEmail.Record)
 }
 
-func (UserEmailGaeDal) SaveUserEmail(c context.Context, tx dal.ReadwriteTransaction, userEmail models.UserEmail) (err error) {
+func (UserEmailGaeDal) SaveUserEmail(c context.Context, tx dal.ReadwriteTransaction, userEmail models.UserEmailEntry) (err error) {
 	return tx.Set(c, userEmail.Record)
 }

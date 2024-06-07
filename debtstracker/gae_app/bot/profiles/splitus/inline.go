@@ -79,7 +79,7 @@ func inlineQueryJoinGroup(whc botsfw.WebhookContext, query string) (m botsfw.Mes
 
 	inlineQuery := whc.Input().(botsfw.WebhookInlineQuery)
 
-	var group models.Group
+	var group models.GroupEntry
 	if group.ID = query[len(joinGroupCommanCode+"?id="):]; group.ID == "" {
 		err = errors.New("Missing group ID")
 		return

@@ -159,7 +159,7 @@ func (v WithOrderContainers) GetContainerByID(id string) (i int, container *Orde
 //	}
 //}
 
-func (v WithOrderContainers) validateOrder(order OrderDto) error {
+func (v WithOrderContainers) validateOrder(order OrderDbo) error {
 	if err := v.Validate(); err != nil {
 		return err
 	}

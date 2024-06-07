@@ -41,7 +41,7 @@ func addSegmentsTx(ctx context.Context, tx dal.ReadwriteTransaction, params *Ord
 	return nil
 }
 
-func updateContainerWithAddedSegment(orderDto *dbo4logist.OrderDto, containerData dto4logist.SegmentContainerData) error {
+func updateContainerWithAddedSegment(orderDto *dbo4logist.OrderDbo, containerData dto4logist.SegmentContainerData) error {
 	_, container := orderDto.GetContainerByID(containerData.ID)
 
 	if container == nil {
@@ -130,7 +130,7 @@ func addSegment(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderW
 }
 
 func addContainerPoint(
-	orderDto *dbo4logist.OrderDto,
+	orderDto *dbo4logist.OrderDbo,
 	shippingPointID string,
 	containerData dto4logist.SegmentContainerData,
 	containerEndpoints dbo4logist.ContainerEndpoints,
@@ -187,7 +187,7 @@ func addOrUpdateShippingPoints(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	params *OrderWorkerParams,
-	orderDto *dbo4logist.OrderDto,
+	orderDto *dbo4logist.OrderDbo,
 	segment *dbo4logist.ContainerSegment,
 	containerData dto4logist.SegmentContainerData,
 ) error {
@@ -237,7 +237,7 @@ func addShippingPointsToOrderIfNeeded(
 	ctx context.Context,
 	tx dal.ReadTransaction,
 	teamID string,
-	orderDto *dbo4logist.OrderDto,
+	orderDto *dbo4logist.OrderDbo,
 	segment *dbo4logist.ContainerSegment,
 ) (fromShippingPoint, toShippingPoint *dbo4logist.OrderShippingPoint, err error) {
 	add := func(end string, point *dbo4logist.SegmentEndpoint) (
@@ -264,7 +264,7 @@ func addShippingPointToOrderIfNeeded(
 	ctx context.Context,
 	tx dal.ReadTransaction,
 	teamID string,
-	orderDto *dbo4logist.OrderDto,
+	orderDto *dbo4logist.OrderDbo,
 	end string,
 	segmentCounterparty dbo4logist.SegmentCounterparty,
 ) (
@@ -350,7 +350,7 @@ func addCounterpartyToOrderIfNeeded(
 	ctx context.Context,
 	tx dal.ReadTransaction,
 	teamID string,
-	order *dbo4logist.OrderDto,
+	order *dbo4logist.OrderDbo,
 	endpointType string, // Either "from", "to" or "by"
 	segmentEndpoint dto4logist.AddSegmentEndpoint,
 ) (changes OrderChanges, err error) {

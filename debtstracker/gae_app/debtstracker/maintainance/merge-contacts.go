@@ -189,7 +189,7 @@ func mergeContactTransfers(c context.Context, tx dal.ReadwriteTransaction, wg *s
 	defer func() {
 		wg.Done()
 	}()
-	transfersQ := dal.From(models.TransferKind).
+	transfersQ := dal.From(models.TransfersCollection).
 		Where(dal.Field("BothCounterpartyIDs").EqualTo(sourceContactID)).
 		SelectInto(func() dal.Record {
 			return models.NewTransfer("", nil).Record
@@ -200,7 +200,7 @@ func mergeContactTransfers(c context.Context, tx dal.ReadwriteTransaction, wg *s
 	}
 	var (
 		record   dal.Record
-		transfer models.Transfer
+		transfer models.TransferEntry
 	)
 	for {
 		if record, err = transfers.Next(); err != nil {

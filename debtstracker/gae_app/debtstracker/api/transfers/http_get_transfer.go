@@ -15,7 +15,7 @@ func HandleGetTransfer(c context.Context, w http.ResponseWriter, r *http.Request
 		return
 	} else {
 		transfer, err := facade.Transfers.GetTransferByID(c, nil, transferID)
-		if api.HasError(c, w, err, models.TransferKind, transferID, http.StatusBadRequest) {
+		if api.HasError(c, w, err, models.TransfersCollection, transferID, http.StatusBadRequest) {
 			return
 		}
 

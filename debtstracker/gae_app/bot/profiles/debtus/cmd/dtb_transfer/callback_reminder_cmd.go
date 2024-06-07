@@ -74,7 +74,7 @@ func rescheduleReminder(whc botsfw.WebhookContext, reminderID string, remindInDu
 	if m.Text != "" {
 		return m, err
 	}
-	var transfer models.Transfer
+	var transfer models.TransferEntry
 	if transfer, err = facade.Transfers.GetTransferByID(c, nil, oldReminder.Data.TransferID); err != nil {
 		return m, fmt.Errorf("failed to get transferEntity by id: %w", err)
 	}

@@ -189,7 +189,7 @@ func viewReceiptCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) 
 	return ShowReceipt(whc, receiptID)
 }
 
-//func (viewReceiptCallback) onInvite(whc botsfw.WebhookContext, inviteCode string) (exit bool, transferID int, transfer *models.Transfer, m botsfw.MessageFromBot, err error) {
+//func (viewReceiptCallback) onInvite(whc botsfw.WebhookContext, inviteCode string) (exit bool, transferID int, transfer *models.TransferEntry, m botsfw.MessageFromBot, err error) {
 //	c := whc.Context()
 //	var invite *invites.Invite
 //	if invite, err = invites.GetInvite(c, inviteCode); err != nil {

@@ -7,7 +7,7 @@ import (
 
 // OrderResponse is a response to an order modification request.
 type OrderResponse struct {
-	OrderDto *dbo4logist.OrderDto `json:"order"`
+	OrderDto *dbo4logist.OrderDbo `json:"order"`
 }
 
 // Validate returns an error if the response is invalid.

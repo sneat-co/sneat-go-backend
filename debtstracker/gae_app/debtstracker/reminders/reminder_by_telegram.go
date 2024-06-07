@@ -20,7 +20,7 @@ import (
 	"time"
 )
 
-func sendReminderByTelegram(c context.Context, transfer models.Transfer, reminder models.Reminder, tgChatID int64, tgBot string) (sent, channelDisabledByUser bool, err error) {
+func sendReminderByTelegram(c context.Context, transfer models.TransferEntry, reminder models.Reminder, tgChatID int64, tgBot string) (sent, channelDisabledByUser bool, err error) {
 	log.Debugf(c, "sendReminderByTelegram(transfer.ID=%v, reminder.ID=%v, tgChatID=%v, tgBot=%v)", transfer.ID, reminder.ID, tgChatID, tgBot)
 
 	if tgChatID == 0 {

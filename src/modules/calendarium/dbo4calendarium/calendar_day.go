@@ -44,7 +44,7 @@ func (v *HappeningAdjustment) Validate() error {
 
 const CalendarDayCollection = "calendar_days"
 
-type CalendarDayDto struct {
+type CalendarDayDbo struct {
 	dbmodels.WithTeamID
 	Date                 string                 `json:"date" firestore:"date"`
 	HappeningIDs         []string               `json:"happeningIDs" firestore:"happeningIDs"`
@@ -52,7 +52,7 @@ type CalendarDayDto struct {
 	//Happenings    []*HappeningBrief                 `json:"happenings" firestore:"happenings"`
 }
 
-func (v CalendarDayDto) GetAdjustment(happeningID, slotID string) (i int, adjustment *HappeningAdjustment) {
+func (v CalendarDayDbo) GetAdjustment(happeningID, slotID string) (i int, adjustment *HappeningAdjustment) {
 	for i, adjustment = range v.HappeningAdjustments {
 		if adjustment.HappeningID == happeningID && adjustment.Slot.ID == slotID {
 			return i, adjustment
@@ -61,7 +61,7 @@ func (v CalendarDayDto) GetAdjustment(happeningID, slotID string) (i int, adjust
 	return -1, nil
 }
 
-func (v CalendarDayDto) Validate() error {
+func (v CalendarDayDbo) Validate() error {
 	if err := v.WithTeamID.Validate(); err != nil {
 		return err
 	}
@@ -82,20 +82,7 @@ func (v CalendarDayDto) Validate() error {
 	return nil
 }
 
-type CalendarDayEntry struct {
-	record.WithID[string]
-	Dto *CalendarDayDto
-}
-
-func (v CalendarDayEntry) Validate() error {
-	if v.ID == "" {
-		return validation.NewErrRecordIsMissingRequiredField("id")
-	}
-	if v.Dto == nil {
-		return validation.NewErrRecordIsMissingRequiredField("dto")
-	}
-	return v.Dto.Validate()
-}
+type CalendarDayEntry = record.DataWithID[string, *CalendarDayDbo]
 
 func NewCalendarDayID(teamID, date string) string {
 	return teamID + ":" + date
@@ -113,13 +100,13 @@ func NewCalendarDayContext(teamID, date string) CalendarDayEntry {
 	if _, err := validate.DateString(date); err != nil {
 		panic(err)
 	}
-	dto := new(CalendarDayDto)
+	dto := new(CalendarDayDbo)
 	dto.TeamID = teamID
 	dto.Date = date
 	return NewCalendarDayContextWithDto(dto)
 }
 
-func NewCalendarDayContextWithDto(dto *CalendarDayDto) (calendarDay CalendarDayEntry) {
+func NewCalendarDayContextWithDto(dto *CalendarDayDbo) (calendarDay CalendarDayEntry) {
 	if dto == nil {
 		panic("dto is nil")
 	}
@@ -133,7 +120,7 @@ func NewCalendarDayContextWithDto(dto *CalendarDayDto) (calendarDay CalendarDayE
 	calendarDay.ID = dto.Date
 	calendarDay.FullID = NewCalendarDayID(dto.TeamID, dto.Date)
 	calendarDay.Key = key
-	calendarDay.Dto = dto
+	calendarDay.Data = dto
 	calendarDay.Record = dal.NewRecordWithData(key, dto)
 	return
 }

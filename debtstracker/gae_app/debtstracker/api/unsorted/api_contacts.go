@@ -150,7 +150,7 @@ func contactToResponse(c context.Context, w http.ResponseWriter, authInfo auth.A
 	}
 	if len(contact.Data.GroupIDs) > 0 {
 		for _, groupID := range contact.Data.GroupIDs {
-			var group models.Group
+			var group models.GroupEntry
 			if group, err = dtdal.Group.GetGroupByID(c, nil, groupID); err != nil {
 				api.ErrorAsJson(c, w, http.StatusInternalServerError, err)
 				return

@@ -7,15 +7,15 @@ import (
 )
 
 func TestUserEmail(t *testing.T) {
-	var _ appuser.AccountData = (*UserEmailData)(nil)
+	var _ appuser.AccountData = (*UserEmailDbo)(nil)
 }
 
 func TestUserEmailEntity(t *testing.T) {
-	var _ appuser.AccountData = (*UserEmailData)(nil)
+	var _ appuser.AccountData = (*UserEmailDbo)(nil)
 }
 
 func TestUserEmailEntity_AddProvider(t *testing.T) {
-	entity := new(UserEmailData)
+	entity := new(UserEmailDbo)
 
 	if changed := entity.AddProvider("facebook"); !changed {
 		t.Error("Should return changed=true")

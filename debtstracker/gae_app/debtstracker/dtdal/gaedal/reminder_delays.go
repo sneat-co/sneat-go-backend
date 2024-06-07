@@ -54,7 +54,7 @@ func delayedCreateReminderForTransferUser(c context.Context, transferID string, 
 		return
 	}
 	return db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-		var transfer models.Transfer
+		var transfer models.TransferEntry
 		transfer, err = facade.Transfers.GetTransferByID(c, tx, transferID)
 		if err != nil {
 			if dal.IsNotFound(err) {
@@ -69,12 +69,12 @@ func delayedCreateReminderForTransferUser(c context.Context, transferID string, 
 		}
 
 		if transferUserInfo.ReminderID != "" {
-			log.Warningf(c, "Transfer user already has reminder # %v", transferUserInfo.ReminderID)
+			log.Warningf(c, "TransferEntry user already has reminder # %v", transferUserInfo.ReminderID)
 			return
 		}
 
 		if transferUserInfo.TgChatID == 0 { // TODO: Try to get TgChat from user record or check other channels?
-			log.Warningf(c, "Transfer user has no associated TgChatID: %+v", transferUserInfo)
+			log.Warningf(c, "TransferEntry user has no associated TgChatID: %+v", transferUserInfo)
 			return
 		}
 

@@ -19,7 +19,7 @@ import (
 const groupSplitCommandCode = "group-split"
 
 var groupSplitCommand = shared_group.GroupCallbackCommand(groupSplitCommandCode,
-	func(whc botsfw.WebhookContext, callbackUrl *url.URL, group models.Group) (m botsfw.MessageFromBot, err error) {
+	func(whc botsfw.WebhookContext, callbackUrl *url.URL, group models.GroupEntry) (m botsfw.MessageFromBot, err error) {
 		c := whc.Context()
 
 		members := group.Data.GetMembers()

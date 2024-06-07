@@ -54,7 +54,7 @@ func JoinTeam(ctx context.Context, userContext facade.User, request JoinTeamRequ
 		userRecord := dal.NewRecordWithData(userKey, userDto)
 
 		inviteKey := NewInviteKey(request.InviteID)
-		inviteDto := new(dbo4invitus.InviteDto)
+		inviteDto := new(dbo4invitus.InviteDbo)
 		inviteRecord := dal.NewRecordWithData(inviteKey, inviteDto)
 
 		if err = params.GetRecords(ctx, tx, userRecord, inviteRecord); err != nil {
@@ -148,7 +148,7 @@ func onJoinUpdateInvite(
 	tx dal.ReadwriteTransaction,
 	uid string,
 	inviteKey *dal.Key,
-	inviteDto *dbo4invitus.InviteDto,
+	inviteDto *dbo4invitus.InviteDbo,
 ) (err error) {
 	inviteDto.To.UserID = uid
 	if err = inviteDto.Validate(); err != nil {

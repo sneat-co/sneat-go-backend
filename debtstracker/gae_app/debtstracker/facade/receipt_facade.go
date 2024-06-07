@@ -27,7 +27,7 @@ type receiptDbChanges struct {
 	// use pointer as we pass it to FlagAsChanged() and IsChanged()
 	*usersLinkingDbChanges
 	receipt  *models.Receipt
-	transfer *models.Transfer
+	transfer *models.TransferEntry
 }
 
 func newReceiptDbChanges() *receiptDbChanges {
@@ -60,7 +60,7 @@ func workaroundReinsertContact(c context.Context, receipt models.Receipt, invite
 }
 
 func AcknowledgeReceipt(c context.Context, receiptID, currentUserID string, operation string) (
-	receipt models.Receipt, transfer models.Transfer, isCounterpartiesJustConnected bool, err error,
+	receipt models.Receipt, transfer models.TransferEntry, isCounterpartiesJustConnected bool, err error,
 ) {
 	log.Debugf(c, "AcknowledgeReceipt(receiptID=%s, currentUserID=%s, operation=%s)", receiptID, currentUserID, operation)
 	var transferAckStatus string
@@ -245,7 +245,7 @@ func markReceiptAsViewed(receipt *models.ReceiptData, userID string) (changed bo
 
 func getReceiptTransferAndUsers(c context.Context, tx dal.ReadSession, receiptID, userID string) (
 	receipt models.Receipt,
-	transfer models.Transfer,
+	transfer models.TransferEntry,
 	creatorUser models.AppUser,
 	counterpartyUser models.AppUser,
 	err error,

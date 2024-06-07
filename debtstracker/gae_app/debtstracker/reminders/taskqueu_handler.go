@@ -81,7 +81,7 @@ func sendReminder(c context.Context, reminderID string) (err error) {
 	}
 
 	if !transfer.Data.IsOutstanding {
-		log.Infof(c, "Transfer(id=%v) is not outstanding, transfer.Amount=%v, transfer.AmountInCentsReturned=%v", reminder.Data.TransferID, transfer.Data.AmountInCents, transfer.Data.AmountReturned())
+		log.Infof(c, "TransferEntry(id=%v) is not outstanding, transfer.Amount=%v, transfer.AmountInCentsReturned=%v", reminder.Data.TransferID, transfer.Data.AmountInCents, transfer.Data.AmountReturned())
 
 		if err := gaedal.DiscardReminder(c, reminderID, reminder.Data.TransferID, ""); err != nil {
 			return fmt.Errorf("failed to discard a reminder for non outstanding transfer id=%v: %w", reminder.Data.TransferID, err)
@@ -98,7 +98,7 @@ func sendReminder(c context.Context, reminderID string) (err error) {
 
 var errReminderAlreadySentOrIsBeingSent = errors.New("Reminder already sent or is being sent")
 
-func sendReminderToUser(c context.Context, reminderID string, transfer models.Transfer) (err error) {
+func sendReminderToUser(c context.Context, reminderID string, transfer models.TransferEntry) (err error) {
 
 	var reminder models.Reminder
 

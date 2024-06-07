@@ -19,12 +19,12 @@ var groupBalanceCommand = botsfw.Command{
 	Code:     GROUP_BALANCE_COMMAND,
 	Commands: []string{"/balance"},
 	Action:   shared_group.NewGroupAction(groupBalanceAction),
-	CallbackAction: shared_group.NewGroupCallbackAction(func(whc botsfw.WebhookContext, callbackUrl *url.URL, group models.Group) (m botsfw.MessageFromBot, err error) {
+	CallbackAction: shared_group.NewGroupCallbackAction(func(whc botsfw.WebhookContext, callbackUrl *url.URL, group models.GroupEntry) (m botsfw.MessageFromBot, err error) {
 		return groupBalanceAction(whc, group)
 	}),
 }
 
-func groupBalanceAction(whc botsfw.WebhookContext, group models.Group) (m botsfw.MessageFromBot, err error) {
+func groupBalanceAction(whc botsfw.WebhookContext, group models.GroupEntry) (m botsfw.MessageFromBot, err error) {
 	var buf bytes.Buffer
 	writeMembers := func(members []models.GroupMemberJson) {
 		for i, m := range members {

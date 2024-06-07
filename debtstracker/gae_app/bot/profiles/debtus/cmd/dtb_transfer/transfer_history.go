@@ -38,7 +38,7 @@ var HistoryCommand = botsfw.Command{
 func showHistoryCard(whc botsfw.WebhookContext, limit int) (m botsfw.MessageFromBot, err error) {
 	c := whc.Context()
 
-	var transfers []models.Transfer
+	var transfers []models.TransferEntry
 	var hasMore bool
 	if transfers, hasMore, err = dtdal.Transfer.LoadTransfersByUserID(c, whc.AppUserID(), 0, limit); err != nil {
 		return m, err
@@ -79,7 +79,7 @@ const (
 	UTM_CAMPAIGN_TRANSFER_HISTORY = "transfer-history"
 )
 
-func transferHistoryRows(whc botsfw.WebhookContext, transfers []models.Transfer) string {
+func transferHistoryRows(whc botsfw.WebhookContext, transfers []models.TransferEntry) string {
 	var s bytes.Buffer
 	for _, transfer := range transfers {
 		isCreator := whc.AppUserID() == transfer.Data.CreatorUserID

@@ -7,11 +7,7 @@ import (
 	"reflect"
 )
 
-type DebtusTelegramChat struct {
-	record.WithID[string]
-	//botsfwtgmodels.ChatEntity
-	Data *DebtusTelegramChatData
-}
+type DebtusTelegramChat = record.DataWithID[string, *DebtusTelegramChatData]
 
 var _ botsfwtgmodels.TgChatData = (*DebtusTelegramChatData)(nil)
 

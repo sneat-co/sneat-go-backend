@@ -13,7 +13,7 @@ import (
 	"net/url"
 )
 
-func GroupSettingsAction(whc botsfw.WebhookContext, group models.Group, isEdit bool) (m botsfw.MessageFromBot, err error) {
+func GroupSettingsAction(whc botsfw.WebhookContext, group models.GroupEntry, isEdit bool) (m botsfw.MessageFromBot, err error) {
 	var buf bytes.Buffer
 	buf.WriteString(whc.Translate(trans.MT_GROUP_LABEL, group.Data.Name))
 	buf.WriteString("\n")
@@ -67,7 +67,7 @@ var settingsCommand = func() (settingsCommand botsfw.Command) {
 
 func settingsAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 	if whc.IsInGroup() {
-		groupAction := shared_group.NewGroupAction(func(whc botsfw.WebhookContext, group models.Group) (m botsfw.MessageFromBot, err error) {
+		groupAction := shared_group.NewGroupAction(func(whc botsfw.WebhookContext, group models.GroupEntry) (m botsfw.MessageFromBot, err error) {
 			return GroupSettingsAction(whc, group, false)
 		})
 		return groupAction(whc)

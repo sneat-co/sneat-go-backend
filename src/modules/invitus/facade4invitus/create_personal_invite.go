@@ -78,7 +78,7 @@ func createInviteForMember(
 	}
 	from.UserID = uid
 	personalInvite = &dbo4invitus.PersonalInviteDbo{
-		InviteDto: dbo4invitus.InviteDto{
+		InviteDbo: dbo4invitus.InviteDbo{
 			Status: "active",
 			Pin:    randomPinCode(),
 			TeamID: teamID,

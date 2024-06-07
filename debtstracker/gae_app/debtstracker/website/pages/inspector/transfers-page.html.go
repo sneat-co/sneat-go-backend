@@ -11,7 +11,7 @@ import (
 	"io"
 )
 
-func renderTransfersPage(contact models.Contact, currency money.CurrencyCode, balancesWithoutInterest, balancesWithInterest balanceRow, transfers []models.Transfer, w io.Writer) {
+func renderTransfersPage(contact models.Contact, currency money.CurrencyCode, balancesWithoutInterest, balancesWithInterest balanceRow, transfers []models.TransferEntry, w io.Writer) {
 	_buffer := hero.GetBuffer()
 	defer hero.PutBuffer(_buffer)
 	_buffer.WriteString(`<!DOCTYPE html>

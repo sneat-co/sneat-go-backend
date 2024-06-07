@@ -20,20 +20,20 @@ func NewGroupDalGae() GroupDalGae {
 	return GroupDalGae{}
 }
 
-func (GroupDalGae) InsertGroup(c context.Context, tx dal.ReadwriteTransaction, groupEntity *models.GroupEntity) (group models.Group, err error) {
+func (GroupDalGae) InsertGroup(c context.Context, tx dal.ReadwriteTransaction, groupEntity *models.GroupDbo) (group models.GroupEntry, err error) {
 	group = models.NewGroup("", groupEntity)
 	err = dtdal.InsertWithRandomStringID(c, tx, group.Record)
 	return
 }
 
-func (GroupDalGae) SaveGroup(c context.Context, tx dal.ReadwriteTransaction, group models.Group) (err error) {
+func (GroupDalGae) SaveGroup(c context.Context, tx dal.ReadwriteTransaction, group models.GroupEntry) (err error) {
 	if err = tx.Set(c, group.Record); err != nil {
 		return
 	}
 	return
 }
 
-func (GroupDalGae) GetGroupByID(c context.Context, tx dal.ReadSession, groupID string) (group models.Group, err error) {
+func (GroupDalGae) GetGroupByID(c context.Context, tx dal.ReadSession, groupID string) (group models.GroupEntry, err error) {
 	if tx == nil {
 		if tx, err = facade.GetDatabase(c); err != nil {
 			return
@@ -67,7 +67,7 @@ func delayedUpdateGroupWithBill(c context.Context, groupID, billID string) (err 
 		if err != nil {
 			return
 		}
-		var group models.Group
+		var group models.GroupEntry
 		if group, err = dtdal.Group.GetGroupByID(c, tx, groupID); err != nil {
 			return err
 		}

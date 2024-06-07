@@ -55,7 +55,7 @@ func DelayUpdateTransferOnReturn(c context.Context, returnTransferID, transferID
 func updateTransferOnReturn(c context.Context, returnTransferID, transferID string, returnedAmount decimal.Decimal64p2) (err error) {
 	log.Debugf(c, "updateTransferOnReturn(returnTransferID=%v, transferID=%v, returnedAmount=%v)", returnTransferID, transferID, returnedAmount)
 
-	var transfer, returnTransfer models.Transfer
+	var transfer, returnTransfer models.TransferEntry
 
 	var db dal.DB
 	if db, err = GetDatabase(c); err != nil {
@@ -90,7 +90,7 @@ func updateTransferOnReturn(c context.Context, returnTransferID, transferID stri
 	}, dal.TxWithCrossGroup())
 }
 
-func removeFromOutstandingWithInterest(c context.Context, tx dal.ReadwriteTransaction, transfer models.Transfer) (err error) {
+func removeFromOutstandingWithInterest(c context.Context, tx dal.ReadwriteTransaction, transfer models.TransferEntry) (err error) {
 	removeFromOutstanding := func(userID, contactID string) (err error) {
 		if userID == "" && contactID == "" {
 			return

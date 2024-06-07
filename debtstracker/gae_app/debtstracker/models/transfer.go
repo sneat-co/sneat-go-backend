@@ -28,7 +28,7 @@ func (d TransferDirection) Reverse() TransferDirection {
 	}
 }
 
-const ( // Transfer directions
+const ( // TransferEntry directions
 	TransferDirectionUser2Counterparty = "u2c"
 	TransferDirectionCounterparty2User = "c2u"
 	TransferDirection3dParty           = "3d-party"
@@ -42,7 +42,7 @@ func IsKnownTransferDirection(direction TransferDirection) bool {
 	return false
 }
 
-const ( // Transfer statuses
+const ( // TransferEntry statuses
 	// TransferViewed   = "viewed" // TODO: use the status
 
 	// TransferAccepted for transfers that have been accepted by the counterparty
@@ -52,39 +52,36 @@ const ( // Transfer statuses
 	TransferDeclined = "declined"
 )
 
-const TransferKind = "Transfer"
+const TransfersCollection = "transfers"
 
 //var _ datastore.PropertyLoadSaver = (*TransferData)(nil)
 
-type Transfer struct {
-	record.WithID[string]
-	Data *TransferData
-}
+type TransferEntry = record.DataWithID[string, *TransferData]
 
-func NewTransfers(transferIDs []string) []Transfer {
-	transfers := make([]Transfer, len(transferIDs))
+func NewTransfers(transferIDs []string) []TransferEntry {
+	transfers := make([]TransferEntry, len(transferIDs))
 	for i, transferID := range transferIDs {
 		transfers[i] = NewTransfer(transferID, nil)
 	}
 	return transfers
 }
 
-func TransferFromRecord(r dal.Record) (transfer Transfer) {
-	return Transfer{
+func TransferFromRecord(r dal.Record) (transfer TransferEntry) {
+	return TransferEntry{
 		WithID: record.NewWithID(r.Key().ID.(string), r.Key(), r.Data),
 		Data:   r.Data().(*TransferData),
 	}
 }
 
-func TransfersFromRecords(records []dal.Record) (transfers []Transfer) {
-	transfers = make([]Transfer, len(records))
+func TransfersFromRecords(records []dal.Record) (transfers []TransferEntry) {
+	transfers = make([]TransferEntry, len(records))
 	for i, r := range records {
 		transfers[i] = TransferFromRecord(r)
 	}
 	return
 }
 
-func TransferRecords(transfers []Transfer) []dal.Record {
+func TransferRecords(transfers []TransferEntry) []dal.Record {
 	records := make([]dal.Record, len(transfers))
 	for i, transfer := range transfers {
 		records[i] = transfer.Record
@@ -96,30 +93,30 @@ func NewTransferKey(id string) *dal.Key {
 	if id == "" {
 		panic("id == 0")
 	}
-	return dal.NewKeyWithID(TransferKind, id)
+	return dal.NewKeyWithID(TransfersCollection, id)
 }
 
 var NewTransferRecord = func() dal.Record {
 	return NewTransferWithIncompleteKey(nil).Record
 }
 
-func NewTransferWithIncompleteKey(data *TransferData) Transfer {
-	key := dal.NewIncompleteKey(TransferKind, reflect.String, nil)
+func NewTransferWithIncompleteKey(data *TransferData) TransferEntry {
+	key := dal.NewIncompleteKey(TransfersCollection, reflect.String, nil)
 	if data == nil {
 		data = new(TransferData)
 	}
-	return Transfer{
+	return TransferEntry{
 		WithID: record.NewWithID("", key, data),
 		Data:   data,
 	}
 }
 
-func NewTransfer(id string, data *TransferData) Transfer {
+func NewTransfer(id string, data *TransferData) TransferEntry {
 	key := NewTransferKey(id)
 	if data == nil {
 		data = new(TransferData)
 	}
-	return Transfer{
+	return TransferEntry{
 		WithID: record.WithID[string]{
 			ID:     id,
 			Record: dal.NewRecordWithData(key, data),
@@ -128,25 +125,25 @@ func NewTransfer(id string, data *TransferData) Transfer {
 	}
 }
 
-//var _ db.EntityHolder = (*Transfer)(nil)
+//var _ db.EntityHolder = (*TransferEntry)(nil)
 
-func (Transfer) Kind() string {
-	return TransferKind
-}
+//func (TransferEntry) Kind() string {
+//	return TransfersCollection
+//}
 
-//func (t Transfer) IntID() int64 {
+//func (t TransferEntry) IntID() int64 {
 //	return t.ID
 //}
 
-//func (t *Transfer) Entity() interface{} {
+//func (t *TransferEntry) Entity() interface{} {
 //	return t.TransferData
 //}
 
-//func (Transfer) NewEntity() interface{} {
+//func (TransferEntry) NewEntity() interface{} {
 //	return new(TransferData)
 //}
 
-//func (t *Transfer) SetEntity(entity interface{}) {
+//func (t *TransferEntry) SetEntity(entity interface{}) {
 //	if entity == nil {
 //		t.Data = nil
 //	} else {
@@ -265,14 +262,6 @@ func (t *TransferData) AmountReturned() decimal.Decimal64p2 {
 	return 0
 }
 
-func (t Transfer) String() string {
-	if t.Data == nil {
-		return fmt.Sprintf("Transfer{ID: %s, Entity: nil}", t.ID)
-	} else {
-		return fmt.Sprintf("Transfer{ID: %s, Entity: %v}", t.ID, t.Data)
-	}
-}
-
 func (t *TransferData) String() string {
 	return fmt.Sprintf(
 		"TransferData{DtCreated: %v, Direction: %v, GetAmount(): %v, AmoutInCentsReturned: %v, IsReturn: %v, ReturnToTransferIDs: %v, CreatorUserID: %s, Creator: %v, Contact: %v, BothUserIDs: %v, BothCounterpartyIDs: %v, From: %v, To: %v}",
@@ -325,14 +314,14 @@ func (t *TransferData) DirectionForContact(contactID string) TransferDirection {
 
 func (t *TransferData) transferIsNotAssociatedWithUser(userID string) string {
 	return fmt.Sprintf(
-		"Transfer is not associated with userID=%s  (FromUserID=%s, ToUserID=%s)",
+		"TransferEntry is not associated with userID=%s  (FromUserID=%s, ToUserID=%s)",
 		userID, t.From().UserID, t.To().UserID,
 	)
 }
 
 func (t *TransferData) transferIsNotAssociatedWithContact(contactID string) string {
 	return fmt.Sprintf(
-		"Transfer is not associated with contactID=%s  (FromContactID=%s, ToContactID=%s)",
+		"TransferEntry is not associated with contactID=%s  (FromContactID=%s, ToContactID=%s)",
 		contactID, t.From().ContactID, t.To().ContactID,
 	)
 }
@@ -357,7 +346,7 @@ func (t *TransferData) ReturnDirectionForUser(userID string) TransferDirection {
 	}
 }
 
-var ErrTransferNotRelatedToCreator = errors.New("Transfer is not related to creator")
+var ErrTransferNotRelatedToCreator = errors.New("TransferEntry is not related to creator")
 
 func (t *TransferData) Creator() *TransferCounterpartyInfo { // TODO: Same as t.Creator()
 	if t.CreatorUserID == "" {
@@ -413,7 +402,7 @@ func (t *TransferData) UserInfoByUserID(userID string) *TransferCounterpartyInfo
 
 // const TRANSFER_REMINDERS_DISABLED = "disabled"
 //
-// func (t *Transfer) IsRemindersDisabled(userID int64) bool {
+// func (t *TransferEntry) IsRemindersDisabled(userID int64) bool {
 // 	switch userID {
 // 	case t.CreatorUserID:
 // 		return t.CreatorAutoRemindersDisabled
@@ -425,7 +414,7 @@ func (t *TransferData) UserInfoByUserID(userID string) *TransferCounterpartyInfo
 // }
 //
 // // Returns true if value have been changed and false if unchanged.
-// func (t *Transfer) setAutoRemindersDisabled(userID int64, value bool) bool {
+// func (t *TransferEntry) setAutoRemindersDisabled(userID int64, value bool) bool {
 // 	switch userID {
 // 	case t.CreatorUserID:
 // 		if t.CreatorAutoRemindersDisabled != value {
@@ -444,12 +433,12 @@ func (t *TransferData) UserInfoByUserID(userID string) *TransferCounterpartyInfo
 // }
 //
 // // Returns true if value have been changed and false if unchanged.
-// func (t *Transfer) EnableAutoReminders(userID int64) bool {
+// func (t *TransferEntry) EnableAutoReminders(userID int64) bool {
 // 	return t.setAutoRemindersDisabled(userID, false)
 // }
 //
 // // Returns true if value have been changed and false if unchanged.
-// func (t *Transfer) DisableAutoReminders(userID int64) bool {
+// func (t *TransferEntry) DisableAutoReminders(userID int64) bool {
 // 	return t.setAutoRemindersDisabled(userID, true)
 // }
 
@@ -885,7 +874,7 @@ func (t *TransferData) Validate() (err error) {
 //	// }
 //
 //	// Make general application-wide checks and call hooks if any
-//	//checkHasProperties(TransferKind, properties)
+//	//checkHasProperties(TransfersCollection, properties)
 //
 //	return
 //}
@@ -934,7 +923,7 @@ func (t *TransferData) GetReturnedAmount() money.Amount {
 	return money.Amount{Currency: t.Currency, Value: t.AmountReturned()}
 }
 
-//func ReverseTransfers(t []Transfer) {
+//func ReverseTransfers(t []TransferEntry) {
 //	last := len(t) - 1
 //	for i := 0; i < len(t)/2; i++ {
 //		t[i], t[last-i] = t[last-i], t[i]

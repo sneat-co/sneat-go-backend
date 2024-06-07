@@ -150,7 +150,7 @@ func joinBillAction(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, bill
 		}
 
 		if whc.IsInGroup() {
-			var group models.Group
+			var group models.GroupEntry
 			if group, err = shared_group.GetGroup(whc, nil); err != nil {
 				return
 			}

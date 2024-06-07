@@ -50,7 +50,7 @@ func (linker *ReceiptUsersLinker) LinkReceiptUsers(c context.Context, receiptID,
 		changes := linker.changes
 		var (
 			receipt     models.Receipt
-			transfer    models.Transfer
+			transfer    models.TransferEntry
 			inviterUser models.AppUser
 			invitedUser models.AppUser
 		)

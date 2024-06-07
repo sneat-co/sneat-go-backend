@@ -97,7 +97,7 @@ func createOrderTxWorker(
 	return orderBrief, err
 }
 
-func fillOrderDtoFromRequest(orderDto *dbo4logist.OrderDto, request dto4logist.CreateOrderRequest, params *dal4teamus.TeamWorkerParams, userID string) {
+func fillOrderDtoFromRequest(orderDto *dbo4logist.OrderDbo, request dto4logist.CreateOrderRequest, params *dal4teamus.TeamWorkerParams, userID string) {
 	orderDto.OrderBase = request.Order
 
 	orderDto.Status = "active"
@@ -150,7 +150,7 @@ func fillOrderDtoFromRequest(orderDto *dbo4logist.OrderDto, request dto4logist.C
 	}
 }
 
-func addContactsFromCounterparties(ctx context.Context, tx dal.ReadTransaction, teamID string, order *dbo4logist.OrderDto) error {
+func addContactsFromCounterparties(ctx context.Context, tx dal.ReadTransaction, teamID string, order *dbo4logist.OrderDbo) error {
 	if len(order.Counterparties) == 0 {
 		panic("at least 1 counterparty should be added to a new order")
 	}

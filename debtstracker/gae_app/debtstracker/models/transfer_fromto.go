@@ -218,7 +218,7 @@ func (t *TransferData) onSaveSerializeJson() error {
 			t.FromJson = string(s)
 		}
 	} else if t.FromJson == "" {
-		return errors.New("Transfer should have 'From' counterparty")
+		return errors.New("TransferEntry should have 'From' counterparty")
 	}
 	if t.to != nil {
 		if s, err := json.Marshal(t.to); err != nil {
@@ -227,7 +227,7 @@ func (t *TransferData) onSaveSerializeJson() error {
 			t.ToJson = string(s)
 		}
 	} else if t.ToJson == "" {
-		return errors.New("Transfer should have 'To' counterparty")
+		return errors.New("TransferEntry should have 'To' counterparty")
 	}
 	return nil
 }

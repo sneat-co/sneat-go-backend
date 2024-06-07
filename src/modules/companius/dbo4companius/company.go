@@ -6,7 +6,7 @@ import (
 	"github.com/strongo/validation"
 )
 
-// CompanyBase holds info shared by CompanyDto and CompanyBrief structs.
+// CompanyBase holds info shared by CompanyDbo and CompanyBrief structs.
 type CompanyBase struct {
 	Kind  string `json:"kind" firestore:"kind"` // either "private" or "work"
 	Type  string `json:"type" firestore:"type"` // e.g. personal, family, work
@@ -31,15 +31,15 @@ func (v CompanyBase) Validate() error {
 	return nil
 }
 
-// CompanyDto holds info about family or work or personal stuff.
-type CompanyDto struct {
+// CompanyDbo holds info about family or work or personal stuff.
+type CompanyDbo struct {
 	CompanyBase
 	// NumberOf keeps numbers of: members, documents, etc. It is used to show #s in company's menu.
 	NumberOf map[string]int `json:"numberOf" firestore:"numberOf"`
 }
 
 // Validate returns error if not valid
-func (v CompanyDto) Validate() error {
+func (v CompanyDbo) Validate() error {
 	if err := v.CompanyBase.Validate(); err != nil {
 		return err
 	}
@@ -51,4 +51,4 @@ func (v CompanyDto) Validate() error {
 	return nil
 }
 
-type Company = record.DataWithID[string, *CompanyDto]
+type Company = record.DataWithID[string, *CompanyDbo]

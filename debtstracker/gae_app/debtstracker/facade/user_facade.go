@@ -65,7 +65,7 @@ func (uf userFacade) CreateUserByEmail(
 	email, name string,
 ) (
 	user models.AppUser,
-	userEmail models.UserEmail,
+	userEmail models.UserEmailEntry,
 	err error,
 ) {
 	var db dal.DB
@@ -114,7 +114,7 @@ func (uf userFacade) GetOrCreateEmailUser(
 	createUserData *dtdal.CreateUserData,
 	clientInfo models.ClientInfo,
 ) (
-	userEmail models.UserEmail,
+	userEmail models.UserEmailEntry,
 	isNewUser bool,
 	err error,
 ) {
@@ -292,12 +292,12 @@ func (uf userFacade) GetOrCreateEmailUser(
 //			panic("Not implemented: userAccount.GetEmail() returned empty string")
 //		}
 //
-//		var userEmail models.UserEmail
-//		if userEmail, err = dtdal.UserEmail.GetUserEmailByID(c, tx, email); err != nil && !dal.IsNotFound(err) {
+//		var userEmail models.UserEmailEntry
+//		if userEmail, err = dtdal.UserEmailEntry.GetUserEmailByID(c, tx, email); err != nil && !dal.IsNotFound(err) {
 //			return // error
 //		}
 //
-//		if dal.IsNotFound(err) { // UserEmail record NOT found
+//		if dal.IsNotFound(err) { // UserEmailEntry record NOT found
 //			userEmail := models.NewUserEmail(email, models.NewUserEmailData(0, true, provider))
 //			userEmail.Data.CreatedAt = now
 //
@@ -325,7 +325,7 @@ func (uf userFacade) GetOrCreateEmailUser(
 //				return
 //			}
 //			return
-//		} else { // UserEmail record found
+//		} else { // UserEmailEntry record found
 //			userAccount.(appuser.BelongsToUser).SetAppUserID(userEmail.Data.AppUserID) // No need to create a new appUser, link to existing
 //			if !isNewUser && userEmail.Data.AppUserID != userID {
 //				panic(fmt.Sprintf("Relinking of appUser accounts us not implemented yet => userEmail.AppUserID:%s != userID:%s", userEmail.Data.AppUserID, userID))
@@ -334,7 +334,7 @@ func (uf userFacade) GetOrCreateEmailUser(
 //			if isNewUser {
 //				if appUser, err = User.GetUserByID(c, tx, userEmail.Data.AppUserID); err != nil {
 //					if dal.IsNotFound(err) {
-//						err = fmt.Errorf("record UserEmail is referencing non existing User: %w", err)
+//						err = fmt.Errorf("record UserEmailEntry is referencing non existing User: %w", err)
 //					}
 //					return
 //				}
@@ -342,7 +342,7 @@ func (uf userFacade) GetOrCreateEmailUser(
 //
 //			if changed := userEmail.Data.AddProvider(provider); changed || !userEmail.Data.IsConfirmed {
 //				userEmail.Data.IsConfirmed = true
-//				if err = dtdal.UserEmail.SaveUserEmail(c, tx, userEmail); err != nil {
+//				if err = dtdal.UserEmailEntry.SaveUserEmail(c, tx, userEmail); err != nil {
 //					return
 //				}
 //			}

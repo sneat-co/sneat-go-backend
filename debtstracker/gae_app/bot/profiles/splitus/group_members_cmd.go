@@ -25,10 +25,10 @@ var groupMembersCommand = botsfw.Command{
 	Code:     GroupMembersCommandCode,
 	Commands: []string{"/members"},
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-		return showGroupMembers(whc, models.Group{}, false)
+		return showGroupMembers(whc, models.GroupEntry{}, false)
 	},
 	CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-		var group models.Group
+		var group models.GroupEntry
 		if group, err = shared_group.GetGroup(whc, callbackUrl); err != nil {
 			err = nil
 			return
@@ -40,7 +40,7 @@ var groupMembersCommand = botsfw.Command{
 func groupMembersCard(
 	c context.Context,
 	t i18n.SingleLocaleTranslator,
-	group models.Group,
+	group models.GroupEntry,
 	selectedMemberID int64,
 ) (text string, err error) {
 	var buffer bytes.Buffer
@@ -86,7 +86,7 @@ func groupMembersCard(
 	return buffer.String(), nil
 }
 
-func showGroupMembers(whc botsfw.WebhookContext, group models.Group, isEdit bool) (m botsfw.MessageFromBot, err error) {
+func showGroupMembers(whc botsfw.WebhookContext, group models.GroupEntry, isEdit bool) (m botsfw.MessageFromBot, err error) {
 
 	if group.Data == nil {
 		if group, err = shared_group.GetGroup(whc, nil); err != nil {

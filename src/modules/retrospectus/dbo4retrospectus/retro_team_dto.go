@@ -5,13 +5,13 @@ import (
 	"github.com/strongo/validation"
 )
 
-type RetroTeamDto struct {
+type RetroTeamDbo struct {
 	RetroSettings `json:"retroSettings,omitempty" firestore:"retroSettings,omitempty"`
 	UpcomingRetro *RetrospectiveCounts        `json:"upcomingRetro,omitempty" firestore:"upcomingRetro,omitempty"`
 	Active        *dbo4teamus.TeamMeetingInfo `json:"active,omitempty" firestore:"active,omitempty"`
 }
 
-func (v *RetroTeamDto) Validate() error {
+func (v *RetroTeamDbo) Validate() error {
 	if err := v.RetroSettings.Validate(); err != nil {
 		return err
 	}
@@ -24,7 +24,7 @@ func (v *RetroTeamDto) Validate() error {
 }
 
 // ActiveRetro returns info on active retro
-func (v *RetroTeamDto) ActiveRetro() dbo4teamus.TeamMeetingInfo {
+func (v *RetroTeamDbo) ActiveRetro() dbo4teamus.TeamMeetingInfo {
 	if v.Active != nil {
 		return *v.Active
 	}

@@ -134,7 +134,7 @@ func (v ContainerSegmentKey) Validate() error {
 	return nil
 }
 
-// ContainerSegment is a segment of the OrderDto and is referenced by WithSegments.
+// ContainerSegment is a segment of the OrderDbo and is referenced by WithSegments.
 type ContainerSegment struct {
 	ContainerSegmentKey
 	ByContactID string        `json:"byContactID,omitempty" firestore:"byContactID,omitempty"`
@@ -239,7 +239,7 @@ func (v WithSegments) Validate() error {
 	return nil
 }
 
-func (v WithSegments) validateOrder(order OrderDto) error {
+func (v WithSegments) validateOrder(order OrderDbo) error {
 	for i, segment := range v.Segments {
 		if err := validateOrderSegment(order, segment); err != nil {
 			return validation.NewErrBadRecordFieldValue(
@@ -250,7 +250,7 @@ func (v WithSegments) validateOrder(order OrderDto) error {
 	return nil
 }
 
-func validateOrderSegment(order OrderDto, segment *ContainerSegment) (err error) {
+func validateOrderSegment(order OrderDbo, segment *ContainerSegment) (err error) {
 	if _, container := order.GetContainerByID(segment.ContainerID); container == nil {
 		return validation.NewErrBadRecordFieldValue("containerID", fmt.Sprintf("container with ID=[%s] does not exist", segment.ContainerID))
 	}
@@ -267,14 +267,14 @@ func validateOrderSegment(order OrderDto, segment *ContainerSegment) (err error)
 	return nil
 }
 
-func validateSegmentCounterparty(order OrderDto, segmentCounterparty SegmentCounterparty) error {
+func validateSegmentCounterparty(order OrderDbo, segmentCounterparty SegmentCounterparty) error {
 	if _, c := order.GetCounterpartyByRoleAndContactID(segmentCounterparty.Role, segmentCounterparty.ContactID); c == nil {
 		return validation.NewErrBadRecordFieldValue("contactID", fmt.Sprintf("referenced contact is not present in order: [%s:%s]", segmentCounterparty.ContactID, segmentCounterparty.Role))
 	}
 	return nil
 }
 
-func validateSegmentEndpoint(order OrderDto, segment *ContainerSegment, field string, endpoint SegmentEndpoint) (err error) {
+func validateSegmentEndpoint(order OrderDbo, segment *ContainerSegment, field string, endpoint SegmentEndpoint) (err error) {
 	if err = validateSegmentCounterparty(order, endpoint.SegmentCounterparty); err != nil {
 		return validation.NewErrBadRecordFieldValue(field, err.Error())
 	}

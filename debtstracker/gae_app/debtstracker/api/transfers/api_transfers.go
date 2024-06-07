@@ -28,7 +28,7 @@ func HandleUserTransfers(c context.Context, w http.ResponseWriter, r *http.Reque
 	transfersToResponse(c, w, user.ID, transfers, hasMore)
 }
 
-func transfersToResponse(c context.Context, w http.ResponseWriter, userID string, transfers []models.Transfer, hasMore bool) {
+func transfersToResponse(c context.Context, w http.ResponseWriter, userID string, transfers []models.TransferEntry, hasMore bool) {
 	api.JsonToResponse(c, w, dto.TransfersResultDto{
 		Transfers:        dto.TransfersToDto(userID, transfers),
 		HasMoreTransfers: hasMore,

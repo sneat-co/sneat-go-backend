@@ -16,7 +16,7 @@ import (
 
 // JoinInfoRequest request
 type JoinInfoRequest struct {
-	InviteID string `json:"inviteID"` // InviteDto ID
+	InviteID string `json:"inviteID"` // InviteDbo ID
 	Pin      string `json:"pin"`
 }
 
@@ -88,7 +88,7 @@ func GetTeamJoinInfo(ctx context.Context, request JoinInfoRequest) (response Joi
 	}
 	db := facade.GetDatabase(ctx)
 
-	var inviteDto *dbo4invitus.InviteDto
+	var inviteDto *dbo4invitus.InviteDbo
 	inviteDto, _, err = GetInviteByID(ctx, db, request.InviteID)
 	if err != nil {
 		err = fmt.Errorf("failed to get invite record by ID=%s: %w", request.InviteID, err)

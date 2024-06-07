@@ -199,7 +199,7 @@ func processReturnCommand(whc botsfw.WebhookContext, returnValue decimal.Decimal
 	currency := money.CurrencyCode(awaitingUrl.Query().Get("currency"))
 
 	if transferID != "" && returnValue > 0 {
-		var transfer models.Transfer
+		var transfer models.TransferEntry
 		if transfer, err = facade.Transfers.GetTransferByID(whc.Context(), nil, transferID); err != nil {
 			return
 		}

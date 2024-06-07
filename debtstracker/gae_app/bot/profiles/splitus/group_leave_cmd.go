@@ -11,7 +11,7 @@ import (
 const LEAVE_GROUP_COMMAND = "leave-group"
 
 var leaveGroupCommand = shared_group.GroupCallbackCommand(LEAVE_GROUP_COMMAND,
-	func(whc botsfw.WebhookContext, _ *url.URL, group models.Group) (m botsfw.MessageFromBot, err error) {
+	func(whc botsfw.WebhookContext, _ *url.URL, group models.GroupEntry) (m botsfw.MessageFromBot, err error) {
 		return
 	},
 )

@@ -116,7 +116,7 @@ func cancelRecurringHappening(
 		}
 
 		var dayUpdates []dal.Update
-		_, adjustment := calendarDay.Dto.GetAdjustment(happening.ID, request.SlotID)
+		_, adjustment := calendarDay.Data.GetAdjustment(happening.ID, request.SlotID)
 		if adjustment == nil {
 			_, slot := happening.Data.GetSlot(request.SlotID)
 			if slot == nil {
@@ -131,12 +131,12 @@ func cancelRecurringHappening(
 					Reason: request.Reason,
 				},
 			}
-			calendarDay.Dto.HappeningAdjustments = append(calendarDay.Dto.HappeningAdjustments, adjustment)
+			calendarDay.Data.HappeningAdjustments = append(calendarDay.Data.HappeningAdjustments, adjustment)
 		}
-		if i := slice.Index(calendarDay.Dto.HappeningIDs, happening.ID); i < 0 {
-			calendarDay.Dto.HappeningIDs = append(calendarDay.Dto.HappeningIDs, happening.ID)
+		if i := slice.Index(calendarDay.Data.HappeningIDs, happening.ID); i < 0 {
+			calendarDay.Data.HappeningIDs = append(calendarDay.Data.HappeningIDs, happening.ID)
 			dayUpdates = append(dayUpdates, dal.Update{
-				Field: "happeningIDs", Value: calendarDay.Dto.HappeningIDs,
+				Field: "happeningIDs", Value: calendarDay.Data.HappeningIDs,
 			})
 		}
 		var modified bool
@@ -166,7 +166,7 @@ func cancelRecurringHappening(
 			modified = true
 		}
 
-		if err := calendarDay.Dto.Validate(); err != nil {
+		if err := calendarDay.Data.Validate(); err != nil {
 			return fmt.Errorf("calendar day record is not valid: %w", err)
 		}
 
@@ -176,7 +176,7 @@ func cancelRecurringHappening(
 			}
 		} else if modified {
 			dayUpdates = append(dayUpdates, dal.Update{
-				Field: "cancellations", Value: calendarDay.Dto.HappeningAdjustments,
+				Field: "cancellations", Value: calendarDay.Data.HappeningAdjustments,
 			})
 			if err := tx.Update(ctx, calendarDay.Key, dayUpdates); err != nil {
 				return fmt.Errorf("failed to update calendar day record: %w", err)

@@ -25,10 +25,10 @@ func (v *WithContainerPoints) Updates() []dal.Update {
 
 // Validate returns an error if the WithContainerPoints is invalid.
 func (v *WithContainerPoints) Validate() error {
-	panic("not implemented, call `WithContainerPoints.validateOrder(order OrderDto)` instead")
+	panic("not implemented, call `WithContainerPoints.validateOrder(order OrderDbo)` instead")
 }
 
-func (v *WithContainerPoints) validateOrder(order OrderDto) error {
+func (v *WithContainerPoints) validateOrder(order OrderDbo) error {
 	for i, p := range v.ContainerPoints {
 		field := fmt.Sprintf("containerPoints[%v]", i)
 		if err := p.Validate(); err != nil {

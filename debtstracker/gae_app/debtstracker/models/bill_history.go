@@ -16,34 +16,27 @@ const (
 	BillsHistoryKind = "BillH"
 )
 
-type BillsHistory struct {
-	record.WithID[string]
-	Data *BillsHistoryEntity
-}
-
-func (BillsHistory) Kind() string {
-	return BillsHistoryKind
-}
+type BillsHistory = record.DataWithID[string, *BillsHistoryDbo]
 
 //func (record BillsHistory) Entity() interface{} {
-//	return record.BillsHistoryEntity
+//	return record.BillsHistoryDbo
 //}
 //
 //func (BillsHistory) NewEntity() interface{} {
-//	return new(BillsHistoryEntity)
+//	return new(BillsHistoryDbo)
 //}
 //
 //func (record *BillsHistory) SetEntity(entity interface{}) {
 //	if entity == nil {
-//		record.BillsHistoryEntity = nil
+//		record.BillsHistoryDbo = nil
 //	} else {
-//		record.BillsHistoryEntity = entity.(*BillsHistoryEntity)
+//		record.BillsHistoryDbo = entity.(*BillsHistoryDbo)
 //	}
 //}
 
 //var _ db.EntityHolder = (*BillsHistory)(nil)
 
-type BillsHistoryEntity struct {
+type BillsHistoryDbo struct {
 	DtCreated              time.Time
 	UserID                 string
 	StatusOld              string              `datastore:",noindex"`
@@ -61,7 +54,7 @@ type BillsHistoryEntity struct {
 	GroupMembersJsonAfter  string `datastore:",noindex"`
 }
 
-func (entity *BillsHistoryEntity) BillSettlements() (billSettlements []BillSettlementJson) {
+func (entity *BillsHistoryDbo) BillSettlements() (billSettlements []BillSettlementJson) {
 	billSettlements = make([]BillSettlementJson, 0, entity.BillsSettlementCount)
 	if err := ffjson.Unmarshal([]byte(entity.BillsSettlementJson), &billSettlements); err != nil {
 		panic(err)
@@ -69,7 +62,7 @@ func (entity *BillsHistoryEntity) BillSettlements() (billSettlements []BillSettl
 	return
 }
 
-func (entity *BillsHistoryEntity) SetBillSettlements(groupID string, billSettlements []BillSettlementJson) { // TODO: Enable support for multiple groups
+func (entity *BillsHistoryDbo) SetBillSettlements(groupID string, billSettlements []BillSettlementJson) { // TODO: Enable support for multiple groups
 	if data, err := ffjson.Marshal(&billSettlements); err != nil {
 		panic(err)
 	} else {
@@ -92,12 +85,12 @@ func (entity *BillsHistoryEntity) SetBillSettlements(groupID string, billSettlem
 	}
 }
 
-func (entity *BillsHistoryEntity) Validate() (err error) {
+func (entity *BillsHistoryDbo) Validate() (err error) {
 	if entity.DtCreated.IsZero() {
 		entity.DtCreated = time.Now()
 	}
 	if entity.Action == "" {
-		err = errors.New("*BillsHistoryEntity.Action is empty")
+		err = errors.New("*BillsHistoryDbo.Action is empty")
 		return
 	}
 	if entity.Action == BillHistoryActionSettled && entity.BillsSettlementJson == "" {
@@ -163,12 +156,12 @@ const (
 	//BillHistoryActionRestored    BillHistoryAction = "restored"
 )
 
-func NewBillHistoryBillCreated(bill Bill, groupEntity *GroupEntity) (bh BillsHistory) {
+func NewBillHistoryBillCreated(bill Bill, groupEntity *GroupDbo) (bh BillsHistory) {
 	key, err := dal.NewKeyWithOptions(BillsHistoryKind, dal.WithRandomStringID(dal.RandomLength(BillsHistoryIdLen)))
 	if err != nil {
 		panic(err)
 	}
-	data := &BillsHistoryEntity{
+	data := &BillsHistoryDbo{
 		Currency:         bill.Data.Currency,
 		UserID:           bill.Data.CreatorUserID,
 		TotalAmountAfter: bill.Data.AmountTotal,
@@ -191,7 +184,7 @@ func NewBillHistoryBillCreated(bill Bill, groupEntity *GroupEntity) (bh BillsHis
 
 func NewBillHistoryMemberAdded(userID string, bill Bill, totalAboutBefore decimal.Decimal64p2, groupMemberJsonBefore, groupMemberJsonAfter string) (bh BillsHistory) {
 	bh = BillsHistory{
-		Data: &BillsHistoryEntity{
+		Data: &BillsHistoryDbo{
 			UserID:            userID,
 			Currency:          bill.Data.Currency,
 			TotalAmountBefore: totalAboutBefore,
@@ -209,7 +202,7 @@ func NewBillHistoryMemberAdded(userID string, bill Bill, totalAboutBefore decima
 func NewBillHistoryBillDeleted(userID string, bill Bill) (record BillsHistory) {
 	panic("TODO: create key with random ID using dalgo insert options")
 	//return BillsHistory{
-	//	Data: &BillsHistoryEntity{
+	//	Data: &BillsHistoryDbo{
 	//		StatusOld:         bill.Data.Status,
 	//		StatusNew:         BillStatusDeleted,
 	//		UserID:            userID,
@@ -225,7 +218,7 @@ func NewBillHistoryBillDeleted(userID string, bill Bill) (record BillsHistory) {
 
 func NewBillHistoryBillRestored(userID string, bill Bill) (record BillsHistory) {
 	return BillsHistory{
-		Data: &BillsHistoryEntity{
+		Data: &BillsHistoryDbo{
 			StatusOld:         BillStatusDeleted,
 			StatusNew:         bill.Data.Status,
 			UserID:            userID,

@@ -213,7 +213,7 @@ var errInvalidEmailConformationPin = errors.New("email confirmation pin is not v
 func HandleConfirmEmailAndSignIn(c context.Context, w http.ResponseWriter, r *http.Request) {
 	var (
 		err       error
-		userEmail models.UserEmail
+		userEmail models.UserEmailEntry
 		pin       string
 	)
 

@@ -7,8 +7,8 @@ import (
 )
 
 // GetInviteByID returns an invitation record by ID
-func GetInviteByID(ctx context.Context, getter dal.ReadSession, id string) (inviteDto *dbo4invitus.InviteDto, inviteRecord dal.Record, err error) {
-	inviteDto = new(dbo4invitus.InviteDto)
+func GetInviteByID(ctx context.Context, getter dal.ReadSession, id string) (inviteDto *dbo4invitus.InviteDbo, inviteRecord dal.Record, err error) {
+	inviteDto = new(dbo4invitus.InviteDbo)
 	inviteRecord = dal.NewRecordWithData(NewInviteKey(id), inviteDto)
 	return inviteDto, inviteRecord, getter.Get(ctx, inviteRecord)
 }

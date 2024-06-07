@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-// WithOrderContacts is a struct that contains contacts in OrderDto
+// WithOrderContacts is a struct that contains contacts in OrderDbo
 type WithOrderContacts struct {
 	Contacts []*OrderContact `json:"contacts" firestore:"contacts"`
 }

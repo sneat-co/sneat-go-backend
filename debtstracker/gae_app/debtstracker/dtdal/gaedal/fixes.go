@@ -100,7 +100,7 @@ func (f *TransferFixer) FixAllIfNeeded(c context.Context) (err error) {
 }
 
 func FixTransfers(c context.Context) (loadedCount int, fixedCount int, failedCount int, err error) {
-	query := dal.From(models.TransferKind).SelectInto(func() dal.Record {
+	query := dal.From(models.TransfersCollection).SelectInto(func() dal.Record {
 		return models.NewTransferWithIncompleteKey(nil).Record
 	})
 	//query.Limit = 50
@@ -145,7 +145,7 @@ func FixTransfers(c context.Context) (loadedCount int, fixedCount int, failedCou
 					mutex.Unlock()
 					log.Infof(c, "Fixed transfer %v: %v", key.ID.(int), fixer.Fixes)
 					//} else {
-					//	log.Debugf(c, "Transfer %v is OK: CounterpartyCounterpartyName: %v", transferKey.IntegerID(), fixer.transfer.Creator().ContactName)
+					//	log.Debugf(c, "TransferEntry %v is OK: CounterpartyCounterpartyName: %v", transferKey.IntegerID(), fixer.transfer.Creator().ContactName)
 				}
 			}
 		}(record)

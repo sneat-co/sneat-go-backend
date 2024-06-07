@@ -76,8 +76,8 @@ type CreateTransferOutputCounterparty struct {
 }
 
 type CreateTransferOutput struct {
-	Transfer          models.Transfer
-	ReturnedTransfers []models.Transfer
+	Transfer          models.TransferEntry
+	ReturnedTransfers []models.TransferEntry
 	From, To          *CreateTransferOutputCounterparty
 }
 
@@ -110,7 +110,7 @@ func (input CreateTransferInput) CreatorContactID() string {
 
 func (output CreateTransferOutput) Validate() {
 	if output.Transfer.ID == "" {
-		panic("Transfer.ID == 0")
+		panic("TransferEntry.ID == 0")
 	}
 	if output.Transfer.Data == nil {
 		panic("TransferData == nil")

@@ -93,7 +93,7 @@ const (
 )
 
 var groupSettingsChooseCurrencyCommand = shared_group.GroupCallbackCommand(GroupSettingsChooseCurrencyCommandCode,
-	func(whc botsfw.WebhookContext, callbackUrl *url.URL, group models.Group) (m botsfw.MessageFromBot, err error) {
+	func(whc botsfw.WebhookContext, callbackUrl *url.URL, group models.GroupEntry) (m botsfw.MessageFromBot, err error) {
 		m.IsEdit = true
 		m.Text = whc.Translate(trans.MESSAGE_TEXT_ASK_PRIMARY_CURRENCY)
 		m.Keyboard = currenciesInlineKeyboard(
@@ -112,7 +112,7 @@ var groupSettingsChooseCurrencyCommand = shared_group.GroupCallbackCommand(Group
 func groupSettingsSetCurrencyCommand(params shared_all.BotParams) botsfw.Command {
 	return botsfw.Command{
 		Code: GroupSettingsSetCurrencyCommandCode,
-		CallbackAction: shared_group.NewGroupCallbackAction(func(whc botsfw.WebhookContext, callbackUrl *url.URL, group models.Group) (m botsfw.MessageFromBot, err error) {
+		CallbackAction: shared_group.NewGroupCallbackAction(func(whc botsfw.WebhookContext, callbackUrl *url.URL, group models.GroupEntry) (m botsfw.MessageFromBot, err error) {
 			currency := money.CurrencyCode(callbackUrl.Query().Get(CURRENCY_PARAM_NAME))
 			if group.Data.DefaultCurrency != currency {
 				c := whc.Context()
@@ -146,7 +146,7 @@ func groupSettingsSetCurrencyCommand(params shared_all.BotParams) botsfw.Command
 	}
 }
 
-func onStartCallbackInGroup(whc botsfw.WebhookContext, group models.Group) (m botsfw.MessageFromBot, err error) {
+func onStartCallbackInGroup(whc botsfw.WebhookContext, group models.GroupEntry) (m botsfw.MessageFromBot, err error) {
 	// This links Telegram ChatID and ChatInstance
 	panic("not implemeted")
 	// if twhc, ok := whc.(*telegram.tgWebhookContext); ok {
@@ -157,7 +157,7 @@ func onStartCallbackInGroup(whc botsfw.WebhookContext, group models.Group) (m bo
 	// return inGroupWelcomeMessage(whc, group)
 }
 
-//func inGroupWelcomeMessage(whc botsfw.WebhookContext, group models.Group) (m botsfw.MessageFromBot, err error) {
+//func inGroupWelcomeMessage(whc botsfw.WebhookContext, group models.GroupEntry) (m botsfw.MessageFromBot, err error) {
 //	m, err = GroupSettingsAction(whc, group, false)
 //	if err != nil {
 //		return

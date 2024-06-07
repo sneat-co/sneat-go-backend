@@ -22,7 +22,7 @@ type billFacade struct {
 
 var Bill = billFacade{}
 
-func (billFacade) AssignBillToGroup(c context.Context, tx dal.ReadwriteTransaction, inBill models.Bill, groupID, userID string) (bill models.Bill, group models.Group, err error) {
+func (billFacade) AssignBillToGroup(c context.Context, tx dal.ReadwriteTransaction, inBill models.Bill, groupID, userID string) (bill models.Bill, group models.GroupEntry, err error) {
 	bill = inBill
 	if err = bill.Data.AssignToGroup(groupID); err != nil {
 		return
@@ -486,7 +486,7 @@ func (billFacade) GetBillMembersUserInfo(c context.Context, bill models.Bill, fo
 func (billFacade) AddBillMember(
 	c context.Context, tx dal.ReadwriteTransaction, userID string, inBill models.Bill, memberID, memberUserID string, memberUserName string, paid decimal.Decimal64p2,
 ) (
-	bill models.Bill, group models.Group, changed, isJoined bool, err error,
+	bill models.Bill, group models.GroupEntry, changed, isJoined bool, err error,
 ) {
 	if tx == nil {
 		panic("This method should be called within transaction")
@@ -527,7 +527,7 @@ func (billFacade) AddBillMember(
 		if _, groupChanged, _, groupMember, groupMembers = group.Data.AddOrGetMember(memberUserID, "", memberUserName); groupChanged {
 			group.Data.SetGroupMembers(groupMembers)
 		} else {
-			log.Debugf(c, "Group billMembers not changed, groupMember.ID: "+groupMember.ID)
+			log.Debugf(c, "GroupEntry billMembers not changed, groupMember.ID: "+groupMember.ID)
 		}
 	}
 
@@ -635,7 +635,7 @@ func (billFacade) DeleteBill(c context.Context, billID string, userID string) (b
 			}
 		}
 		if groupID := bill.Data.GetUserGroupID(); groupID != "" {
-			var group models.Group
+			var group models.GroupEntry
 			if group, err = dtdal.Group.GetGroupByID(c, tx, groupID); err != nil {
 				return
 			}
@@ -699,7 +699,7 @@ func (billFacade) RestoreBill(c context.Context, billID string, userID string) (
 			return
 		}
 		if groupID := bill.Data.GetUserGroupID(); groupID != "" {
-			var group models.Group
+			var group models.GroupEntry
 			if group, err = dtdal.Group.GetGroupByID(c, tx, groupID); err != nil {
 				return
 			}

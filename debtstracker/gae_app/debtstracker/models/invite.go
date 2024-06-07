@@ -27,12 +27,7 @@ const (
 
 const InviteKind = "Invite"
 
-type Invite struct {
-	record.WithID[string]
-	//db.NoStrID
-	//ID string
-	Data *InviteData
-}
+type Invite = record.DataWithID[string, *InviteData]
 
 func NewInviteKey(inviteCode string) *dal.Key {
 	return dal.NewKeyWithID(InviteKind, inviteCode)
