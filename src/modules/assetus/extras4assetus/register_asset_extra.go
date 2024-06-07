@@ -1,14 +1,17 @@
 package extras4assetus
 
-import "github.com/sneat-co/sneat-go-backend/src/coremodels/extra"
+import (
+	"github.com/sneat-co/sneat-go-backend/src/coremodels/extra"
+	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/briefs4assetus"
+)
 
-var assetExtraFactories = map[extra.Type]func() extra.Data{}
+var assetExtraFactories = map[extra.Type]func() briefs4assetus.AssetExtra{}
 
-func RegisterAssetExtraFactory(t extra.Type, f func() extra.Data) {
+func RegisterAssetExtraFactory(t extra.Type, f func() briefs4assetus.AssetExtra) {
 	assetExtraFactories[t] = f
 }
 
-func NewAssetExtra(t extra.Type) extra.Data {
+func NewAssetExtra(t extra.Type) briefs4assetus.AssetExtra {
 	if f, ok := assetExtraFactories[t]; ok {
 		return f()
 	}

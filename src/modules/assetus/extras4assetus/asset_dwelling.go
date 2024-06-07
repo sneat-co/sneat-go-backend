@@ -2,16 +2,18 @@ package extras4assetus
 
 import (
 	"github.com/sneat-co/sneat-go-backend/src/coremodels/extra"
+	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/briefs4assetus"
 	"github.com/strongo/validation"
 )
 
 func init() {
-	RegisterAssetExtraFactory(AssetExtraTypeDwelling, func() extra.Data {
+	RegisterAssetExtraFactory(AssetExtraTypeDwelling, func() briefs4assetus.AssetExtra {
 		return new(AssetDwellingExtra)
 	})
 }
 
 var _ extra.Data = (*AssetDwellingExtra)(nil)
+var _ briefs4assetus.AssetExtra = (*AssetDwellingExtra)(nil)
 
 type AssetDwellingExtra struct {
 	//extra.BaseData
@@ -22,6 +24,16 @@ type AssetDwellingExtra struct {
 	} `json:"rent_price,omitempty" firestore:"rent_price,omitempty"`
 	NumberOfBedrooms int `json:"numberOfBedrooms,omitempty" firestore:"numberOfBedrooms,omitempty"`
 	AreaSqM          int `json:"areaSqM,omitempty" firestore:"areaSqM,omitempty"`
+}
+
+func (v AssetDwellingExtra) ValidateWithAssetBrief(assetBrief briefs4assetus.AssetBrief) error {
+	if err := v.Validate(); err != nil {
+		return err
+	}
+	if assetBrief.Title == "" && v.Address == "" {
+		return validation.NewValidationError("dwelling asset should have at least 1 of next fields: title, address")
+	}
+	return nil
 }
 
 func (v AssetDwellingExtra) GetBrief() extra.Data {

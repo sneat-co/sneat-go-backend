@@ -23,7 +23,6 @@ func TestAssetBriefNoOmitEmpty(t *testing.T) {
 			t.Errorf("should NOT omit empty `%s`", field)
 		}
 	}
-	assetEmptyFieldIsNotOmitted("title")
 	assetEmptyFieldIsNotOmitted("type")
 	assetEmptyFieldIsNotOmitted("status")
 	assetEmptyFieldIsNotOmitted("category")

@@ -2,18 +2,20 @@ package extras4assetus
 
 import (
 	"github.com/sneat-co/sneat-go-backend/src/coremodels/extra"
+	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/briefs4assetus"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
 	"time"
 )
 
 func init() {
-	RegisterAssetExtraFactory(AssetExtraTypeDocument, func() extra.Data {
+	RegisterAssetExtraFactory(AssetExtraTypeDocument, func() briefs4assetus.AssetExtra {
 		return new(AssetDocumentExtra)
 	})
 }
 
 var _ extra.Data = (*AssetDocumentExtra)(nil)
+var _ briefs4assetus.AssetExtra = (*AssetDocumentExtra)(nil)
 
 type AssetDocumentExtra struct {
 	//extra.BaseData
@@ -21,6 +23,16 @@ type AssetDocumentExtra struct {
 	IssuedOn      string `json:"issuedOn,omitempty" firestore:"issuedOn,omitempty"`
 	EffectiveFrom string `json:"effectiveFrom,omitempty" firestore:"effectiveFrom,omitempty"`
 	ExpiresOn     string `json:"expiresOn,omitempty" firestore:"expiresOn,omitempty"`
+}
+
+func (v *AssetDocumentExtra) ValidateWithAssetBrief(assetBrief briefs4assetus.AssetBrief) error {
+	if err := v.Validate(); err != nil {
+		return err
+	}
+	if assetBrief.Title == "" && v.RegNumber == "" {
+		return validation.NewValidationError("document asset should have at least 1 of next fields: title, regNumber")
+	}
+	return nil
 }
 
 func (v *AssetDocumentExtra) RequiredFields() []string {

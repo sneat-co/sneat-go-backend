@@ -1,5 +1,11 @@
 package const4assetus
 
+import (
+	"fmt"
+	"github.com/strongo/slice"
+	"github.com/strongo/validation"
+)
+
 // AssetType is a type of asset, e.g. house, apartment, car, boat, etc
 type AssetType = string
 
@@ -43,7 +49,7 @@ const (
 	AssetTypeRealEstateWarehouse = "warehouse"
 )
 
-var AssetRealEstateTypes = []string{
+var DwellingAssetTypes = []string{
 	AssetTypeRealEstateApartment,
 	AssetTypeRealEstateHouse,
 	AssetTypeRealEstateOffice,
@@ -53,7 +59,7 @@ var AssetRealEstateTypes = []string{
 	AssetTypeRealEstateWarehouse,
 }
 
-var AssetVehicleTypes = []string{
+var VehicleAssetTypes = []string{
 	AssetTypeVehicleCar,
 	AssetTypeVehicleBus,
 	AssetTypeVehicleVan,
@@ -64,7 +70,7 @@ var AssetVehicleTypes = []string{
 	AssetTypeVehicleHelicopter,
 }
 
-var AssetSportGearTypes = []string{
+var SportGearAssetTypes = []string{
 	AssetTypeSportGearBicycle,
 	AssetTypeSportGearKite,
 	AssetTypeSportGearKiteBar,
@@ -86,10 +92,27 @@ const (
 	AssetTypeDocumentTypeBirthCert      = "birth_cert"
 )
 
-var AssetDocumentTypes = []string{
+var DocumentAssetTypes = []string{
 	AssetTypeDocumentTypePassport,
 	AssetTypeDocumentTypeIDCard,
 	AssetTypeDocumentTypeDrivingLicense,
 	AssetTypeDocumentTypeMarriageCert,
 	AssetTypeDocumentTypeBirthCert,
+}
+
+var assetTypesByCategory = map[AssetCategory][]string{
+	AssetCategoryVehicle:   VehicleAssetTypes,
+	AssetCategoryDwelling:  DwellingAssetTypes,
+	AssetCategorySportGear: SportGearAssetTypes,
+	AssetCategoryDocument:  DocumentAssetTypes,
+}
+
+func ValidateAssetType(assetCategory AssetCategory, assetType AssetType) error {
+	if types, ok := assetTypesByCategory[assetCategory]; ok {
+		if !slice.Contains(types, assetType) {
+			return validation.NewErrBadRecordFieldValue("type", fmt.Sprintf("unknown %s type: %s", assetCategory, assetType))
+		}
+		return nil
+	}
+	return validation.NewErrBadRecordFieldValue("assetCategory", "unknown value: "+string(assetCategory))
 }
