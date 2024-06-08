@@ -106,7 +106,7 @@ func (uf userFacade) CreateUserByEmail(
 	return
 }
 
-// This is used in invites.
+// GetOrCreateEmailUser is used in invites.
 func (uf userFacade) GetOrCreateEmailUser(
 	c context.Context,
 	email string,
@@ -136,7 +136,7 @@ func (uf userFacade) GetOrCreateEmailUser(
 		now := time.Now()
 		isNewUser = true
 		userEmail = models.NewUserEmail(email, models.NewUserEmailData(0, isConfirmed, "email"))
-		appUser = models.NewUser(models.ClientInfo{})
+		appUser = models.NewUser(clientInfo)
 		appUser.Data.DtCreated = now
 		appUser.Data.AddAccount(userEmail.UserAccount())
 
