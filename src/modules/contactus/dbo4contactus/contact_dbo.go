@@ -18,8 +18,9 @@ type ContactDbo struct {
 	//dbmodels.WithTeamID -- not needed as it's in record key
 	//dbmodels.WithUserIDs
 
-	dbo4linkage.WithRelatedAndIDs
 	briefs4contactus.ContactBase
+
+	dbo4linkage.WithRelatedAndIDs
 	with.CreatedFields
 	with.TagsField
 	briefs4contactus.WithMultiTeamContacts[*briefs4contactus.ContactBrief]

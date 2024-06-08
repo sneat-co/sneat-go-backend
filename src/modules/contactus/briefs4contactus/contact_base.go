@@ -11,10 +11,10 @@ import (
 // ContactBase is used in models4contactus.ContactDto and in requests to create a contactBrief
 type ContactBase struct {
 	ContactBrief
-	dbmodels.WithUpdatedAndVersion
 
-	// Status belong to ContactBase and is not part of ContactBrief as we keep in briefs only active contacts
 	Status dbmodels.Status `json:"status" firestore:"status"` // active, archived
+
+	dbmodels.WithUpdatedAndVersion
 
 	WithGroupIDs
 
