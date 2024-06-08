@@ -18,7 +18,6 @@ var _ extra.Data = (*AssetDocumentExtra)(nil)
 var _ briefs4assetus.AssetExtra = (*AssetDocumentExtra)(nil)
 
 type AssetDocumentExtra struct {
-	//extra.BaseData
 	WithOptionalRegNumberField
 	IssuedOn      string `json:"issuedOn,omitempty" firestore:"issuedOn,omitempty"`
 	EffectiveFrom string `json:"effectiveFrom,omitempty" firestore:"effectiveFrom,omitempty"`

@@ -3,6 +3,7 @@ package extras4assetus
 import (
 	"github.com/sneat-co/sneat-go-backend/src/core/extra"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/briefs4assetus"
+	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
 )
 
@@ -17,7 +18,7 @@ var _ briefs4assetus.AssetExtra = (*AssetDwellingExtra)(nil)
 
 type AssetDwellingExtra struct {
 	//extra.BaseData
-	Address   string `json:"address,omitempty" firestore:"address,omitempty"`
+	Address   *dbmodels.Address `json:"address,omitempty" firestore:"address,omitempty"`
 	RentPrice struct {
 		Value    float64 `json:"value,omitempty" firestore:"value,omitempty"`
 		Currency string  `json:"currency,omitempty" firestore:"currency,omitempty"`
@@ -30,7 +31,7 @@ func (v AssetDwellingExtra) ValidateWithAssetBrief(assetBrief briefs4assetus.Ass
 	if err := v.Validate(); err != nil {
 		return err
 	}
-	if assetBrief.Title == "" && v.Address == "" {
+	if assetBrief.Title == "" && v.Address == nil {
 		return validation.NewValidationError("dwelling asset should have at least 1 of next fields: title, address")
 	}
 	return nil
@@ -53,9 +54,11 @@ func (v AssetDwellingExtra) IndexedFields() []string {
 }
 
 func (v AssetDwellingExtra) Validate() error {
-	//if err := v.BaseData.Validate(); err != nil {
-	//	return err
-	//}
+	if v.Address != nil {
+		if err := v.Address.Validate(); err != nil {
+			return err
+		}
+	}
 	if v.NumberOfBedrooms < 0 {
 		return validation.NewErrBadRecordFieldValue("numberOfBedrooms", "negative value")
 	}

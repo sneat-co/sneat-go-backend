@@ -17,7 +17,6 @@ var _ briefs4assetus.AssetExtra = (*AssetVehicleExtra)(nil)
 
 // AssetVehicleExtra is an extension of asset data for vehicles
 type AssetVehicleExtra struct {
-	//extra.BaseData
 	WithMakeModelRegNumberFields
 	WithEngineData
 	Vin string `json:"vin,omitempty" firestore:"vin,omitempty"`
