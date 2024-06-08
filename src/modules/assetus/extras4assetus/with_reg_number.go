@@ -6,14 +6,12 @@ import (
 )
 
 type WithOptionalRegNumberField struct {
-	RegNumber string `json:"regNumber,omitempty" firestore:"regNumber,omitempty"`
+	RegNumber string `json:"regNumber,omitempty" firestore:"regNumber,omitempty" datastore:"regNumber,omitempty" dalgo:"regNumber,omitempty"`
 }
 
 // Validate validates WitRegNumberField
 func (v *WithOptionalRegNumberField) Validate() error {
-	if regNumber := strings.TrimSpace(v.RegNumber); regNumber == "" {
-		return validation.NewErrRecordIsMissingRequiredField("regNumber")
-	} else if regNumber != v.RegNumber {
+	if regNumber := strings.TrimSpace(v.RegNumber); regNumber != v.RegNumber {
 		return validation.NewErrBadRecordFieldValue("regNumber", "should not have leading or trailing spaces")
 	}
 	return nil
