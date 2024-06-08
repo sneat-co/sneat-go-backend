@@ -23,7 +23,7 @@ func DeleteAsset(ctx context.Context, user facade.User, request dal4teamus.TeamI
 		getBriefsCount,
 		func(teamModuleDbo *dbo4assetus.AssetusTeamDbo, id string) ([]dal.Update, error) {
 			delete(teamModuleDbo.Assets, id)
-			return []dal.Update{{Field: "assets." + id}}, teamModuleDbo.Validate()
+			return []dal.Update{{Field: "assets." + id, Value: dal.DeleteField}}, teamModuleDbo.Validate()
 		},
 	)
 
