@@ -20,8 +20,8 @@ require (
 	github.com/bots-go-framework/bots-api-telegram v0.4.3
 	github.com/bots-go-framework/bots-fw v0.25.2
 	github.com/bots-go-framework/bots-fw-store v0.4.0
-	github.com/bots-go-framework/bots-fw-telegram v0.8.6
-	github.com/bots-go-framework/bots-fw-telegram-models v0.1.5
+	github.com/bots-go-framework/bots-fw-telegram v0.8.7
+	github.com/bots-go-framework/bots-fw-telegram-models v0.1.6
 	github.com/bots-go-framework/bots-go-core v0.0.2
 	github.com/bots-go-framework/bots-host-gae v0.5.7
 	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85
@@ -39,10 +39,10 @@ require (
 	github.com/sendgrid/sendgrid-go v3.14.0+incompatible
 	github.com/shiyanhui/hero v0.0.2
 	github.com/sneat-co/debtstracker-translations v0.0.21
-	github.com/sneat-co/sneat-go-core v0.24.0
+	github.com/sneat-co/sneat-go-core v0.24.1
 	github.com/sneat-co/sneat-go-firebase v0.4.48
 	github.com/stretchr/testify v1.9.0
-	github.com/strongo/app-host-gae v0.1.27
+	github.com/strongo/app-host-gae v0.1.28
 	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.0.1
 	github.com/strongo/facebook v1.8.1
@@ -53,11 +53,11 @@ require (
 	github.com/strongo/random v0.0.1
 	github.com/strongo/slice v0.1.4
 	github.com/strongo/slices v0.0.0-20231201223919-29a6c669158a
-	github.com/strongo/strongoapp v0.18.2
+	github.com/strongo/strongoapp v0.18.3
 	github.com/strongo/validation v0.0.6
 	github.com/yaa110/go-persian-calendar v1.2.0
-	golang.org/x/crypto v0.23.0
-	golang.org/x/net v0.25.0
+	golang.org/x/crypto v0.24.0
+	golang.org/x/net v0.26.0
 	google.golang.org/appengine/v2 v2.0.6
 )
 
@@ -73,7 +73,7 @@ require (
 	firebase.google.com/go/v4 v4.14.1 // indirect
 	github.com/AlekSi/pointer v1.2.0 // indirect
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
-	github.com/alexsergivan/transliterator v1.0.0 // indirect
+	github.com/alexsergivan/transliterator v1.0.1 // indirect
 	github.com/dal-go/dalgo2firestore v0.1.65 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
@@ -102,8 +102,8 @@ require (
 	go.opentelemetry.io/otel/trace v1.26.0 // indirect
 	golang.org/x/oauth2 v0.20.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
-	golang.org/x/sys v0.20.0 // indirect
-	golang.org/x/text v0.15.0 // indirect
+	golang.org/x/sys v0.21.0 // indirect
+	golang.org/x/text v0.16.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	google.golang.org/api v0.182.0 // indirect
 	google.golang.org/genproto v0.0.0-20240509183442-62759503f434 // indirect
