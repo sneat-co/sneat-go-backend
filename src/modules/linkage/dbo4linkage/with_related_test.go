@@ -121,7 +121,9 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 				WithRelated: WithRelated{
 					Related: tt.fields.Related,
 				},
-				RelatedIDs: tt.fields.relatedIDs,
+				WithRelatedIDs: WithRelatedIDs{
+					RelatedIDs: tt.fields.relatedIDs,
+				},
 			}
 			gotUpdates, gotErr := v.AddRelationshipAndID(
 				tt.args.item,

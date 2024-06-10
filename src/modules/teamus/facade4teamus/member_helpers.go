@@ -7,6 +7,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"time"
 )
@@ -35,7 +36,7 @@ func CreateMemberRecordFromBrief(
 	_ = member.Data.AddRole(const4contactus.TeamMemberRoleMember)
 	member.Data.CreatedAt = now
 	member.Data.CreatedBy = byUserID
-	member.Data.UpdateRelatedIDs()
+	dbo4linkage.UpdateRelatedIDs(&member.Data.WithRelated, &member.Data.WithRelatedIDs)
 	member.Data.IncreaseVersion(now, byUserID)
 	if err = member.Data.Validate(); err != nil {
 		return member, fmt.Errorf("failed to validate member data: %w", err)

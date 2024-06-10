@@ -41,7 +41,9 @@ func AddParticipantToHappening(ctx context.Context, user facade.User, request dt
 		}
 		contactFullRef := models4contactus.NewContactFullRef(request.TeamID, request.Contact.ID)
 		var updates []dal.Update
-		if updates, err = params.Happening.Data.AddRelationshipAndID(
+		if updates, err = dbo4linkage.AddRelationshipAndID(
+			&params.Happening.Data.WithRelated,
+			&params.Happening.Data.WithRelatedIDs,
 			contactFullRef,
 			dbo4linkage.RelationshipRolesCommand{
 				Add: &dbo4linkage.RolesCommand{

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -47,7 +48,7 @@ func addOrderShippingPointTx(
 	if err := tx.Get(ctx, locationContact.Record); err != nil {
 		return nil, fmt.Errorf("failed to get locationContact referenced by shipping point: %w", err)
 	}
-	locationContact.Data.UpdateRelatedIDs()
+	dbo4linkage.UpdateRelatedIDs(&locationContact.Data.WithRelated, &locationContact.Data.WithRelatedIDs)
 	if err := locationContact.Data.Validate(); err != nil {
 		return nil, fmt.Errorf("locationContact record referenced by request.LocationContactID is not valid (ID=%s): %w", locationContact.ID, err)
 	}
@@ -63,7 +64,7 @@ func addOrderShippingPointTx(
 		//} else if !counterpartyContact.Record.Exists() {
 		//	return nil, fmt.Errorf("counterpartyContact referenced by location point does not exist (id=%v): %w", locationContact.Data.ParentID, err)
 	}
-	counterpartyContact.Data.UpdateRelatedIDs()
+	dbo4linkage.UpdateRelatedIDs(&counterpartyContact.Data.WithRelated, &counterpartyContact.Data.WithRelatedIDs)
 	if err := counterpartyContact.Data.Validate(); err != nil {
 		return nil, fmt.Errorf("counterpartyContact record referenced by location contact and loaded from DB is not valid (ID=%s): %w", counterpartyContact.ID, err)
 	}

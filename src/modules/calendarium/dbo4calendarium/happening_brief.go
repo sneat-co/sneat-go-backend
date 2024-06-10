@@ -2,6 +2,7 @@ package dbo4calendarium
 
 import (
 	"fmt"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
 )
@@ -15,6 +16,7 @@ type HappeningBrief struct {
 	Levels   []string         `json:"levels,omitempty" firestore:"levels,omitempty"`
 	Slots    []*HappeningSlot `json:"slots,omitempty" firestore:"slots,omitempty"`
 	WithHappeningPrices
+	dbo4linkage.WithRelated
 }
 
 func (v HappeningBrief) GetSlot(id string) (i int, slot *HappeningSlot) {
@@ -74,6 +76,9 @@ func (v HappeningBrief) Validate() error {
 		if price.ID == "" {
 			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("prices[%v].id", i), "empty string value")
 		}
+	}
+	if err := v.WithRelated.Validate(); err != nil {
+		return err
 	}
 	return nil
 }

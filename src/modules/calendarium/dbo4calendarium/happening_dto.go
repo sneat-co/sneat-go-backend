@@ -16,7 +16,7 @@ type HappeningDbo struct {
 	with.TagsField
 	dbmodels.WithUserIDs
 	with.DatesFields
-	dbo4linkage.WithRelatedAndIDs
+	dbo4linkage.WithRelatedIDs
 	//dbmodels.WithTeamDates
 	//briefs4contactus.WithMultiTeamContacts[*briefs4contactus.ContactBrief]
 }
@@ -72,6 +72,13 @@ func (v *HappeningDbo) Validate() error {
 		}
 	default:
 		return validation.NewErrBadRecordFieldValue("type", "unknown value: "+v.Type)
+	}
+
+	if err := v.WithRelatedIDs.Validate(); err != nil {
+		return err
+	}
+	if err := dbo4linkage.ValidateRelatedAndRelatedIDs(v.WithRelated, v.RelatedIDs); err != nil {
+		return err
 	}
 
 	//if err := v.WithMultiTeamContacts.Validate(); err != nil {

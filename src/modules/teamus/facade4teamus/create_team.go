@@ -8,6 +8,7 @@ import (
 	"github.com/gosimple/slug"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
@@ -183,7 +184,7 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 	}
 	updates := user.Data.SetTeamBrief(teamID, &userTeamBrief)
 
-	updates = append(updates, user.Data.UpdateRelatedIDs()...)
+	updates = append(updates, dbo4linkage.UpdateRelatedIDs(&user.Data.WithRelated, &user.Data.WithRelatedIDs)...)
 
 	if err = user.Data.Validate(); err != nil {
 		return response, fmt.Errorf("user record is not valid after adding new team info: %v", err)

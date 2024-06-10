@@ -8,6 +8,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dbo4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
@@ -39,7 +40,14 @@ func RemoveParticipantFromHappening(ctx context.Context, user facade.User, reque
 					fmt.Sprintf("unknown value: [%v]", params.Happening.Data.Type)))
 		}
 		contactFullRef := models4contactus.NewContactFullRef(contactShortRef.TeamID(), contactShortRef.ItemID())
-		params.HappeningUpdates = append(params.HappeningUpdates, params.Happening.Data.RemoveRelatedAndID(contactFullRef)...)
+		params.HappeningUpdates = append(
+			params.HappeningUpdates,
+			dbo4linkage.RemoveRelatedAndID(
+				&params.Happening.Data.WithRelated,
+				&params.Happening.Data.WithRelatedIDs,
+				contactFullRef,
+			)...,
+		)
 		return err
 	}
 

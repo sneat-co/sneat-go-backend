@@ -6,6 +6,7 @@ import (
 	"github.com/dal-go/mocks4dalgo/mocks4dal"
 	"github.com/golang/mock/gomock"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dbo4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"testing"
@@ -96,7 +97,7 @@ func MockTx(t *testing.T) (tx *mocks4dal.MockReadwriteTransaction) {
 				default:
 					return dal.ErrRecordNotFound
 				}
-				contactDto.UpdateRelatedIDs()
+				dbo4linkage.UpdateRelatedIDs(&contactDto.WithRelated, &contactDto.WithRelatedIDs)
 			default:
 				t.Fatalf("Unexpected collection: %v", record.Key())
 			}

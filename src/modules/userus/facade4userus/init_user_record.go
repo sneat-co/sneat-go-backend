@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/facade4teamus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dto4userus"
@@ -135,7 +136,7 @@ func createUserRecordTx(ctx context.Context, tx dal.ReadwriteTransaction, reques
 	if user.Data.Title == "" && user.Data.Names.IsEmpty() {
 		user.Data.Title = user.Data.Email
 	}
-	_ = user.Data.UpdateRelatedIDs()
+	_ = dbo4linkage.UpdateRelatedIDs(&user.Data.WithRelated, &user.Data.WithRelatedIDs)
 	if err := user.Data.Validate(); err != nil {
 		return fmt.Errorf("user record prepared for insert is not valid: %w", err)
 	}

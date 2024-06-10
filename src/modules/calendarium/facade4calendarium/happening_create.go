@@ -64,7 +64,12 @@ func CreateHappening(
 	return
 }
 
-func createHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, happeningDto *dbo4calendarium.HappeningDbo, params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo]) (
+func createHappeningTx(
+	ctx context.Context,
+	tx dal.ReadwriteTransaction,
+	happeningDto *dbo4calendarium.HappeningDbo,
+	params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo],
+) (
 	response dto4calendarium.CreateHappeningResponse, err error,
 ) {
 	happeningDto.CreatedAt = params.Started

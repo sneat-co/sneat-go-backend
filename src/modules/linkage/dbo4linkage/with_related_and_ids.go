@@ -14,9 +14,7 @@ const AnyRelatedID = "*"
 // WithRelatedAndIDs defines relationships of the current contact record to other contacts.
 type WithRelatedAndIDs struct {
 	WithRelated
-
-	// RelatedIDs holds identifiers of related records - needed for indexed search.
-	RelatedIDs []string `json:"relatedIDs,omitempty" firestore:"relatedIDs,omitempty"`
+	WithRelatedIDs
 
 	//	Example of related field as a JSON and relevant relatedIDs field:
 	/*
@@ -42,10 +40,27 @@ type WithRelatedAndIDs struct {
 	*/
 }
 
-// Validate returns error if not valid
-func (v *WithRelatedAndIDs) Validate() error {
-	if err := v.ValidateRelated(func(relatedID string) error {
-		if !slice.Contains(v.RelatedIDs, relatedID) {
+type WithRelatedIDs struct {
+	// RelatedIDs holds identifiers of related records - needed for indexed search.
+	RelatedIDs []string `json:"relatedIDs,omitempty" firestore:"relatedIDs,omitempty"`
+}
+
+func (v *WithRelatedIDs) Validate() error {
+	for i, relatedID := range v.RelatedIDs {
+		s := strings.TrimSpace(relatedID)
+		if s == "" {
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), "empty contact ID")
+		}
+		if s != relatedID {
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), "has leading or trailing spaces")
+		}
+	}
+	return nil
+}
+
+func ValidateRelatedAndRelatedIDs(withRelated WithRelated, relatedIDs []string) error {
+	if err := withRelated.ValidateRelated(func(relatedID string) error {
+		if !slice.Contains(relatedIDs, relatedID) {
 			return validation.NewErrBadRecordFieldValue("relatedIDs",
 				fmt.Sprintf(`does not have relevant value in 'relatedIDs' field: relatedID="%s"`, relatedID))
 		}
@@ -53,13 +68,13 @@ func (v *WithRelatedAndIDs) Validate() error {
 	}); err != nil {
 		return err
 	}
-	if len(v.RelatedIDs) == 0 {
+	if len(relatedIDs) == 0 {
 		return validation.NewErrRecordIsMissingRequiredField("relatedIDs")
 	}
-	if v.RelatedIDs[0] != AnyRelatedID && v.RelatedIDs[0] != NoRelatedID {
+	if relatedIDs[0] != AnyRelatedID && relatedIDs[0] != NoRelatedID {
 		return validation.NewErrBadRecordFieldValue("relatedIDs[0]", fmt.Sprintf("should be either '%s' or '%s'", AnyRelatedID, NoRelatedID))
 	}
-	for i, relatedID := range v.RelatedIDs[1:] { // The first item is always either "*" or "-"
+	for i, relatedID := range relatedIDs[1:] { // The first item is always either "*" or "-"
 		if strings.TrimSpace(relatedID) == "" {
 			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), "empty contact ID")
 		}
@@ -69,7 +84,7 @@ func (v *WithRelatedAndIDs) Validate() error {
 		}
 		relatedRef := NewTeamModuleItemRefFromString(relatedID)
 
-		relatedByCollectionID := v.Related[relatedRef.ModuleID]
+		relatedByCollectionID := withRelated.Related[relatedRef.ModuleID]
 		if relatedByCollectionID == nil {
 			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), fmt.Sprintf("field 'related[%s]' does not have value for module ID=%s", relatedRef.TeamID, relatedRef.ModuleID))
 		}
@@ -83,6 +98,14 @@ func (v *WithRelatedAndIDs) Validate() error {
 		}
 	}
 	return nil
+}
+
+// Validate returns error if not valid
+func (v *WithRelatedAndIDs) Validate() error {
+	if err := v.WithRelatedIDs.Validate(); err != nil {
+		return err
+	}
+	return ValidateRelatedAndRelatedIDs(v.WithRelated, v.RelatedIDs)
 }
 
 func (v *WithRelatedAndIDs) AddRelationshipsAndIDs(
@@ -111,10 +134,10 @@ func (v *WithRelatedAndIDs) AddRelationshipsAndIDs(
 	//return nil, errors.New("not implemented yet - AddRelationshipsAndIDs")
 }
 
-func (v *WithRelatedAndIDs) UpdateRelatedIDs() (updates []dal.Update) {
+func UpdateRelatedIDs(withRelated *WithRelated, withRelatedIDs *WithRelatedIDs) (updates []dal.Update) {
 	searchIndex := []string{AnyRelatedID}
-	v.RelatedIDs = make([]string, 0)
-	for moduleID, relatedByCollectionID := range v.Related {
+	withRelatedIDs.RelatedIDs = make([]string, 0)
+	for moduleID, relatedByCollectionID := range withRelated.Related {
 		searchIndex = append(searchIndex, fmt.Sprintf("%s.%s", moduleID, AnyRelatedID))
 		for collectionID, relatedItems := range relatedByCollectionID {
 			searchIndex = append(searchIndex, fmt.Sprintf("%s.%s.%s", moduleID, collectionID, AnyRelatedID))
@@ -126,17 +149,17 @@ func (v *WithRelatedAndIDs) UpdateRelatedIDs() (updates []dal.Update) {
 						searchIndex = append(searchIndex, fmt.Sprintf("%s.%s.%s.%s", moduleID, collectionID, k.TeamID, AnyRelatedID))
 					}
 					id := NewTeamModuleItemRef(k.TeamID, moduleID, collectionID, k.ItemID).ID()
-					v.RelatedIDs = append(v.RelatedIDs, id)
+					withRelatedIDs.RelatedIDs = append(withRelatedIDs.RelatedIDs, id)
 				}
 			}
 		}
 	}
-	if len(v.RelatedIDs) == 0 {
-		v.RelatedIDs = []string{NoRelatedID}
+	if len(withRelatedIDs.RelatedIDs) == 0 {
+		withRelatedIDs.RelatedIDs = []string{NoRelatedID}
 		updates = append(updates, dal.Update{Field: "relatedIDs", Value: dal.DeleteField})
 	} else {
-		v.RelatedIDs = append(searchIndex, v.RelatedIDs...)
-		updates = append(updates, dal.Update{Field: "relatedIDs", Value: v.RelatedIDs})
+		withRelatedIDs.RelatedIDs = append(searchIndex, withRelatedIDs.RelatedIDs...)
+		updates = append(updates, dal.Update{Field: "relatedIDs", Value: withRelatedIDs.RelatedIDs})
 	}
 	return
 }
@@ -146,13 +169,24 @@ func (v *WithRelatedAndIDs) AddRelationshipAndID(
 	link RelationshipRolesCommand,
 ) (updates []dal.Update, err error) {
 	updates, err = v.WithRelated.AddRelationship(itemRef, link)
-	updates = append(updates, v.UpdateRelatedIDs()...)
+	updates = append(updates, UpdateRelatedIDs(&v.WithRelated, &v.WithRelatedIDs)...)
 	return
 }
 
-func (v *WithRelatedAndIDs) RemoveRelatedAndID(ref TeamModuleItemRef) (updates []dal.Update) {
-	updates = v.WithRelated.RemoveRelatedItem(ref)
-	updates = append(updates, v.UpdateRelatedIDs()...)
+func AddRelationshipAndID(
+	withRelated *WithRelated,
+	withRelatedIDs *WithRelatedIDs,
+	itemRef TeamModuleItemRef,
+	link RelationshipRolesCommand,
+) (updates []dal.Update, err error) {
+	updates, err = withRelated.AddRelationship(itemRef, link)
+	updates = append(updates, UpdateRelatedIDs(withRelated, withRelatedIDs)...)
+	return
+}
+
+func RemoveRelatedAndID(withRelated *WithRelated, withRelatedIDs *WithRelatedIDs, ref TeamModuleItemRef) (updates []dal.Update) {
+	updates = withRelated.RemoveRelatedItem(ref)
+	updates = append(updates, UpdateRelatedIDs(withRelated, withRelatedIDs)...)
 	return updates
 }
 
