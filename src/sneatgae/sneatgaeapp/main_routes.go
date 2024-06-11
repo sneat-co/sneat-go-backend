@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"runtime/debug"
+	"time"
 )
 
 func initHTTPRouter(globalOptions http.HandlerFunc) *httprouter.Router {
@@ -88,9 +89,11 @@ func wrapHTTPHandlerFunc(handler http.HandlerFunc) http.HandlerFunc {
 		if r.URL.RawQuery != "" {
 			uri += "?" + r.URL.RawQuery
 		}
-		log.Println(r.Method, uri, "started")
+		//log.Println(r.Method, uri, "started")
+		defer func(started time.Time) {
+			log.Println(r.Method, uri, "completed in", time.Since(started))
+		}(time.Now())
 		handler(w, r)
-		log.Println(r.Method, uri, "finished")
 	}
 	errorsReporterHandler := errsReporter.Handle(handlerWrapper)
 	panicHandler := func(w http.ResponseWriter, r *http.Request) {
@@ -104,15 +107,8 @@ func wrapHTTPHandlerFunc(handler http.HandlerFunc) http.HandlerFunc {
 				w.WriteHeader(http.StatusInternalServerError)
 				httpserver.AccessControlAllowOrigin(w, r)
 				_, _ = fmt.Fprint(w, "PANIC:", err, "\nSTACKTRACE from panic:\n"+stack)
-				//panic(err)
 			}
 		}()
-		//defer func() {
-		//	if p := recover(); p != nil {
-		//		handlePanic(p, w, r)
-		//		//panic(p)
-		//	}
-		//}()
 		errorsReporterHandler.ServeHTTP(w, r)
 	}
 	return panicHandler
