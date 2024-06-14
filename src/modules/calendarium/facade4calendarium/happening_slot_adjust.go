@@ -12,6 +12,7 @@ import (
 	"github.com/strongo/slice"
 )
 
+// AdjustSlot temporary changes slot (for example, time changed for a specific date, or first class has been canceled)
 func AdjustSlot(ctx context.Context, user facade.User, request dto4calendarium.HappeningSlotDateRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
