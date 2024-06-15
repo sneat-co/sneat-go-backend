@@ -8,6 +8,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
+	"github.com/strongo/validation"
 )
 
 type CalendariumTeamWorkerParams = dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo]
@@ -26,6 +27,9 @@ func RunHappeningTeamWorker(
 	request dto4calendarium.HappeningRequest,
 	happeningWorker HappeningWorker,
 ) (err error) {
+	if err = request.Validate(); err != nil {
+		return validation.NewBadRequestError(err)
+	}
 	moduleTeamWorker := func(
 		ctx context.Context,
 		tx dal.ReadwriteTransaction,
