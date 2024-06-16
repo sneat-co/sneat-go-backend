@@ -6,25 +6,21 @@ import (
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
 	"strconv"
-	"strings"
 )
 
-// HappeningSlot DTO
+// HappeningSlot DBO
 type HappeningSlot struct {
-	ID string `json:"id" firestore:"id"`
 	HappeningSlotTiming
 	dbo4linkage.WithRelated
 	Locations []Location `json:"locations,omitempty" firestore:"locations,omitempty"`
 }
 
+func (v *HappeningSlot) IsEmpty() bool {
+	return v == nil || v.HappeningSlotTiming.IsEmpty() && len(v.Locations) == 0 && len(v.WithRelated.Related) == 0
+}
+
 // Validate returns error if not valid
-func (v HappeningSlot) Validate() error {
-	if strings.TrimSpace(v.ID) == "" {
-		return validation.NewErrRecordIsMissingRequiredField("id")
-	}
-	if err := validate.RecordID(v.ID); err != nil {
-		return validation.NewErrBadRecordFieldValue("id", err.Error())
-	}
+func (v *HappeningSlot) Validate() error {
 	numberOfPhysicalLocations := 0
 	for i, l := range v.Locations {
 		if err := l.Validate(); err != nil {

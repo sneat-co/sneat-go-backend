@@ -5,78 +5,45 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
-	"github.com/sneat-co/sneat-go-core/models/dbmodels"
+	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/const4calendarium"
+	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
-	"strings"
 )
-
-// HappeningAdjustment at the moment supposed to be used only for recurring happenings
-type HappeningAdjustment struct {
-	HappeningID string        `json:"happeningID" firestore:"happeningID"`
-	Slot        HappeningSlot `json:"slot" firestore:"slot"`
-	Canceled    *Canceled     `json:"canceled,omitempty" firestore:"canceled,omitempty"`
-}
 
 const ReasonMaxLen = 10000
 
-func (v *HappeningAdjustment) Validate() error {
-	if v == nil {
-		return errors.New("nil")
-	}
-	if strings.TrimSpace(v.HappeningID) == "" {
-		return validation.NewErrRecordIsMissingRequiredField("happeningID")
-	}
-	if strings.TrimSpace(v.HappeningID) == "" {
-		return validation.NewErrRecordIsMissingRequiredField("happeningID")
-	}
-	if err := v.Slot.Validate(); err != nil {
-		return err
-	}
-
-	if v.Canceled != nil {
-		if err := v.Canceled.Validate(); err != nil {
-			return validation.NewErrBadRecordFieldValue("canceled", err.Error())
-		}
-	}
-	return nil
-}
-
-const CalendarDayCollection = "calendar_days"
+const DaysCollection = "days"
 
 type CalendarDayDbo struct {
-	dbmodels.WithTeamID
-	Date                 string                 `json:"date" firestore:"date"`
-	HappeningIDs         []string               `json:"happeningIDs" firestore:"happeningIDs"`
-	HappeningAdjustments []*HappeningAdjustment `json:"happeningAdjustments" firestore:"happeningAdjustments"`
-	//Happenings    []*HappeningBrief                 `json:"happenings" firestore:"happenings"`
+	HappeningIDs         []string                        `json:"happeningIDs,omitempty" firestore:"happeningIDs,omitempty"`
+	HappeningAdjustments map[string]*HappeningAdjustment `json:"happeningAdjustments,omitempty" firestore:"happeningAdjustments,omitempty"`
 }
 
-func (v CalendarDayDbo) GetAdjustment(happeningID, slotID string) (i int, adjustment *HappeningAdjustment) {
-	for i, adjustment = range v.HappeningAdjustments {
-		if adjustment.HappeningID == happeningID && adjustment.Slot.ID == slotID {
-			return i, adjustment
+func (v CalendarDayDbo) GetAdjustment(happeningID, slotID string) (
+	happeningAdjustment *HappeningAdjustment,
+	slotAdjustment *SlotAdjustment,
+) {
+
+	if happeningAdjustment = v.HappeningAdjustments[happeningID]; happeningAdjustment != nil && len(happeningAdjustment.Slots) > 0 {
+		if slotID == "" {
+			return happeningAdjustment, nil
 		}
+		return happeningAdjustment, happeningAdjustment.Slots[slotID]
 	}
-	return -1, nil
+	return happeningAdjustment, nil
 }
 
 func (v CalendarDayDbo) Validate() error {
-	if err := v.WithTeamID.Validate(); err != nil {
-		return err
-	}
-	if v.Date == "" {
-		return validation.NewErrRecordIsMissingRequiredField("date")
-	}
-	if _, err := validate.DateString(v.Date); err != nil {
-		return validation.NewErrBadRecordFieldValue("date", err.Error())
-	}
 	if len(v.HappeningIDs) == 0 {
 		return validation.NewErrRecordIsMissingRequiredField("happeningIDs")
 	}
-	for i, adjustment := range v.HappeningAdjustments {
+	for happeningID, adjustment := range v.HappeningAdjustments {
+		if adjustment == nil {
+			return validation.NewErrRecordIsMissingRequiredField(fmt.Sprintf("happeningAdjustments[%v]", happeningID))
+		}
 		if err := adjustment.Validate(); err != nil {
-			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("happeningAdjustments[%v]", i), err.Error())
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("happeningAdjustments[%v]", happeningID), err.Error())
 		}
 	}
 	return nil
@@ -84,13 +51,8 @@ func (v CalendarDayDbo) Validate() error {
 
 type CalendarDayEntry = record.DataWithID[string, *CalendarDayDbo]
 
-func NewCalendarDayID(teamID, date string) string {
-	return teamID + ":" + date
-}
-
 func NewCalendarDayKey(teamID, date string) *dal.Key {
-	id := NewCalendarDayID(teamID, date)
-	return dal.NewKeyWithID(CalendarDayCollection, id)
+	return dal4teamus.NewTeamModuleItemKey(teamID, const4calendarium.ModuleID, DaysCollection, date)
 }
 
 func NewCalendarDayContext(teamID, date string) CalendarDayEntry {
@@ -101,26 +63,17 @@ func NewCalendarDayContext(teamID, date string) CalendarDayEntry {
 		panic(err)
 	}
 	dto := new(CalendarDayDbo)
-	dto.TeamID = teamID
-	dto.Date = date
-	return NewCalendarDayContextWithDto(dto)
+	return NewCalendarDayContextWithDbo(teamID, date, dto)
 }
 
-func NewCalendarDayContextWithDto(dto *CalendarDayDbo) (calendarDay CalendarDayEntry) {
-	if dto == nil {
-		panic("dto is nil")
+func NewCalendarDayContextWithDbo(teamID, date string, dbo *CalendarDayDbo) (calendarDay CalendarDayEntry) {
+	if dbo == nil {
+		panic("dbo is nil")
 	}
-	if dto.TeamID == "" {
-		panic("dto.TeamID is empty string")
-	}
-	if dto.Date == "" {
-		panic("dto.Date is empty string")
-	}
-	key := NewCalendarDayKey(dto.TeamID, dto.Date)
-	calendarDay.ID = dto.Date
-	calendarDay.FullID = NewCalendarDayID(dto.TeamID, dto.Date)
+	key := NewCalendarDayKey(teamID, date)
+	calendarDay.ID = date
 	calendarDay.Key = key
-	calendarDay.Data = dto
-	calendarDay.Record = dal.NewRecordWithData(key, dto)
+	calendarDay.Data = dbo
+	calendarDay.Record = dal.NewRecordWithData(key, dbo)
 	return
 }

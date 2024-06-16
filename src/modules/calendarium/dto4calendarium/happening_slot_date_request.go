@@ -10,14 +10,18 @@ import (
 // HappeningSlotDateRequest updates slot
 type HappeningSlotDateRequest struct {
 	HappeningRequest
-	Slot dbo4calendarium.HappeningSlot `json:"slot"`
-	Date string                        `json:"date"`
+	SlotID string                        `json:"slotID"`
+	Slot   dbo4calendarium.HappeningSlot `json:"slot"`
+	Date   string                        `json:"date"`
 }
 
 // Validate returns error if not valid
 func (v HappeningSlotDateRequest) Validate() error {
 	if err := v.HappeningRequest.Validate(); err != nil {
 		return err
+	}
+	if strings.TrimSpace(v.SlotID) == "" {
+		return validation.NewErrRequestIsMissingRequiredField("slotID")
 	}
 	if err := v.Slot.Validate(); err != nil {
 		return err

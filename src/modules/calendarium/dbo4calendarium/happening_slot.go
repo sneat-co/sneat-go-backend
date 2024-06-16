@@ -7,13 +7,13 @@ import (
 	"time"
 )
 
-type Canceled struct {
+type Cancellation struct {
 	At     time.Time       `json:"at" firestore:"at"`
 	By     dbmodels.ByUser `json:"by" firestore:"by"`
 	Reason string          `json:"reason,omitempty" firestore:"reason,omitempty"`
 }
 
-func (v *Canceled) Validate() error {
+func (v *Cancellation) Validate() error {
 	if v.At.IsZero() {
 		return validation.NewErrRecordIsMissingRequiredField("at")
 	}
@@ -28,7 +28,7 @@ func (v *Canceled) Validate() error {
 }
 
 type SingleHappeningSlotCancellation struct {
-	SlotIDs  []string `json:"slotIDs" firestore:"slotIDs"`
-	Canceled Canceled `json:"canceled" firestore:"canceled"`
-	Reason   string   `json:"reason,omitempty" firestore:"reason,omitempty"`
+	SlotIDs  []string     `json:"slotIDs" firestore:"slotIDs"`
+	Canceled Cancellation `json:"canceled" firestore:"canceled"`
+	Reason   string       `json:"reason,omitempty" firestore:"reason,omitempty"`
 }

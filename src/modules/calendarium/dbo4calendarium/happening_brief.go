@@ -5,27 +5,23 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
+	"strings"
 )
 
 // HappeningBrief hold data that stored both in entity record and in a brief.
 type HappeningBrief struct {
-	Type     HappeningType    `json:"type" firestore:"type"`
-	Status   string           `json:"status" firestore:"status"`
-	Canceled *Canceled        `json:"canceled,omitempty" firestore:"canceled,omitempty"`
-	Title    string           `json:"title" firestore:"title"`
-	Levels   []string         `json:"levels,omitempty" firestore:"levels,omitempty"`
-	Slots    []*HappeningSlot `json:"slots,omitempty" firestore:"slots,omitempty"`
+	Type         HappeningType             `json:"type" firestore:"type"`
+	Status       string                    `json:"status" firestore:"status"`
+	Cancellation *Cancellation             `json:"canceled,omitempty" firestore:"canceled,omitempty"`
+	Title        string                    `json:"title" firestore:"title"`
+	Levels       []string                  `json:"levels,omitempty" firestore:"levels,omitempty"`
+	Slots        map[string]*HappeningSlot `json:"slots,omitempty" firestore:"slots,omitempty"`
 	WithHappeningPrices
 	dbo4linkage.WithRelated
 }
 
-func (v HappeningBrief) GetSlot(id string) (i int, slot *HappeningSlot) {
-	for i, slot = range v.Slots {
-		if slot.ID == id {
-			return
-		}
-	}
-	return -1, nil
+func (v HappeningBrief) GetSlot(id string) (slot *HappeningSlot) {
+	return v.Slots[id]
 }
 
 // Validate returns error if not valid
@@ -44,10 +40,10 @@ func (v HappeningBrief) Validate() error {
 	if !IsKnownHappeningStatus(v.Status) {
 		return validation.NewErrBadRecordFieldValue("status", fmt.Sprintf("unknown value: '%v'", v.Status))
 	}
-	if v.Status == HappeningStatusCanceled && v.Canceled == nil {
+	if v.Status == HappeningStatusCanceled && v.Cancellation == nil {
 		return validation.NewErrRecordIsMissingRequiredField("canceled")
 	}
-	if v.Canceled != nil && v.Status != HappeningStatusCanceled {
+	if v.Cancellation != nil && v.Status != HappeningStatusCanceled {
 		return validation.NewErrBadRecordFieldValue("canceled", "should be populated only for canceled happenings, current status="+v.Status)
 	}
 
@@ -58,15 +54,12 @@ func (v HappeningBrief) Validate() error {
 		return validation.NewErrRecordIsMissingRequiredField("slots")
 	}
 
-	for i, slot := range v.Slots {
-		if err := slot.Validate(); err != nil {
-			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("slots[%v]", i), err.Error())
+	for slotID, slot := range v.Slots {
+		if strings.TrimSpace(slotID) == "" {
+			return validation.NewErrBadRecordFieldValue("slots", "has empty string key")
 		}
-		for j, s := range v.Slots {
-			if i != j && s.ID == slot.ID {
-				return validation.NewErrBadRecordFieldValue("slots", fmt.Sprintf("at least 2 slots have same ContactID at indexes: %v & %v", i, j))
-			}
-			// TODO: Add more validations?
+		if err := slot.Validate(); err != nil {
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("slots[%v]", slotID), err.Error())
 		}
 	}
 	if err := v.WithHappeningPrices.Validate(); err != nil {

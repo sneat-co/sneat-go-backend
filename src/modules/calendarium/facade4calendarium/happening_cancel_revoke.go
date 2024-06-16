@@ -40,7 +40,7 @@ func RevokeHappeningCancellation(ctx context.Context, user facade.User, request 
 			}
 		})
 	if err != nil {
-		return fmt.Errorf("failed to cancel happening: %w", err)
+		return fmt.Errorf("failed to revoke happening cancellation: %w", err)
 	}
 	return
 }
@@ -80,7 +80,7 @@ func removeCancellationFromHappeningBrief(params *dal4teamus.ModuleTeamWorkerPar
 	}
 	if happeningBrief.Status == dbo4calendarium.HappeningStatusCanceled {
 		happeningBrief.Status = dbo4calendarium.HappeningStatusActive
-		happeningBrief.Canceled = nil
+		happeningBrief.Cancellation = nil
 		if err := happeningBrief.Validate(); err != nil {
 			return err
 		}
@@ -97,7 +97,7 @@ func removeCancellationFromHappeningRecord(ctx context.Context, tx dal.Readwrite
 		return fmt.Errorf("not allowed to revoke cancelation for happening in status=" + happening.Data.Status)
 	}
 	happening.Data.Status = dbo4calendarium.HappeningStatusCanceled
-	happening.Data.Canceled = nil
+	happening.Data.Cancellation = nil
 	if err := happening.Data.Validate(); err != nil {
 		return err
 	}
@@ -124,9 +124,14 @@ func removeCancellationFromCalendarDay(ctx context.Context, tx dal.ReadwriteTran
 		}
 		return fmt.Errorf("failed to get calendar day record by ContactID")
 	}
-	if i, adjustment := calendarDay.Data.GetAdjustment(happeningID, slotID); adjustment != nil && adjustment.Canceled != nil {
-		a := calendarDay.Data.HappeningAdjustments
-		calendarDay.Data.HappeningAdjustments = append(a[:i], a[i+1:]...)
+	if happeningAdjustment, slotAdjustment := calendarDay.Data.GetAdjustment(happeningID, slotID); slotAdjustment != nil && slotAdjustment.Cancellation != nil {
+		slotAdjustment.Cancellation = nil
+		if slotAdjustment.IsEmpty() {
+			delete(happeningAdjustment.Slots, slotID)
+		}
+		if happeningAdjustment.IsEmpty() {
+			delete(calendarDay.Data.HappeningAdjustments, happeningID)
+		}
 		if len(calendarDay.Data.HappeningAdjustments) == 0 {
 			if err := tx.Delete(ctx, calendarDay.Key); err != nil {
 				return fmt.Errorf("failed to delete calendar day record: %w", err)

@@ -21,28 +21,28 @@ func UpdateSlot(ctx context.Context, user facade.User, request dto4calendarium.H
 			return err
 		}
 
-		if slotIndex, _ := params.Happening.Data.GetSlot(request.Slot.ID); slotIndex < 0 {
-			return validation.NewErrBadRequestFieldValue("slot.id", "slot not found by ID="+request.Slot.ID)
+		if slot := params.Happening.Data.GetSlot(request.SlotID); slot == nil {
+			return validation.NewErrBadRequestFieldValue("slot.id", "slot not found by ID="+request.SlotID)
 		} else {
-			params.Happening.Data.Slots[slotIndex] = &request.Slot
+			slot := &request.Slot
+			params.Happening.Data.Slots[request.SlotID] = slot
 			params.HappeningUpdates = []dal.Update{
 				{
-					Field: "slots",
-					Value: params.Happening.Data.Slots,
+					Field: "slots." + request.SlotID,
+					Value: slot,
 				},
 			}
 		}
 
 		if params.Happening.Data.Type == dbo4calendarium.HappeningTypeRecurring {
 			if happeningBrief := params.TeamModuleEntry.Data.GetRecurringHappeningBrief(params.Happening.ID); happeningBrief != nil {
-				if slotIndex, _ := happeningBrief.GetSlot(request.Slot.ID); slotIndex >= 0 {
-					if err = happeningBrief.Validate(); err != nil {
-						return fmt.Errorf("happening brief is not valid before update: %w", err)
-					}
-					happeningBrief.Slots[slotIndex] = &request.Slot
-				} else {
-					happeningBrief.Slots = append(happeningBrief.Slots, &request.Slot)
+				if err = happeningBrief.Validate(); err != nil {
+					return fmt.Errorf("happening brief is not valid before update: %w", err)
 				}
+				if slot := happeningBrief.GetSlot(request.SlotID); slot == nil {
+					return validation.NewErrBadRequestFieldValue("slotID", "slot not found by ID="+request.SlotID)
+				}
+				happeningBrief.Slots[request.SlotID] = &request.Slot
 				if err = happeningBrief.Validate(); err != nil {
 					return fmt.Errorf("happening brief is not valid after update: %w", err)
 				}

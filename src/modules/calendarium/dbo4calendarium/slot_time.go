@@ -142,6 +142,15 @@ type HappeningSlotTiming struct {
 	Weeks []int `json:"weeks,omitempty" firestore:"weeks,omitempty"`
 }
 
+func (v HappeningSlotTiming) IsEmpty() bool {
+	return v.Timing.Start.Date == "" ||
+		v.Timing.Start.Time == "" ||
+		v.Timing.End.Time == "" ||
+		len(v.Weeks) > 0 ||
+		len(v.Weekdays) > 0 ||
+		v.DurationInMinutes != 0
+}
+
 // Validate returns error if not valid
 func (v HappeningSlotTiming) Validate() error {
 	if err := v.Timing.Validate(); err != nil {

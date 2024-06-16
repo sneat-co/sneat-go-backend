@@ -53,14 +53,16 @@ func adjustSlotInCalendarDay(ctx context.Context, tx dal.ReadwriteTransaction, t
 			return fmt.Errorf("failed to get calendar day record: %w", err)
 		}
 	}
-	_, adjustment := calendarDay.Data.GetAdjustment(happeningID, request.Slot.ID)
-	if adjustment == nil {
-		adjustment = &dbo4calendarium.HappeningAdjustment{
-			HappeningID: happeningID,
+	happeningAdjustment, slotAdjustment := calendarDay.Data.GetAdjustment(happeningID, request.SlotID)
+	if slotAdjustment == nil {
+		if happeningAdjustment == nil {
+			happeningAdjustment = &dbo4calendarium.HappeningAdjustment{}
+			calendarDay.Data.HappeningAdjustments[happeningID] = happeningAdjustment
 		}
-		calendarDay.Data.HappeningAdjustments = append(calendarDay.Data.HappeningAdjustments, adjustment)
+		slotAdjustment = new(dbo4calendarium.SlotAdjustment)
+		happeningAdjustment.Slots[request.SlotID] = slotAdjustment
 	}
-	adjustment.Slot = request.Slot
+	slotAdjustment.Adjustment = &request.Slot
 	var happeningIDsChanged bool
 	if happeningIDsChanged = slice.Index(calendarDay.Data.HappeningIDs, happeningID) < 0; happeningIDsChanged {
 		calendarDay.Data.HappeningIDs = append(calendarDay.Data.HappeningIDs, happeningID)
@@ -80,11 +82,11 @@ func adjustSlotInCalendarDay(ctx context.Context, tx dal.ReadwriteTransaction, t
 			})
 		}
 		if err := tx.Update(ctx, calendarDay.Key, updates); err != nil {
-			return fmt.Errorf("failed to update calendar day record with happening adjustment: %w", err)
+			return fmt.Errorf("failed to update calendar day record with happening slotAdjustment: %w", err)
 		}
 	} else {
 		if err := tx.Insert(ctx, calendarDay.Record); err != nil {
-			return fmt.Errorf("failed to insert calendar day record with happening adjustment: %w", err)
+			return fmt.Errorf("failed to insert calendar day record with happening slotAdjustment: %w", err)
 		}
 	}
 	return nil

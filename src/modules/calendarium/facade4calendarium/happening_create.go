@@ -81,10 +81,22 @@ func createHappeningTx(
 	happeningDto.UserIDs = params.Team.Data.UserIDs
 	happeningDto.Status = "active"
 	if happeningDto.Type == dbo4calendarium.HappeningTypeSingle {
-		date := happeningDto.Slots[0].Start.Date
-		happeningDto.Dates = []string{date}
-		happeningDto.DateMin = date
-		happeningDto.DateMax = date
+		for _, slot := range happeningDto.Slots {
+			if slot.Start.Date != "" {
+				happeningDto.Dates = append(happeningDto.Dates, slot.Start.Date)
+			}
+			if happeningDto.DateMin == "" || happeningDto.DateMin > slot.Start.Date {
+				happeningDto.DateMin = slot.Start.Date
+			}
+			endDate := slot.End.Date
+			if endDate == "" {
+				endDate = slot.Start.Date
+			}
+			if happeningDto.DateMax == "" && endDate != "" && happeningDto.DateMax < endDate {
+				happeningDto.DateMax = endDate
+			}
+			// TODO(help-wanted): populate dates between start & end dates
+		}
 	}
 
 	contactsByTeamID := make(map[string][]dal4contactus.ContactEntry)

@@ -9,7 +9,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
-	"github.com/strongo/slice"
 	"github.com/strongo/validation"
 	"log"
 )
@@ -116,7 +115,7 @@ func removeSlotFromHappeningDto(
 			}
 		}
 	} else {
-		_, slot := happening.Data.GetSlot(request.SlotID)
+		slot := happening.Data.GetSlot(request.SlotID)
 		if changed := removeWeekday(slot, request.Weekday); changed {
 			updates = append(updates, dal.Update{
 				Field: "slots",
@@ -152,7 +151,7 @@ func removeSlotFromHappeningBriefInTeamRecord(
 			brief.Slots = slots
 		}
 	} else {
-		_, slot := brief.GetSlot(request.SlotID)
+		slot := brief.GetSlot(request.SlotID)
 		if slot == nil {
 			return nil
 		}
@@ -167,14 +166,11 @@ func removeSlotFromHappeningBriefInTeamRecord(
 	return nil
 }
 
-func removeSlots(slots []*dbo4calendarium.HappeningSlot, slotIDs []string) []*dbo4calendarium.HappeningSlot {
-	result := make([]*dbo4calendarium.HappeningSlot, 0, len(slots))
-	for _, slot := range slots {
-		if slice.Index(slotIDs, slot.ID) < 0 {
-			result = append(result, slot)
-		}
+func removeSlots(slots map[string]*dbo4calendarium.HappeningSlot, slotIDs []string) map[string]*dbo4calendarium.HappeningSlot {
+	for _, slotID := range slotIDs {
+		delete(slots, slotID)
 	}
-	return result
+	return slots
 }
 
 func removeWeekday(slot *dbo4calendarium.HappeningSlot, weekday dbo4calendarium.WeekdayCode) (changed bool) {

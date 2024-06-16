@@ -17,6 +17,7 @@ type HappeningDbo struct {
 	dbmodels.WithUserIDs
 	with.DatesFields
 	dbo4linkage.WithRelatedIDs
+	Adjustments HappeningAdjustment `json:"adjustments,omitempty" firestore:"adjustments,omitempty"`
 	//dbmodels.WithTeamDates
 	//briefs4contactus.WithMultiTeamContacts[*briefs4contactus.ContactBrief]
 }
@@ -33,6 +34,9 @@ func (v *HappeningDbo) Validate() error {
 		return err
 	}
 	if err := v.DatesFields.Validate(); err != nil {
+		return err
+	}
+	if err := v.Adjustments.Validate(); err != nil {
 		return err
 	}
 	//if err := v.WithTeamDates.Validate(); err != nil {

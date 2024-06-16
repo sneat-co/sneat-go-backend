@@ -8,8 +8,6 @@ import (
 	"net/http"
 )
 
-var cancelHappening = facade4calendarium.CancelHappening
-
 // httpCancelHappening marks happening as canceled
 func httpCancelHappening(w http.ResponseWriter, r *http.Request) {
 	var happeningRequest = getHappeningRequestParamsFromURL(r)
@@ -20,6 +18,6 @@ func httpCancelHappening(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	err = cancelHappening(ctx, user, request)
-	apicore.ReturnJSON(ctx, w, r, http.StatusOK, err, nil)
+	err = facade4calendarium.CancelHappening(ctx, user, request)
+	apicore.ReturnJSON(ctx, w, r, http.StatusNoContent, err, nil)
 }
