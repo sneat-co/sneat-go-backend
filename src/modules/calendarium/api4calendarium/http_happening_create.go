@@ -8,8 +8,6 @@ import (
 	"net/http"
 )
 
-var createHappening = facade4calendarium.CreateHappening
-
 // httpPostCreateHappening creates recurring happening
 func httpPostCreateHappening(w http.ResponseWriter, r *http.Request) {
 	var request dto4calendarium.CreateHappeningRequest
@@ -17,6 +15,6 @@ func httpPostCreateHappening(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	response, err := createHappening(ctx, userContext, request)
+	response, err := facade4calendarium.CreateHappening(ctx, userContext, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusCreated, err, &response)
 }

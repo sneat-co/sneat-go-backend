@@ -8,6 +8,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/slice"
@@ -145,6 +146,9 @@ func createHappeningTx(
 	}
 	response.ID = happeningID
 	record := dal.NewRecordWithData(happeningKey, happeningDto)
+
+	_ = dbo4linkage.UpdateRelatedIDs(&happeningDto.WithRelated, &happeningDto.WithRelatedIDs)
+
 	if err = happeningDto.Validate(); err != nil {
 		return response, fmt.Errorf("happening record is not valid for insertion: %w", err)
 	}
