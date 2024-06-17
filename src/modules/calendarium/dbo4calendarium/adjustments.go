@@ -11,8 +11,8 @@ type HappeningAdjustment struct {
 	Slots map[string]*SlotAdjustment `json:"slots,omitempty" firestore:"slots,omitempty"`
 }
 
-func (v HappeningAdjustment) IsEmpty() bool {
-	return len(v.Slots) == 0
+func (v *HappeningAdjustment) IsEmpty() bool {
+	return v == nil || len(v.Slots) == 0
 }
 
 func (v *HappeningAdjustment) Validate() error {
