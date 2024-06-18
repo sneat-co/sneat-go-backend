@@ -8,13 +8,21 @@ import (
 	"net/http"
 )
 
+func httpAddSlot(w http.ResponseWriter, r *http.Request) {
+	httpPutSlot(w, r, facade4calendarium.AddSlot)
+}
+
 func httpUpdateSlot(w http.ResponseWriter, r *http.Request) {
+	httpPutSlot(w, r, facade4calendarium.UpdateSlot)
+}
+
+func httpPutSlot(w http.ResponseWriter, r *http.Request, putMode facade4calendarium.PutMode) {
 	var request dto4calendarium.HappeningSlotRequest
 	request.HappeningRequest = getHappeningRequestParamsFromURL(r)
 	ctx, userContext, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
 	if err != nil {
 		return
 	}
-	err = facade4calendarium.UpdateSlot(ctx, userContext, request)
+	err = facade4calendarium.PutSlot(ctx, putMode, userContext, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusNoContent, err, nil)
 }

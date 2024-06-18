@@ -11,7 +11,14 @@ import (
 	"github.com/strongo/validation"
 )
 
-func UpdateSlot(ctx context.Context, user facade.User, request dto4calendarium.HappeningSlotRequest) (err error) {
+type PutMode int
+
+const (
+	AddSlot PutMode = iota
+	UpdateSlot
+)
+
+func PutSlot(ctx context.Context, putMode PutMode, user facade.User, request dto4calendarium.HappeningSlotRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return validation.NewBadRequestError(err)
 	}
@@ -21,7 +28,7 @@ func UpdateSlot(ctx context.Context, user facade.User, request dto4calendarium.H
 			return err
 		}
 
-		if existingSlot := params.Happening.Data.GetSlot(request.Slot.ID); existingSlot == nil {
+		if existingSlot := params.Happening.Data.GetSlot(request.Slot.ID); existingSlot == nil && putMode == UpdateSlot {
 			return validation.NewErrBadRequestFieldValue("slot.id", "slot not found by ID="+request.Slot.ID)
 		} else {
 			slot := &request.Slot.HappeningSlot
