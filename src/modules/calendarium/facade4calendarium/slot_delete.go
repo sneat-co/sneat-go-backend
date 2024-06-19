@@ -13,8 +13,8 @@ import (
 	"log"
 )
 
-// DeleteSlots deletes happening
-func DeleteSlots(ctx context.Context, user facade.User, request dto4calendarium.DeleteHappeningSlotRequest) (err error) {
+// DeleteSlot deletes happening
+func DeleteSlot(ctx context.Context, user facade.User, request dto4calendarium.DeleteHappeningSlotRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
@@ -25,7 +25,10 @@ func DeleteSlots(ctx context.Context, user facade.User, request dto4calendarium.
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo]) (err error) {
 			happening := dbo4calendarium.NewHappeningEntry(request.TeamID, request.HappeningID)
 			hasHappeningRecord := true
-			if err = tx.Get(ctx, happening.Record); err != nil {
+			if err = tx.GetMulti(ctx, []dal.Record{happening.Record, params.TeamModuleEntry.Record}); err != nil {
+				return err
+			}
+			if err = happening.Record.Error(); err != nil {
 				if dal.IsNotFound(err) {
 					hasHappeningRecord = false
 					happening.Data.Type = request.HappeningType
@@ -66,7 +69,7 @@ func removeSlotFromSingleHappening(
 	happening dbo4calendarium.HappeningEntry,
 	request dto4calendarium.DeleteHappeningSlotRequest,
 ) error {
-	if err := removeSlotFromHappeningDto(ctx, tx, happening, request); err != nil {
+	if err := removeSlotFromHappeningDbo(ctx, tx, happening, request); err != nil {
 		return fmt.Errorf("faile to remove slot from happening record: %w", err)
 	}
 	return nil
@@ -79,38 +82,39 @@ func removeSlotFromRecurringHappening(
 	happening dbo4calendarium.HappeningEntry,
 	request dto4calendarium.DeleteHappeningSlotRequest,
 ) error {
-	if err := removeSlotFromHappeningDto(ctx, tx, happening, request); err != nil {
+	if err := removeSlotFromHappeningDbo(ctx, tx, happening, request); err != nil {
 		return fmt.Errorf("failed to remove slot from happening record: %w", err)
 	}
-	if err := removeSlotFromHappeningBriefInTeamRecord(params, happening, request); err != nil {
-		return fmt.Errorf("failed to remove slot from happening brief in team record: %w", err)
+	if params.TeamModuleEntry.Record.Exists() {
+		if err := removeSlotFromHappeningBriefInTeamRecord(params, happening, request); err != nil {
+			return fmt.Errorf("failed to remove slot from happening brief in team record: %w", err)
+		}
 	}
 	return nil
 }
 
-func removeSlotFromHappeningDto(
+func removeSlotFromHappeningDbo(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	happening dbo4calendarium.HappeningEntry,
 	request dto4calendarium.DeleteHappeningSlotRequest,
 ) error {
-	log.Printf("removeSlotFromHappeningDto() %+v", request)
+	log.Printf("removeSlotFromHappeningDbo() %+v", request)
 	if len(happening.Data.Slots) == 0 {
 		return nil
 	}
 	var updates []dal.Update
 	if request.Weekday == "" {
-		slots := removeSlots(happening.Data.Slots, []string{request.SlotID})
-		if len(slots) < len(happening.Data.Slots) {
-			if len(slots) == 0 {
+		removedSlotIDs := removeSlots(happening.Data.Slots, []string{request.SlotID})
+		if len(removedSlotIDs) > 0 {
+			updates = append(updates, dal.Update{
+				Field: "slots." + request.SlotID,
+				Value: dal.DeleteField,
+			})
+			if len(happening.Data.Slots) == 0 {
 				happening.Data.Status = dbo4calendarium.HappeningStatusDeleted
 				updates = append(updates, dal.Update{
 					Field: "status", Value: happening.Data.Status,
-				})
-			} else {
-				happening.Data.Slots = slots
-				updates = append(updates, dal.Update{
-					Field: "slots", Value: happening.Data.Slots,
 				})
 			}
 		}
@@ -144,11 +148,19 @@ func removeSlotFromHappeningBriefInTeamRecord(
 		return nil
 	}
 	if request.Weekday == "" {
-		slots := removeSlots(brief.Slots, []string{request.SlotID})
-		if len(slots) == 0 {
-			delete(params.TeamModuleEntry.Data.RecurringHappenings, happening.ID)
-		} else {
-			brief.Slots = slots
+		removedSlotIDs := removeSlots(brief.Slots, []string{request.SlotID})
+		if len(removedSlotIDs) > 0 {
+			params.TeamModuleUpdates = append(params.TeamModuleUpdates, dal.Update{
+				Field: fmt.Sprintf("recurringHappenings.%s.slots.%s", happening.ID, request.SlotID),
+				Value: dal.DeleteField,
+			})
+			if len(happening.Data.Slots) == 0 {
+				happening.Data.Status = dbo4calendarium.HappeningStatusDeleted
+				params.TeamModuleUpdates = append(params.TeamModuleUpdates, dal.Update{
+					Field: fmt.Sprintf("recurringHappenings.%s.status", happening.ID),
+					Value: happening.Data.Status,
+				})
+			}
 		}
 	} else {
 		slot := brief.GetSlot(request.SlotID)
@@ -159,18 +171,17 @@ func removeSlotFromHappeningBriefInTeamRecord(
 			return nil
 		}
 	}
-	params.TeamUpdates = append(params.TeamUpdates, dal.Update{
-		Field: "recurringHappenings",
-		Value: params.TeamModuleEntry.Data.RecurringHappenings,
-	})
 	return nil
 }
 
-func removeSlots(slots map[string]*dbo4calendarium.HappeningSlot, slotIDs []string) map[string]*dbo4calendarium.HappeningSlot {
+func removeSlots(slots map[string]*dbo4calendarium.HappeningSlot, slotIDs []string) (removedSlotIDs []string) {
 	for _, slotID := range slotIDs {
-		delete(slots, slotID)
+		if _, ok := slots[slotID]; ok {
+			removedSlotIDs = append(removedSlotIDs, slotID)
+			delete(slots, slotID)
+		}
 	}
-	return slots
+	return
 }
 
 func removeWeekday(slot *dbo4calendarium.HappeningSlot, weekday dbo4calendarium.WeekdayCode) (changed bool) {

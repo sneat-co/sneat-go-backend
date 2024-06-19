@@ -8,10 +8,8 @@ import (
 	"net/http"
 )
 
-var deleteSlot = facade4calendarium.DeleteSlots
-
 // httpDeleteHappening deletes happening
-func httpDeleteSlots(w http.ResponseWriter, r *http.Request) {
+func httpDeleteSlot(w http.ResponseWriter, r *http.Request) {
 	var request = dto4calendarium.DeleteHappeningSlotRequest{
 		HappeningSlotRefRequest: dto4calendarium.HappeningSlotRefRequest{
 			HappeningRequest: getHappeningRequestParamsFromURL(r),
@@ -21,6 +19,6 @@ func httpDeleteSlots(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	err = deleteSlot(ctx, userContext, request)
+	err = facade4calendarium.DeleteSlot(ctx, userContext, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusCreated, err, nil)
 }
