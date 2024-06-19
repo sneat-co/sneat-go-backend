@@ -11,11 +11,11 @@ import (
 	"github.com/strongo/validation"
 )
 
-type PutMode int
+type PutMode string
 
 const (
-	AddSlot PutMode = iota
-	UpdateSlot
+	AddSlot    PutMode = "AddSlot"
+	UpdateSlot PutMode = "UpdateSlot"
 )
 
 func PutSlot(ctx context.Context, putMode PutMode, user facade.User, request dto4calendarium.HappeningSlotRequest) (err error) {
@@ -46,8 +46,18 @@ func PutSlot(ctx context.Context, putMode PutMode, user facade.User, request dto
 				if err = happeningBrief.Validate(); err != nil {
 					return fmt.Errorf("happening brief is not valid before update: %w", err)
 				}
-				if slot := happeningBrief.GetSlot(request.Slot.ID); slot == nil {
-					return validation.NewErrBadRequestFieldValue("slotID", "exostingSlot not found by ID="+request.Slot.ID)
+				switch putMode {
+				case AddSlot:
+					if happeningBrief.HasSlot(request.Slot.ID) {
+						return validation.NewErrBadRequestFieldValue("slotID",
+							"happening already have slot with ID="+request.Slot.ID)
+					}
+				case UpdateSlot:
+					if !happeningBrief.HasSlot(request.Slot.ID) {
+						return validation.NewErrBadRequestFieldValue("slotID", "slot not found by ID="+request.Slot.ID)
+					}
+				default:
+					return fmt.Errorf("unsupported put mode: %v", putMode)
 				}
 				happeningBrief.Slots[request.Slot.ID] = &request.Slot.HappeningSlot
 				if err = happeningBrief.Validate(); err != nil {

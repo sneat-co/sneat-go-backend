@@ -24,6 +24,11 @@ func (v HappeningBrief) GetSlot(id string) (slot *HappeningSlot) {
 	return v.Slots[id]
 }
 
+func (v HappeningBrief) HasSlot(id string) bool {
+	_, ok := v.Slots[id]
+	return ok
+}
+
 // Validate returns error if not valid
 func (v HappeningBrief) Validate() error {
 	switch v.Type {
