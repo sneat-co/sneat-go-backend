@@ -117,7 +117,7 @@ func removeCancellationFromCalendarDay(ctx context.Context, tx dal.ReadwriteTran
 	if len(slotID) == 0 {
 		return validation.NewErrRequestIsMissingRequiredField("slotID")
 	}
-	calendarDay := dbo4calendarium.NewCalendarDayContext(teamID, dateID)
+	calendarDay := dbo4calendarium.NewCalendarDayEntry(teamID, dateID)
 	if err := tx.Get(ctx, calendarDay.Record); err != nil {
 		if dal.IsNotFound(err) {
 			return nil

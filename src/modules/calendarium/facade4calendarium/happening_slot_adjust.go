@@ -47,7 +47,7 @@ func adjustRecurringSlot(ctx context.Context, tx dal.ReadwriteTransaction, happe
 }
 
 func adjustSlotInCalendarDay(ctx context.Context, tx dal.ReadwriteTransaction, teamID, happeningID string, request dto4calendarium.HappeningSlotDateRequest) error {
-	calendarDay := dbo4calendarium.NewCalendarDayContext(teamID, request.Date)
+	calendarDay := dbo4calendarium.NewCalendarDayEntry(teamID, request.Date)
 	if err := tx.Get(ctx, calendarDay.Record); err != nil {
 		if !dal.IsNotFound(err) {
 			return fmt.Errorf("failed to get calendar day record: %w", err)

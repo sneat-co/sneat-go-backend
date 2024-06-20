@@ -15,11 +15,18 @@ const ReasonMaxLen = 10000
 
 const DaysCollection = "days"
 
+// CalendarDayDbo is a record in "teams/{teamID}/calendarium/days" collection with ID=YYYY-MM-DD
+// It's needed to store adjustments of recurring happenings for a specific days like:
+// - canceled slots
+// - changed slot times
+// - changed slot locations
+// - changed slot participants
 type CalendarDayDbo struct {
 	HappeningIDs         []string                        `json:"happeningIDs,omitempty" firestore:"happeningIDs,omitempty"`
 	HappeningAdjustments map[string]*HappeningAdjustment `json:"happeningAdjustments,omitempty" firestore:"happeningAdjustments,omitempty"`
 }
 
+// GetAdjustment returns adjustments for happening and slot for a specific day
 func (v CalendarDayDbo) GetAdjustment(happeningID, slotID string) (
 	happeningAdjustment *HappeningAdjustment,
 	slotAdjustment *SlotAdjustment,
@@ -34,6 +41,7 @@ func (v CalendarDayDbo) GetAdjustment(happeningID, slotID string) (
 	return happeningAdjustment, nil
 }
 
+// Validate returns error if not valid
 func (v CalendarDayDbo) Validate() error {
 	if len(v.HappeningIDs) == 0 {
 		return validation.NewErrRecordIsMissingRequiredField("happeningIDs")
@@ -49,13 +57,16 @@ func (v CalendarDayDbo) Validate() error {
 	return nil
 }
 
+// CalendarDayEntry is a helper type to work with CalendarDayDbo and it's key
 type CalendarDayEntry = record.DataWithID[string, *CalendarDayDbo]
 
+// NewCalendarDayKey returns key for a record in teams/{teamID}/calendarium/days collection with ID=YYYY-MM-DD
 func NewCalendarDayKey(teamID, date string) *dal.Key {
 	return dal4teamus.NewTeamModuleItemKey(teamID, const4calendarium.ModuleID, DaysCollection, date)
 }
 
-func NewCalendarDayContext(teamID, date string) CalendarDayEntry {
+// NewCalendarDayEntry creates a new instance of CalendarDayEntry
+func NewCalendarDayEntry(teamID, date string) CalendarDayEntry {
 	if teamID == "" {
 		panic(errors.New("required parameter 'teamID' is empty string"))
 	}
@@ -63,10 +74,11 @@ func NewCalendarDayContext(teamID, date string) CalendarDayEntry {
 		panic(err)
 	}
 	dto := new(CalendarDayDbo)
-	return NewCalendarDayContextWithDbo(teamID, date, dto)
+	return NewCalendarDayEntryWithDbo(teamID, date, dto)
 }
 
-func NewCalendarDayContextWithDbo(teamID, date string, dbo *CalendarDayDbo) (calendarDay CalendarDayEntry) {
+// NewCalendarDayEntryWithDbo creates a new instance of CalendarDayEntry with provided CalendarDayDbo
+func NewCalendarDayEntryWithDbo(teamID, date string, dbo *CalendarDayDbo) (calendarDay CalendarDayEntry) {
 	if dbo == nil {
 		panic("dbo is nil")
 	}

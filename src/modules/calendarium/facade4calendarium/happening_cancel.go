@@ -136,7 +136,7 @@ func addCancellationToCalendarDayAdjustments(
 	happening dbo4calendarium.HappeningEntry,
 	cancellation *dbo4calendarium.Cancellation,
 ) (err error) {
-	calendarDay := dbo4calendarium.NewCalendarDayContext(params.Team.ID, request.Date)
+	calendarDay := dbo4calendarium.NewCalendarDayEntry(params.Team.ID, request.Date)
 
 	var isNewRecord bool
 	if err := tx.Get(ctx, calendarDay.Record); err != nil {
