@@ -19,6 +19,7 @@ var _ briefs4assetus.AssetExtra = (*AssetVehicleExtra)(nil)
 type AssetVehicleExtra struct {
 	WithMakeModelRegNumberFields
 	WithEngineData
+	WithMileageExtra
 	Vin string `json:"vin,omitempty" firestore:"vin,omitempty"`
 }
 
