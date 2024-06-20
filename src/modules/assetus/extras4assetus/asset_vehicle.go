@@ -3,6 +3,7 @@ package extras4assetus
 import (
 	"github.com/sneat-co/sneat-core-modules/core/extra"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/briefs4assetus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
 	"github.com/strongo/validation"
 )
 
@@ -19,8 +20,8 @@ var _ briefs4assetus.AssetExtra = (*AssetVehicleExtra)(nil)
 type AssetVehicleExtra struct {
 	WithMakeModelRegNumberFields
 	WithEngineData
-	WithMileageExtra
-	Vin string `json:"vin,omitempty" firestore:"vin,omitempty"`
+	Vin     string                      `json:"vin,omitempty" firestore:"vin,omitempty"`
+	Mileage *dbo4assetus.VehicleMileage `json:"mileage,omitempty" firestore:"mileage,omitempty"`
 }
 
 func (v *AssetVehicleExtra) ValidateWithAssetBrief(assetBrief briefs4assetus.AssetBrief) error {
