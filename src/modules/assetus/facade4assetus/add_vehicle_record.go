@@ -4,89 +4,50 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/briefs4assetus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dal4assetus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dto4assetus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
-	"github.com/sneat-co/sneat-go-core/models/dbmodels"
-	"github.com/strongo/random"
 )
 
-type CreateVehicleAssetResponse struct {
-	ID   string                   `json:"id"`
-	Data dal4assetus.Mileage	 `json:"data"`
+type CreateVehicleRecordResponse struct {
+	ID string `json:"id"`
 }
 
-func addVehicleRecord(ctx context.Context, user facade.User, request dto4assetus.AddVehicleRecordRequest) (response CreateVehicleAssetResponse, err error) {
+func AddVehicleRecord(ctx context.Context, user facade.User, request dto4assetus.AddVehicleRecordRequest) (response CreateVehicleRecordResponse, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4teamus.RunTeamWorker(ctx, user,
-		request.TeamID, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.TeamWorkerParams) (err error) {
-			item, err = 
+	err = dal4assetus.RunAssetusTeamWorker(ctx, user,
+		request.TeamRequest,
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4assetus.AssetusTeamWorkerParams) (err error) {
+			response, err = addVehicleRecordTx(ctx, tx, user, request, params)
 			return err
 		},
 	)
-
 	return
 }
 
+// addVehicleRecordTx creates dbo4assetus.VehicleRecordDbo in n /teams/{teamID}/modules/assetus/{assetID}/mileage/{randomRecordID}
 func addVehicleRecordTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
+	user facade.User,
 	request dto4assetus.AddVehicleRecordRequest,
-	params *dal4teamus.ModuleTeamWorkerParams[*dal4assetus.Mileage],
+	params *dal4assetus.AssetusTeamWorkerParams,
+	// params *dal4teamus.ModuleTeamWorkerParams[*dal4assetus.Mileage],
 ) (
-	response CreateAssetResponse, err error,
+	response CreateVehicleRecordResponse, err error,
 ) {
-	
+	_ = fmt.Sprintf("%v, %v, %v, %v, %v", ctx, tx, user, request, params) // TODO: remove this temp line
 
-	asset := dal4teamus.NewAssetEntry(request.TeamRequest.TeamID, random.ID(8)) // TODO: use DALgo random ID generator
-	asset.Data.AssetBaseDbo = request.Asset
-	asset.Data.UserIDs = []string{params.UserID}
-	asset.Data.TeamIDs = []string{request.TeamRequest.TeamID}
-	//asset.Data.ContactIDs = []string{"*"}
-	asset.Data.WithModified = dbmodels.NewWithModified(params.Started, params.UserID)
+	// TODO:
+	// 1. Get asset record by ID using tx.Get()
+	// 2. Verify asset exists by checking if (dal.IsErrNotFound(err))
+	// 3. Create dbo4assetus.VehicleRecordDbo in /teams/{teamID}/modules/assetus/{assetID}/mileage/{randomRecordID} using VehicleRecordDbo tx.Insert()
+	// 4. Update asset.extra.Mileages with mileage record ID
+	// 4.1 Update asset record
+	// 4.2 Validate asset record
+	// 4.3 update asset record using tx.Update()
 
-	asset.Record.SetError(nil) // Mark record as not having an error
-
-	if err = asset.Data.Validate(); err != nil {
-		return response, fmt.Errorf("assert record data is not valid before insert: %w", err)
-	}
-
-	if err = tx.Set(ctx, asset.Record); err != nil { // TODO: change to .Insert() with random ID generator
-		return response, fmt.Errorf("failed to insert asset record: %w", err)
-	}
-
-	response.ID = asset.ID
-
-	var assetBrief briefs4assetus.AssetBrief
-	if assetBrief, err = asset.Data.GetAssetBrief(); err != nil {
-		return
-	}
-
-	var assetusTeamModuleUpdates []dal.Update
-	if assetusTeamModuleUpdates, err = params.TeamModuleEntry.Data.AddAssetBrief(asset.ID, assetBrief); err != nil {
-		return
-	}
-
-	if err = params.TeamModuleEntry.Data.Validate(); err != nil {
-		return response, fmt.Errorf("assetus team module record is not valid before saving to db: %w", err)
-	}
-
-	if params.TeamModuleEntry.Record.Exists() {
-		if err = tx.Update(ctx, params.TeamModuleEntry.Record.Key(), assetusTeamModuleUpdates); err != nil {
-			return
-		}
-	} else {
-		if err = tx.Insert(ctx, params.TeamModuleEntry.Record); err != nil {
-			return
-		}
-	}
-
-	response.Data = asset.Data.AssetBaseDbo
 	return response, err
 }

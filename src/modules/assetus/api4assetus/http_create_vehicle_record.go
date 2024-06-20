@@ -2,6 +2,7 @@ package api4assetus
 
 import (
 	"context"
+	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/facade4assetus"
 	"net/http"
 
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dto4assetus"
@@ -12,22 +13,11 @@ import (
 
 func httpPostCreateVehicleRecord(w http.ResponseWriter, r *http.Request) {
 	var (
-		request dto4assetus.CreateAssetRequest
+		request dto4assetus.AddVehicleRecordRequest
 	)
-	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.DefaultJsonWithAuthRequired, http.StatusCreated,
+	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.DefaultJsonWithAuthRequired, http.StatusOK,
 		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
-			// asset, err := facade4assetus.CreateAsset(ctx, userCtx, request)
-			// if err != nil {
-			// 	return nil, fmt.Errorf("failed to create asset: %w", err)
-			// }
-			// if asset.ID == "" {
-			// 	return nil, errors.New("asset created by facade does not have an ContactID")
-			// }
-			// if err = asset.Data.Validate(); err != nil {
-			// 	err = fmt.Errorf("asset created by facade is not valid: %w", err)
-			// 	return asset, err
-			// }
-			// return asset, nil
+			return facade4assetus.AddVehicleRecord(ctx, userCtx, request)
 		},
 	)
 }
