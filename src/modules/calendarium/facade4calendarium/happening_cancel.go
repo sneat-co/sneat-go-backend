@@ -159,9 +159,15 @@ func addCancellationToCalendarDayAdjustments(
 		}
 		if happeningAdjustment == nil {
 			happeningAdjustment = new(dbo4calendarium.HappeningAdjustment)
+			if calendarDay.Data.HappeningAdjustments == nil {
+				calendarDay.Data.HappeningAdjustments = make(map[string]*dbo4calendarium.HappeningAdjustment, 1)
+			}
 			calendarDay.Data.HappeningAdjustments[happening.ID] = happeningAdjustment
 		}
 
+		if happeningAdjustment.Slots == nil {
+			happeningAdjustment.Slots = make(map[string]*dbo4calendarium.SlotAdjustment, 1)
+		}
 		happeningAdjustment.Slots[request.SlotID] = slotAdjustment
 	}
 	if !slice.Contains(calendarDay.Data.HappeningIDs, happening.ID) {
