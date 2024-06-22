@@ -100,7 +100,7 @@ func cancelRecurringHappeningInstance(
 		if err := happeningBrief.Validate(); err != nil {
 			return fmt.Errorf("happening brief in team record is not valid: %w", err)
 		}
-		params.TeamUpdates = append(params.TeamUpdates, dal.Update{
+		params.TeamModuleUpdates = append(params.TeamModuleUpdates, dal.Update{
 			Field: "recurringHappenings",
 			Value: params.TeamModuleEntry.Data.RecurringHappenings,
 		})
