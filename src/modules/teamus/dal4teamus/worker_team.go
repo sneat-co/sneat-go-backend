@@ -198,14 +198,11 @@ var RunTeamWorker = func(ctx context.Context, user facade.User, teamID string, w
 }
 
 func applyTeamUpdates(ctx context.Context, tx dal.ReadwriteTransaction, params *TeamWorkerParams) (err error) {
-	if len(params.TeamUpdates) == 0 {
+	if len(params.TeamUpdates) == 0 && !params.Team.Record.HasChanged() {
 		return
 	}
 	if teamRecErr := params.Team.Record.Error(); teamRecErr != nil {
 		return fmt.Errorf("an attempt to update a team record with an error: %w", teamRecErr)
-	}
-	if !params.Team.Record.Exists() {
-		return fmt.Errorf("team record should exsits & be loaded before applying updates")
 	}
 	if !params.Team.Record.HasChanged() {
 		return fmt.Errorf("team record should be marked as changed before applying updates")
@@ -213,14 +210,18 @@ func applyTeamUpdates(ctx context.Context, tx dal.ReadwriteTransaction, params *
 	if err = params.Team.Data.Validate(); err != nil {
 		return fmt.Errorf("team record is not valid before applying %d team updates: %w", len(params.TeamUpdates), err)
 	}
-	if err = TxUpdateTeam(ctx, tx, params.Started, params.Team, params.TeamUpdates); err != nil {
+	if !params.Team.Record.Exists() {
+		return tx.Insert(ctx, params.Team.Record)
+	} else if len(params.TeamUpdates) == 0 {
+		return tx.Set(ctx, params.Team.Record)
+	} else if err = TxUpdateTeam(ctx, tx, params.Started, params.Team, params.TeamUpdates); err != nil {
 		return fmt.Errorf("failed to update team record: %w", err)
 	}
 	return
 }
 
 func applyTeamModuleUpdates[D TeamModuleDbo](ctx context.Context, tx dal.ReadwriteTransaction, params *ModuleTeamWorkerParams[D]) (err error) {
-	if len(params.TeamModuleUpdates) > 0 {
+	if len(params.TeamModuleUpdates) == 0 && !params.TeamModuleEntry.Record.HasChanged() {
 		return
 	}
 	if err = params.TeamModuleEntry.Record.Error(); err != nil {
@@ -235,12 +236,13 @@ func applyTeamModuleUpdates[D TeamModuleDbo](ctx context.Context, tx dal.Readwri
 	if err = params.TeamModuleEntry.Data.Validate(); err != nil {
 		return fmt.Errorf("team module record is not valid before applying team module updates: %w", err)
 	}
-	if params.TeamModuleEntry.Record.Exists() {
-		if err = txUpdateTeamModule(ctx, tx, params.Started, params.TeamModuleEntry, params.TeamModuleUpdates); err != nil {
-			return fmt.Errorf("failed to update team module record: %w", err)
-		}
-	} else if err = tx.Insert(ctx, params.TeamModuleEntry.Record); err != nil {
+
+	if !params.TeamModuleEntry.Record.Exists() {
 		return fmt.Errorf("failed to insert team module record: %w", err)
+	} else if len(params.TeamModuleUpdates) == 0 {
+		return tx.Insert(ctx, params.TeamModuleEntry.Record)
+	} else if err = txUpdateTeamModule(ctx, tx, params.Started, params.TeamModuleEntry, params.TeamModuleUpdates); err != nil {
+		return fmt.Errorf("failed to update team module record: %w", err)
 	}
 	return
 }
