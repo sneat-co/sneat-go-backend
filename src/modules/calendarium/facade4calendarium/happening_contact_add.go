@@ -67,21 +67,6 @@ func addParticipantToHappeningTxWorker(ctx context.Context, tx dal.ReadwriteTran
 	params.HappeningUpdates = append(params.HappeningUpdates, updates...)
 	params.Happening.Record.MarkAsChanged()
 
-	//if params.Happening.Data.ExtraType == dbo4calendarium.HappeningTypeRecurring {
-	//	recurringHappening := params.TeamModuleEntry.Data.RecurringHappenings[params.Happening.ID]
-	//	if recurringHappening != nil {
-	//		recurringHappening.Related = params.Happening.Data.Related
-	//		if err = recurringHappening.Validate(); err != nil {
-	//			return fmt.Errorf("failed to validate recurring happening: %w", err)
-	//		}
-	//		if err = params.TeamModuleEntry.Data.Validate(); err != nil {
-	//			return fmt.Errorf("failed to validate calendarium team module data: %w", err)
-	//		}
-	//		params.TeamModuleUpdates = append(params.TeamModuleUpdates, dal.Update{
-	//			Field: fmt.Sprintf("recurringHappenings.%s.related", params.Happening.ID),
-	//		})
-	//	}
-	//}
 	return err
 }
 
@@ -94,7 +79,6 @@ func addContactToHappeningBriefInTeamDto(
 ) (updates []dal.Update, err error) {
 	teamID := calendariumTeam.Key.Parent().ID.(string)
 	happeningBriefPointer := calendariumTeam.Data.GetRecurringHappeningBrief(happening.ID)
-	//teamContactID := dbmodels.NewTeamItemID(teamID, contactID)
 	var happeningBrief dbo4calendarium.HappeningBrief
 	if happeningBriefPointer == nil {
 		happeningBrief = happening.Data.HappeningBrief // Make copy so we do not affect the DTO object
@@ -102,8 +86,6 @@ func addContactToHappeningBriefInTeamDto(
 			HappeningBrief: happeningBrief,
 			WithRelated:    happening.Data.WithRelated,
 		}
-		//} else if happeningBriefPointer.Participants[string(teamContactID)] != nil {
-		//	return nil // Already added to happening brief in calendariumTeam record
 	}
 	contactRef := dbo4linkage.NewTeamModuleItemRef(teamID, const4contactus.ModuleID, const4contactus.ContactsCollection, contactID)
 
@@ -118,24 +100,6 @@ func addContactToHappeningBriefInTeamDto(
 		updates[i].Field = fmt.Sprintf("recurringHappenings.%s.%s", happening.ID, updates[i].Field)
 	}
 
-	//if happeningBriefPointer.Participants == nil {
-	//	happeningBriefPointer.Participants = make(map[string]*dbo4calendarium.HappeningParticipant)
-	//}
-	//if happeningBriefPointer.Participants[string(teamContactID)] == nil {
-	//	happeningBriefPointer.Participants[string(teamContactID)] = &dbo4calendarium.HappeningParticipant{}
-	//}
-	//if calendariumTeam.Data.RecurringHappenings == nil {
-	//	calendariumTeam.Data.RecurringHappenings = make(map[string]*dbo4calendarium.CalendarHappeningBrief, 1)
-	//}
 	calendariumTeam.Data.RecurringHappenings[happening.ID] = happeningBriefPointer
-	//teamUpdates := []dal.Update{
-	//	{
-	//		Field: "recurringHappenings." + happening.ID,
-	//		Value: happeningBriefPointer,
-	//	},
-	//}
-	//if err = tx.Update(ctx, calendariumTeam.Key, teamUpdates); err != nil {
-	//	return fmt.Errorf("failed to update calendariumTeam record with a member added to a recurring happening: %w", err)
-	//}
 	return
 }
