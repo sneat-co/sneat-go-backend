@@ -20,41 +20,47 @@ func RemoveParticipantFromHappening(ctx context.Context, user facade.User, reque
 	}
 
 	var worker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
-		_, err := getHappeningContactRecords(ctx, tx, &request, params)
-		if err != nil {
-			return err
-		}
-		contactShortRef := dbmodels.NewTeamItemID(request.Contact.TeamID, request.Contact.ID)
-		switch params.Happening.Data.Type {
-		case dbo4calendarium.HappeningTypeSingle:
-			break // nothing to do
-		case dbo4calendarium.HappeningTypeRecurring:
-			var updates []dal.Update
-			if updates, err = removeContactFromHappeningBriefInContactusTeamDbo(params.TeamModuleEntry, params.Happening, contactShortRef); err != nil {
-				return fmt.Errorf("failed to remove member from happening brief in team DBO: %w", err)
-			}
-			params.TeamModuleUpdates = append(params.TeamModuleUpdates, updates...)
-		default:
-			return fmt.Errorf("invalid happenning record: %w",
-				validation.NewErrBadRecordFieldValue("type",
-					fmt.Sprintf("unknown value: [%v]", params.Happening.Data.Type)))
-		}
-		contactFullRef := models4contactus.NewContactFullRef(contactShortRef.TeamID(), contactShortRef.ItemID())
-		params.HappeningUpdates = append(
-			params.HappeningUpdates,
-			dbo4linkage.RemoveRelatedAndID(
-				&params.Happening.Data.WithRelated,
-				&params.Happening.Data.WithRelatedIDs,
-				contactFullRef,
-			)...,
-		)
-		return err
+		return removeParticipantFromHappeningTxWorker(ctx, tx, params, request)
 	}
 
 	if err = dal4calendarium.RunHappeningTeamWorker(ctx, user, request.HappeningRequest, worker); err != nil {
 		return err
 	}
 	return nil
+}
+
+func removeParticipantFromHappeningTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.HappeningContactRequest) error {
+	_, err := getHappeningContactRecords(ctx, tx, &request, params)
+	if err != nil {
+		return err
+	}
+	contactShortRef := dbmodels.NewTeamItemID(request.Contact.TeamID, request.Contact.ID)
+	switch params.Happening.Data.Type {
+	case dbo4calendarium.HappeningTypeSingle:
+		break // nothing to do
+	case dbo4calendarium.HappeningTypeRecurring:
+		var updates []dal.Update
+		if updates, err = removeContactFromHappeningBriefInContactusTeamDbo(params.TeamModuleEntry, params.Happening, contactShortRef); err != nil {
+			return fmt.Errorf("failed to remove member from happening brief in team DBO: %w", err)
+		}
+		params.TeamModuleUpdates = append(params.TeamModuleUpdates, updates...)
+		params.TeamModuleEntry.Record.MarkAsChanged()
+	default:
+		return fmt.Errorf("invalid happenning record: %w",
+			validation.NewErrBadRecordFieldValue("type",
+				fmt.Sprintf("unknown value: [%v]", params.Happening.Data.Type)))
+	}
+	contactFullRef := models4contactus.NewContactFullRef(contactShortRef.TeamID(), contactShortRef.ItemID())
+	params.HappeningUpdates = append(
+		params.HappeningUpdates,
+		dbo4linkage.RemoveRelatedAndID(
+			&params.Happening.Data.WithRelated,
+			&params.Happening.Data.WithRelatedIDs,
+			contactFullRef,
+		)...,
+	)
+	params.Happening.Record.MarkAsChanged()
+	return err
 }
 
 func removeContactFromHappeningBriefInContactusTeamDbo(

@@ -20,64 +20,69 @@ func AddParticipantToHappening(ctx context.Context, user facade.User, request dt
 	}
 
 	var worker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
-		_, err := getHappeningContactRecords(ctx, tx, &request, params)
-		if err != nil {
-			return err
-		}
-
-		switch params.Happening.Data.Type {
-		case dbo4calendarium.HappeningTypeSingle:
-			break // No special processing needed
-		case dbo4calendarium.HappeningTypeRecurring:
-			var updates []dal.Update
-			if updates, err = addContactToHappeningBriefInTeamDto(ctx, tx, params.TeamModuleEntry, params.Happening, request.Contact.ID); err != nil {
-				return fmt.Errorf("failed to add member to happening brief in team DTO: %w", err)
-			}
-			params.TeamModuleUpdates = append(params.TeamModuleUpdates, updates...)
-		default:
-			return fmt.Errorf("invalid happenning record: %w",
-				validation.NewErrBadRecordFieldValue("type",
-					fmt.Sprintf("unknown value: [%v]", params.Happening.Data.Type)))
-		}
-		contactFullRef := models4contactus.NewContactFullRef(request.TeamID, request.Contact.ID)
-		var updates []dal.Update
-		if updates, err = dbo4linkage.AddRelationshipAndID(
-			&params.Happening.Data.WithRelated,
-			&params.Happening.Data.WithRelatedIDs,
-			contactFullRef,
-			dbo4linkage.RelationshipRolesCommand{
-				Add: &dbo4linkage.RolesCommand{
-					RolesOfItem: []string{"participant"},
-				},
-			},
-		); err != nil {
-			return err
-		}
-		params.HappeningUpdates = append(params.HappeningUpdates, updates...)
-
-		//if params.Happening.Data.ExtraType == dbo4calendarium.HappeningTypeRecurring {
-		//	recurringHappening := params.TeamModuleEntry.Data.RecurringHappenings[params.Happening.ID]
-		//	if recurringHappening != nil {
-		//		recurringHappening.Related = params.Happening.Data.Related
-		//		if err = recurringHappening.Validate(); err != nil {
-		//			return fmt.Errorf("failed to validate recurring happening: %w", err)
-		//		}
-		//		if err = params.TeamModuleEntry.Data.Validate(); err != nil {
-		//			return fmt.Errorf("failed to validate calendarium team module data: %w", err)
-		//		}
-		//		params.TeamModuleUpdates = append(params.TeamModuleUpdates, dal.Update{
-		//			Field: fmt.Sprintf("recurringHappenings.%s.related", params.Happening.ID),
-		//		})
-		//	}
-		//}
-
-		return err
+		return addParticipantToHappeningTxWorker(ctx, tx, params, request)
 	}
 
 	if err = dal4calendarium.RunHappeningTeamWorker(ctx, user, request.HappeningRequest, worker); err != nil {
-		return fmt.Errorf("failed to add member to happening: %w", err)
+		return fmt.Errorf("failed to add participant to happening: %w", err)
 	}
 	return nil
+}
+
+func addParticipantToHappeningTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.HappeningContactRequest) error {
+	_, err := getHappeningContactRecords(ctx, tx, &request, params)
+	if err != nil {
+		return err
+	}
+
+	switch params.Happening.Data.Type {
+	case dbo4calendarium.HappeningTypeSingle:
+		break // No special processing needed
+	case dbo4calendarium.HappeningTypeRecurring:
+		var updates []dal.Update
+		if updates, err = addContactToHappeningBriefInTeamDto(ctx, tx, params.TeamModuleEntry, params.Happening, request.Contact.ID); err != nil {
+			return fmt.Errorf("failed to add member to happening brief in team DTO: %w", err)
+		}
+		params.TeamModuleUpdates = append(params.TeamModuleUpdates, updates...)
+		params.TeamModuleEntry.Record.MarkAsChanged()
+	default:
+		return fmt.Errorf("invalid happenning record: %w",
+			validation.NewErrBadRecordFieldValue("type",
+				fmt.Sprintf("unknown value: [%v]", params.Happening.Data.Type)))
+	}
+	contactFullRef := models4contactus.NewContactFullRef(request.TeamID, request.Contact.ID)
+	var updates []dal.Update
+	if updates, err = dbo4linkage.AddRelationshipAndID(
+		&params.Happening.Data.WithRelated,
+		&params.Happening.Data.WithRelatedIDs,
+		contactFullRef,
+		dbo4linkage.RelationshipRolesCommand{
+			Add: &dbo4linkage.RolesCommand{
+				RolesOfItem: []string{"participant"},
+			},
+		},
+	); err != nil {
+		return err
+	}
+	params.HappeningUpdates = append(params.HappeningUpdates, updates...)
+	params.Happening.Record.MarkAsChanged()
+
+	//if params.Happening.Data.ExtraType == dbo4calendarium.HappeningTypeRecurring {
+	//	recurringHappening := params.TeamModuleEntry.Data.RecurringHappenings[params.Happening.ID]
+	//	if recurringHappening != nil {
+	//		recurringHappening.Related = params.Happening.Data.Related
+	//		if err = recurringHappening.Validate(); err != nil {
+	//			return fmt.Errorf("failed to validate recurring happening: %w", err)
+	//		}
+	//		if err = params.TeamModuleEntry.Data.Validate(); err != nil {
+	//			return fmt.Errorf("failed to validate calendarium team module data: %w", err)
+	//		}
+	//		params.TeamModuleUpdates = append(params.TeamModuleUpdates, dal.Update{
+	//			Field: fmt.Sprintf("recurringHappenings.%s.related", params.Happening.ID),
+	//		})
+	//	}
+	//}
+	return err
 }
 
 func addContactToHappeningBriefInTeamDto(

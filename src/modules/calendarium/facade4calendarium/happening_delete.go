@@ -18,13 +18,13 @@ func DeleteHappening(ctx context.Context, user facade.User, request dto4calendar
 	}
 
 	worker := func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
-		return deleteHappeningTx(ctx, tx, user, request, params)
+		return deleteHappeningTx(ctx, tx, request, params)
 	}
 
 	return dal4calendarium.RunHappeningTeamWorker(ctx, user, request, worker)
 }
 
-func deleteHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, user facade.User, request dto4calendarium.HappeningRequest, params *dal4calendarium.HappeningWorkerParams) (err error) {
+func deleteHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, request dto4calendarium.HappeningRequest, params *dal4calendarium.HappeningWorkerParams) (err error) {
 	happening := params.Happening
 	switch happening.Data.Type {
 	case "":
@@ -35,14 +35,11 @@ func deleteHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, user fa
 
 		if happeningBrief != nil {
 			delete(params.TeamModuleEntry.Data.RecurringHappenings, request.HappeningID)
-			params.TeamUpdates = append(params.TeamUpdates, dal.Update{
+			params.TeamModuleUpdates = append(params.TeamUpdates, dal.Update{
 				Field: "recurringHappenings." + request.HappeningID,
 				Value: dal.DeleteField,
 			})
-			params.TeamUpdates = append(params.TeamUpdates, dal.Update{
-				Field: "numberOf.recurringHappenings",
-				Value: len(params.TeamModuleEntry.Data.RecurringHappenings),
-			})
+			params.TeamModuleEntry.Record.MarkAsChanged()
 		}
 	default:
 		return validation.NewErrBadRecordFieldValue("type", "happening has unknown type: "+happening.Data.Type)
