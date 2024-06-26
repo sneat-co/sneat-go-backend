@@ -18,59 +18,65 @@ const (
 	UpdateSlot PutMode = "UpdateSlot"
 )
 
-func PutSlot(ctx context.Context, putMode PutMode, user facade.User, request dto4calendarium.HappeningSlotRequest) (err error) {
+func PutSlot(ctx context.Context, user facade.User, putMode PutMode, request dto4calendarium.HappeningSlotRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return validation.NewBadRequestError(err)
 	}
 
 	worker := func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
-		if err = params.GetRecords(ctx, tx); err != nil {
-			return err
-		}
-
-		if existingSlot := params.Happening.Data.GetSlot(request.Slot.ID); existingSlot == nil && putMode == UpdateSlot {
-			return validation.NewErrBadRequestFieldValue("slot.id", "slot not found by ID="+request.Slot.ID)
-		} else {
-			slot := &request.Slot.HappeningSlot
-			params.Happening.Data.Slots[request.Slot.ID] = slot
-			params.HappeningUpdates = []dal.Update{
-				{
-					Field: "slots." + request.Slot.ID,
-					Value: slot,
-				},
-			}
-		}
-
-		if params.Happening.Data.Type == dbo4calendarium.HappeningTypeRecurring {
-			if happeningBrief := params.TeamModuleEntry.Data.GetRecurringHappeningBrief(params.Happening.ID); happeningBrief != nil {
-				if err = happeningBrief.Validate(); err != nil {
-					return fmt.Errorf("happening brief is not valid before update: %w", err)
-				}
-				switch putMode {
-				case AddSlot:
-					if happeningBrief.HasSlot(request.Slot.ID) {
-						return validation.NewErrBadRequestFieldValue("slotID",
-							"happening already have slot with ID="+request.Slot.ID)
-					}
-				case UpdateSlot:
-					if !happeningBrief.HasSlot(request.Slot.ID) {
-						return validation.NewErrBadRequestFieldValue("slotID", "slot not found by ID="+request.Slot.ID)
-					}
-				default:
-					return fmt.Errorf("unsupported put mode: %v", putMode)
-				}
-				happeningBrief.Slots[request.Slot.ID] = &request.Slot.HappeningSlot
-				if err = happeningBrief.Validate(); err != nil {
-					return fmt.Errorf("happening brief is not valid after update: %w", err)
-				}
-				params.TeamModuleUpdates = append(params.TeamModuleUpdates, dal.Update{
-					Field: "recurringHappenings." + params.Happening.ID + ".slots",
-					Value: happeningBrief.Slots,
-				})
-			}
-		}
-		return
+		return putSlotTxWorker(ctx, tx, params, putMode, request)
 	}
 
 	return dal4calendarium.RunHappeningTeamWorker(ctx, user, request.HappeningRequest, worker)
+}
+
+func putSlotTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams, putMode PutMode, request dto4calendarium.HappeningSlotRequest) (err error) {
+	if err = params.GetRecords(ctx, tx); err != nil {
+		return err
+	}
+
+	if existingSlot := params.Happening.Data.GetSlot(request.Slot.ID); existingSlot == nil && putMode == UpdateSlot {
+		return validation.NewErrBadRequestFieldValue("slot.id", "slot not found by ID="+request.Slot.ID)
+	} else {
+		slot := &request.Slot.HappeningSlot
+		params.Happening.Record.MarkAsChanged()
+		params.Happening.Data.Slots[request.Slot.ID] = slot
+		params.HappeningUpdates = []dal.Update{
+			{
+				Field: "slots." + request.Slot.ID,
+				Value: slot,
+			},
+		}
+	}
+
+	if params.Happening.Data.Type == dbo4calendarium.HappeningTypeRecurring {
+		if happeningBrief := params.TeamModuleEntry.Data.GetRecurringHappeningBrief(params.Happening.ID); happeningBrief != nil {
+			if err = happeningBrief.Validate(); err != nil {
+				return fmt.Errorf("happening brief is not valid before update: %w", err)
+			}
+			switch putMode {
+			case AddSlot:
+				if happeningBrief.HasSlot(request.Slot.ID) {
+					return validation.NewErrBadRequestFieldValue("slotID",
+						"happening already have slot with ID="+request.Slot.ID)
+				}
+			case UpdateSlot:
+				if !happeningBrief.HasSlot(request.Slot.ID) {
+					return validation.NewErrBadRequestFieldValue("slotID", "slot not found by ID="+request.Slot.ID)
+				}
+			default:
+				return fmt.Errorf("unsupported put mode: %v", putMode)
+			}
+			happeningBrief.Slots[request.Slot.ID] = &request.Slot.HappeningSlot
+			if err = happeningBrief.Validate(); err != nil {
+				return fmt.Errorf("happening brief is not valid after update: %w", err)
+			}
+			params.TeamModuleEntry.Record.MarkAsChanged()
+			params.TeamModuleUpdates = append(params.TeamModuleUpdates, dal.Update{
+				Field: "recurringHappenings." + params.Happening.ID + ".slots",
+				Value: happeningBrief.Slots,
+			})
+		}
+	}
+	return
 }

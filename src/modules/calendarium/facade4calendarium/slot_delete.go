@@ -23,44 +23,48 @@ func DeleteSlot(ctx context.Context, user facade.User, request dto4calendarium.D
 		const4calendarium.ModuleID,
 		new(dbo4calendarium.CalendariumTeamDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo]) (err error) {
-			happening := dbo4calendarium.NewHappeningEntry(request.TeamID, request.HappeningID)
-			hasHappeningRecord := true
-			if err = tx.GetMulti(ctx, []dal.Record{happening.Record, params.TeamModuleEntry.Record}); err != nil {
-				return err
-			}
-			if err = happening.Record.Error(); err != nil {
-				if dal.IsNotFound(err) {
-					hasHappeningRecord = false
-					happening.Data.Type = request.HappeningType
-				} else {
-					return fmt.Errorf("failed to get happening: %w", err)
-				}
-			}
-			switch happening.Data.Type {
-			case "":
-				return fmt.Errorf("unknown happening type: %w", validation.NewErrRecordIsMissingRequiredField("type"))
-			case dbo4calendarium.HappeningTypeSingle:
-				if err := removeSlotFromSingleHappening(ctx, tx, happening, request); err != nil {
-					return fmt.Errorf("failed to delete slot from single happening: %w", err)
-				}
-			case dbo4calendarium.HappeningTypeRecurring:
-				if err := removeSlotFromRecurringHappening(ctx, tx, params, happening, request); err != nil {
-					return fmt.Errorf("failed to delete slot from recurrign happening: %w", err)
-				}
-			default:
-				return validation.NewErrBadRecordFieldValue("type", "happening has unknown type: "+happening.Data.Type)
-			}
-			if request.SlotID == "" && hasHappeningRecord || len(happening.Data.Slots) == 0 {
-				if err = tx.Delete(ctx, happening.Key); err != nil {
-					return fmt.Errorf("faield to delete happening record: %w", err)
-				}
-			}
-			return nil
+			return deleteSlotTxWorker(ctx, tx, params, request)
 		})
 	if err != nil {
 		return fmt.Errorf("failed to delete happening: %w", err)
 	}
 	return
+}
+
+func deleteSlotTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo], request dto4calendarium.DeleteHappeningSlotRequest) (err error) {
+	happening := dbo4calendarium.NewHappeningEntry(request.TeamID, request.HappeningID)
+	hasHappeningRecord := true
+	if err = tx.GetMulti(ctx, []dal.Record{happening.Record, params.TeamModuleEntry.Record}); err != nil {
+		return err
+	}
+	if err = happening.Record.Error(); err != nil {
+		if dal.IsNotFound(err) {
+			hasHappeningRecord = false
+			happening.Data.Type = request.HappeningType
+		} else {
+			return fmt.Errorf("failed to get happening: %w", err)
+		}
+	}
+	switch happening.Data.Type {
+	case "":
+		return fmt.Errorf("unknown happening type: %w", validation.NewErrRecordIsMissingRequiredField("type"))
+	case dbo4calendarium.HappeningTypeSingle:
+		if err := removeSlotFromSingleHappening(ctx, tx, happening, request); err != nil {
+			return fmt.Errorf("failed to delete slot from single happening: %w", err)
+		}
+	case dbo4calendarium.HappeningTypeRecurring:
+		if err := removeSlotFromRecurringHappening(ctx, tx, params, happening, request); err != nil {
+			return fmt.Errorf("failed to delete slot from recurrign happening: %w", err)
+		}
+	default:
+		return validation.NewErrBadRecordFieldValue("type", "happening has unknown type: "+happening.Data.Type)
+	}
+	if request.SlotID == "" && hasHappeningRecord || len(happening.Data.Slots) == 0 {
+		if err = tx.Delete(ctx, happening.Key); err != nil {
+			return fmt.Errorf("faield to delete happening record: %w", err)
+		}
+	}
+	return nil
 }
 
 func removeSlotFromSingleHappening(

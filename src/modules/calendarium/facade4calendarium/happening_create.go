@@ -157,6 +157,7 @@ func createHappeningTx(
 		return response, fmt.Errorf("failed to insert new happening record: %w", err)
 	}
 	if happeningDto.Type == dbo4calendarium.HappeningTypeRecurring {
+		params.TeamModuleEntry.Record.MarkAsChanged()
 		if params.TeamModuleEntry.Data.RecurringHappenings == nil {
 			params.TeamModuleEntry.Data.RecurringHappenings = make(map[string]*dbo4calendarium.CalendarHappeningBrief)
 		}
