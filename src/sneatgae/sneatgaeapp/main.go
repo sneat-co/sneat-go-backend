@@ -30,12 +30,12 @@ func CreateHttpRouter() *httprouter.Router {
 	return initHTTPRouter(globalOptionsHandler)
 }
 
-func Start(reportPanic func(err any), errorsReporter HandlerWrapper, httpRouter *httprouter.Router, emailClient emails.Client, extraModule ...modules.Module) {
+func Start(reportPanic func(err any), wrapHandler HandlerWrapper, httpRouter *httprouter.Router, emailClient emails.Client, extraModule ...modules.Module) {
 	if reportPanic != nil {
 		ReportPanic = reportPanic
 	}
-	if errorsReporter != nil {
-		errsReporter = errorsReporter
+	if wrapHandler == nil {
+		wrapHandler = noWrapper
 	}
 	defaultLogger := golog.Default()
 	log.AddLogger(log.NewPrinter("log.Default()", func(format string, a ...any) (n int, err error) {
@@ -48,8 +48,8 @@ func Start(reportPanic func(err any), errorsReporter HandlerWrapper, httpRouter 
 	//bots.InitializeBots(httpRouter) // TODO: should be part of module registration?
 
 	// A shortcut to map handlers to httpRouter
-	var handle = func(method, path string, handler http.HandlerFunc) {
-		httpRouter.HandlerFunc(method, path, wrapHTTPHandlerFunc(handler))
+	var handle = func(method, path string, handler http.HandlerFunc) { // TODO: change from HandlerFunc to Handler?
+		httpRouter.HandlerFunc(method, path, wrapHTTPHandler(handler, wrapHandler))
 	}
 
 	initHtmlPageHandlers(handle)

@@ -68,20 +68,14 @@ func allowedOrigin(r *http.Request, w http.ResponseWriter) (string, bool) {
 var ReportPanic = func(err any) {
 }
 
-type HandlerWrapper interface {
-	Handle(handler http.Handler) http.Handler
-}
+type HandlerWrapper = func(handler http.Handler) http.Handler
 
-type noOpHandlerWrapper struct{}
-
-func (noOpHandlerWrapper) Handle(handler http.Handler) http.Handler {
+var noWrapper = func(handler http.Handler) http.Handler {
 	return handler
 }
 
-var errsReporter HandlerWrapper = noOpHandlerWrapper{}
-
-func wrapHTTPHandlerFunc(handler http.HandlerFunc) http.HandlerFunc {
-	var handlerWrapper http.HandlerFunc = func(w http.ResponseWriter, r *http.Request) {
+func wrapHTTPHandler(handler http.HandlerFunc, wrapHandler HandlerWrapper) http.HandlerFunc {
+	var wrappedHandlerFunc http.HandlerFunc = func(w http.ResponseWriter, r *http.Request) {
 		if _, isAllowedOrigin := allowedOrigin(r, w); !isAllowedOrigin { // Check origin, is this  unnecessary?
 			return
 		}
@@ -93,9 +87,9 @@ func wrapHTTPHandlerFunc(handler http.HandlerFunc) http.HandlerFunc {
 		defer func(started time.Time) {
 			log.Println(r.Method, uri, "completed in", time.Since(started))
 		}(time.Now())
-		handler(w, r)
+		handler.ServeHTTP(w, r)
 	}
-	errorsReporterHandler := errsReporter.Handle(handlerWrapper)
+	wrappedHandler := wrapHandler(wrappedHandlerFunc)
 	panicHandler := func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			err := recover()
@@ -109,7 +103,7 @@ func wrapHTTPHandlerFunc(handler http.HandlerFunc) http.HandlerFunc {
 				_, _ = fmt.Fprint(w, "PANIC:", err, "\nSTACKTRACE from panic:\n"+stack)
 			}
 		}()
-		errorsReporterHandler.ServeHTTP(w, r)
+		wrappedHandler.ServeHTTP(w, r)
 	}
 	return panicHandler
 }
