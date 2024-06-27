@@ -220,7 +220,11 @@ func applyTeamUpdates(ctx context.Context, tx dal.ReadwriteTransaction, params *
 	return
 }
 
-func applyTeamModuleUpdates[D TeamModuleDbo](ctx context.Context, tx dal.ReadwriteTransaction, params *ModuleTeamWorkerParams[D]) (err error) {
+func applyTeamModuleUpdates[D TeamModuleDbo](
+	ctx context.Context,
+	tx dal.ReadwriteTransaction,
+	params *ModuleTeamWorkerParams[D],
+) (err error) {
 	if len(params.TeamModuleUpdates) == 0 && !params.TeamModuleEntry.Record.HasChanged() {
 		return
 	}
