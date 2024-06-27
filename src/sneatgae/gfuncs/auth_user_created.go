@@ -3,6 +3,7 @@ package gfuncs
 import (
 	"cloud.google.com/go/firestore"
 	"context"
+	"fmt"
 	"log"
 	"time"
 )
@@ -52,7 +53,6 @@ func AuthUserCreated(ctx context.Context, e AuthEvent) error {
 	if e.UID == "" {
 		return nil
 	}
-	log.Printf("AuthUserCreated(user=User{id=%v; DisplayName=%v;})", e.UID, e.DisplayName)
 	if db == nil {
 		initDb()
 	}
@@ -67,7 +67,7 @@ func AuthUserCreated(ctx context.Context, e AuthEvent) error {
 				Created:       e.Metadata.CreatedAt,
 			})
 	}); err != nil {
-		log.Printf("failed to create user record: %v", err)
+		return fmt.Errorf("failed to create user record: %w", err)
 	}
 	return nil
 }

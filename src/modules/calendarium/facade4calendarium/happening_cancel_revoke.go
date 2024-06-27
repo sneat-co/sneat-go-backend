@@ -9,13 +9,13 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
+	"github.com/strongo/log"
 	"github.com/strongo/validation"
-	"log"
 )
 
 // RevokeHappeningCancellation marks happening as canceled
 func RevokeHappeningCancellation(ctx context.Context, user facade.User, request dto4calendarium.CancelHappeningRequest) (err error) {
-	log.Printf("RevokeHappeningCancellation() %+v", request)
+	log.Debugf(ctx, "RevokeHappeningCancellation() %+v", request)
 	if err = request.Validate(); err != nil {
 		return err
 	}
@@ -57,7 +57,7 @@ func revokeRecurringHappeningCancellation(
 	dateID string,
 	slotID string,
 ) error {
-	log.Printf("revokeRecurringHappeningCancellation(): teamID=%v, dateID=%v, happeningID=%v, slotID=%+v", params.Team.ID, dateID, happening.ID, slotID)
+	log.Debugf(ctx, "revokeRecurringHappeningCancellation(): teamID=%v, dateID=%v, happeningID=%v, slotID=%+v", params.Team.ID, dateID, happening.ID, slotID)
 	if happening.Data.Status == dbo4calendarium.HappeningStatusCanceled {
 		if err := removeCancellationFromHappeningRecord(ctx, tx, happening); err != nil {
 			return fmt.Errorf("failed to remove cancellation from happening record: %w", err)
@@ -113,7 +113,7 @@ func removeCancellationFromHappeningRecord(ctx context.Context, tx dal.Readwrite
 }
 
 func removeCancellationFromCalendarDay(ctx context.Context, tx dal.ReadwriteTransaction, teamID, dateID, happeningID string, slotID string) error {
-	log.Printf("removeCancellationFromCalendarDay(): teamID=%v, dateID=%v, happeningID=%v, slotID=%+v", teamID, dateID, happeningID, slotID)
+	log.Debugf(ctx, "removeCancellationFromCalendarDay(): teamID=%v, dateID=%v, happeningID=%v, slotID=%+v", teamID, dateID, happeningID, slotID)
 	if len(slotID) == 0 {
 		return validation.NewErrRequestIsMissingRequiredField("slotID")
 	}

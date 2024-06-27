@@ -7,9 +7,9 @@ import (
 
 func initFirebase() {
 	if gCloudProject := os.Getenv("GCLOUD_PROJECT"); gCloudProject != "" {
-		log.Println("Sneat: GCLOUD_PROJECT:", gCloudProject)
+		//log.Println("Sneat: GCLOUD_PROJECT:", gCloudProject)
 	} else {
-		log.Println("Sneat: GCLOUD_PROJECT is not set")
+		log.Println("WARNING: Sneat: GCLOUD_PROJECT is not set")
 	}
 
 	logHost := func(name string) {

@@ -6,7 +6,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
-	"log"
+	"github.com/strongo/log"
 )
 
 func updateParentContact(
@@ -14,7 +14,7 @@ func updateParentContact(
 	tx dal.ReadwriteTransaction,
 	contact, parent dal4contactus.ContactEntry,
 ) error {
-	//log.Printf("updateParentContact(contact=%s, parentID=%s)", contact.ID, parent.ID)
+	//log.Debugf(ctx, "updateParentContact(contact=%s, parentID=%s)", contact.ID, parent.ID)
 	contactBrief := &briefs4contactus.ContactBrief{
 		Type:   contact.Data.Type,
 		Gender: contact.Data.Gender,
@@ -28,6 +28,6 @@ func updateParentContact(
 	if err := tx.Update(ctx, parent.Key, updates); err != nil {
 		return fmt.Errorf("failed to update parent contact record: %w", err)
 	}
-	log.Printf("updateParentContact(contact=%v, parentID=%v) - success!", contact.ID, parent.ID)
+	log.Infof(ctx, "updateParentContact(contact=%v, parentID=%v) - success!", contact.ID, parent.ID)
 	return nil
 }

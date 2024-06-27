@@ -6,8 +6,8 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
 	"github.com/sneat-co/sneat-go-core/facade"
+	"github.com/strongo/log"
 	"github.com/strongo/validation"
-	"log"
 )
 
 // SetListItemsIsDone marks list item as completed
@@ -34,7 +34,7 @@ func SetListItemsIsDone(ctx context.Context, userContext facade.User, request Li
 		changed := 0
 		for _, item := range list.Data.Items {
 			for _, id := range request.ItemIDs {
-				log.Println("item.InviteID", item.ID, "requestItemID", id)
+				log.Debugf(ctx, "item.InviteID", item.ID, "requestItemID", id)
 				if item.ID == id && item.IsDone != request.IsDone {
 					item.IsDone = request.IsDone
 					changed++
@@ -42,7 +42,7 @@ func SetListItemsIsDone(ctx context.Context, userContext facade.User, request Li
 				}
 			}
 		}
-		log.Println("changed", changed)
+		log.Debugf(ctx, "changed: %d", changed)
 		if changed == 0 {
 			return nil
 		}
@@ -53,12 +53,12 @@ func SetListItemsIsDone(ctx context.Context, userContext facade.User, request Li
 			},
 		}
 		listKey := list.Record.Key()
-		//log.Printf("Updating list with listKey=%v, item[0]: %+v; updates[0]: %+v",
+		//log.Debugf(ctx, "Updating list with listKey=%v, item[0]: %+v; updates[0]: %+v",
 		//	listKey, list.Data.Items[0], listUpdates[0].Value)
 		if err = tx.Update(ctx, listKey, listUpdates); err != nil {
 			return fmt.Errorf("failed to update list record: %w", err)
 		}
-		log.Printf("Updated list with listKey=%v, field=%s, item[1]: %+v", listKey, listUpdates[0].Field, listUpdates[0].Value)
+		log.Debugf(ctx, "Updated list with listKey=%v, field=%s, item[1]: %+v", listKey, listUpdates[0].Field, listUpdates[0].Value)
 		return nil
 	})
 	if err != nil {

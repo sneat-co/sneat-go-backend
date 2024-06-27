@@ -9,8 +9,8 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
+	"github.com/strongo/log"
 	"github.com/strongo/validation"
-	"log"
 )
 
 // DeleteSlot deletes happening
@@ -103,7 +103,7 @@ func removeSlotFromHappeningDbo(
 	happening dbo4calendarium.HappeningEntry,
 	request dto4calendarium.DeleteHappeningSlotRequest,
 ) error {
-	log.Printf("removeSlotFromHappeningDbo() %+v", request)
+	log.Debugf(ctx, "removeSlotFromHappeningDbo() %+v", request)
 	if len(happening.Data.Slots) == 0 {
 		return nil
 	}

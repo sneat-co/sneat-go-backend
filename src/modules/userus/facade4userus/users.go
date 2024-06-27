@@ -8,7 +8,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
-	"log"
+	"github.com/strongo/log"
 	"time"
 )
 
@@ -97,7 +97,7 @@ var RunUserWorker = func(ctx context.Context, db dal.DB, user facade.User, worke
 			return fmt.Errorf("failed to load user record: %w", err)
 		}
 		if err = params.User.Data.Validate(); err != nil {
-			log.Printf("WARNING: user record loaded from DB is not valid: %v: data=%+v", err, params.User.Data)
+			log.Warningf(ctx, "User record loaded from DB is not valid: %v: data=%+v", err, params.User.Data)
 		}
 		if err = worker(ctx, tx, &params); err != nil {
 			return fmt.Errorf("failed to execute teamWorker: %w", err)

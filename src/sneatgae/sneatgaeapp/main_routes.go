@@ -6,7 +6,7 @@ import (
 	"github.com/sneat-co/sneat-go-core/capturer"
 	"github.com/sneat-co/sneat-go-core/httpserver"
 	"github.com/sneat-co/sneat-go-core/security"
-	"log"
+	"github.com/strongo/log"
 	"net/http"
 	"runtime/debug"
 	"time"
@@ -27,7 +27,7 @@ func globalOptionsHandler(w http.ResponseWriter, r *http.Request) {
 	if accessControlRequestMethod == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		const m = "Missing required request header: Access-Control-Request-Method"
-		log.Printf("globalOptionsHandler(%s): bad request: %s\n", r.URL.String(), m)
+		log.Infof(r.Context(), "globalOptionsHandler(%s): bad request: %s\n", r.URL.String(), m)
 		_, _ = fmt.Println(w)
 		return
 	}
@@ -58,7 +58,7 @@ func allowedOrigin(r *http.Request, w http.ResponseWriter) (string, bool) {
 	if !security.IsSupportedOrigin(origin) {
 		w.WriteHeader(http.StatusForbidden)
 		m := "Unsupported origin: " + origin
-		log.Printf("globalOptionsHandler(%s): %s\n", r.URL.String(), m)
+		log.Warningf(r.Context(), "globalOptionsHandler(%s): %s\n", r.URL.String(), m)
 		_, _ = fmt.Println(w, m)
 		return origin, false
 	}
@@ -85,7 +85,7 @@ func wrapHTTPHandler(handler http.HandlerFunc, wrapHandler HandlerWrapper) http.
 		}
 		//log.Println(r.Method, uri, "started")
 		defer func(started time.Time) {
-			log.Println(r.Method, uri, "completed in", time.Since(started))
+			log.Debugf(r.Context(), "%s %s completed in %v", r.Method, uri, "", time.Since(started))
 		}(time.Now())
 		handler.ServeHTTP(w, r)
 	}

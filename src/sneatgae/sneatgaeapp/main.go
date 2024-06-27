@@ -21,8 +21,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/sneatgae/sneatgaeapp/pages"
 	"github.com/sneat-co/sneat-go-core/emails"
 	"github.com/sneat-co/sneat-go-core/modules"
-	"github.com/strongo/log"
-	golog "log"
 	"net/http"
 )
 
@@ -37,11 +35,6 @@ func Start(reportPanic func(err any), wrapHandler HandlerWrapper, httpRouter *ht
 	if wrapHandler == nil {
 		wrapHandler = noWrapper
 	}
-	defaultLogger := golog.Default()
-	log.AddLogger(log.NewPrinter("log.Default()", func(format string, a ...any) (n int, err error) {
-		defaultLogger.Printf(format, a...)
-		return 0, nil
-	}))
 
 	initInfrastructure(emailClient)
 
