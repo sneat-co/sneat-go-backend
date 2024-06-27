@@ -34,7 +34,7 @@ func TestAddRetroItem(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	verifyRequest = func(w http.ResponseWriter, r *http.Request, options verify.RequestOptions) (ctx context.Context, userContext facade.User, err error) {
-		return nil, nil, nil
+		return r.Context(), nil, nil
 	}
 
 	handler := http.HandlerFunc(httpPostAddRetroItem)
