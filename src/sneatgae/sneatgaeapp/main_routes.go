@@ -7,6 +7,7 @@ import (
 	"github.com/sneat-co/sneat-go-core/httpserver"
 	"github.com/sneat-co/sneat-go-core/security"
 	"github.com/strongo/log"
+	"google.golang.org/appengine/v2"
 	"net/http"
 	"runtime/debug"
 	"time"
@@ -79,9 +80,14 @@ func wrapHTTPHandler(handler http.HandlerFunc, wrapHandler HandlerWrapper) http.
 		if _, isAllowedOrigin := allowedOrigin(r, w); !isAllowedOrigin { // Check origin, is this  unnecessary?
 			return
 		}
-		defer func(started time.Time) { // needs to be inside handler wrapped by wrapHandler to keep context with logger
-			log.Infof(r.Context(), "%s %s  in %v", r.Method, r.URL.String(), time.Since(started))
-		}(time.Now())
+		if appengine.IsDevAppServer() {
+			defer func(started time.Time) { // needs to be inside handler wrapped by wrapHandler to keep context with logger
+				c := r.Context()
+				url := r.URL.String()
+				duration := time.Since(started)
+				log.Infof(c, "%s %s completed in %v", r.Method, url, duration)
+			}(time.Now())
+		}
 		handler.ServeHTTP(w, r)
 	}
 	wrappedHandler := wrapHandler(wrappedHandlerFunc)
