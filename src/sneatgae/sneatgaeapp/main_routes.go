@@ -79,6 +79,9 @@ func wrapHTTPHandler(handler http.HandlerFunc, wrapHandler HandlerWrapper) http.
 		if _, isAllowedOrigin := allowedOrigin(r, w); !isAllowedOrigin { // Check origin, is this  unnecessary?
 			return
 		}
+		defer func(started time.Time) { // needs to be inside handler wrapped by wrapHandler to keep context with logger
+			log.Infof(r.Context(), "%s %s  in %v", r.Method, r.URL.String(), time.Since(started))
+		}(time.Now())
 		handler.ServeHTTP(w, r)
 	}
 	wrappedHandler := wrapHandler(wrappedHandlerFunc)
@@ -95,9 +98,6 @@ func wrapHTTPHandler(handler http.HandlerFunc, wrapHandler HandlerWrapper) http.
 				_, _ = fmt.Fprint(w, "PANIC:", err, "\nSTACKTRACE from panic:\n"+stack)
 			}
 		}()
-		defer func(started time.Time) {
-			log.Infof(r.Context(), "%s %s completed in %v", r.Method, r.URL.String(), time.Since(started))
-		}(time.Now())
 		wrappedHandler.ServeHTTP(w, r)
 	}
 	return panicHandler
