@@ -52,7 +52,7 @@ require (
 	github.com/strongo/gamp v0.0.1
 	github.com/strongo/gotwilio v0.0.0-20160123000810-f024bbefe80f
 	github.com/strongo/i18n v0.0.4
-	github.com/strongo/log v0.3.0
+	github.com/strongo/logus v0.0.0-20240628225821-04cf45b5968f
 	github.com/strongo/random v0.0.1
 	github.com/strongo/slice v0.1.4
 	github.com/strongo/slices v0.0.0-20231201223919-29a6c669158a
@@ -98,7 +98,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
 	github.com/sendgrid/rest v2.6.9+incompatible // indirect
-	github.com/strongo/logus v0.0.0-20240628225821-04cf45b5968f // indirect
+	github.com/strongo/log v0.3.0 // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.51.0 // indirect
