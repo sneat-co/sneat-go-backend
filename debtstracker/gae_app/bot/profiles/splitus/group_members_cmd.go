@@ -7,6 +7,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/strongo/i18n"
+	"github.com/strongo/logus"
 	"net/url"
 
 	"context"
@@ -16,7 +17,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/decimal"
-	"github.com/strongo/log"
 )
 
 const GroupMembersCommandCode = "group-members"
@@ -57,7 +57,7 @@ func groupMembersCard(
 		if len(members) == 0 {
 			msg := fmt.Sprintf("ERROR: group.MembersCount:%d != 0 && len(members) == 0", group.Data.MembersCount)
 			buffer.WriteString("\n" + msg + "\n")
-			log.Errorf(c, msg)
+			logus.Errorf(c, msg)
 		}
 
 		splitMode := group.Data.GetSplitMode()

@@ -6,7 +6,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"net/url"
 )
 
@@ -15,7 +15,7 @@ const CHANGE_BILL_PAYER_COMMAND = "change-bill-payer"
 var changeBillPayerCommand = billCallbackCommand(CHANGE_BILL_PAYER_COMMAND,
 	func(whc botsfw.WebhookContext, _ dal.ReadwriteTransaction, callbackUrl *url.URL, bill models.Bill) (m botsfw.MessageFromBot, err error) {
 		c := whc.Context()
-		log.Debugf(c, "changeBillPayerCommand.CallbackAction()")
+		logus.Debugf(c, "changeBillPayerCommand.CallbackAction()")
 		var (
 			mt string
 			//editedMessage *tgbotapi.EditMessageTextConfig

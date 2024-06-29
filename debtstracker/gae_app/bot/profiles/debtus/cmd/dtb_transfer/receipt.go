@@ -7,6 +7,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/strongo/i18n"
+	"github.com/strongo/logus"
 	"html/template"
 	"net/url"
 	"strings"
@@ -18,7 +19,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/general"
-	"github.com/strongo/log"
 )
 
 //func InlineAcceptTransfer(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
@@ -43,7 +43,7 @@ var CreateReceiptIfNoInlineNotificationCommand = botsfw.Command{
 
 func InlineSendReceipt(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 	c := whc.Context()
-	log.Debugf(c, "InlineSendReceipt()")
+	logus.Debugf(c, "InlineSendReceipt()")
 	inlineQuery := whc.Input().(botsfw.WebhookInlineQuery)
 	query := inlineQuery.GetQuery()
 	values, err := url.ParseQuery(query[len("receipt?"):])
@@ -52,7 +52,7 @@ func InlineSendReceipt(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err 
 	}
 	idParam := values.Get("id")
 	if cleanID := strings.Trim(idParam, " \",.;!@#$%^&*(){}[]`~?/\\|"); cleanID != idParam {
-		log.Debugf(c, "Unclean receipt ID: %v, cleaned: %v", idParam, cleanID)
+		logus.Debugf(c, "Unclean receipt ID: %v, cleaned: %v", idParam, cleanID)
 		idParam = cleanID
 	}
 	transferID := idParam
@@ -62,11 +62,11 @@ func InlineSendReceipt(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err 
 	var transfer models.TransferEntry
 	transfer, err = facade.Transfers.GetTransferByID(c, nil, transferID)
 	if err != nil {
-		log.Infof(c, "Faield to get transfer by ID: %v", transferID)
+		logus.Infof(c, "Faield to get transfer by ID: %v", transferID)
 		return m, err
 	}
 
-	log.Debugf(c, "Loaded transfer: %v", transfer)
+	logus.Debugf(c, "Loaded transfer: %v", transfer)
 	creator := whc.GetSender()
 
 	m.BotMessage = telegram.InlineBotMessage(tgbotapi.InlineConfig{
@@ -99,9 +99,9 @@ func InlineSendReceipt(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err 
 			},
 		},
 	})
-	log.Debugf(c, "MessageFromBot: %v", m)
+	logus.Debugf(c, "MessageFromBot: %v", m)
 
-	//log.Debugf(c, "Calling botApi.Send(inlineConfig=%v)", inlineConfig)
+	//logus.Debugf(c, "Calling botApi.Send(inlineConfig=%v)", inlineConfig)
 	//
 	//botApi := &tgbotapi.BotAPI{
 	//	Token:  whc.GetBotToken(),
@@ -110,13 +110,13 @@ func InlineSendReceipt(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err 
 	//}
 	//mes, err := botApi.AnswerInlineQuery(inlineConfig)
 	//if err != nil {
-	//	log.Errorf(c, "Failed to send inline results: %v", err)
+	//	logus.Errorf(c, "Failed to send inline results: %v", err)
 	//}
 	//s, err := json.Marshal(mes)
 	//if err != nil {
-	//	log.Errorf(c, "Failed to marshal inline results response: %v, %v", err, mes)
+	//	logus.Errorf(c, "Failed to marshal inline results response: %v, %v", err, mes)
 	//}
-	//log.Infof(c, "botApi.Send(inlineConfig): %v", string(s))
+	//logus.Infof(c, "botApi.Send(inlineConfig): %v", string(s))
 	return m, err
 }
 
@@ -147,7 +147,7 @@ func getInlineReceiptMessageText(t i18n.SingleLocaleTranslator, botCode, localeC
 func OnInlineChosenCreateReceipt(whc botsfw.WebhookContext, inlineMessageID string, queryUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 	c := whc.Context()
 
-	log.Debugf(c, "OnInlineChosenCreateReceipt(queryUrl: %v)", queryUrl)
+	logus.Debugf(c, "OnInlineChosenCreateReceipt(queryUrl: %v)", queryUrl)
 	transferID := queryUrl.Query().Get("id")
 	creator := whc.GetSender()
 	creatorName := fmt.Sprintf("%v %v", creator.GetFirstName(), creator.GetLastName())
@@ -166,20 +166,20 @@ func OnInlineChosenCreateReceipt(whc botsfw.WebhookContext, inlineMessageID stri
 	}
 
 	if err = dtdal.Receipt.DelayedMarkReceiptAsSent(c, receipt.ID, transferID, time.Now()); err != nil {
-		log.Errorf(c, "Failed DelayedMarkReceiptAsSent: %v", err)
+		logus.Errorf(c, "Failed DelayedMarkReceiptAsSent: %v", err)
 	}
 	if m, err = showReceiptAnnouncement(whc, receipt.ID, creatorName); err != nil {
 		return m, err
 	}
 
 	if err = analytics.ReceiptSentFromBot(whc, "telegram"); err != nil {
-		log.Errorf(c, "Failed to send analytics.ReceiptSentFromBot: %v", err)
+		logus.Errorf(c, "Failed to send analytics.ReceiptSentFromBot: %v", err)
 		err = nil
 	}
 
 	//_, err = whc.Responder().SendMessage(c, m, botsfw.BotAPISendMessageOverHTTPS)
 	//if err != nil {
-	//	log.Errorf(c, "Failed to send inline response: %v", err.Error())
+	//	logus.Errorf(c, "Failed to send inline response: %v", err.Error())
 	//}
 	//m = whc.NewMessage("")
 	return

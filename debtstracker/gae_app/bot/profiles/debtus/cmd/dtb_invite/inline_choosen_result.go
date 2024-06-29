@@ -2,10 +2,10 @@ package dtb_invite
 
 import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
+	"github.com/strongo/logus"
 	"net/url"
 
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/debtus/cmd/dtb_transfer"
-	"github.com/strongo/log"
 )
 
 var ChosenInlineResultCommand = botsfw.Command{
@@ -15,7 +15,7 @@ var ChosenInlineResultCommand = botsfw.Command{
 		c := whc.Context()
 		chosenResult := whc.Input().(botsfw.WebhookChosenInlineResult)
 		query := chosenResult.GetQuery()
-		log.Debugf(c, "ChosenInlineResultCommand.Action() => query: %v", query)
+		logus.Debugf(c, "ChosenInlineResultCommand.Action() => query: %v", query)
 
 		queryUrl, err := url.Parse(query)
 		if err != nil {
@@ -26,7 +26,7 @@ var ChosenInlineResultCommand = botsfw.Command{
 		case "receipt":
 			return dtb_transfer.OnInlineChosenCreateReceipt(whc, chosenResult.GetInlineMessageID(), queryUrl)
 		default:
-			log.Warningf(c, "Unknown chosen inline query: "+query)
+			logus.Warningf(c, "Unknown chosen inline query: "+query)
 		}
 		return
 	},

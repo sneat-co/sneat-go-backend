@@ -9,7 +9,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/delaying"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 )
 
 type billDalGae struct {
@@ -39,11 +39,11 @@ func (billDalGae) DelayUpdateBillDependencies(c context.Context, billID string) 
 }
 
 func delayedUpdateBillDependencies(c context.Context, billID string) (err error) {
-	log.Debugf(c, "delayUpdateBillDependencies(billID=%d)", billID)
+	logus.Debugf(c, "delayUpdateBillDependencies(billID=%s)", billID)
 	var bill models.Bill
 	if bill, err = facade.GetBillByID(c, nil, billID); err != nil {
 		if dal.IsNotFound(err) {
-			log.Warningf(c, err.Error())
+			logus.Warningf(c, err.Error())
 			err = nil
 		}
 		return

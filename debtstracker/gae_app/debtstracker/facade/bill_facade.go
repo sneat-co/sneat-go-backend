@@ -7,6 +7,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/strongo/logus"
 	"math"
 
 	"strconv"
@@ -14,7 +15,6 @@ import (
 
 	"context"
 	"github.com/strongo/decimal"
-	"github.com/strongo/log"
 )
 
 type billFacade struct {
@@ -79,7 +79,7 @@ func (billFacade) AssignBillToGroup(c context.Context, tx dal.ReadwriteTransacti
 					return
 				}
 			}
-			log.Debugf(c, "bill.GetBillMembers(): %+v", bill.Data.GetBillMembers())
+			logus.Debugf(c, "bill.GetBillMembers(): %+v", bill.Data.GetBillMembers())
 		}
 	}
 	return
@@ -89,7 +89,7 @@ func (billFacade) CreateBill(c context.Context, tx dal.ReadwriteTransaction, bil
 	if c == nil {
 		panic("Parameter c context.Context is required")
 	}
-	log.Debugf(c, "billFacade.CreateBill(%v)", billEntity)
+	logus.Debugf(c, "billFacade.CreateBill(%v)", billEntity)
 	if tx == nil {
 		panic("parameter tx dal.ReadwriteTransaction is required")
 	}
@@ -436,8 +436,8 @@ func (billFacade) CreateBill(c context.Context, tx dal.ReadwriteTransaction, bil
 //			UserID:    borrower.UserID,
 //			ContactID: payer.ContactByUser[sCreatorUserID].ContactID,
 //		}
-//		log.Debugf(c, "from: %v", from)
-//		log.Debugf(c, "to: %v", to)
+//		logus.Debugf(c, "from: %v", from)
+//		logus.Debugf(c, "to: %v", to)
 //		//_, _, _, _, _, _, err = CreateTransfer(
 //		//	c,
 //		//	strongoapp.EnvUnknown,
@@ -491,7 +491,7 @@ func (billFacade) AddBillMember(
 	if tx == nil {
 		panic("This method should be called within transaction")
 	}
-	log.Debugf(c, "billFacade.AddBillMember(bill.ID=%v, memberID=%v, memberUserID=%v, memberUserName=%v, paid=%v)", bill.ID, memberID, memberUserID, memberUserName, paid)
+	logus.Debugf(c, "billFacade.AddBillMember(bill.ID=%v, memberID=%v, memberUserID=%v, memberUserName=%v, paid=%v)", bill.ID, memberID, memberUserID, memberUserName, paid)
 	if paid < 0 {
 		panic("paid < 0")
 	}
@@ -527,13 +527,13 @@ func (billFacade) AddBillMember(
 		if _, groupChanged, _, groupMember, groupMembers = group.Data.AddOrGetMember(memberUserID, "", memberUserName); groupChanged {
 			group.Data.SetGroupMembers(groupMembers)
 		} else {
-			log.Debugf(c, "GroupEntry billMembers not changed, groupMember.ID: "+groupMember.ID)
+			logus.Debugf(c, "GroupEntry billMembers not changed, groupMember.ID: "+groupMember.ID)
 		}
 	}
 
 	_, changed, index, billMember, billMembers = bill.Data.AddOrGetMember(groupMember.ID, memberUserID, "", memberUserName)
 
-	log.Debugf(c, "billMember.ID: "+billMember.ID)
+	logus.Debugf(c, "billMember.ID: "+billMember.ID)
 
 	if paid > 0 {
 		if billMember.Paid == paid {
@@ -564,22 +564,22 @@ func (billFacade) AddBillMember(
 
 	billMembers[index] = billMember
 
-	log.Debugf(c, "billMembers: %+v", billMembers)
+	logus.Debugf(c, "billMembers: %+v", billMembers)
 	if err = bill.Data.SetBillMembers(billMembers); err != nil {
 		return
 	}
-	log.Debugf(c, "bill.GetBillMembers(): %+v", bill.Data.GetBillMembers())
+	logus.Debugf(c, "bill.GetBillMembers(): %+v", bill.Data.GetBillMembers())
 
 	if err = dtdal.Bill.SaveBill(c, tx, bill); err != nil {
 		return
 	}
 
-	log.Debugf(c, "bill.GetBillMembers() after save: %v", bill.Data.GetBillMembers())
+	logus.Debugf(c, "bill.GetBillMembers() after save: %v", bill.Data.GetBillMembers())
 
 	currentBalance := bill.Data.GetBalance()
 
 	if balanceDifference := currentBalance.BillBalanceDifference(previousBalance); balanceDifference.IsNoDifference() {
-		log.Debugf(c, "Bill balanceDifference: %v", balanceDifference)
+		logus.Debugf(c, "Bill balanceDifference: %v", balanceDifference)
 		if groupChanged, err = group.Data.ApplyBillBalanceDifference(bill.Data.Currency, balanceDifference); err != nil {
 			err = fmt.Errorf("failed to apply bill difference: %w", err)
 			return
@@ -591,7 +591,7 @@ func (billFacade) AddBillMember(
 		}
 	}
 
-	log.Debugf(c, "group: %+v", group)
+	logus.Debugf(c, "group: %+v", group)
 	var groupMembersJsonAfter string
 	if group.Data != nil {
 		groupMembersJsonAfter = group.Data.MembersJson

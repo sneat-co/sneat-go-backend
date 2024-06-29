@@ -7,6 +7,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/strongo/logus"
 	"html"
 	"net/url"
 	"strings"
@@ -19,7 +20,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/general"
-	"github.com/strongo/log"
 )
 
 var SendReceiptCallbackCommand = botsfw.NewCallbackCommand(SEND_RECEIPT_CALLBACK_PATH, CallbackSendReceipt)
@@ -28,7 +28,7 @@ func CallbackSendReceipt(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 	c := whc.Context()
 	q := callbackUrl.Query()
 	sendBy := q.Get("by")
-	log.Debugf(c, "CallbackSendReceipt(callbackUrl=%v)", callbackUrl)
+	logus.Debugf(c, "CallbackSendReceipt(callbackUrl=%v)", callbackUrl)
 	var db dal.DB
 	if db, err = facade.GetDatabase(c); err != nil {
 		return m, err
@@ -62,7 +62,7 @@ func CallbackSendReceipt(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 			m, err = createSendReceiptOptionsMessage(whc, transfer)
 			return
 		case RECEIPT_ACTION__DO_NOT_SEND:
-			log.Debugf(c, "CallbackSendReceipt(): do-not-send")
+			logus.Debugf(c, "CallbackSendReceipt(): do-not-send")
 			if m, err = whc.NewEditMessage(whc.Translate(trans.MESSAGE_TEXT_RECEIPT_WILL_NOT_BE_SENT), botsfw.MessageFormatHTML); err != nil {
 				return
 			}
@@ -97,7 +97,7 @@ func CallbackSendReceipt(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 					return
 				}
 				if _, err = whc.Responder().SendMessage(c, updateMessage, botsfw.BotAPISendMessageOverHTTPS); err != nil {
-					log.Errorf(c, fmt.Errorf("failed to update Telegram message: %w", err).Error())
+					logus.Errorf(c, fmt.Errorf("failed to update Telegram message: %w", err).Error())
 					err = nil
 				}
 
@@ -135,7 +135,7 @@ func CallbackSendReceipt(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 			m = whc.NewMessage(whc.Translate(trans.MESSAGE_TEXT_INVITE_ASK_EMAIL_FOR_RECEIPT, transfer.Data.Counterparty().ContactName))
 		default:
 			err = errors.New("Unknown channel to send receipt: " + sendBy)
-			log.Errorf(c, err.Error())
+			logus.Errorf(c, err.Error())
 		}
 		return err
 	})

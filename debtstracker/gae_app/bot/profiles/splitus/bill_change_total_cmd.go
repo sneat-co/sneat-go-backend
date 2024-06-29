@@ -5,7 +5,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"net/url"
 )
 
@@ -14,7 +14,7 @@ const CHANGE_BILL_TOTAL_COMMAND = "bill_total"
 var changeBillTotalCommand = billCallbackCommand(CHANGE_BILL_TOTAL_COMMAND,
 	func(whc botsfw.WebhookContext, _ dal.ReadwriteTransaction, callbackUrl *url.URL, bill models.Bill) (m botsfw.MessageFromBot, err error) {
 		c := whc.Context()
-		log.Debugf(c, "changeBillTotalCommand.CallbackAction()")
+		logus.Debugf(c, "changeBillTotalCommand.CallbackAction()")
 		//var editedMessage *tgbotapi.EditMessageTextConfig
 		//if editedMessage, err = dtb_common.NewTelegramEditMessage(whc, "Enter new total for the bill:"); err != nil {
 		//	return

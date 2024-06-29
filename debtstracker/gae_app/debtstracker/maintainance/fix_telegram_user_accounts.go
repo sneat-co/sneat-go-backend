@@ -64,7 +64,7 @@ package maintainance
 //	//if tgChatEntity.BotID == "" {
 //	//	counters.Increment("empty_BotID_count", 1)
 //	//	if err = datastore.Delete(c, key); err != nil {
-//	//		log.Errorf(c, "failed to delete %v: %v", key.IntID(), err)
+//	//		logus.Errorf(c, "failed to delete %v: %v", key.IntID(), err)
 //	//		return nil
 //	//	}
 //	//	counters.Increment("empty_BotID_deleted", 1)
@@ -75,27 +75,27 @@ package maintainance
 //	//		//tgChat.SetID(tgChatEntity.BotID, tgChatEntity.TelegramUserID)
 //	//		//tgChat.SetEntity(tgChatEntity)
 //	//		if err = dtdal.DB.Update(c, &tgChat); err != nil {
-//	//			log.Errorf(c, "failed to created entity with fixed key %v: %v", tgChat.ID, err)
+//	//			logus.Errorf(c, "failed to created entity with fixed key %v: %v", tgChat.ID, err)
 //	//			return nil
 //	//		}
 //	//		if err = datastore.Delete(c, key); err != nil {
-//	//			log.Errorf(c, "failed to delete migrated %v: %v", key.IntID(), err)
+//	//			logus.Errorf(c, "failed to delete migrated %v: %v", key.IntID(), err)
 //	//			return nil
 //	//		}
 //	//		counters.Increment("migrated", 1)
 //	//	}
 //	//} else if tgChat.BotID == tgChatEntity.BotID && tgChat.TelegramUserID == tgChatEntity.TelegramUserID {
 //	//	if err = datastore.Delete(c, key); err != nil {
-//	//		log.Errorf(c, "failed to delete already migrated %v: %v", key.IntID(), err)
+//	//		logus.Errorf(c, "failed to delete already migrated %v: %v", key.IntID(), err)
 //	//		return nil
 //	//	}
 //	//	counters.Increment("already_migrated_so_deleted", 1)
 //	//} else {
 //	//	counters.Increment("mismatches", 1)
 //	//	if tgChat.BotID != tgChatEntity.BotID {
-//	//		log.Warningf(c, "%v: tgChat.BotID != tgChatEntity.BotID: %v != %v", key.IntID(), tgChat.BotID, tgChatEntity.BotID)
+//	//		logus.Warningf(c, "%v: tgChat.BotID != tgChatEntity.BotID: %v != %v", key.IntID(), tgChat.BotID, tgChatEntity.BotID)
 //	//	} else if tgChat.TelegramUserID != tgChatEntity.TelegramUserID {
-//	//		log.Warningf(c, "%v: tgChat.TelegramUserID != tgChatEntity.TelegramUserID: %v != %v", key.IntID(), tgChat.TelegramUserID, tgChatEntity.TelegramUserID)
+//	//		logus.Warningf(c, "%v: tgChat.TelegramUserID != tgChatEntity.TelegramUserID: %v != %v", key.IntID(), tgChat.TelegramUserID, tgChatEntity.TelegramUserID)
 //	//	}
 //	//}
 //	//return
@@ -108,7 +108,7 @@ package maintainance
 //	//	userChanged bool
 //	//)
 //	//if tgChat.BotID == "" || tgChat.TelegramUserID == 0 {
-//	//	log.Warningf(c, "TgChat(%v) => BotID=%v, TelegramUserID=%v", tgChat.ID, tgChat.TelegramUserID)
+//	//	logus.Warningf(c, "TgChat(%v) => BotID=%v, TelegramUserID=%v", tgChat.ID, tgChat.TelegramUserID)
 //	//	if strings.Contains(tgChat.ID, ":") {
 //	//		botID := strings.Split(tgChat.ID, ":")[0]
 //	//		tgUserID := tgChat.TelegramUserID
@@ -125,23 +125,23 @@ package maintainance
 //	//			tgChat.BotID = botID
 //	//			return dtdal.DB.Update(c, &tgChat)
 //	//		}, db.CrossGroupTransaction); err != nil {
-//	//			log.Errorf(c, "Failed to fix TgChat(%v): %v", tgChat.ID, err)
+//	//			logus.Errorf(c, "Failed to fix TgChat(%v): %v", tgChat.ID, err)
 //	//			err = nil
 //	//			return
 //	//		}
-//	//		log.Infof(c, "Fixed TgChat(%v)", tgChat.ID)
+//	//		logus.Infof(c, "Fixed TgChat(%v)", tgChat.ID)
 //	//	} else {
 //	//		return
 //	//	}
 //	//}
 //	//if tgChat.AppUserIntID == 0 {
-//	//	log.Warningf(c, "TgChat(%v).AppUserIntID == 0", tgChat.ID)
+//	//	logus.Warningf(c, "TgChat(%v).AppUserIntID == 0", tgChat.ID)
 //	//	return
 //	//}
 //	//if err = dtdal.DB.RunInTransaction(c, func(c context.Context) (err error) {
 //	//	if user, err = facade.User.GetUserByID(c, tgChat.AppUserIntID); err != nil {
 //	//		if dal.IsNotFound(err) {
-//	//			log.Errorf(c, "Failed to process %v: %v", tgChat.ID, err)
+//	//			logus.Errorf(c, "Failed to process %v: %v", tgChat.ID, err)
 //	//			err = nil
 //	//		}
 //	//		return
@@ -153,7 +153,7 @@ package maintainance
 //	//			if ua.App == tgChat.BotID {
 //	//				goto userAccountFound
 //	//			} else if ua.App == "" {
-//	//				//log.Debugf(c, "will be fixed")
+//	//				//logus.Debugf(c, "will be fixed")
 //	//				user.Data.RemoveAccount(ua)
 //	//				ua.App = tgChat.BotID
 //	//				userChanged = user.Data.AddAccount(ua) || userChanged
@@ -168,10 +168,10 @@ package maintainance
 //	//	}) || userChanged
 //	//userAccountFound:
 //	//	if userChanged {
-//	//		//log.Debugf(c, "user changed %v", user.ID)
+//	//		//logus.Debugf(c, "user changed %v", user.ID)
 //	//		defer func() {
 //	//			if r := recover(); r != nil {
-//	//				log.Errorf(c, "panic on saving user %v: %v", user.ID, r)
+//	//				logus.Errorf(c, "panic on saving user %v: %v", user.ID, r)
 //	//				err = fmt.Errorf("panic on saving user %v: %v", user.ID, r)
 //	//			}
 //	//		}()
@@ -179,14 +179,14 @@ package maintainance
 //	//			return
 //	//		}
 //	//		//} else {
-//	//		//	log.Debugf(c, "user NOT changed %v", user.ID)
+//	//		//	logus.Debugf(c, "user NOT changed %v", user.ID)
 //	//	}
 //	//	return
 //	//}, db.CrossGroupTransaction); err != nil {
 //	//	counters.Increment("failed", 1)
 //	//	return
 //	//} else if userChanged {
-//	//	log.Infof(c, "User %v fixed", user.ID)
+//	//	logus.Infof(c, "User %v fixed", user.ID)
 //	//	counters.Increment("users-changed", 1)
 //	//}
 //	//return

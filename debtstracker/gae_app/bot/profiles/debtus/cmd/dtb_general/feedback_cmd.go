@@ -16,7 +16,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/general"
 	"github.com/strongo/i18n"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"net/url"
 	"strconv"
 	"strings"
@@ -253,7 +253,7 @@ const CAN_YOU_RATE_COMMAND = "can-you-rate"
 var CanYouRateCommand = botsfw.Command{
 	Code: CAN_YOU_RATE_COMMAND,
 	CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-		log.Debugf(whc.Context(), "CanYouRateCommand.CallbackAction): whc.ChatData().GetPreferredLanguage()=%v", whc.ChatData().GetPreferredLanguage())
+		logus.Debugf(whc.Context(), "CanYouRateCommand.CallbackAction): whc.ChatData().GetPreferredLanguage()=%v", whc.ChatData().GetPreferredLanguage())
 		if callbackUrl == nil || callbackUrl.RawQuery == "" {
 			m, err = askIfCanRateAtStoreBot(whc)
 		} else {
@@ -280,7 +280,7 @@ var CanYouRateCommand = botsfw.Command{
 				)
 			default:
 				m = whc.NewMessage(fmt.Sprintf("Unknown 'will-rate' value, expected yes/no, got: %v", callbackUrl.Query().Get("reply")))
-				log.Errorf(whc.Context(), m.Text)
+				logus.Errorf(whc.Context(), m.Text)
 			}
 		}
 		return
@@ -373,7 +373,7 @@ var FeedbackTextCommand = botsfw.Command{
 			m.Text += fmt.Sprintf(` Feedback #<a href="https://debtstracker.io/app/#/feedback/%d">%d</a>`, feedback.ID, feedback.ID)
 			SetMainMenuKeyboard(whc, &m)
 			if err2 := admin.SendFeedbackToAdmins(c, tgbots.DebtusBotToken, feedback); err2 != nil {
-				log.Errorf(c, "failed to notify admins: %v", err)
+				logus.Errorf(c, "failed to notify admins: %v", err)
 			}
 		default:
 			m = whc.NewMessageByCode(trans.MESSAGE_TEXT_PLEASE_SEND_TEXT)

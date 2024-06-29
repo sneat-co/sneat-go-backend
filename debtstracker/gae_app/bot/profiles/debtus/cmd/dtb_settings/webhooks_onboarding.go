@@ -52,7 +52,7 @@ func handleInviteOnStart(whc botsfw.WebhookContext, inviteCode string, invite mo
 }
 
 //func OnboardingTellAboutInviteCodeAction(whc botsfw.WebhookContext) (botsfw.MessageFromBot, error) {
-//	log.Infof(whc.Context(), "onboardingTellAboutInviteCodeAction")
+//	logus.Infof(whc.Context(), "onboardingTellAboutInviteCodeAction")
 //	m := whc.NewMessageByCode(trans.MESSAGE_TEXT_ONBOARDING_TELL_ABOUT_INVITES, whc.GetSender().GetFirstName())
 //	keyboard := tgbotapi.NewReplyKeyboardUsingStrings([][]string{
 //		{whc.CommandText(trans.COMMAND_TEXT_I_HAVE_INVITE, emoji.CLOSED_LOCK_WITH_KEY)},
@@ -241,7 +241,7 @@ func TextCommand(on string, message []string, icon, replyIcon string, hideKeyboa
 //		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 //			c := whc.Context()
 //
-//			log.Infof(c, "Command(code=%v).Action()", cmd.code)
+//			logus.Infof(c, "Command(code=%v).Action()", cmd.code)
 //			chatEntity := whc.ChatData()
 //			awaitingReplyTo := chatEntity.GetAwaitingReplyTo()
 //
@@ -253,7 +253,7 @@ func TextCommand(on string, message []string, icon, replyIcon string, hideKeyboa
 //				message := whc.Input().(botsfw.WebhookTextMessage)
 //				messageText := message.Text()
 //				altOption := messageText == altCmd.title
-//				//log.Debugf(c, "code: %v, awaitingReplyTo: %v, messageText: %v, altOption=%v, altCommand: %v", cmd.code, awaitingReplyTo, messageText, altOption, altCmd.title)
+//				//logus.Debugf(c, "code: %v, awaitingReplyTo: %v, messageText: %v, altOption=%v, altCommand: %v", cmd.code, awaitingReplyTo, messageText, altOption, altCmd.title)
 //				switch {
 //				case messageText == whc.CommandText(trans.COMMAND_TEXT_TELL_ME_MORE_ABOUT_INVITES, emoji.QUESTION_ICON):
 //					switch cmd.code {
@@ -274,7 +274,7 @@ func TextCommand(on string, message []string, icon, replyIcon string, hideKeyboa
 //					}
 //				default:
 //					if altOption {
-//						log.Debugf(c, "Switching to alt code: %v", altCmd.code)
+//						logus.Debugf(c, "Switching to alt code: %v", altCmd.code)
 //						cmd.code = altCmd.code
 //						cmd.message = altCmd.message
 //					}
@@ -408,7 +408,7 @@ const INVITE_IS_RELATED_TO_ONBOARDING = "onboarding=yes"
 
 //func onboardingProcessEmail(messageText string, whc botsfw.WebhookContext, altCmd ContactsChannelCommand) (m botsfw.MessageFromBot, err error) {
 //
-//	log.Infof(whc.Context(), "onboardingProcessEmail(messageText=%v)", messageText)
+//	logus.Infof(whc.Context(), "onboardingProcessEmail(messageText=%v)", messageText)
 //	email := strings.TrimSpace(messageText)
 //
 //	if !reEmail.MatchString(email) {

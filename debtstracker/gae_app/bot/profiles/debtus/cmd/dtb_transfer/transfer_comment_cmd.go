@@ -7,12 +7,12 @@ import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/strongo/logus"
 	"net/url"
 	"strings"
 
 	"errors"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
-	"github.com/strongo/log"
 	"golang.org/x/net/html"
 )
 
@@ -43,7 +43,7 @@ const (
 //		Title: title,
 //		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 //
-//			log.Debugf(c, "createTransferAddNoteOrCommentCommand().Action(), code=%v", code)
+//			logus.Debugf(c, "createTransferAddNoteOrCommentCommand().Action(), code=%v", code)
 //			if code != ADD_NOTE_COMMAND && code != ADD_COMMENT_COMMAND {
 //				panic(fmt.Sprintf("Unknown code: %v", code))
 //			}
@@ -107,7 +107,7 @@ func createTransferAskNoteOrCommentCommand(code string, nextCommand botsfw.Comma
 		},
 		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 			c := whc.Context()
-			log.Infof(c, "createTransferAskNoteOrCommentCommand().Action()")
+			logus.Infof(c, "createTransferAskNoteOrCommentCommand().Action()")
 			chatEntity := whc.ChatData()
 			//noOptionSelected := false
 			if chatEntity.IsAwaitingReplyTo(code) {

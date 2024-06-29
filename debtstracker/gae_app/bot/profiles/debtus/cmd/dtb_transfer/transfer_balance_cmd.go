@@ -6,6 +6,7 @@ import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/strongo/logus"
 	"net/url"
 	"strings"
 	"time"
@@ -15,7 +16,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 const BALANCE_COMMAND = "balance"
@@ -37,7 +37,7 @@ func balanceCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.Mess
 func balanceAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 	c := whc.Context()
 
-	log.Debugf(c, "BalanceCommand.Action()")
+	logus.Debugf(c, "BalanceCommand.Action()")
 
 	var user models.AppUser
 
@@ -62,14 +62,14 @@ func balanceAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err erro
 
 		var thereAreFewDebtsForSingleCurrency = func() bool {
 			//TODO: Duplicate call to Balance() - consider move inside BalanceMessageBuilder
-			//log.Debugf(c, "thereAreFewDebtsForSingleCurrency()")
+			//logus.Debugf(c, "thereAreFewDebtsForSingleCurrency()")
 			var currencies []money.CurrencyCode
 			for _, counterparty := range contacts {
-				//log.Debugf(c, "counterparty: %v", counterparty)
+				//logus.Debugf(c, "counterparty: %v", counterparty)
 				for currency := range counterparty.Balance() {
-					//log.Debugf(c, "currency: %v", currency)
+					//logus.Debugf(c, "currency: %v", currency)
 					for _, curr := range currencies {
-						//log.Debugf(c, "curr: %v; curr == currency: %v", curr, curr == currency)
+						//logus.Debugf(c, "curr: %v; curr == currency: %v", curr, curr == currency)
 						if curr == currency {
 							return true
 						}
@@ -77,7 +77,7 @@ func balanceAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err erro
 					currencies = append(currencies, currency)
 				}
 			}
-			//log.Debugf(c, "thereAreFewDebtsForSingleCurrency: %v", currencies)
+			//logus.Debugf(c, "thereAreFewDebtsForSingleCurrency: %v", currencies)
 			return false
 		}
 
@@ -85,7 +85,7 @@ func balanceAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err erro
 			userBalanceWithInterest, err := user.Data.BalanceWithInterest(c, time.Now())
 			if err != nil {
 				m := fmt.Sprintf("Failed to get balance with interest for user %v: %v", user.ID, err)
-				log.Errorf(c, m)
+				logus.Errorf(c, m)
 				buffer.WriteString(m)
 			} else {
 				buffer.WriteString("\n" + strings.Repeat("─", 16) + "\n" + balanceMessageBuilder.ByCurrency(true, userBalanceWithInterest))

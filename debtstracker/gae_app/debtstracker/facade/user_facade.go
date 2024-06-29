@@ -8,7 +8,7 @@ import (
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"strings"
 	"time"
 )
@@ -39,7 +39,7 @@ func (userFacade) GetUserByID(c context.Context, tx dal.ReadSession, userID stri
 }
 
 func (userFacade) GetUsersByIDs(c context.Context, userIDs []string) (users []*models.AppUser, err error) {
-	//log.Debugf(c, "UserDalGae.GetUsersByIDs(%d)", userIDs)
+	//logus.Debugf(c, "UserDalGae.GetUsersByIDs(%d)", userIDs)
 	if len(userIDs) == 0 {
 		return
 	}
@@ -80,7 +80,7 @@ func (uf userFacade) CreateUserByEmail(
 		}
 
 		if userEmail.ID == "" {
-			log.Errorf(c, "userEmail.ID is empty string")
+			logus.Errorf(c, "userEmail.ID is empty string")
 			userEmail.ID = strings.ToLower(strings.TrimSpace(email))
 		}
 
@@ -205,7 +205,7 @@ func (uf userFacade) GetOrCreateEmailUser(
 //) (
 //	appUser models.AppUser, err error,
 //) {
-//	log.Debugf(c, "getOrCreateUserAccountRecordOnSignIn(provider=%v, userID=%d)", provider, userID)
+//	logus.Debugf(c, "getOrCreateUserAccountRecordOnSignIn(provider=%v, userID=%d)", provider, userID)
 //	var db dal.DB
 //	if db, err = GetDatabase(c); err != nil {
 //		return
@@ -366,7 +366,7 @@ func (uf userFacade) GetOrCreateEmailUser(
 //) (
 //	userFacebook models.UserFacebook, appUser models.AppUser, err error,
 //) {
-//	log.Debugf(c, "GetOrCreateUserFacebookOnSignIn(firstName=%v, lastName=%v)", firstName, lastName)
+//	logus.Debugf(c, "GetOrCreateUserFacebookOnSignIn(firstName=%v, lastName=%v)", firstName, lastName)
 //	if fbAppOrPageID == "" {
 //		panic("fbAppOrPageID is empty string")
 //	}

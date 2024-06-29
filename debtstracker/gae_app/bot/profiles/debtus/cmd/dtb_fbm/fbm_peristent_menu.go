@@ -9,7 +9,7 @@ package dtb_fbm
 //	"github.com/sneat-co/debtstracker-translations/emoji"
 //	"github.com/strongo/bots-api-fbm"
 //	"github.com/bots-go-framework/bots-fw/botsfw"
-//	"github.com/strongo/log"
+//	"github.com/strongo/logus"
 //)
 //
 //var EM_SPACE = strings.Repeat("\u00A0", 2)
@@ -26,7 +26,7 @@ package dtb_fbm
 //		return fbmbotapi.NewMenuItemPostback(icon+EM_SPACE+title, payload)
 //	}
 //
-//	log.Debugf(c, "url: %v", url)
+//	logus.Debugf(c, "url: %v", url)
 //
 //	persistentMenu := func(locale string) fbmbotapi.PersistentMenu {
 //

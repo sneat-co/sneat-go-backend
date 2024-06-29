@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/strongo/logus"
 	"google.golang.org/appengine/v2"
 	"net/http"
 	"sync"
@@ -13,7 +14,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/decimal"
-	"github.com/strongo/log"
 	"google.golang.org/appengine/v2/datastore"
 )
 
@@ -219,14 +219,14 @@ func validateContacts(c context.Context,
 	}
 
 	defer func() {
-		log.Debugf(c, "contactInfos: %v", contactInfos)
-		log.Debugf(c, "contactsMissingInJson: %v", contactsMissingInJson)
-		log.Debugf(c, "contactsMissedByQuery: %v", contactsMissedByQuery)
-		log.Debugf(c, "matchedContacts: %v", matchedContacts)
+		logus.Debugf(c, "contactInfos: %v", contactInfos)
+		logus.Debugf(c, "contactsMissingInJson: %v", contactsMissingInJson)
+		logus.Debugf(c, "contactsMissedByQuery: %v", contactsMissedByQuery)
+		logus.Debugf(c, "matchedContacts: %v", matchedContacts)
 	}()
 
-	log.Debugf(c, "contactsTotalWithoutInterest: %v", contactsTotalWithoutInterest)
-	log.Debugf(c, "contactsTotalWithInterest: %v", contactsTotalWithInterest)
+	logus.Debugf(c, "contactsTotalWithoutInterest: %v", contactsTotalWithoutInterest)
+	logus.Debugf(c, "contactsTotalWithInterest: %v", contactsTotalWithInterest)
 
 	userBalances.withoutInterest.SetBalance(func(balances balancesByCurrency) {
 		for currency, value := range contactsTotalWithoutInterest {
@@ -306,7 +306,7 @@ func userPage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		}
 	}
 
-	log.Debugf(c, "matchedContacts: %v", matchedContacts)
+	logus.Debugf(c, "matchedContacts: %v", matchedContacts)
 
 	renderUserPage(now,
 		user,

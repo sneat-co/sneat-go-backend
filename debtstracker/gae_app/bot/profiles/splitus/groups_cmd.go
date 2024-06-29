@@ -5,7 +5,7 @@ import (
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"net/url"
 )
 
@@ -28,7 +28,7 @@ var groupsCommand = botsfw.Command{
 		}
 		if isRefresh {
 			c := whc.Context()
-			log.Debugf(c, "do == 'refresh'")
+			logus.Debugf(c, "do == 'refresh'")
 			if m, err = bot.SendRefreshOrNothingChanged(whc, m); err != nil {
 				return
 			}
@@ -44,7 +44,7 @@ func groupsAction(whc botsfw.WebhookContext, isEdit bool, groupsMessageID int) (
 	//	return
 	//}
 	//c := whc.Context()
-	//log.Debugf(c, "groupsAction(isEdit=%v, groupsMessageID=%d)", isEdit, groupsMessageID)
+	//logus.Debugf(c, "groupsAction(isEdit=%v, groupsMessageID=%d)", isEdit, groupsMessageID)
 	//buf := new(bytes.Buffer)
 	//
 	//fmt.Fprintf(buf, "<b>%v</b>\n\n", whc.Translate(trans.MESSAGE_TEXT_YOUR_BILL_SPLITTING_GROUPS))

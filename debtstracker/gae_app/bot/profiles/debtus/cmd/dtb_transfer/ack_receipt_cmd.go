@@ -3,6 +3,7 @@ package dtb_transfer
 import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/strongo/logus"
 	"html"
 
 	"errors"
@@ -10,7 +11,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
-	"github.com/strongo/log"
 )
 
 func AcknowledgeReceipt(whc botsfw.WebhookContext, receiptID, operation string) (m botsfw.MessageFromBot, err error) {
@@ -33,7 +33,7 @@ func AcknowledgeReceipt(whc botsfw.WebhookContext, receiptID, operation string) 
 				"receipt-acknowledged",
 				operation,
 			)); err != nil {
-				log.Errorf(c, "Failed to report receipt-acknowledged to Google Analytics: %v", err)
+				logus.Errorf(c, "Failed to report receipt-acknowledged to Google Analytics: %v", err)
 			}
 
 			if isCounterpartiesJustConnected {
@@ -41,7 +41,7 @@ func AcknowledgeReceipt(whc botsfw.WebhookContext, receiptID, operation string) 
 					"counterparties",
 					"counterparties-connected",
 				)); err != nil {
-					log.Errorf(c, "Failed to report counterparties-connected to Google Analytics: %v", err)
+					logus.Errorf(c, "Failed to report counterparties-connected to Google Analytics: %v", err)
 				}
 			}
 		}
@@ -84,10 +84,10 @@ func AcknowledgeReceipt(whc botsfw.WebhookContext, receiptID, operation string) 
 			askMsgToCreator.Text = operationMsg + "\n\n" + common.TextReceiptForTransfer(c, whc, transfer, transfer.Data.CreatorUserID, common.ShowReceiptToAutodetect, utm)
 
 			if transfer.Data.Creator().TgBotID != whc.GetBotCode() {
-				log.Warningf(c, "TODO: transferEntity.Creator().TgBotID != whc.GetBotCode(): "+askMsgToCreator.Text)
+				logus.Warningf(c, "TODO: transferEntity.Creator().TgBotID != whc.GetBotCode(): "+askMsgToCreator.Text)
 			} else {
 				if _, err = whc.Responder().SendMessage(c, askMsgToCreator, botsfw.BotAPISendMessageOverHTTPS); err != nil {
-					log.Errorf(c, "Failed to send acknowledge to creator: %v", err)
+					logus.Errorf(c, "Failed to send acknowledge to creator: %v", err)
 					err = nil // This is not that critical to report the error to user
 				}
 			}
@@ -98,15 +98,15 @@ func AcknowledgeReceipt(whc botsfw.WebhookContext, receiptID, operation string) 
 		//	editMessage := tgbotapi.NewEditMessageTextByInlineMessageID(transferEntity.CounterpartyTgReceiptInlineMessageID, mt + fmt.Sprintf("\n\n Acknowledged by %v", transferEntity.ContactEntry().ContactName))
 		//
 		//	if values, err := editMessage.Values(); err != nil {
-		//		log.Errorf(c, "Failed to get values for editMessage: %v", err)
+		//		logus.Errorf(c, "Failed to get values for editMessage: %v", err)
 		//	} else {
-		//		log.Debugf(c, "editMessage.Values(): %v", values)
+		//		logus.Debugf(c, "editMessage.Values(): %v", values)
 		//	}
 		//	updateMessage := whc.NewMessage("")
 		//	updateMessage.TelegramEditMessageText = &editMessage
 		//	_, err := whc.Responder().SendMessage(c, updateMessage, botsfw.BotAPISendMessageOverHTTPS)
 		//	if err != nil {
-		//		log.Errorf(c, "Failed to update counterparty receipt message: %v", err)
+		//		logus.Errorf(c, "Failed to update counterparty receipt message: %v", err)
 		//	}
 		//}
 		return m, err

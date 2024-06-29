@@ -12,7 +12,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/delaying"
 	"github.com/strongo/i18n"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"strings"
 )
 
@@ -23,19 +23,19 @@ func delayUpdateBillCardOnUserJoin(c context.Context, billID string, message str
 		billID,
 		message,
 	); err != nil {
-		log.Errorf(c, "Failed to queue update of bill cards: %v", err)
+		logus.Errorf(c, "Failed to queue update of bill cards: %v", err)
 	}
 	return nil
 }
 
 func delayedUpdateBillCards(c context.Context, billID string, footer string) error {
-	log.Debugf(c, "delayedUpdateBillCards(billID=%d)", billID)
+	logus.Debugf(c, "delayedUpdateBillCards(billID=%s)", billID)
 	if bill, err := facade.GetBillByID(c, nil, billID); err != nil {
 		return err
 	} else {
 		for _, tgChatMessageID := range bill.Data.TgChatMessageIDs {
 			if err = delayUpdateBillTgChatCard.EnqueueWork(c, delaying.With(common.QUEUE_BILLS, "update-bill-tg-chat-card", 0), billID, tgChatMessageID, footer); err != nil {
-				log.Errorf(c, "Failed to queue updated for %v: %v", tgChatMessageID, err)
+				logus.Errorf(c, "Failed to queue updated for %v: %v", tgChatMessageID, err)
 				return err
 			}
 		}
@@ -44,7 +44,7 @@ func delayedUpdateBillCards(c context.Context, billID string, footer string) err
 }
 
 func delayedUpdateBillTgChartCard(c context.Context, billID string, tgChatMessageID, footer string) error {
-	log.Debugf(c, "delayedUpdateBillTgChartCard(billID=%d, tgChatMessageID=%v)", billID, tgChatMessageID)
+	logus.Debugf(c, "delayedUpdateBillTgChartCard(billID=%s, tgChatMessageID=%v)", billID, tgChatMessageID)
 	if bill, err := facade.GetBillByID(c, nil, billID); err != nil {
 		return err
 	} else {
@@ -62,13 +62,13 @@ func delayedUpdateBillTgChartCard(c context.Context, billID string, tgChatMessag
 			telegramBots := tgbots.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil), nil)
 			botSettings, ok := telegramBots.ByCode[botCode]
 			if !ok {
-				log.Errorf(c, "No bot settings for bot: "+botCode)
+				logus.Errorf(c, "No bot settings for bot: "+botCode)
 				return nil
 			}
 
 			tgApi := tgbotapi.NewBotAPIWithClient(botSettings.Token, dtdal.HttpClient(c))
 			if _, err := tgApi.Send(editMessage); err != nil {
-				log.Errorf(c, "Failed to sent message to Telegram: %v", err)
+				logus.Errorf(c, "Failed to sent message to Telegram: %v", err)
 				return err
 			}
 		}

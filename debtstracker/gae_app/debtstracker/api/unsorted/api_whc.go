@@ -3,7 +3,7 @@ package unsorted
 import (
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"net/http"
 
 	"github.com/bots-go-framework/bots-fw-telegram"
@@ -44,7 +44,7 @@ func NewApiWebhookContext(r *http.Request, appUser *models.DebutsAppUserDataOBSO
 		nil, // GaMeasurement
 	)
 	if err != nil {
-		log.Errorf(r.Context(), "failed to create WebhookContextBase: %v", err)
+		logus.Errorf(r.Context(), "failed to create WebhookContextBase: %v", err)
 	}
 	whc := ApiWebhookContext{
 		appUser:            appUser,
@@ -54,7 +54,7 @@ func NewApiWebhookContext(r *http.Request, appUser *models.DebutsAppUserDataOBSO
 		WebhookContextBase: whcb,
 	}
 	if err := whc.SetLocale(chatData.GetPreferredLanguage()); err != nil {
-		log.Errorf(r.Context(), "failed to set locale: %v", err)
+		logus.Errorf(r.Context(), "failed to set locale: %v", err)
 	}
 	return whc
 }

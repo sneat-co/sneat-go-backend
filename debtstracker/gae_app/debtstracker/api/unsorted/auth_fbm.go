@@ -2,15 +2,15 @@ package unsorted
 
 import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
+	"github.com/strongo/logus"
 	"net/http"
 
 	"context"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
-	"github.com/strongo/log"
 )
 
 func HandleSignInWithFbm(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
-	log.Debugf(c, "api.HandleSignInWithFbm()")
+	logus.Debugf(c, "api.HandleSignInWithFbm()")
 
 	threadID := r.PostFormValue("tid")
 	threadType := r.PostFormValue("thread_type")
@@ -35,7 +35,7 @@ func HandleSignInWithFbm(c context.Context, w http.ResponseWriter, r *http.Reque
 	}
 
 	// TODO: Log FbApp Code & FbPage Code (e.g. fbAppID=12345 => code=DebtsTracker)
-	log.Debugf(c, "FbmContext: thread_type=%v, tid=%v, psid=%v", threadType, threadID, pageScopedID)
+	logus.Debugf(c, "FbmContext: thread_type=%v, tid=%v, psid=%v", threadType, threadID, pageScopedID)
 
 	user, isNewUser, _, _, _, err := signInFbUser(c, fbAppID, pageScopedID, r, authInfo)
 	if err != nil {

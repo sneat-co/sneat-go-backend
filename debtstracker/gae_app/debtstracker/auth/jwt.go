@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"google.golang.org/appengine/v2"
 	"net/http"
 	"strings"
@@ -96,12 +96,12 @@ func Authenticate(w http.ResponseWriter, r *http.Request, required bool) (authIn
 		s = SECRET_PREFIX + s
 	}
 
-	log.Debugf(appengine.NewContext(r), "JWT token: [%v]", s)
+	logus.Debugf(appengine.NewContext(r), "JWT token: [%v]", s)
 
 	if token, err = jwt.Parse(s, func(token *jwt.Token) (interface{}, error) {
 		return nil, nil
 	}); err != nil {
-		log.Debugf(c, "Tried to parse: [%v]", s)
+		logus.Debugf(c, "Tried to parse: [%v]", s)
 		return
 	}
 

@@ -12,7 +12,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/decimal"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"strings"
 )
 
@@ -114,7 +114,7 @@ var ParseTransferCommand = botsfw.Command{
 		//transferKey, err = nds.Put(ctx, transferKey, transfer)
 
 		if err != nil {
-			log.Errorf(c, "Failed to save transfer & counterparty to datastore: %v", err)
+			logus.Errorf(c, "Failed to save transfer & counterparty to datastore: %v", err)
 			return m, err
 		}
 

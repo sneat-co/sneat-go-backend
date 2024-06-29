@@ -3,12 +3,12 @@ package facade
 import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/strongo/logus"
 
 	"context"
 	"errors"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 type usersLinker struct {
@@ -43,7 +43,7 @@ func (linker usersLinker) linkUsersWithinTransaction(
 		changes.invitedContact = invitedContact
 	}
 
-	log.Debugf(tc, "usersLinker.linkUsersWithinTransaction(inviterUser.ID=%d, invitedUser.ID=%d, inviterContact=%d, inviterContact.UserID=%v)", inviterUser.ID, invitedUser.ID, inviterContact.ID, inviterContact.Data.UserID)
+	logus.Debugf(tc, "usersLinker.linkUsersWithinTransaction(inviterUser.ID=%s, invitedUser.ID=%s, inviterContact=%s, inviterContact.UserID=%s)", inviterUser.ID, invitedUser.ID, inviterContact.ID, inviterContact.Data.UserID)
 
 	// First of all lets validate input
 	if err = linker.validateInput(inviterUser, invitedUser, inviterContact); err != nil {
@@ -72,7 +72,7 @@ func (linker usersLinker) linkUsersWithinTransaction(
 			return fmt.Errorf("invitedContact.UserID != invitedUser.ID: %v != %v", invitedContact.Data.UserID, invitedUser.ID)
 		}
 
-		log.Debugf(tc, "getOrCreateInvitedContactByInviterUserAndInviterContact() => invitedContact.ID: %v", invitedContact.ID)
+		logus.Debugf(tc, "getOrCreateInvitedContactByInviterUserAndInviterContact() => invitedContact.ID: %v", invitedContact.ID)
 
 		if err = linker.updateInvitedUser(tc, *invitedUser, inviterUser.ID, *inviterContact); err != nil {
 			return
@@ -140,7 +140,7 @@ func (linker usersLinker) getOrCreateInvitedContactByInviterUserAndInviterContac
 ) (err error) {
 	inviterUser, invitedUser := *changes.inviterUser, *changes.invitedUser
 	inviterContact := *changes.inviterContact
-	log.Debugf(tc, "getOrCreateInvitedContactByInviterUserAndInviterContact()\n\tinviterContact.ID: %v", inviterContact.ID)
+	logus.Debugf(tc, "getOrCreateInvitedContactByInviterUserAndInviterContact()\n\tinviterContact.ID: %v", inviterContact.ID)
 	if inviterUser.ID == invitedUser.ID {
 		panic(fmt.Sprintf("inviterUser.ID == invitedUser.ID: %v", inviterUser.ID))
 	}
@@ -180,7 +180,7 @@ func (linker usersLinker) getOrCreateInvitedContactByInviterUserAndInviterContac
 	}
 
 	if invitedContact.ID == "" {
-		log.Debugf(tc, "getOrCreateInvitedContactByInviterUserAndInviterContact(): creating new contact for invited user")
+		logus.Debugf(tc, "getOrCreateInvitedContactByInviterUserAndInviterContact(): creating new contact for invited user")
 		invitedContactDetails := models.ContactDetails{
 			FirstName:  inviterUser.Data.FirstName,
 			LastName:   inviterUser.Data.LastName,
@@ -205,7 +205,7 @@ func (linker usersLinker) getOrCreateInvitedContactByInviterUserAndInviterContac
 			linker.changes.FlagAsChanged(invitedUser.Record)
 		}
 	} else {
-		log.Debugf(tc, "getOrCreateInvitedContactByInviterUserAndInviterContact(): linking existing contact: %v", invitedContact)
+		logus.Debugf(tc, "getOrCreateInvitedContactByInviterUserAndInviterContact(): linking existing contact: %v", invitedContact)
 		// TODO: How do we merge existing contacts?
 		invitedContact.Data.CountOfTransfers = inviterContact.Data.CountOfTransfers
 		invitedContact.Data.LastTransferID = inviterContact.Data.LastTransferID
@@ -223,7 +223,7 @@ func (linker usersLinker) updateInvitedUser(c context.Context,
 	invitedUser models.AppUser,
 	inviterUserID string, inviterContact models.ContactEntry,
 ) (err error) {
-	log.Debugf(c, "usersLinker.updateInvitedUser()")
+	logus.Debugf(c, "usersLinker.updateInvitedUser()")
 	var invitedUserChanged bool
 
 	if invitedUser.Data.InvitedByUserID == "" {
@@ -252,7 +252,7 @@ func (linker usersLinker) updateInviterContact(
 ) (
 	isJustConnected bool, err error,
 ) {
-	log.Debugf(tc, "usersLinker.updateInviterContact(), inviterContact.CounterpartyUserID: %d, inviterContact.CountOfTransfers: %d", inviterContact.Data.CounterpartyUserID, inviterContact.Data.CountOfTransfers)
+	logus.Debugf(tc, "usersLinker.updateInviterContact(), inviterContact.CounterpartyUserID: %s, inviterContact.CountOfTransfers: %d", inviterContact.Data.CounterpartyUserID, inviterContact.Data.CountOfTransfers)
 	// validate input
 	{
 		if inviterUser.ID == "" {
@@ -299,7 +299,7 @@ func (linker usersLinker) updateInviterContact(
 	}
 	switch inviterContact.Data.CounterpartyUserID {
 	case "":
-		log.Debugf(tc, "Updating inviterUser.ContactEntry* fields...")
+		logus.Debugf(tc, "Updating inviterUser.ContactEntry* fields...")
 		isJustConnected = true
 		inviterContactChanged = true
 		inviterContact.Data.CounterpartyUserID = invitedUser.ID
@@ -339,10 +339,10 @@ func (linker usersLinker) updateInviterContact(
 				return
 			}
 		} else {
-			log.Debugf(tc, "No need to update transfers of inviter as inviterContact.CountOfTransfers == 0")
+			logus.Debugf(tc, "No need to update transfers of inviter as inviterContact.CountOfTransfers == 0")
 		}
 	case invitedUser.ID:
-		log.Infof(tc, "inviterContact.CounterpartyUserID is already set, updateInviterContact() did nothing")
+		logus.Infof(tc, "inviterContact.CounterpartyUserID is already set, updateInviterContact() did nothing")
 	default:
 		err = fmt.Errorf("inviterContact.CounterpartyUserID is different from current user. inviterContact.CounterpartyUserID: %v, currentUserID: %v", inviterContact.Data.CounterpartyUserID, invitedUser.ID)
 		return

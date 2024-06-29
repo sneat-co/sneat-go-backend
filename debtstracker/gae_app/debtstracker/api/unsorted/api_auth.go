@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
+	"github.com/strongo/logus"
 	"github.com/strongo/strongoapp"
 	"io"
 	"net/http"
@@ -15,7 +16,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 type AuthHandler func(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo)
@@ -27,7 +27,7 @@ func AuthOnly(handler AuthHandler) strongoapp.HttpHandlerWithContext {
 		if authInfo, _, err := auth.Authenticate(w, r, true); err == nil {
 			handler(c, w, r, authInfo)
 		} else {
-			log.Warningf(c, "Failed to authenticate: %v", err)
+			logus.Warningf(c, "Failed to authenticate: %v", err)
 		}
 	}
 }
@@ -37,7 +37,7 @@ func AuthOnlyWithUser(handler AuthHandlerWithUser) strongoapp.HttpHandlerWithCon
 		var userID string
 
 		if userID = getUserID(c, w, r, authInfo); userID == "" {
-			log.Warningf(c, "userID is empty")
+			logus.Warningf(c, "userID is empty")
 			return
 		}
 
@@ -54,9 +54,9 @@ func OptionalAuth(handler AuthHandler) strongoapp.HttpHandlerWithContext {
 	return func(c context.Context, w http.ResponseWriter, r *http.Request) {
 		authInfo, _, _ := auth.Authenticate(w, r, false)
 		if authInfo.UserID == "" {
-			log.Debugf(c, "OptionalAuth(), anonymous")
+			logus.Debugf(c, "OptionalAuth(), anonymous")
 		} else {
-			log.Debugf(c, "OptionalAuth(), userID=%d", authInfo.UserID)
+			logus.Debugf(c, "OptionalAuth(), userID=%s", authInfo.UserID)
 		}
 		handler(c, w, r, authInfo)
 	}
@@ -66,13 +66,13 @@ func AdminOnly(handler AuthHandler) strongoapp.HttpHandlerWithContext {
 	return func(c context.Context, w http.ResponseWriter, r *http.Request) {
 		if authInfo, _, err := auth.Authenticate(w, r, true); err == nil {
 			if !authInfo.IsAdmin {
-				log.Debugf(c, "Not admin!")
+				logus.Debugf(c, "Not admin!")
 				//hashedWriter.WriteHeader(http.StatusForbidden)
 				//return
 			}
 			handler(c, w, r, authInfo)
 		} else {
-			log.Errorf(c, "Failed to authenticate: %v", err)
+			logus.Errorf(c, "Failed to authenticate: %v", err)
 		}
 	}
 }
@@ -114,9 +114,9 @@ func HandleAuthLoginId(c context.Context, w http.ResponseWriter, r *http.Request
 
 	returnLoginID := func(loginID int) {
 		encoded := common.EncodeIntID(loginID)
-		log.Infof(c, "Login ID: %s, Encoded: %s", loginID, encoded)
+		logus.Infof(c, "Login ID: %d, Encoded: %s", loginID, encoded)
 		if _, err = w.Write([]byte(encoded)); err != nil {
-			log.Criticalf(c, "Failed to write login ID to response: %v", err)
+			logus.Criticalf(c, "Failed to write login ID to response: %v", err)
 		}
 	}
 

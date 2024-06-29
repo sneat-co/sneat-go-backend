@@ -11,7 +11,7 @@ var serve = func(handler http.Handler) {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "4300"
-		//log.Printf("Defaulting to port %s", port)
+		//logus.Printf("Defaulting to port %s", port)
 	}
 	// [END setting_port]
 

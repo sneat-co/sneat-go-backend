@@ -2,6 +2,7 @@ package website
 
 import (
 	"github.com/dal-go/dalgo/dal"
+	"github.com/strongo/logus"
 	"google.golang.org/appengine/v2"
 	"net/http"
 	"strings"
@@ -10,7 +11,6 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
-	"github.com/strongo/log"
 )
 
 func LoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -20,18 +20,18 @@ func LoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	userID := q.Get("user")
 	if userID == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		log.Infof(c, "Invalid user parameter")
+		logus.Infof(c, "Invalid user parameter")
 		return
 	}
 	secret := q.Get("secret")
 	secretItems := strings.Split(secret, ":")
 	expirySecStr := secretItems[0]
-	log.Infof(c, "expirySeconds: %v; secret: %v", expirySecStr, secret)
+	logus.Infof(c, "expirySeconds: %v; secret: %v", expirySecStr, secret)
 	expirySeconds, err := common.DecodeID(expirySecStr)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		log.Infof(c, "Failed to decode expiry bytes to seconds")
+		logus.Infof(c, "Failed to decode expiry bytes to seconds")
 		return
 	}
 
@@ -40,13 +40,13 @@ func LoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	expectedSecret := common.SignStrWithExpiry(c, userID, expiresAt)
 	if secret != expectedSecret {
 		w.WriteHeader(http.StatusUnauthorized)
-		log.Infof(c, "Invalid secret")
+		logus.Infof(c, "Invalid secret")
 		return
 	}
 
 	if expiresAt.Before(time.Now()) {
 		w.WriteHeader(http.StatusUnauthorized)
-		log.Infof(c, "expiresAt.Before(time.Now())")
+		logus.Infof(c, "expiresAt.Before(time.Now())")
 		_, _ = w.Write([]byte("<html><body style=font-size:xx-large>Your secret has expired. Please generate a new link</body></html>"))
 		return
 	}
@@ -54,29 +54,29 @@ func LoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	if _user, err := facade.User.GetUserByID(c, nil, userID); err != nil {
 		if dal.IsNotFound(err) {
 			w.WriteHeader(http.StatusNotFound)
-			log.Infof(c, err.Error())
+			logus.Infof(c, err.Error())
 		} else {
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Errorf(c, err.Error())
+			logus.Errorf(c, err.Error())
 		}
 		return
 	} else {
 		if _user.Data.EmailAddress != "" {
-			log.Infof(c, "_user.EmailAddress: %v", _user.Data.EmailAddress)
+			logus.Infof(c, "_user.EmailAddress: %v", _user.Data.EmailAddress)
 		} else {
 			panic("disabled: switch to Firestore authentication") // TODO: switch to Firestore authentication
 			//gaeUser := gaeuser.Current(c)
 			//if gaeUser == nil {
-			//	log.Infof(c, "appengine.user.Current(): nil")
+			//	logus.Infof(c, "appengine.user.Current(): nil")
 			//} else {
 			//	if gaeUser.Email == "" {
-			//		log.Infof(c, "gaeUser.Email is empty")
+			//		logus.Infof(c, "gaeUser.Email is empty")
 			//	} else {
-			//		log.Infof(c, "gaeUser.Email: %v", gaeUser.Email)
+			//		logus.Infof(c, "gaeUser.Email: %v", gaeUser.Email)
 			//		var db dal.DB
 			//		if db, err = facade.GetDatabase(c); err != nil {
 			//			w.WriteHeader(http.StatusInternalServerError)
-			//			log.Errorf(c, err.Error())
+			//			logus.Errorf(c, err.Error())
 			//			return
 			//		}
 			//		err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
@@ -94,7 +94,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			//		}, nil)
 			//		if err != nil {
 			//			w.WriteHeader(http.StatusInternalServerError)
-			//			log.Errorf(c, err.Error())
+			//			logus.Errorf(c, err.Error())
 			//		}
 			//	}
 			//}
@@ -106,7 +106,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	//session.SetUserID(userID, w)
 	//if err = session.Save(r, w); err != nil {
 	//	w.WriteHeader(http.StatusInternalServerError)
-	//	log.Errorf(c, err.Error())
+	//	logus.Errorf(c, err.Error())
 	//	return
 	//}
 

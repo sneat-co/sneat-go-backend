@@ -8,7 +8,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/general"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"github.com/strongo/strongoapp"
 	"strconv"
 	"strings"
@@ -44,7 +44,7 @@ func (InviteDalGae) ClaimInvite(c context.Context, userID string, inviteCode, cl
 		if err = tx.Get(tc, invite.Record); err != nil {
 			return err
 		}
-		log.Debugf(c, "Invite found")
+		logus.Debugf(c, "Invite found")
 		// TODO: Check invite.For
 		//invite.ClaimedCount += 1
 		inviteClaim := models.NewInviteClaimWithoutID(models.NewInviteClaimData(inviteCode, userID, claimedOn, claimedVia))
@@ -61,7 +61,7 @@ func (InviteDalGae) ClaimInvite(c context.Context, userID string, inviteCode, cl
 			return fmt.Errorf("failed to save user: %w", err)
 		}
 		inviteClaimID := inviteClaim.Key.ID.(int64)
-		log.Debugf(c, "inviteClaimKey.IntegerID(): %v", inviteClaimID)
+		logus.Debugf(c, "inviteClaimKey.IntegerID(): %v", inviteClaimID)
 		return DelayUpdateInviteClaimedCount(tc, inviteClaimID)
 	})
 	return
@@ -143,19 +143,19 @@ func createInvite(ec strongoapp.ExecutionContext, inviteType models.InviteType, 
 				existingInvite := models.NewInvite(inviteCode, nil)
 
 				if err := tx.Get(c, existingInvite.Record); dal.IsNotFound(err) {
-					//log.Debugf(c, "New invite code: %v", inviteCode)
+					//logus.Debugf(c, "New invite code: %v", inviteCode)
 					break
 				} else {
-					log.Warningf(c, "Already existing invite code: %v", inviteCode)
+					logus.Warningf(c, "Already existing invite code: %v", inviteCode)
 				}
 			}
 		}
 		return tx.Set(c, invite.Record)
 	}, nil)
 	if err == nil {
-		log.Infof(c, "Invite created with code: %v", inviteCode)
+		logus.Infof(c, "Invite created with code: %v", inviteCode)
 	} else {
-		log.Errorf(c, "Failed to create invite with code: %v", err)
+		logus.Errorf(c, "Failed to create invite with code: %v", err)
 	}
 	return
 }

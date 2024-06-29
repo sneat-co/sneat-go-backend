@@ -18,7 +18,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/decimal"
 	"github.com/strongo/i18n"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"net/url"
 	"strings"
 	"time"
@@ -56,7 +56,7 @@ var joinBillCommand = botsfw.Command{
 		//
 		return shared_all.TransactionalCallbackAction(billCallbackAction(func(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, callbackUrl *url.URL, bill models.Bill) (m botsfw.MessageFromBot, err error) {
 			c := whc.Context()
-			log.Debugf(c, "joinBillCommand.CallbackAction()")
+			logus.Debugf(c, "joinBillCommand.CallbackAction()")
 			memberStatus := callbackUrl.Query().Get("i")
 			m, err = joinBillAction(whc, tx, bill, memberStatus, true)
 			return
@@ -70,7 +70,7 @@ func joinBillAction(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, bill
 		panic("bill.ID is empty string")
 	}
 	c := whc.Context()
-	log.Debugf(c, "joinBillAction(bill.ID=%v)", bill.ID)
+	logus.Debugf(c, "joinBillAction(bill.ID=%v)", bill.ID)
 
 	userID := whc.AppUserID()
 	var appUserData botsfwmodels.AppUserData
@@ -109,7 +109,7 @@ func joinBillAction(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, bill
 	}
 
 	if memberStatus == "" && isMember {
-		log.Infof(c, "User is already member of the bill before transaction, memberStatus: "+memberStatus)
+		logus.Infof(c, "User is already member of the bill before transaction, memberStatus: "+memberStatus)
 		callbackAnswer := tgbotapi.NewCallback("", whc.Translate(trans.MESSAGE_TEXT_ALREADY_BILL_MEMBER, userName))
 		callbackAnswer.ShowAlert = true
 		m.BotMessage = telegram.CallbackAnswer(callbackAnswer)
@@ -118,12 +118,12 @@ func joinBillAction(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, bill
 			if m2, err := ShowBillCard(whc, true, bill, ""); err != nil {
 				return m2, err
 			} else if m2.Text != update.CallbackQuery.Message.Text {
-				log.Debugf(c, "Need to update bill card")
+				logus.Debugf(c, "Need to update bill card")
 				if _, err = whc.Responder().SendMessage(c, m2, botsfw.BotAPISendMessageOverHTTPS); err != nil {
 					return m2, err
 				}
 			} else {
-				log.Debugf(c, "m.Text: %v", m2.Text)
+				logus.Debugf(c, "m.Text: %v", m2.Text)
 			}
 		}
 		return
@@ -192,7 +192,7 @@ func joinBillAction(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, bill
 		}
 		if isJoined {
 			if err = delayUpdateBillCardOnUserJoin(c, bill.ID, whc.Translate(fmt.Sprintf("%v: ", time.Now())+trans.MESSAGE_TEXT_USER_JOINED_BILL, userName)); err != nil {
-				log.Errorf(c, "failed to daley update bill card on user join: %v", err)
+				logus.Errorf(c, "failed to daley update bill card on user join: %v", err)
 			}
 		}
 	}

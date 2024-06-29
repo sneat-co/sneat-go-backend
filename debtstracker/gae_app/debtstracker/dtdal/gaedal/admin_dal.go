@@ -37,18 +37,18 @@ func (AdminDalGae) DeleteAll(c context.Context, botCode, botChatID string) error
 	//allErrors := make(chan error, tasksCount)
 	//
 	//deleteAllEntitiesByKind := func(kind string, completion chan string) {
-	//	log.Debugf(c, "Deleting: %v...", kind)
+	//	logus.Debugf(c, "Deleting: %v...", kind)
 	//	if keys, err := datastore.NewQuery(kind).KeysOnly().GetAll(c, nil); err != nil {
 	//		allErrors <- err
-	//		log.Errorf(c, "Failed to load %v entities: %v", kind, err)
+	//		logus.Errorf(c, "Failed to load %v entities: %v", kind, err)
 	//	} else if len(keys) > 0 {
-	//		log.Debugf(c, "Loaded %v key(s) of %v kind: %v", len(keys), kind, keys)
+	//		logus.Debugf(c, "Loaded %v key(s) of %v kind: %v", len(keys), kind, keys)
 	//		if err := gaedb.DeleteMulti(c, keys); err != nil {
-	//			log.Errorf(c, "Failed to delete %v entities of %v kind: %v", len(keys), kind, err)
+	//			logus.Errorf(c, "Failed to delete %v entities of %v kind: %v", len(keys), kind, err)
 	//			allErrors <- err
 	//		}
 	//	} else {
-	//		log.Debugf(c, "Noting to delete for: %v", kind)
+	//		logus.Debugf(c, "Noting to delete for: %v", kind)
 	//	}
 	//	completion <- kind
 	//}
@@ -90,7 +90,7 @@ func (AdminDalGae) DeleteAll(c context.Context, botCode, botChatID string) error
 	//}
 	//
 	//for i := 0; i < len(kindsToDelete); i++ {
-	//	log.Debugf(c, "%v - deleted: %v", i, <-await)
+	//	logus.Debugf(c, "%v - deleted: %v", i, <-await)
 	//}
 	//
 	//close(allErrors)
@@ -101,7 +101,7 @@ func (AdminDalGae) DeleteAll(c context.Context, botCode, botChatID string) error
 	//}
 	//
 	//if err := memcache.Flush(c); err != nil {
-	//	log.Errorf(c, "Failed to flush memcache: %v", err)
+	//	logus.Errorf(c, "Failed to flush memcache: %v", err)
 	//	// Do not return
 	//}
 	//
@@ -126,16 +126,16 @@ func (AdminDalGae) DeleteAll(c context.Context, botCode, botChatID string) error
 }
 
 //var delayTgChatDeletion = delaying.MustRegisterFunc("delete-%v", func(c context.Context, id string) error {
-//	log.Debugf(c, "delayTgChatDeletion(id=%v)", id)
+//	logus.Debugf(c, "delayTgChatDeletion(id=%v)", id)
 //	panic("not implemented")
 //	key := gaedb.NewKey(c, telegram.ChatKind, id, 0, nil)
 //	if err := gaedb.Delete(c, key); err != nil {
-//		log.Errorf(c, "Failed to delete %v: %v", key, err)
+//		logus.Errorf(c, "Failed to delete %v: %v", key, err)
 //		return err
 //	}
 //	if err := memcache.Flush(c); err != nil {
-//		log.Errorf(c, "Failed to clear memcache: %v", err)
+//		logus.Errorf(c, "Failed to clear memcache: %v", err)
 //	}
-//	log.Infof(c, "%v deleted", key)
+//	logus.Infof(c, "%v deleted", key)
 //	return nil
 //})

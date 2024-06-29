@@ -2,18 +2,18 @@ package pages
 
 import (
 	"fmt"
+	"github.com/strongo/logus"
 	"google.golang.org/appengine/v2"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
-	"github.com/strongo/log"
 	"golang.org/x/net/html"
 )
 
 func CounterpartyPage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	c := appengine.NewContext(r)
-	log.Infof(c, "CounterpartyPage: %v", r.Method)
+	logus.Infof(c, "CounterpartyPage: %v", r.Method)
 	counterpartyID := r.URL.Query().Get("id")
 	if counterpartyID == "" {
 		w.WriteHeader(404)

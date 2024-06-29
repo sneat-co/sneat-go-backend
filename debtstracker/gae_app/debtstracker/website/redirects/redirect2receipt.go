@@ -3,6 +3,7 @@ package redirects
 import (
 	"fmt"
 	"github.com/strongo/i18n"
+	"github.com/strongo/logus"
 	"google.golang.org/appengine/v2"
 	"html/template"
 	"net/http"
@@ -12,7 +13,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/website/pages"
-	"github.com/strongo/log"
 	"google.golang.org/appengine/v2/datastore"
 )
 
@@ -32,17 +32,17 @@ func ReceiptRedirect(w http.ResponseWriter, r *http.Request, _ httprouter.Params
 		return
 	}
 	var err error
-	log.Debugf(c, "Receipt ID: %v", receiptID)
+	logus.Debugf(c, "Receipt ID: %v", receiptID)
 	_, err = dtdal.Receipt.GetReceiptByID(c, nil, receiptID)
 	switch err {
 	case nil: //pass
 	case datastore.ErrNoSuchEntity:
-		log.Debugf(c, "Receipt not found by ID")
+		logus.Debugf(c, "Receipt not found by ID")
 		http.NotFound(w, r)
 		return
 	default:
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Errorf(c, err.Error())
+		logus.Errorf(c, err.Error())
 		_, _ = w.Write([]byte(err.Error()))
 		return
 	}

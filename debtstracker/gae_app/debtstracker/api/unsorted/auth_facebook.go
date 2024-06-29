@@ -2,15 +2,15 @@ package unsorted
 
 import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
+	"github.com/strongo/logus"
 	"net/http"
 
 	"context"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
-	"github.com/strongo/log"
 )
 
 func HandleSignedWithFacebook(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
-	log.Debugf(c, "api.HandleSignedWithFacebook()")
+	logus.Debugf(c, "api.HandleSignedWithFacebook()")
 	fbUserID := r.PostFormValue("fbUserID")
 	fbAppID := r.PostFormValue("fbAppID")
 	if fbUserID == "" {

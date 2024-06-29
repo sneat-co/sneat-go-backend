@@ -3,13 +3,13 @@ package facade
 import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/strongo/logus"
 	"time"
 
 	"context"
 	"errors"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 	"github.com/strongo/slices"
 )
 
@@ -27,7 +27,7 @@ func NewReceiptUsersLinker(changes *receiptDbChanges) *ReceiptUsersLinker {
 }
 
 func (linker *ReceiptUsersLinker) LinkReceiptUsers(c context.Context, receiptID, invitedUserID string) (isJustLinked bool, err error) {
-	log.Debugf(c, "ReceiptUsersLinker.LinkReceiptUsers(receiptID=%v, invitedUserID=%v)", receiptID, invitedUserID)
+	logus.Debugf(c, "ReceiptUsersLinker.LinkReceiptUsers(receiptID=%v, invitedUserID=%v)", receiptID, invitedUserID)
 	var db dal.DB
 	if db, err = GetDatabase(c); err != nil {
 		return false, err
@@ -36,7 +36,7 @@ func (linker *ReceiptUsersLinker) LinkReceiptUsers(c context.Context, receiptID,
 		// TODO: Instead pass user as a parameter? Even better if the user entity was created within following transaction.
 		return isJustLinked, err
 	} else if invitedUser.Data.DtCreated.After(time.Now().Add(-time.Second / 2)) {
-		log.Debugf(c, "A new user, will wait for half a seconds to cleanup previous transaction")
+		logus.Debugf(c, "A new user, will wait for half a seconds to cleanup previous transaction")
 		time.Sleep(time.Second / 2)
 	}
 	var invitedContact models.ContactEntry
@@ -44,7 +44,7 @@ func (linker *ReceiptUsersLinker) LinkReceiptUsers(c context.Context, receiptID,
 	err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
 		if attempt += 1; attempt > 1 {
 			sleepPeriod := time.Duration(attempt) * time.Second
-			log.Warningf(c, "Transaction retry will sleep for %v, invitedContact.ID: %v", attempt, invitedContact.ID)
+			logus.Warningf(c, "Transaction retry will sleep for %v, invitedContact.ID: %v", attempt, invitedContact.ID)
 			time.Sleep(sleepPeriod)
 		}
 		changes := linker.changes
@@ -83,18 +83,18 @@ func (linker *ReceiptUsersLinker) LinkReceiptUsers(c context.Context, receiptID,
 				return
 			}
 		} else {
-			log.Debugf(c, "Receipt and transfer has not changed")
+			logus.Debugf(c, "Receipt and transfer has not changed")
 		}
 		return
 	}, dal.TxWithCrossGroup())
 	if err != nil {
 		return
 	}
-	log.Debugf(c, "ReceiptUsersLinker.LinkReceiptUsers() => invitedContact: %+v", invitedContact)
+	logus.Debugf(c, "ReceiptUsersLinker.LinkReceiptUsers() => invitedContact: %+v", invitedContact)
 	if invitedContact, err = GetContactByID(c, nil, invitedContact.ID); err != nil {
 		return
 	}
-	log.Debugf(c, "ReceiptUsersLinker.LinkReceiptUsers() => invitedContact from DB: %+v", invitedContact)
+	logus.Debugf(c, "ReceiptUsersLinker.LinkReceiptUsers() => invitedContact from DB: %+v", invitedContact)
 	return
 }
 
@@ -118,8 +118,8 @@ func (linker *ReceiptUsersLinker) linkUsersByReceiptWithinTransaction(
 		invitedContact = *changes.invitedContact
 	}
 
-	log.Debugf(c,
-		"ReceiptUsersLinker.linkUsersByReceiptWithinTransaction(receipt.ID=%d, transfer.ID=%d, inviterUser.ID=%d, invitedUser.ID=%d, inviterContact.ID=%v, invitedContact.ID=%v)",
+	logus.Debugf(c,
+		"ReceiptUsersLinker.linkUsersByReceiptWithinTransaction(receipt.ID=%s, transfer.ID=%s, inviterUser.ID=%s, invitedUser.ID=%s, inviterContact.ID=%s, invitedContact.ID=%s)",
 		receipt.ID, transfer.ID, inviterUser.ID, invitedUser.ID, inviterContact.ID, invitedContact.ID)
 
 	{ // validate inputs
@@ -140,9 +140,9 @@ func (linker *ReceiptUsersLinker) linkUsersByReceiptWithinTransaction(
 
 	fromOriginal := *transfer.Data.From()
 	toOriginal := *transfer.Data.To()
-	//log.Debugf(c, "transferEntity: %v", transfer.Data)
-	//log.Debugf(c, "transfer.From(): %v", fromOriginal)
-	//log.Debugf(c, "transfer.To(): %v",toOriginal)
+	//logus.Debugf(c, "transferEntity: %v", transfer.Data)
+	//logus.Debugf(c, "transfer.From(): %v", fromOriginal)
+	//logus.Debugf(c, "transfer.To(): %v",toOriginal)
 
 	transferCreatorCounterparty := transfer.Data.Counterparty()
 
@@ -167,7 +167,7 @@ func (linker *ReceiptUsersLinker) linkUsersByReceiptWithinTransaction(
 		}
 	}
 
-	log.Debugf(c, "linkUsersWithinTransaction() => invitedContact.ID: %v, inviterContact.ID: %v", invitedContact.ID, inviterContact.ID)
+	logus.Debugf(c, "linkUsersWithinTransaction() => invitedContact.ID: %v, inviterContact.ID: %v", invitedContact.ID, inviterContact.ID)
 
 	// Update entities
 	{
@@ -176,7 +176,7 @@ func (linker *ReceiptUsersLinker) linkUsersByReceiptWithinTransaction(
 		} else if err = linker.updateTransfer(); err != nil {
 			return
 		} else if linker.changes.IsChanged(linker.changes.transfer.Record) {
-			log.Debugf(c, "transfer changed:\n\tFrom(): %v\n\tTo(): %v", transfer.Data.From(), transfer.Data.To())
+			logus.Debugf(c, "transfer changed:\n\tFrom(): %v\n\tTo(): %v", transfer.Data.From(), transfer.Data.To())
 			// Just double check we did not screw up
 			{
 				if fromOriginal.UserID != "" && fromOriginal.UserID != transfer.Data.From().UserID {
@@ -206,9 +206,9 @@ func (linker *ReceiptUsersLinker) linkUsersByReceiptWithinTransaction(
 		}
 	} else {
 		if transfer.Data.DtDueOn.IsZero() {
-			log.Debugf(tc, "No need to create reminder for counterparty as no due date")
+			logus.Debugf(tc, "No need to create reminder for counterparty as no due date")
 		} else {
-			log.Debugf(tc, "No need to create reminder for counterparty as due date in past")
+			logus.Debugf(tc, "No need to create reminder for counterparty as due date in past")
 		}
 	}
 	return

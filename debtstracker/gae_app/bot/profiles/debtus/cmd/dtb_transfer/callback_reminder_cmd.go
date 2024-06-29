@@ -10,7 +10,8 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/debtus/dtb_common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
+
 	//"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/platforms/telegram"
 	//"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	//apphostgae "github.com/strongo/app-host-gae"
@@ -45,7 +46,7 @@ var RemindAgainCallbackCommand = botsfw.NewCallbackCommand(dtb_common.CALLBACK_R
 				if remindInDays, err := strconv.Atoi(remindIn[0 : len(remindIn)-1]); err == nil {
 					remindIn = fmt.Sprintf("%vh", remindInDays*24)
 				} else {
-					log.Errorf(whc.Context(), fmt.Errorf("failed to parse duration days: %w", err).Error())
+					logus.Errorf(whc.Context(), fmt.Errorf("failed to parse duration days: %w", err).Error())
 				}
 			}
 			if remindInDuration, err = time.ParseDuration(remindIn); err != nil {
@@ -109,11 +110,11 @@ func rescheduleReminder(whc botsfw.WebhookContext, reminderID string, remindInDu
 	//	chatID := whc.MustBotChatID()
 	//	intChatID, err := strconv.ParseInt(chatID, 10, 64)
 	//	if err != nil {
-	//		log.Errorf(c, "Failed to parse BotChatID to int: %v\nwhc.BotChatID(): %v", err, chatID)
+	//		logus.Errorf(c, "Failed to parse BotChatID to int: %v\nwhc.BotChatID(): %v", err, chatID)
 	//		return
 	//	}
 	//	if err = delayAskForFeedback(c, whc.GetBotCode(), intChatID, whc.AppUserID()); err != nil {
-	//		log.Errorf(c, "Failed to create task for asking feedback: %v", err)
+	//		logus.Errorf(c, "Failed to create task for asking feedback: %v", err)
 	//	}
 	//}()
 
@@ -134,9 +135,9 @@ func rescheduleReminder(whc botsfw.WebhookContext, reminderID string, remindInDu
 //
 //var delayedAskForFeedback = delaying.MustRegisterFunc(ASK_FOR_FEEDBACK_TASK,
 //	func(c context.Context, botID string, chatID, userID int64) error {
-//		log.Debugf(c, "delayedAskForFeedback(botID=%v, chatID=%d, userID=%d)", botID, chatID, userID)
+//		logus.Debugf(c, "delayedAskForFeedback(botID=%v, chatID=%d, userID=%d)", botID, chatID, userID)
 //		if botSettings, ok := telegram.Bots(gaestandard.GetEnvironment(c), nil).ByCode[botID]; !ok {
-//			log.Errorf(c, "Bot settings not found by ID: "+botID)
+//			logus.Errorf(c, "Bot settings not found by ID: "+botID)
 //			return nil
 //		} else {
 //			locale, err := facade.GetLocale(c, botID, chatID, userID)
@@ -154,10 +155,10 @@ func rescheduleReminder(whc botsfw.WebhookContext, reminderID string, remindInDu
 //			messageConfig.ParseMode = "HTML"
 //			tgBotApi := tgbotapi.NewBotAPIWithClient(botSettings.Token, &http.Client{Transport: &urlfetch.Transport{Context: c}})
 //			if message, err := tgBotApi.Send(messageConfig); err != nil {
-//				log.Debugf(c, "Faield to send message to Telegram: %v", err)
+//				logus.Debugf(c, "Faield to send message to Telegram: %v", err)
 //				return nil
 //			} else {
-//				log.Debugf(c, "Sent to Telegram: %v", message.MessageID)
+//				logus.Debugf(c, "Sent to Telegram: %v", message.MessageID)
 //			}
 //		}
 //		return nil

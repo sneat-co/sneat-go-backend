@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/strongo/logus"
 	"math/rand"
 	"time"
 
 	"context"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 type LoginCodeDalGae struct {
@@ -36,7 +36,7 @@ func (LoginCodeDalGae) NewLoginCode(c context.Context, userID string) (code int,
 					loginCode.Data.UserID = userID
 					loginCode.Data.Claimed = time.Time{}
 					if err = tx.Set(c, loginCode.Record); err != nil {
-						log.Errorf(c, err.Error())
+						logus.Errorf(c, err.Error())
 						return err
 					}
 					created = true
@@ -44,12 +44,12 @@ func (LoginCodeDalGae) NewLoginCode(c context.Context, userID string) (code int,
 				} else if err != nil {
 					return fmt.Errorf("failed to get entity within transaction: %w", err)
 				} else {
-					log.Warningf(c, "This logic code already creted outside of the current transaction")
+					logus.Warningf(c, "This logic code already creted outside of the current transaction")
 					return nil
 				}
 			}, nil)
 			if err != nil {
-				log.Errorf(c, fmt.Errorf("%w: transaction failed", err).Error())
+				logus.Errorf(c, fmt.Errorf("%w: transaction failed", err).Error())
 			} else if created {
 				return code, nil
 			}

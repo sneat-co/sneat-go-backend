@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/strongo/delaying"
+	"github.com/strongo/logus"
 	"time"
 
 	"context"
@@ -11,7 +12,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 type ReceiptDalGae struct {
@@ -109,18 +109,18 @@ func (receiptDalGae ReceiptDalGae) DelayedMarkReceiptAsSent(c context.Context, r
 }
 
 func delayedMarkReceiptAsSent(c context.Context, receiptID, transferID string, sentTime time.Time) (err error) {
-	log.Debugf(c, "delayMarkReceiptAsSent(receiptID=%v, transferID=%v, sentTime=%v)", receiptID, transferID, sentTime)
+	logus.Debugf(c, "delayMarkReceiptAsSent(receiptID=%v, transferID=%v, sentTime=%v)", receiptID, transferID, sentTime)
 	if receiptID == "" {
-		log.Errorf(c, "receiptID == 0")
+		logus.Errorf(c, "receiptID == 0")
 		return nil
 	}
 	if receiptID == "" {
-		log.Errorf(c, "transferID == 0")
+		logus.Errorf(c, "transferID == 0")
 		return nil
 	}
 
 	if err = dtdal.Receipt.MarkReceiptAsSent(c, receiptID, transferID, sentTime); dal.IsNotFound(err) {
-		log.Errorf(c, err.Error())
+		logus.Errorf(c, err.Error())
 		return nil
 	}
 	return

@@ -13,7 +13,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/delaying"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"net/http"
 	"reflect"
 )
@@ -22,7 +22,7 @@ func HandleAdminFindUser(c context.Context, w http.ResponseWriter, r *http.Reque
 
 	if userID := r.URL.Query().Get("userID"); userID != "" {
 		if user, err := dtdal.User.GetUserByStrID(c, userID); err != nil {
-			log.Errorf(c, fmt.Errorf("failed to get user by ID=%v: %w", userID, err).Error())
+			logus.Errorf(c, fmt.Errorf("failed to get user by ID=%v: %w", userID, err).Error())
 		} else {
 			api.JsonToResponse(c, w, []dto.ApiUserDto{{ID: userID, Name: user.Data.FullName()}})
 		}
@@ -65,7 +65,7 @@ func HandleAdminMergeUserContacts(c context.Context, w http.ResponseWriter, r *h
 		return
 	}
 
-	log.Infof(c, "keepID: %d, deleteID: %d", keepID, deleteID)
+	logus.Infof(c, "keepID: %s, deleteID: %s", keepID, deleteID)
 
 	db, err := facade.GetDatabase(c)
 	if err != nil {
@@ -107,7 +107,7 @@ func HandleAdminMergeUserContacts(c context.Context, w http.ResponseWriter, r *h
 		if err := tx.Delete(c, models.NewDebtusContactKey(deleteID)); err != nil {
 			return err
 		} else {
-			log.Warningf(c, "ContactEntry %d has been deleted from DB (non revocable)", deleteID)
+			logus.Warningf(c, "ContactEntry %s has been deleted from DB (non revocable)", deleteID)
 		}
 		return nil
 	}); err != nil {
@@ -117,7 +117,7 @@ func HandleAdminMergeUserContacts(c context.Context, w http.ResponseWriter, r *h
 }
 
 func DelayedChangeTransfersCounterparty(c context.Context, oldID, newID int64, cursor string) (err error) {
-	log.Debugf(c, "delayedChangeTransfersCounterparty(oldID=%d, newID=%d)", oldID, newID)
+	logus.Debugf(c, "delayedChangeTransfersCounterparty(oldID=%d, newID=%d)", oldID, newID)
 
 	var q = dal.From(models.TransfersCollection).
 		WhereField("BothCounterpartyIDs", dal.Equal, oldID).
@@ -133,7 +133,7 @@ func DelayedChangeTransfersCounterparty(c context.Context, oldID, newID int64, c
 		return err
 	}
 
-	log.Infof(c, "Loaded %d transferIDs", len(transferIDs))
+	logus.Infof(c, "Loaded %d transferIDs", len(transferIDs))
 	args := make([][]interface{}, len(transferIDs))
 	for i, id := range transferIDs {
 		args[i] = []interface{}{id, oldID, newID, ""}
@@ -142,7 +142,7 @@ func DelayedChangeTransfersCounterparty(c context.Context, oldID, newID int64, c
 }
 
 func DelayedChangeTransferCounterparty(c context.Context, transferID string, oldID, newID string, cursor string) (err error) {
-	log.Debugf(c, "delayedChangeTransferCounterparty(oldID=%d, newID=%d, cursor=%v)", oldID, newID, cursor)
+	logus.Debugf(c, "delayedChangeTransferCounterparty(oldID=%s, newID=%s, cursor=%s)", oldID, newID, cursor)
 	if _, err = facade.GetContactByID(c, nil, newID); err != nil {
 		return err
 	}

@@ -8,7 +8,7 @@ import (
 	"github.com/crediterra/money"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/strongo/decimal"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"html"
 	"net/url"
 	"regexp"
@@ -19,7 +19,7 @@ var ReInlineQueryAmount = regexp.MustCompile(`^\s*(\d+(?:\.\d*)?)\s*((?:\b|\B).+
 
 func InlineNewRecord(whc botsfw.WebhookContext, amountMatches []string) (m botsfw.MessageFromBot, err error) {
 	c := whc.Context()
-	log.Debugf(c, "InlineNewRecord()")
+	logus.Debugf(c, "InlineNewRecord()")
 
 	inlineQuery := whc.Input().(botsfw.WebhookInlineQuery)
 	var (
@@ -30,7 +30,7 @@ func InlineNewRecord(whc botsfw.WebhookContext, amountMatches []string) (m botsf
 		return
 	}
 	currencyCode := strings.TrimRight(amountMatches[2], ".,;()[]{} ")
-	log.Debugf(c, "currencyCode: %v", currencyCode)
+	logus.Debugf(c, "currencyCode: %v", currencyCode)
 	if currencyCode != "" {
 		if len(currencyCode) > 20 {
 			currencyCode = currencyCode[:20]

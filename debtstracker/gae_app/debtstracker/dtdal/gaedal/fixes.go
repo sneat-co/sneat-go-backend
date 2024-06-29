@@ -3,13 +3,13 @@ package gaedal
 import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/strongo/logus"
 
 	//"errors"
 	"sync"
 
 	"context"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
-	"github.com/strongo/log"
 )
 
 type TransferFixer struct {
@@ -29,7 +29,7 @@ func (f *TransferFixer) needFixCounterpartyCounterpartyName() bool {
 
 //func (f *TransferFixer) fixCounterpartyCounterpartyName(c context.Context) error {
 //	if f.needFixCounterpartyCounterpartyName() {
-//		log.Debugf(c, "%v: needFixCounterpartyCounterpartyName=true", f.transferKey.IntegerID())
+//		logus.Debugf(c, "%v: needFixCounterpartyCounterpartyName=true", f.transferKey.IntegerID())
 //		if f.transfer.Creator().CounterpartyID != 0 {
 //			var counterpartyCounterparty models.DebtusContactDbo
 //			err := gaedb.Get(c, NewCounterpartyKey(c, f.transfer.Creator().CounterpartyID), &counterpartyCounterparty)
@@ -37,9 +37,9 @@ func (f *TransferFixer) needFixCounterpartyCounterpartyName() bool {
 //				return err
 //			}
 //			f.transfer.Creator().ContactName = counterpartyCounterparty.GetFullName()
-//			log.Debugf(c, "%v: got name from counterpartyCounterparty", f.transferKey.IntegerID())
+//			logus.Debugf(c, "%v: got name from counterpartyCounterparty", f.transferKey.IntegerID())
 //			if f.transfer.Creator().ContactName == "" {
-//				log.Warningf(c, "Counterparty %v has no full name", f.transfer.Creator().CounterpartyID)
+//				logus.Warningf(c, "Counterparty %v has no full name", f.transfer.Creator().CounterpartyID)
 //			}
 //		}
 //		if f.transfer.Creator().ContactName == "" { // Not fixed from counterparty
@@ -48,9 +48,9 @@ func (f *TransferFixer) needFixCounterpartyCounterpartyName() bool {
 //				return err
 //			}
 //			f.transfer.Creator().ContactName = user.GetFullName()
-//			log.Debugf(c, "%v: got name from user", f.transferKey.IntegerID())
+//			logus.Debugf(c, "%v: got name from user", f.transferKey.IntegerID())
 //			if f.transfer.Creator().ContactName == "" {
-//				log.Warningf(c, "User %v has no full name", f.transfer.CreatorUserID)
+//				logus.Warningf(c, "User %v has no full name", f.transfer.CreatorUserID)
 //			}
 //		}
 //		if f.transfer.Creator().ContactName == "" {
@@ -59,14 +59,14 @@ func (f *TransferFixer) needFixCounterpartyCounterpartyName() bool {
 //		f.changed = true
 //		f.Fixes = append(f.Fixes, "CounterpartyCounterpartyName")
 //		//} else {
-//		//	log.Debugf(c, "%v: %v", f.transferKey.IntegerID(), f.transfer.Creator().ContactName)
+//		//	logus.Debugf(c, "%v: %v", f.transferKey.IntegerID(), f.transfer.Creator().ContactName)
 //	}
 //	return nil
 //}
 
 func (f *TransferFixer) needFixes(_ context.Context) bool {
 	return f.needFixCounterpartyCounterpartyName()
-	//log.Debugf(c, "%v: needFixes=%v", f.transferKey.IntegerID(), result)
+	//logus.Debugf(c, "%v: needFixes=%v", f.transferKey.IntegerID(), result)
 	//return result
 }
 
@@ -87,11 +87,11 @@ func (f *TransferFixer) FixAllIfNeeded(c context.Context) (err error) {
 			//	return err
 			//}
 			if f.changed {
-				//log.Debugf(c, "%v: changed", f.transferKey.IntegerID())
+				//logus.Debugf(c, "%v: changed", f.transferKey.IntegerID())
 				err = tx.Set(tc, transfer.Record)
 				return err
 				//} else {
-				//	log.Debugf(c, "%v: not changed", f.transferKey.IntegerID())
+				//	logus.Debugf(c, "%v: not changed", f.transferKey.IntegerID())
 			}
 			return nil
 		}, nil)
@@ -122,7 +122,7 @@ func FixTransfers(c context.Context) (loadedCount int, fixedCount int, failedCou
 				err = nil
 				return
 			}
-			log.Errorf(c, "Failed to get next transfer: %v", err.Error())
+			logus.Errorf(c, "Failed to get next transfer: %v", err.Error())
 			return
 		}
 		loadedCount += 1
@@ -133,7 +133,7 @@ func FixTransfers(c context.Context) (loadedCount int, fixedCount int, failedCou
 			fixer := NewTransferFixer(key, transferRecord.Data().(*models.TransferData))
 			err2 := fixer.FixAllIfNeeded(c)
 			if err2 != nil {
-				log.Errorf(c, "Failed to fix transfer=%v: %v", key.ID.(int), err2.Error())
+				logus.Errorf(c, "Failed to fix transfer=%v: %v", key.ID.(int), err2.Error())
 				mutex.Lock()
 				failedCount += 1
 				err = err2
@@ -143,9 +143,9 @@ func FixTransfers(c context.Context) (loadedCount int, fixedCount int, failedCou
 					mutex.Lock()
 					fixedCount += 1
 					mutex.Unlock()
-					log.Infof(c, "Fixed transfer %v: %v", key.ID.(int), fixer.Fixes)
+					logus.Infof(c, "Fixed transfer %v: %v", key.ID.(int), fixer.Fixes)
 					//} else {
-					//	log.Debugf(c, "TransferEntry %v is OK: CounterpartyCounterpartyName: %v", transferKey.IntegerID(), fixer.transfer.Creator().ContactName)
+					//	logus.Debugf(c, "TransferEntry %v is OK: CounterpartyCounterpartyName: %v", transferKey.IntegerID(), fixer.transfer.Creator().ContactName)
 				}
 			}
 		}(record)

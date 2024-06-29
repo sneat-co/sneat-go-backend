@@ -58,7 +58,7 @@ func handleSignedWithGoogle(_ context.Context, _ http.ResponseWriter, _ *http.Re
 	//googleUser := gaeuser.Current(c)
 	//if googleUser == nil {
 	//	err := errors.New("handleSignedWithGoogle(): googleUser == nil")
-	//	log.Errorf(c, err.Error())
+	//	logus.Errorf(c, err.Error())
 	//	w.WriteHeader(http.StatusUnauthorized)
 	//	_, _ = w.Write([]byte(err.Error()))
 	//	return
@@ -66,20 +66,20 @@ func handleSignedWithGoogle(_ context.Context, _ http.ResponseWriter, _ *http.Re
 	//
 	//userGoogle, _, err := facade.User.GetOrCreateUserGoogleOnSignIn(c, googleUser, userID, clientInfo)
 	//if err != nil {
-	//	log.Errorf(c, err.Error())
+	//	logus.Errorf(c, err.Error())
 	//	w.WriteHeader(http.StatusInternalServerError)
 	//	_, _ = w.Write([]byte(err.Error()))
 	//}
 	//
 	//if !userGoogle.Record.Exists() {
-	//	log.Errorf(c, "userGoogle.UserGoogleData == nil")
+	//	logus.Errorf(c, "userGoogle.UserGoogleData == nil")
 	//	w.WriteHeader(http.StatusInternalServerError)
 	//	_, _ = w.Write([]byte("userGoogle.UserGoogleData == nil"))
 	//}
 	//
 	//accountData := userGoogle.Data().(*appuser.AccountDataBase)
 	//appUserID := userGoogle.Data().GetAppUserID()
-	//log.Debugf(c, "userGoogle.AppUserIntID: %s", appUserID)
+	//logus.Debugf(c, "userGoogle.AppUserIntID: %s", appUserID)
 	//token := auth.IssueToken(appUserID, "web", accountData.EmailLowerCase == "alexander.trakhimenok@gmail.com")
 	//destinationUrl := r.URL.Query().Get(REDIRECT_DESTINATION_PARAM_NAME)
 	//

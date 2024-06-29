@@ -9,7 +9,6 @@ import (
 	"github.com/bots-go-framework/bots-fw/botswebhook"
 	"github.com/julienschmidt/httprouter"
 	"github.com/strongo/i18n"
-	"github.com/strongo/log"
 	"net/http"
 )
 
@@ -30,7 +29,7 @@ func InitializeBots(botHost botsfw.BotHost, httpRouter *httprouter.Router) {
 	if httpRouter == nil {
 		panic("httpRouter = nil")
 	}
-	botsfw.SetLogger(log.StrongoLogger{})
+	//botsfw.SetLogger(null)
 
 	driver := botswebhook.NewBotDriver( // Orchestrate requests to appropriate handlers
 		botswebhook.AnalyticsSettings{GaTrackingID: ""}, // TODO: Refactor to list of analytics providers

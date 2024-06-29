@@ -6,6 +6,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
+	"github.com/strongo/logus"
 	"io"
 	"net/http"
 	"strconv"
@@ -17,7 +18,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal/gaedal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 func getApiUser(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) (user models.AppUser, err error) {
@@ -42,7 +42,7 @@ func HandleUserInfo(c context.Context, w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write(([]byte)(err.Error()))
 	} else {
 		if err := SaveUserAgent(c, strconv.FormatInt(userID, 10), r.UserAgent()); err != nil {
-			log.Errorf(c, err.Error())
+			logus.Errorf(c, err.Error())
 			w.WriteHeader(http.StatusInternalServerError)
 			_, _ = w.Write(([]byte)(err.Error()))
 		}

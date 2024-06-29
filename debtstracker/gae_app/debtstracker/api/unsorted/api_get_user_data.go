@@ -3,6 +3,7 @@ package unsorted
 import (
 	"bytes"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
+	"github.com/strongo/logus"
 	"io"
 	"net/http"
 	"strings"
@@ -10,14 +11,13 @@ import (
 	"context"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 func panicUnknownStatus(status string) {
 	panic("Unknown status: " + status)
 }
 func HandleGetUserData(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
-	log.Debugf(c, "HandleGetUserData(authInfo.UserID: %d)", authInfo.UserID)
+	logus.Debugf(c, "HandleGetUserData(authInfo.UserID: %s)", authInfo.UserID)
 	user, err := getApiUser(c, w, r, authInfo)
 	if err != nil {
 		return
@@ -55,13 +55,13 @@ func HandleGetUserData(c context.Context, w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	//log.Debugf(c, "load: %v", dataCodes)
+	//logus.Debugf(c, "load: %v", dataCodes)
 
 	dataResults := make([]*bytes.Buffer, len(dataCodes))
 
 	hasContent := false
 	for i, dataCode := range dataCodes {
-		//log.Debugf(c, "i=%d, dataCode=%v", i, dataCode)
+		//logus.Debugf(c, "i=%d, dataCode=%v", i, dataCode)
 		dataResults[i] = &bytes.Buffer{}
 		switch dataCode {
 		case "Contacts":
@@ -117,7 +117,7 @@ func HandleGetUserData(c context.Context, w http.ResponseWriter, r *http.Request
 }
 
 func writeUserGroupsToJson(_ context.Context, w io.Writer, status string, user models.AppUser) bool {
-	//log.Debugf(c, "writeUserGroupsToJson(status=%v)", status)
+	//logus.Debugf(c, "writeUserGroupsToJson(status=%v)", status)
 	var jsonVal string
 	switch status {
 	case models.STATUS_ACTIVE:
@@ -136,7 +136,7 @@ func writeUserGroupsToJson(_ context.Context, w io.Writer, status string, user m
 }
 
 func writeUserContactsToJson(c context.Context, w io.Writer, status string, user models.AppUser) bool {
-	//log.Debugf(c, "writeUserContactsToJson(status=%v)", status)
+	//logus.Debugf(c, "writeUserContactsToJson(status=%v)", status)
 	var jsonVal string
 	switch status {
 	case models.STATUS_ACTIVE:
@@ -157,9 +157,9 @@ func writeUserContactsToJson(c context.Context, w io.Writer, status string, user
 
 func writeUserActiveBillsToJson(c context.Context, w io.Writer, user models.AppUser) bool {
 	if user.Data.BillsJsonActive != "" {
-		log.Debugf(c, "User has BillsJsonActive")
+		logus.Debugf(c, "User has BillsJsonActive")
 		if user.Data.BillsCountActive == 0 {
-			log.Warningf(c, "User(id=%d).BillsJsonActive is not empty && BillsCountActive == 0", user.ID)
+			logus.Warningf(c, "User(id=%s).BillsJsonActive is not empty && BillsCountActive == 0", user.ID)
 		}
 		_, _ = w.Write(([]byte)(`"Bills":`))
 		_, _ = w.Write([]byte(user.Data.BillsJsonActive))
@@ -170,9 +170,9 @@ func writeUserActiveBillsToJson(c context.Context, w io.Writer, user models.AppU
 
 func writeUserActiveBillSchedulesToJson(c context.Context, w io.Writer, user models.AppUser) bool {
 	if user.Data.BillSchedulesJsonActive != "" {
-		log.Debugf(c, "User has BillSchedulesJsonActive")
+		logus.Debugf(c, "User has BillSchedulesJsonActive")
 		if user.Data.BillSchedulesCountActive == 0 {
-			log.Warningf(c, "User(id=%d).BillSchedulesJsonActive is not empty && BillSchedulesCountActive == 0", user.ID)
+			logus.Warningf(c, "User(id=%s).BillSchedulesJsonActive is not empty && BillSchedulesCountActive == 0", user.ID)
 		}
 		_, _ = w.Write(([]byte)(`"BillSchedules":`))
 		_, _ = w.Write([]byte(user.Data.BillSchedulesJsonActive))

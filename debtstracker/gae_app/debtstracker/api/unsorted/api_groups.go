@@ -5,6 +5,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
+	"github.com/strongo/logus"
 	"github.com/strongo/validation"
 	"io"
 	"net/http"
@@ -19,7 +20,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 func HandlerCreateGroup(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo, user models.AppUser) {
@@ -44,7 +44,7 @@ func HandlerCreateGroup(c context.Context, w http.ResponseWriter, r *http.Reques
 		api.ErrorAsJson(c, w, http.StatusInternalServerError, err)
 		return
 	}
-	log.Infof(c, "GroupEntry created, ID: %v", group.ID)
+	logus.Infof(c, "GroupEntry created, ID: %v", group.ID)
 	if err = groupToResponse(c, w, group, user); err != nil {
 		api.ErrorAsJson(c, w, http.StatusInternalServerError, err)
 		return
@@ -227,7 +227,7 @@ func HandlerDeleteGroup(c context.Context, w http.ResponseWriter, r *http.Reques
 }
 
 func HandlerUpdateGroup(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
-	log.Debugf(c, "HandlerUpdateGroup()")
+	logus.Debugf(c, "HandlerUpdateGroup()")
 
 	var (
 		user  models.AppUser
@@ -300,7 +300,7 @@ func HandlerUpdateGroup(c context.Context, w http.ResponseWriter, r *http.Reques
 }
 
 func HandlerSetContactsToGroup(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo, user models.AppUser) {
-	log.Debugf(c, "HandlerSetContactsToGroup()")
+	logus.Debugf(c, "HandlerSetContactsToGroup()")
 
 	var (
 		groupID string

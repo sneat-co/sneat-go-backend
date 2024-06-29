@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/strongo/logus"
 	"reflect"
 	"time"
 
 	"context"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 func NewReminderIncompleteKey(_ context.Context) *dal.Key {
@@ -102,7 +102,7 @@ func (reminderDalGae ReminderDalGae) SetReminderIsSentInTransaction(c context.Co
 		}
 	}
 	if reminder.Data.Status != models.ReminderStatusSending {
-		log.Errorf(c, "reminder.Status:%v != models.ReminderStatusSending:%v", reminder.Data.Status, models.ReminderStatusSending)
+		logus.Errorf(c, "reminder.Status:%v != models.ReminderStatusSending:%v", reminder.Data.Status, models.ReminderStatusSending)
 		return nil
 	} else {
 		reminder.Data.Status = models.ReminderStatusSent

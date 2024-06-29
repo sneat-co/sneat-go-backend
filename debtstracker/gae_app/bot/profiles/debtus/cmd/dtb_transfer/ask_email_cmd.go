@@ -3,6 +3,7 @@ package dtb_transfer
 import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/strongo/logus"
 	"strings"
 
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
@@ -10,7 +11,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/general"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/invites"
-	"github.com/strongo/log"
 )
 
 const ASK_EMAIL_FOR_RECEIPT_COMMAND = "ask-email-for-receipt"
@@ -20,7 +20,7 @@ var AskEmailForReceiptCommand = botsfw.Command{
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		c := whc.Context()
 
-		log.Debugf(c, "AskEmailForReceiptCommand.Action()")
+		logus.Debugf(c, "AskEmailForReceiptCommand.Action()")
 		email := whc.Input().(botsfw.WebhookTextMessage).Text()
 		if !strings.Contains(email, "@") {
 			return whc.NewMessage(whc.Translate(trans.MESSAGE_TEXT_INVALID_EMAIL)), nil

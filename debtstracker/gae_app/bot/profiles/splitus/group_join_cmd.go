@@ -6,6 +6,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/strongo/logus"
 	"net/url"
 	"strconv"
 
@@ -15,7 +16,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 const joinGroupCommanCode = "join-group"
@@ -50,7 +50,7 @@ var joinGroupCommand = shared_group.GroupCallbackCommand(joinGroupCommanCode,
 					changed = true
 				} else {
 					if tgUserID != member.TgUserID {
-						log.Errorf(c, "tgUserID:%v != member.TgUserID:%v", tgUserID, member.TgUserID)
+						logus.Errorf(c, "tgUserID:%v != member.TgUserID:%v", tgUserID, member.TgUserID)
 					}
 				}
 				switch group.Data.GetSplitMode() {
@@ -78,7 +78,7 @@ var joinGroupCommand = shared_group.GroupCallbackCommand(joinGroupCommanCode,
 						return err
 					}
 				} else {
-					log.Debugf(c, "GroupEntry member not changed")
+					logus.Debugf(c, "GroupEntry member not changed")
 				}
 				if userChanged := appUser.Data.AddGroup(group, whc.GetBotCode()); userChanged {
 					if err = facade.User.SaveUser(c, tx, appUser); err != nil {

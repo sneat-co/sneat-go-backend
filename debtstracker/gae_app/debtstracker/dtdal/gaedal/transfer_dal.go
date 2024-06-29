@@ -6,6 +6,7 @@ import (
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/strongo/delaying"
+	"github.com/strongo/logus"
 	"time"
 
 	"context"
@@ -14,7 +15,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 type TransferDalGae struct {
@@ -72,7 +72,7 @@ func (transferDalGae TransferDalGae) GetTransfersByID(c context.Context, tx dal.
 }
 
 func (transferDalGae TransferDalGae) LoadOutstandingTransfers(c context.Context, tx dal.ReadSession, periodEnds time.Time, userID, contactID string, currency money.CurrencyCode, direction models.TransferDirection) (transfers []models.TransferEntry, err error) {
-	log.Debugf(c, "TransferDalGae.LoadOutstandingTransfers(periodEnds=%v, userID=%v, contactID=%v currency=%v, direction=%v)", periodEnds, userID, contactID, currency, direction)
+	logus.Debugf(c, "TransferDalGae.LoadOutstandingTransfers(periodEnds=%v, userID=%v, contactID=%v currency=%v, direction=%v)", periodEnds, userID, contactID, currency, direction)
 	const limit = 100
 
 	// TODO: Load outstanding transfer just for the specific contact & specific direction
@@ -115,27 +115,27 @@ func (transferDalGae TransferDalGae) LoadOutstandingTransfers(c context.Context,
 	}
 	if len(transfersIDsToFixIsOutstanding) > 0 {
 		if err = delayFixTransfersIsOutstanding.EnqueueWork(c, delaying.With(common.QUEUE_TRANSFERS, "fix-transfers-is-outstanding", 0), transfersIDsToFixIsOutstanding); err != nil {
-			log.Errorf(c, "failed to delay task to fix transfers IsOutstanding")
+			logus.Errorf(c, "failed to delay task to fix transfers IsOutstanding")
 			err = nil
 		}
 	}
 	if errorMessages.Len() > 0 {
-		log.Errorf(c, errorMessages.String())
+		logus.Errorf(c, errorMessages.String())
 	}
 	if warnings.Len() > 0 {
-		log.Warningf(c, warnings.String())
+		logus.Warningf(c, warnings.String())
 	}
 	if debugs.Len() > 0 {
-		log.Debugf(c, debugs.String())
+		logus.Debugf(c, debugs.String())
 	}
 	return
 }
 
 func fixTransfersIsOutstanding(c context.Context, transferIDs []string) (err error) {
-	log.Debugf(c, "fixTransfersIsOutstanding(%v)", transferIDs)
+	logus.Debugf(c, "fixTransfersIsOutstanding(%v)", transferIDs)
 	for _, transferID := range transferIDs {
 		if _, transferErr := fixTransferIsOutstanding(c, transferID); transferErr != nil {
-			log.Errorf(c, "Failed to fix transfer %v: %v", transferID, err)
+			logus.Errorf(c, "Failed to fix transfer %v: %v", transferID, err)
 			err = transferErr
 		}
 	}
@@ -158,9 +158,9 @@ func fixTransferIsOutstanding(c context.Context, transferID string) (transfer mo
 		return nil
 	})
 	if err == nil {
-		log.Warningf(c, "Fixed IsOutstanding (set to false) for transfer %v", transferID)
+		logus.Warningf(c, "Fixed IsOutstanding (set to false) for transfer %v", transferID)
 	} else {
-		log.Errorf(c, "Failed to fix IsOutstanding for transfer %v", transferID)
+		logus.Errorf(c, "Failed to fix IsOutstanding for transfer %v", transferID)
 	}
 	return
 }

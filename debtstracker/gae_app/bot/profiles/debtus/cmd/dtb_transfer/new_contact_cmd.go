@@ -5,6 +5,7 @@ import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/strongo/logus"
 	"strconv"
 	"strings"
 
@@ -13,7 +14,6 @@ import (
 	dtb_common "github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/debtus/dtb_common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 const NEW_COUNTERPARTY_COMMAND = "new-counterparty"
@@ -70,7 +70,7 @@ func NewCounterpartyCommand(nextCommand botsfw.Command) botsfw.Command {
 					}
 					phoneStr := input2.PhoneNumber()
 					if phoneNum, err := strconv.ParseInt(phoneStr, 10, 64); err != nil {
-						log.Warningf(whc.Context(), "Failed to parse phone string to int (%v)", phoneStr)
+						logus.Warningf(whc.Context(), "Failed to parse phone string to int (%v)", phoneStr)
 					} else {
 						contactDetails.PhoneContact = models.PhoneContact{
 							PhoneNumber:          phoneNum,
@@ -84,7 +84,7 @@ func NewCounterpartyCommand(nextCommand botsfw.Command) botsfw.Command {
 						if contactDetails.TelegramUserID != 0 {
 							for _, userContactJson := range user.Data.Contacts() {
 								if userContactJson.TgUserID == contactDetails.TelegramUserID {
-									log.Debugf(whc.Context(), "Matched contact my TelegramUserID=%d", contactDetails.TelegramUserID)
+									logus.Debugf(whc.Context(), "Matched contact my TelegramUserID=%d", contactDetails.TelegramUserID)
 									existingContact = true
 									contact.ID = userContactJson.ID
 								}

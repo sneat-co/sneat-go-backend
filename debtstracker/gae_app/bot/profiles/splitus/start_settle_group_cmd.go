@@ -13,7 +13,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal/gaedal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"net/url"
 	"strings"
 )
@@ -85,7 +85,7 @@ func settleGroupAskForCounterpartyAction(whc botsfw.WebhookContext, group models
 	}
 
 	m.Text = "You are not a member of this group"
-	log.Warningf(whc.Context(), m.Text)
+	logus.Warningf(whc.Context(), m.Text)
 	return
 
 userMemberFound:
@@ -193,7 +193,7 @@ func settleGroupCounterpartyChosenAction(whc botsfw.WebhookContext, group models
 			},
 		},
 	)
-	log.Debugf(whc.Context(), "counterpartyMember: %v", counterpartyMember)
+	logus.Debugf(whc.Context(), "counterpartyMember: %v", counterpartyMember)
 	return
 }
 
@@ -245,7 +245,7 @@ func settleGroupCounterpartyConfirmedAction(whc botsfw.WebhookContext, group mod
 
 	m.Text = "Settled up"
 	m.IsEdit = true
-	log.Debugf(whc.Context(), "counterpartyMember: %v", counterpartyMember)
+	logus.Debugf(whc.Context(), "counterpartyMember: %v", counterpartyMember)
 	return
 }
 

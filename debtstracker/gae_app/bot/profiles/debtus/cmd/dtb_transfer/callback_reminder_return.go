@@ -6,6 +6,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/crediterra/money"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/strongo/logus"
 	"net/url"
 	"time"
 
@@ -15,7 +16,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 var ReturnCallbackCommand = botsfw.NewCallbackCommand(dtb_common.CALLBACK_DEBT_RETURNED_PATH, ProcessReturnAnswer)
@@ -23,7 +23,7 @@ var ReturnCallbackCommand = botsfw.NewCallbackCommand(dtb_common.CALLBACK_DEBT_R
 func ProcessReturnAnswer(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 	//
 	c := whc.Context()
-	log.Debugf(c, "ProcessReturnAnswer()")
+	logus.Debugf(c, "ProcessReturnAnswer()")
 	q := callbackUrl.Query()
 	reminderID := q.Get("reminder")
 	if reminderID == "" {
@@ -67,7 +67,7 @@ const commandCodeEnableReminderAgain = "enable-reminder-again"
 
 var EnableReminderAgainCallbackCommand = botsfw.NewCallbackCommand(commandCodeEnableReminderAgain, func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 	c := whc.Context()
-	log.Debugf(c, "EnableReminderAgainCallbackCommand()")
+	logus.Debugf(c, "EnableReminderAgainCallbackCommand()")
 	q := callbackUrl.Query()
 	var (
 		reminderID string

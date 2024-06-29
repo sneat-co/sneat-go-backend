@@ -7,6 +7,7 @@ import (
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/strongo/i18n"
+	"github.com/strongo/logus"
 	"github.com/strongo/strongoapp"
 	"google.golang.org/appengine/v2"
 	"html/template"
@@ -16,7 +17,6 @@ import (
 	"context"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/platforms/tgbots"
-	"github.com/strongo/log"
 )
 
 func pageContext(r *http.Request, locale i18n.Locale) (translator i18n.SingleLocaleTranslator, data map[string]interface{}) {
@@ -101,7 +101,7 @@ func getLocale(c context.Context, w http.ResponseWriter, r *http.Request) (local
 					w.WriteHeader(http.StatusNotFound)
 					w.Header().Set("Content-Type", "text/plain")
 					if _, err := w.Write(([]byte)(fmt.Sprintf("Unsupported locale: %v", localeCode))); err != nil {
-						log.Errorf(c, err.Error())
+						logus.Errorf(c, err.Error())
 					}
 					return
 				}

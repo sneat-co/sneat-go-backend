@@ -9,7 +9,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"github.com/strongo/strongoapp/appuser"
 	"net/http"
 )
@@ -41,7 +41,7 @@ func HandleDisconnect(c context.Context, w http.ResponseWriter, r *http.Request,
 					return err
 				}
 			} else {
-				log.Warningf(c, "TODO: Handle case if userFb.AppUserIntID:%s != appUser.ID:%d", fbUserAppID, appUser.ID)
+				logus.Warningf(c, "TODO: Handle case if userFb.AppUserIntID:%s != appUser.ID:%s", fbUserAppID, appUser.ID)
 			}
 			return nil
 		}
@@ -69,7 +69,7 @@ func HandleDisconnect(c context.Context, w http.ResponseWriter, r *http.Request,
 						return err
 					}
 				} else {
-					log.Warningf(c, "TODO: Handle case if userGoogle.AppUserIntID:%d != appUser.ID:%d", userGoogle.Data().GetAppUserID(), appUser.ID)
+					logus.Warningf(c, "TODO: Handle case if userGoogle.AppUserIntID:%s != appUser.ID:%s", userGoogle.Data().GetAppUserID(), appUser.ID)
 				}
 				_ = appUser.Data.RemoveAccount(*userAccount)
 				changed = true

@@ -9,7 +9,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/delaying"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"strings"
 	"time"
 )
@@ -65,7 +65,7 @@ func (userDal UserDalGae) GetUserByEmail(c context.Context, email string) (model
 			SelectInto(models.NewAppUserRecord)
 		user, err = userDal.getUserByQuery(c, query, "EmailAddress, is not confirmed")
 	}
-	log.Debugf(c, "GetUserByEmail() => err=%v, User(id=%d): %v", err, user.ID, user)
+	//logus.Debugf(c, "GetUserByEmail() => err=%v, User(id=%s): %v", err, user.ID, user)
 	return user, err
 }
 
@@ -82,12 +82,12 @@ func (userDal UserDalGae) getUserByQuery(c context.Context, query dal.Query, sea
 	}
 	switch len(userRecords) {
 	case 1:
-		log.Debugf(c, "getUserByQuery(%v) => %v: %v", searchCriteria, userRecords[0].Key().ID, userEntities[0])
+		logus.Debugf(c, "getUserByQuery(%v) => %v: %v", searchCriteria, userRecords[0].Key().ID, userEntities[0])
 		ur := userRecords[0]
 		return models.NewAppUser(ur.Key().ID.(string), ur.Data().(*models.DebutsAppUserDataOBSOLETE)), nil
 	case 0:
 		err = dal.ErrRecordNotFound
-		log.Debugf(c, "getUserByQuery(%v) => %v", searchCriteria, err)
+		logus.Debugf(c, "getUserByQuery(%v) => %v", searchCriteria, err)
 		return
 	default: // > 1
 		errDup := dal.ErrDuplicateUser{ // TODO: ErrDuplicateUser should be moved out from dalgo
@@ -141,7 +141,7 @@ func (UserDalGae) DelayUpdateUserWithContact(c context.Context, userID string, c
 }
 
 func updateUserWithContact(c context.Context, userID, contactID string) (err error) {
-	log.Debugf(c, "updateUserWithContact(userID=%v, contactID=%v)", userID, contactID)
+	logus.Debugf(c, "updateUserWithContact(userID=%v, contactID=%v)", userID, contactID)
 	var db dal.DB
 	if db, err = facade.GetDatabase(c); err != nil {
 		return
@@ -150,10 +150,10 @@ func updateUserWithContact(c context.Context, userID, contactID string) (err err
 		var contact models.ContactEntry
 		if contact, err = facade.GetContactByID(c, tx, contactID); err != nil {
 			if dal.IsNotFound(err) {
-				log.Warningf(c, "contact not found: %v", err)
+				logus.Warningf(c, "contact not found: %v", err)
 				return nil
 			}
-			log.Errorf(c, "updateUserWithContact: %v", err)
+			logus.Errorf(c, "updateUserWithContact: %v", err)
 			return
 		}
 		var user models.AppUser
@@ -162,7 +162,7 @@ func updateUserWithContact(c context.Context, userID, contactID string) (err err
 			return
 		}
 		if dal.IsNotFound(err) {
-			log.Errorf(c, err.Error())
+			logus.Errorf(c, err.Error())
 			err = nil
 		}
 
@@ -171,7 +171,7 @@ func updateUserWithContact(c context.Context, userID, contactID string) (err err
 				return
 			}
 		} else {
-			log.Debugf(c, "user not changed")
+			logus.Debugf(c, "user not changed")
 		}
 		return
 	})

@@ -24,7 +24,7 @@ var users *firestore.CollectionRef
 func initDb() {
 	var err error
 	if db, err = newDbClient(); err != nil {
-		log.Fatalf("Failed to init firestore client: %v", err)
+		logus.Fatalf("Failed to init firestore client: %v", err)
 	}
 	users = db.Collection("users")
 }

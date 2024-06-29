@@ -5,7 +5,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"net/url"
 )
 
@@ -13,7 +13,7 @@ var billChangeSplitModeCommand = botsfw.Command{
 	Code: "split-mode",
 	CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 		c := whc.Context()
-		log.Debugf(c, "billChangeSplitModeCommand.CallbackAction()")
+		logus.Debugf(c, "billChangeSplitModeCommand.CallbackAction()")
 		var bill models.Bill
 		if bill.ID, err = GetBillID(callbackUrl); err != nil {
 			return

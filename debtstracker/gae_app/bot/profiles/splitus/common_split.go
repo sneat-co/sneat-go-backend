@@ -9,13 +9,13 @@ import (
 	"github.com/crediterra/money"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/strongo/i18n"
+	"github.com/strongo/logus"
 	"html"
 	"net/url"
 	"strconv"
 
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/decimal"
-	"github.com/strongo/log"
 )
 
 func editSplitCallbackAction(
@@ -42,10 +42,10 @@ func editSplitCallbackAction(
 		return
 	}
 
-	log.Debugf(c, "current member: %v", member)
+	logus.Debugf(c, "current member: %v", member)
 
 	if addValue != 0 {
-		log.Debugf(c, "add=%d", addValue)
+		logus.Debugf(c, "add=%d", addValue)
 
 		if member, err = addShares(member.ID, addValue); err != nil {
 			return

@@ -7,7 +7,7 @@ import (
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"net/url"
 )
 
@@ -16,7 +16,7 @@ const setBillCurrencyCommandCode = "set-bill-currency"
 var setBillCurrencyCommand = billCallbackCommand(setBillCurrencyCommandCode,
 	func(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, callbackUrl *url.URL, bill models.Bill) (m botsfw.MessageFromBot, err error) {
 		c := whc.Context()
-		log.Debugf(c, "setBillCurrencyCommand.CallbackAction()")
+		logus.Debugf(c, "setBillCurrencyCommand.CallbackAction()")
 		query := callbackUrl.Query()
 		currencyCode := money.CurrencyCode(query.Get("currency"))
 		if bill.Data.Currency != currencyCode {

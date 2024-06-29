@@ -134,7 +134,7 @@ func assert(t *testing.T, locale i18n.Locale, warningsCount int, expected, actua
 	if actual != expected {
 		t.Errorf("Unexpected output for locale %v:\nExpected:\n%v\nActual:\n%v", locale.Code5, expected, actual)
 	}
-	//if len(log.Warnings) != warningsCount {
-	//	t.Errorf("Unexpected warnings count: %v", log.Warnings)
+	//if len(logus.Warnings) != warningsCount {
+	//	t.Errorf("Unexpected warnings count: %v", logus.Warnings)
 	//}
 }

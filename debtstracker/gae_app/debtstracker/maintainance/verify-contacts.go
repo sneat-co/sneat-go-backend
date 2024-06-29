@@ -17,16 +17,16 @@ package maintainance
 //}
 //
 //func (m *verifyContacts) Next(c context.Context, counters mapper.Counters, key *datastore.Key) error {
-//	//log.Debugf(c, "*verifyContacts.Next(id: %v)", key.IntID())
+//	//logus.Debugf(c, "*verifyContacts.Next(id: %v)", key.IntID())
 //	return m.startContactWorker(c, counters, key, m.processContact)
 //}
 //
 //func (m *verifyContacts) processContact(c context.Context, counters *asyncCounters, contact models.ContactEntry) (err error) {
 //	if _, err = facade.User.GetUserByID(c, nil, contact.Data.UserID); dal.IsNotFound(err) {
 //		counters.Increment("wrong_UserID", 1)
-//		log.Warningf(c, "ContactEntry %d reference unknown user %d", contact.ID, contact.Data.UserID)
+//		logus.Warningf(c, "ContactEntry %d reference unknown user %d", contact.ID, contact.Data.UserID)
 //	} else if err != nil {
-//		log.Errorf(c, err.Error())
+//		logus.Errorf(c, err.Error())
 //		return
 //	}
 //
@@ -44,7 +44,7 @@ package maintainance
 //	if contact.Data.CounterpartyCounterpartyID != 0 {
 //		var counterpartyContact models.ContactEntry
 //		if counterpartyContact, err = facade.GetContactByID(c, nil, contact.Data.CounterpartyCounterpartyID); err != nil {
-//			log.Errorf(c, err.Error())
+//			logus.Errorf(c, err.Error())
 //			return
 //		}
 //		if counterpartyContact.Data.CounterpartyCounterpartyID == 0 || counterpartyContact.Data.CounterpartyUserID == 0 {
@@ -54,7 +54,7 @@ package maintainance
 //		} else if counterpartyContact.Data.CounterpartyCounterpartyID == contact.ID && counterpartyContact.Data.CounterpartyUserID == contact.Data.UserID {
 //			// Pass, we are OK
 //		} else {
-//			log.Warningf(c, "Wrongly linked contacts: %v=>%v != %v=>%v",
+//			logus.Warningf(c, "Wrongly linked contacts: %v=>%v != %v=>%v",
 //				contact.ID, contact.Data.CounterpartyCounterpartyID,
 //				counterpartyContact.ID, counterpartyContact.Data.CounterpartyCounterpartyID)
 //		}
@@ -70,7 +70,7 @@ package maintainance
 //	}
 //	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 //		if counterpartyContact, err = facade.GetContactByID(c, tx, contact.Data.CounterpartyCounterpartyID); err != nil {
-//			log.Errorf(c, err.Error())
+//			logus.Errorf(c, err.Error())
 //			return
 //		}
 //		if counterpartyContact.Data.CounterpartyCounterpartyID == 0 {
@@ -86,17 +86,17 @@ package maintainance
 //				return
 //			}
 //		} else if counterpartyContact.Data.CounterpartyCounterpartyID != contact.ID {
-//			log.Warningf(c, "in tx: wrongly linked contacts: %v=>%v != %v=>%v",
+//			logus.Warningf(c, "in tx: wrongly linked contacts: %v=>%v != %v=>%v",
 //				contact.ID, contact.Data.CounterpartyCounterpartyID,
 //				counterpartyContact.ID, counterpartyContact.Data.CounterpartyCounterpartyID)
 //		}
 //		return
 //	}); err != nil {
-//		log.Errorf(c, err.Error())
+//		logus.Errorf(c, err.Error())
 //		return
 //	}
 //	counters.Increment("linked_contacts", 1)
-//	log.Infof(c, "Successfully linked contact %v to %v", counterpartyContact.ID, contact.ID)
+//	logus.Infof(c, "Successfully linked contact %v to %v", counterpartyContact.ID, contact.ID)
 //	return
 //}
 //
@@ -114,7 +114,7 @@ package maintainance
 //				if err = facade.SaveContact(c, contact); err != nil {
 //					return err
 //				}
-//				log.Infof(c, "Fixed contact balance currencies: %d", contact.ID)
+//				logus.Infof(c, "Fixed contact balance currencies: %d", contact.ID)
 //			}
 //			return nil
 //		}, nil); err != nil {

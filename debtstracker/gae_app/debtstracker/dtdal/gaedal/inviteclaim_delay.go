@@ -9,7 +9,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/delaying"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 )
 
 func DelayUpdateInviteClaimedCount(c context.Context, claimID int64) error {
@@ -17,7 +17,7 @@ func DelayUpdateInviteClaimedCount(c context.Context, claimID int64) error {
 }
 
 func delayedUpdateInviteClaimedCount(c context.Context, claimID int64) (err error) {
-	log.Debugf(c, "delayUpdateInviteClaimedCount(claimID=%v)", claimID)
+	logus.Debugf(c, "delayUpdateInviteClaimedCount(claimID=%v)", claimID)
 	var db dal.DB
 	if db, err = facade.GetDatabase(c); err != nil {
 		return err
@@ -27,7 +27,7 @@ func delayedUpdateInviteClaimedCount(c context.Context, claimID int64) (err erro
 		err = tx.Get(c, claim.Record)
 		if err != nil {
 			if dal.IsNotFound(err) {
-				log.Errorf(c, "Claim not found by id: %v", claimID)
+				logus.Errorf(c, "Claim not found by id: %v", claimID)
 				return nil
 			}
 			return fmt.Errorf("failed to get InviteClaimData by id=%v: %w", claimID, err)
@@ -35,14 +35,14 @@ func delayedUpdateInviteClaimedCount(c context.Context, claimID int64) (err erro
 		invite, err := dtdal.Invite.GetInvite(c, tx, claim.Data.InviteCode)
 		if err != nil {
 			if dal.IsNotFound(err) {
-				log.Errorf(c, "Invite not found by code: %v", claim.Data.InviteCode)
+				logus.Errorf(c, "Invite not found by code: %v", claim.Data.InviteCode)
 				return nil // Internationally return NIL to avoid retrying
 			}
 			return err
 		}
 		for _, cid := range invite.Data.LastClaimIDs {
 			if cid == claimID {
-				log.Infof(c, "Invite already has been updated for this claim (claimID=%v, inviteCode=%v).", claimID, claim.Data.InviteCode)
+				logus.Infof(c, "Invite already has been updated for this claim (claimID=%v, inviteCode=%v).", claimID, claim.Data.InviteCode)
 				return nil
 			}
 		}
@@ -61,7 +61,7 @@ func delayedUpdateInviteClaimedCount(c context.Context, claimID int64) (err erro
 		return err
 	})
 	if err != nil {
-		log.Errorf(c, "Failed to update Invite.ClaimedCount for claimID=%v", claimID)
+		logus.Errorf(c, "Failed to update Invite.ClaimedCount for claimID=%v", claimID)
 	}
 	return err
 }

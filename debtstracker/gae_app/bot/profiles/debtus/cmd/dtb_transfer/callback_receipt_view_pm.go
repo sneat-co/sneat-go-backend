@@ -5,6 +5,7 @@ import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/strongo/logus"
 	"html"
 	"net/url"
 
@@ -13,7 +14,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 	"strings"
 )
 
@@ -74,7 +74,7 @@ func ShowReceipt(whc botsfw.WebhookContext, receiptID string) (m botsfw.MessageF
 	utm := common.NewUtmParams(whc, common.UTM_CAMPAIGN_REMINDER)
 	mt = common.TextReceiptForTransfer(c, whc, transfer, whc.AppUserID(), common.ShowReceiptToAutodetect, utm)
 
-	log.Debugf(c, "Receipt text: %v", mt)
+	logus.Debugf(c, "Receipt text: %v", mt)
 
 	var inlineKeyboard *tgbotapi.InlineKeyboardMarkup
 
@@ -90,7 +90,7 @@ func ShowReceipt(whc botsfw.WebhookContext, receiptID string) (m botsfw.MessageF
 			case models.TransferDeclined:
 				mt += "\n" + whc.Translate(trans.MESSAGE_TEXT_ALREADY_DECLINED_TRANSFER)
 			default:
-				log.Errorf(c, "!transfer.AcknowledgeTime.IsZero() && transfer.AcknowledgeStatus not in (accepted, declined)")
+				logus.Errorf(c, "!transfer.AcknowledgeTime.IsZero() && transfer.AcknowledgeStatus not in (accepted, declined)")
 			}
 		} else {
 			mt += "\n" + whc.Translate(trans.MESSAGE_TEXT_PLEASE_ACKNOWLEDGE_TRANSFER)
@@ -117,7 +117,7 @@ func ShowReceipt(whc botsfw.WebhookContext, receiptID string) (m botsfw.MessageF
 		}
 	}
 
-	log.Debugf(c, "mt: %v", mt)
+	logus.Debugf(c, "mt: %v", mt)
 	switch whc.InputType() {
 	case botsfw.WebhookInputCallbackQuery:
 		if m, err = whc.NewEditMessage(mt, botsfw.MessageFormatHTML); err != nil {
@@ -134,15 +134,15 @@ func ShowReceipt(whc botsfw.WebhookContext, receiptID string) (m botsfw.MessageF
 		}
 	default:
 		if inputType, ok := botsfw.WebhookInputTypeNames[whc.InputType()]; ok {
-			log.Errorf(c, "Unknown input type: %d=%v", whc.InputType(), inputType)
+			logus.Errorf(c, "Unknown input type: %d=%v", whc.InputType(), inputType)
 		} else {
-			log.Errorf(c, "Unknown input type: %d", whc.InputType())
+			logus.Errorf(c, "Unknown input type: %d", whc.InputType())
 		}
 	}
 
 	if _, err = whc.Responder().SendMessage(c, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
 		if strings.Contains(err.Error(), "message is not modified") { // TODO: Can fail on different receipts for same amount
-			log.Warningf(c, fmt.Sprintf("Failed to send receipt to counterparty: %v", err))
+			logus.Warningf(c, fmt.Sprintf("Failed to send receipt to counterparty: %v", err))
 		} else {
 			return m, err
 		}
@@ -156,7 +156,7 @@ func ShowReceipt(whc botsfw.WebhookContext, receiptID string) (m botsfw.MessageF
 		}
 		m.EditMessageUID = telegram.NewChatMessageUID(transfer.Data.Creator().TgChatID, int(transfer.Data.CreatorTgReceiptByTgMsgID))
 		//if _, err := whc.Responder().SendMessage(c, editCreatorMessage, botsfw.BotAPISendMessageOverHTTPS); err != nil {
-		//	log.Errorf(c, "Failed to edit creator message: %v", err)
+		//	logus.Errorf(c, "Failed to edit creator message: %v", err)
 		//}
 	}
 	return m, err
@@ -165,7 +165,7 @@ func ShowReceipt(whc botsfw.WebhookContext, receiptID string) (m botsfw.MessageF
 func viewReceiptCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 	c := whc.Context()
 
-	log.Debugf(c, "ViewReceiptAction(callbackUrl=%v)", callbackUrl)
+	logus.Debugf(c, "ViewReceiptAction(callbackUrl=%v)", callbackUrl)
 	callbackQuery := callbackUrl.Query()
 
 	localeCode5 := callbackQuery.Get("locale")

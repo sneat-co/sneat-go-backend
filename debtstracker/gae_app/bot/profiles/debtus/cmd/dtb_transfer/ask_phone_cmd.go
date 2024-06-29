@@ -10,6 +10,8 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/sms"
+	"github.com/strongo/logus"
+
 	//"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/invites"
 	"encoding/json"
 	"fmt"
@@ -24,7 +26,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/analytics"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/general"
-	"github.com/strongo/log"
 )
 
 const ASK_PHONE_NUMBER_FOR_RECEIPT_COMMAND = "ask-phone-number-for-receipt"
@@ -45,7 +46,7 @@ var AskPhoneNumberForReceiptCommand = botsfw.Command{
 			return m, err
 		}
 		return m, db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-			log.Debugf(c, "AskPhoneNumberForReceiptCommand.Action()")
+			logus.Debugf(c, "AskPhoneNumberForReceiptCommand.Action()")
 
 			input := whc.Input()
 
@@ -69,7 +70,7 @@ var AskPhoneNumberForReceiptCommand = botsfw.Command{
 				if user.Data.FirstName == contact.FirstName() && user.Data.LastName == contact.LastName() {
 					phoneNumberStr = cleanPhoneNumber(contact.PhoneNumber())
 					if phoneNumber, err = strconv.ParseInt(phoneNumberStr, 10, 64); err != nil {
-						log.Warningf(c, "Failed to parse contact's phone number: [%v]", phoneNumberStr)
+						logus.Warningf(c, "Failed to parse contact's phone number: [%v]", phoneNumberStr)
 						return err
 					} else if user.Data.PhoneNumber == 0 {
 						user, err := facade.User.GetUserByID(c, tx, whc.AppUserID())
@@ -80,7 +81,7 @@ var AskPhoneNumberForReceiptCommand = botsfw.Command{
 							user.Data.PhoneNumber = phoneNumber
 							user.Data.PhoneNumberConfirmed = true
 							if err = facade.User.SaveUser(c, tx, user); err != nil {
-								log.Errorf(c, fmt.Errorf("failed to update user with phone number: %w", err).Error())
+								logus.Errorf(c, fmt.Errorf("failed to update user with phone number: %w", err).Error())
 								return err
 							}
 
@@ -95,7 +96,7 @@ var AskPhoneNumberForReceiptCommand = botsfw.Command{
 			}
 
 			if twilioTestNumber, ok := common.TwilioTestNumbers[mt]; ok {
-				log.Debugf(c, "Using predefined test number [%v]: %v", mt, twilioTestNumber)
+				logus.Debugf(c, "Using predefined test number [%v]: %v", mt, twilioTestNumber)
 				phoneNumberStr = twilioTestNumber
 			} else {
 				phoneNumberStr = cleanPhoneNumber(mt)
@@ -176,7 +177,7 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, ph
 		//related := fmt.Sprintf("%v=%v", models.TransfersCollection, transferID)
 		//inviteKey, invite, err := invites.CreatePersonalInvite(whc, whc.AppUserID(), invites.InviteBySms, strconv.FormatInt(phoneContact.PhoneNumber, 10), whc.BotPlatform().ID(), whc.GetBotCode(), related)
 		//if err != nil {
-		//	log.Errorf(c, "Failed to create invite: %v", err)
+		//	logus.Errorf(c, "Failed to create invite: %v", err)
 		//	return m, err
 		//}
 		//inviteCode = inviteKey.StringID()
@@ -207,9 +208,9 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, ph
 	var createSmsStatusMessage = func() error {
 		var msgSmsStatus botsfw.MessageFromBot
 		mt := whc.Translate(trans.MESSAGE_TEXT_SMS_QUEUING_FOR_SENDING, phoneContact.PhoneNumberAsString())
-		//log.Debugf(c, "whc.InputTypes(): %v, botsfw.WebhookInputCallbackQuery: %v, MessageID: %v", whc.InputTypes(), botsfw.WebhookInputCallbackQuery, whc.InputCallbackQuery().GetMessage().IntID())
+		//logus.Debugf(c, "whc.InputTypes(): %v, botsfw.WebhookInputCallbackQuery: %v, MessageID: %v", whc.InputTypes(), botsfw.WebhookInputCallbackQuery, whc.InputCallbackQuery().GetMessage().IntID())
 		if whc.InputType() == botsfw.WebhookInputCallbackQuery {
-			//log.Debugf(c, "editMessage.MessageID: %v", editMessage.MessageID)
+			//logus.Debugf(c, "editMessage.MessageID: %v", editMessage.MessageID)
 			if msgSmsStatus, err = whc.NewEditMessage(mt, botsfw.MessageFormatHTML); err != nil {
 				return err
 			}
@@ -260,7 +261,7 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, ph
 		if smsRecord.Data.To == phoneContact.PhoneNumberAsString() && (smsRecord.Data.Status == "delivered" || smsRecord.Data.Status == "queued") {
 			// TODO: Do smarter check for limit
 			m.Text = emoji.ERROR_ICON + " " + fmt.Sprintf("Exceeded limit for sending SMS to same number: %v", phoneContact.PhoneNumberAsString())
-			log.Warningf(c, m.Text)
+			logus.Warningf(c, m.Text)
 			return m, err
 		}
 	}
@@ -285,10 +286,10 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, ph
 
 	if twilioException != nil {
 		twilioExceptionStr, _ := json.Marshal(twilioException)
-		log.Errorf(c, "Failed to send SMS via Twilio: %v", string(twilioExceptionStr))
+		logus.Errorf(c, "Failed to send SMS via Twilio: %v", string(twilioExceptionStr))
 		mt, tryAnotherNumber := sms.TwilioExceptionToMessage(whc, whc, twilioException)
 		if tryAnotherNumber {
-			log.Infof(c, "Twilio identified invalid phone number, need to try another one.")
+			logus.Infof(c, "Twilio identified invalid phone number, need to try another one.")
 			if m, err = whc.NewEditMessage(mt, botsfw.MessageFormatText); err != nil {
 				return
 			}
@@ -316,10 +317,10 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, ph
 	}
 
 	smsResponseStr, _ := json.Marshal(smsResponse)
-	log.Debugf(c, "Twilio response: %v", string(smsResponseStr))
+	logus.Debugf(c, "Twilio response: %v", string(smsResponseStr))
 
 	if err = analytics.ReceiptSentFromBot(whc, "sms"); err != nil {
-		log.Errorf(c, "Failed to send to analytics receipt sent event: %v", err)
+		logus.Errorf(c, "Failed to send to analytics receipt sent event: %v", err)
 	}
 
 	if _, err = dtdal.Twilio.SaveTwilioSms(

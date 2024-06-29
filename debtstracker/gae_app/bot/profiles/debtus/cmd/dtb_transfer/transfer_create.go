@@ -10,7 +10,7 @@ import (
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"regexp"
 	"strconv"
 	"strings"
@@ -33,7 +33,7 @@ func CreateStartTransferWizardCommand(code, messageText string, commands []strin
 		},
 		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 			c := whc.Context()
-			log.Debugf(c, "CreateStartTransferWizardCommand(code=%v).Action()", code)
+			logus.Debugf(c, "CreateStartTransferWizardCommand(code=%v).Action()", code)
 			mt := strings.TrimSpace(whc.Input().(botsfw.WebhookTextMessage).Text())
 			chatEntity := whc.ChatData()
 			switch {
@@ -179,12 +179,12 @@ func TransferAskDueDateCommand(code string, nextCommand botsfw.Command) botsfw.C
 		Action: func(whc botsfw.WebhookContext) (botsfw.MessageFromBot, error) {
 
 			c := whc.Context()
-			log.Infof(c, "TransferAskDueDateCommand(code=%v).Action()", code)
+			logus.Infof(c, "TransferAskDueDateCommand(code=%v).Action()", code)
 			m := whc.NewMessageByCode(trans.MESSAGE_TEXT_ASK_DUE)
 			chatEntity := whc.ChatData()
 			if chatEntity.IsAwaitingReplyTo(code) {
 				mt := strings.TrimSpace(whc.Input().(botsfw.WebhookTextMessage).Text())
-				log.Debugf(c, "Chat is awating reply to %v", code)
+				logus.Debugf(c, "Chat is awating reply to %v", code)
 				var duration time.Duration
 				switch mt {
 				case whc.Translate(trans.COMMAND_TEXT_IN_FEW_MINUTES):
@@ -217,7 +217,7 @@ func TransferAskDueDateCommand(code string, nextCommand botsfw.Command) botsfw.C
 				}
 				return nextCommand.Action(whc)
 			} else {
-				log.Debugf(c, "Chat is NOT awating reply to %v", code)
+				logus.Debugf(c, "Chat is NOT awating reply to %v", code)
 				chatEntity.PushStepToAwaitingReplyTo(code)
 				keyboard := tgbotapi.NewReplyKeyboardUsingStrings([][]string{
 					{
@@ -291,12 +291,12 @@ func processSetDate(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, date ti
 			day = temp
 		}
 		dateToParse := fmt.Sprintf("%02d.%02d", day, month) + "." + yearStr
-		log.Debugf(c, "dateToParse: %v", dateFormat)
+		logus.Debugf(c, "dateToParse: %v", dateFormat)
 		if date, err = time.Parse(dateFormat, dateToParse); err != nil {
 			m = whc.NewMessageByCode(trans.MESSAGE_TEXT_WRONG_DATE)
 		}
 	} else {
-		log.Debugf(c, "Regex not matched")
+		logus.Debugf(c, "Regex not matched")
 		m = whc.NewMessageByCode(trans.MESSAGE_TEXT_INVALID_DATE)
 	}
 	return m, date, nil

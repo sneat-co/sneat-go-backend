@@ -7,7 +7,7 @@ import (
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"github.com/strongo/slice"
 	"strings"
 	"time"
@@ -180,7 +180,7 @@ var RunTeamWorker = func(ctx context.Context, user facade.User, teamID string, w
 			return fmt.Errorf("failed to load team record: %w", err)
 		}
 		if err = params.Team.Data.Validate(); err != nil {
-			log.Warningf(ctx, "Team record loaded from DB is not valid: %v: dto=%+v", err, params.Team.Data)
+			logus.Warningf(ctx, "Team record loaded from DB is not valid: %v: dto=%+v", err, params.Team.Data)
 		}
 		if err = worker(ctx, tx, params); err != nil {
 			return fmt.Errorf("failed to execute team worker: %w", err)

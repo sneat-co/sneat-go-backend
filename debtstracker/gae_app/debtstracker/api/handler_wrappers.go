@@ -2,11 +2,11 @@ package api
 
 import (
 	"fmt"
+	"github.com/strongo/logus"
 	"net/http"
 	"strings"
 
 	"context"
-	"github.com/strongo/log"
 )
 
 func OptionsHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
@@ -26,12 +26,12 @@ func OptionsHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 	default:
 		if !(strings.HasPrefix(origin, "http://") && strings.HasSuffix(origin, ":8100")) {
 			err := fmt.Errorf("unknown origin: %s", origin)
-			log.Debugf(c, err.Error())
+			logus.Debugf(c, err.Error())
 			BadRequestError(c, w, err)
 			return
 		}
 	}
-	log.Debugf(c, "Request 'Origin' header: %s", origin)
+	logus.Debugf(c, "Request 'Origin' header: %s", origin)
 	responseHeader := w.Header()
 	if accessControlRequestMethod := r.Header.Get("Access-Control-Request-Method"); !(accessControlRequestMethod == "GET" || accessControlRequestMethod == "POST") {
 		BadRequestMessage(c, w, "Requested method is unsupported: "+accessControlRequestMethod)
@@ -40,10 +40,10 @@ func OptionsHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 		responseHeader.Set("Access-Control-Allow-Methods", accessControlRequestMethod)
 	}
 	if accessControlRequestHeaders := r.Header.Get("Access-Control-Request-Headers"); accessControlRequestHeaders != "" {
-		log.Debugf(c, "Request Access-Control-Request-Headers: %v", accessControlRequestHeaders)
+		logus.Debugf(c, "Request Access-Control-Request-Headers: %v", accessControlRequestHeaders)
 		responseHeader.Set("Access-Control-Allow-Headers", accessControlRequestHeaders)
 	} else {
-		log.Debugf(c, "Request header 'Access-Control-Allow-Headers' is empty or missing")
+		logus.Debugf(c, "Request header 'Access-Control-Allow-Headers' is empty or missing")
 		// TODO(security): Is it wrong to return 200 in this case?
 	}
 	responseHeader.Set("Access-Control-Allow-Origin", origin)
@@ -72,7 +72,7 @@ func OptionsHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 //}
 
 func BadRequestMessage(c context.Context, w http.ResponseWriter, m string) {
-	log.Infof(c, m)
+	logus.Infof(c, m)
 	w.WriteHeader(http.StatusBadRequest)
 	_, _ = w.Write([]byte(m))
 }
@@ -83,7 +83,7 @@ func BadRequestError(c context.Context, w http.ResponseWriter, err error) {
 
 func InternalError(c context.Context, w http.ResponseWriter, err error) {
 	m := err.Error()
-	log.Errorf(c, m)
+	logus.Errorf(c, m)
 	w.WriteHeader(http.StatusInternalServerError)
 	_, _ = w.Write([]byte(m))
 }
@@ -139,22 +139,22 @@ func InternalError(c context.Context, w http.ResponseWriter, err error) {
 //			return
 //		}
 //		if hashedWriter.buffer.Len() > 0 {
-//			log.Debugf(c, "No ETag check/set as response.status=%d", hashedWriter.status)
+//			logus.Debugf(c, "No ETag check/set as response.status=%d", hashedWriter.status)
 //		}
 //		return
 //	}
 //	eTag := fmt.Sprintf("%x", hashedWriter.hash)
 //	if match := r.Header.Get("If-None-Match"); match == eTag {
-//		log.Debugf(c, "Setting response status to 304 - not modified")
+//		logus.Debugf(c, "Setting response status to 304 - not modified")
 //		w.WriteHeader(http.StatusNotModified)
-//		log.Debugf(c, "Response status set to 304 - not modified")
+//		logus.Debugf(c, "Response status set to 304 - not modified")
 //	} else {
 //		contentLen := hashedWriter.buffer.Len()
 //		if (len(eTag) + 5) < contentLen {
 //			w.Header().Set("ETag", eTag)
-//			log.Debugf(c, "ETag: "+eTag)
+//			logus.Debugf(c, "ETag: "+eTag)
 //		} else if contentLen > 0 {
-//			log.Debugf(c, "ETag is not set as contentLength:%d is smaller then ETag header", contentLen)
+//			logus.Debugf(c, "ETag is not set as contentLength:%d is smaller then ETag header", contentLen)
 //		}
 //		if _, err := hashedWriter.flush(w); err != nil {
 //			w.WriteHeader(http.StatusInternalServerError)

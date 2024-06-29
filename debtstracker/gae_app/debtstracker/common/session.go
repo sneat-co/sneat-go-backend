@@ -1,11 +1,11 @@
 package common
 
 import (
+	"github.com/strongo/logus"
 	"google.golang.org/appengine/v2"
 	"net/http"
 
 	"github.com/gorilla/sessions"
-	"github.com/strongo/log"
 	//"fmt"
 	//"encoding/base64"
 	//"crypto/sha1"
@@ -17,7 +17,7 @@ var store = sessions.NewCookieStore([]byte("Very-secret: 8468df92-fe04-432d-9f56
 func GetSession(r *http.Request) (*DTSession, error) {
 	s, err := store.Get(r, "session")
 	if err != nil {
-		log.Warningf(appengine.NewContext(r), err.Error())
+		logus.Warningf(appengine.NewContext(r), err.Error())
 	}
 	return &DTSession{Session: s}, nil
 }
@@ -37,7 +37,7 @@ type DTSession struct {
 //			if len(cookie.Value) > 0 {
 //				uidStr := strconv.FormatInt(uid, 10)
 //				if cookie.Value != uidStr {
-//					log.Warningf(appengine.NewContext(r), "Cookie(UserID):%v != Session(UserID):%v", cookie.Value, uid)
+//					logus.Warningf(appengine.NewContext(r), "Cookie(UserID):%v != Session(UserID):%v", cookie.Value, uid)
 //					s.setUserIdCookie(w, uid)
 //				}
 //			} else {

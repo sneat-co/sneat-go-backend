@@ -22,7 +22,7 @@ func LatestPage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	//var users []models.DebutsAppUserDataOBSOLETE
 	//userKeys, err := datastore.NewQuery(models.AppUserKind).Order("-DtCreated").Limit(50).GetAll(c, &users)
 	//if err != nil {
-	//	log.Errorf(c, err.Error())
+	//	logus.Errorf(c, err.Error())
 	//	w.WriteHeader(http.StatusInternalServerError)
 	//	_, _ = w.Write([]byte(err.Error()))
 	//}

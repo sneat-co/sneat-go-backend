@@ -3,6 +3,7 @@ package splitus
 import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/strongo/logus"
 	"net/url"
 
 	"context"
@@ -10,7 +11,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/shared_group"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 func GetBillMembersCallbackData(billID string) string {
@@ -66,7 +66,7 @@ func billCallbackAction(f billCallbackActionHandler) func(whc botsfw.WebhookCont
 						return
 					}
 				} else {
-					log.Debugf(c, "Not in group")
+					logus.Debugf(c, "Not in group")
 				}
 			}
 			m, err = f(whc, tx, callbackUrl, bill)

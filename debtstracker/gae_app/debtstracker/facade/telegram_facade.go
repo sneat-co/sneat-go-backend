@@ -9,7 +9,7 @@ import (
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/i18n"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"strconv"
 )
 
@@ -25,11 +25,11 @@ func GetLocale(c context.Context, botID string, tgChatIntID int64, userID string
 		return
 	}
 	if err = db.Get(c, tgChat.Record); err != nil {
-		log.Debugf(c, "Failed to get TgChat entity by string ID=%v: %v", tgChat.ID, err) // TODO: Replace with error once load by int ID removed
+		logus.Debugf(c, "Failed to get TgChat entity by string ID=%v: %v", tgChat.ID, err) // TODO: Replace with error once load by int ID removed
 		if dal.IsNotFound(err) {
 			panic("TODO: Remove this load by int ID")
 			//if err = nds.Get(c, datastore.NewKey(c, botsfwtgmodels.TgChatCollection, "", tgChatIntID, nil), &tgChatEntity); err != nil { // TODO: Remove this load by int ID
-			//	log.Errorf(c, "Failed to get TgChat entity by int ID=%v: %v", tgChatIntID, err)
+			//	logus.Errorf(c, "Failed to get TgChat entity by int ID=%v: %v", tgChatIntID, err)
 			//	return
 			//}
 		} else {
@@ -48,14 +48,14 @@ func GetLocale(c context.Context, botID string, tgChatIntID int64, userID string
 			}
 			user, err := User.GetUserByID(c, db, userID)
 			if err != nil {
-				log.Errorf(c, fmt.Errorf("failed to get user by ID=%v: %w", userID, err).Error())
+				logus.Errorf(c, fmt.Errorf("failed to get user by ID=%v: %w", userID, err).Error())
 				return locale, err
 			}
 			tgChatPreferredLanguage = user.Data.PreferredLanguage
 		}
 		if tgChatPreferredLanguage == "" {
 			tgChatPreferredLanguage = i18n.LocaleCodeEnUS
-			log.Warningf(c, "tgChat.PreferredLanguage == '' && user.PreferredLanguage == '', set to %v", i18n.LocaleCodeEnUS)
+			logus.Warningf(c, "tgChat.PreferredLanguage == '' && user.PreferredLanguage == '', set to %v", i18n.LocaleCodeEnUS)
 		}
 	}
 	locale = i18n.LocalesByCode5[tgChatPreferredLanguage]

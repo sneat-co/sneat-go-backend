@@ -9,6 +9,7 @@ import (
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/strongo/i18n"
+	"github.com/strongo/logus"
 	"html"
 	"net/url"
 	"strings"
@@ -17,7 +18,6 @@ import (
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 const DUE_RETURNS_COMMAND = "due-returns"
@@ -42,7 +42,7 @@ func dueReturnsCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.M
 		if overdueTransfers, err = dtdal.Transfer.LoadOverdueTransfers(c, db, userID, 5); err != nil {
 			er <- fmt.Errorf("failed to get overdue transfers: %w", err)
 		} else {
-			log.Debugf(c, "Loaded %v overdue transfer", len(overdueTransfers))
+			logus.Debugf(c, "Loaded %v overdue transfer", len(overdueTransfers))
 			er <- nil
 		}
 	}(er)
@@ -55,7 +55,7 @@ func dueReturnsCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.M
 		if dueTransfers, err = dtdal.Transfer.LoadDueTransfers(c, db, userID, 5); err != nil {
 			er <- fmt.Errorf("failed to get due transfers: %w", err)
 		} else {
-			log.Debugf(c, "Loaded %v due transfer", len(dueTransfers))
+			logus.Debugf(c, "Loaded %v due transfer", len(dueTransfers))
 			er <- nil
 		}
 	}(er)

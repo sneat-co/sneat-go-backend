@@ -13,7 +13,7 @@ import (
 	//"errors"
 	//"github.com/pquerna/ffjson/ffjson"
 	//"github.com/dal-go/dalgo"
-	//"github.com/strongo/log"
+	//"github.com/strongo/logus"
 )
 
 type GoogleAuthData struct {
@@ -67,7 +67,7 @@ func HandleSignedInWithGooglePlus(c context.Context, w http.ResponseWriter, r *h
 	//		ErrorAsJson(c, w, http.StatusInternalServerError, errors.Wrap(err, "Failed to read response body"))
 	//		return
 	//	} else {
-	//		log.Infof(c, "idToken verified: %s", string(body))
+	//		logus.Infof(c, "idToken verified: %s", string(body))
 	//		if err = json.Unmarshal(body, &tokenData); err != nil {
 	//			ErrorAsJson(c, w, http.StatusInternalServerError, errors.Wrap(err, "Failed to unmarshal response body as JSON"))
 	//			return

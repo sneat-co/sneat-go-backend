@@ -1,11 +1,11 @@
 package dalmocks
 
 import (
+	"github.com/strongo/logus"
 	"time"
 
 	"context"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 type ReminderDalMock struct {
@@ -16,7 +16,7 @@ func NewReminderDalMock() *ReminderDalMock {
 }
 
 func (mock *ReminderDalMock) DelayDiscardReminders(c context.Context, transferIDs []int, returntransferID int) error {
-	log.Warningf(c, "DelayDiscardReminders() is not implemented in mock")
+	logus.Warningf(c, "DelayDiscardReminders() is not implemented in mock")
 	return nil
 }
 

@@ -7,7 +7,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/gotwilio"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"google.golang.org/appengine/v2"
 )
 
@@ -77,16 +77,16 @@ func (TwilioDalGae) SaveTwilioSms(
 						recordsToPut = append(recordsToPut, counterparty.Record)
 					}
 					if err = tx.SetMulti(tc, recordsToPut); err != nil {
-						log.Errorf(c, "Failed to save Twilio SMS")
+						logus.Errorf(c, "Failed to save Twilio SMS")
 						return err
 					}
 					return err
 				} else if multiError[1] == nil {
-					log.Warningf(c, "Twillio SMS already saved to DB (1)")
+					logus.Warningf(c, "Twillio SMS already saved to DB (1)")
 				}
 			}
 		} else {
-			log.Warningf(c, "Twillio SMS already saved to DB (2)")
+			logus.Warningf(c, "Twillio SMS already saved to DB (2)")
 		}
 		return nil
 	}); err != nil {

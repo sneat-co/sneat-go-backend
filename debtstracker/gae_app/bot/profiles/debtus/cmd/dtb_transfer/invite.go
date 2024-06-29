@@ -62,7 +62,7 @@ package dtb_transfer
 //			entitiesToPut := []interface{}{transfer, user, invite, inviteClaim}
 //
 //			var updateTransferWithCounterpartyDetails = func(counterpartyCounterpartyID int64, counterpartyKey *datastore.Key, counterparty *models.ContactEntry) {
-//				log.Debugf(c, "updateTransferWithCounterpartyDetails(counterpartyCounterpartyID=%v)", counterpartyCounterpartyID)
+//				logus.Debugf(c, "updateTransferWithCounterpartyDetails(counterpartyCounterpartyID=%v)", counterpartyCounterpartyID)
 //				counterpartyID = counterpartyCounterpartyID
 //				transfer.CounterpartyCounterparty().CounterpartyID = counterpartyCounterpartyID
 //				transfer.CounterpartyCounterparty().CounterpartyName = counterparty.GetFullName()
@@ -83,11 +83,11 @@ package dtb_transfer
 //			if transfer.CounterpartyCounterparty().CounterpartyID != 0 {
 //				// Cleaning just in case
 //				transfer.CounterpartyCounterparty().CounterpartyID = 0
-//				log.Warningf(c, "Transfer %v had CounterpartyCounterpartyID != 0", transferID)
+//				logus.Warningf(c, "Transfer %v had CounterpartyCounterpartyID != 0", transferID)
 //			}
 //			transferCreatorUser := new(models.AppUser)
 //			if transferCreatorUser, err = facade.User.GetUserByID(tc, transfer.CreatorUserID); err != nil {
-//				log.Errorf(c, "Failed to load transferCreatorUser by ID (%v): %err", transfer.CreatorUserID, err)
+//				logus.Errorf(c, "Failed to load transferCreatorUser by ID (%v): %err", transfer.CreatorUserID, err)
 //				return err
 //			}
 //			creatorCounterpartyKey, creatorCounterparty, err := gaedal.GetCounterpartyByID(tc, transfer.ContactEntry().CounterpartyID)
@@ -125,7 +125,7 @@ package dtb_transfer
 //					}
 //				}
 //				if !counterpartyFound {
-//					log.Infof(c, "ContactEntry not found by userID=%v, len(counterparties)=%v", userID, len(counterparties))
+//					logus.Infof(c, "ContactEntry not found by userID=%v, len(counterparties)=%v", userID, len(counterparties))
 //					counterparty = nil
 //				}
 //			}
@@ -170,13 +170,13 @@ package dtb_transfer
 //					}
 //				}
 //			case userID:
-//				log.Infof(c, "creatorCounterparty.CounterpartyUserID already set")
+//				logus.Infof(c, "creatorCounterparty.CounterpartyUserID already set")
 //			default:
-//				log.Warningf(c, "creatorCounterparty.CounterpartyUserID is differnt from current user. creatorCounterparty.CounterpartyUserID: %v, currentUserID: %v", creatorCounterparty.CounterpartyUserID, userID)
+//				logus.Warningf(c, "creatorCounterparty.CounterpartyUserID is differnt from current user. creatorCounterparty.CounterpartyUserID: %v, currentUserID: %v", creatorCounterparty.CounterpartyUserID, userID)
 //			}
 //
 //			if _, err = nds.PutMulti(tc, keysToPut, entitiesToPut); err != nil {
-//				log.Errorf(c, "Failed to call nds.PutMulti(keysToPut=%v, len(entitiesToPut)=%v)", keysToPut, len(entitiesToPut))
+//				logus.Errorf(c, "Failed to call nds.PutMulti(keysToPut=%v, len(entitiesToPut)=%v)", keysToPut, len(entitiesToPut))
 //				return err
 //			}
 //		}
@@ -189,9 +189,9 @@ package dtb_transfer
 //			}
 //		} else {
 //			if transfer.DtDueOn.IsZero() {
-//				log.Debugf(c, "No neeed to create reminder for counterparty as no due date")
+//				logus.Debugf(c, "No neeed to create reminder for counterparty as no due date")
 //			} else {
-//				log.Debugf(c, "No neeed to create reminder for counterparty as due date in past")
+//				logus.Debugf(c, "No neeed to create reminder for counterparty as due date in past")
 //			}
 //		}
 //		return err
@@ -199,7 +199,7 @@ package dtb_transfer
 //	if err != nil {
 //		return
 //	}
-//	log.Debugf(c, "Transaction completed without errors")
+//	logus.Debugf(c, "Transaction completed without errors")
 //	if err = botsfw.SetAccessGranted(whc, true); err != nil {
 //		err = errors.Wrap(err, "Failed to call botsfw.SetAccessGranted(whc, true)")
 //	}

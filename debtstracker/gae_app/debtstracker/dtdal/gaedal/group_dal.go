@@ -8,7 +8,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/delaying"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 )
 
 var _ dtdal.GroupDal = (*GroupDalGae)(nil)
@@ -57,7 +57,7 @@ func (GroupDalGae) DelayUpdateGroupWithBill(c context.Context, groupID, billID s
 }
 
 func delayedUpdateGroupWithBill(c context.Context, groupID, billID string) (err error) {
-	log.Debugf(c, "delayedUpdateGroupWithBill(groupID=%d, billID=%d)", groupID, billID)
+	logus.Debugf(c, "delayedUpdateGroupWithBill(groupID=%s, billID=%s)", groupID, billID)
 	var db dal.DB
 	if db, err = GetDatabase(c); err != nil {
 		return

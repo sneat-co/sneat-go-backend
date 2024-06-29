@@ -9,7 +9,7 @@ package maintainance
 //}
 //
 //func (m *verifyContactTransfers) processContact(c context.Context, counters *asyncCounters, contact models.ContactEntry) (err error) {
-//	//log.Debugf(c, "processContact(contact.ID=%v)", contact.ID)
+//	//logus.Debugf(c, "processContact(contact.ID=%v)", contact.ID)
 //	buf := new(bytes.Buffer)
 //	now := time.Now()
 //	hasError := false
@@ -22,11 +22,11 @@ package maintainance
 //
 //	defer func() {
 //		if hasError || warningsCount > 0 {
-//			var logFunc log.Func
+//			var logFunc logus.Func
 //			if hasError {
-//				logFunc = log.Errorf
+//				logFunc = logus.Errorf
 //			} else {
-//				logFunc = log.Warningf
+//				logFunc = logus.Warningf
 //			}
 //			var userName, contactName string
 //			if user.Data != nil {
@@ -95,7 +95,7 @@ package maintainance
 //			}
 //			if counterparty.UserName == "" && counterparty.UserID != 0 {
 //				if user, err := facade.User.GetUserByID(c, db, counterparty.UserID); err != nil {
-//					log.Errorf(c, err.Error())
+//					logus.Errorf(c, err.Error())
 //					return err
 //				} else {
 //					counterparty.UserName = user.Data.FullName()
@@ -110,7 +110,7 @@ package maintainance
 //
 //			if self.ContactID != 0 && self.ContactName == "" {
 //				if counterpartyContact, err := facade.GetContactByID(c, nil, self.ContactID); err != nil {
-//					log.Errorf(c, err.Error())
+//					logus.Errorf(c, err.Error())
 //					return err
 //				} else {
 //					self.ContactName = counterpartyContact.Data.FullName()
@@ -120,7 +120,7 @@ package maintainance
 //
 //			if self.UserID != 0 && self.UserName == "" {
 //				if user, err := facade.User.GetUserByID(c, nil, self.UserID); err != nil {
-//					log.Errorf(c, err.Error())
+//					logus.Errorf(c, err.Error())
 //					return err
 //				} else {
 //					self.UserName = user.Data.FullName()
@@ -129,12 +129,12 @@ package maintainance
 //			}
 //
 //			if changed {
-//				log.Warningf(c, "Fixing contact details for transfer %v: From:%v, To: %v\n\noriginal: %v\n\n new: %v", transfer.ID, litter.Sdump(transfer.Data.From()), litter.Sdump(transfer.Data.To()), litter.Sdump(originalTransfer), litter.Sdump(transfer))
+//				logus.Warningf(c, "Fixing contact details for transfer %v: From:%v, To: %v\n\noriginal: %v\n\n new: %v", transfer.ID, litter.Sdump(transfer.Data.From()), litter.Sdump(transfer.Data.To()), litter.Sdump(originalTransfer), litter.Sdump(transfer))
 //				err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 //					return facade.Transfers.SaveTransfer(c, tx, transfer)
 //				})
 //				if err != nil {
-//					log.Errorf(c, fmt.Errorf("failed to save transfer: %w", err).Error())
+//					logus.Errorf(c, fmt.Errorf("failed to save transfer: %w", err).Error())
 //					return
 //				}
 //			}
@@ -238,7 +238,7 @@ package maintainance
 //
 //	if outstandingIsValid {
 //		if user, err = facade.User.GetUserByID(c, nil, contact.Data.UserID); err != nil {
-//			log.Errorf(c, fmt.Errorf("contact{ID=%v}: user not found by ID: %w", contact.ID, err).Error())
+//			logus.Errorf(c, fmt.Errorf("contact{ID=%v}: user not found by ID: %w", contact.ID, err).Error())
 //			return
 //		}
 //	}
@@ -272,7 +272,7 @@ package maintainance
 //
 //	if warningsCount == 0 {
 //		counters.Increment("good_contacts", 1)
-//		//log.Infof(c, contactPrefix + "is OK, %v transfers", len(transfers))
+//		//logus.Infof(c, contactPrefix + "is OK, %v transfers", len(transfers))
 //	} else {
 //		counters.Lock()
 //		counters.Increment("bad_contacts", 1)

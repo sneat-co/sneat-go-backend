@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/strongo/i18n"
+	"github.com/strongo/logus"
 	"github.com/strongo/strongoapp"
 	"google.golang.org/appengine/v2"
 	"net/http"
@@ -13,7 +14,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/website/admin"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/website/pages"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/website/redirects"
-	"github.com/strongo/log"
 	//"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
 	//"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
@@ -49,7 +49,7 @@ func InitWebsite(router router) {
 
 func CreateInvitePage(w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
 	c := appengine.NewContext(r)
-	log.Infof(c, "CreateInvitePage()")
+	logus.Infof(c, "CreateInvitePage()")
 	//panic("Not implemented")
 	userID := authInfo.UserID
 	//session, _ := common.GetSession(r)

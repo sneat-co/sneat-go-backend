@@ -33,7 +33,7 @@ package maintainance
 //		return
 //	}
 //	if buf.Len() > 0 {
-//		log.Infof(c, buf.String())
+//		logus.Infof(c, buf.String())
 //	}
 //	return
 //}
@@ -48,7 +48,7 @@ package maintainance
 //		if contact, err = facade.GetContactByID(c, nil, contactID); err != nil {
 //			if dal.IsNotFound(err) {
 //				if err = m.createContact(c, buf, counters, user, userContact); err != nil {
-//					log.Errorf(c, "Failed to create contact %v", userContact.ID)
+//					logus.Errorf(c, "Failed to create contact %v", userContact.ID)
 //					err = nil
 //					continue
 //				}
@@ -125,7 +125,7 @@ package maintainance
 //	}); err != nil {
 //		return
 //	} else {
-//		log.Warningf(c, "Recreated contact %v[%v] for user %v[%v]", contact.ID, contact.Data.FullName(), user.ID, user.Data.FullName())
+//		logus.Warningf(c, "Recreated contact %v[%v] for user %v[%v]", contact.ID, contact.Data.FullName(), user.ID, user.Data.FullName())
 //	}
 //	return
 //}

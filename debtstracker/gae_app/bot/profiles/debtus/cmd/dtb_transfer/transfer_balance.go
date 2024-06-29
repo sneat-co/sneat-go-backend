@@ -6,13 +6,13 @@ import (
 	"github.com/crediterra/money"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/strongo/i18n"
+	"github.com/strongo/logus"
 	"time"
 
 	"context"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 	"golang.org/x/net/html"
 )
 
@@ -64,12 +64,12 @@ func (m BalanceMessageBuilder) ByContact(c context.Context, linker common.Linker
 	for _, userContactJson := range userContactJsons {
 		counterpartyBalanceWithInterest, err := userContactJson.BalanceWithInterest(c, now)
 		if err != nil {
-			log.Errorf(c, "Failed to get userContactJson balance with interest for contact %v: %v", userContactJson.ID, err)
+			logus.Errorf(c, "Failed to get userContactJson balance with interest for contact %v: %v", userContactJson.ID, err)
 			writeBalanceErrorRow(userContactJson, err)
 			continue
 		}
 		//counterpartyBalance := userContactJson.Balance()
-		//log.Debugf(c, "counterpartyBalanceWithInterest: %v\ncounterpartyBalance: %v", counterpartyBalanceWithInterest, counterpartyBalance)
+		//logus.Debugf(c, "counterpartyBalanceWithInterest: %v\ncounterpartyBalance: %v", counterpartyBalanceWithInterest, counterpartyBalance)
 		if counterpartyBalanceWithInterest.IsZero() {
 			counterpartiesWithZeroBalanceCount += 1
 			counterpartiesWithZeroBalance.WriteString(userContactJson.ID)
@@ -80,7 +80,7 @@ func (m BalanceMessageBuilder) ByContact(c context.Context, linker common.Linker
 		writeBalanceRow(userContactJson, counterpartyBalanceWithInterest.OnlyNegative(), trans.MESSAGE_TEXT_BALANCE_SINGLE_CURRENCY_COUNTERPARTY_DEBT_BY_USER)
 	}
 	//if counterpartiesWithZeroBalanceCount > 0 {
-	//	log.Debugf(c, "There are %d userContactJsons with zero balance: %v", counterpartiesWithZeroBalanceCount, strings.TrimRight(counterpartiesWithZeroBalance.String(), ", "))
+	//	logus.Debugf(c, "There are %d userContactJsons with zero balance: %v", counterpartiesWithZeroBalanceCount, strings.TrimRight(counterpartiesWithZeroBalance.String(), ", "))
 	//}
 	if l := buffer.Len() - 1; l > 0 {
 		buffer.Truncate(l)

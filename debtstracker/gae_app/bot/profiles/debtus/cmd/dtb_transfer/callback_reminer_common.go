@@ -2,7 +2,7 @@ package dtb_transfer
 
 import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 )
 
 func reportReminderIsActed(whc botsfw.WebhookContext, action string) {
@@ -11,7 +11,7 @@ func reportReminderIsActed(whc botsfw.WebhookContext, action string) {
 		"reminders",
 		action,
 	)); err != nil {
-		log.Errorf(whc.Context(), err.Error())
+		logus.Errorf(whc.Context(), err.Error())
 		err = nil
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/strongo/i18n"
+	"github.com/strongo/logus"
 	"html"
 	"net/url"
 	"regexp"
@@ -15,7 +16,6 @@ import (
 	"github.com/bots-go-framework/bots-fw-telegram"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 var reInlineQueryNewBill = regexp.MustCompile(`^\s*(\d+(?:\.\d*)?)([^\s]*)\s+(.+?)\s*$`)
@@ -32,12 +32,12 @@ var inlineQueryCommand = botsfw.Command{
 			if appUserData, err := whc.AppUserData(); err != nil {
 				return m, err
 			} else if preferredLocale := appUserData.BotsFwAdapter().GetPreferredLocale(); preferredLocale != "" {
-				log.Debugf(c, "User has preferring locale")
+				logus.Debugf(c, "User has preferring locale")
 				_ = whc.SetLocale(preferredLocale)
 			} else if tgLang := update.InlineQuery.From.LanguageCode; len(tgLang) >= 2 {
 				switch strings.ToLower(tgLang[:2]) {
 				case "ru":
-					log.Debugf(c, "Telegram client has known language code")
+					logus.Debugf(c, "Telegram client has known language code")
 					if err = whc.SetLocale(i18n.LocaleRuRu.Code5); err != nil {
 						return m, err
 					}
@@ -46,7 +46,7 @@ var inlineQueryCommand = botsfw.Command{
 		}
 		inlineQuery := whc.Input().(botsfw.WebhookInlineQuery)
 		query := strings.TrimSpace(inlineQuery.GetQuery())
-		log.Debugf(c, "inlineQueryCommand.Action(query=%v)", query)
+		logus.Debugf(c, "inlineQueryCommand.Action(query=%v)", query)
 		switch {
 		case query == "":
 			return inlineEmptyQuery(whc, inlineQuery)
@@ -56,7 +56,7 @@ var inlineQueryCommand = botsfw.Command{
 			if reMatches := reInlineQueryNewBill.FindStringSubmatch(query); reMatches != nil {
 				return inlineQueryNewBill(whc, reMatches[1], reMatches[2], reMatches[3])
 			}
-			log.Debugf(c, "Inline query not matched to any action: [%v]", query)
+			logus.Debugf(c, "Inline query not matched to any action: [%v]", query)
 		}
 
 		return
@@ -64,7 +64,7 @@ var inlineQueryCommand = botsfw.Command{
 }
 
 func inlineEmptyQuery(whc botsfw.WebhookContext, inlineQuery botsfw.WebhookInlineQuery) (m botsfw.MessageFromBot, err error) {
-	log.Debugf(whc.Context(), "InlineEmptyQuery()")
+	logus.Debugf(whc.Context(), "InlineEmptyQuery()")
 	m.BotMessage = telegram.InlineBotMessage(tgbotapi.InlineConfig{
 		InlineQueryID:     inlineQuery.GetInlineQueryID(),
 		CacheTime:         60,

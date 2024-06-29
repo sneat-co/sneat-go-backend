@@ -9,6 +9,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/strongo/i18n"
+	"github.com/strongo/logus"
 	"net/url"
 
 	"context"
@@ -18,7 +19,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/decimal"
-	"github.com/strongo/log"
 )
 
 const billCardCommandCode = "bill-card"
@@ -138,7 +138,7 @@ func writeBillMembersList(
 			buffer.WriteString("<b>")
 		}
 		if err = common.HtmlTemplates.RenderTemplate(c, buffer, translator, trans.MESSAGE_TEXT_BILL_CARD_MEMBER_TITLE, templateParams); err != nil {
-			log.Errorf(c, "Failed to render template")
+			logus.Errorf(c, "Failed to render template")
 			return
 		}
 		if member.Paid == bill.Data.AmountTotal {
@@ -160,10 +160,10 @@ func writeBillMembersList(
 			templateName = trans.MESSAGE_TEXT_BILL_CARD_MEMBERS_ROW
 		}
 
-		log.Debugf(c, "Will render template")
+		logus.Debugf(c, "Will render template")
 		buffer.WriteString(" ")
 		if err = common.HtmlTemplates.RenderTemplate(c, buffer, translator, templateName, templateParams); err != nil {
-			log.Errorf(c, "Failed to render template")
+			logus.Errorf(c, "Failed to render template")
 			return
 		}
 		buffer.WriteString("\n\n")
@@ -219,21 +219,21 @@ func writeBillCardTitle(c context.Context, bill models.Bill, botID string, buffe
 		amount = bill.Data.TotalAmount()
 	}
 	titleWithLink := fmt.Sprintf(`<a href="https://t.me/%v?start=bill-%v">%v</a>`, botID, bill.ID, bill.Data.Name)
-	log.Debugf(c, "titleWithLink: %v", titleWithLink)
+	logus.Debugf(c, "titleWithLink: %v", titleWithLink)
 	header := translator.Translate(trans.MESSAGE_TEXT_BILL_CARD_HEADER, amount, titleWithLink)
-	log.Debugf(c, "header: %v", header)
+	logus.Debugf(c, "header: %v", header)
 	if _, err := buffer.WriteString(header); err != nil {
-		log.Errorf(c, "Failed to write bill header")
+		logus.Errorf(c, "Failed to write bill header")
 		return err
 	}
 	return nil
 }
 
 func getBillCardMessageText(c context.Context, botID string, translator i18n.SingleLocaleTranslator, bill models.Bill, showMembers bool, footer string) (string, error) {
-	log.Debugf(c, "getBillCardMessageText() => bill.BillEntity: %v", bill.Data)
+	logus.Debugf(c, "getBillCardMessageText() => bill.BillEntity: %v", bill.Data)
 
 	var buffer bytes.Buffer
-	log.Debugf(c, "Will write bill header...")
+	logus.Debugf(c, "Will write bill header...")
 
 	if err := writeBillCardTitle(c, bill, botID, &buffer, translator); err != nil {
 		return "", err
@@ -259,6 +259,6 @@ func getBillCardMessageText(c context.Context, botID string, translator i18n.Sin
 		}
 		buffer.WriteString(footer)
 	}
-	log.Debugf(c, "getBillCardMessageText() completed")
+	logus.Debugf(c, "getBillCardMessageText() completed")
 	return buffer.String(), nil
 }

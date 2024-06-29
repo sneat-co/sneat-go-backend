@@ -109,7 +109,7 @@ func SendEmail(c context.Context, email emails.Email) (messageID string, err err
 	//
 	////http.DefaultClient = urlfetch.Client(c)
 	////http.DefaultTransport = &urlfetch.Transport{Context: c, AllowInvalidServerCertificate: false}
-	//log.Debugf(c, "Sending email through AWS SES: %v", params)
+	//logus.Debugf(c, "Sending email through AWS SES: %v", params)
 	//
 	//resp, err := svc.SendEmail(params)
 	//
@@ -122,16 +122,16 @@ func SendEmail(c context.Context, email emails.Email) (messageID string, err err
 	//		params.Destination.ToAddresses[0] = aws.String(strings.ToLower(to))
 	//		resp, err = svc.SendEmail(params)
 	//		if err != nil {
-	//			log.Errorf(c, "Failed to send ToLower(email): %v", err)
+	//			logus.Errorf(c, "Failed to send ToLower(email): %v", err)
 	//			return "", originalErr
 	//		}
 	//	} else {
-	//		log.Errorf(c, "Failed to send email using AWS SES: %v", err)
+	//		logus.Errorf(c, "Failed to send email using AWS SES: %v", err)
 	//		return "", fmt.Errorf("failed to send email: %w", err)
 	//	}
 	//}
 	//
 	//// Pretty-print the response data.
-	//log.Debugf(c, "AWS SES output: %v", resp)
+	//logus.Debugf(c, "AWS SES output: %v", resp)
 	//return *resp.MessageId, err
 }

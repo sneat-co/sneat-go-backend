@@ -13,7 +13,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/delaying"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"net/url"
 	"strings"
 )
@@ -22,7 +22,7 @@ var ViewReceiptInTelegramCallbackCommand = botsfw.NewCallbackCommand(
 	VIEW_RECEIPT_IN_TELEGRAM_COMMAND,
 	func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 		c := whc.Context()
-		log.Debugf(c, "ViewReceiptInTelegramCallbackCommand.CallbackAction()")
+		logus.Debugf(c, "ViewReceiptInTelegramCallbackCommand.CallbackAction()")
 		query := callbackUrl.Query()
 
 		receiptID := query.Get("id")
@@ -33,7 +33,7 @@ var ViewReceiptInTelegramCallbackCommand = botsfw.NewCallbackCommand(
 		currentUserID := whc.AppUserID()
 		if receipt.Data.CreatorUserID != currentUserID {
 			if err = linkUsersByReceiptNowOrDelay(c, receipt, currentUserID); err != nil {
-				log.Errorf(c, err.Error())
+				logus.Errorf(c, err.Error())
 				err = nil // We still can create link to receipt, so log error and continue
 			}
 		}
@@ -64,11 +64,11 @@ func DelayLinkUsersByReceipt(c context.Context, receiptID, invitedUserID string)
 }
 
 func delayedLinkUsersByReceipt(c context.Context, receiptID, invitedUserID string) error {
-	log.Debugf(c, "delayedLinkUsersByReceipt(receiptID=%v, invitedUserID=%v)", receiptID, invitedUserID)
+	logus.Debugf(c, "delayedLinkUsersByReceipt(receiptID=%v, invitedUserID=%v)", receiptID, invitedUserID)
 	receipt, err := dtdal.Receipt.GetReceiptByID(c, nil, receiptID)
 	if err != nil {
 		if dal.IsNotFound(err) {
-			log.Errorf(c, err.Error())
+			logus.Errorf(c, err.Error())
 			err = nil
 		}
 		return err
@@ -80,7 +80,7 @@ func linkUsersByReceiptNowOrDelay(c context.Context, receipt models.Receipt, inv
 	if err = linkUsersByReceipt(c, receipt, invitedUserID); err != nil {
 		err = fmt.Errorf("failed to link users by receipt: %w", err)
 		if strings.Contains(err.Error(), "concurrent transaction") {
-			log.Warningf(c, err.Error())
+			logus.Warningf(c, err.Error())
 			if err = DelayLinkUsersByReceipt(c, receipt.ID, invitedUserID); err != nil {
 				err = fmt.Errorf("failed to delay linking users by receipt: %w", err)
 			}
@@ -97,10 +97,10 @@ func linkUsersByReceipt(c context.Context, receipt models.Receipt, invitedUserID
 		}
 	} else if receipt.Data.CounterpartyUserID != invitedUserID {
 		// TODO: Should we allow to see receipt but block from changing it?
-		log.Warningf(c, `Security issue: receipt.CreatorUserID != currentUserID && receipt.CounterpartyUserID != currentUserID
-	currentUserID: %d
-	receipt.CreatorUserID: %d
-	receipt.CounterpartyUserID: %d
+		logus.Warningf(c, `Security issue: receipt.CreatorUserID != currentUserID && receipt.CounterpartyUserID != currentUserID
+	currentUserID: %s
+	receipt.CreatorUserID: %s
+	receipt.CounterpartyUserID: %s
 				`, invitedUserID, receipt.Data.CreatorUserID, receipt.Data.CounterpartyUserID)
 		//} else {
 		// receipt.CounterpartyUserID == currentUserID - we are fine

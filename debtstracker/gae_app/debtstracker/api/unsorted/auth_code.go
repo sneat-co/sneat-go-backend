@@ -3,6 +3,7 @@ package unsorted
 import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
+	"github.com/strongo/logus"
 	"net/http"
 	"strconv"
 
@@ -13,7 +14,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 // TODO: Obsolete - migrate to HandleSignInWithPin
@@ -42,7 +42,7 @@ func HandleSignInWithCode(c context.Context, w http.ResponseWriter, r *http.Requ
 			}
 		} else {
 			if authInfo.UserID != "" && userID != authInfo.UserID {
-				log.Warningf(c, "userID:%s != authInfo.AppUserIntID:%s", userID, authInfo.UserID)
+				logus.Warningf(c, "userID:%s != authInfo.AppUserIntID:%s", userID, authInfo.UserID)
 			}
 			ReturnToken(c, w, userID, false, false)
 			return
@@ -76,7 +76,7 @@ func HandleSignInWithPin(c context.Context, w http.ResponseWriter, r *http.Reque
 			}
 		} else {
 			if authInfo.UserID != "" && userID != authInfo.UserID {
-				log.Warningf(c, "userID:%s != authInfo.AppUserIntID:%s", userID, authInfo.UserID)
+				logus.Warningf(c, "userID:%s != authInfo.AppUserIntID:%s", userID, authInfo.UserID)
 			}
 			ReturnToken(c, w, userID, false, false)
 		}

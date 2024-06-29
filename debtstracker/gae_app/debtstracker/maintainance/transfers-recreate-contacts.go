@@ -9,7 +9,7 @@ package maintainance
 //	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 //	"context"
 //	"github.com/captaincodeman/datastore-mapper"
-//	"github.com/strongo/log"
+//	"github.com/strongo/logus"
 //	"time"
 //)
 //
@@ -24,7 +24,7 @@ package maintainance
 //func (m *transfersRecreateContacts) verifyAndFix(c context.Context, tx dal.ReadwriteTransaction, counters *asyncCounters, transfer models.Transfer) (err error) {
 //	defer func() {
 //		if r := recover(); r != nil {
-//			log.Errorf(c, "*transfersRecreateContacts.verifyAndFix() => panic: %v\n\n%v", r, string(debug.Stack()))
+//			logus.Errorf(c, "*transfersRecreateContacts.verifyAndFix() => panic: %v\n\n%v", r, string(debug.Stack()))
 //		}
 //	}()
 //	var fixed bool
@@ -63,7 +63,7 @@ package maintainance
 //			return
 //		}
 //		err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
-//			log.Debugf(c, "Recreating contact # %v", contactInfo.ContactID)
+//			logus.Debugf(c, "Recreating contact # %v", contactInfo.ContactID)
 //			var counterpartyContact models.ContactEntry
 //			if counterpartyContact, err = facade.GetContactByID(c, tx, counterpartyInfo.ContactID); err != nil {
 //				return
@@ -88,7 +88,7 @@ package maintainance
 //			}
 //
 //			if contactUserContactJson.ID == 0 {
-//				log.Errorf(c, "ContactEntry %v info not found in user %v contacts json", contactInfo.ContactID, counterpartyInfo.UserID)
+//				logus.Errorf(c, "ContactEntry %v info not found in user %v contacts json", contactInfo.ContactID, counterpartyInfo.UserID)
 //				return
 //			}
 //
@@ -97,7 +97,7 @@ package maintainance
 //					counterpartyContact.Data.CounterpartyCounterpartyID = contactInfo.ContactID
 //					counterpartyContact.Data.CounterpartyUserID = counterpartyInfo.UserID
 //				} else if counterpartyContact.Data.CounterpartyCounterpartyID != contactInfo.ContactID {
-//					log.Errorf(c, "counterpartyContact.CounterpartyCounterpartyID != contact.ID: %v != %v", counterpartyContact.Data.CounterpartyCounterpartyID, contactInfo.ContactID)
+//					logus.Errorf(c, "counterpartyContact.CounterpartyCounterpartyID != contact.ID: %v != %v", counterpartyContact.Data.CounterpartyCounterpartyID, contactInfo.ContactID)
 //					return
 //				}
 //				if err = facade.SaveContact(c, counterpartyContact); err != nil {
@@ -136,7 +136,7 @@ package maintainance
 //			return
 //		}
 //		fixed = true
-//		log.Warningf(c, "Counterparty re-created: %v", contactInfo.ContactID)
+//		logus.Warningf(c, "Counterparty re-created: %v", contactInfo.ContactID)
 //		return
 //	}
 //

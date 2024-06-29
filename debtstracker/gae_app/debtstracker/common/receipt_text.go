@@ -10,7 +10,7 @@ import (
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/i18n"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"github.com/strongo/strongoapp"
 	"html"
 	"html/template"
@@ -131,7 +131,7 @@ func (r receiptTextBuilder) receiptCommonFooter(buffer *bytes.Buffer) {
 }
 
 func TextReceiptForTransfer(c context.Context, translator i18n.SingleLocaleTranslator, transfer models.TransferEntry, showToUserID string, showReceiptTo ShowReceiptTo, utmParams UtmParams) string {
-	log.Debugf(c, "TextReceiptForTransfer(transferID=%v, showToUserID=%v, showReceiptTo=%v)", transfer.ID, showToUserID, showReceiptTo)
+	logus.Debugf(c, "TextReceiptForTransfer(transferID=%v, showToUserID=%v, showReceiptTo=%v)", transfer.ID, showToUserID, showReceiptTo)
 
 	if transfer.ID == "" {
 		panic("transferID == 0")

@@ -31,9 +31,9 @@ func getMainMenuParams(_ botsfw.WebhookContext, onReceiptAck bool) (params mainM
 	//)
 	//c := whc.Context()
 	//if userEntity, err := whc.AppUserData(); err != nil {
-	//	log.Errorf(c, "Failed to get user: %v", err)
+	//	logus.Errorf(c, "Failed to get user: %v", err)
 	//} else if user, isAppUser = userEntity.(*models.DebutsAppUserDataOBSOLETE); !isAppUser {
-	//	log.Errorf(c, "Failed to case user to *models.DebutsAppUserDataOBSOLETE: %T", userEntity)
+	//	logus.Errorf(c, "Failed to case user to *models.DebutsAppUserDataOBSOLETE: %T", userEntity)
 	//} else if onReceiptAck || !user.Balance().IsZero() {
 	//	params.showReturn = true
 	//}
@@ -125,7 +125,7 @@ func SetMainMenuKeyboard(whc botsfw.WebhookContext, m *botsfw.MessageFromBot) {
 //			),
 //		),
 //	}
-//	log.Debugf(whc.Context(), "First element: %v", attachment.Payload.RequestAttachmentListTemplate.Elements[0])
+//	logus.Debugf(whc.Context(), "First element: %v", attachment.Payload.RequestAttachmentListTemplate.Elements[0])
 //	return attachment
 //}
 

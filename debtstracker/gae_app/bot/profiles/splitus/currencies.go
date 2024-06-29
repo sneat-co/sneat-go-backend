@@ -13,7 +13,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"net/url"
 )
 
@@ -132,9 +132,9 @@ func groupSettingsSetCurrencyCommand(params shared_all.BotParams) botsfw.Command
 					}
 					return
 				}); err != nil {
-					log.Errorf(whc.Context(), "failed to change group default currency: %v", err)
+					logus.Errorf(whc.Context(), "failed to change group default currency: %v", err)
 				} else {
-					log.Debugf(c, "Default currency for group %v updated to: %v", group.ID, currency)
+					logus.Debugf(c, "Default currency for group %v updated to: %v", group.ID, currency)
 				}
 			}
 			if callbackUrl.Query().Get("start") == "y" {

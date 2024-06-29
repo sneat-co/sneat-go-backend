@@ -5,13 +5,13 @@ import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/strongo/logus"
 
 	"github.com/bots-go-framework/bots-fw-telegram"
-	"github.com/strongo/log"
 )
 
 func InlineSendInvite(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-	log.Debugf(whc.Context(), "InlineSendInvite()")
+	logus.Debugf(whc.Context(), "InlineSendInvite()")
 	inlineQuery := whc.Input().(botsfw.WebhookInlineQuery)
 	//callbackData := "call-back1"
 	//url := fmt.Sprintf("https://telegram.me/%v?start=invite-%v", whc.GetBotCode(), "some-code")

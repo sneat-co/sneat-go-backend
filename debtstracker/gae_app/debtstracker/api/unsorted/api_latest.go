@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
+	"github.com/strongo/logus"
 	"net/http"
 	"sync"
 
@@ -13,7 +14,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
-	"github.com/strongo/log"
 )
 
 func HandleAdminLatestUsers(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
@@ -45,7 +45,7 @@ func HandleAdminLatestUsers(c context.Context, w http.ResponseWriter, r *http.Re
 			go func(i int, userCounterpartiesIDs []string) {
 				counterparties, err := facade.GetContactsByIDs(c, nil, userCounterpartiesIDs)
 				if err != nil {
-					log.Errorf(c, fmt.Errorf("failed to get counterparties by ids=%+v: %w", userCounterpartiesIDs, err).Error())
+					logus.Errorf(c, fmt.Errorf("failed to get counterparties by ids=%+v: %w", userCounterpartiesIDs, err).Error())
 					wg.Done()
 					return
 				}
@@ -62,7 +62,7 @@ func HandleAdminLatestUsers(c context.Context, w http.ResponseWriter, r *http.Re
 					}
 					record.Counterparties = append(record.Counterparties, counterpartyDto)
 				}
-				log.Debugf(c, "Contacts goroutine completed.")
+				logus.Debugf(c, "Contacts goroutine completed.")
 				wg.Done()
 			}(i, userCounterpartiesIDs)
 		}
@@ -71,7 +71,7 @@ func HandleAdminLatestUsers(c context.Context, w http.ResponseWriter, r *http.Re
 			go func(i int, userID string) {
 				inviter, err := facade.User.GetUserByID(c, nil, userID)
 				if err != nil {
-					log.Errorf(c, fmt.Errorf("failed to get user by id=%v: %w", userID, err).Error())
+					logus.Errorf(c, fmt.Errorf("failed to get user by id=%v: %w", userID, err).Error())
 					return
 				}
 				records[i].InvitedByUser = &struct {
@@ -81,7 +81,7 @@ func HandleAdminLatestUsers(c context.Context, w http.ResponseWriter, r *http.Re
 					userID,
 					inviter.Data.FullName(),
 				}
-				log.Debugf(c, "User goroutine completed.")
+				logus.Debugf(c, "User goroutine completed.")
 				wg.Done()
 			}(i, user.Data.InvitedByUserID)
 		}
@@ -91,7 +91,7 @@ func HandleAdminLatestUsers(c context.Context, w http.ResponseWriter, r *http.Re
 
 	for i, record := range records {
 		if userBytes, err := json.Marshal(record); err != nil {
-			log.Errorf(c, err.Error())
+			logus.Errorf(c, err.Error())
 			w.WriteHeader(http.StatusInternalServerError)
 			_, _ = w.Write([]byte(err.Error()))
 			return
@@ -108,7 +108,7 @@ func HandleAdminLatestUsers(c context.Context, w http.ResponseWriter, r *http.Re
 	header.Add("Content-Type", "application/json")
 	header.Add("Access-Control-Allow-Origin", "*")
 	if _, err = w.Write(buffer.Bytes()); err != nil {
-		log.Errorf(c, err.Error())
+		logus.Errorf(c, err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
 	}

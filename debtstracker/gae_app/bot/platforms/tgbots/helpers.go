@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botsfw"
+	"github.com/strongo/logus"
 	"regexp"
 	"strings"
 
 	"context"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/strongo/log"
 )
 
 func GetTelegramBotApiByBotCode(c context.Context, code string) *tgbotapi.BotAPI {
@@ -55,10 +55,10 @@ func ParseStartCommand(whc botsfw.WebhookContext) (startParam string, startParam
 				}
 			}
 			if utmMedium != "" || utmSource != "" { // TODO: Handle analytics
-				log.Debugf(whc.Context(), "TODO: utm_medium=%v, utm_source=%v", utmMedium, utmSource)
+				logus.Debugf(whc.Context(), "TODO: utm_medium=%v, utm_source=%v", utmMedium, utmSource)
 			}
 		} else {
-			log.Debugf(whc.Context(), "reTelegramStartCommandPrefix did not match - no start parameters")
+			logus.Debugf(whc.Context(), "reTelegramStartCommandPrefix did not match - no start parameters")
 		}
 		return
 	}

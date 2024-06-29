@@ -3,13 +3,13 @@ package facade
 import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/strongo/logus"
 	"time"
 
 	"context"
 	"errors"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 type usersLinkingDbChanges struct {
@@ -39,22 +39,22 @@ func newReceiptDbChanges() *receiptDbChanges {
 func workaroundReinsertContact(c context.Context, receipt models.Receipt, invitedContact models.ContactEntry, changes *receiptDbChanges) (err error) {
 	if _, err = GetContactByID(c, nil, invitedContact.ID); err != nil {
 		if dal.IsNotFound(err) {
-			log.Warningf(c, "workaroundReinsertContact(invitedContact.ID=%s) => %v", invitedContact.ID, err)
+			logus.Warningf(c, "workaroundReinsertContact(invitedContact.ID=%s) => %v", invitedContact.ID, err)
 			err = nil
 			if receipt.Data.Status == models.ReceiptStatusAcknowledged {
 				if invitedContactInfo := changes.invitedUser.Data.ContactByID(invitedContact.ID); invitedContactInfo != nil {
-					log.Warningf(c, "Transactional retry, contact was not created in DB but invitedUser already has the contact info & receipt is acknowledged")
+					logus.Warningf(c, "Transactional retry, contact was not created in DB but invitedUser already has the contact info & receipt is acknowledged")
 					changes.invitedContact = &invitedContact
 				} else {
-					log.Warningf(c, "Transactional retry, contact was not created in DB but receipt is acknowledged & invitedUser has not contact info in JSON")
+					logus.Warningf(c, "Transactional retry, contact was not created in DB but receipt is acknowledged & invitedUser has not contact info in JSON")
 				}
 			}
 			changes.FlagAsChanged(changes.invitedContact.Record)
 		} else {
-			log.Errorf(c, "workaroundReinsertContact(invitedContact.ID=%s) => %v", invitedContact.ID, err)
+			logus.Errorf(c, "workaroundReinsertContact(invitedContact.ID=%s) => %v", invitedContact.ID, err)
 		}
 	} else {
-		log.Debugf(c, "workaroundReinsertContact(%s) => contact found by ID!", invitedContact.ID)
+		logus.Debugf(c, "workaroundReinsertContact(%s) => contact found by ID!", invitedContact.ID)
 	}
 	return
 }
@@ -62,7 +62,7 @@ func workaroundReinsertContact(c context.Context, receipt models.Receipt, invite
 func AcknowledgeReceipt(c context.Context, receiptID, currentUserID string, operation string) (
 	receipt models.Receipt, transfer models.TransferEntry, isCounterpartiesJustConnected bool, err error,
 ) {
-	log.Debugf(c, "AcknowledgeReceipt(receiptID=%s, currentUserID=%s, operation=%s)", receiptID, currentUserID, operation)
+	logus.Debugf(c, "AcknowledgeReceipt(receiptID=%s, currentUserID=%s, operation=%s)", receiptID, currentUserID, operation)
 	var transferAckStatus string
 	switch operation {
 	case dtdal.AckAccept:
@@ -91,7 +91,7 @@ func AcknowledgeReceipt(c context.Context, receiptID, currentUserID string, oper
 		}
 
 		if transfer.Data.CreatorUserID == currentUserID {
-			log.Errorf(tc, "An attempt to claim receipt on self created transfer")
+			logus.Errorf(tc, "An attempt to claim receipt on self created transfer")
 			err = ErrSelfAcknowledgement
 			return
 		}
@@ -126,7 +126,7 @@ func AcknowledgeReceipt(c context.Context, receiptID, currentUserID string, oper
 				err = fmt.Errorf("receipt.AcknowledgedByUserID != currentUserID (%s != %s)", receipt.Data.AcknowledgedByUserID, currentUserID)
 				return
 			}
-			log.Debugf(c, "Receipt is already acknowledged")
+			logus.Debugf(c, "Receipt is already acknowledged")
 		} else {
 			receipt.Data.DtAcknowledged = time.Now()
 			receipt.Data.Status = models.ReceiptStatusAcknowledged
@@ -145,10 +145,10 @@ func AcknowledgeReceipt(c context.Context, receiptID, currentUserID string, oper
 			}
 			invitedContact = *changes.invitedContact
 			inviterContact = *changes.inviterContact
-			//log.Debugf(c, "linkUsersByReceiptWithinTransaction() =>\n\tinvitedContact %s: %+v\n\tinviterContact %s: %v",
+			//logus.Debugf(c, "linkUsersByReceiptWithinTransaction() =>\n\tinvitedContact %s: %+v\n\tinviterContact %s: %v",
 			//	invitedContact.ID, invitedContact.Data, inviterContact.ID, inviterContact.Data)
 		} else {
-			log.Debugf(c, "No need to link users as already linked")
+			logus.Debugf(c, "No need to link users as already linked")
 			inviterContact.ID = transfer.Data.CounterpartyInfoByUserID(inviterUser.ID).ContactID
 			invitedContact.ID = transfer.Data.CounterpartyInfoByUserID(invitedUser.ID).ContactID
 		}
@@ -157,17 +157,17 @@ func AcknowledgeReceipt(c context.Context, receiptID, currentUserID string, oper
 		invitedUser.Data.CountOfAckTransfersByUser += 1
 
 		if recordsToSave := changes.Records(); len(recordsToSave) > 0 {
-			//log.Debugf(c, "%d entities to save: %+v", len(recordsToSave), recordsToSave)
+			//logus.Debugf(c, "%d entities to save: %+v", len(recordsToSave), recordsToSave)
 			if err = tx.SetMulti(c, recordsToSave); err != nil {
 				return
 			}
 		} else {
-			log.Debugf(c, "Nothing to save")
+			logus.Debugf(c, "Nothing to save")
 		}
 
 		//if _, err = GetContactByID(c, invitedContact.ID); err != nil {
 		//	if dal.IsNotFound(err) {
-		//		log.Errorf(c, "Invited contact is not found by ID, let's try to re-insert.")
+		//		logus.Errorf(c, "Invited contact is not found by ID, let's try to re-insert.")
 		//		if err = facade.SaveContact(c, invitedContact); err != nil {
 		//			return
 		//		}
@@ -186,7 +186,7 @@ func AcknowledgeReceipt(c context.Context, receiptID, currentUserID string, oper
 		err = fmt.Errorf("failed to acknowledge receipt: %w", err)
 		return
 	}
-	log.Infof(c, "Receipt successfully acknowledged")
+	logus.Infof(c, "Receipt successfully acknowledged")
 
 	{ // verify invitedContact
 		if invitedContact, err = GetContactByID(c, nil, invitedContact.ID); err != nil {
@@ -194,7 +194,7 @@ func AcknowledgeReceipt(c context.Context, receiptID, currentUserID string, oper
 			if dal.IsNotFound(err) {
 				return
 			}
-			log.Errorf(c, err.Error())
+			logus.Errorf(c, err.Error())
 			err = nil // We are OK to ignore technical issues here
 			return
 		}
@@ -250,7 +250,7 @@ func getReceiptTransferAndUsers(c context.Context, tx dal.ReadSession, receiptID
 	counterpartyUser models.AppUser,
 	err error,
 ) {
-	log.Debugf(c, "getReceiptTransferAndUsers(receiptID=%s, userID=%s)", receiptID, userID)
+	logus.Debugf(c, "getReceiptTransferAndUsers(receiptID=%s, userID=%s)", receiptID, userID)
 
 	if receipt, err = dtdal.Receipt.GetReceiptByID(c, tx, receiptID); err != nil {
 		return
@@ -279,7 +279,7 @@ func getReceiptTransferAndUsers(c context.Context, tx dal.ReadSession, receiptID
 		}
 	}
 
-	log.Debugf(c, "getReceiptTransferAndUsers(receiptID=%s, userID=%s) =>\n\tcreatorUser(id=%s): %+v\n\tcounterpartyUser(id=%s): %+v",
+	logus.Debugf(c, "getReceiptTransferAndUsers(receiptID=%s, userID=%s) =>\n\tcreatorUser(id=%s): %+v\n\tcounterpartyUser(id=%s): %+v",
 		receiptID, userID,
 		creatorUser.ID, creatorUser.Data,
 		counterpartyUser.ID, counterpartyUser.Data,

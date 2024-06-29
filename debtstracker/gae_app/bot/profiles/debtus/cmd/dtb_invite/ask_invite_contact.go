@@ -5,6 +5,7 @@ import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/strongo/logus"
 	"net/url"
 	"strings"
 
@@ -14,7 +15,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/invites"
-	"github.com/strongo/log"
 )
 
 var AskInviteAddressTelegramCommand = AskInviteAddress(string(models.InviteByTelegram), emoji.ROCKET_ICON, trans.COMMAND_TEXT_INVITE_BY_TELEGRAM, trans.MESSAGE_TEXT_INVITE_BY_TELEGRAM, trans.MESSAGE_TEXT_NO_CONTACT_RECEIVED)
@@ -36,7 +36,7 @@ func AskInviteAddress(channel, icon, commandText, messageCode, invalidMessageCod
 				if isValid {
 					invite, err := dtdal.Invite.CreatePersonalInvite(whc, whc.AppUserID(), models.InviteByEmail, email, whc.BotPlatform().ID(), whc.GetBotCode(), "counterparty=?")
 					if err != nil {
-						log.Errorf(whc.Context(), "Failed to call invites.CreateInvite()")
+						logus.Errorf(whc.Context(), "Failed to call invites.CreateInvite()")
 						return m, err
 					}
 					var emailID string
@@ -95,7 +95,7 @@ var AskInviteAddressCallbackCommand = botsfw.Command{
 			}
 			return AskInviteAddressSmsCommand.Action(whc)
 		case "":
-			log.Warningf(whc.Context(), "AskInviteAddressCallbackCommand: got request to create invite without specifying a channel - not implemented yet. Need to ask a channel first. Check how it works if message forwarded to secret chat.")
+			logus.Warningf(whc.Context(), "AskInviteAddressCallbackCommand: got request to create invite without specifying a channel - not implemented yet. Need to ask a channel first. Check how it works if message forwarded to secret chat.")
 			m.Text = whc.Translate(trans.MESSAGE_TEXT_NOT_IMPLEMENTED_YET)
 			return
 		default:

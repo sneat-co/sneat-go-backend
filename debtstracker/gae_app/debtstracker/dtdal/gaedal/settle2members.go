@@ -9,12 +9,12 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/decimal"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"reflect"
 )
 
 func Settle2members(c context.Context, groupID, debtorID, sponsorID string, currency money.CurrencyCode, amount decimal.Decimal64p2) (err error) {
-	log.Debugf(c, "Settle2members(groupID=%v, debtorID=%v, sponsorID=%v, currency=%v, amount=%v)", groupID, debtorID, sponsorID, currency, amount)
+	logus.Debugf(c, "Settle2members(groupID=%v, debtorID=%v, sponsorID=%v, currency=%v, amount=%v)", groupID, debtorID, sponsorID, currency, amount)
 	query := dal.From(models.BillKind).
 		WhereField("GetUserGroupID", dal.Equal, groupID).
 		WhereField("Currency", dal.Equal, string(currency)).
@@ -39,10 +39,10 @@ func Settle2members(c context.Context, groupID, debtorID, sponsorID string, curr
 	}
 
 	if len(ids) == 0 {
-		log.Errorf(c, "No bills found to settle")
+		logus.Errorf(c, "No bills found to settle")
 		return
 	} else {
-		log.Debugf(c, "ids: %+v", ids)
+		logus.Debugf(c, "ids: %+v", ids)
 	}
 
 	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
@@ -72,13 +72,13 @@ func Settle2members(c context.Context, groupID, debtorID, sponsorID string, curr
 		if v, ok := groupDebtor.Balance[currency]; !ok {
 			return fmt.Errorf("group debtor has no balance in currency=%v", currency)
 		} else if -v < amount {
-			log.Warningf(c, "Debtor balance is less then settling amount")
+			logus.Warningf(c, "Debtor balance is less then settling amount")
 			amount = -v
 		}
 		if v, ok := groupSponsor.Balance[currency]; !ok {
 			return fmt.Errorf("group sponsor has no balance in currency=%v", currency)
 		} else if v < amount {
-			log.Warningf(c, "sponsor balance is less then settling amount")
+			logus.Warningf(c, "sponsor balance is less then settling amount")
 			amount = v
 		}
 
@@ -103,7 +103,7 @@ func Settle2members(c context.Context, groupID, debtorID, sponsorID string, curr
 				switch billMembers[i].ID {
 				case debtorID:
 					if debtor = &billMembers[i]; debtor.Balance() >= 0 {
-						log.Warningf(c, "Got debtor %v with positive balance = %v", debtor.ID, debtor.Balance())
+						logus.Warningf(c, "Got debtor %v with positive balance = %v", debtor.ID, debtor.Balance())
 						goto nextBill
 					}
 					if sponsor != nil {
@@ -111,7 +111,7 @@ func Settle2members(c context.Context, groupID, debtorID, sponsorID string, curr
 					}
 				case sponsorID:
 					if sponsor = &billMembers[i]; sponsor.Balance() <= 0 {
-						log.Warningf(c, "Got sponsor %v with negative balance = %v", sponsor.ID, sponsor.Balance())
+						logus.Warningf(c, "Got sponsor %v with negative balance = %v", sponsor.ID, sponsor.Balance())
 						goto nextBill
 					}
 					if debtor != nil {
@@ -120,11 +120,11 @@ func Settle2members(c context.Context, groupID, debtorID, sponsorID string, curr
 				}
 			}
 			if debtor == nil {
-				log.Warningf(c, "Debtor not found by ID="+debtorID)
+				logus.Warningf(c, "Debtor not found by ID="+debtorID)
 				goto nextBill
 			}
 			if sponsor == nil {
-				log.Warningf(c, "Sponsor not found by ID="+sponsorID)
+				logus.Warningf(c, "Sponsor not found by ID="+sponsorID)
 				goto nextBill
 			}
 			debtorInvertedBalance = -1 * debtor.Balance()
@@ -138,7 +138,7 @@ func Settle2members(c context.Context, groupID, debtorID, sponsorID string, curr
 				diff = amount
 			}
 
-			log.Debugf(c, "diff: %v", diff)
+			logus.Debugf(c, "diff: %v", diff)
 			amount -= diff
 			billsSettlement.Data.TotalAmountDiff += diff
 
@@ -158,8 +158,8 @@ func Settle2members(c context.Context, groupID, debtorID, sponsorID string, curr
 				return
 			}
 
-			log.Debugf(c, "groupDebtor.Balance: %v", groupDebtor.Balance)
-			log.Debugf(c, "groupSponsor.Balance: %v", groupSponsor.Balance)
+			logus.Debugf(c, "groupDebtor.Balance: %v", groupDebtor.Balance)
+			logus.Debugf(c, "groupSponsor.Balance: %v", groupSponsor.Balance)
 
 			billsToSave = append(billsToSave, bill)
 			settlementBills = append(settlementBills, models.BillSettlementJson{
@@ -205,7 +205,7 @@ func Settle2members(c context.Context, groupID, debtorID, sponsorID string, curr
 				return
 			}
 		} else {
-			log.Errorf(c, "No bills found to settle")
+			logus.Errorf(c, "No bills found to settle")
 		}
 
 		return

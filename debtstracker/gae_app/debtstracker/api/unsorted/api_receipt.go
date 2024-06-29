@@ -8,6 +8,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
 	"github.com/strongo/i18n"
+	"github.com/strongo/logus"
 	"github.com/strongo/strongoapp"
 	"net/http"
 	"strings"
@@ -24,7 +25,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/general"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/invites"
-	"github.com/strongo/log"
 )
 
 func NewReceiptTransferDto(c context.Context, transfer models.TransferEntry) dto.ApiReceiptTransferDto {
@@ -50,11 +50,11 @@ func NewReceiptTransferDto(c context.Context, transfer models.TransferEntry) dto
 		}
 	}
 	if transferDto.From.Name == "" {
-		log.Warningf(c, "transferDto.From.Name is empty string")
+		logus.Warningf(c, "transferDto.From.Name is empty string")
 	}
 
 	if transferDto.To.Name == "" {
-		log.Warningf(c, "transferDto.To.Name is empty string")
+		logus.Warningf(c, "transferDto.To.Name is empty string")
 	}
 	return transferDto
 }
@@ -102,19 +102,19 @@ func HandleGetReceipt(c context.Context, w http.ResponseWriter, r *http.Request)
 		env := dtdal.HttpAppHost.GetEnvironment(c, r)
 		if env == strongoapp.UnknownEnv {
 			w.WriteHeader(http.StatusBadRequest)
-			log.Warningf(c, "Unknown host")
+			logus.Warningf(c, "Unknown host")
 		}
 		botSettings, err := tgbots.GetBotSettingsByLang(env, bot.ProfileDebtus, lang)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Errorf(c, fmt.Errorf("failed to get bot settings by lang: %w", err).Error())
+			logus.Errorf(c, fmt.Errorf("failed to get bot settings by lang: %w", err).Error())
 		}
 		sentTo = botSettings.Code
 	}
 
 	creator := transfer.Data.Creator()
 
-	log.Debugf(c, "transfer.Creator(): %v", creator)
+	logus.Debugf(c, "transfer.Creator(): %v", creator)
 
 	receiptDto := dto.ApiReceiptDto{
 		ID:       receiptID,
@@ -209,7 +209,7 @@ func HandleSendReceipt(c context.Context, w http.ResponseWriter, r *http.Request
 	translator := i18n.NewSingleMapTranslator(locale, nil /*common.TheAppContext.GetTranslator(c)*/)
 
 	if _, err = invites.SendReceiptByEmail(c, translator, receipt, user.Data.FullName(), transfer.Data.Counterparty().ContactName, toAddress); err != nil {
-		log.Errorf(c, err.Error())
+		logus.Errorf(c, err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		err = fmt.Errorf("failed to send receipt by email: %w", err)
 		_, _ = w.Write([]byte(err.Error()))
@@ -257,9 +257,9 @@ func updateReceiptAndTransferOnSent(c context.Context, receiptID string, channel
 				err = fmt.Errorf("failed to save receipt & transfer: %w", err)
 			}
 		} else if receipt.Data.SentVia == channel {
-			log.Infof(c, "Receipt already has channel '%s'", channel)
+			logus.Infof(c, "Receipt already has channel '%s'", channel)
 		} else {
-			log.Warningf(c, "An attempt to set receipt channel to '%s' when it's alreay '%s'", channel, receipt.Data.SentVia)
+			logus.Warningf(c, "An attempt to set receipt channel to '%s' when it's alreay '%s'", channel, receipt.Data.SentVia)
 		}
 
 		return err
@@ -278,7 +278,7 @@ func HandleSetReceiptChannel(c context.Context, w http.ResponseWriter, r *http.R
 	receiptID := r.FormValue("receipt")
 	if receiptID == "" {
 		err := fmt.Errorf("missing receipt parameter")
-		log.Debugf(c, err.Error())
+		logus.Debugf(c, err.Error())
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte(err.Error()))
 		return
@@ -288,7 +288,7 @@ func HandleSetReceiptChannel(c context.Context, w http.ResponseWriter, r *http.R
 	if err != nil {
 		if errors.Is(err, errUnknownChannel) {
 			m := "Unknown channel: " + channel
-			log.Debugf(c, m)
+			logus.Debugf(c, m)
 			w.WriteHeader(http.StatusBadRequest)
 			_, _ = w.Write([]byte(m))
 		} else {
@@ -297,10 +297,10 @@ func HandleSetReceiptChannel(c context.Context, w http.ResponseWriter, r *http.R
 		}
 	}
 
-	log.Debugf(c, "HandleSetReceiptChannel(receiptID=%s, channel=%s)", receiptID, channel)
+	logus.Debugf(c, "HandleSetReceiptChannel(receiptID=%s, channel=%s)", receiptID, channel)
 	if channel == RECEIPT_CHANNEL_DRAFT {
 		m := fmt.Sprintf("Status '%s' is not supported in this method", RECEIPT_CHANNEL_DRAFT)
-		log.Warningf(c, m)
+		logus.Warningf(c, m)
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte(m))
 	}
@@ -315,7 +315,7 @@ func HandleSetReceiptChannel(c context.Context, w http.ResponseWriter, r *http.R
 		}
 		return
 	}
-	log.Infof(c, "Done")
+	logus.Infof(c, "Done")
 	_, _ = w.Write([]byte("ok"))
 }
 
@@ -339,12 +339,12 @@ func getReceiptChannel(r *http.Request) (channel string, err error) {
 
 func HandleCreateReceipt(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
 	if err := r.ParseForm(); err != nil {
-		log.Debugf(c, "HandleCreateReceipt() => Invalid form data: "+err.Error())
+		logus.Debugf(c, "HandleCreateReceipt() => Invalid form data: "+err.Error())
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte("Invalid form data"))
 		return
 	}
-	//log.Debugf(c, "HandleCreateReceipt() => r.Form: %+v", r.Form)
+	//logus.Debugf(c, "HandleCreateReceipt() => r.Form: %+v", r.Form)
 	transferID := r.FormValue("transfer")
 	if transferID == "" {
 		w.WriteHeader(http.StatusBadRequest)
@@ -357,7 +357,7 @@ func HandleCreateReceipt(c context.Context, w http.ResponseWriter, r *http.Reque
 			w.WriteHeader(http.StatusBadRequest)
 		} else {
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Errorf(c, err.Error())
+			logus.Errorf(c, err.Error())
 		}
 		_, _ = w.Write([]byte(err.Error()))
 		return
@@ -413,7 +413,7 @@ func HandleCreateReceipt(c context.Context, w http.ResponseWriter, r *http.Reque
 	receipt, err := dtdal.Receipt.CreateReceipt(c, receiptData)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Errorf(c, err.Error())
+		logus.Errorf(c, err.Error())
 		return
 	}
 
@@ -422,7 +422,7 @@ func HandleCreateReceipt(c context.Context, w http.ResponseWriter, r *http.Reque
 	//	w.WriteHeader(http.StatusInternalServerError)
 	//	err = errors.Wrapf(err, "Failed to get user by ID=%v", transfer.CreatorUserID)
 	//	w.Write([]byte(err.Error()))
-	//	log.Warningf(c, err.Error())
+	//	logus.Warningf(c, err.Error())
 	//	return
 	//}
 	var messageToSend string
@@ -442,7 +442,7 @@ func HandleCreateReceipt(c context.Context, w http.ResponseWriter, r *http.Reque
 		translator := i18n.NewSingleMapTranslator(locale, nil /*common.TheAppContext.GetTranslator(c)*/)
 		//ec := strongoapp.NewExecutionContext(c, translator)
 
-		log.Debugf(c, "r.Host: %s", r.Host)
+		logus.Debugf(c, "r.Host: %s", r.Host)
 
 		templateParams := struct {
 			ReceiptURL string
@@ -453,7 +453,7 @@ func HandleCreateReceipt(c context.Context, w http.ResponseWriter, r *http.Reque
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			err = fmt.Errorf("failed to render message template: %w", err)
-			log.Errorf(c, err.Error())
+			logus.Errorf(c, err.Error())
 			_, _ = w.Write([]byte(err.Error()))
 		}
 	}

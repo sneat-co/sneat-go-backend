@@ -40,7 +40,7 @@ func HandleSignedWithVK(c context.Context, w http.ResponseWriter, r *http.Reques
 	//
 	//logTodoMergeUsers := func(userID int64) {
 	//	m := fmt.Sprintf("TODO: Merge users: userID=%v, authInfo.AppUserIntID=%v", userID, authInfo.UserID)
-	//	//log.Errorf(c, m)
+	//	//logus.Errorf(c, m)
 	//	hashedWriter.WriteHeader(http.StatusInternalServerError)
 	//	hashedWriter.Write([]byte(m))
 	//}
@@ -50,7 +50,7 @@ func HandleSignedWithVK(c context.Context, w http.ResponseWriter, r *http.Reques
 	//vkUser, err := dtdal.UserVk.GetUserVkByID(c, vkUserID)
 	//if err != nil {
 	//	if dal.IsNotFound(err) {  // It's OK if UserVk entity not found.
-	//		log.Debugf(c, "UserVk entity not found by ID=%v", vkUserID)
+	//		logus.Debugf(c, "UserVk entity not found by ID=%v", vkUserID)
 	//	} else {  // For other errors fail gracefully.
 	//		InternalError(c, hashedWriter, err)
 	//		return
@@ -58,13 +58,13 @@ func HandleSignedWithVK(c context.Context, w http.ResponseWriter, r *http.Reques
 	//}
 	//if vkUserEntity.UserID == 0 {
 	//	// For some reason we have UserVk entity without associated AppUser
-	//	log.Warningf(c, "vkUserEntity.AppUserIntID == 0 - TOOD: Create user?")// TODO: Create user?
+	//	logus.Warningf(c, "vkUserEntity.AppUserIntID == 0 - TOOD: Create user?")// TODO: Create user?
 	//} else {
 	//	if authInfo.UserID != 0 && vkUserEntity.UserID != authInfo.UserID {
 	//		logTodoMergeUsers(vkUserEntity.UserID)
 	//		return
 	//	}
-	//	log.Debugf(c, "UserVk entity found by key and has AppUserIntID=%v", vkUserEntity.UserID)
+	//	logus.Debugf(c, "UserVk entity found by key and has AppUserIntID=%v", vkUserEntity.UserID)
 	//	ReturnToken(c, hashedWriter, vkUserEntity.UserID, vkUserID == VK_USER_ALEXT)
 	//	return
 	//}
@@ -89,7 +89,7 @@ func HandleSignedWithVK(c context.Context, w http.ResponseWriter, r *http.Reques
 	//		// Good access token
 	//	} else {
 	//		err = errors.Wrap(err, "Failed to get verify VK access token")
-	//		log.Warningf(c, err.Error())
+	//		logus.Warningf(c, err.Error())
 	//		hashedWriter.WriteHeader(http.StatusInternalServerError)
 	//		hashedWriter.Write([]byte(err.Error()))
 	//		return
@@ -168,7 +168,7 @@ func HandleSignedWithVK(c context.Context, w http.ResponseWriter, r *http.Reques
 	//			return
 	//		}
 	//		if changed {
-	//			log.Infof(c, "User update with VK info")
+	//			logus.Infof(c, "User update with VK info")
 	//		}
 	//	}
 	//	return nil
@@ -189,9 +189,9 @@ func HandleSignedWithVK(c context.Context, w http.ResponseWriter, r *http.Reques
 	//if authInfo.UserID != 0 {
 	//	if user, err = facade.User.GetUserByID(c, authInfo.UserID); err != nil {
 	//		if err == datastore.ErrNoSuchEntity {
-	//			log.Warningf(c, "User not found ID=%v", authInfo.UserID)
+	//			logus.Warningf(c, "User not found ID=%v", authInfo.UserID)
 	//		} else {
-	//			log.Errorf(c, err.Error())
+	//			logus.Errorf(c, err.Error())
 	//		}
 	//		InternalError(c, hashedWriter, err)
 	//		return

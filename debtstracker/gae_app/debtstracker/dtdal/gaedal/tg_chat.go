@@ -5,6 +5,7 @@ import (
 	"github.com/bots-go-framework/bots-fw-telegram-models/botsfwtgmodels"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
+	"github.com/strongo/logus"
 	"strconv"
 	"strings"
 	"sync"
@@ -12,7 +13,6 @@ import (
 	"context"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 type TgChatDalGae struct {
@@ -67,12 +67,12 @@ func (TgChatDalGae) /* TODO: rename properly! */ DoSomething(c context.Context,
 			return err
 		}
 		if debtusTgChat.Data.BotID == "" {
-			log.Errorf(c, "Data inconsistency issue - TgChat(%v).BotID is empty string", tgChatID)
+			logus.Errorf(c, "Data inconsistency issue - TgChat(%v).BotID is empty string", tgChatID)
 			if strings.Contains(authInfo.Issuer, ":") {
 				issuer := strings.Split(authInfo.Issuer, ":")
 				if strings.ToLower(issuer[0]) == "telegram" {
 					debtusTgChat.Data.BotID = issuer[1]
-					log.Infof(c, "Data inconsistency fixed, set to: %v", debtusTgChat.Data.BotID)
+					logus.Infof(c, "Data inconsistency fixed, set to: %v", debtusTgChat.Data.BotID)
 				}
 			}
 		}

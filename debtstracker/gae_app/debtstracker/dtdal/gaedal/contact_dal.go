@@ -10,7 +10,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/delaying"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"strings"
 )
 
@@ -24,7 +24,7 @@ func NewContactDalGae() ContactDalGae {
 var _ dtdal.ContactDal = (*ContactDalGae)(nil)
 
 func (contactDalGae ContactDalGae) DeleteContact(c context.Context, tx dal.ReadwriteTransaction, contactID string) (err error) {
-	log.Debugf(c, "ContactDalGae.DeleteContact(%d)", contactID)
+	logus.Debugf(c, "ContactDalGae.DeleteContact(%s)", contactID)
 	if err = tx.Delete(c, models.NewDebtusContactKey(contactID)); err != nil {
 		return
 	}
@@ -44,7 +44,7 @@ func delayDeleteContactTransfers(c context.Context, contactID string, cursor str
 }
 
 func delayedDeleteContactTransfers(c context.Context, contactID string, cursor string) (err error) {
-	log.Debugf(c, "delayedDeleteContactTransfers(contactID=%d, cursor=%v", contactID, cursor)
+	logus.Debugf(c, "delayedDeleteContactTransfers(contactID=%s, cursor=%v", contactID, cursor)
 	const limit = 100
 	var transferIDs []string
 	transferIDs, cursor, err = dtdal.Transfer.LoadTransferIDsByContactID(c, contactID, limit, cursor)
@@ -120,9 +120,9 @@ func (ContactDalGae) GetLatestContacts(whc botsfw.WebhookContext, tx dal.ReadSes
 	var records []dal.Record
 	records, err = tx.QueryAllRecords(c, query)
 	var contactsCount = len(records)
-	log.Debugf(c, "GetLatestContacts(limit=%v, totalCount=%v): %v", limit, totalCount, contactsCount)
+	logus.Debugf(c, "GetLatestContacts(limit=%v, totalCount=%v): %v", limit, totalCount, contactsCount)
 	if (limit == 0 && contactsCount < totalCount) || (limit > 0 && totalCount > 0 && contactsCount < limit && contactsCount < totalCount) {
-		log.Debugf(c, "Querying counterparties without index -LastTransferAt")
+		logus.Debugf(c, "Querying counterparties without index -LastTransferAt")
 		query = newUserActiveContactsQuery(appUserID).
 			Limit(limit).
 			SelectInto(models.NewTransferRecord)

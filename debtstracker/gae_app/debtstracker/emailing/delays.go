@@ -6,6 +6,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-core/emails"
 	"github.com/strongo/delaying"
+	"github.com/strongo/logus"
 	"time"
 
 	"context"
@@ -13,7 +14,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 const SEND_EMAIL_TASK = "send-email"
@@ -25,7 +25,7 @@ func DelaySendEmail(c context.Context, id int64) error {
 var ErrEmailIsInWrongStatus = errors.New("email is already sending or sent")
 
 func delayedSendEmail(c context.Context, id int64) (err error) {
-	log.Debugf(c, "delayedSendEmail(%v)", id)
+	logus.Debugf(c, "delayedSendEmail(%v)", id)
 
 	var email models.Email
 
@@ -46,13 +46,13 @@ func delayedSendEmail(c context.Context, id int64) (err error) {
 	}, nil); err != nil {
 		err = fmt.Errorf("failed to update email status to 'queued': %w", err)
 		if dal.IsNotFound(err) {
-			log.Warningf(c, err.Error())
+			logus.Warningf(c, err.Error())
 			return nil // Do not retry
 		} else if errors.Is(err, ErrEmailIsInWrongStatus) {
-			log.Warningf(c, err.Error())
+			logus.Warningf(c, err.Error())
 			return nil // Do not retry
 		}
-		log.Errorf(c, err.Error())
+		logus.Errorf(c, err.Error())
 		return err // Retry
 	}
 
@@ -65,7 +65,7 @@ func delayedSendEmail(c context.Context, id int64) (err error) {
 		HTML:    email.Data.BodyHtml,
 	}
 	if sentMessageID, err = SendEmail(c, emailMessage); err != nil {
-		log.Errorf(c, "Failed to send email: %v", err)
+		logus.Errorf(c, "Failed to send email: %v", err)
 
 		if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 			if email, err = dtdal.Email.GetEmailByID(c, tx, id); err != nil {
@@ -78,12 +78,12 @@ func delayedSendEmail(c context.Context, id int64) (err error) {
 			email.Data.Error = err.Error()
 			return dtdal.Email.UpdateEmail(c, tx, email)
 		}); err != nil {
-			log.Errorf(c, err.Error())
+			logus.Errorf(c, err.Error())
 		}
 		return nil // Do not retry
 	}
 
-	log.Infof(c, "Sent email, message ID: %v", sentMessageID)
+	logus.Infof(c, "Sent email, message ID: %v", sentMessageID)
 
 	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		if email, err = dtdal.Email.GetEmailByID(c, tx, id); err != nil {
@@ -97,7 +97,7 @@ func delayedSendEmail(c context.Context, id int64) (err error) {
 		email.Data.AwsSesMessageID = sentMessageID
 		return dtdal.Email.UpdateEmail(c, tx, email)
 	}); err != nil {
-		log.Errorf(c, err.Error())
+		logus.Errorf(c, err.Error())
 		err = nil // Do not retry!
 	}
 	return nil // Do not retry!

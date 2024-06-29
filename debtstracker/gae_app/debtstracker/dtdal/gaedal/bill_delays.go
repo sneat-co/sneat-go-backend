@@ -11,7 +11,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/decimal"
 	"github.com/strongo/delaying"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"sync"
 )
 
@@ -39,7 +39,7 @@ func updateUsersWithBill(c context.Context, billID string, userIDs []string) (er
 const updateUserWithBillKeyName = "delayedUpdateUserWithBill"
 
 func delayedUpdateUserWithBill(c context.Context, billID, userID string) (err error) {
-	log.Debugf(c, "delayedUpdateUserWithBill(billID=%v, userID=%v)", billID, userID)
+	logus.Debugf(c, "delayedUpdateUserWithBill(billID=%v, userID=%v)", billID, userID)
 	var (
 		bill             models.Bill
 		wg               sync.WaitGroup
@@ -75,14 +75,14 @@ func delayedUpdateUserWithBill(c context.Context, billID, userID string) (err er
 				if billMember.UserID == userID {
 					userBillBalance = billMember.Balance()
 					userIsBillMember = true
-					log.Debugf(c, "userBillBalance: %v; billMember.Owes: %v; billMember.Paid: %v",
+					logus.Debugf(c, "userBillBalance: %v; billMember.Owes: %v; billMember.Paid: %v",
 						userBillBalance, billMember.Owes, billMember.Paid)
 					break
 				}
 			}
 		}
 
-		log.Debugf(c, "userIsBillMember: %v", userIsBillMember)
+		logus.Debugf(c, "userIsBillMember: %v", userIsBillMember)
 
 		shouldBeInOutstanding := userIsBillMember && (bill.Data.Status == models.BillStatusOutstanding || bill.Data.Status == models.BillStatusDraft)
 		userOutstandingBills := user.Data.GetOutstandingBills()
@@ -138,18 +138,18 @@ func delayedUpdateUserWithBill(c context.Context, billID, userID string) (err er
 				return
 			}
 		} else {
-			log.Debugf(c, "User not changed, ID: %v", user.ID)
+			logus.Debugf(c, "User not changed, ID: %v", user.ID)
 		}
 		return
 	}); err != nil {
 		if dal.IsNotFound(err) {
-			log.Errorf(c, err.Error())
+			logus.Errorf(c, err.Error())
 			err = nil
 		}
 		return
 	}
 	if userChanged {
-		log.Infof(c, "User %v updated with info for bill %v", userID, billID)
+		logus.Infof(c, "User %v updated with info for bill %v", userID, billID)
 	}
 	return
 }

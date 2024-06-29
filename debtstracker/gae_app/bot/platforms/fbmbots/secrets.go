@@ -120,16 +120,16 @@ var ErrUnknownHost = errors.New("Unknown host")
 //func getFbAppAndSession(c context.Context, r *http.Request, getSession func(fbApp *fb.App) (*fb.Session, error)) (
 //	fbApp *fb.App, fbSession *fb.Session, err error,
 //) {
-//	log.Debugf(c, "getFbAppAndSession()")
+//	logus.Debugf(c, "getFbAppAndSession()")
 //	if fbApp, _, err = GetFbAppAndHost(r); err != nil {
-//		log.Errorf(c, "getFbAppAndSession() => Failed to get app")
+//		logus.Errorf(c, "getFbAppAndSession() => Failed to get app")
 //		return nil, nil, err
 //	}
 //	if fbSession, err = getSession(fbApp); err != nil {
-//		log.Errorf(c, "getFbAppAndSession() => Failed to get session")
+//		logus.Errorf(c, "getFbAppAndSession() => Failed to get session")
 //		return nil, nil, err
 //	}
-//	log.Debugf(c, "getFbAppAndSession() => AppId: %v", fbApp.AppId)
+//	logus.Debugf(c, "getFbAppAndSession() => AppId: %v", fbApp.AppId)
 //	return fbApp, fbSession, err
 //}
 
@@ -142,12 +142,12 @@ var ErrUnknownHost = errors.New("Unknown host")
 //}
 //
 //func FbAppAndSessionFromSignedRequest(c context.Context, r *http.Request, signedRequest string) (*fb.App, *fb.Session, error) {
-//	log.Debugf(c, "FbAppAndSessionFromSignedRequest()")
+//	logus.Debugf(c, "FbAppAndSessionFromSignedRequest()")
 //	return getFbAppAndSession(c, r, func(fbApp *fb.App) (fbSession *fb.Session, err error) {
-//		log.Debugf(c, "FbAppAndSessionFromSignedRequest() => getSession()")
+//		logus.Debugf(c, "FbAppAndSessionFromSignedRequest() => getSession()")
 //		//fbSession, err = fbApp.SessionFromSignedRequest(c, signedRequest, dtdal.HttpClient(c))
 //		//if err != nil {
-//		//	log.Debugf(c, "FbAppAndSessionFromSignedRequest() => getSession(): %v", err.Error())
+//		//	logus.Debugf(c, "FbAppAndSessionFromSignedRequest() => getSession(): %v", err.Error())
 //		//}
 //		panic("not implemented")
 //		return

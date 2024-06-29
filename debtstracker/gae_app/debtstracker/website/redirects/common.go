@@ -3,6 +3,7 @@ package redirects
 import (
 	"bytes"
 	"fmt"
+	"github.com/strongo/logus"
 	"google.golang.org/appengine/v2"
 	"net/http"
 	"net/url"
@@ -13,7 +14,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
-	"github.com/strongo/log"
 )
 
 func redirectToWebApp(w http.ResponseWriter, r *http.Request, authRequired bool, path string, p2p map[string]string, optionalParams []string) {
@@ -62,7 +62,7 @@ func redirectToWebApp(w http.ResponseWriter, r *http.Request, authRequired bool,
 			if pn == "id" && pn2 == "receipt" { // TODO: Dirty hack! Please fix!!!
 				receiptID, err := common.DecodeID(pv)
 				if err != nil {
-					log.Debugf(c, "Failed to decode receipt ID: %v", err)
+					logus.Debugf(c, "Failed to decode receipt ID: %v", err)
 					w.WriteHeader(http.StatusBadRequest)
 					_, _ = w.Write([]byte(fmt.Sprintf("Failed to decod receipt ID: %v", err)))
 					return
@@ -90,10 +90,10 @@ func redirectToWebApp(w http.ResponseWriter, r *http.Request, authRequired bool,
 					redirectTo.WriteString(fmt.Sprintf("&%v=%v", p, url.QueryEscape(utmValues[i])))
 				}
 			} else {
-				log.Warningf(c, "Parameter utm should consist of 3 values seprated by ';' character. Got: [%v]", utm)
+				logus.Warningf(c, "Parameter utm should consist of 3 values seprated by ';' character. Got: [%v]", utm)
 			}
 		} else {
-			log.Errorf(c, "reUtm: %v", matches)
+			logus.Errorf(c, "reUtm: %v", matches)
 		}
 	} else {
 		for _, p := range []string{"utm_source", "utm_medium", "utm_campaign"} {
@@ -106,7 +106,7 @@ func redirectToWebApp(w http.ResponseWriter, r *http.Request, authRequired bool,
 	if authInfo.UserID > "" {
 		redirectTo.WriteString("&secret=" + query.Get("secret"))
 	}
-	log.Debugf(c, "Will redirect to: %v", redirectTo.String())
+	logus.Debugf(c, "Will redirect to: %v", redirectTo.String())
 	http.Redirect(w, r, redirectTo.String(), http.StatusFound)
 	//w.WriteHeader(http.StatusFound)
 	//w.Header().Set("Location", redirectTo.String())

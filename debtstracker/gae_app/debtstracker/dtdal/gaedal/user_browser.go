@@ -3,12 +3,12 @@ package gaedal
 import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/strongo/logus"
 	"strings"
 	"time"
 
 	"context"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 type UserBrowserDalGae struct {
@@ -75,7 +75,7 @@ func (userBrowserDalGae UserBrowserDalGae) SaveUserBrowser(c context.Context, us
 			})
 		}
 	default:
-		log.Errorf(c, "Loaded too many records: %v", len(records))
+		logus.Errorf(c, "Loaded too many records: %v", len(records))
 	}
 	return
 }

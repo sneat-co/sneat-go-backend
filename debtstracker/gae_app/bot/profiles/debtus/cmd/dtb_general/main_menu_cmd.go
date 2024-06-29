@@ -5,7 +5,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"net/url"
 )
 
@@ -34,7 +34,7 @@ func MainMenuAction(whc botsfw.WebhookContext, messageText string, showHint bool
 		}
 		//}
 	}
-	log.Infof(whc.Context(), "MainMenuCommand.Action()")
+	logus.Infof(whc.Context(), "MainMenuCommand.Action()")
 	whc.ChatData().SetAwaitingReplyTo("")
 	m = whc.NewMessage(messageText)
 	SetMainMenuKeyboard(whc, &m)

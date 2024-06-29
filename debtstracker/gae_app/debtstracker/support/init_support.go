@@ -6,6 +6,7 @@ import (
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/strongo/logus"
 	"google.golang.org/appengine/v2"
 	"net/http"
 	"net/url"
@@ -16,7 +17,6 @@ import (
 	"errors"
 	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 	"google.golang.org/appengine/v2/datastore"
 	"google.golang.org/appengine/v2/taskqueue"
 )
@@ -40,7 +40,7 @@ func ValidateUsersHandler(w http.ResponseWriter, r *http.Request) {
 
 	addTasksToQueue := func() error {
 		if _, err := taskqueue.AddMulti(c, tasks, "support"); err != nil {
-			log.Errorf(c, "Failed to add tasks: %v", err)
+			logus.Errorf(c, "Failed to add tasks: %v", err)
 			return err
 		}
 		tasks = make([]*taskqueue.Task, 0, batchSize)
@@ -52,7 +52,7 @@ func ValidateUsersHandler(w http.ResponseWriter, r *http.Request) {
 			if err == datastore.Done {
 				break
 			}
-			log.Errorf(c, "Failed to fetch %v: %v", key, err)
+			logus.Errorf(c, "Failed to fetch %v: %v", key, err)
 			return
 		} else {
 			usersCount += 1
@@ -74,7 +74,7 @@ func ValidateUsersHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	log.Errorf(c, "(NOT error) Users count: %v", usersCount)
+	logus.Errorf(c, "(NOT error) Users count: %v", usersCount)
 	_, _ = w.Write([]byte(fmt.Sprintf("Users count: %v", usersCount)))
 }
 
@@ -89,21 +89,21 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 	doFixes := r.URL.Query().Get("fix") == "all"
 	userID := r.URL.Query().Get("id")
 	if userID == "" {
-		log.Errorf(c, "User ID is empty")
+		logus.Errorf(c, "User ID is empty")
 		return
 	}
 	user := models.NewAppUser(userID, nil)
 	var db dal.DB
 	var err error
 	if db, err = facade.GetDatabase(c); err != nil {
-		log.Errorf(c, "Failed to get database: %v", err)
+		logus.Errorf(c, "Failed to get database: %v", err)
 		return
 	}
 	if err = db.Get(c, user.Record); err != nil {
 		if dal.IsNotFound(err) {
-			log.Errorf(c, "User not found by key: %v", err)
+			logus.Errorf(c, "User not found by key: %v", err)
 		} else {
-			log.Errorf(c, "Failed to get user by key=%v: %v", user.Key, err)
+			logus.Errorf(c, "Failed to get user by key=%v: %v", user.Key, err)
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 		return
@@ -113,14 +113,14 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 	})
 	userCounterpartyRecords, err := db.QueryAllRecords(c, query)
 	if err != nil {
-		log.Errorf(c, "Failed to load user counterparties: %v", err)
+		logus.Errorf(c, "Failed to load user counterparties: %v", err)
 		return
 	}
 
 	userCounterpartyIDs := user.Data.ContactIDs()[:]
 
 	if user.Data.TotalContactsCount() != len(userCounterpartyIDs) {
-		log.Warningf(c, "user.TotalContactsCount() != len(user.ContactIDs()) => %v != %v", user.Data.TotalContactsCount(), len(userCounterpartyIDs))
+		logus.Warningf(c, "user.TotalContactsCount() != len(user.ContactIDs()) => %v != %v", user.Data.TotalContactsCount(), len(userCounterpartyIDs))
 	}
 
 	//slices.Sort(userCounterpartyIDs)
@@ -138,7 +138,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 	transferRecords, err := db.QueryAllRecords(c, query)
 
 	if err != nil {
-		log.Errorf(c, "Failed to load transfers: %v", err)
+		logus.Errorf(c, "Failed to load transfers: %v", err)
 		return
 	}
 
@@ -166,11 +166,11 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 		var txUser models.AppUser
 		var db dal.DB
 		if db, err = facade.GetDatabase(c); err != nil {
-			log.Errorf(c, "Failed to get database: %v", err)
+			logus.Errorf(c, "Failed to get database: %v", err)
 			return
 		}
 		err := db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-			log.Debugf(c, "Transaction started..")
+			logus.Debugf(c, "Transaction started..")
 			txUser = models.NewAppUser(userID, nil)
 			if err := tx.Get(c, txUser.Record); err != nil {
 				return err
@@ -199,15 +199,15 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 			return nil
 		}, nil)
 		if err != nil {
-			log.Errorf(c, "Failed to fix user.CounterpartyIDs: %v", err)
+			logus.Errorf(c, "Failed to fix user.CounterpartyIDs: %v", err)
 			return
 		}
-		log.Infof(c, "Fixed user.ContactsJson\n\tfrom: %v\n\tto: %v", user.Data.ContactsJson, txUser.Data.ContactsJson)
+		logus.Infof(c, "Fixed user.ContactsJson\n\tfrom: %v\n\tto: %v", user.Data.ContactsJson, txUser.Data.ContactsJson)
 		user = txUser
 	}
 
 	if len(userCounterpartyIDs) != len(counterpartyIDs) {
-		log.Warningf(c, "len(userCounterpartyIDs) != len(counterpartyIDs) => %v != %v", len(userCounterpartyIDs), len(counterpartyIDs))
+		logus.Warningf(c, "len(userCounterpartyIDs) != len(counterpartyIDs) => %v != %v", len(userCounterpartyIDs), len(counterpartyIDs))
 		if doFixes {
 			fixUserCounterparties()
 		} else {
@@ -216,7 +216,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		for i, v := range userCounterpartyIDs {
 			if counterpartyIDs[i] != v {
-				log.Warningf(c, "user.CounterpartyIDs != counterpartyKeys\n\tuserCounterpartyIDs:\n\t\t%v\n\tcounterpartyIDs:\n\t\t%v", userCounterpartyIDs, counterpartyIDs)
+				logus.Warningf(c, "user.CounterpartyIDs != counterpartyKeys\n\tuserCounterpartyIDs:\n\t\t%v\n\tcounterpartyIDs:\n\t\t%v", userCounterpartyIDs, counterpartyIDs)
 				if doFixes {
 					fixUserCounterparties()
 					break
@@ -226,7 +226,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-	log.Infof(c, "OK - User ContactsJson is OK")
+	logus.Infof(c, "OK - User ContactsJson is OK")
 
 	// We need counterparties by ID to check balance against transfers
 	counterpartiesByID := make(map[int64]*models.DebtusContactDbo, len(counterpartyIDs))
@@ -239,7 +239,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 			var txUser models.AppUser
 			var db dal.DB
 			if db, err = facade.GetDatabase(c); err != nil {
-				log.Errorf(c, "Failed to get database: %v", err)
+				logus.Errorf(c, "Failed to get database: %v", err)
 				return
 			}
 			err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
@@ -257,13 +257,13 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 				return nil
 			}, nil)
 			if err != nil {
-				log.Errorf(c, "Failed to update user.LastTransferID")
+				logus.Errorf(c, "Failed to update user.LastTransferID")
 			} else {
-				log.Infof(c, "Fixed user.LastTransferID")
+				logus.Infof(c, "Fixed user.LastTransferID")
 				user = txUser
 			}
 		} else {
-			log.Warningf(c, "user.LastTransferID is not set")
+			logus.Warningf(c, "user.LastTransferID is not set")
 		}
 	}
 
@@ -281,7 +281,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 		case transferData.Counterparty().UserID:
 			counterpartyID = transferData.Creator().ContactID
 		default:
-			log.Errorf(c, "userID=%v is NOT equal to transferData.CreatorUserID=%v or transferData.ContactEntry().UserID=%v", userID, transferData.CreatorUserID, transferData.Counterparty().UserID)
+			logus.Errorf(c, "userID=%v is NOT equal to transferData.CreatorUserID=%v or transferData.ContactEntry().UserID=%v", userID, transferData.CreatorUserID, transferData.Counterparty().UserID)
 			return
 		}
 		transfersCounterpartyBalance, ok := transfersBalanceByCounterpartyID[counterpartyID]
@@ -297,12 +297,12 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 		case models.TransferDirectionCounterparty2User:
 			transfersCounterpartyBalance[currency] -= value
 		default:
-			log.Errorf(c, "TransferEntry %v has unknown direction: %v", transferRecords[i].Key().ID, transferData.DirectionForUser(userID))
+			logus.Errorf(c, "TransferEntry %v has unknown direction: %v", transferRecords[i].Key().ID, transferData.DirectionForUser(userID))
 			return
 		}
 	}
 
-	//log.Debugf(c, "transfersBalanceByCounterpartyID: %v", transfersBalanceByCounterpartyID)
+	//logus.Debugf(c, "transfersBalanceByCounterpartyID: %v", transfersBalanceByCounterpartyID)
 
 	transfersTotalBalance := make(money.Balance)
 	for _, transfersCounterpartyBalance := range transfersBalanceByCounterpartyID {
@@ -322,38 +322,38 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(userBalance) != len(transfersTotalBalance) {
-		log.Warningf(c, "len(userBalance) != len(transfersTotalBalance) =>\n\t%d: %v\n\t%d: %v", len(userBalance), userBalance, len(transfersTotalBalance), transfersTotalBalance)
+		logus.Warningf(c, "len(userBalance) != len(transfersTotalBalance) =>\n\t%d: %v\n\t%d: %v", len(userBalance), userBalance, len(transfersTotalBalance), transfersTotalBalance)
 	}
 
 	userBalanceIsOK := true
 
 	for currency, userVal := range userBalance {
 		if transfersVal, ok := transfersTotalBalance[currency]; !ok {
-			log.Warningf(c, "User has %v=%v balance but no corresponding transfers' balance.", currency, userVal)
+			logus.Warningf(c, "User has %v=%v balance but no corresponding transfers' balance.", currency, userVal)
 			userBalanceIsOK = false
 		} else if transfersVal != userVal {
-			log.Warningf(c, "Currency(%v) User balance %v not equal to transfers' balance %v", currency, userVal, transfersVal)
+			logus.Warningf(c, "Currency(%v) User balance %v not equal to transfers' balance %v", currency, userVal, transfersVal)
 			userBalanceIsOK = false
 		}
 	}
 
 	for currency, transfersVal := range transfersTotalBalance {
 		if _, ok := userBalance[currency]; !ok {
-			log.Warningf(c, "Transfers has %v=%v balance but no corresponding user balance.", currency, transfersVal)
+			logus.Warningf(c, "Transfers has %v=%v balance but no corresponding user balance.", currency, transfersVal)
 			userBalanceIsOK = false
 		}
 	}
 
 	if userBalanceIsOK {
-		log.Infof(c, "OK - User.Balance() is matching to %v transfers' balance.", len(transferRecords))
+		logus.Infof(c, "OK - User.Balance() is matching to %v transfers' balance.", len(transferRecords))
 	} else {
-		log.Warningf(c, "Calculated balance for %v user transfers does not match user's total balance.", len(transferRecords))
+		logus.Warningf(c, "Calculated balance for %v user transfers does not match user's total balance.", len(transferRecords))
 		if !doFixes {
-			log.Debugf(c, "Pass fix=all to fix user balance")
+			logus.Debugf(c, "Pass fix=all to fix user balance")
 		} else {
 			var db dal.DB
 			if db, err = facade.GetDatabase(c); err != nil {
-				log.Errorf(c, "Failed to get database: %v", err)
+				logus.Errorf(c, "Failed to get database: %v", err)
 				return
 			}
 			err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
@@ -378,12 +378,12 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 			}, nil)
 			if err != nil {
 				err = fmt.Errorf("failed to fix user balance: %w", err)
-				log.Errorf(c, err.Error())
+				logus.Errorf(c, err.Error())
 				w.WriteHeader(http.StatusInternalServerError)
 				_, _ = w.Write([]byte(err.Error()))
 				return
 			}
-			log.Infof(c, "Fixed user balance")
+			logus.Infof(c, "Fixed user balance")
 		}
 	}
 
@@ -401,7 +401,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 				if doFixes {
 					var db dal.DB
 					if db, err = facade.GetDatabase(c); err != nil {
-						log.Errorf(c, "Failed to get database: %v", err)
+						logus.Errorf(c, "Failed to get database: %v", err)
 						return
 					}
 					err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
@@ -418,22 +418,22 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 						return nil
 					}, nil)
 					if err != nil {
-						log.Errorf(c, "Failed to fix counterparty.BalanceCount, ID=%v", counterpartyID)
+						logus.Errorf(c, "Failed to fix counterparty.BalanceCount, ID=%v", counterpartyID)
 					} else {
-						log.Warningf(c, "Fixed counterparrty.BalanceCount, ID=%v", counterpartyID)
+						logus.Warningf(c, "Fixed counterparrty.BalanceCount, ID=%v", counterpartyID)
 					}
 				} else {
-					log.Warningf(c, "counterparty.BalanceCount != len(counterparty.BalanceCount), ID: %v", counterpartyID)
+					logus.Warningf(c, "counterparty.BalanceCount != len(counterparty.BalanceCount), ID: %v", counterpartyID)
 				}
 			}
 		} else {
 			counterpartyIDsWithNonMatchingBalance = append(counterpartyIDsWithNonMatchingBalance, counterpartyID)
-			log.Warningf(c, "ContactEntry ID=%v has balance not matching transfers' balance:\n\tContactEntry: %v\n\tTransfers: %v", counterpartyID, counterpartyBalance, transfersCounterpartyBalance)
+			logus.Warningf(c, "ContactEntry ID=%v has balance not matching transfers' balance:\n\tContactEntry: %v\n\tTransfers: %v", counterpartyID, counterpartyBalance, transfersCounterpartyBalance)
 			if doFixes {
 				//var txCounterparty models.ContactEntry
 				var db dal.DB
 				if db, err = facade.GetDatabase(c); err != nil {
-					log.Errorf(c, "Failed to get database: %v", err)
+					logus.Errorf(c, "Failed to get database: %v", err)
 					return
 				}
 				err := db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
@@ -457,18 +457,18 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 					return nil
 				}, nil)
 				if err != nil {
-					log.Errorf(c, "Failed to fix counterparty with ID=%v: %v", counterpartyID, err)
+					logus.Errorf(c, "Failed to fix counterparty with ID=%v: %v", counterpartyID, err)
 				} else {
-					log.Infof(c, "Fixed counterparty with ID=%v", counterpartyID)
+					logus.Infof(c, "Fixed counterparty with ID=%v", counterpartyID)
 					//userCounterpartyRecords[i] = txCounterparty.Data
 				}
 			}
 		}
 	}
 	if len(counterpartyIDsWithMatchingBalance) > 0 {
-		log.Infof(c, "There are %v counterparties with balance matching to transfers: %v", len(counterpartyIDsWithMatchingBalance), counterpartyIDsWithMatchingBalance)
+		logus.Infof(c, "There are %v counterparties with balance matching to transfers: %v", len(counterpartyIDsWithMatchingBalance), counterpartyIDsWithMatchingBalance)
 	}
 	if len(counterpartyIDsWithNonMatchingBalance) > 0 {
-		log.Warningf(c, "There are %v counterparties with balance NOT matching to transfers: %v", len(counterpartyIDsWithNonMatchingBalance), counterpartyIDsWithNonMatchingBalance)
+		logus.Warningf(c, "There are %v counterparties with balance NOT matching to transfers: %v", len(counterpartyIDsWithNonMatchingBalance), counterpartyIDsWithNonMatchingBalance)
 	}
 }

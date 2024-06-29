@@ -12,7 +12,7 @@ var groupCommand = botsfw.NewCallbackCommand(groupCommandCode,
 		panic("implement me")
 		//// we can't use GroupCallbackCommand as we have parameter id=[first|last|<id>]
 		//c := whc.Context()
-		//log.Debugf(c, "groupCommand.CallbackAction()")
+		//logus.Debugf(c, "groupCommand.CallbackAction()")
 		//
 		//var user botsfwmodels.AppUserData
 		//if user, err = whc.AppUserData(); err != nil {

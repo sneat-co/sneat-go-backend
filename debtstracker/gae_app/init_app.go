@@ -103,9 +103,9 @@ type TestTransfer struct {
 //	}
 //	var testTransfer2 TestTransfer
 //	datastore.Get(c, key, &testTransfer2)
-//	log.Debugf(c, "testTransfer2: %v", testTransfer2)
-//	log.Debugf(c, "testTransfer2.From: %v", testTransfer2.From)
-//	log.Debugf(c, "testTransfer2.To: %v", testTransfer2.To)
+//	logus.Debugf(c, "testTransfer2: %v", testTransfer2)
+//	logus.Debugf(c, "testTransfer2.From: %v", testTransfer2.From)
+//	logus.Debugf(c, "testTransfer2.To: %v", testTransfer2.To)
 //	testTransfer2.From.Comment = "Comment #1"
 //	if _, err := datastore.Put(c, key, &testTransfer); err != nil {
 //		w.WriteHeader(http.StatusInternalServerError)
@@ -114,7 +114,7 @@ type TestTransfer struct {
 //	}
 //	var testTransfer3 TestTransfer
 //	datastore.Get(c, key, &testTransfer3)
-//	log.Debugf(c, "testTransfer2: %v", testTransfer3)
-//	log.Debugf(c, "testTransfer2.From: %v", testTransfer3.From)
-//	log.Debugf(c, "testTransfer2.To: %v", testTransfer3.To)
+//	logus.Debugf(c, "testTransfer2: %v", testTransfer3)
+//	logus.Debugf(c, "testTransfer2.From: %v", testTransfer3.From)
+//	logus.Debugf(c, "testTransfer2.To: %v", testTransfer3.To)
 //}

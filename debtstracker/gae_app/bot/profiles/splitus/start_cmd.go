@@ -3,14 +3,14 @@ package splitus
 import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/shared_all"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"strings"
 )
 
 func startInGroupAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 	panic("implement me")
 	//c := whc.Context()
-	//log.Debugf(c, "splitus.startInGroupAction()")
+	//logus.Debugf(c, "splitus.startInGroupAction()")
 	//var group models.Group
 	//if group, err = shared_group.GetGroup(whc, nil); err != nil {
 	//	return
@@ -56,7 +56,7 @@ func startInGroupAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err
 }
 
 func startInBotAction(whc botsfw.WebhookContext, startParams []string) (m botsfw.MessageFromBot, err error) {
-	log.Debugf(whc.Context(), "splitus.startInBotAction() => startParams: %v", startParams)
+	logus.Debugf(whc.Context(), "splitus.startInBotAction() => startParams: %v", startParams)
 	if len(startParams) > 0 {
 		switch {
 		case strings.HasPrefix(startParams[0], "bill-"):

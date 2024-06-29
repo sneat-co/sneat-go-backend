@@ -2,6 +2,7 @@ package pages
 
 import (
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/strongo/logus"
 	"google.golang.org/appengine/v2"
 	"html/template"
 	"net/http"
@@ -9,7 +10,6 @@ import (
 
 	"context"
 	"github.com/julienschmidt/httprouter"
-	"github.com/strongo/log"
 )
 
 const TEMPLATES_PATH = "templates/" //"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/pages/templates/"
@@ -46,7 +46,7 @@ var supportedLocales = []string{"ru", "es", "it", "fr", "fa", "de", "pl", "pt", 
 
 func IndexRootPage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	c := appengine.NewContext(r)
-	log.Debugf(c, "IndexRootPage")
+	logus.Debugf(c, "IndexRootPage")
 
 	if r.URL.Path != "/" { // This handler should work just for a root path.
 		w.WriteHeader(http.StatusNotFound)
@@ -74,10 +74,10 @@ func IndexRootPage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 	{ // Try to detect language by country
 		country := r.Header.Get("CF-IPCountry")
 		if country != "" {
-			log.Debugf(c, "CF-IPCountry: %s", country)
+			logus.Debugf(c, "CF-IPCountry: %s", country)
 		} else {
 			country = r.Header.Get("X-AppEngine-Country")
-			log.Debugf(c, "X-AppEngine-Country: %s", country)
+			logus.Debugf(c, "X-AppEngine-Country: %s", country)
 		}
 
 		if country != "" {
@@ -114,7 +114,7 @@ func IndexPage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 func indexPage(c context.Context, w http.ResponseWriter, r *http.Request) {
 	if referrer := r.Referer(); referrer != "" && !strings.Contains(referrer, "://"+r.Host) {
-		log.Debugf(c, "Referer: %v", referrer)
+		logus.Debugf(c, "Referer: %v", referrer)
 	}
 	locale, err := getLocale(c, w, r)
 	if err != nil {

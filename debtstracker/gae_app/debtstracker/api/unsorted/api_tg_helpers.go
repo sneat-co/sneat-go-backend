@@ -13,7 +13,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"net/http"
 	"strconv"
 	"strings"
@@ -59,7 +59,7 @@ func HandleTgHelperCurrencySelected(c context.Context, w http.ResponseWriter, r 
 		handleError(w, http.StatusBadRequest, fmt.Errorf("value of Telegram chat ID should be integer: %w", err))
 		return
 	}
-	log.Debugf(c, "AppUserIntID: %v, tgChatKeyID: %v", authInfo.UserID, tgChatKeyID)
+	logus.Debugf(c, "AppUserIntID: %v, tgChatKeyID: %v", authInfo.UserID, tgChatKeyID)
 
 	errs := make(chan error, 2) // We use errors channel as sync pipe
 
@@ -71,11 +71,11 @@ func HandleTgHelperCurrencySelected(c context.Context, w http.ResponseWriter, r 
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
-				log.Errorf(c, "panic in HandleTgHelperCurrencySelected() => dtdal.User.SetLastCurrency(): %v", r)
+				logus.Errorf(c, "panic in HandleTgHelperCurrencySelected() => dtdal.User.SetLastCurrency(): %v", r)
 			}
 		}()
 		if err := dtdal.User.SetLastCurrency(c, authInfo.UserID, money.CurrencyCode(selectedCurrency)); err != nil {
-			log.Errorf(c, "Failed to save user last currency: %v", err)
+			logus.Errorf(c, "Failed to save user last currency: %v", err)
 		}
 		userTask.Done()
 		errs <- nil
@@ -84,7 +84,7 @@ func HandleTgHelperCurrencySelected(c context.Context, w http.ResponseWriter, r 
 	go func(currency string) {
 		defer func() {
 			if r := recover(); r != nil {
-				log.Errorf(c, "panic in HandleTgHelperCurrencySelected() => dtdal.TgChat.DoSomething() => sendToTelegram(): %v", r)
+				logus.Errorf(c, "panic in HandleTgHelperCurrencySelected() => dtdal.TgChat.DoSomething() => sendToTelegram(): %v", r)
 			}
 		}()
 		errs <- dtdal.TgChat.DoSomething(c, &userTask, currency, tgChatID, authInfo, user,
@@ -97,14 +97,14 @@ func HandleTgHelperCurrencySelected(c context.Context, w http.ResponseWriter, r 
 
 	for i := range []int{1, 2} {
 		if err := <-errs; err != nil {
-			log.Errorf(c, "%v: %v", i, err.Error())
+			logus.Errorf(c, "%v: %v", i, err.Error())
 			w.WriteHeader(http.StatusInternalServerError)
 			_, _ = w.Write([]byte(err.Error()))
 			return
 		}
 	}
 
-	log.Debugf(c, "Selected currency processed: %v", selectedCurrency)
+	logus.Debugf(c, "Selected currency processed: %v", selectedCurrency)
 }
 
 // TODO: This is some serious architecture sheet. Too sleepy to make it right, just make it working.
@@ -117,7 +117,7 @@ func sendToTelegram(c context.Context, user models.AppUser, tgChatID int64, tgCh
 		return fmt.Errorf("ReferredTo settings not found by tgChat.BotID=%v, out of %v items", botID, len(telegramBots.ByCode))
 	}
 
-	log.Debugf(c, "botSettings(%v : %v)", botSettings.Code, botSettings.Token)
+	logus.Debugf(c, "botSettings(%v : %v)", botSettings.Code, botSettings.Token)
 
 	tgBotApi := tgbotapi.NewBotAPIWithClient(botSettings.Token, dtdal.HttpClient(c))
 	tgBotApi.EnableDebug(c)

@@ -2,23 +2,31 @@ package debtus
 
 import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
+	"github.com/strongo/logus"
 	"strings"
 
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/debtus/cmd/dtb_inline"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/debtus/cmd/dtb_invite"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/debtus/cmd/dtb_transfer"
-	"github.com/strongo/log"
 )
 
 var InlineQueryCommand = botsfw.Command{
-	Code: "inline-query",
+	InputTypes: nil,
+	Icon:       "",
+	Replies:    nil,
+	Code:       "inline-query",
+	Title:      "",
+	Titles:     nil,
+	ExactMatch: "",
+	Commands:   nil,
+	Matcher:    nil,
 	//InputTypes: []botsfw.WebhookInputType{botsfw.WebhookInputInlineQuery},
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		c := whc.Context()
 
 		inlineQuery := whc.Input().(botsfw.WebhookInlineQuery)
 		query := inlineQuery.GetQuery()
-		log.Debugf(c, "InlineQueryCommand.Action(query=%v)", query)
+		logus.Debugf(c, "InlineQueryCommand.Action(query=%v)", query)
 		switch {
 		case query == "":
 			m, err = dtb_inline.InlineEmptyQuery(whc)
@@ -33,8 +41,9 @@ var InlineQueryCommand = botsfw.Command{
 			if amountMatches != nil {
 				return dtb_inline.InlineNewRecord(whc, amountMatches)
 			}
-			log.Debugf(c, "Inline query not matched to any action: [%v]", query)
+			logus.Debugf(c, "Inline query not matched to any action: [%v]", query)
 		}
 		return
 	},
+	CallbackAction: nil,
 }

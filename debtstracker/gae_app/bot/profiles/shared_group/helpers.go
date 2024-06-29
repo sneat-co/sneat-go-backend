@@ -5,6 +5,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/strongo/logus"
 	"net/url"
 
 	"bytes"
@@ -16,7 +17,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 	"strconv"
 )
 
@@ -70,7 +70,7 @@ func GetUserGroupID(whc botsfw.WebhookContext) (groupID string, err error) {
 }
 
 func createGroupFromTelegram(c context.Context, whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, chatData *models.DebtusTelegramChatData, tgChat *tgbotapi.Chat) (group models.GroupEntry, err error) {
-	log.Debugf(c, "createGroupFromTelegram()")
+	logus.Debugf(c, "createGroupFromTelegram()")
 	var user *models.DebutsAppUserDataOBSOLETE
 	if user, err = shared_all.GetUser(whc); err != nil {
 		return
@@ -81,10 +81,10 @@ func createGroupFromTelegram(c context.Context, whc botsfw.WebhookContext, tx da
 		// TODO: Do this in delayed task - Lets try to get chat  invite link
 		msg := botsfw.MessageFromBot{BotMessage: telegram.ExportChatInviteLink{}}
 		if tgResponse, err := whc.Responder().SendMessage(c, msg, botsfw.BotAPISendMessageOverHTTPS); err != nil {
-			log.Debugf(c, "Not able to export chat invite link: %v", err)
+			logus.Debugf(c, "Not able to export chat invite link: %v", err)
 		} else {
 			chatInviteLink = string(tgResponse.TelegramMessage.(tgbotapi.APIResponse).Result)
-			log.Debugf(c, "exportInviteLink response: %v", chatInviteLink)
+			logus.Debugf(c, "exportInviteLink response: %v", chatInviteLink)
 		}
 	}
 
@@ -103,7 +103,7 @@ func createGroupFromTelegram(c context.Context, whc botsfw.WebhookContext, tx da
 
 	hasTgGroupEntity := false
 	beforeGroupInsert := func(c context.Context, groupEntity *models.GroupDbo) (group models.GroupEntry, err error) {
-		log.Debugf(c, "beforeGroupInsert()")
+		logus.Debugf(c, "beforeGroupInsert()")
 		var tgGroup models.TgGroup
 		if tgGroup, err = dtdal.TgGroup.GetTgGroupByID(c, nil, tgChat.ID); err != nil {
 			if dal.IsNotFound(err) {
@@ -124,7 +124,7 @@ func createGroupFromTelegram(c context.Context, whc botsfw.WebhookContext, tx da
 	}
 
 	afterGroupInsert := func(c context.Context, group models.GroupEntry, user models.AppUser) (err error) {
-		log.Debugf(c, "afterGroupInsert()")
+		logus.Debugf(c, "afterGroupInsert()")
 		if !hasTgGroupEntity {
 			data := &models.TgGroupData{
 				UserGroupID: group.ID,
@@ -153,12 +153,12 @@ func getTgChatEntity(whc botsfw.WebhookContext) (tgChatEntity *models.DebtusTele
 	chatEntity := whc.ChatData()
 	if chatEntity == nil {
 		whc.LogRequest()
-		log.Debugf(whc.Context(), "can't get group as chatEntity == nil")
+		logus.Debugf(whc.Context(), "can't get group as chatEntity == nil")
 		return
 	}
 	var ok bool
 	if tgChatEntity, ok = chatEntity.(*models.DebtusTelegramChatData); !ok {
-		log.Debugf(whc.Context(), "whc.ChatData() is not TgChatEntityBase")
+		logus.Debugf(whc.Context(), "whc.ChatData() is not TgChatEntityBase")
 		return
 	}
 	return tgChatEntity, nil

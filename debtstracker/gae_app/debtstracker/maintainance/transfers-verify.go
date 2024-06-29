@@ -12,7 +12,7 @@ package maintainance
 //	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 //	"context"
 //	"github.com/captaincodeman/datastore-mapper"
-//	"github.com/strongo/log"
+//	"github.com/strongo/logus"
 //	"github.com/strongo/nds"
 //)
 //
@@ -27,23 +27,23 @@ package maintainance
 //func (m *verifyTransfers) verifyTransfer(c context.Context, tx dal.ReadwriteTransaction, counters *asyncCounters, transfer models.Transfer) (err error) {
 //	buf := new(bytes.Buffer)
 //	if err = m.verifyTransferUsers(c, tx, transfer, buf, counters); err != nil {
-//		log.Errorf(c, fmt.Errorf("verifyTransferUsers:transfer=%d: %w", transfer.ID, err).Error())
+//		logus.Errorf(c, fmt.Errorf("verifyTransferUsers:transfer=%d: %w", transfer.ID, err).Error())
 //		return
 //	}
 //	if err = m.verifyTransferContacts(c, tx, transfer, buf, counters); err != nil {
-//		log.Errorf(c, fmt.Errorf("verifyTransferContacts:transfer=%d: %w", transfer.ID, err).Error())
+//		logus.Errorf(c, fmt.Errorf("verifyTransferContacts:transfer=%d: %w", transfer.ID, err).Error())
 //		return
 //	}
 //	if err = m.verifyTransferCurrency(c, tx, transfer, buf, counters); err != nil {
-//		log.Errorf(c, fmt.Errorf("verifyTransferCurrency:transfer=%d: %w", transfer.ID, err).Error())
+//		logus.Errorf(c, fmt.Errorf("verifyTransferCurrency:transfer=%d: %w", transfer.ID, err).Error())
 //		return
 //	}
 //	if err = m.verifyReturnsToTransferIDs(c, tx, transfer, buf, counters); err != nil {
-//		log.Errorf(c, fmt.Errorf("verifyReturnsToTransferIDs:transfer=%d: %w", transfer.ID, err).Error())
+//		logus.Errorf(c, fmt.Errorf("verifyReturnsToTransferIDs:transfer=%d: %w", transfer.ID, err).Error())
 //		return
 //	}
 //	if buf.Len() > 0 {
-//		log.Warningf(c, fmt.Errorf("transfer.ID: %v, Created: %v\n", transfer.ID, transfer.Data.DtCreated).Error()+buf.String())
+//		logus.Warningf(c, fmt.Errorf("transfer.ID: %v, Created: %v\n", transfer.ID, transfer.Data.DtCreated).Error()+buf.String())
 //	}
 //	return
 //}

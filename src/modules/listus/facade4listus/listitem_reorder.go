@@ -68,12 +68,12 @@ func ReorderListItem(ctx context.Context, userContext facade.User, request Reord
 			},
 		}
 		listKey := list.Record.Key()
-		//log.Debugf("Updating list with listKey=%v, item[1]: %+v; updates[0]: %+v",
+		//logus.Debugf("Updating list with listKey=%v, item[1]: %+v; updates[0]: %+v",
 		//	listKey, list.Data.Items[1], listUpdates[0].Value)
 		if err = tx.Update(ctx, listKey, listUpdates); err != nil {
 			return fmt.Errorf("failed to update list record: %w", err)
 		}
-		//log.Debugf("Updated list with listKey=%v, field=%s, item[1]: %+v", listKey, listUpdates[0].Field, listUpdates[0].Value)
+		//logus.Debugf("Updated list with listKey=%v, field=%s, item[1]: %+v", listKey, listUpdates[0].Field, listUpdates[0].Value)
 		return nil
 	})
 	if err != nil {

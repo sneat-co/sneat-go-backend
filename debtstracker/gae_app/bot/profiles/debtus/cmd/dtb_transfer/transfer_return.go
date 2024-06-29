@@ -7,6 +7,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/crediterra/money"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/strongo/logus"
 	"net/url"
 	"strings"
 	"time"
@@ -17,7 +18,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/decimal"
-	"github.com/strongo/log"
 	"golang.org/x/net/html"
 )
 
@@ -34,7 +34,7 @@ var StartReturnWizardCommand = botsfw.Command{
 	Commands: trans.Commands(trans.COMMAND_RETURNED),
 	Replies:  []botsfw.Command{AskReturnCounterpartyCommand, AskToChooseDebtToReturnCommand},
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-		log.Debugf(whc.Context(), "StartReturnWizardCommand.Action()")
+		logus.Debugf(whc.Context(), "StartReturnWizardCommand.Action()")
 		whc.ChatData().SetAwaitingReplyTo(RETURN_WIZARD_COMMAND)
 		return AskReturnCounterpartyCommand.Action(whc)
 	},
@@ -50,7 +50,7 @@ func askIfReturnedInFull(whc botsfw.WebhookContext, counterparty models.ContactE
 		mt = trans.MESSAGE_TEXT_COUNTERPARTY_OWES_YOU_SINGLE_DEBT
 	case value == 0:
 		errorMessage := fmt.Sprintf("ERROR: Balance for currency [%v] is: %v", currency, value)
-		log.Warningf(whc.Context(), errorMessage)
+		logus.Warningf(whc.Context(), errorMessage)
 		m = whc.NewMessage(errorMessage)
 		return
 	}
@@ -88,7 +88,7 @@ var AskReturnCounterpartyCommand = CreateAskTransferCounterpartyCommand(
 	func(whc botsfw.WebhookContext, counterparty models.ContactEntry) (m botsfw.MessageFromBot, err error) {
 		c := whc.Context()
 
-		log.Debugf(c, "StartReturnWizardCommand.onCounterpartySelectedAction(counterparty.ID=%v)", counterparty.ID)
+		logus.Debugf(c, "StartReturnWizardCommand.onCounterpartySelectedAction(counterparty.ID=%v)", counterparty.ID)
 		var balanceWithInterest money.Balance
 		balanceWithInterest, err = counterparty.Data.BalanceWithInterest(c, time.Now())
 		if err != nil {
@@ -103,7 +103,7 @@ var AskReturnCounterpartyCommand = CreateAskTransferCounterpartyCommand(
 			}
 		case 0:
 			errorMessage := whc.Translate(trans.MESSAGE_TEXT_COUNTERPARTY_HAS_EMPTY_BALANCE, counterparty.Data.FullName())
-			log.Debugf(c, "Balance is empty: "+errorMessage)
+			logus.Debugf(c, "Balance is empty: "+errorMessage)
 			m = whc.NewMessage(errorMessage)
 		default:
 			buttons := make([][]string, len(balanceWithInterest)+1)
@@ -232,7 +232,7 @@ var AskHowMuchHaveBeenReturnedCommand = botsfw.Command{
 	Code: ASK_HOW_MUCH_HAVE_BEEN_RETURNED,
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		c := whc.Context()
-		log.Debugf(c, "AskHowMuchHaveBeenReturnedCommand.Action()")
+		logus.Debugf(c, "AskHowMuchHaveBeenReturnedCommand.Action()")
 		chatEntity := whc.ChatData()
 		if chatEntity.IsAwaitingReplyTo(ASK_HOW_MUCH_HAVE_BEEN_RETURNED) {
 			return TryToProcessHowMuchHasBeenReturned(whc)
@@ -336,10 +336,10 @@ var AskToChooseDebtToReturnCommand = botsfw.Command{
 
 func CreateReturnAndShowReceipt(whc botsfw.WebhookContext, returnToTransferID string, counterpartyID string, direction models.TransferDirection, returnAmount money.Amount) (m botsfw.MessageFromBot, err error) {
 	c := whc.Context()
-	log.Debugf(c, "CreateReturnAndShowReceipt(returnToTransferID=%d, counterpartyID=%d)", returnToTransferID, counterpartyID)
+	logus.Debugf(c, "CreateReturnAndShowReceipt(returnToTransferID=%s, counterpartyID=%s)", returnToTransferID, counterpartyID)
 
 	if returnAmount.Value < 0 {
-		log.Warningf(c, "returnAmount.Value < 0: %v", returnAmount.Value)
+		logus.Warningf(c, "returnAmount.Value < 0: %v", returnAmount.Value)
 		returnAmount.Value = returnAmount.Value.Abs()
 	}
 
@@ -351,7 +351,7 @@ func CreateReturnAndShowReceipt(whc botsfw.WebhookContext, returnToTransferID st
 	if m, err = CreateTransferFromBot(whc, true, returnToTransferID, direction, creatorInfo, returnAmount, time.Time{}, models.NoInterest()); err != nil {
 		return m, err
 	}
-	log.Debugf(c, "createReturnAndShowReceipt(): %v", m)
+	logus.Debugf(c, "createReturnAndShowReceipt(): %v", m)
 	return m, err
 }
 

@@ -9,7 +9,7 @@ import (
 	"github.com/sanity-io/litter"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"reflect"
 	"strconv"
 )
@@ -56,7 +56,7 @@ func createContactWithinTransaction(
 		counterpartyContact = *changes.counterpartyContact
 	}
 
-	log.Debugf(tc, "createContactWithinTransaction(appUser.ID=%v, counterpartyDetails=%v)", appUser.ID, contactDetails)
+	logus.Debugf(tc, "createContactWithinTransaction(appUser.ID=%v, counterpartyDetails=%v)", appUser.ID, contactDetails)
 	if appUser.ID == "" {
 		err = errors.New("appUser.ID == 0")
 		return
@@ -96,7 +96,7 @@ func createContactWithinTransaction(
 			LastTransferAt:   counterpartyContact.Data.LastTransferAt,
 		}
 		invitedCounterpartyBalance := counterpartyContact.Data.Balance().Reversed()
-		log.Debugf(tc, "invitedCounterpartyBalance: %v", invitedCounterpartyBalance)
+		logus.Debugf(tc, "invitedCounterpartyBalance: %v", invitedCounterpartyBalance)
 		if err = contact.Data.SetBalance(invitedCounterpartyBalance); err != nil {
 			return
 		}
@@ -145,7 +145,7 @@ func createContactWithinTransaction(
 				panic(fmt.Sprintf("contact.UserID == counterpartyContact.UserID: %v", contact.Data.UserID))
 			}
 			if contact.Data.TransfersJson != counterpartyContact.Data.TransfersJson {
-				log.Errorf(tc, "contact.TransfersJson != counterpartyContact.TransfersJson\n contact: %v\n counterpartyContact: %v", contact.Data.TransfersJson, counterpartyContact.Data.TransfersJson)
+				logus.Errorf(tc, "contact.TransfersJson != counterpartyContact.TransfersJson\n contact: %v\n counterpartyContact: %v", contact.Data.TransfersJson, counterpartyContact.Data.TransfersJson)
 			}
 			if contact.Data.BalanceCount != counterpartyContact.Data.BalanceCount {
 				panic(fmt.Sprintf("contact.BalanceCount != counterpartyContact.BalanceCount: %v != %v", contact.Data.BalanceCount, counterpartyContact.Data.BalanceCount))
@@ -276,7 +276,7 @@ func UpdateContact(c context.Context, contactID string, values map[string]string
 						changed = true
 					}
 				default:
-					log.Debugf(c, "Unknown field: %v", name)
+					logus.Debugf(c, "Unknown field: %v", name)
 				}
 			}
 			if changed {
@@ -296,7 +296,7 @@ func UpdateContact(c context.Context, contactID string, values map[string]string
 var ErrContactIsNotDeletable = errors.New("contact is not deletable")
 
 func DeleteContact(c context.Context, contactID string) (user models.AppUser, err error) {
-	log.Warningf(c, "ContactDalGae.DeleteContact(%d)", contactID)
+	logus.Warningf(c, "ContactDalGae.DeleteContact(%s)", contactID)
 	var db dal.DB
 	if db, err = GetDatabase(c); err != nil {
 		return
@@ -305,7 +305,7 @@ func DeleteContact(c context.Context, contactID string) (user models.AppUser, er
 	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		if contact, err = GetContactByID(c, tx, contactID); err != nil {
 			if dal.IsNotFound(err) {
-				log.Warningf(c, "ContactEntry not found by ID: %v", contactID)
+				logus.Warningf(c, "ContactEntry not found by ID: %v", contactID)
 				err = nil
 			}
 			return

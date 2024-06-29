@@ -13,7 +13,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/i18n"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"net/url"
 	"strings"
 )
@@ -37,7 +37,7 @@ func createStartCommand(botParams BotParams) botsfw.Command {
 			whc.LogRequest()
 			c := whc.Context()
 			text := whc.Input().(botsfw.WebhookTextMessage).Text()
-			log.Debugf(c, "createStartCommand.Action() => text: "+text)
+			logus.Debugf(c, "createStartCommand.Action() => text: "+text)
 
 			startParam, startParams := tgbots.ParseStartCommand(whc)
 
@@ -120,7 +120,7 @@ func onStartCallbackCommand(params BotParams) botsfw.Command {
 		func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 			lang := callbackUrl.Query().Get("lang")
 			c := whc.Context()
-			log.Debugf(c, "Locale: "+lang)
+			logus.Debugf(c, "Locale: "+lang)
 
 			whc.ChatData().SetPreferredLanguage(lang)
 

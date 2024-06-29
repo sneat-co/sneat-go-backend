@@ -7,14 +7,14 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"net/url"
 )
 
 var billSplitModesListCommand = billCallbackCommand("split-modes",
 	func(whc botsfw.WebhookContext, _ dal.ReadwriteTransaction, callbackUrl *url.URL, bill models.Bill) (m botsfw.MessageFromBot, err error) {
 		c := whc.Context()
-		log.Debugf(c, "billSplitModesListCommand.CallbackAction()")
+		logus.Debugf(c, "billSplitModesListCommand.CallbackAction()")
 		var mt string
 		if mt, err = getBillCardMessageText(c, whc.GetBotCode(), whc, bill, true, ""); err != nil {
 			return

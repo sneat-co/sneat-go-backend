@@ -7,7 +7,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/strongo/gotwilio"
 	"github.com/strongo/i18n"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"github.com/strongo/strongoapp"
 	"strings"
 )
@@ -43,7 +43,7 @@ func SendSms(c context.Context, isLive bool, toPhoneNumber, smsText string) (isT
 
 	if twilioException != nil && twilioException.Code == 21211 && len(toPhoneNumber) == 12 && strings.HasPrefix(toPhoneNumber, "+8") { // is not a valid phone number
 		correctedPhoneNumber := strings.Replace(toPhoneNumber, "+8", "+7", 1)
-		log.Warningf(c, "%v. Will try to send after changing phone number from %v to %v", twilioException.Message, toPhoneNumber, correctedPhoneNumber)
+		logus.Warningf(c, "%v. Will try to send after changing phone number from %v to %v", twilioException.Message, toPhoneNumber, correctedPhoneNumber)
 		smsResponse, twilioException, err = twilio.SendSMS(
 			fromNumber,
 			correctedPhoneNumber,

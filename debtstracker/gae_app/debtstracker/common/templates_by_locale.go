@@ -3,12 +3,12 @@ package common
 import (
 	"bytes"
 	"github.com/strongo/i18n"
+	"github.com/strongo/logus"
 	html "html/template"
 	"sync"
 	text "text/template"
 
 	"context"
-	"github.com/strongo/log"
 )
 
 type TextTemplateProvider struct {
@@ -45,7 +45,7 @@ func (templates *TextTemplateProvider) RenderTemplate(c context.Context, transla
 		defer templates.mutex.Unlock()
 		templates.mutex.Lock()
 		templates.compiled[templateName] = t
-		log.Infof(c, "Compiled & cached template [%v], total cached: %v", templateName, len(templates.compiled))
+		logus.Infof(c, "Compiled & cached template [%v], total cached: %v", templateName, len(templates.compiled))
 	}
 
 	var wr bytes.Buffer
@@ -69,7 +69,7 @@ func (templates *HtmlTemplateProvider) RenderTemplate(c context.Context, wr *byt
 		templates.mutex.Lock()
 		templates.compiled[cacheCode] = t
 
-		log.Infof(c, "Compiled & cached template [%v], total cached: %v", cacheCode, len(templates.compiled))
+		logus.Infof(c, "Compiled & cached template [%v], total cached: %v", cacheCode, len(templates.compiled))
 	}
 
 	if err = t.Execute(wr, params); err != nil {

@@ -7,7 +7,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"google.golang.org/appengine/v2"
 	"google.golang.org/appengine/v2/datastore"
 	"net/http"
@@ -96,7 +96,7 @@ func mergeContacts(c context.Context, tx dal.ReadwriteTransaction, targetContact
 	for _, sourceContactID := range sourceContactIDs {
 		go func(sourceContactID string) {
 			if err2 := mergeContactTransfers(c, tx, wg, targetContactID, sourceContactID); err2 != nil {
-				log.Errorf(c, "failed to merge transfers for contact %v: %v", sourceContactID, err2)
+				logus.Errorf(c, "failed to merge transfers for contact %v: %v", sourceContactID, err2)
 				if err == nil {
 					err = err2
 				}
@@ -208,7 +208,7 @@ func mergeContactTransfers(c context.Context, tx dal.ReadwriteTransaction, wg *s
 				err = nil
 				break
 			}
-			log.Errorf(c, "Failed to get next transfer: %v", err)
+			logus.Errorf(c, "Failed to get next transfer: %v", err)
 		}
 		transfer.ID = record.Key().ID.(string)
 		switch sourceContactID {
@@ -224,7 +224,7 @@ func mergeContactTransfers(c context.Context, tx dal.ReadwriteTransaction, wg *s
 			transfer.Data.BothCounterpartyIDs[1] = targetContactID
 		}
 		if err = facade.Transfers.SaveTransfer(c, tx, transfer); err != nil {
-			log.Errorf(c, "Failed to save transfer #%v: %v", transfer.ID, err)
+			logus.Errorf(c, "Failed to save transfer #%v: %v", transfer.ID, err)
 		}
 	}
 	return

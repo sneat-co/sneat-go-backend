@@ -9,7 +9,7 @@ package maintainance
 //	"context"
 //	"fmt"
 //	"github.com/captaincodeman/datastore-mapper"
-//	"github.com/strongo/log"
+//	"github.com/strongo/logus"
 //	"google.golang.org/appengine/v2/datastore"
 //	"net/url"
 //)
@@ -23,19 +23,19 @@ package maintainance
 //
 ////func (m *asyncMapper) startWorker(c context.Context, counters mapper.Counters, createWorker WorkerFactory) (err error) {
 ////	// gaedb.LoggingEnabled = false
-////	// log.Debugf(c, "*asyncMapper.startWorker()")
+////	// logus.Debugf(c, "*asyncMapper.startWorker()")
 ////	executeWorker := createWorker()
-////	// log.Debugf(c, "Will add 1 to WaitGroup")
+////	// logus.Debugf(c, "Will add 1 to WaitGroup")
 ////	m.WaitGroup.Add(1)
-////	// log.Debugf(c, "Added 1 to WaitGroup")
+////	// logus.Debugf(c, "Added 1 to WaitGroup")
 ////	go func() {
-////		// log.Debugf(c, "*asyncMapper.startWorker() => goroutine started")
+////		// logus.Debugf(c, "*asyncMapper.startWorker() => goroutine started")
 ////		defer m.WaitGroup.Done()
 ////		counters := NewAsynCounters(counters)
 ////		defer func() {
 ////			if r := recover(); r != nil {
 ////				// gaedb.LoggingEnabled = true
-////				log.Errorf(c, "panic: %v\n\tStack trace: %v", r, string(debug.Stack()))
+////				logus.Errorf(c, "panic: %v\n\tStack trace: %v", r, string(debug.Stack()))
 ////				// gaedb.LoggingEnabled = false
 ////			}
 ////			if counters != nil && counters.locked {
@@ -44,17 +44,17 @@ package maintainance
 ////		}()
 ////		if err = executeWorker(counters); err != nil {
 ////			// gaedb.LoggingEnabled = true
-////			log.Errorf(c, "*contactsAsyncJob() > Worker failed: %v", err)
+////			logus.Errorf(c, "*contactsAsyncJob() > Worker failed: %v", err)
 ////			// gaedb.LoggingEnabled = false
 ////		}
-////		// log.Debugf(c, "worker completed")
+////		// logus.Debugf(c, "worker completed")
 ////	}()
 ////	return nil
 ////}
 //
 //// JobStarted is called when a mapper job is started
 //func (*asyncMapper) JobStarted(c context.Context, id string) {
-//	log.Debugf(c, "Job started: %v", id)
+//	logus.Debugf(c, "Job started: %v", id)
 //}
 //
 //// JobCompleted is called when a mapper job is completed
@@ -73,11 +73,11 @@ package maintainance
 //// SliceCompleted is called when a mapper job for an individual slice of a
 //// shard within a namespace is completed
 //func (m *asyncMapper) SliceCompleted(c context.Context, id string, namespace string, shard, slice int) {
-//	log.Debugf(c, "Awaiting completion...")
+//	logus.Debugf(c, "Awaiting completion...")
 //	if m.WaitGroup != nil {
 //		m.WaitGroup.Wait()
 //	}
-//	log.Debugf(c, "Processing completed.")
+//	logus.Debugf(c, "Processing completed.")
 //	// gaedb.LoggingEnabled = true
 //}
 //
@@ -94,7 +94,7 @@ package maintainance
 //		return
 //	}
 //	query = query.Filter("__key__ =", datastore.NewKey(c, kind, "", id, nil))
-//	log.Debugf(c, "Filtered by %v(IntID=%v)", kind, id)
+//	logus.Debugf(c, "Filtered by %v(IntID=%v)", kind, id)
 //	filtered = true
 //	return
 //}
@@ -107,7 +107,7 @@ package maintainance
 ////	}
 ////	c := appengine.NewContext(r)
 ////	query = query.Filter("__key__ =", datastore.NewKey(c, kind, paramVal, 0, nil))
-////	log.Debugf(c, "Filtered by %v(StrID=%v)", kind, paramVal)
+////	logus.Debugf(c, "Filtered by %v(StrID=%v)", kind, paramVal)
 ////	filtered = true
 ////	return
 ////}

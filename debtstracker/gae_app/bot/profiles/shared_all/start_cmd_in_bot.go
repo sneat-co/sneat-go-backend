@@ -4,17 +4,17 @@ import (
 	"bytes"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/strongo/logus"
 	"strings"
 
 	"errors"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 var ErrUnknownStartParam = errors.New("unknown start parameter")
 
 func startInBotAction(whc botsfw.WebhookContext, startParams []string, botParams BotParams) (m botsfw.MessageFromBot, err error) {
-	log.Debugf(whc.Context(), "startInBotAction() => startParams: %v", startParams)
+	logus.Debugf(whc.Context(), "startInBotAction() => startParams: %v", startParams)
 	if m, err = botParams.StartInBotAction(whc, startParams); err != nil {
 		if err == ErrUnknownStartParam {
 			if whc.ChatData().GetPreferredLanguage() == "" {
@@ -58,7 +58,7 @@ func startInBotWelcomeAction(whc botsfw.WebhookContext, botParams BotParams) (m 
 
 //func onStartCallbackInBot(whc botsfw.WebhookContext, params BotParams) (m botsfw.MessageFromBot, err error) {
 //	c := whc.Context()
-//	log.Debugf(c, "onStartCallbackInBot()")
+//	logus.Debugf(c, "onStartCallbackInBot()")
 //
 //	if m, err = params.InBotWelcomeMessage(whc); err != nil {
 //		return

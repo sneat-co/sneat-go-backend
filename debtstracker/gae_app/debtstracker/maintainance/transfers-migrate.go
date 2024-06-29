@@ -6,7 +6,7 @@ package maintainance
 //	"context"
 //	"github.com/captaincodeman/datastore-mapper"
 //	"github.com/dal-go/dalgo/dal"
-//	"github.com/strongo/log"
+//	"github.com/strongo/logus"
 //)
 //
 //type migrateTransfers struct {
@@ -19,11 +19,11 @@ package maintainance
 //
 //func (m *migrateTransfers) migrateTransfer(c context.Context, tx dal.ReadwriteTransaction, counters *asyncCounters, transfer models.Transfer) (err error) {
 //	if transfer.Data.CreatorUserID == 0 {
-//		log.Errorf(c, "Transfer(ID=%v) is missing CreatorUserID")
+//		logus.Errorf(c, "Transfer(ID=%v) is missing CreatorUserID")
 //		return
 //	}
 //	if !transfer.Data.HasObsoleteProps() {
-//		// log.Debugf(c, "transfer.ID=%v has no obsolete props", transfer.ID)
+//		// logus.Debugf(c, "transfer.ID=%v has no obsolete props", transfer.ID)
 //		return
 //	}
 //	var db dal.DB
@@ -39,11 +39,11 @@ package maintainance
 //			if err = facade.Transfers.SaveTransfer(tc, tx, transfer); err != nil {
 //				return
 //			}
-//			log.Infof(c, "Transfer %v fixed", transfer.ID)
+//			logus.Infof(c, "Transfer %v fixed", transfer.ID)
 //		}
 //		return
 //	}, nil); err != nil {
-//		log.Errorf(c, "failed to fix transfer %v: %v", transfer.ID, err)
+//		logus.Errorf(c, "failed to fix transfer %v: %v", transfer.ID, err)
 //	}
 //	return
 //}

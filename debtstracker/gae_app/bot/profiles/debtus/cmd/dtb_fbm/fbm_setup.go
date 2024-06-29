@@ -10,7 +10,7 @@ package dtb_fbm
 //	"context"
 //	"github.com/julienschmidt/httprouter"
 //	"github.com/strongo/bots-api-fbm"
-//	"github.com/strongo/log"
+//	"github.com/strongo/logus"
 //	"google.golang.org/appengine/v2"
 //)
 //
@@ -33,7 +33,7 @@ package dtb_fbm
 //	var buffer bytes.Buffer
 //
 //	reportError := func(err error) {
-//		log.Errorf(c, err.Error())
+//		logus.Errorf(c, err.Error())
 //		w.WriteHeader(http.StatusInternalServerError)
 //		w.Write(buffer.Bytes())
 //		w.Write([]byte(err.Error()))
@@ -66,7 +66,7 @@ package dtb_fbm
 //		}
 //		buffer.WriteString("Enabled 'Persistent menu'\n")
 //	}
-//	log.Debugf(c, buffer.String())
+//	logus.Debugf(c, buffer.String())
 //	w.Header().Set("Content-ExtraType", "text/plain")
 //	w.Write(buffer.Bytes())
 //	w.Write([]byte(fmt.Sprintf("OK! %v", time.Now())))

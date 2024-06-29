@@ -3,18 +3,18 @@ package facade
 import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/strongo/logus"
 	"time"
 
 	"context"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 func SaveFeedback(c context.Context, tx dal.ReadwriteTransaction, feedbackID int64, feedbackEntity *models.FeedbackData) (feedback models.Feedback, user models.AppUser, err error) {
 	if c == nil {
 		panic("c == nil")
 	}
-	log.Debugf(c, "FeedbackDalGae.SaveFeedback(feedbackEntity:%v)", feedbackEntity)
+	logus.Debugf(c, "FeedbackDalGae.SaveFeedback(feedbackEntity:%v)", feedbackEntity)
 	if feedbackEntity == nil {
 		panic("feedbackEntity == nil")
 	}

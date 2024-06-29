@@ -111,7 +111,7 @@ func (UserGoogleDalGae) SaveUserGoogle(c context.Context, userGoogle models.User
 //				return err
 //			} else if user.GoogleUniqueUserID != entity.ID {
 //				if user.GoogleUniqueUserID != "" {
-//					log.Warningf(c, "TODO: Handle case when connect with to user with different linked Google ID")
+//					logus.Warningf(c, "TODO: Handle case when connect with to user with different linked Google ID")
 //				}
 //				user.GoogleUniqueUserID = entity.ID
 //				if err = facade.User.SaveUser(c, user); err != nil {

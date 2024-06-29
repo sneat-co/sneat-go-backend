@@ -9,12 +9,12 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/sneat-co/sneat-go-core/emails"
 	"github.com/strongo/i18n"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"time"
 )
 
 func sendReminderByEmail(c context.Context, reminder models.Reminder, emailTo string, transfer models.TransferEntry, user models.DebutsAppUserDataOBSOLETE) (err error) {
-	log.Debugf(c, "sendReminderByEmail(reminder.ID=%v, emailTo=%v)", reminder.ID, emailTo)
+	logus.Debugf(c, "sendReminderByEmail(reminder.ID=%v, emailTo=%v)", reminder.ID, emailTo)
 
 	emailMessage := emails.Email{
 		From: common.FROM_REMINDER,
@@ -58,6 +58,6 @@ func sendReminderByEmail(c context.Context, reminder models.Reminder, emailTo st
 	}
 
 	// Pretty-print the response data.
-	log.Debugf(c, "AWS SES output (for Reminder=%v): %v", reminder.ID, sent)
+	logus.Debugf(c, "AWS SES output (for Reminder=%v): %v", reminder.ID, sent)
 	return nil
 }

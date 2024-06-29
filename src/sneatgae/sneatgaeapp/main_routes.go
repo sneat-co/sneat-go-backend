@@ -6,7 +6,7 @@ import (
 	"github.com/sneat-co/sneat-go-core/capturer"
 	"github.com/sneat-co/sneat-go-core/httpserver"
 	"github.com/sneat-co/sneat-go-core/security"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"google.golang.org/appengine/v2"
 	"net/http"
 	"runtime/debug"
@@ -23,12 +23,12 @@ func initHTTPRouter(globalOptions http.HandlerFunc) *httprouter.Router {
 
 // globalOptionsHandler handles OPTIONS requests
 func globalOptionsHandler(w http.ResponseWriter, r *http.Request) {
-	//log.Println("globalOptionsHandler()", r.URL)
+	//logus.Println("globalOptionsHandler()", r.URL)
 	accessControlRequestMethod := r.Header.Get("Access-Control-Request-Method")
 	if accessControlRequestMethod == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		const m = "Missing required request header: Access-Control-Request-Method"
-		log.Infof(r.Context(), "globalOptionsHandler(%s): bad request: %s\n", r.URL.String(), m)
+		logus.Infof(r.Context(), "globalOptionsHandler(%s): bad request: %s\n", r.URL.String(), m)
 		_, _ = fmt.Println(w)
 		return
 	}
@@ -44,7 +44,7 @@ func globalOptionsHandler(w http.ResponseWriter, r *http.Request) {
 	if accessControlRequestHeaders != "" {
 		responseHeader.Set("Access-Control-Allow-Headers", accessControlRequestHeaders)
 	}
-	//log.Println("globalOptionsHandler(): OK, response code = 204 - no content")
+	//logus.Println("globalOptionsHandler(): OK, response code = 204 - no content")
 	w.WriteHeader(http.StatusOK) // Do not use http.StatusNoContent here, it will cause error in Chrome
 }
 
@@ -59,7 +59,7 @@ func allowedOrigin(r *http.Request, w http.ResponseWriter) (string, bool) {
 	if !security.IsSupportedOrigin(origin) {
 		w.WriteHeader(http.StatusForbidden)
 		m := "Unsupported origin: " + origin
-		log.Warningf(r.Context(), "globalOptionsHandler(%s): %s\n", r.URL.String(), m)
+		logus.Warningf(r.Context(), "globalOptionsHandler(%s): %s\n", r.URL.String(), m)
 		_, _ = fmt.Println(w, m)
 		return origin, false
 	}
@@ -85,7 +85,7 @@ func wrapHTTPHandler(handler http.HandlerFunc, wrapHandler HandlerWrapper) http.
 				c := r.Context()
 				url := r.URL.String()
 				duration := time.Since(started)
-				log.Infof(c, "%s %s completed in %v", r.Method, url, duration)
+				logus.Infof(c, "%s %s completed in %v", r.Method, url, duration)
 			}(time.Now())
 		}
 		handler.ServeHTTP(w, r)

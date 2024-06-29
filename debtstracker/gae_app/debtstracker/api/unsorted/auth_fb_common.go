@@ -7,7 +7,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	fb "github.com/strongo/facebook"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"net/http"
 )
 
@@ -17,7 +17,7 @@ var ErrBadRequest = errors.New("Bad request")
 func signInFbUser(c context.Context, fbAppID, fbUserID string, r *http.Request, authInfo auth.AuthInfo) (
 	user models.AppUser, isNewUser bool, userFacebook models.UserFacebook, fbApp *fb.App, fbSession *fb.Session, err error,
 ) {
-	log.Debugf(c, "api.signInFbUser()")
+	logus.Debugf(c, "api.signInFbUser()")
 
 	if fbAppID == "" {
 		panic("fbAppID is empty string")
@@ -66,7 +66,7 @@ func signInFbUser(c context.Context, fbAppID, fbUserID string, r *http.Request, 
 			//		pageID = strconv.FormatFloat(signedData.Get("page_id").(float64), 'f', 0, 64)
 			//	}
 			//
-			//	log.Debugf(c, "pageID: %v, signedData: %v", pageID, signedData)
+			//	logus.Debugf(c, "pageID: %v, signedData: %v", pageID, signedData)
 			//	if fbmBot, ok := fbmbots.Bots(c).ByID[pageID]; !ok {
 			//		err = errors.New("ReferredTo settings not found by page ID=" + pageID)
 			//	} else {
@@ -100,7 +100,7 @@ func signInFbUser(c context.Context, fbAppID, fbUserID string, r *http.Request, 
 	//		return
 	//	}
 	//} else {
-	//	log.Debugf(c, "Not updating FB user db record as last updated less then an hour ago")
+	//	logus.Debugf(c, "Not updating FB user db record as last updated less then an hour ago")
 	//}
 	//
 	//if err != nil {
@@ -138,7 +138,7 @@ func signInFbUser(c context.Context, fbAppID, fbUserID string, r *http.Request, 
 //		return
 //	}
 //
-//	log.Debugf(c, "Facebook API response: %v", fbResp)
+//	logus.Debugf(c, "Facebook API response: %v", fbResp)
 //
 //	var ok bool
 //	if email, ok = fbResp["email"].(string); ok && email != "" {
@@ -169,10 +169,10 @@ func signInFbUser(c context.Context, fbAppID, fbUserID string, r *http.Request, 
 func authWriteResponseForAuthFailed(c context.Context, w http.ResponseWriter, err error) {
 	if errors.Is(err, ErrUnauthorized) {
 		w.WriteHeader(http.StatusUnauthorized)
-		log.Debugf(c, err.Error())
+		logus.Debugf(c, err.Error())
 	} else {
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Errorf(c, "Auth failed: %v", err.Error())
+		logus.Errorf(c, "Auth failed: %v", err.Error())
 	}
 	_, _ = w.Write([]byte(err.Error()))
 }

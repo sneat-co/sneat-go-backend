@@ -9,7 +9,7 @@ import (
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 )
 
 const ASK_CURRENCY_SETTING_COMMAND = "ask-currency-settings"
@@ -43,7 +43,7 @@ var SetPrimaryCurrency = botsfw.Command{
 	Code: SET_PRIMARY_CURRENCY_COMMAND,
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		c := whc.Context()
-		log.Debugf(c, "SetPrimaryCurrency.Action()")
+		logus.Debugf(c, "SetPrimaryCurrency.Action()")
 		whc.ChatData().SetAwaitingReplyTo("")
 		primaryCurrency := whc.Input().(botsfw.WebhookTextMessage).Text()
 		var db dal.DB

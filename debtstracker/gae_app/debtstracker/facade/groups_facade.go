@@ -10,7 +10,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/delaying"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"github.com/strongo/slices"
 )
 
@@ -98,7 +98,7 @@ func (groupFacade groupFacade) CreateGroup(c context.Context,
 	}, dal.TxWithCrossGroup()); err != nil {
 		return
 	}
-	log.Infof(c, "GroupEntry created, ID=%v", group.ID)
+	logus.Infof(c, "GroupEntry created, ID=%v", group.ID)
 	return
 }
 
@@ -109,7 +109,7 @@ type NewUser struct {
 }
 
 func (groupFacade) AddUsersToTheGroupAndOutstandingBills(c context.Context, groupID string, newUsers []NewUser) (models.GroupEntry, []NewUser, error) {
-	log.Debugf(c, "groupFacade.AddUsersToTheGroupAndOutstandingBills(groupID=%v, newUsers=%v)", groupID, newUsers)
+	logus.Debugf(c, "groupFacade.AddUsersToTheGroupAndOutstandingBills(groupID=%v, newUsers=%v)", groupID, newUsers)
 	if groupID == "" {
 		panic("groupID is empty string")
 	}
@@ -127,7 +127,7 @@ func (groupFacade) AddUsersToTheGroupAndOutstandingBills(c context.Context, grou
 		if group, err = dtdal.Group.GetGroupByID(c, tx, groupID); err != nil {
 			return
 		}
-		log.Debugf(c, "group: %+v", group.Data)
+		logus.Debugf(c, "group: %+v", group.Data)
 		j := 0
 		for _, newUser := range newUsers {
 			_, isChanged, _, _, groupMembers := group.Data.AddOrGetMember(newUser.GetAppUserID(), "", newUser.Name)
@@ -140,7 +140,7 @@ func (groupFacade) AddUsersToTheGroupAndOutstandingBills(c context.Context, grou
 		}
 		newUsers = newUsers[:j]
 		if changed {
-			log.Debugf(c, "group: %+v", group.Data)
+			logus.Debugf(c, "group: %+v", group.Data)
 			if err = dtdal.Group.SaveGroup(c, tx, group); err != nil {
 				return
 			}
@@ -164,11 +164,11 @@ func (groupFacade) DelayUpdateGroupUsers(c context.Context, groupID string) erro
 
 func updateGroupUsers(c context.Context, groupID string) (err error) {
 	if groupID == "" {
-		log.Criticalf(c, "groupID is empty string")
+		logus.Criticalf(c, "groupID is empty string")
 		return nil
 	}
 
-	log.Debugf(c, "updateGroupUsers(groupID=%v)", groupID)
+	logus.Debugf(c, "updateGroupUsers(groupID=%v)", groupID)
 	var db dal.DB
 	if db, err = GetDatabase(c); err != nil {
 		return err
@@ -192,7 +192,7 @@ func updateGroupUsers(c context.Context, groupID string) (err error) {
 }
 
 func delayedUpdateUserWithGroups(c context.Context, userID string, groupIDs2add, groupIDs2remove []string) (err error) {
-	log.Debugf(c, "delayedUpdateUserWithGroups(userID=%d, groupIDs2add=%v, groupIDs2remove=%v)", userID, groupIDs2add, groupIDs2remove)
+	logus.Debugf(c, "delayedUpdateUserWithGroups(userID=%s, groupIDs2add=%+v, groupIDs2remove=%+v)", userID, groupIDs2add, groupIDs2remove)
 	var db dal.DB
 	if db, err = GetDatabase(c); err != nil {
 		return
@@ -216,7 +216,7 @@ func delayedUpdateUserWithGroups(c context.Context, userID string, groupIDs2add,
 }
 
 func (userFacade) UpdateUserWithGroups(c context.Context, tx dal.ReadwriteTransaction, user models.AppUser, groups2add []models.GroupEntry, groups2remove []string) (err error) {
-	log.Debugf(c, "updateUserWithGroup(user.ID=%d, len(groups2add)=%d, groups2remove=%v)", user.ID, len(groups2add), groups2remove)
+	logus.Debugf(c, "updateUserWithGroup(user.ID=%s, len(groups2add)=%d, groups2remove=%+v)", user.ID, len(groups2add), groups2remove)
 	groups := user.Data.ActiveGroups()
 	updated := false
 	for _, group2add := range groups2add {
@@ -232,7 +232,7 @@ func (userFacade) UpdateUserWithGroups(c context.Context, tx dal.ReadwriteTransa
 		}
 	}
 	if !updated {
-		log.Debugf(c, "User is not update with groups")
+		logus.Debugf(c, "User is not update with groups")
 		return
 	}
 	user.Data.SetActiveGroups(groups)
@@ -247,7 +247,7 @@ func (userFacade) DelayUpdateContactWithGroups(c context.Context, contactID stri
 }
 
 func delayedUpdateContactWithGroup(c context.Context, contactID string, addGroupIDs, removeGroupIDs []string) (err error) {
-	log.Debugf(c, "delayedUpdateContactWithGroup(contactID=%s, addGroupIDs=%v, removeGroupIDs=%v)", contactID, addGroupIDs, removeGroupIDs)
+	logus.Debugf(c, "delayedUpdateContactWithGroup(contactID=%s, addGroupIDs=%v, removeGroupIDs=%v)", contactID, addGroupIDs, removeGroupIDs)
 	var db dal.DB
 	if db, err = GetDatabase(c); err != nil {
 		return
@@ -265,7 +265,7 @@ func delayedUpdateContactWithGroup(c context.Context, contactID string, addGroup
 }
 
 func (userFacade) UpdateContactWithGroups(c context.Context, contactID string, addGroupIDs, removeGroupIDs []string) error {
-	log.Debugf(c, "UpdateContactWithGroups(contactID=%d, addGroupIDs=%v, removeGroupIDs=%v)", contactID, addGroupIDs, removeGroupIDs)
+	logus.Debugf(c, "UpdateContactWithGroups(contactID=%s, addGroupIDs=%+v, removeGroupIDs=%+v)", contactID, addGroupIDs, removeGroupIDs)
 	if contact, err := GetContactByID(c, nil, contactID); err != nil {
 		return err
 	} else {

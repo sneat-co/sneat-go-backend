@@ -7,13 +7,13 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/strongo/logus"
 	"net/url"
 
 	"errors"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/decimal"
-	"github.com/strongo/log"
 )
 
 const (
@@ -30,7 +30,7 @@ var newBillCommand = botsfw.Command{
 	Code: newBillCommandCode,
 	CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 		c := whc.Context()
-		log.Debugf(c, "newBillCommand.CallbackAction(callbackUrl=%v)", callbackUrl)
+		logus.Debugf(c, "newBillCommand.CallbackAction(callbackUrl=%v)", callbackUrl)
 		query := callbackUrl.Query()
 		paramI := query.Get(NEW_BILL_PARAM_I)
 		if paramI != NEW_BILL_PARAM_I_OWE && paramI != NEW_BILL_PARAM_I_PAID {

@@ -9,7 +9,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/strongo/gamp"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"net/http"
 )
 
@@ -40,7 +40,7 @@ func SendSingleMessage(c context.Context, m gamp.Message) (err error) {
 	}
 	var buffer bytes.Buffer
 	_, _ = m.Write(&buffer)
-	log.Debugf(c, "Sent single message to GA: "+buffer.String())
+	logus.Debugf(c, "Sent single message to GA: "+buffer.String())
 	return nil
 }
 
@@ -65,7 +65,7 @@ func getGaCommon(r *http.Request, userID string, userLanguage, platform string) 
 func ReminderSent(c context.Context, userID string, userLanguage, platform string) {
 	gaCommon := getGaCommon(nil, userID, userLanguage, platform)
 	if err := SendSingleMessage(c, gamp.NewEvent(EventCategoryReminders, EventActionReminderSent, gaCommon)); err != nil {
-		log.Errorf(c, fmt.Errorf("failed to send even to GA: %w", err).Error())
+		logus.Errorf(c, fmt.Errorf("failed to send even to GA: %w", err).Error())
 	}
 }
 

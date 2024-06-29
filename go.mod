@@ -1,6 +1,8 @@
 module github.com/sneat-co/sneat-go-backend
 
-go 1.22.2
+go 1.22.3
+
+toolchain go1.22.4
 
 //replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
 //replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
@@ -96,6 +98,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
 	github.com/sendgrid/rest v2.6.9+incompatible // indirect
+	github.com/strongo/logus v0.0.0-20240628225821-04cf45b5968f // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.51.0 // indirect

@@ -10,11 +10,11 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/decimal"
 	"github.com/strongo/delaying"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 )
 
 func (TransferDalGae) DelayUpdateTransfersOnReturn(c context.Context, returnTransferID string, transferReturnsUpdate []dtdal.TransferReturnUpdate) (err error) {
-	log.Debugf(c, "DelayUpdateTransfersOnReturn(returnTransferID=%v, transferReturnsUpdate=%v)", returnTransferID, transferReturnsUpdate)
+	logus.Debugf(c, "DelayUpdateTransfersOnReturn(returnTransferID=%v, transferReturnsUpdate=%v)", returnTransferID, transferReturnsUpdate)
 	if returnTransferID == "" {
 		panic("returnTransferID == 0")
 	}
@@ -33,7 +33,7 @@ func (TransferDalGae) DelayUpdateTransfersOnReturn(c context.Context, returnTran
 }
 
 func updateTransfersOnReturn(c context.Context, returnTransferID string, transferReturnsUpdate []dtdal.TransferReturnUpdate) (err error) {
-	log.Debugf(c, "updateTransfersOnReturn(returnTransferID=%v, transferReturnsUpdate=%+v)", returnTransferID, transferReturnsUpdate)
+	logus.Debugf(c, "updateTransfersOnReturn(returnTransferID=%v, transferReturnsUpdate=%+v)", returnTransferID, transferReturnsUpdate)
 	for i, transferReturnUpdate := range transferReturnsUpdate {
 		if transferReturnUpdate.TransferID == "" {
 			panic(fmt.Sprintf("transferReturnsUpdates[%d].TransferID == 0", i))
@@ -53,7 +53,7 @@ func DelayUpdateTransferOnReturn(c context.Context, returnTransferID, transferID
 }
 
 func updateTransferOnReturn(c context.Context, returnTransferID, transferID string, returnedAmount decimal.Decimal64p2) (err error) {
-	log.Debugf(c, "updateTransferOnReturn(returnTransferID=%v, transferID=%v, returnedAmount=%v)", returnTransferID, transferID, returnedAmount)
+	logus.Debugf(c, "updateTransferOnReturn(returnTransferID=%v, transferID=%v, returnedAmount=%v)", returnTransferID, transferID, returnedAmount)
 
 	var transfer, returnTransfer models.TransferEntry
 
@@ -65,7 +65,7 @@ func updateTransferOnReturn(c context.Context, returnTransferID, transferID stri
 	return db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		if returnTransfer, err = facade.Transfers.GetTransferByID(c, tx, returnTransferID); err != nil {
 			if dal.IsNotFound(err) {
-				log.Errorf(c, fmt.Errorf("return transfer not found: %w", err).Error())
+				logus.Errorf(c, fmt.Errorf("return transfer not found: %w", err).Error())
 				err = nil
 			}
 			return
@@ -73,7 +73,7 @@ func updateTransferOnReturn(c context.Context, returnTransferID, transferID stri
 
 		if transfer, err = facade.Transfers.GetTransferByID(c, tx, transferID); err != nil {
 			if dal.IsNotFound(err) {
-				log.Errorf(c, err.Error())
+				logus.Errorf(c, err.Error())
 				err = nil
 			}
 			return

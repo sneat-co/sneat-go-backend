@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
+	"github.com/strongo/logus"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -16,7 +17,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/emailing"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 	"github.com/strongo/strongoapp/appuser"
 )
 
@@ -76,7 +76,7 @@ func HandleSignUpWithEmail(c context.Context, w http.ResponseWriter, r *http.Req
 func HandleSignInWithEmail(c context.Context, w http.ResponseWriter, r *http.Request) {
 	email := strings.TrimSpace(r.PostFormValue("email"))
 	password := strings.TrimSpace(r.PostFormValue("password"))
-	//log.Debugf(c, "Email: %s", email)
+	//logus.Debugf(c, "Email: %s", email)
 	if email == "" || password == "" {
 		api.ErrorAsJson(c, w, http.StatusBadRequest, errors.New("Missing required value"))
 		return
@@ -96,7 +96,7 @@ func HandleSignInWithEmail(c context.Context, w http.ResponseWriter, r *http.Req
 		}
 		return
 	} else if err = userEmail.Data.CheckPassword(password); err != nil {
-		log.Debugf(c, "Invalid password: %v", err)
+		logus.Debugf(c, "Invalid password: %v", err)
 		api.ErrorAsJson(c, w, http.StatusForbidden, errors.New("invalid password"))
 		return
 	}

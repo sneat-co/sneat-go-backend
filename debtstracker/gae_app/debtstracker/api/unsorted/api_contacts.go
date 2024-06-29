@@ -6,6 +6,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
+	"github.com/strongo/logus"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -16,7 +17,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
 )
 
 func getUserID(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) (userID string) {
@@ -178,7 +178,7 @@ func contactToResponse(c context.Context, w http.ResponseWriter, authInfo auth.A
 //}
 
 func HandleDeleteContact(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
-	log.Debugf(c, "HandleDeleteContact()")
+	logus.Debugf(c, "HandleDeleteContact()")
 	//err := r.ParseForm()
 	//if err != nil {
 	//	BadRequestError(c, hashedWriter, err)
@@ -188,12 +188,12 @@ func HandleDeleteContact(c context.Context, w http.ResponseWriter, r *http.Reque
 	if contactID == "" {
 		return
 	}
-	log.Debugf(c, "contactID: %v", contactID)
+	logus.Debugf(c, "contactID: %v", contactID)
 	if _, err := facade.DeleteContact(c, contactID); err != nil {
 		api.InternalError(c, w, err)
 		return
 	}
-	log.Infof(c, "ContactEntry deleted: %v", contactID)
+	logus.Infof(c, "ContactEntry deleted: %v", contactID)
 }
 
 func HandleArchiveCounterparty(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {

@@ -6,7 +6,7 @@ import (
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"google.golang.org/appengine/v2"
 	"net/http"
 )
@@ -60,22 +60,22 @@ func SendEmail(c context.Context, fromName, subject, html string) (err error) {
 	from := mail.NewEmail(fromName, "hello@debtstracker.io")
 	to := mail.NewEmail("Example User", "test@example.com")
 	message := mail.NewSingleEmail(from, subject, to, "", html)
-	log.Infof(c, "Sending from %v email message: %v", fromName, html)
+	logus.Infof(c, "Sending from %v email message: %v", fromName, html)
 	_, err = sgClient.Send(message)
 	return
 }
 
 func SendReceipt(c context.Context, w http.ResponseWriter, r *http.Request) {
-	log.Infof(c, "sendReceipt() started")
+	logus.Infof(c, "sendReceipt() started")
 	err := r.ParseForm()
 	if err != nil {
 		m := "Failed to parse form: %v"
-		log.Infof(c, m, err)
+		logus.Infof(c, m, err)
 		w.WriteHeader(500)
 		fmt.Fprintf(w, m, err)
 		return
 	}
-	log.Infof(c, "Form parsed: %v", r.FormValue("from_name"))
+	logus.Infof(c, "Form parsed: %v", r.FormValue("from_name"))
 	fromName := r.Form.Get("from_name")
 	//	fromEmail := r.Form["from_email"][0]
 	//	toName := r.Form["to_name"][0]
@@ -86,7 +86,7 @@ func SendReceipt(c context.Context, w http.ResponseWriter, r *http.Request) {
 	message := "<p>You've got " + amount + currency + " from " + fromName + "</p><p>--<br>Sent via <a href='https://debtstracker.io/#utm_source=app&utm_medium=email&utm_campaign=receipt&utm_content=footer'><b>DebtsTracker.IO</b></a> - available at <a href=https://itunes.apple.com/en/app/debttracker-pro/id303497125>Apple AppStore</a> & <a href=https://play.google.com/store/apps/details?id=com.stellar.debtsfree&hl=en>Google Play</a></p>"
 	allowOrigin(w)
 	if err := SendEmail(c, fromName, subject, message); err != nil {
-		log.Infof(c, "Failed to send email: %v", err)
+		logus.Infof(c, "Failed to send email: %v", err)
 		fmt.Fprint(w, err)
 	} else {
 		fmt.Fprint(w, "Email sent")

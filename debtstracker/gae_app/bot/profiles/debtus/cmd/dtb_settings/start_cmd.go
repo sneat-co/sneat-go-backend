@@ -9,7 +9,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"regexp"
 	"time"
 )
@@ -33,7 +33,7 @@ func StartInBotAction(whc botsfw.WebhookContext, startParams []string) (m botsfw
 
 func startByLinkCode(whc botsfw.WebhookContext, matches []string) (m botsfw.MessageFromBot, err error) {
 	c := whc.Context()
-	log.Debugf(c, "startByLinkCode() => matches: %v", matches)
+	logus.Debugf(c, "startByLinkCode() => matches: %v", matches)
 	chatEntity := whc.ChatData()
 	entityType := matches[1]
 	entityCode := matches[2]
@@ -73,7 +73,7 @@ func startInvite(whc botsfw.WebhookContext, inviteCode, operation, localeCode5 s
 		}
 		return
 	}
-	log.Debugf(c, "Invite(%v): ClaimedCount=%v, MaxClaimsCount=%v", inviteCode, invite.Data.ClaimedCount, invite.Data.MaxClaimsCount)
+	logus.Debugf(c, "Invite(%v): ClaimedCount=%v, MaxClaimsCount=%v", inviteCode, invite.Data.ClaimedCount, invite.Data.MaxClaimsCount)
 	if invite.Data.MaxClaimsCount == 0 || invite.Data.ClaimedCount < invite.Data.MaxClaimsCount {
 		return handleInviteOnStart(whc, inviteCode, invite)
 	} else {

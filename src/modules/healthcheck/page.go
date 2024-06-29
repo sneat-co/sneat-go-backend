@@ -6,7 +6,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/facade"
-	"github.com/strongo/log"
+	"github.com/strongo/logus"
 	"net/http"
 	"time"
 )
@@ -38,6 +38,6 @@ func httpGetPage(w http.ResponseWriter, r *http.Request) {
 		key.String(),
 	)))
 	if err != nil {
-		log.Errorf(ctx, "Failed to write to output stream: ", err)
+		logus.Errorf(ctx, "Failed to write to output stream: %v", err)
 	}
 }
