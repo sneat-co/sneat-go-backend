@@ -43,7 +43,7 @@ require (
 	github.com/shiyanhui/hero v0.0.2
 	github.com/sneat-co/debtstracker-translations v0.0.21
 	github.com/sneat-co/sneat-go-core v0.24.3
-	github.com/sneat-co/sneat-go-firebase v0.4.52
+	github.com/sneat-co/sneat-go-firebase v0.4.53
 	github.com/stretchr/testify v1.9.0
 	github.com/strongo/app-host-gae v0.1.28
 	github.com/strongo/decimal v0.1.1
