@@ -34,9 +34,9 @@ func (v *OrderChanges) AddChanges(v2 OrderChanges) OrderChanges {
 
 // OrderWorkerParams passes data to a order worker
 type OrderWorkerParams struct {
-	TeamWorkerParams *dal4teamus.TeamWorkerParams
-	Order            dbo4logist.Order
-	Changed          OrderChanges
+	SpaceWorkerParams *dal4teamus.SpaceWorkerParams
+	Order             dbo4logist.Order
+	Changed           OrderChanges
 	// OrderUpdates     []dal.Update
 }
 
@@ -45,11 +45,11 @@ var RunOrderWorker = func(ctx context.Context, user facade.User, request dto4log
 	if err := request.Validate(); err != nil {
 		return fmt.Errorf("invalid order request: %w", err)
 	}
-	return dal4teamus.RunTeamWorker(ctx, user, request.TeamID, func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4teamus.TeamWorkerParams) (err error) {
-		order := dbo4logist.NewOrder(teamWorkerParams.Team.ID, request.OrderID)
+	return dal4teamus.RunSpaceWorker(ctx, user, request.SpaceID, func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4teamus.SpaceWorkerParams) (err error) {
+		order := dbo4logist.NewOrder(teamWorkerParams.Space.ID, request.OrderID)
 		params := OrderWorkerParams{
-			TeamWorkerParams: teamWorkerParams,
-			Order:            order,
+			SpaceWorkerParams: teamWorkerParams,
+			Order:             order,
 		}
 		if err := tx.Get(ctx, order.Record); err != nil {
 			return fmt.Errorf("failed to load order record: %w", err)
@@ -100,7 +100,7 @@ var RunOrderWorker = func(ctx context.Context, user facade.User, request dto4log
 		}
 		orderUpdates = append(orderUpdates, order.Dto.DatesFields.UpdatesWhenDatesChanged()...)
 
-		order.Dto.WithModified.MarkAsUpdated(params.TeamWorkerParams.UserID)
+		order.Dto.WithModified.MarkAsUpdated(params.SpaceWorkerParams.UserID)
 		if err := order.Dto.Validate(); err != nil {
 			return fmt.Errorf(
 				"order is not valid before pushing updates to DB (ID=%s): %w",

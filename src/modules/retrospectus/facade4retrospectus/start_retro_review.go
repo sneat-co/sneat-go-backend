@@ -53,8 +53,8 @@ func moveRetroItemsFromUsers(ctx context.Context, tx dal.ReadwriteTransaction, p
 	//wg := sync.WaitGroup{}
 	userRetroRecords := make([]dal.Record, len(retrospective.Contacts))
 	for _, member := range retrospective.Contacts {
-		if member.UserID != "" && member.HasRole(const4contactus.TeamMemberRoleContributor) {
-			userRetroRecords = append(userRetroRecords, getUserRetroRecord(member.UserID, params.Team.ID, new(dbo4retrospectus.Retrospective)))
+		if member.UserID != "" && member.HasRole(const4contactus.SpaceMemberRoleContributor) {
+			userRetroRecords = append(userRetroRecords, getUserRetroRecord(member.UserID, params.Space.ID, new(dbo4retrospectus.Retrospective)))
 		}
 		//}
 	}

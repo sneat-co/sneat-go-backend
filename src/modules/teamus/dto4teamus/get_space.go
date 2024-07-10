@@ -6,13 +6,13 @@ import (
 	"strings"
 )
 
-// GetTeamRequest request
-type GetTeamRequest struct {
+// GetSpaceRequest request
+type GetSpaceRequest struct {
 	ID string
 }
 
 // Validate validates
-func (v *GetTeamRequest) Validate() error {
+func (v *GetSpaceRequest) Validate() error {
 	id := strings.TrimSpace(v.ID)
 	if id == "" {
 		return validation.NewErrRecordIsMissingRequiredField("ID")
@@ -23,4 +23,4 @@ func (v *GetTeamRequest) Validate() error {
 	return nil
 }
 
-var _ facade.Request = (*GetTeamRequest)(nil)
+var _ facade.Request = (*GetSpaceRequest)(nil)

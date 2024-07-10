@@ -26,7 +26,7 @@ func Test_addOrderShippingPointTx(t *testing.T) {
 			name: "OK",
 			args: args{
 				params: &OrderWorkerParams{
-					Order: dbo4logist.NewOrderWithData("team1", "order1", mocks4logist.ValidOrderDto1(t)),
+					Order: dbo4logist.NewOrderWithData("space1", "order1", mocks4logist.ValidOrderDto1(t)),
 				},
 				request: dto4logist.AddOrderShippingPointRequest{
 					LocationContactID: mocks4logist.Dispatcher1warehouse1ContactID,
@@ -35,7 +35,7 @@ func Test_addOrderShippingPointTx(t *testing.T) {
 						{ID: mocks4logist.Container1ID, Tasks: []dbo4logist.ShippingPointTask{dbo4logist.ShippingPointTaskLoad}},
 						{ID: mocks4logist.Container2ID, Tasks: []dbo4logist.ShippingPointTask{dbo4logist.ShippingPointTaskUnload}},
 					},
-					OrderRequest: dto4logist.NewOrderRequest("order1", "team1"),
+					OrderRequest: dto4logist.NewOrderRequest("order1", "space1"),
 				},
 			},
 			assertPost: func(t *testing.T, err error, args args) {

@@ -35,7 +35,7 @@ func createInviteForMember(
 	tx dal.ReadwriteTransaction,
 	uid string,
 	remoteClient dbmodels.RemoteClientInfo,
-	team dbo4invitus.InviteTeam,
+	space dbo4invitus.InviteSpace,
 	from dbo4invitus.InviteFrom,
 	to dbo4invitus.InviteToMember,
 	composeOnly bool,
@@ -43,8 +43,8 @@ func createInviteForMember(
 	message string,
 	toAvatar *dbprofile.Avatar,
 ) (id string, personalInvite *dbo4invitus.PersonalInviteDbo, err error) {
-	if err = team.Validate(); err != nil {
-		err = fmt.Errorf("parameter 'team' is not valid: %w", err)
+	if err = space.Validate(); err != nil {
+		err = fmt.Errorf("parameter 'space' is not valid: %w", err)
 		return
 	}
 	if err = to.Validate(); err != nil {
@@ -55,14 +55,14 @@ func createInviteForMember(
 		err = fmt.Errorf("parameter 'from' is not valid: %w", err)
 		return
 	}
-	teamID := team.ID
-	if teamID == "" {
-		err = validation.NewErrRecordIsMissingRequiredField("team.InviteID")
+	spaceID := space.ID
+	if spaceID == "" {
+		err = validation.NewErrRecordIsMissingRequiredField("space.InviteID")
 		return
 	}
-	team.ID = ""
-	if team.Type == "family" && team.Title != "" {
-		team.Title = ""
+	space.ID = ""
+	if space.Type == "family" && space.Title != "" {
+		space.Title = ""
 	}
 	var toAddress *mail.Address
 	if to.Address != "" {
@@ -79,9 +79,9 @@ func createInviteForMember(
 	from.UserID = uid
 	personalInvite = &dbo4invitus.PersonalInviteDbo{
 		InviteDbo: dbo4invitus.InviteDbo{
-			Status: "active",
-			Pin:    randomPinCode(),
-			TeamID: teamID,
+			Status:  "active",
+			Pin:     randomPinCode(),
+			SpaceID: spaceID,
 			InviteBase: dbo4invitus.InviteBase{
 				Type:    "personal",
 				Channel: to.Channel,
@@ -95,13 +95,13 @@ func createInviteForMember(
 			Created: dbmodels.CreatedInfo{
 				Client: remoteClient,
 			},
-			Team:    team,
+			Space:   space,
 			Message: message,
 			Roles:   []string{"contributor"},
 		},
-		Address:        toAddressLower,
-		ToTeamMemberID: briefs4contactus.GetFullContactID(teamID, to.MemberID),
-		ToAvatar:       toAvatar,
+		Address:         toAddressLower,
+		ToSpaceMemberID: briefs4contactus.GetFullContactID(spaceID, to.MemberID),
+		ToAvatar:        toAvatar,
 	}
 	id = randomInviteID()
 	inviteKey := NewInviteKey(id)

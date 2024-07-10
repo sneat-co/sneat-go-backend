@@ -38,7 +38,7 @@ func Test_txAddContainerPoints(t *testing.T) {
 			name: "adds_single_container_point_with_single_task",
 			args: args{
 				request: dto4logist.AddContainerPointsRequest{
-					OrderRequest: dto4logist.NewOrderRequest("team1", "order1"),
+					OrderRequest: dto4logist.NewOrderRequest("space1", "order1"),
 					ContainerPoints: []dbo4logist.ContainerPoint{
 						{
 							ContainerID:     mocks4logist.Container1ID,
@@ -53,7 +53,7 @@ func Test_txAddContainerPoints(t *testing.T) {
 					},
 				},
 				params: &OrderWorkerParams{
-					Order: dbo4logist.NewOrderWithData("team1", "order1", mocks4logist.ValidOrderDto1(t)),
+					Order: dbo4logist.NewOrderWithData("space1", "order1", mocks4logist.ValidOrderDto1(t)),
 				},
 			},
 			preAssert: func(t *testing.T, args args) {

@@ -9,12 +9,10 @@ import (
 	"net/http"
 )
 
-var setLogistTeamSettings = facade4logist.SetLogistTeamSettings
-
-func httpSetLogistTeamSettings(w http.ResponseWriter, r *http.Request) {
-	var request dto4logist.SetLogistTeamSettingsRequest
+func httpSetLogistSpaceSettings(w http.ResponseWriter, r *http.Request) {
+	var request dto4logist.SetLogistSpaceSettingsRequest
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, defaultJsonWithAuthRequired, http.StatusNoContent,
 		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
-			return nil, setLogistTeamSettings(ctx, userCtx, request)
+			return nil, facade4logist.SetLogistSpaceSettings(ctx, userCtx, request)
 		})
 }

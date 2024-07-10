@@ -8,19 +8,20 @@ import (
 	"net/http"
 )
 
-var getTeam = facade4teamus.GetTeam
+//var getSpaceByID = facade4teamus.GetSpaceByID
 
-//var getTeamByID = facade4teamus.GetTeamByID
-
-// httpGetTeam is an API endpoint that return team data
-func httpGetTeam(w http.ResponseWriter, r *http.Request) {
+// httpGetSpace is an API endpoint that return team data
+func httpGetSpace(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 	verifyOptions := verify.Request(verify.AuthenticationRequired(true))
 	ctx, userContext, err := apicore.VerifyRequestAndCreateUserContext(w, r, verifyOptions)
 	if err != nil {
 		return
 	}
-	var team dal4teamus.TeamEntry
-	team, err = getTeam(ctx, userContext, id)
-	apicore.ReturnJSON(ctx, w, r, http.StatusOK, err, team.Data)
+	var space dal4teamus.SpaceEntry
+	var response any
+	if space, err = facade4teamus.GetSpace(ctx, userContext, id); err == nil {
+		response = space.Data
+	}
+	apicore.ReturnJSON(ctx, w, r, http.StatusOK, err, response)
 }

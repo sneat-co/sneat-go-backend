@@ -19,7 +19,7 @@ var addTaskInTransaction = func(
 	request AddTaskRequest,
 	params facade4meetingus.WorkerParams,
 ) (response *AddTaskResponse, err error) {
-	contactusTeam := params.TeamModuleEntry
+	contactusSpace := params.SpaceModuleEntry
 	params.Meeting.Record.SetError(nil)
 	scrum := params.Meeting.Record.Data().(*dbo4scrumus.Scrum)
 
@@ -27,7 +27,7 @@ var addTaskInTransaction = func(
 
 	status := scrum.GetOrCreateStatus(request.ContactID)
 	//status.Member.Title = ""
-	if contactBrief, ok := contactusTeam.Data.Contacts[request.ContactID]; ok {
+	if contactBrief, ok := contactusSpace.Data.Contacts[request.ContactID]; ok {
 		status.Member.ID = request.ContactID
 		status.Member.Title = contactBrief.Title
 	} else {
@@ -120,7 +120,7 @@ func AddTask(ctx context.Context, userContext facade.User, request AddTaskReques
 
 	err = runScrumWorker(ctx, userContext, request.Request,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params facade4meetingus.WorkerParams) (err error) {
-			if err := tx.GetMulti(ctx, []dal.Record{params.TeamModuleEntry.Record, params.Meeting.Record}); err != nil {
+			if err := tx.GetMulti(ctx, []dal.Record{params.SpaceModuleEntry.Record, params.Meeting.Record}); err != nil {
 				return err
 			}
 			response, err = addTaskInTransaction(ctx, params.UserID, tx, request, params)

@@ -22,8 +22,8 @@ func SetMetric(ctx context.Context, userContext facade.User, request SetMetricRe
 	uid := userContext.GetID()
 	err = runScrumWorker(ctx, userContext, request.Request,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params facade4meetingus.WorkerParams) (err error) {
-			var teamMetric *dbo4teamus.TeamMetric
-			for _, m := range params.Team.Data.Metrics {
+			var teamMetric *dbo4teamus.SpaceMetric
+			for _, m := range params.Space.Data.Metrics {
 				if m.ID == request.Metric {
 					teamMetric = m
 					break
@@ -40,12 +40,12 @@ func SetMetric(ctx context.Context, userContext facade.User, request SetMetricRe
 				teamMetric: teamMetric,
 			}
 			switch teamMetric.Mode {
-			case "team":
-				if scrumUpdates, err = setTeamMetric(p); err != nil {
+			case "space":
+				if scrumUpdates, err = setSpaceMetric(p); err != nil {
 					return
 				}
 			case "personal":
-				if scrumUpdates, err = setPersonalMetric(p, params.TeamModuleEntry.Data); err != nil {
+				if scrumUpdates, err = setPersonalMetric(p, params.SpaceModuleEntry.Data); err != nil {
 					return
 				}
 			default:
@@ -65,14 +65,14 @@ type setMetricParams struct {
 	uid        string
 	request    SetMetricRequest
 	scrum      *dbo4scrumus.Scrum
-	teamMetric *dbo4teamus.TeamMetric
+	teamMetric *dbo4teamus.SpaceMetric
 }
 
-func setPersonalMetric(p setMetricParams, contactusTeam *models4contactus.ContactusTeamDbo) (scrumUpdates []dal.Update, err error) {
+func setPersonalMetric(p setMetricParams, contactusSpace *models4contactus.ContactusSpaceDbo) (scrumUpdates []dal.Update, err error) {
 	var status *dbo4scrumus.MemberStatus
 	var teamMember *briefs4contactus.ContactBrief
 	var teamMemberContactID string
-	for contactID, contact := range contactusTeam.Contacts {
+	for contactID, contact := range contactusSpace.Contacts {
 		if contactID == p.request.Member {
 			teamMember = contact
 			teamMemberContactID = contactID
@@ -108,9 +108,9 @@ UpdateMember:
 	return
 }
 
-func setTeamMetric(p setMetricParams) (scrumUpdates []dal.Update, err error) {
+func setSpaceMetric(p setMetricParams) (scrumUpdates []dal.Update, err error) {
 	var changed bool
-	changed, p.scrum.TeamMetrics, scrumUpdates, err = setMetric(p, p.scrum.TeamMetrics)
+	changed, p.scrum.SpaceMetrics, scrumUpdates, err = setMetric(p, p.scrum.SpaceMetrics)
 	if changed {
 		scrumUpdates = append(scrumUpdates, dal.Update{
 			Field: "metrics",
@@ -171,7 +171,7 @@ UpdateMetric:
 	if !isExistingRecord {
 		p.scrum.Metrics = append(p.scrum.Metrics, p.teamMetric)
 		scrumUpdates = []dal.Update{{
-			Field: "teamMetrics",
+			Field: "spaceMetrics",
 			Value: metrics,
 		}}
 	}

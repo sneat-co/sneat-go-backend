@@ -12,7 +12,7 @@ var _ facade.Request = (*CreateMemberRequest)(nil)
 
 // CreateMemberRequest request is similar to dto4contactus.CreateContactRequest but has less fields
 type CreateMemberRequest struct {
-	dto4teamus.TeamRequest
+	dto4teamus.SpaceRequest
 	dto4contactus.CreatePersonRequest
 	dbo4linkage.WithRelated
 	Message string `json:"message"`
@@ -21,7 +21,7 @@ type CreateMemberRequest struct {
 
 // Validate validates request
 func (v *CreateMemberRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
 	if err := v.CreatePersonRequest.Validate(); err != nil {

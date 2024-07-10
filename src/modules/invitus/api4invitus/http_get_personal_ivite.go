@@ -17,8 +17,8 @@ func httpGetPersonal(w http.ResponseWriter, r *http.Request) {
 	}
 	q := r.URL.Query()
 	request := facade4invitus.GetPersonalInviteRequest{
-		TeamRequest: dto4teamus.TeamRequest{
-			TeamID: strings.TrimSpace(q.Get("teamID")),
+		SpaceRequest: dto4teamus.SpaceRequest{
+			SpaceID: strings.TrimSpace(q.Get("spaceID")),
 		},
 		InviteID: strings.TrimSpace(q.Get("inviteID")),
 	}

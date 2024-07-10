@@ -27,8 +27,8 @@ func (v OrderCounter) Validate() error {
 	return nil
 }
 
-// LogistTeamDbo is a DTO for LogistTeam
-type LogistTeamDbo struct {
+// LogistSpaceDbo is a DTO for LogistTeam
+type LogistSpaceDbo struct {
 	dbmodels.WithUserIDs
 	Roles             []string
 	ContactID         string `json:"contactID,omitempty" firestore:"contactID,omitempty"`
@@ -38,7 +38,7 @@ type LogistTeamDbo struct {
 }
 
 // Validate returns error if invalid
-func (v LogistTeamDbo) Validate() error {
+func (v LogistSpaceDbo) Validate() error {
 	if err := v.WithUserIDs.Validate(); err != nil {
 		return validation.NewErrBadRecordFieldValue("WithUserIDs", err.Error())
 	}
@@ -46,7 +46,7 @@ func (v LogistTeamDbo) Validate() error {
 		return validation.NewErrRecordIsMissingRequiredField("roles")
 	}
 	for i, role := range v.Roles {
-		if !IsKnownLogistCompanyRole(LogistTeamRole(role)) {
+		if !IsKnownLogistCompanyRole(LogistSpaceRole(role)) {
 			return validation.NewErrBadRequestFieldValue(fmt.Sprintf("roles[%d]", i),
 				fmt.Sprintf("should be one of: %+v", KnownLogistCompanyRoles))
 		}
@@ -68,19 +68,19 @@ func (v LogistTeamDbo) Validate() error {
 	return nil
 }
 
-// LogistTeamEntry is a context for LogistTeam
-type LogistTeamEntry = record.DataWithID[string, *LogistTeamDbo]
+// LogistSpaceEntry is a context for LogistTeam
+type LogistSpaceEntry = record.DataWithID[string, *LogistSpaceDbo]
 
-func newLogistTeamKey(teamID string) *dal.Key {
-	teamKey := dal4teamus.NewTeamKey(teamID)
-	return dal.NewKeyWithParentAndID(teamKey, dal4teamus.TeamModulesCollection, ModuleID)
+func newLogistSpaceKey(spaceID string) *dal.Key {
+	key := dal4teamus.NewSpaceKey(spaceID)
+	return dal.NewKeyWithParentAndID(key, dal4teamus.SpaceModulesCollection, ModuleID)
 }
 
-// NewLogistTeamEntry creates new LogistTeamEntry
-func NewLogistTeamEntry(teamID string) (logistTeam LogistTeamEntry) {
-	logistTeam.ID = teamID
-	logistTeam.Key = newLogistTeamKey(teamID)
-	logistTeam.Data = new(LogistTeamDbo)
-	logistTeam.Record = dal.NewRecordWithData(logistTeam.Key, logistTeam.Data)
-	return logistTeam
+// NewLogistSpaceEntry creates new LogistSpaceEntry
+func NewLogistSpaceEntry(teamID string) (logistSpace LogistSpaceEntry) {
+	logistSpace.ID = teamID
+	logistSpace.Key = newLogistSpaceKey(teamID)
+	logistSpace.Data = new(LogistSpaceDbo)
+	logistSpace.Record = dal.NewRecordWithData(logistSpace.Key, logistSpace.Data)
+	return logistSpace
 }

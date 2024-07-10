@@ -10,7 +10,7 @@ import (
 	"github.com/strongo/validation"
 )
 
-const TeamAssetsCollection = "assets"
+const SpaceAssetsCollection = "assets"
 
 type AssetCreationData interface {
 	AssetBaseDboExtension
@@ -28,7 +28,7 @@ type AssetBaseDboExtension interface {
 // AssetBaseDbo is used in both AssetDbo and a request to create an asset,
 type AssetBaseDbo struct {
 	briefs4assetus.AssetBrief
-	WithAssetTeams
+	WithAssetSpaces
 	with.TagsField
 	//briefs4contactus.WithMultiTeamContactIDs
 	dbmodels.WithCustomFields
@@ -52,13 +52,13 @@ func (v *AssetBaseDbo) Validate() error {
 	if err := v.AssetBrief.Validate(); err != nil {
 		return err
 	}
-	if err := v.WithAssetTeams.Validate(); err != nil {
+	if err := v.WithAssetSpaces.Validate(); err != nil {
 		return err
 	}
 	if err := v.TagsField.Validate(); err != nil {
 		return err
 	}
-	//if err := v.WithMultiTeamContactIDs.Validate(); err != nil {
+	//if err := v.WithMultiSpaceContactIDs.Validate(); err != nil {
 	//	return err
 	//}
 	if err := v.WithCustomFields.Validate(); err != nil {
@@ -86,7 +86,7 @@ type AssetDbo struct {
 	AssetBaseDbo
 	dbmodels.WithModified
 	dbmodels.WithUserIDs
-	dbmodels.WithTeamIDs
+	dbmodels.WithSpaceIDs
 }
 
 func (v *AssetDbo) AssetExtraData() *AssetDbo {
@@ -103,7 +103,7 @@ func (v *AssetDbo) Validate() error {
 	if err := v.WithUserIDs.Validate(); err != nil {
 		return err
 	}
-	if err := v.WithTeamIDs.Validate(); err != nil {
+	if err := v.WithSpaceIDs.Validate(); err != nil {
 		return err
 	}
 	return nil

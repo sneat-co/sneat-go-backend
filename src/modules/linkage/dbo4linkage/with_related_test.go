@@ -15,7 +15,7 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 	}
 	type args struct {
 		userID string
-		item   TeamModuleItemRef
+		item   SpaceModuleItemRef
 		link   RelationshipRolesCommand
 		now    time.Time
 	}
@@ -31,8 +31,8 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 			fields: fields{},
 			args: args{
 				userID: "u1",
-				item: TeamModuleItemRef{
-					TeamID:     "team1",
+				item: SpaceModuleItemRef{
+					SpaceID:    "space1",
 					ModuleID:   const4contactus.ModuleID,
 					Collection: const4contactus.ContactsCollection,
 					ItemID:     "c2",
@@ -46,11 +46,11 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 			},
 			wantUpdates: []dal.Update{
 				{
-					Field: "related.contactus.contacts", // team1.c2.relatedAs.child
+					Field: "related.contactus.contacts", // space1.c2.relatedAs.child
 					Value: []*RelatedItem{
 						{
 							Keys: []RelatedItemKey{
-								{TeamID: "team1", ItemID: "c2"},
+								{SpaceID: "space1", ItemID: "c2"},
 							},
 							RolesOfItem: RelationshipRoles{
 								"parent": &RelationshipRole{},
@@ -61,13 +61,13 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 						},
 					},
 				},
-				//{Field: "related.team1.contactus.contacts.c2.relatesAs.child", Value: &RelationshipRole{WithCreatedField: dbmodels.WithCreatedField{Created: dbmodels.Created{By: "u1", On: now.Format(time.DateTime)}}}},
+				//{Field: "related.space1.contactus.contacts.c2.relatesAs.child", Value: &RelationshipRole{WithCreatedField: dbmodels.WithCreatedField{Created: dbmodels.Created{By: "u1", On: now.Format(time.DateTime)}}}},
 				{Field: "relatedIDs", Value: []string{
 					"*",
 					"contactus.*",
 					"contactus.contacts.*",
-					"contactus.contacts.team1.*",
-					"contactus.contacts.team1.c2",
+					"contactus.contacts.space1.*",
+					"contactus.contacts.space1.c2",
 				}},
 			},
 		},
@@ -76,8 +76,8 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 			fields: fields{},
 			args: args{
 				userID: "u1",
-				item: TeamModuleItemRef{
-					TeamID:     "team1",
+				item: SpaceModuleItemRef{
+					SpaceID:    "space1",
 					ModuleID:   const4contactus.ModuleID,
 					Collection: const4contactus.ContactsCollection,
 					ItemID:     "c2",
@@ -90,11 +90,11 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 				now: now,
 			},
 			wantUpdates: []dal.Update{
-				{Field: "related.contactus.contacts", // team1.c2.relatedAs.child
+				{Field: "related.contactus.contacts", // space1.c2.relatedAs.child
 					Value: []*RelatedItem{
 						{
 							Keys: []RelatedItemKey{
-								{TeamID: "team1", ItemID: "c2"},
+								{SpaceID: "space1", ItemID: "c2"},
 							},
 							RolesOfItem: RelationshipRoles{
 								"child": &RelationshipRole{},
@@ -109,8 +109,8 @@ func TestWithRelatedAndIDs_SetRelationshipToItem(t *testing.T) {
 					"*",
 					"contactus.*",
 					"contactus.contacts.*",
-					"contactus.contacts.team1.*",
-					"contactus.contacts.team1.c2",
+					"contactus.contacts.space1.*",
+					"contactus.contacts.space1.c2",
 				}},
 			},
 		},

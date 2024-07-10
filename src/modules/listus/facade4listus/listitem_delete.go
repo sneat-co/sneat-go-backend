@@ -21,7 +21,7 @@ func DeleteListItems(ctx context.Context, userContext facade.User, request ListI
 	db := facade.GetDatabase(ctx)
 	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		listID := request.ListID
-		list := dal4listus.NewTeamListEntry(request.TeamID, listID)
+		list := dal4listus.NewSpaceListEntry(request.SpaceID, listID)
 
 		if err := GetListForUpdate(ctx, tx, list); err != nil {
 			return err

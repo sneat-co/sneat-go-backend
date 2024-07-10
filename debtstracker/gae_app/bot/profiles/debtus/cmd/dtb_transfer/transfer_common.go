@@ -598,10 +598,10 @@ func CreateTransferFromBot(
 		return
 	}
 	request := dto.CreateTransferRequest{
-		TeamRequest: dto4teamus.TeamRequest{},
-		Amount:      amount,
-		DueOn:       &dueOn,
-		Interest:    &transferInterest,
+		SpaceRequest: dto4teamus.SpaceRequest{},
+		Amount:       amount,
+		DueOn:        &dueOn,
+		Interest:     &transferInterest,
 	}
 	env := whc.Environment()
 	source := GetTransferSource(whc)

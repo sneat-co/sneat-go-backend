@@ -37,16 +37,16 @@ func InitUserRecord(ctx context.Context, userContext facade.User, request dto4us
 		user.Data = nil
 		return user, fmt.Errorf("failet to init user record: %w", err)
 	}
-	if request.Team != nil {
-		var hasTeamOfSameType bool
-		for _, team := range user.Data.Teams {
-			if team.Type == request.Team.Type {
-				hasTeamOfSameType = true
+	if request.Space != nil {
+		var hasSpaceOfSameType bool
+		for _, team := range user.Data.Spaces {
+			if team.Type == request.Space.Type {
+				hasSpaceOfSameType = true
 				break
 			}
 		}
-		if !hasTeamOfSameType && request.Team != nil {
-			if _, err = facade4teamus.CreateTeam(ctx, userContext, *request.Team); err != nil {
+		if !hasSpaceOfSameType && request.Space != nil {
+			if _, err = facade4teamus.CreateSpace(ctx, userContext, *request.Space); err != nil {
 				err = fmt.Errorf("failed to create team for user: %w", err)
 				return
 			}

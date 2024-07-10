@@ -8,16 +8,16 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 )
 
-type ContactusTeamModuleEntry = record.DataWithID[string, *models4contactus.ContactusTeamDbo]
+type ContactusSpaceModuleEntry = record.DataWithID[string, *models4contactus.ContactusSpaceDbo]
 
-func NewContactusTeamModuleKey(teamID string) *dal.Key {
-	return dal4teamus.NewTeamModuleKey(teamID, const4contactus.ModuleID)
+func NewContactusSpaceModuleKey(teamID string) *dal.Key {
+	return dal4teamus.NewSpaceModuleKey(teamID, const4contactus.ModuleID)
 }
 
-func NewContactusTeamModuleEntry(teamID string) ContactusTeamModuleEntry {
-	return NewContactusTeamModuleEntryWithData(teamID, new(models4contactus.ContactusTeamDbo))
+func NewContactusSpaceModuleEntry(teamID string) ContactusSpaceModuleEntry {
+	return NewContactusSpaceModuleEntryWithData(teamID, new(models4contactus.ContactusSpaceDbo))
 }
 
-func NewContactusTeamModuleEntryWithData(teamID string, data *models4contactus.ContactusTeamDbo) ContactusTeamModuleEntry {
-	return dal4teamus.NewTeamModuleEntry(teamID, const4contactus.ModuleID, data)
+func NewContactusSpaceModuleEntryWithData(teamID string, data *models4contactus.ContactusSpaceDbo) ContactusSpaceModuleEntry {
+	return dal4teamus.NewSpaceModuleEntry(teamID, const4contactus.ModuleID, data)
 }

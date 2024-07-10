@@ -21,8 +21,8 @@ func UpdateRelatedItemsWithLatestRelationships(
 ) (err error) {
 	var updateErrors []error
 	for itemID := range request.Related {
-		itemRef := dbo4linkage.NewTeamModuleItemRefFromString(itemID)
-		err = updateItemWithLatestRelationshipsFromRelatedItem(ctx, userCtx, itemRef, request.TeamModuleItemRef, itemData.Related)
+		itemRef := dbo4linkage.NewSpaceModuleItemRefFromString(itemID)
+		err = updateItemWithLatestRelationshipsFromRelatedItem(ctx, userCtx, itemRef, request.SpaceModuleItemRef, itemData.Related)
 		if err != nil {
 			updateErrors = append(updateErrors, err)
 		}
@@ -36,8 +36,8 @@ func UpdateRelatedItemsWithLatestRelationships(
 func updateItemWithLatestRelationshipsFromRelatedItem(
 	ctx context.Context,
 	userCtx facade.User,
-	itemRef dbo4linkage.TeamModuleItemRef,
-	relatedItemRef dbo4linkage.TeamModuleItemRef,
+	itemRef dbo4linkage.SpaceModuleItemRef,
+	relatedItemRef dbo4linkage.SpaceModuleItemRef,
 	relatedByModuleOfRelatedItem dbo4linkage.RelatedByModuleID,
 ) (err error) {
 	itemRelationshipInRelatedItem := dbo4linkage.GetRelatedItemByRef(relatedByModuleOfRelatedItem, itemRef, false)
@@ -49,7 +49,7 @@ func updateItemWithLatestRelationshipsFromRelatedItem(
 
 	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 
-		key := dal4teamus.NewTeamModuleItemKey(itemRef.TeamID, itemRef.ModuleID, itemRef.Collection, itemRef.ItemID)
+		key := dal4teamus.NewSpaceModuleItemKey(itemRef.SpaceID, itemRef.ModuleID, itemRef.Collection, itemRef.ItemID)
 		item := record.NewDataWithID(itemRef.ItemID, key, new(dbo4linkage.WithRelatedAndIDsAndUserID))
 		if err = tx.Get(ctx, item.Record); err != nil {
 			return err

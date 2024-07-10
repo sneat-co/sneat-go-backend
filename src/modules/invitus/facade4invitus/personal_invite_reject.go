@@ -12,7 +12,7 @@ import (
 )
 
 type InviteRequest struct {
-	dto4teamus.TeamRequest
+	dto4teamus.SpaceRequest
 	InviteID string `json:"inviteID"`
 	Pin      string `json:"pin"`
 }
@@ -22,7 +22,7 @@ type RejectPersonalInviteRequest = InviteRequest
 
 // Validate validates request
 func (v *InviteRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
 	if v.InviteID == "" {
@@ -39,7 +39,7 @@ func RejectPersonalInvite(ctx context.Context, userContext facade.User, request 
 	if err = request.Validate(); err != nil {
 		return err
 	}
-	team := dal4teamus.NewTeamEntry(request.TeamID)
+	team := dal4teamus.NewSpaceEntry(request.SpaceID)
 	invite := NewPersonalInviteEntry(request.InviteID)
 	uid := userContext.GetID()
 

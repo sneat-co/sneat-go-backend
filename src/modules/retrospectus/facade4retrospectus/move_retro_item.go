@@ -14,9 +14,9 @@ func MoveRetroItem(ctx context.Context, userFacade facade.User, request MoveRetr
 	uid := userFacade.GetID()
 	var retrospectiveKey *dal.Key
 	if request.MeetingID == UpcomingRetrospectiveID {
-		retrospectiveKey = dbo4retrospectus.NewRetrospectiveKey(request.TeamID, dbo4userus.NewUserKey(uid))
+		retrospectiveKey = dbo4retrospectus.NewRetrospectiveKey(request.SpaceID, dbo4userus.NewUserKey(uid))
 	} else {
-		retrospectiveKey = dbo4retrospectus.NewRetrospectiveKey(request.MeetingID, newTeamKey(request.TeamID))
+		retrospectiveKey = dbo4retrospectus.NewRetrospectiveKey(request.MeetingID, newSpaceKey(request.SpaceID))
 	}
 
 	db := facade.GetDatabase(ctx)
@@ -32,7 +32,7 @@ func MoveRetroItem(ctx context.Context, userFacade facade.User, request MoveRetr
 		} else if err := retrospectiveRecord.Error(); err != nil {
 			return fmt.Errorf("retrospectiveRecord.Error(): %w", err)
 		} else if !retrospectiveRecord.Exists() {
-			return fmt.Errorf("retrospective not found by id: %v-%v", request.TeamID, request.MeetingID)
+			return fmt.Errorf("retrospective not found by id: %v-%v", request.SpaceID, request.MeetingID)
 		}
 		if err = dbo4retrospectus.MoveRetroItem(retrospective.Items, request.Item, request.From, request.To); err != nil {
 			return err

@@ -10,11 +10,11 @@ import (
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
-func RunCalendariumTeamWorker(
+func RunCalendariumSpaceWorker(
 	ctx context.Context,
 	user facade.User,
-	request dto4teamus.TeamRequest,
-	worker func(ctx context.Context, tx dal.ReadwriteTransaction, params *CalendariumTeamWorkerParams) (err error),
+	request dto4teamus.SpaceRequest,
+	worker func(ctx context.Context, tx dal.ReadwriteTransaction, params *CalendariumSpaceWorkerParams) (err error),
 ) error {
-	return dal4teamus.RunModuleTeamWorker(ctx, user, request, const4calendarium.ModuleID, new(dbo4calendarium.CalendariumTeamDbo), worker)
+	return dal4teamus.RunModuleSpaceWorker(ctx, user, request, const4calendarium.ModuleID, new(dbo4calendarium.CalendariumSpaceDbo), worker)
 }

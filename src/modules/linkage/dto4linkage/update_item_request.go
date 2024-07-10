@@ -5,12 +5,12 @@ import (
 )
 
 type UpdateItemRequest struct {
-	dbo4linkage.TeamModuleItemRef `json:"itemRef"`
+	dbo4linkage.SpaceModuleItemRef `json:"itemRef"`
 	UpdateRelatedFieldRequest
 }
 
 func (v *UpdateItemRequest) Validate() error {
-	if err := v.TeamModuleItemRef.Validate(); err != nil {
+	if err := v.SpaceModuleItemRef.Validate(); err != nil {
 		return err
 	}
 	if err := v.UpdateRelatedFieldRequest.Validate(); err != nil {

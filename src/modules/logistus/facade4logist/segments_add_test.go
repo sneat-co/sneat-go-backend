@@ -59,10 +59,10 @@ func TestAddSegmentsTx(t *testing.T) { // TODO: create few test cases
 	}
 
 	params := &OrderWorkerParams{
-		TeamWorkerParams: &dal4teamus.TeamWorkerParams{
-			Team: dal4teamus.NewTeamEntry("team1"),
+		SpaceWorkerParams: &dal4teamus.SpaceWorkerParams{
+			Space: dal4teamus.NewSpaceEntry("space1"),
 		},
-		Order: dbo4logist.NewOrderWithData("team1", "order1", order),
+		Order: dbo4logist.NewOrderWithData("space1", "order1", order),
 	}
 
 	{ // Pre-checks
@@ -115,7 +115,7 @@ func TestAddCounterpartyToOrderIfNeeded(t *testing.T) {
 
 	tx := mocks4logist.MockTx(t)
 
-	changes, err := addCounterpartyToOrderIfNeeded(ctx, tx, "team1", order, "from", dto4logist.AddSegmentEndpoint{
+	changes, err := addCounterpartyToOrderIfNeeded(ctx, tx, "space1", order, "from", dto4logist.AddSegmentEndpoint{
 		AddSegmentParty: dto4logist.AddSegmentParty{
 			Counterparty: segmentCounterparty,
 		},

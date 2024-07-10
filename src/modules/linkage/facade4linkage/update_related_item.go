@@ -14,10 +14,10 @@ import (
 func updateRelatedItem(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	objectRef dbo4linkage.TeamModuleItemRef,
+	objectRef dbo4linkage.SpaceModuleItemRef,
 	related map[string]*dbo4linkage.RelationshipRolesCommand,
 ) (recordsUpdates []dal4teamus.RecordUpdates, err error) {
-	itemKey := dal4teamus.NewTeamModuleItemKeyFromItemRef(objectRef)
+	itemKey := dal4teamus.NewSpaceModuleItemKeyFromItemRef(objectRef)
 	object := record.NewDataWithID(objectRef.ItemID, itemKey, new(dbo4linkage.WithRelatedAndIDsAndUserID))
 	if err := tx.Get(ctx, object.Record); err != nil {
 		return recordsUpdates, fmt.Errorf("failed to get object record: %w", err)
@@ -26,7 +26,7 @@ func updateRelatedItem(
 		return recordsUpdates, fmt.Errorf("record is not valid after loading from DB: %w", err)
 	}
 	for itemID /*, itemRolesCommand*/ := range related {
-		itemRef := dbo4linkage.NewTeamModuleItemRefFromString(itemID)
+		itemRef := dbo4linkage.NewSpaceModuleItemRefFromString(itemID)
 		if objectRef == itemRef {
 			return recordsUpdates, validation.NewErrBadRequestFieldValue("itemRef", fmt.Sprintf("objectRef and itemRef are the same: %+v", objectRef))
 		}

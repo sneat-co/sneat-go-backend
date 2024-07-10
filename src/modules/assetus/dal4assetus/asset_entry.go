@@ -23,6 +23,6 @@ func NewAssetKey(teamID, assetID string) *dal.Key {
 	if !core.IsAlphanumericOrUnderscore(assetID) {
 		panic(fmt.Errorf("assetID should be alphanumeric, got: [%s]", assetID))
 	}
-	teamModuleKey := dal4teamus.NewTeamModuleKey(teamID, const4assetus.ModuleID)
-	return dal.NewKeyWithParentAndID(teamModuleKey, dbo4assetus.TeamAssetsCollection, assetID)
+	teamModuleKey := dal4teamus.NewSpaceModuleKey(teamID, const4assetus.ModuleID)
+	return dal.NewKeyWithParentAndID(teamModuleKey, dbo4assetus.SpaceAssetsCollection, assetID)
 }

@@ -14,7 +14,7 @@ import (
 
 // InviteMemberRequest is a request DTO
 type InviteMemberRequest struct {
-	dto4teamus.TeamRequest
+	dto4teamus.SpaceRequest
 	RemoteClient dbmodels.RemoteClientInfo `json:"remoteClient"`
 
 	To    dbo4invitus.InviteToMember `json:"to"`
@@ -28,7 +28,7 @@ const maxMessageSize = 1000
 
 // Validate returns error if not valid
 func (v InviteMemberRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
 	//if err := v.From.Validate(); err != nil {
@@ -57,9 +57,9 @@ func CreateOrReuseInviteForMember(ctx context.Context, user facade.User, request
 		err = fmt.Errorf("invalid request: %w", err)
 		return
 	}
-	err = dal4contactus.RunContactusTeamWorker(ctx, user, request.TeamRequest,
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusTeamWorkerParams) (err error) {
-			fromContactID, fromContactBrief := params.TeamModuleEntry.Data.GetContactBriefByUserID(params.UserID)
+	err = dal4contactus.RunContactusSpaceWorker(ctx, user, request.SpaceRequest,
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) (err error) {
+			fromContactID, fromContactBrief := params.SpaceModuleEntry.Data.GetContactBriefByUserID(params.UserID)
 
 			if fromContactBrief == nil {
 				// TODO: Should return specific error so we can return HTTP 401
@@ -70,7 +70,7 @@ func CreateOrReuseInviteForMember(ctx context.Context, user facade.User, request
 				personalInvite *dbo4invitus.PersonalInviteDbo
 			)
 
-			fromContact := dal4contactus.NewContactEntry(request.TeamID, fromContactID)
+			fromContact := dal4contactus.NewContactEntry(request.SpaceID, fromContactID)
 			if err = tx.Get(ctx, fromContact.Record); err != nil {
 				return err
 			}
@@ -121,15 +121,15 @@ func createPersonalInvite(
 	tx dal.ReadwriteTransaction,
 	uid string,
 	request InviteMemberRequest,
-	param *dal4contactus.ContactusTeamWorkerParams,
+	param *dal4contactus.ContactusSpaceWorkerParams,
 	fromMember dal4contactus.ContactEntry,
 ) (
 	inviteID string, personalInvite *dbo4invitus.PersonalInviteDbo, err error,
 ) {
 
-	toMember := param.TeamModuleEntry.Data.Contacts[request.To.MemberID]
+	toMember := param.SpaceModuleEntry.Data.Contacts[request.To.MemberID]
 	if toMember == nil {
-		err = fmt.Errorf("team has no 'to' member with id=" + request.To.MemberID)
+		err = fmt.Errorf("space has no 'to' member with id=" + request.To.MemberID)
 		return
 	}
 	request.To.Title = toMember.GetTitle()
@@ -142,17 +142,17 @@ func createPersonalInvite(
 	}
 	to := request.To
 	to.Title = toMember.GetTitle()
-	inviteTeam := dbo4invitus.InviteTeam{
-		ID:    request.TeamID,
-		Type:  param.Team.Data.Type,
-		Title: param.Team.Data.Title,
+	inviteSpace := dbo4invitus.InviteSpace{
+		ID:    request.SpaceID,
+		Type:  param.Space.Data.Type,
+		Title: param.Space.Data.Title,
 	}
 	inviteID, personalInvite, err = createInviteForMember(
 		ctx,
 		tx,
 		uid,
 		request.RemoteClient,
-		inviteTeam,
+		inviteSpace,
 		from,
 		to,
 		!request.Send,
@@ -183,7 +183,7 @@ func createPersonalInvite(
 		To:         *personalInvite.To,
 		CreateTime: personalInvite.CreatedAt,
 	})
-	memberKey := dal4contactus.NewContactKey(request.TeamID, fromMember.ID)
+	memberKey := dal4contactus.NewContactKey(request.SpaceID, fromMember.ID)
 	if err = tx.Update(ctx, memberKey, []dal.Update{
 		{Field: "invites", Value: fromMember.Data.Invites},
 	}); err != nil {

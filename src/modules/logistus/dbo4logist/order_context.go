@@ -14,13 +14,13 @@ type Order struct {
 // NewOrderKey create new order key
 func NewOrderKey(teamID, orderID string) *dal.Key {
 	if teamID == "" {
-		panic("teamID is empty")
+		panic("spaceID is empty")
 	}
 	if orderID == "" {
 		panic("orderID is empty")
 	}
-	logistTeamKey := newLogistTeamKey(teamID)
-	return dal.NewKeyWithParentAndID(logistTeamKey, OrdersCollection, orderID)
+	logistSpaceKey := newLogistSpaceKey(teamID)
+	return dal.NewKeyWithParentAndID(logistSpaceKey, OrdersCollection, orderID)
 }
 
 // NewOrder creates new order context

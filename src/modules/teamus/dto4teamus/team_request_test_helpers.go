@@ -1,7 +1,7 @@
 package dto4teamus
 
-func ValidTeamRequest() TeamRequest {
-	return TeamRequest{
-		TeamID: "test-team-id",
+func ValidSpaceRequest() SpaceRequest {
+	return SpaceRequest{
+		SpaceID: "test-team-id",
 	}
 }

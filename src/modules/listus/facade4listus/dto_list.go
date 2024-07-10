@@ -11,7 +11,7 @@ import (
 
 // ListRequest DTO
 type ListRequest struct {
-	dto4teamus.TeamRequest
+	dto4teamus.SpaceRequest
 	ListID   string `json:"listID"`
 	listType dbo4listus.ListType
 }
@@ -32,7 +32,7 @@ func (v *ListRequest) ListType() dbo4listus.ListType {
 
 // Validate returns error if not valid
 func (v *ListRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
 	if strings.TrimSpace(v.ListID) == "" {
@@ -48,14 +48,14 @@ func (v *ListRequest) Validate() error {
 
 // CreateListRequest DTO
 type CreateListRequest struct {
-	dto4teamus.TeamRequest
+	dto4teamus.SpaceRequest
 	Type  string `json:"type"`
 	Title string `json:"title"`
 }
 
 // Validate returns error if not valid
 func (v CreateListRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
 	if strings.TrimSpace(v.Type) == "" {

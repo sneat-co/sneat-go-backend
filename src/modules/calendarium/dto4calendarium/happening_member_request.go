@@ -6,7 +6,7 @@ import (
 
 type HappeningContactRequest struct {
 	HappeningRequest
-	Contact dbo4linkage.ShortTeamModuleDocRef `json:"contact"`
+	Contact dbo4linkage.ShortSpaceModuleDocRef `json:"contact"`
 }
 
 func (v HappeningContactRequest) Validate() error {

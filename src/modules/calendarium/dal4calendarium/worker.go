@@ -11,17 +11,17 @@ import (
 	"github.com/strongo/validation"
 )
 
-type CalendariumTeamWorkerParams = dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo]
+type CalendariumSpaceWorkerParams = dal4teamus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo]
 
 type HappeningWorkerParams struct {
-	*CalendariumTeamWorkerParams
+	*CalendariumSpaceWorkerParams
 	Happening        dbo4calendarium.HappeningEntry
 	HappeningUpdates []dal.Update
 }
 
 type HappeningWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *HappeningWorkerParams) (err error)
 
-func RunHappeningTeamWorker(
+func RunHappeningSpaceWorker(
 	ctx context.Context,
 	user facade.User,
 	request dto4calendarium.HappeningRequest,
@@ -30,14 +30,14 @@ func RunHappeningTeamWorker(
 	if err = request.Validate(); err != nil {
 		return validation.NewBadRequestError(err)
 	}
-	moduleTeamWorker := func(
+	moduleSpaceWorker := func(
 		ctx context.Context,
 		tx dal.ReadwriteTransaction,
-		moduleTeamParams *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo],
+		moduleSpaceParams *dal4teamus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo],
 	) (err error) {
 		params := &HappeningWorkerParams{
-			CalendariumTeamWorkerParams: moduleTeamParams,
-			Happening:                   dbo4calendarium.NewHappeningEntry(request.TeamID, request.HappeningID),
+			CalendariumSpaceWorkerParams: moduleSpaceParams,
+			Happening:                    dbo4calendarium.NewHappeningEntry(request.SpaceID, request.HappeningID),
 		}
 		if err = tx.Get(ctx, params.Happening.Record); err != nil {
 			if dal.IsNotFound(err) {
@@ -55,16 +55,16 @@ func RunHappeningTeamWorker(
 				return fmt.Errorf("failed to update happening record: %w", err)
 			}
 		}
-		if len(params.TeamModuleUpdates) == 0 && params.Happening.Data.Type == dbo4calendarium.HappeningTypeRecurring && (len(params.HappeningUpdates) > 0 || params.Happening.Record.HasChanged()) {
-			recurringHappening := params.TeamModuleEntry.Data.RecurringHappenings[params.Happening.ID]
+		if len(params.SpaceModuleUpdates) == 0 && params.Happening.Data.Type == dbo4calendarium.HappeningTypeRecurring && (len(params.HappeningUpdates) > 0 || params.Happening.Record.HasChanged()) {
+			recurringHappening := params.SpaceModuleEntry.Data.RecurringHappenings[params.Happening.ID]
 			recurringHappening.HappeningBrief = params.Happening.Data.HappeningBrief
 			recurringHappening.WithRelated = params.Happening.Data.WithRelated
-			moduleTeamParams.TeamModuleUpdates = append(moduleTeamParams.TeamModuleUpdates, dal.Update{
+			moduleSpaceParams.SpaceModuleUpdates = append(moduleSpaceParams.SpaceModuleUpdates, dal.Update{
 				Field: "recurringHappenings." + request.HappeningID,
 				Value: params.Happening.Data.HappeningBrief,
 			})
 		}
 		return nil
 	}
-	return RunCalendariumTeamWorker(ctx, user, request.TeamRequest, moduleTeamWorker)
+	return RunCalendariumSpaceWorker(ctx, user, request.SpaceRequest, moduleSpaceWorker)
 }

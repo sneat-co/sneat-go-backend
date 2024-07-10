@@ -20,11 +20,11 @@ func RevokeHappeningCancellation(ctx context.Context, user facade.User, request 
 		return err
 	}
 
-	happening := dbo4calendarium.NewHappeningEntry(request.TeamID, request.HappeningID)
-	err = dal4teamus.RunModuleTeamWorker(ctx, user, request.TeamRequest,
+	happening := dbo4calendarium.NewHappeningEntry(request.SpaceID, request.HappeningID)
+	err = dal4teamus.RunModuleSpaceWorker(ctx, user, request.SpaceRequest,
 		const4calendarium.ModuleID,
-		new(dbo4calendarium.CalendariumTeamDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo]) (err error) {
+		new(dbo4calendarium.CalendariumSpaceDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo]) (err error) {
 			if err = tx.Get(ctx, happening.Record); err != nil {
 				return fmt.Errorf("failed to get happening: %w", err)
 			}
@@ -52,12 +52,12 @@ func revokeSingleHappeningCancellation(ctx context.Context, tx dal.ReadwriteTran
 func revokeRecurringHappeningCancellation(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo],
+	params *dal4teamus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo],
 	happening dbo4calendarium.HappeningEntry,
 	dateID string,
 	slotID string,
 ) error {
-	logus.Debugf(ctx, "revokeRecurringHappeningCancellation(): teamID=%v, dateID=%v, happeningID=%v, slotID=%+v", params.Team.ID, dateID, happening.ID, slotID)
+	logus.Debugf(ctx, "revokeRecurringHappeningCancellation(): teamID=%v, dateID=%v, happeningID=%v, slotID=%+v", params.Space.ID, dateID, happening.ID, slotID)
 	if happening.Data.Status == dbo4calendarium.HappeningStatusCanceled {
 		if err := removeCancellationFromHappeningRecord(ctx, tx, happening); err != nil {
 			return fmt.Errorf("failed to remove cancellation from happening record: %w", err)
@@ -67,14 +67,14 @@ func revokeRecurringHappeningCancellation(
 		if err := removeCancellationFromHappeningBrief(params, happening); err != nil {
 			return fmt.Errorf("failed to remove cancellation from happening brief in team record: %w", err)
 		}
-	} else if err := removeCancellationFromCalendarDay(ctx, tx, params.Team.ID, dateID, happening.ID, slotID); err != nil {
+	} else if err := removeCancellationFromCalendarDay(ctx, tx, params.Space.ID, dateID, happening.ID, slotID); err != nil {
 		return fmt.Errorf("failed to remove cancellation from calendar day record: %w", err)
 	}
 	return nil
 }
 
-func removeCancellationFromHappeningBrief(params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo], happening dbo4calendarium.HappeningEntry) error {
-	happeningBrief := params.TeamModuleEntry.Data.GetRecurringHappeningBrief(happening.ID)
+func removeCancellationFromHappeningBrief(params *dal4teamus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo], happening dbo4calendarium.HappeningEntry) error {
+	happeningBrief := params.SpaceModuleEntry.Data.GetRecurringHappeningBrief(happening.ID)
 	if happeningBrief == nil {
 		return nil
 	}
@@ -84,9 +84,9 @@ func removeCancellationFromHappeningBrief(params *dal4teamus.ModuleTeamWorkerPar
 		if err := happeningBrief.Validate(); err != nil {
 			return err
 		}
-		params.TeamUpdates = append(params.TeamUpdates, dal.Update{
+		params.SpaceUpdates = append(params.SpaceUpdates, dal.Update{
 			Field: "recurringHappenings",
-			Value: params.TeamModuleEntry.Data.RecurringHappenings,
+			Value: params.SpaceModuleEntry.Data.RecurringHappenings,
 		})
 	}
 	return nil

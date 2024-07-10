@@ -10,13 +10,13 @@ import (
 
 // Request base for api4meetingus requests
 type Request struct {
-	dto4teamus.TeamRequest
+	dto4teamus.SpaceRequest
 	MeetingID string `json:"meetingID"`
 }
 
 // Validate validates api4meetingus requests
 func (v *Request) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
 	if strings.TrimSpace(v.MeetingID) == "" {

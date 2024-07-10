@@ -37,9 +37,9 @@ func CreateHappening(
 				CreatedBy: user.GetID(),
 			},
 		},
-		//WithTeamDates: dbmodels.WithTeamDates{
-		//	WithTeamIDs: dbmodels.WithTeamIDs{
-		//		TeamIDs: []string{request.TeamID},
+		//WithTeamDates: dbmodels.WithSpaceDates{
+		//	WithTeamIDs: dbmodels.WithSpaceIDs{
+		//		SpaceIDs: []string{request.SpaceID},
 		//	},
 		//},
 	}
@@ -53,10 +53,10 @@ func CreateHappening(
 			}
 		}
 	}
-	err = dal4teamus.CreateTeamItem(ctx, user, request.TeamRequest,
+	err = dal4teamus.CreateSpaceItem(ctx, user, request.SpaceRequest,
 		const4calendarium.ModuleID,
-		new(dbo4calendarium.CalendariumTeamDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo]) (err error) {
+		new(dbo4calendarium.CalendariumSpaceDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo]) (err error) {
 			response, err = createHappeningTx(ctx, tx, happeningDto, params)
 			return
 		},
@@ -69,17 +69,17 @@ func createHappeningTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	happeningDto *dbo4calendarium.HappeningDbo,
-	params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo],
+	params *dal4teamus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo],
 ) (
 	response dto4calendarium.CreateHappeningResponse, err error,
 ) {
 	happeningDto.CreatedAt = params.Started
-	contactusTeam := dal4contactus.NewContactusTeamModuleEntry(params.Team.ID)
-	if err = params.GetRecords(ctx, tx, contactusTeam.Record); err != nil {
+	contactusSpace := dal4contactus.NewContactusSpaceModuleEntry(params.Space.ID)
+	if err = params.GetRecords(ctx, tx, contactusSpace.Record); err != nil {
 		return response, err
 	}
 
-	happeningDto.UserIDs = params.Team.Data.UserIDs
+	happeningDto.UserIDs = params.Space.Data.UserIDs
 	happeningDto.Status = "active"
 	if happeningDto.Type == dbo4calendarium.HappeningTypeSingle {
 		for _, slot := range happeningDto.Slots {
@@ -100,19 +100,19 @@ func createHappeningTx(
 		}
 	}
 
-	contactsByTeamID := make(map[string][]dal4contactus.ContactEntry)
+	contactsBySpaceID := make(map[string][]dal4contactus.ContactEntry)
 
 	//for participantID := range happeningDto.Participants {
-	//	participantKey := dbmodels.TeamItemID(participantID)
-	//	teamID := participantKey.TeamID()
-	//	if teamID == params.Team.ID {
-	//		contactBrief := contactusTeam.Data.Contacts[participantKey.ItemID()]
+	//	participantKey := dbmodels.SpaceItemID(participantID)
+	//	spaceID := participantKey.SpaceID()
+	//	if spaceID == params.Space.ID {
+	//		contactBrief := contactusSpace.Data.Contacts[participantKey.ItemID()]
 	//		if contactBrief == nil {
-	//			teamContacts := contactsByTeamID[teamID]
-	//			if teamContacts == nil {
-	//				teamContacts = make([]dal4contactus.ContactEntry, 0, 1)
+	//			spaceContacts := contactsBySpaceID[teamID]
+	//			if spaceContacts == nil {
+	//				spaceContacts = make([]dal4contactus.ContactEntry, 0, 1)
 	//			}
-	//			contactsByTeamID[teamID] = append(teamContacts, dal4contactus.NewContactEntry(teamID, participantKey.ItemID()))
+	//			contactsBySpaceID[teamID] = append(teamContacts, dal4contactus.NewContactEntry(teamID, participantKey.ItemID()))
 	//		} else {
 	//			happeningDto.AddContact(teamID, participantKey.ItemID(), contactBrief)
 	//		}
@@ -121,9 +121,9 @@ func createHappeningTx(
 	//	}
 	//}
 
-	if len(contactsByTeamID) > 0 {
+	if len(contactsBySpaceID) > 0 {
 		contactRecords := make([]dal.Record, 0)
-		for _, teamContacts := range contactsByTeamID {
+		for _, teamContacts := range contactsBySpaceID {
 			for _, contact := range teamContacts {
 				contactRecords = append(contactRecords, contact.Record)
 			}
@@ -131,7 +131,7 @@ func createHappeningTx(
 		if err = tx.GetMulti(ctx, contactRecords); err != nil {
 			return response, err
 		}
-		//for teamID, teamContacts := range contactsByTeamID {
+		//for teamID, teamContacts := range contactsBySpaceID {
 		//	for _, contact := range teamContacts {
 		//		happeningDto.AddContact(teamID, contact.ID, &contact.Data.ContactBrief)
 		//	}
@@ -140,8 +140,8 @@ func createHappeningTx(
 
 	var happeningID string
 	var happeningKey *dal.Key
-	if happeningID, happeningKey, err = dal4teamus.GenerateNewTeamModuleItemKey(
-		ctx, tx, params.Team.ID, moduleID, happeningsCollection, 5, 10); err != nil {
+	if happeningID, happeningKey, err = dal4teamus.GenerateNewSpaceModuleItemKey(
+		ctx, tx, params.Space.ID, moduleID, happeningsCollection, 5, 10); err != nil {
 		return response, err
 	}
 	response.ID = happeningID
@@ -152,19 +152,19 @@ func createHappeningTx(
 	if err = happeningDto.Validate(); err != nil {
 		return response, fmt.Errorf("happening record is not valid for insertion: %w", err)
 	}
-	//panic("teamDates: " + strings.Join(happeningDto.TeamDates, ","))
+	//panic("spaceDates: " + strings.Join(happeningDto.TeamDates, ","))
 	if err = tx.Insert(ctx, record); err != nil {
 		return response, fmt.Errorf("failed to insert new happening record: %w", err)
 	}
 	if happeningDto.Type == dbo4calendarium.HappeningTypeRecurring {
-		params.TeamModuleEntry.Record.MarkAsChanged()
-		if params.TeamModuleEntry.Data.RecurringHappenings == nil {
-			params.TeamModuleEntry.Data.RecurringHappenings = make(map[string]*dbo4calendarium.CalendarHappeningBrief)
+		params.SpaceModuleEntry.Record.MarkAsChanged()
+		if params.SpaceModuleEntry.Data.RecurringHappenings == nil {
+			params.SpaceModuleEntry.Data.RecurringHappenings = make(map[string]*dbo4calendarium.CalendarHappeningBrief)
 		}
-		params.TeamModuleEntry.Data.RecurringHappenings[happeningID] = &dbo4calendarium.CalendarHappeningBrief{
+		params.SpaceModuleEntry.Data.RecurringHappenings[happeningID] = &dbo4calendarium.CalendarHappeningBrief{
 			HappeningBrief: happeningDto.HappeningBrief,
 		}
-		params.TeamModuleUpdates = append(params.TeamUpdates, dal.Update{
+		params.SpaceModuleUpdates = append(params.SpaceUpdates, dal.Update{
 			Field: "recurringHappenings." + happeningID,
 			Value: &happeningDto.HappeningBrief,
 		})

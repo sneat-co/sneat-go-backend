@@ -21,7 +21,7 @@ func ReorderTask(ctx context.Context, userContext facade.User, request ReorderTa
 	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		var params facade4meetingus.WorkerParams
 		scrum := dbo4scrumus.Scrum{}
-		if params, err = facade4meetingus.GetMeetingAndTeam(ctx, tx, uid, request.TeamID, request.MeetingID, MeetingRecordFactory{}); err != nil {
+		if params, err = facade4meetingus.GetMeetingAndSpace(ctx, tx, uid, request.SpaceID, request.MeetingID, MeetingRecordFactory{}); err != nil {
 			return
 		}
 		if !params.Meeting.Record.Exists() {

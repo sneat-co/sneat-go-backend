@@ -32,7 +32,7 @@ func TestToggleTimer(t *testing.T) { // TODO(help-wanted): add more test cases
 	userContext := facade.NewUser("user1")
 
 	const (
-		team1ID = "team1"
+		space1ID = "space1"
 	)
 
 	type expecting struct {
@@ -46,7 +46,7 @@ func TestToggleTimer(t *testing.T) { // TODO(help-wanted): add more test cases
 		timestamps []dbmodels.Timestamp,
 		expected expecting,
 		initMeeting func(meeting *dbo4meetingus.Meeting),
-		assert func(response ToggleTimerResponse, meeting dbo4meetingus.Meeting, team dbo4teamus.TeamDbo),
+		assert func(response ToggleTimerResponse, meeting dbo4meetingus.Meeting, team dbo4teamus.SpaceDbo),
 	) {
 		assertTimer := func(source string, timer *dbo4meetingus.Timer) {
 			if timer == nil {
@@ -78,8 +78,8 @@ func TestToggleTimer(t *testing.T) { // TODO(help-wanted): add more test cases
 			Operation: op,
 			Member:    member,
 			Request: Request{
-				TeamRequest: dto4teamus.TeamRequest{
-					TeamID: team1ID,
+				SpaceRequest: dto4teamus.SpaceRequest{
+					SpaceID: space1ID,
 				},
 				MeetingID: "2010-11-22",
 			},
@@ -135,7 +135,7 @@ func TestToggleTimer(t *testing.T) { // TODO(help-wanted): add more test cases
 					func(meeting *dbo4meetingus.Meeting) {
 
 					},
-					func(response ToggleTimerResponse, meeting dbo4meetingus.Meeting, team dbo4teamus.TeamDbo) {
+					func(response ToggleTimerResponse, meeting dbo4meetingus.Meeting, team dbo4teamus.SpaceDbo) {
 						if meeting.Timer.ActiveMemberID != request.Member {
 							t.Errorf("api4meetingus.Timer.ActiveMemberID !== request.MemberDto: %v != %v", meeting.Timer.ActiveMemberID, request.Member)
 						}

@@ -1,56 +1,47 @@
 package const4contactus
 
-type TeamMemberRole = string
+import "github.com/strongo/slice"
+
+type SpaceMemberRole = string
 
 const (
-	TeamMemberRoleMember = "member"
+	SpaceMemberRoleMember = "member"
 
-	TeamMemberRoleAdult = "adult"
+	SpaceMemberRoleAdult = "adult"
 
-	TeamMemberRoleChild = "child"
+	SpaceMemberRoleChild = "child"
 
-	// TeamMemberRoleCreator role of a creator
-	TeamMemberRoleCreator TeamMemberRole = "creator"
+	// SpaceMemberRoleCreator role of a creator
+	SpaceMemberRoleCreator SpaceMemberRole = "creator"
 
-	// TeamMemberRoleOwner role of an owner
-	TeamMemberRoleOwner TeamMemberRole = "owner"
+	// SpaceMemberRoleOwner role of an owner
+	SpaceMemberRoleOwner SpaceMemberRole = "owner"
 
-	TeamMemberRoleAdmin TeamMemberRole = "admin"
+	SpaceMemberRoleAdmin SpaceMemberRole = "admin"
 
-	// TeamMemberRoleContributor role of a contributor
-	TeamMemberRoleContributor TeamMemberRole = "contributor"
+	// SpaceMemberRoleContributor role of a contributor
+	SpaceMemberRoleContributor SpaceMemberRole = "contributor"
 
-	// TeamMemberRoleSpectator role of spectator
-	TeamMemberRoleSpectator TeamMemberRole = "spectator"
+	// SpaceMemberRoleSpectator role of spectator
+	SpaceMemberRoleSpectator SpaceMemberRole = "spectator"
 
-	// TeamMemberRoleExcluded if team members is excluded
-	TeamMemberRoleExcluded TeamMemberRole = "excluded"
+	// SpaceMemberRoleExcluded if team members are excluded
+	SpaceMemberRoleExcluded SpaceMemberRole = "excluded"
 )
 
-// TeamMemberWellKnownRoles defines known roles
-var TeamMemberWellKnownRoles = []TeamMemberRole{
-	TeamMemberRoleAdmin,
-	TeamMemberRoleContributor,
-	TeamMemberRoleCreator,
-	TeamMemberRoleMember,
-	TeamMemberRoleSpectator,
-	TeamMemberRoleExcluded,
+// SpaceMemberWellKnownRoles defines known roles
+var SpaceMemberWellKnownRoles = []SpaceMemberRole{
+	SpaceMemberRoleAdmin,
+	SpaceMemberRoleContributor,
+	SpaceMemberRoleCreator,
+	SpaceMemberRoleMember,
+	SpaceMemberRoleChild,
+	SpaceMemberRoleAdult,
+	SpaceMemberRoleSpectator,
+	SpaceMemberRoleExcluded,
 }
 
-// IsKnownTeamMemberRole checks if role has valid value
-func IsKnownTeamMemberRole(role TeamMemberRole, teamRoles []TeamMemberRole) bool {
-	for _, r := range TeamMemberWellKnownRoles {
-		if r == role {
-			return true
-		}
-	}
-	if teamRoles == nil {
-		return true
-	}
-	for _, r := range teamRoles {
-		if r == role {
-			return true
-		}
-	}
-	return false
+// IsKnownSpaceMemberRole checks if a role has a valid value
+func IsKnownSpaceMemberRole(role SpaceMemberRole, teamRoles []SpaceMemberRole) bool {
+	return teamRoles == nil || slice.Contains(SpaceMemberWellKnownRoles, role) || slice.Contains(teamRoles, role)
 }

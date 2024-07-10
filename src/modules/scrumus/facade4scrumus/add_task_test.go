@@ -27,8 +27,8 @@ func TestAddTask(t *testing.T) {
 		request := AddTaskRequest{
 			TaskRequest: TaskRequest{
 				Request: facade4meetingus.Request{
-					TeamRequest: dto4teamus.TeamRequest{
-						TeamID: "team1",
+					SpaceRequest: dto4teamus.SpaceRequest{
+						SpaceID: "space1",
 					},
 					MeetingID: now.Format("2006-01-02"),
 				},

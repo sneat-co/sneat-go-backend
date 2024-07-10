@@ -73,7 +73,7 @@ func AddRetroItem(ctx context.Context, userContext facade.User, request AddRetro
 			err = fmt.Errorf("failed to add item to future retrospective: %w", err)
 		}
 	} else {
-		response, err = addRetroItemToTeamRetro(ctx, userContext, request)
+		response, err = addRetroItemToSpaceRetro(ctx, userContext, request)
 		if err != nil {
 			err = fmt.Errorf("failed to add item to specific retrospective: %w", err)
 		}
@@ -110,16 +110,16 @@ func addRetroItemToUserRetro(ctx context.Context, userContext facade.User, reque
 			return err
 		}
 
-		userTeamInfo := user.GetUserTeamInfoByID(request.TeamID)
-		if userTeamInfo == nil {
-			return validation.NewErrBadRequestFieldValue("team", fmt.Sprintf("user does not belong to this team %v, uid=%v", request.TeamID, uid))
+		userSpaceInfo := user.GetUserSpaceInfoByID(request.SpaceID)
+		if userSpaceInfo == nil {
+			return validation.NewErrBadRequestFieldValue("space", fmt.Sprintf("user does not belong to this team %v, uid=%v", request.SpaceID, uid))
 		}
 
-		//if userTeamInfo.RetroItems == nil {
-		//	userTeamInfo.RetroItems = make(dbretro.RetroItemsByType)
+		//if userSpaceInfo.RetroItems == nil {
+		//	userSpaceInfo.RetroItems = make(dbretro.RetroItemsByType)
 		//}
 		//
-		//items, existingType := userTeamInfo.RetroItems[request.Role]
+		//items, existingType := userSpaceInfo.RetroItems[request.Role]
 
 		//if !existingType {
 		//	items = make([]*dbretro.RetroItem, 0, 1)
@@ -128,19 +128,19 @@ func addRetroItemToUserRetro(ctx context.Context, userContext facade.User, reque
 			Title:   request.Title,
 			Created: started,
 		}
-		//userTeamInfo.RetroItems[request.Role] = addItemWithUniqueID(&item, items)
+		//userSpaceInfo.RetroItems[request.Role] = addItemWithUniqueID(&item, items)
 
 		if err = user.Validate(); err != nil {
 			return err
 		}
 
-		//if err := updateTeamWithUpcomingRetroUserCounts(ctx, transaction, started, uid, request.TeamID, userTeamInfo.RetroItems); err != nil {
+		//if err := updateTeamWithUpcomingRetroUserCounts(ctx, transaction, started, uid, request.SpaceID, userSpaceInfo.RetroItems); err != nil {
 		//	return fmt.Errorf("failed to update team record: %w", err)
 		//}
 
 		updates := []dal.Update{
 			{
-				Field: fmt.Sprintf("api4meetingus.%v.retroItems.%v", request.TeamID, request.Type),
+				Field: fmt.Sprintf("api4meetingus.%v.retroItems.%v", request.SpaceID, request.Type),
 				Value: dal.ArrayUnion(item),
 			},
 		}
@@ -157,9 +157,9 @@ func addRetroItemToUserRetro(ctx context.Context, userContext facade.User, reque
 	return
 }
 
-func addRetroItemToTeamRetro(ctx context.Context, userContext facade.User, request AddRetroItemRequest) (response AddRetroItemResponse, err error) {
+func addRetroItemToSpaceRetro(ctx context.Context, userContext facade.User, request AddRetroItemRequest) (response AddRetroItemResponse, err error) {
 	uid := userContext.GetID()
-	retrospectiveKey := getTeamRetroDocKey(request.TeamID, request.MeetingID)
+	retrospectiveKey := getSpaceRetroDocKey(request.SpaceID, request.MeetingID)
 
 	user := new(dbo4userus.UserDbo)
 	userKey := dal.NewKeyWithID(dbo4userus.UsersCollection, uid)

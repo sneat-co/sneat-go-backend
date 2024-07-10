@@ -8,19 +8,19 @@ import (
 )
 
 type ContactWorkerParams struct {
-	*ContactusTeamWorkerParams
+	*ContactusSpaceWorkerParams
 	Contact        ContactEntry
 	ContactUpdates []dal.Update
 }
 
 func (v ContactWorkerParams) GetRecords(ctx context.Context, tx dal.ReadSession, records ...dal.Record) error {
-	return v.ContactusTeamWorkerParams.GetRecords(ctx, tx, append(records, v.Contact.Record)...)
+	return v.ContactusSpaceWorkerParams.GetRecords(ctx, tx, append(records, v.Contact.Record)...)
 }
 
-func NewContactWorkerParams(moduleParams *ContactusTeamWorkerParams, contactID string) *ContactWorkerParams {
+func NewContactWorkerParams(moduleParams *ContactusSpaceWorkerParams, contactID string) *ContactWorkerParams {
 	return &ContactWorkerParams{
-		ContactusTeamWorkerParams: moduleParams,
-		Contact:                   NewContactEntry(moduleParams.Team.ID, contactID),
+		ContactusSpaceWorkerParams: moduleParams,
+		Contact:                    NewContactEntry(moduleParams.Space.ID, contactID),
 	}
 }
 
@@ -32,7 +32,7 @@ func RunContactWorker(
 	request dto4contactus.ContactRequest,
 	worker ContactWorker,
 ) error {
-	contactWorker := func(ctx context.Context, tx dal.ReadwriteTransaction, moduleWorkerParams *ContactusTeamWorkerParams) (err error) {
+	contactWorker := func(ctx context.Context, tx dal.ReadwriteTransaction, moduleWorkerParams *ContactusSpaceWorkerParams) (err error) {
 		params := NewContactWorkerParams(moduleWorkerParams, request.ContactID)
 		if err = worker(ctx, tx, params); err != nil {
 			return err
@@ -42,7 +42,7 @@ func RunContactWorker(
 		}
 		return err
 	}
-	return RunContactusTeamWorker(ctx, user, request.TeamRequest, contactWorker)
+	return RunContactusSpaceWorker(ctx, user, request.SpaceRequest, contactWorker)
 }
 
 func applyContactUpdates(ctx context.Context, tx dal.ReadwriteTransaction, params *ContactWorkerParams) (err error) {

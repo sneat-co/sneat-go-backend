@@ -1,4 +1,4 @@
 package dal4teamus
 
-// TxUpdateTeam is a public proxy to txUpdateTeam
-var TxUpdateTeam = txUpdateTeam
+// TxUpdateSpace is a public proxy to txUpdateSpace
+var TxUpdateSpace = txUpdateSpace

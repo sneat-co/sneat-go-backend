@@ -33,24 +33,24 @@ func SetUserCountry(ctx context.Context, userContext facade.User, request SetUse
 			params.UserUpdates = append(params.UserUpdates,
 				dal.Update{Field: "countryID", Value: request.CountryID})
 		}
-		for teamID, teamBrief := range params.User.Data.Teams {
+		for teamID, teamBrief := range params.User.Data.Spaces {
 			if teamBrief.Type == "family" && IsUnknownCountryID(teamBrief.CountryID) {
 				teamBrief.CountryID = request.CountryID
-				params.UserUpdates = append(params.UserUpdates, dal.Update{Field: fmt.Sprintf("teams.%s.countryID", teamID), Value: request.CountryID})
+				params.UserUpdates = append(params.UserUpdates, dal.Update{Field: fmt.Sprintf("spaces.%s.countryID", teamID), Value: request.CountryID})
 			}
-			teamRequest := dto4teamus.TeamRequest{TeamID: teamID}
-			err = dal4contactus.RunContactusTeamWorkerTx(ctx, tx, userContext, teamRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusTeamWorkerParams) error {
+			teamRequest := dto4teamus.SpaceRequest{SpaceID: teamID}
+			err = dal4contactus.RunContactusSpaceWorkerTx(ctx, tx, userContext, teamRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) error {
 				if err = params.GetRecords(ctx, tx); err != nil {
 					return err
 				}
-				if params.Team.Data.CountryID == "" || params.Team.Data.CountryID == with.UnknownCountryID {
-					params.Team.Data.CountryID = request.CountryID
-					params.TeamUpdates = append(params.TeamUpdates, dal.Update{Field: "countryID", Value: request.CountryID})
+				if params.Space.Data.CountryID == "" || params.Space.Data.CountryID == with.UnknownCountryID {
+					params.Space.Data.CountryID = request.CountryID
+					params.SpaceUpdates = append(params.SpaceUpdates, dal.Update{Field: "countryID", Value: request.CountryID})
 				}
-				userContactID, userContactBrief := params.TeamModuleEntry.Data.GetContactBriefByUserID(userContext.GetID())
+				userContactID, userContactBrief := params.SpaceModuleEntry.Data.GetContactBriefByUserID(userContext.GetID())
 				if userContactBrief != nil && IsUnknownCountryID(userContactBrief.CountryID) {
 					userContactBrief.CountryID = request.CountryID
-					params.TeamModuleUpdates = append(params.TeamModuleUpdates, dal.Update{Field: "contacts." + userContactID + ".countryID", Value: request.CountryID})
+					params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, dal.Update{Field: "contacts." + userContactID + ".countryID", Value: request.CountryID})
 					userContact := dal4contactus.NewContactEntry(teamID, userContactID)
 					if err = tx.Get(ctx, userContact.Record); err != nil {
 						return err

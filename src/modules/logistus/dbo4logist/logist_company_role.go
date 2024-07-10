@@ -2,9 +2,9 @@ package dbo4logist
 
 import "github.com/strongo/slice"
 
-type LogistTeamRole string
+type LogistSpaceRole string
 
-func ConvertLogistTeamRolesToStringSlice(roles []LogistTeamRole) []string {
+func ConvertLogistSpaceRolesToStringSlice(roles []LogistSpaceRole) []string {
 	result := make([]string, len(roles))
 	for i, r := range roles {
 		result[i] = string(r)
@@ -12,7 +12,7 @@ func ConvertLogistTeamRolesToStringSlice(roles []LogistTeamRole) []string {
 	return result
 }
 
-func RolesChanged(currentRoles []string, newRoles []LogistTeamRole) bool {
+func RolesChanged(currentRoles []string, newRoles []LogistSpaceRole) bool {
 	for _, r := range newRoles {
 		if role := string(r); !slice.Contains(currentRoles, role) {
 			return true
@@ -22,22 +22,22 @@ func RolesChanged(currentRoles []string, newRoles []LogistTeamRole) bool {
 }
 
 const (
-	CompanyRoleBuyer        = LogistTeamRole(CounterpartyRoleBuyer)
-	CompanyRoleCustomBroker = LogistTeamRole(CounterpartyRoleCustomBroker)
-	CompanyRoleDispatcher   = LogistTeamRole(CounterpartyRoleDispatcher)
-	CompanyRoleTrucker      = LogistTeamRole(CounterpartyRoleTrucker)
-	CompanyRoleShippingLine = LogistTeamRole(CounterpartyRoleShippingLine)
+	CompanyRoleBuyer        = LogistSpaceRole(CounterpartyRoleBuyer)
+	CompanyRoleCustomBroker = LogistSpaceRole(CounterpartyRoleCustomBroker)
+	CompanyRoleDispatcher   = LogistSpaceRole(CounterpartyRoleDispatcher)
+	CompanyRoleTrucker      = LogistSpaceRole(CounterpartyRoleTrucker)
+	CompanyRoleShippingLine = LogistSpaceRole(CounterpartyRoleShippingLine)
 
 	CompanyRoleFreightAgent  = "freight_agent" // Freight agent can be either a CounterpartyRoleDispatchAgent or CounterpartyRoleReceiveAgent
-	CompanyRoleDispatchAgent = LogistTeamRole(CounterpartyRoleDispatchAgent)
-	CompanyRoleReceiveAgent  = LogistTeamRole(CounterpartyRoleReceiveAgent)
+	CompanyRoleDispatchAgent = LogistSpaceRole(CounterpartyRoleDispatchAgent)
+	CompanyRoleReceiveAgent  = LogistSpaceRole(CounterpartyRoleReceiveAgent)
 
-	CompanyRoleFreightBroker     LogistTeamRole = "freight_broker"
-	CompanyRoleFreightForwarder  LogistTeamRole = "freight_forwarder"
-	CompanyRoleWarehouseOperator LogistTeamRole = "warehouse_operator"
+	CompanyRoleFreightBroker     LogistSpaceRole = "freight_broker"
+	CompanyRoleFreightForwarder  LogistSpaceRole = "freight_forwarder"
+	CompanyRoleWarehouseOperator LogistSpaceRole = "warehouse_operator"
 )
 
-var KnownLogistCompanyRoles = []LogistTeamRole{
+var KnownLogistCompanyRoles = []LogistSpaceRole{
 	CompanyRoleBuyer,
 	CompanyRoleCustomBroker,
 	CompanyRoleFreightAgent,
@@ -51,6 +51,6 @@ var KnownLogistCompanyRoles = []LogistTeamRole{
 	CompanyRoleWarehouseOperator,
 }
 
-func IsKnownLogistCompanyRole(role LogistTeamRole) bool {
+func IsKnownLogistCompanyRole(role LogistSpaceRole) bool {
 	return slice.Index(KnownLogistCompanyRoles, role) >= 0
 }

@@ -22,13 +22,13 @@ import (
 	"time"
 )
 
-type CreateTeamResult struct {
-	Team dal4teamus.TeamEntry `json:"-"`
-	User dbo4userus.UserEntry `json:"-"`
+type CreateSpaceResult struct {
+	Space dal4teamus.SpaceEntry `json:"-"`
+	User  dbo4userus.UserEntry  `json:"-"`
 }
 
-// CreateTeam creates TeamIDs record
-func CreateTeam(ctx context.Context, userContext facade.User, request dto4teamus.CreateTeamRequest) (response CreateTeamResult, err error) {
+// CreateSpace creates SpaceIDs record
+func CreateSpace(ctx context.Context, userContext facade.User, request dto4teamus.CreateSpaceRequest) (response CreateSpaceResult, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
@@ -36,19 +36,19 @@ func CreateTeam(ctx context.Context, userContext facade.User, request dto4teamus
 
 	// We do not use facade4userus.RunUserWorker dues to cycle dependency
 	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
-		response, err = createTeamTxWorker(ctx, userContext, tx, request)
+		response, err = createSpaceTxWorker(ctx, userContext, tx, request)
 		return err
 	})
 	return response, err
 }
 
-func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.ReadwriteTransaction, request dto4teamus.CreateTeamRequest) (response CreateTeamResult, err error) {
+func createSpaceTxWorker(ctx context.Context, userContext facade.User, tx dal.ReadwriteTransaction, request dto4teamus.CreateSpaceRequest) (response CreateSpaceResult, err error) {
 	now := time.Now()
 	userID := userContext.GetID()
 	if strings.TrimSpace(userID) == "" {
 		return response, facade.ErrUnauthenticated
 	}
-	var userTeamContactID string
+	var userSpaceContactID string
 
 	user := dbo4userus.NewUserEntry(userID)
 	response.User = user
@@ -58,38 +58,38 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 	}
 
 	if request.Title == "" {
-		teamID, _ := user.Data.GetTeamBriefByType(request.Type)
-		if teamID != "" {
-			response.Team.ID = teamID
-			if team, err := GetTeamByID(ctx, tx, teamID); err != nil {
+		spaceID, _ := user.Data.GetSpaceBriefByType(request.Type)
+		if spaceID != "" {
+			response.Space.ID = spaceID
+			if space, err := GetSpaceByID(ctx, tx, spaceID); err != nil {
 				return response, err
 			} else {
-				response.Team = team
+				response.Space = space
 				return response, nil
 			}
 		}
 	}
 
-	userTeamContactID, err = person.GenerateIDFromNameOrRandom(user.Data.Names, nil)
+	userSpaceContactID, err = person.GenerateIDFromNameOrRandom(user.Data.Names, nil)
 	if err != nil {
 		return response, fmt.Errorf("failed to generate  member ID: %w", err)
 	}
 
 	roles := []string{
-		const4contactus.TeamMemberRoleMember,
-		const4contactus.TeamMemberRoleCreator,
-		const4contactus.TeamMemberRoleOwner,
-		const4contactus.TeamMemberRoleContributor,
+		const4contactus.SpaceMemberRoleMember,
+		const4contactus.SpaceMemberRoleCreator,
+		const4contactus.SpaceMemberRoleOwner,
+		const4contactus.SpaceMemberRoleContributor,
 	}
 	if request.Type == "family" {
-		roles = append(roles, const4contactus.TeamMemberRoleAdult)
+		roles = append(roles, const4contactus.SpaceMemberRoleAdult)
 	}
 
 	if request.Type == "family" && request.Title == "" {
 		request.Title = "Family"
 	}
-	teamDbo := &dbo4teamus.TeamDbo{
-		TeamBrief: dbo4teamus.TeamBrief{
+	teamDbo := &dbo4teamus.SpaceDbo{
+		SpaceBrief: dbo4teamus.SpaceBrief{
 			Type:   request.Type,
 			Title:  request.Title,
 			Status: dbmodels.StatusActive,
@@ -116,9 +116,9 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 	if request.Type == "work" {
 		zero := 0
 		hundred := 100
-		teamDbo.Metrics = []*dbo4teamus.TeamMetric{
-			{ID: "cc", Title: "Code coverage", Type: "int", Mode: "TeamIDs", Min: &zero, Max: &hundred},
-			{ID: "bb", Title: "Build is broken", Type: "bool", Mode: "TeamIDs", Bool: &dbo4teamus.BoolMetric{
+		teamDbo.Metrics = []*dbo4teamus.SpaceMetric{
+			{ID: "cc", Title: "Code coverage", Type: "int", Mode: "SpaceIDs", Min: &zero, Max: &hundred},
+			{ID: "bb", Title: "Build is broken", Type: "bool", Mode: "SpaceIDs", Bool: &dbo4teamus.BoolMetric{
 				True:  &dbo4teamus.BoolMetricVal{Label: "Yes", Color: "danger"},
 				False: &dbo4teamus.BoolMetricVal{Label: "No", Color: "success"},
 			}},
@@ -130,7 +130,7 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 	}
 
 	if err = teamDbo.Validate(); err != nil {
-		return response, fmt.Errorf("teamDbo reacord is not valid: %w", err)
+		return response, fmt.Errorf("spaceDbo reacord is not valid: %w", err)
 	}
 
 	var teamID string
@@ -138,18 +138,18 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 	if request.Type == "family" {
 		title = ""
 	}
-	teamID, err = getUniqueTeamID(ctx, tx, title)
+	teamID, err = getUniqueSpaceID(ctx, tx, title)
 	if err != nil {
 		return response, fmt.Errorf("failed to get an unique ID for a new teamDbo: %w", err)
 	}
-	teamKey := dal.NewKeyWithID(dal4teamus.TeamsCollection, teamID)
+	teamKey := dal.NewKeyWithID(dal4teamus.SpacesCollection, teamID)
 
 	teamRecord := dal.NewRecordWithData(teamKey, teamDbo)
 	if err = tx.Insert(ctx, teamRecord); err != nil {
 		return response, fmt.Errorf("failed to insert a new teamDbo record: %w", err)
 	}
 
-	teamContactus := dal4contactus.NewContactusTeamModuleEntry(teamID)
+	teamContactus := dal4contactus.NewContactusSpaceModuleEntry(teamID)
 
 	teamMember := user.Data.ContactBrief // This should copy data from user's contact brief as it's not a pointer
 
@@ -167,22 +167,22 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 	//if len(teamMember.Phones) == 0 && len(user.Data.Phones) > 0 {
 	//	teamMember.Phones = user.Data.Phones
 	//}
-	teamContactus.Data.AddContact(userTeamContactID, &teamMember)
+	teamContactus.Data.AddContact(userSpaceContactID, &teamMember)
 
 	if err := tx.Insert(ctx, teamContactus.Record); err != nil {
 		return response, fmt.Errorf("failed to insert a new teamDbo contactus record: %w", err)
 	}
 
-	userTeamBrief := dbo4userus.UserTeamBrief{
-		TeamBrief:     teamDbo.TeamBrief,
-		UserContactID: userTeamContactID,
+	userSpaceBrief := dbo4userus.UserSpaceBrief{
+		SpaceBrief:    teamDbo.SpaceBrief,
+		UserContactID: userSpaceContactID,
 		Roles:         roles,
 	}
 
-	if user.Data.Teams == nil {
-		user.Data.Teams = make(map[string]*dbo4userus.UserTeamBrief, 1)
+	if user.Data.Spaces == nil {
+		user.Data.Spaces = make(map[string]*dbo4userus.UserSpaceBrief, 1)
 	}
-	updates := user.Data.SetTeamBrief(teamID, &userTeamBrief)
+	updates := user.Data.SetSpaceBrief(teamID, &userSpaceBrief)
 
 	updates = append(updates, dbo4linkage.UpdateRelatedIDs(&user.Data.WithRelated, &user.Data.WithRelatedIDs)...)
 
@@ -200,38 +200,38 @@ func createTeamTxWorker(ctx context.Context, userContext facade.User, tx dal.Rea
 	}
 
 	teamMember.Roles = roles
-	if _, err = CreateMemberRecordFromBrief(ctx, tx, teamID, userTeamContactID, teamMember, now, userID); err != nil {
+	if _, err = CreateMemberRecordFromBrief(ctx, tx, teamID, userSpaceContactID, teamMember, now, userID); err != nil {
 		return response, fmt.Errorf("failed to create member's record: %w", err)
 	}
 
-	response.Team.ID = teamID
-	response.Team.Data = teamDbo
+	response.Space.ID = teamID
+	response.Space.Data = teamDbo
 	return
 }
 
-func getUniqueTeamID(ctx context.Context, getter dal.ReadSession, title string) (teamID string, err error) {
-	if title == "" || const4contactus.IsKnownTeamMemberRole(title, []string{}) {
-		teamID = random.ID(5)
+func getUniqueSpaceID(ctx context.Context, getter dal.ReadSession, title string) (spaceID string, err error) {
+	if title == "" || const4contactus.IsKnownSpaceMemberRole(title, []string{}) {
+		spaceID = random.ID(5)
 	} else {
-		teamID = strings.Replace(slug.Make(title), "-", "", -1)
+		spaceID = strings.Replace(slug.Make(title), "-", "", -1)
 	}
 	const maxAttemptsCount = 9
 	for i := 0; i <= maxAttemptsCount; i++ {
 		if i == maxAttemptsCount {
-			return "", errors.New("too many attempts to get an unique team ID")
+			return "", errors.New("too many attempts to get an unique space ID")
 		}
-		teamID = strings.ToLower(teamID)
-		teamKey := dal.NewKeyWithID(dal4teamus.TeamsCollection, teamID)
+		spaceID = strings.ToLower(spaceID)
+		teamKey := dal.NewKeyWithID(dal4teamus.SpacesCollection, spaceID)
 		teamRecord := dal.NewRecordWithData(teamKey, nil)
 		if err = getter.Get(ctx, teamRecord); dal.IsNotFound(err) {
-			return teamID, nil
+			return spaceID, nil
 		} else if err != nil {
-			return teamID, err
+			return spaceID, err
 		}
 		if i == 0 && title != "" {
-			teamID += "_"
+			spaceID += "_"
 		}
-		teamID += random.ID(1)
+		spaceID += random.ID(1)
 	}
-	return teamID, nil
+	return spaceID, nil
 }

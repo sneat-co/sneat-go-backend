@@ -14,7 +14,7 @@ func SetHappeningPrices(ctx context.Context, user facade.User, request dto4calen
 	var setHappeningPricesWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
 		return setHappeningPricesTx(ctx, tx, user, params, request)
 	}
-	return dal4calendarium.RunHappeningTeamWorker(ctx, user, request.HappeningRequest, setHappeningPricesWorker)
+	return dal4calendarium.RunHappeningSpaceWorker(ctx, user, request.HappeningRequest, setHappeningPricesWorker)
 }
 
 func setHappeningPricesTx(ctx context.Context, tx dal.ReadwriteTransaction, _ facade.User, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.HappeningPricesRequest) (err error) {

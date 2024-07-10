@@ -12,15 +12,15 @@ import (
 	"strings"
 )
 
-// AddTeamMetricRequest request
-type AddTeamMetricRequest struct {
-	dto4teamus.TeamRequest
-	Metric dbo4teamus.TeamMetric `json:"metric"`
+// AddSpaceMetricRequest request
+type AddSpaceMetricRequest struct {
+	dto4teamus.SpaceRequest
+	Metric dbo4teamus.SpaceMetric `json:"metric"`
 }
 
 // Validate validates request
-func (v *AddTeamMetricRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+func (v *AddSpaceMetricRequest) Validate() error {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
 	if err := v.Metric.Validate(); err != nil {
@@ -30,21 +30,21 @@ func (v *AddTeamMetricRequest) Validate() error {
 }
 
 // AddMetric adds metric
-func AddMetric(ctx context.Context, user facade.User, request AddTeamMetricRequest) (err error) {
+func AddMetric(ctx context.Context, user facade.User, request AddSpaceMetricRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4teamus.RunTeamWorker(ctx, user, request.TeamID, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.TeamWorkerParams) (err error) {
+	err = dal4teamus.RunSpaceWorker(ctx, user, request.SpaceID, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.SpaceWorkerParams) (err error) {
 		request.Metric.ID = strings.Replace(slug.Make(request.Metric.Title), "-", "_", -1)
-		for _, m := range params.Team.Data.Metrics {
+		for _, m := range params.Space.Data.Metrics {
 			if m.ID == request.Metric.ID {
 				err = validation.NewErrBadRequestFieldValue("title", "duplicate slug(title)")
 				return
 			}
 		}
-		params.Team.Data.Metrics = append(params.Team.Data.Metrics, &request.Metric)
-		if err = dal4teamus.TxUpdateTeam(ctx, tx, params.Started, params.Team, []dal.Update{
-			{Field: "metrics", Value: params.Team.Data.Metrics},
+		params.Space.Data.Metrics = append(params.Space.Data.Metrics, &request.Metric)
+		if err = dal4teamus.TxUpdateSpace(ctx, tx, params.Started, params.Space, []dal.Update{
+			{Field: "metrics", Value: params.Space.Data.Metrics},
 		}); err != nil {
 			return err
 		}

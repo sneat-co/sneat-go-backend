@@ -16,7 +16,7 @@ type CreateListItemsRequest struct {
 
 // Validate returns error if not valid
 func (v CreateListItemsRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
 	for i, item := range v.Items {

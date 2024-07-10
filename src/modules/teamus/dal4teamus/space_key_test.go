@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestNewTeamKey(t *testing.T) {
+func TestNewSpaceKey(t *testing.T) {
 	type args struct {
 		id string
 	}
@@ -16,7 +16,7 @@ func TestNewTeamKey(t *testing.T) {
 				t.Fatal("no expected panic")
 			}
 		}()
-		NewTeamKey("")
+		NewSpaceKey("")
 	})
 	t.Run("should_panic_on_long_id", func(t *testing.T) {
 		defer func() {
@@ -24,7 +24,7 @@ func TestNewTeamKey(t *testing.T) {
 				t.Fatal("no expected panic")
 			}
 		}()
-		NewTeamKey("0123456789012345678901234567891")
+		NewSpaceKey("0123456789012345678901234567891")
 	})
 	tests := []struct {
 		name string
@@ -33,14 +33,14 @@ func TestNewTeamKey(t *testing.T) {
 	}{
 		{
 			name: "should_pass",
-			args: args{id: "TestTeam"},
-			want: dal.NewKeyWithID(TeamsCollection, "TestTeam"),
+			args: args{id: "TestSpace"},
+			want: dal.NewKeyWithID(SpacesCollection, "TestSpace"),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewTeamKey(tt.args.id); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewTeamKey() = %v, want %v", got, tt.want)
+			if got := NewSpaceKey(tt.args.id); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewSpaceKey() = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -52,7 +52,7 @@ func sendInviteEmail(ctx context.Context, id string, invite *dbo4invitus.Persona
 		templateData["fromHTML"] = fmt.Sprintf(`<a href="mailto:%s">%s</a>`, invite.From.Address, invite.From.Title)
 	}
 	templateData["invite"] = invite
-	templateData["team"] = invite.Team
+	templateData["space"] = invite.Space
 	templateData["pinCode"] = invite.Pin
 	buf := new(bytes.Buffer)
 	if err := inviteEmailTemplate.Execute(buf, templateData); err != nil {
@@ -62,7 +62,7 @@ func sendInviteEmail(ctx context.Context, id string, invite *dbo4invitus.Persona
 	msg := emails.Email{
 		From:    fmt.Sprintf(`"%s" <inviter@sneat.app>`, mime.QEncoding.Encode("utf-8", invite.From.Title)),
 		To:      []string{invite.To.Address},
-		Subject: fmt.Sprintf("You are invited by %s to join %s", invite.From.Title, invite.Team.Title),
+		Subject: fmt.Sprintf("You are invited by %s to join %s", invite.From.Title, invite.Space.Title),
 		HTML:    buf.String(),
 		//ReplyTo: nil,
 	}

@@ -17,7 +17,7 @@ var txUpdate = func(ctx context.Context, updater dal.ReadwriteTransaction, key *
 	return updater.Update(ctx, key, updates, preconditions...)
 }
 
-var txUpdateTeam = dal4teamus.TxUpdateTeam
+var txUpdateSpace = dal4teamus.TxUpdateSpace
 
 var txCreateRetrospective = func(ctx context.Context, tx dal.ReadwriteTransaction, key *dal.Key, retrospective *dbo4retrospectus.Retrospective) error {
 	if retrospective.Version == 0 {

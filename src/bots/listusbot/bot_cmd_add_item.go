@@ -43,22 +43,22 @@ var addBuyItemCommand = botsfw.Command{
 			return m, err
 		}
 
-		teamID := listusChatData.TeamID
+		spaceID := listusChatData.SpaceID
 
-		if teamID == "" {
-			familyTeamID, familyTeamBrief := user.Data.GetTeamBriefByType(core4teamus.TeamTypeFamily)
-			if familyTeamBrief == nil {
+		if spaceID == "" {
+			familySpaceID, familySpaceBrief := user.Data.GetSpaceBriefByType(core4teamus.SpaceTypeFamily)
+			if familySpaceBrief == nil {
 				m = whc.NewMessage("You are not a member of any family team")
 				return m, nil
 			}
-			teamID = familyTeamID
+			spaceID = familySpaceID
 		}
 
 		request := facade4listus.CreateListItemsRequest{
 			ListRequest: facade4listus.ListRequest{
 				ListID: dbo4listus.GetFullListID(dbo4listus.ListTypeToBuy, "groceries"),
-				TeamRequest: dto4teamus.TeamRequest{
-					TeamID: teamID,
+				SpaceRequest: dto4teamus.SpaceRequest{
+					SpaceID: spaceID,
 				},
 			},
 			Items: []facade4listus.CreateListItemRequest{

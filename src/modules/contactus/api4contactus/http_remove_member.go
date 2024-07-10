@@ -8,8 +8,8 @@ import (
 	"net/http"
 )
 
-// httpPostRemoveTeamMember is an API endpoint that removes a members from a team
-func httpPostRemoveTeamMember(w http.ResponseWriter, r *http.Request) {
+// httpPostRemoveSpaceMember is an API endpoint that removes a members from a team
+func httpPostRemoveSpaceMember(w http.ResponseWriter, r *http.Request) {
 	ctx, userContext, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
 	if err != nil {
 		return
@@ -18,6 +18,6 @@ func httpPostRemoveTeamMember(w http.ResponseWriter, r *http.Request) {
 	if err = apicore.DecodeRequestBody(w, r, &request); err != nil {
 		return
 	}
-	err = facade4contactus.RemoveTeamMember(ctx, userContext, request)
+	err = facade4contactus.RemoveSpaceMember(ctx, userContext, request)
 	apicore.IfNoErrorReturnOK(ctx, w, r, err)
 }

@@ -176,12 +176,12 @@ func (v *MetricRecord) Validate() error {
 // Scrum record
 type Scrum struct {
 	dbo4meetingus.Meeting
-	RisksCount     int                      `json:"risksCount,omitempty" firestore:"risksCount,omitempty"`
-	QuestionsCount int                      `json:"questionsCount,omitempty" firestore:"questionsCount,omitempty"`
-	Statuses       ScrumStatusByMember      `json:"statuses,omitempty" firestore:"statuses,omitempty"`
-	ScrumIDs       *ScrumIDs                `json:"scrumIDs,omitempty" firestore:"scrumIDs,omitempty"`
-	Metrics        []*dbo4teamus.TeamMetric `json:"metrics,omitempty" firestore:"metrics,omitempty"`
-	TeamMetrics    []*MetricRecord          `json:"teamMetrics,omitempty" firestore:"teamMetrics,omitempty"`
+	RisksCount     int                       `json:"risksCount,omitempty" firestore:"risksCount,omitempty"`
+	QuestionsCount int                       `json:"questionsCount,omitempty" firestore:"questionsCount,omitempty"`
+	Statuses       ScrumStatusByMember       `json:"statuses,omitempty" firestore:"statuses,omitempty"`
+	ScrumIDs       *ScrumIDs                 `json:"scrumIDs,omitempty" firestore:"scrumIDs,omitempty"`
+	Metrics        []*dbo4teamus.SpaceMetric `json:"metrics,omitempty" firestore:"metrics,omitempty"`
+	SpaceMetrics   []*MetricRecord           `json:"spaceMetrics,omitempty" firestore:"spaceMetrics,omitempty"`
 }
 
 var _ dbo4meetingus.MeetingInstance = (*Scrum)(nil)

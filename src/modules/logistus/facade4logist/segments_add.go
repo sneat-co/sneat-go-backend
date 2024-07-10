@@ -92,14 +92,14 @@ func addSegment(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderW
 		}
 	}
 	orderDto.Segments = append(orderDto.Segments, segment)
-	teamID := params.TeamWorkerParams.Team.ID
+	spaceID := params.SpaceWorkerParams.Space.ID
 
-	if changes, err := addCounterpartyToOrderIfNeeded(ctx, tx, teamID, orderDto, "from", request.From); err != nil {
+	if changes, err := addCounterpartyToOrderIfNeeded(ctx, tx, spaceID, orderDto, "from", request.From); err != nil {
 		return segmentChanges, err
 	} else {
 		segmentChanges.AddChanges(changes)
 	}
-	if changes, err := addCounterpartyToOrderIfNeeded(ctx, tx, teamID, orderDto, "to", request.To); err != nil {
+	if changes, err := addCounterpartyToOrderIfNeeded(ctx, tx, spaceID, orderDto, "to", request.To); err != nil {
 		return segmentChanges.AddChanges(changes), err
 	} else {
 		segmentChanges.AddChanges(changes)
@@ -107,7 +107,7 @@ func addSegment(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderW
 
 	if request.By != nil {
 		segment.ByContactID = request.By.Counterparty.ContactID
-		if changes, err := addCounterpartyToOrderIfNeeded(ctx, tx, teamID, orderDto, "by", dto4logist.AddSegmentEndpoint{
+		if changes, err := addCounterpartyToOrderIfNeeded(ctx, tx, spaceID, orderDto, "by", dto4logist.AddSegmentEndpoint{
 			AddSegmentParty: *request.By,
 		}); err != nil {
 			return segmentChanges, err
@@ -191,8 +191,8 @@ func addOrUpdateShippingPoints(
 	segment *dbo4logist.ContainerSegment,
 	containerData dto4logist.SegmentContainerData,
 ) error {
-	teamID := params.TeamWorkerParams.Team.ID
-	fromShippingPoint, toShippingPoint, err := addShippingPointsToOrderIfNeeded(ctx, tx, teamID, orderDto, segment)
+	spaceID := params.SpaceWorkerParams.Space.ID
+	fromShippingPoint, toShippingPoint, err := addShippingPointsToOrderIfNeeded(ctx, tx, spaceID, orderDto, segment)
 	if err != nil {
 		return fmt.Errorf("failed to add shipping points to order: %w", err)
 	}

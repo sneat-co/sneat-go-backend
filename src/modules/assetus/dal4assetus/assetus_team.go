@@ -8,9 +8,9 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 )
 
-type AssetusTeamEntry = record.DataWithID[string, *dbo4assetus.AssetusTeamDbo]
+type AssetusSpaceEntry = record.DataWithID[string, *dbo4assetus.AssetusSpaceDbo]
 
 // AssetsCollection is a name of a collection in DB
 const AssetsCollection = "assets"
 
-var AssetusRootKey = dal.NewKeyWithID(dal4teamus.TeamModulesCollection, const4assetus.ModuleID)
+var AssetusRootKey = dal.NewKeyWithID(dal4teamus.SpaceModulesCollection, const4assetus.ModuleID)

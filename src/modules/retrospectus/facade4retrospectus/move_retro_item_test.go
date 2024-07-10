@@ -19,8 +19,8 @@ func TestMoveRetroItem(t *testing.T) {
 			request := MoveRetroItemRequest{
 				Request: RetroRequest{
 					MeetingID: "non_existing_retro",
-					TeamRequest: dto4teamus.TeamRequest{
-						TeamID: "team1",
+					SpaceRequest: dto4teamus.SpaceRequest{
+						SpaceID: "space1",
 					},
 				},
 				Item: "good1",
@@ -42,8 +42,8 @@ func TestMoveRetroItem(t *testing.T) {
 		request := MoveRetroItemRequest{
 			Request: RetroRequest{
 				MeetingID: "retro1",
-				TeamRequest: dto4teamus.TeamRequest{
-					TeamID: "team1",
+				SpaceRequest: dto4teamus.SpaceRequest{
+					SpaceID: "space1",
 				},
 			},
 		}

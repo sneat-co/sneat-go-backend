@@ -7,6 +7,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/dbo4invitus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
@@ -17,16 +18,16 @@ import (
 	"time"
 )
 
-// JoinTeamRequest request
-type JoinTeamRequest struct {
-	dto4teamus.TeamRequest
+// JoinSpaceRequest request
+type JoinSpaceRequest struct {
+	dto4teamus.SpaceRequest
 	InviteID string `json:"inviteID"`
 	Pin      string `json:"pin"`
 }
 
 // Validate validates request
-func (v *JoinTeamRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+func (v *JoinSpaceRequest) Validate() error {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
 	if v.InviteID == "" {
@@ -38,8 +39,8 @@ func (v *JoinTeamRequest) Validate() error {
 	return nil
 }
 
-// JoinTeam joins team
-func JoinTeam(ctx context.Context, userContext facade.User, request JoinTeamRequest) (team *dbo4teamus.TeamDbo, err error) {
+// JoinSpace joins space
+func JoinSpace(ctx context.Context, userContext facade.User, request JoinSpaceRequest) (team *dbo4teamus.SpaceDbo, err error) {
 	if err = request.Validate(); err != nil {
 		err = fmt.Errorf("invalid request: %w", err)
 		return
@@ -47,7 +48,7 @@ func JoinTeam(ctx context.Context, userContext facade.User, request JoinTeamRequ
 	uid := userContext.GetID()
 
 	// We intentionally do not use team worker to query both team & user records in parallel
-	err = dal4contactus.RunContactusTeamWorker(ctx, userContext, request.TeamRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusTeamWorkerParams) error {
+	err = dal4contactus.RunContactusSpaceWorker(ctx, userContext, request.SpaceRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) error {
 
 		userKey := dbo4userus.NewUserKey(uid)
 		userDto := new(dbo4userus.UserDbo)
@@ -90,7 +91,7 @@ func JoinTeam(ctx context.Context, userContext facade.User, request JoinTeamRequ
 		//	}
 		//}
 
-		member := dal4contactus.NewContactEntry(inviteDto.TeamID, inviteDto.To.MemberID)
+		member := dal4contactus.NewContactEntry(inviteDto.SpaceID, inviteDto.To.MemberID)
 		if err = tx.Get(ctx, member.Record); err != nil {
 			return fmt.Errorf("failed to get member record: %w", err)
 		}
@@ -103,13 +104,13 @@ func JoinTeam(ctx context.Context, userContext facade.User, request JoinTeamRequ
 			return fmt.Errorf("failed to update member record")
 		}
 
-		if err = onJoinUpdateMemberBriefInTeamOrAddIfMissing(
+		if err = onJoinUpdateMemberBriefInSpaceOrAddIfMissing(
 			ctx, tx, params, inviteDto.From.MemberID, member, uid, userDto,
 		); err != nil {
 			return err
 		}
-		if err = onJoinAddTeamToUser(
-			ctx, tx, userDto, userRecord, request.TeamID, team, member,
+		if err = onJoinAddSpaceToUser(
+			ctx, tx, userDto, userRecord, request.SpaceID, team, member,
 		); err != nil {
 			return fmt.Errorf("failed to update user record: %w", err)
 		}
@@ -121,7 +122,7 @@ func JoinTeam(ctx context.Context, userContext facade.User, request JoinTeamRequ
 	return
 }
 
-//func joinAddUserToLastScrum(ctx context.Context, tx dal.ReadwriteTransaction, teamKey *dal.Key, team dbo4teamus.TeamDbo, uID string) (err error) {
+//func joinAddUserToLastScrum(ctx context.Context, tx dal.ReadwriteTransaction, teamKey *dal.Key, team dbo4teamus.SpaceDbo, uID string) (err error) {
 //	scrumKey := dal.NewKeyWithID("scrums", team.Last.Scrum.ID, dal.WithParentKey(teamKey))
 //	scrum := new(dbscrum.Scrum)
 //	scrumRecord := dal.NewRecordWithData(scrumKey, scrum)
@@ -164,54 +165,54 @@ func onJoinUpdateInvite(
 	}
 	return err
 }
-func onJoinAddTeamToUser(
+func onJoinAddSpaceToUser(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	userDto *dbo4userus.UserDbo,
 	userRecord dal.Record,
-	teamID string,
-	team *dbo4teamus.TeamDbo,
+	spaceID string,
+	space *dbo4teamus.SpaceDbo,
 	member dal4contactus.ContactEntry,
 ) (err error) {
 	var updates []dal.Update
 	if userDto == nil {
 		panic("required parameter 'userDto' is nil")
 	}
-	if strings.TrimSpace(teamID) == "" {
-		panic("required parameter 'teamID' is empty")
+	if strings.TrimSpace(spaceID) == "" {
+		panic("required parameter 'spaceID' is empty")
 	}
-	if team == nil {
-		panic("required parameter 'team' is nil")
+	if space == nil {
+		panic("required parameter 'space' is nil")
 	}
-	teamInfo := userDto.GetUserTeamInfoByID(teamID)
-	if teamInfo == nil {
-		teamInfo = &dbo4userus.UserTeamBrief{
-			TeamBrief: team.TeamBrief,
-			Roles:     member.Data.Roles,
+	spaceInfo := userDto.GetUserSpaceInfoByID(spaceID)
+	if spaceInfo == nil {
+		spaceInfo = &dbo4userus.UserSpaceBrief{
+			SpaceBrief: space.SpaceBrief,
+			Roles:      member.Data.Roles,
 			//MemberType:   "", // TODO: populate?
 		}
-		userDto.Teams[teamID] = teamInfo
-		userDto.TeamIDs = append(userDto.TeamIDs, teamID)
+		userDto.Spaces[spaceID] = spaceInfo
+		userDto.SpaceIDs = append(userDto.SpaceIDs, spaceID)
 	} else {
 		for _, role := range member.Data.Roles {
-			hasRole := teamInfo.HasRole(role)
-			if teamInfo.Title == team.Title && hasRole {
+			hasRole := spaceInfo.HasRole(role)
+			if spaceInfo.Title == space.Title && hasRole {
 				return // no changes
 			}
-			teamInfo.Title = team.Title
+			spaceInfo.Title = space.Title
 			if !hasRole {
-				teamInfo.Roles = append(teamInfo.Roles, role)
+				spaceInfo.Roles = append(spaceInfo.Roles, role)
 			}
 		}
 	}
 	updates = []dal.Update{
 		{
-			Field: "teams",
-			Value: userDto.Teams,
+			Field: dal4teamus.SpacesFiled,
+			Value: userDto.Spaces,
 		},
 		{
-			Field: "teamIDs",
-			Value: userDto.TeamIDs,
+			Field: "spaceIDs",
+			Value: userDto.SpaceIDs,
 		},
 	}
 	if len(updates) > 0 {
@@ -231,10 +232,10 @@ func onJoinAddTeamToUser(
 	return
 }
 
-func onJoinUpdateMemberBriefInTeamOrAddIfMissing(
+func onJoinUpdateMemberBriefInSpaceOrAddIfMissing(
 	_ context.Context,
 	_ dal.ReadwriteTransaction,
-	params *dal4contactus.ContactusTeamWorkerParams,
+	params *dal4contactus.ContactusSpaceWorkerParams,
 	inviterMemberID string,
 	member dal4contactus.ContactEntry,
 	uid string,
@@ -251,14 +252,14 @@ func onJoinUpdateMemberBriefInTeamOrAddIfMissing(
 		return validation.NewErrBadRecordFieldValue("userID", fmt.Sprintf("joining member should have same user ID as current user, got: {uid=%s, member.Data.UserID=%s}", uid, member.Data.UserID))
 	}
 	//updates = make([]dal.Update, 0, 2)
-	for _, userID := range params.TeamModuleEntry.Data.UserIDs {
+	for _, userID := range params.SpaceModuleEntry.Data.UserIDs {
 		if userID == uid {
 			goto UserIdAddedToUserIDsField
 		}
 	}
 
-	_, _ = params.Team.Data.AddUserID(uid)
-	//if u, ok := params.Team.Data.AddUserID(uid); ok {
+	_, _ = params.Space.Data.AddUserID(uid)
+	//if u, ok := params.Space.Data.AddUserID(uid); ok {
 	//	updates = append(updates, u)
 	//}
 
@@ -268,7 +269,7 @@ UserIdAddedToUserIDsField:
 
 	var isValidInviter bool
 
-	for mID, m := range params.TeamModuleEntry.Data.Contacts {
+	for mID, m := range params.SpaceModuleEntry.Data.Contacts {
 		if mID == member.ID {
 			memberBrief = m
 			goto MemberAdded
@@ -299,7 +300,7 @@ UserIdAddedToUserIDsField:
 		//	},
 		//},
 	}
-	params.TeamModuleEntry.Data.AddContact(member.ID, memberBrief)
+	params.SpaceModuleEntry.Data.AddContact(member.ID, memberBrief)
 MemberAdded:
 	switch memberBrief.UserID {
 	case "":
@@ -307,7 +308,7 @@ MemberAdded:
 		//memberBrief.UserID = uid
 		//updates = append(updates, dal.Update{
 		//	Field: "members",
-		//	Value: params.Team.Members,
+		//	Value: params.Space.Members,
 		//})
 	case uid: // Do nothing
 	default:

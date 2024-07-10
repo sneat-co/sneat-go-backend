@@ -416,11 +416,11 @@ func ValidEmptyOrder(t *testing.T) (order *dbo4logist.OrderDbo) {
 				UpdatedBy: modified.By,
 			},
 		},
-		WithTeamID: dbmodels2.WithTeamID{
-			TeamID: "team-1",
+		WithSpaceID: dbmodels2.WithSpaceID{
+			SpaceID: "space-1",
 		},
-		WithTeamIDs: dbmodels2.WithTeamIDs{
-			TeamIDs: []string{"team-1", "team-2"},
+		WithSpaceIDs: dbmodels2.WithSpaceIDs{
+			SpaceIDs: []string{"space-1", "space-2"},
 		},
 		WithUserIDs: dbmodels2.WithUserIDs{
 			UserIDs: []string{"user-1", "user-2"},

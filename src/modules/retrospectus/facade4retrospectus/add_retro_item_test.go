@@ -19,15 +19,15 @@ func TestAddRetroItem(t *testing.T) {
 	userContext := facade.NewUser("user1")
 	t.Run("should_succeed", func(t *testing.T) {
 		t.Run("upcoming_retrospective", func(t *testing.T) {
-			newTeamKey = func(id string) *dal.Key {
-				return dal.NewKeyWithID(dal4teamus.TeamsCollection, id)
+			newSpaceKey = func(id string) *dal.Key {
+				return dal.NewKeyWithID(dal4teamus.SpacesCollection, id)
 			}
 
 			request := AddRetroItemRequest{
 				RetroItemRequest: RetroItemRequest{
 					Request: facade4meetingus.Request{
-						TeamRequest: dto4teamus.TeamRequest{
-							TeamID: "team1",
+						SpaceRequest: dto4teamus.SpaceRequest{
+							SpaceID: "space1",
 						},
 						MeetingID: UpcomingRetrospectiveID,
 					},

@@ -26,9 +26,9 @@ func CreateAsset(ctx context.Context, user facade.User, request dto4assetus.Crea
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4teamus.CreateTeamItem(ctx, user,
-		request.TeamRequest, const4assetus.ModuleID, new(dbo4assetus.AssetusTeamDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4assetus.AssetusTeamDbo]) (err error) {
+	err = dal4teamus.CreateSpaceItem(ctx, user,
+		request.SpaceRequest, const4assetus.ModuleID, new(dbo4assetus.AssetusSpaceDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleSpaceWorkerParams[*dbo4assetus.AssetusSpaceDbo]) (err error) {
 			if err = params.GetRecords(ctx, tx); err != nil {
 				return err
 			}
@@ -43,14 +43,14 @@ func createAssetTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	request dto4assetus.CreateAssetRequest,
-	params *dal4teamus.ModuleTeamWorkerParams[*dbo4assetus.AssetusTeamDbo],
+	params *dal4teamus.ModuleSpaceWorkerParams[*dbo4assetus.AssetusSpaceDbo],
 ) (
 	response CreateAssetResponse, err error,
 ) {
-	asset := dal4assetus.NewAssetEntry(request.TeamRequest.TeamID, random.ID(8)) // TODO: use DALgo random ID generator
+	asset := dal4assetus.NewAssetEntry(request.SpaceRequest.SpaceID, random.ID(8)) // TODO: use DALgo random ID generator
 	asset.Data.AssetBaseDbo = request.Asset
 	asset.Data.UserIDs = []string{params.UserID}
-	asset.Data.TeamIDs = []string{request.TeamRequest.TeamID}
+	asset.Data.SpaceIDs = []string{request.SpaceRequest.SpaceID}
 	//asset.Data.ContactIDs = []string{"*"}
 	asset.Data.WithModified = dbmodels.NewWithModified(params.Started, params.UserID)
 
@@ -71,21 +71,21 @@ func createAssetTx(
 		return
 	}
 
-	var assetusTeamModuleUpdates []dal.Update
-	if assetusTeamModuleUpdates, err = params.TeamModuleEntry.Data.AddAssetBrief(asset.ID, assetBrief); err != nil {
+	var assetusSpaceModuleUpdates []dal.Update
+	if assetusSpaceModuleUpdates, err = params.SpaceModuleEntry.Data.AddAssetBrief(asset.ID, assetBrief); err != nil {
 		return
 	}
 
-	if err = params.TeamModuleEntry.Data.Validate(); err != nil {
+	if err = params.SpaceModuleEntry.Data.Validate(); err != nil {
 		return response, fmt.Errorf("assetus team module record is not valid before saving to db: %w", err)
 	}
 
-	if params.TeamModuleEntry.Record.Exists() {
-		if err = tx.Update(ctx, params.TeamModuleEntry.Record.Key(), assetusTeamModuleUpdates); err != nil {
+	if params.SpaceModuleEntry.Record.Exists() {
+		if err = tx.Update(ctx, params.SpaceModuleEntry.Record.Key(), assetusSpaceModuleUpdates); err != nil {
 			return
 		}
 	} else {
-		if err = tx.Insert(ctx, params.TeamModuleEntry.Record); err != nil {
+		if err = tx.Insert(ctx, params.SpaceModuleEntry.Record); err != nil {
 			return
 		}
 	}

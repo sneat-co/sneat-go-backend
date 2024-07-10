@@ -14,7 +14,7 @@ import (
 
 // CreateContactRequest DTO
 type CreateContactRequest struct {
-	dto4teamus.TeamRequest
+	dto4teamus.SpaceRequest
 	with.RolesField
 	ParentContactID string                       `json:"parentContactID,omitempty"`
 	Type            briefs4contactus.ContactType `json:"type"`
@@ -37,7 +37,7 @@ type CreateContactRequest struct {
 }
 
 func (v CreateContactRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
 	switch v.Status {

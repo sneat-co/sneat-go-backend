@@ -6,6 +6,6 @@ import (
 )
 
 type CreateAssetRequest struct {
-	dto4teamus.TeamRequest
+	dto4teamus.SpaceRequest
 	Asset dbo4assetus.AssetBaseDbo `json:"asset"`
 }

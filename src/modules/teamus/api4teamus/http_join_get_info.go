@@ -8,10 +8,8 @@ import (
 	"net/http"
 )
 
-var getTeamJoinInfo = facade4invitus.GetTeamJoinInfo
-
-// httpPostGetTeamJoinInfo is an API endpoint that return team info for user willing to join
-func httpPostGetTeamJoinInfo(w http.ResponseWriter, r *http.Request) {
+// httpPostGetSpaceJoinInfo is an API endpoint that return team info for user willing to join
+func httpPostGetSpaceJoinInfo(w http.ResponseWriter, r *http.Request) {
 	ctx, err := apicore.VerifyRequest(w, r, verify.DefaultJsonWithNoAuthRequired)
 	if err != nil {
 		httpserver.HandleError(ctx, err, "VerifyRequest", w, r)
@@ -26,11 +24,11 @@ func httpPostGetTeamJoinInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var response facade4invitus.JoinInfoResponse
-	if response, err = getTeamJoinInfo(ctx, request); err != nil {
+	if response, err = facade4invitus.GetSpaceJoinInfo(ctx, request); err != nil {
 		return
 		//} else {
-		//	for i, m := range response.TeamID.Members {
-		//		response.TeamID.Members[i] = &briefs4memberus.MemberBrief{
+		//	for i, m := range response.SpaceID.Members {
+		//		response.SpaceID.Members[i] = &briefs4memberus.MemberBrief{
 		//			MemberBase: briefs4memberus.MemberBase{
 		//				ContactBaseWithUserID: dbmodels.ContactBaseWithUserID{
 		//					Title:  m.Title,

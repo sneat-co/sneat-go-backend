@@ -19,61 +19,61 @@ import (
 	"github.com/strongo/slice"
 )
 
-// SetLogistTeamSettings sets team settings for logistus module
-func SetLogistTeamSettings(
+// SetLogistSpaceSettings sets team settings for logistus module
+func SetLogistSpaceSettings(
 	ctx context.Context,
 	userContext facade.User,
-	request dto4logist.SetLogistTeamSettingsRequest,
+	request dto4logist.SetLogistSpaceSettingsRequest,
 ) error {
 	if err := request.Validate(); err != nil {
 		return err
 	}
-	return dal4teamus.RunModuleTeamWorker(ctx, userContext, request.TeamRequest,
+	return dal4teamus.RunModuleSpaceWorker(ctx, userContext, request.SpaceRequest,
 		const4logistus.ModuleID,
-		new(dbo4logist.LogistTeamDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4teamus.ModuleTeamWorkerParams[*dbo4logist.LogistTeamDbo]) (err error) {
-			return setLogistTeamSettingsTx(ctx /*userContext,*/, request, tx, teamWorkerParams)
+		new(dbo4logist.LogistSpaceDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4teamus.ModuleSpaceWorkerParams[*dbo4logist.LogistSpaceDbo]) (err error) {
+			return setLogistSpaceSettingsTx(ctx /*userContext,*/, request, tx, teamWorkerParams)
 		},
 	)
 }
 
-func setLogistTeamSettingsTx(
+func setLogistSpaceSettingsTx(
 	ctx context.Context,
 	//userContext facade.User,
-	request dto4logist.SetLogistTeamSettingsRequest,
+	request dto4logist.SetLogistSpaceSettingsRequest,
 	tx dal.ReadwriteTransaction,
-	workerParams *dal4teamus.ModuleTeamWorkerParams[*dbo4logist.LogistTeamDbo],
+	workerParams *dal4teamus.ModuleSpaceWorkerParams[*dbo4logist.LogistSpaceDbo],
 ) (err error) {
-	if workerParams.Team.Data.CountryID != request.Address.CountryID {
-		workerParams.Team.Data.CountryID = request.Address.CountryID
-		workerParams.TeamUpdates = append(workerParams.TeamUpdates, dal.Update{
+	if workerParams.Space.Data.CountryID != request.Address.CountryID {
+		workerParams.Space.Data.CountryID = request.Address.CountryID
+		workerParams.SpaceUpdates = append(workerParams.SpaceUpdates, dal.Update{
 			Field: "countryID",
 			Value: request.Address.CountryID,
 		})
 	}
 
-	logistTeam := dbo4logist.NewLogistTeamEntry(request.TeamID)
-	if err = tx.Get(ctx, logistTeam.Record); err != nil {
+	logistSpace := dbo4logist.NewLogistSpaceEntry(request.SpaceID)
+	if err = tx.Get(ctx, logistSpace.Record); err != nil {
 		if !dal.IsNotFound(err) {
 			return err
 		}
-	} else if err = logistTeam.Data.Validate(); err != nil {
+	} else if err = logistSpace.Data.Validate(); err != nil {
 		return fmt.Errorf("loaded logistus team recod is not valid: %w", err)
 	}
 	var teamContact dal4contactus.ContactEntry
-	if teamContact, err = facade4contactus.GetContactByID(ctx, tx, logistTeam.ID, request.TeamID); err != nil {
+	if teamContact, err = facade4contactus.GetContactByID(ctx, tx, logistSpace.ID, request.SpaceID); err != nil {
 		if !dal.IsNotFound(err) {
 			return fmt.Errorf("failed to get contact record: %w", err)
 		}
 	}
 	if dal.IsNotFound(err) {
 		createContactRequest := dto4contactus.CreateContactRequest{
-			Status:      "active",
-			ContactID:   request.TeamID,
-			Type:        briefs4contactus.ContactTypeCompany,
-			TeamRequest: request.TeamRequest,
+			Status:       "active",
+			ContactID:    request.SpaceID,
+			Type:         briefs4contactus.ContactTypeCompany,
+			SpaceRequest: request.SpaceRequest,
 			Company: &dto4contactus.CreateCompanyRequest{
-				Title:     workerParams.Team.Data.Title,
+				Title:     workerParams.Space.Data.Title,
 				VATNumber: request.VATNumber,
 				Address:   &request.Address,
 			},
@@ -82,9 +82,9 @@ func setLogistTeamSettingsTx(
 			createContactRequest.Roles = append(createContactRequest.Roles, string(role))
 		}
 
-		contactusWorkerParams := &dal4teamus.ModuleTeamWorkerParams[*models4contactus.ContactusTeamDbo]{
-			TeamWorkerParams: workerParams.TeamWorkerParams,
-			TeamModuleEntry:  dal4contactus.NewContactusTeamModuleEntry(request.TeamID),
+		contactusWorkerParams := &dal4teamus.ModuleSpaceWorkerParams[*models4contactus.ContactusSpaceDbo]{
+			SpaceWorkerParams: workerParams.SpaceWorkerParams,
+			SpaceModuleEntry:  dal4contactus.NewContactusSpaceModuleEntry(request.SpaceID),
 		}
 
 		if teamContact, err = facade4contactus.CreateContactTx(ctx, tx, false, createContactRequest, contactusWorkerParams); err != nil {
@@ -94,8 +94,8 @@ func setLogistTeamSettingsTx(
 	} else if contactUpdates := updateContact(teamContact.Data, request); len(contactUpdates) > 0 {
 		request := dto4contactus.UpdateContactRequest{
 			ContactRequest: dto4contactus.ContactRequest{
-				ContactID:   teamContact.ID,
-				TeamRequest: dto4teamus.TeamRequest{TeamID: request.TeamID},
+				ContactID:    teamContact.ID,
+				SpaceRequest: dto4teamus.SpaceRequest{SpaceID: request.SpaceID},
 			},
 			VatNumber: &request.VATNumber,
 		}
@@ -105,50 +105,50 @@ func setLogistTeamSettingsTx(
 		}
 	}
 
-	updates := updateLogistTeam(logistTeam.Data, workerParams.Team.Data, teamContact, request)
+	updates := updateLogistSpace(logistSpace.Data, workerParams.Space.Data, teamContact, request)
 
 	if len(updates) > 0 {
-		if err = logistTeam.Data.Validate(); err != nil {
+		if err = logistSpace.Data.Validate(); err != nil {
 			return fmt.Errorf("logistus team recod is not valid before saving: %w", err)
 		}
-		if logistTeam.Record.Exists() {
-			if err = tx.Update(ctx, logistTeam.Key, updates); err != nil {
+		if logistSpace.Record.Exists() {
+			if err = tx.Update(ctx, logistSpace.Key, updates); err != nil {
 				return fmt.Errorf("failed to update logistus team record: %w", err)
 			}
-		} else if err = tx.Insert(ctx, logistTeam.Record); err != nil {
+		} else if err = tx.Insert(ctx, logistSpace.Record); err != nil {
 			return fmt.Errorf("failed to insert logistus team record: %w", err)
 		}
 	}
 	return nil
 }
 
-func updateLogistTeam(logistTeamDto *dbo4logist.LogistTeamDbo, teamDto *dbo4teamus.TeamDbo, teamContact dal4contactus.ContactEntry, request dto4logist.SetLogistTeamSettingsRequest) (updates []dal.Update) {
-	if logistTeamDto.ContactID != teamContact.ID {
-		logistTeamDto.ContactID = teamContact.ID
+func updateLogistSpace(logistSpaceDbo *dbo4logist.LogistSpaceDbo, spaceDbo *dbo4teamus.SpaceDbo, teamContact dal4contactus.ContactEntry, request dto4logist.SetLogistSpaceSettingsRequest) (updates []dal.Update) {
+	if logistSpaceDbo.ContactID != teamContact.ID {
+		logistSpaceDbo.ContactID = teamContact.ID
 		updates = append(updates, dal.Update{Field: "contactID", Value: teamContact.ID})
 	}
 	if request.OrderNumberPrefix != "" {
-		logistTeamDto.OrderNumberPrefix = request.OrderNumberPrefix
+		logistSpaceDbo.OrderNumberPrefix = request.OrderNumberPrefix
 		updates = append(updates, dal.Update{Field: "orderNumberPrefix", Value: request.OrderNumberPrefix})
 	}
-	if dbo4logist.RolesChanged(logistTeamDto.Roles, request.Roles) {
-		logistTeamDto.Roles = dbo4logist.ConvertLogistTeamRolesToStringSlice(request.Roles)
+	if dbo4logist.RolesChanged(logistSpaceDbo.Roles, request.Roles) {
+		logistSpaceDbo.Roles = dbo4logist.ConvertLogistSpaceRolesToStringSlice(request.Roles)
 		updates = append(updates, dal.Update{Field: "roles", Value: request.Roles})
 	}
-	if !slice.SameUniqueValues(logistTeamDto.UserIDs, teamDto.UserIDs) {
-		logistTeamDto.UserIDs = teamDto.UserIDs
-		updates = append(updates, dal.Update{Field: "userIDs", Value: teamDto.UserIDs})
+	if !slice.SameUniqueValues(logistSpaceDbo.UserIDs, spaceDbo.UserIDs) {
+		logistSpaceDbo.UserIDs = spaceDbo.UserIDs
+		updates = append(updates, dal.Update{Field: "userIDs", Value: spaceDbo.UserIDs})
 	}
 	return updates
 }
 
-func updateContact(contactDto *models4contactus.ContactDbo, request dto4logist.SetLogistTeamSettingsRequest) (updates []dal.Update) {
+func updateContact(contactDto *models4contactus.ContactDbo, request dto4logist.SetLogistSpaceSettingsRequest) (updates []dal.Update) {
 	if contactDto.VATNumber != request.VATNumber {
 		contactDto.VATNumber = request.VATNumber
 		updates = append(updates, dal.Update{Field: "vatNumber", Value: request.VATNumber})
 	}
 	if dbo4logist.RolesChanged(contactDto.Roles, request.Roles) {
-		contactDto.Roles = dbo4logist.ConvertLogistTeamRolesToStringSlice(request.Roles)
+		contactDto.Roles = dbo4logist.ConvertLogistSpaceRolesToStringSlice(request.Roles)
 		updates = append(updates, dal.Update{Field: "roles", Value: request.Roles})
 	}
 	return

@@ -5,7 +5,7 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "teamIDs",
+          "fieldPath": "spaceIDs",
           "arrayConfig": "CONTAINS"
         },
         {
@@ -23,7 +23,7 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "teamIDs",
+          "fieldPath": "spaceIDs",
           "arrayConfig": "CONTAINS"
         },
         {
@@ -41,7 +41,7 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "teamDates",
+          "fieldPath": "spaceDates",
           "arrayConfig": "CONTAINS"
         },
         {
@@ -58,22 +58,22 @@
       "indexes": []
     },
     {
-      "collectionGroup": "teams",
+      "collectionGroup": "spaces",
       "fieldPath": "title",
       "indexes": []
     },
     {
-      "collectionGroup": "team_assets",
+      "collectionGroup": "space_assets",
       "fieldPath": "title",
       "indexes": []
     },
     {
-      "collectionGroup": "team_contacts",
+      "collectionGroup": "space_contacts",
       "fieldPath": "title",
       "indexes": []
     },
     {
-      "collectionGroup": "team_members",
+      "collectionGroup": "space_members",
       "fieldPath": "title",
       "indexes": []
     },

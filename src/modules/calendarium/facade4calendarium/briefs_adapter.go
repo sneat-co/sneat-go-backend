@@ -31,7 +31,7 @@ package facade4calendarium
 //
 //	getListGroup := func(team *dbo4teamus.TeamDto) *dbo4listus.ListGroup {
 //		if team == nil {
-//			panic("team == nil")
+//			panic("space == nil")
 //		}
 //		if team == teamCache && listGroupCache != nil {
 //			return listGroupCache

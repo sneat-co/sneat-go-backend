@@ -21,11 +21,11 @@ func (v *CalendarHappeningBrief) Validate() error {
 	return nil
 }
 
-type CalendariumTeamDbo struct {
+type CalendariumSpaceDbo struct {
 	RecurringHappenings map[string]*CalendarHappeningBrief `json:"recurringHappenings,omitempty" firestore:"recurringHappenings,omitempty"`
 }
 
-func (v *CalendariumTeamDbo) Validate() error {
+func (v *CalendariumSpaceDbo) Validate() error {
 	for i, rh := range v.RecurringHappenings {
 		if err := rh.Validate(); err != nil {
 			return validation.NewErrBadRecordFieldValue("recurringHappenings", fmt.Errorf("invalid value at index %v: %w", i, err).Error())
@@ -38,6 +38,6 @@ func (v *CalendariumTeamDbo) Validate() error {
 	return nil
 }
 
-func (v *CalendariumTeamDbo) GetRecurringHappeningBrief(id string) *CalendarHappeningBrief {
+func (v *CalendariumSpaceDbo) GetRecurringHappeningBrief(id string) *CalendarHappeningBrief {
 	return v.RecurringHappenings[id]
 }

@@ -13,8 +13,8 @@ import (
 	"github.com/strongo/slice"
 )
 
-// RemoveTeamMember removes members from a team
-func RemoveTeamMember(ctx context.Context, user facade.User, request dto4contactus.ContactRequest) (err error) {
+// RemoveSpaceMember removes members from a team
+func RemoveSpaceMember(ctx context.Context, user facade.User, request dto4contactus.ContactRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return err
 	}
@@ -22,11 +22,11 @@ func RemoveTeamMember(ctx context.Context, user facade.User, request dto4contact
 		func(ctx context.Context, tx dal.ReadwriteTransaction,
 			params *dal4contactus.ContactWorkerParams,
 		) (err error) {
-			return removeTeamMemberTx(ctx, tx, request, params)
+			return removeSpaceMemberTx(ctx, tx, request, params)
 		})
 }
 
-func removeTeamMemberTx(
+func removeSpaceMemberTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	request dto4contactus.ContactRequest,
@@ -38,7 +38,7 @@ func removeTeamMemberTx(
 	}
 
 	if params.Contact.Record.Exists() {
-		if params.Contact.Data.RemoveRole(const4contactus.TeamMemberRoleMember) {
+		if params.Contact.Data.RemoveRole(const4contactus.SpaceMemberRoleMember) {
 			params.ContactUpdates = append(params.ContactUpdates, dal.Update{Field: "roles", Value: params.Contact.Data.Roles})
 		}
 	}
@@ -51,7 +51,7 @@ func removeTeamMemberTx(
 		return
 	}
 
-	removeMemberFromTeamRecord(params.TeamWorkerParams, memberUserID, membersCount)
+	removeMemberFromSpaceRecord(params.SpaceWorkerParams, memberUserID, membersCount)
 
 	if memberUserID != "" {
 		var (
@@ -62,7 +62,7 @@ func removeTeamMemberTx(
 			return
 		}
 
-		update := updateUserRecordOnTeamMemberRemoved(memberUser.Data, request.TeamID)
+		update := updateUserRecordOnSpaceMemberRemoved(memberUser.Data, request.SpaceID)
 		if update != nil {
 			if err = txUpdate(ctx, tx, userRef, []dal.Update{*update}); err != nil {
 				return err
@@ -72,26 +72,26 @@ func removeTeamMemberTx(
 	return
 }
 
-func updateUserRecordOnTeamMemberRemoved(user *dbo4userus.UserDbo, teamID string) *dal.Update {
-	delete(user.Teams, teamID)
-	user.TeamIDs = slice.RemoveInPlace(teamID, user.TeamIDs)
+func updateUserRecordOnSpaceMemberRemoved(user *dbo4userus.UserDbo, teamID string) *dal.Update {
+	delete(user.Spaces, teamID)
+	user.SpaceIDs = slice.RemoveInPlace(teamID, user.SpaceIDs)
 	return &dal.Update{
-		Field: "teams",
-		Value: user.Teams,
+		Field: "spaces",
+		Value: user.Spaces,
 	}
 }
 
-func removeMemberFromTeamRecord(
-	params *dal4teamus.TeamWorkerParams,
+func removeMemberFromSpaceRecord(
+	params *dal4teamus.SpaceWorkerParams,
 	contactUserID string,
 	membersCount int,
 ) {
-	if contactUserID != "" && slice.Contains(params.Team.Data.UserIDs, contactUserID) {
-		params.Team.Data.UserIDs = slice.RemoveInPlace(contactUserID, params.Team.Data.UserIDs)
-		params.TeamUpdates = append(params.TeamUpdates, dal.Update{Field: "userIDs", Value: params.Team.Data.UserIDs})
+	if contactUserID != "" && slice.Contains(params.Space.Data.UserIDs, contactUserID) {
+		params.Space.Data.UserIDs = slice.RemoveInPlace(contactUserID, params.Space.Data.UserIDs)
+		params.SpaceUpdates = append(params.SpaceUpdates, dal.Update{Field: "userIDs", Value: params.Space.Data.UserIDs})
 	}
-	//if params.Team.Data.NumberOf[dbo4teamus.NumberOfMembersFieldName] != membersCount {
-	//	params.TeamUpdates = append(params.TeamUpdates, params.Team.Data.SetNumberOf(dbo4teamus.NumberOfMembersFieldName, membersCount))
+	//if params.Space.Data.NumberOf[dbo4teamus.NumberOfMembersFieldName] != membersCount {
+	//	params.SpaceUpdates = append(params.SpaceUpdates, params.Space.Data.SetNumberOf(dbo4teamus.NumberOfMembersFieldName, membersCount))
 	//}
 }
 
@@ -99,20 +99,20 @@ func removeContactBrief(
 	params *dal4contactus.ContactWorkerParams,
 ) (contactUserID string, membersCount int, err error) {
 
-	for id, contactBrief := range params.TeamModuleEntry.Data.Contacts {
+	for id, contactBrief := range params.SpaceModuleEntry.Data.Contacts {
 		if id == params.Contact.ID {
-			params.TeamModuleUpdates = append(params.TeamModuleUpdates, params.TeamModuleEntry.Data.RemoveContact(id))
+			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, params.SpaceModuleEntry.Data.RemoveContact(id))
 			if contactBrief.UserID != "" {
 				contactUserID = contactBrief.UserID
-				userIDs := slice.RemoveInPlace(contactBrief.UserID, params.TeamModuleEntry.Data.UserIDs)
-				if len(userIDs) != len(params.TeamModuleEntry.Data.UserIDs) {
-					params.TeamModuleEntry.Data.UserIDs = userIDs
-					params.TeamModuleUpdates = append(params.TeamModuleUpdates, dal.Update{Field: "userIDs", Value: userIDs})
+				userIDs := slice.RemoveInPlace(contactBrief.UserID, params.SpaceModuleEntry.Data.UserIDs)
+				if len(userIDs) != len(params.SpaceModuleEntry.Data.UserIDs) {
+					params.SpaceModuleEntry.Data.UserIDs = userIDs
+					params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, dal.Update{Field: "userIDs", Value: userIDs})
 				}
 			}
 			break
 		}
 	}
-	membersCount = len(params.TeamModuleEntry.Data.GetContactBriefsByRoles(const4contactus.TeamMemberRoleMember))
+	membersCount = len(params.SpaceModuleEntry.Data.GetContactBriefsByRoles(const4contactus.SpaceMemberRoleMember))
 	return
 }

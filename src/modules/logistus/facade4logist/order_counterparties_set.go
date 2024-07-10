@@ -37,7 +37,7 @@ func setOrderCounterpartyTxWorker(
 	params *OrderWorkerParams,
 	request dto4logist.SetOrderCounterpartiesRequest,
 ) (orderCounterparties []*dbo4logist.OrderCounterparty, err error) {
-	if slice.Index(params.TeamWorkerParams.Team.Data.UserIDs, userID) < 0 {
+	if slice.Index(params.SpaceWorkerParams.Space.Data.UserIDs, userID) < 0 {
 		return nil, facade.ErrUnauthorized
 	}
 	order := params.Order
@@ -54,7 +54,7 @@ counterparties:
 				continue counterparties
 			}
 		}
-		contact := dal4contactus.NewContactEntry(request.TeamID, counterparty.ContactID)
+		contact := dal4contactus.NewContactEntry(request.SpaceID, counterparty.ContactID)
 		contacts = append(contacts, contact)
 		recordsToGet = append(recordsToGet, contact.Record)
 	}
@@ -208,7 +208,7 @@ func setOrderCounterpartyParent(
 	}
 	_, parentOrderContact := order.Dto.GetContactByID(parentID)
 	if parentOrderContact == nil {
-		parentContact := dal4contactus.NewContactEntry(order.Dto.TeamID, parentID)
+		parentContact := dal4contactus.NewContactEntry(order.Dto.SpaceID, parentID)
 		if err := tx.Get(ctx, parentContact.Record); err != nil {
 			return fmt.Errorf("failed to get parent contact record: %w", err)
 		}

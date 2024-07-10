@@ -23,7 +23,7 @@ func AddParticipantToHappening(ctx context.Context, user facade.User, request dt
 		return addParticipantToHappeningTxWorker(ctx, tx, params, request)
 	}
 
-	if err = dal4calendarium.RunHappeningTeamWorker(ctx, user, request.HappeningRequest, worker); err != nil {
+	if err = dal4calendarium.RunHappeningSpaceWorker(ctx, user, request.HappeningRequest, worker); err != nil {
 		return fmt.Errorf("failed to add participant to happening: %w", err)
 	}
 	return nil
@@ -40,17 +40,17 @@ func addParticipantToHappeningTxWorker(ctx context.Context, tx dal.ReadwriteTran
 		break // No special processing needed
 	case dbo4calendarium.HappeningTypeRecurring:
 		var updates []dal.Update
-		if updates, err = addContactToHappeningBriefInTeamDto(ctx, tx, params.TeamModuleEntry, params.Happening, request.Contact.ID); err != nil {
+		if updates, err = addContactToHappeningBriefInSpaceDbo(ctx, tx, params.SpaceModuleEntry, params.Happening, request.Contact.ID); err != nil {
 			return fmt.Errorf("failed to add member to happening brief in team DTO: %w", err)
 		}
-		params.TeamModuleUpdates = append(params.TeamModuleUpdates, updates...)
-		params.TeamModuleEntry.Record.MarkAsChanged()
+		params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, updates...)
+		params.SpaceModuleEntry.Record.MarkAsChanged()
 	default:
 		return fmt.Errorf("invalid happenning record: %w",
 			validation.NewErrBadRecordFieldValue("type",
 				fmt.Sprintf("unknown value: [%v]", params.Happening.Data.Type)))
 	}
-	contactFullRef := models4contactus.NewContactFullRef(request.TeamID, request.Contact.ID)
+	contactFullRef := models4contactus.NewContactFullRef(request.SpaceID, request.Contact.ID)
 	var updates []dal.Update
 	if updates, err = dbo4linkage.AddRelationshipAndID(
 		&params.Happening.Data.WithRelated,
@@ -70,15 +70,15 @@ func addParticipantToHappeningTxWorker(ctx context.Context, tx dal.ReadwriteTran
 	return err
 }
 
-func addContactToHappeningBriefInTeamDto(
+func addContactToHappeningBriefInSpaceDbo(
 	_ context.Context,
 	_ dal.ReadwriteTransaction,
-	calendariumTeam dal4calendarium.CalendariumTeamEntry,
+	calendariumSpace dal4calendarium.CalendariumSpaceEntry,
 	happening dbo4calendarium.HappeningEntry,
 	contactID string,
 ) (updates []dal.Update, err error) {
-	teamID := calendariumTeam.Key.Parent().ID.(string)
-	happeningBriefPointer := calendariumTeam.Data.GetRecurringHappeningBrief(happening.ID)
+	spaceID := calendariumSpace.Key.Parent().ID.(string)
+	happeningBriefPointer := calendariumSpace.Data.GetRecurringHappeningBrief(happening.ID)
 	var happeningBrief dbo4calendarium.HappeningBrief
 	if happeningBriefPointer == nil {
 		happeningBrief = happening.Data.HappeningBrief // Make copy so we do not affect the DTO object
@@ -87,7 +87,7 @@ func addContactToHappeningBriefInTeamDto(
 			WithRelated:    happening.Data.WithRelated,
 		}
 	}
-	contactRef := dbo4linkage.NewTeamModuleItemRef(teamID, const4contactus.ModuleID, const4contactus.ContactsCollection, contactID)
+	contactRef := dbo4linkage.NewSpaceModuleItemRef(spaceID, const4contactus.ModuleID, const4contactus.ContactsCollection, contactID)
 
 	updates, err = happeningBriefPointer.AddRelationship(
 		contactRef,
@@ -100,6 +100,6 @@ func addContactToHappeningBriefInTeamDto(
 		updates[i].Field = fmt.Sprintf("recurringHappenings.%s.%s", happening.ID, updates[i].Field)
 	}
 
-	calendariumTeam.Data.RecurringHappenings[happening.ID] = happeningBriefPointer
+	calendariumSpace.Data.RecurringHappenings[happening.ID] = happeningBriefPointer
 	return
 }

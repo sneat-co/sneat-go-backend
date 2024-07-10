@@ -22,30 +22,30 @@ import (
 func StartRetrospective(ctx context.Context, userContext facade.User, request StartRetrospectiveRequest) (response *RetrospectiveResponse, isNewRetrospective bool, err error) {
 	uid := userContext.GetID()
 
-	teamKey := newTeamKey(request.TeamID)
+	teamKey := newSpaceKey(request.SpaceID)
 
 	retrospective := new(dbo4retrospectus.Retrospective)
 
-	err = dal4contactus.RunContactusTeamWorker(ctx, userContext, request.TeamRequest,
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusTeamWorkerParams) (err error) {
-			team := params.Team
+	err = dal4contactus.RunContactusSpaceWorker(ctx, userContext, request.SpaceRequest,
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) (err error) {
+			team := params.Space
 
-			if err := tx.GetMulti(ctx, []dal.Record{params.Team.Record, params.TeamModuleEntry.Record}); err != nil {
+			if err := tx.GetMulti(ctx, []dal.Record{params.Space.Record, params.SpaceModuleEntry.Record}); err != nil {
 				return err
 			}
 
-			if !params.Team.Data.HasUserID(uid) {
+			if !params.Space.Data.HasUserID(uid) {
 				return errors.New("current user does not belong to team (uid is missing in team.userIDs)")
 			}
-			if !params.TeamModuleEntry.Data.HasUserID(uid) {
-				return errors.New("current user does not belong to team (uid is missing in contactusTeam.userIDs)")
+			if !params.SpaceModuleEntry.Data.HasUserID(uid) {
+				return errors.New("current user does not belong to team (uid is missing in contactusSpace.userIDs)")
 			}
-			if _, b := params.TeamModuleEntry.Data.GetContactBriefByUserID(uid); b == nil {
-				return errors.New("current user does not have contact brief in contactusTeam.Data.Contacts")
+			if _, b := params.SpaceModuleEntry.Data.GetContactBriefByUserID(uid); b == nil {
+				return errors.New("current user does not have contact brief in contactusSpace.Data.Contacts")
 			}
 
-			var retroTeam dal4retrospectus.RetroTeam
-			retroTeam, err = dal4retrospectus.GetRetroTeam(ctx, tx, request.TeamID)
+			var retroSpace dal4retrospectus.RetroSpaceEntry
+			retroSpace, err = dal4retrospectus.GetRetroSpaceEntry(ctx, tx, request.SpaceID)
 			if err != nil && !dal.IsNotFound(err) {
 				return err
 			}
@@ -53,25 +53,25 @@ func StartRetrospective(ctx context.Context, userContext facade.User, request St
 			teamChanged := false // All reads should be before any write in transaction
 			if request.MeetingID == UpcomingRetrospectiveID {
 				var activeRetroID string
-				if retroTeam.Data.Active != nil {
-					activeRetroID = retroTeam.Data.Active.ID
+				if retroSpace.Data.Active != nil {
+					activeRetroID = retroSpace.Data.Active.ID
 				}
 				if activeRetroID == "" {
 					request.MeetingID = params.Started.Format("2006-01-02")
 
-					retroTeam.Data.Active = &dbo4teamus.TeamMeetingInfo{
+					retroSpace.Data.Active = &dbo4teamus.SpaceMeetingInfo{
 						ID:      request.MeetingID,
 						Started: &params.Started,
 					}
-					retroTeam.Data.UpcomingRetro = nil
+					retroSpace.Data.UpcomingRetro = nil
 					teamChanged = true
 				} else {
 					request.MeetingID = activeRetroID
 				}
-			} else if activeRetrospective := retroTeam.Data.ActiveRetro(); activeRetrospective.ID == request.MeetingID {
+			} else if activeRetrospective := retroSpace.Data.ActiveRetro(); activeRetrospective.ID == request.MeetingID {
 				return nil
 			} else if activeRetrospective.ID == "" {
-				retroTeam.Data.Active = &dbo4teamus.TeamMeetingInfo{
+				retroSpace.Data.Active = &dbo4teamus.SpaceMeetingInfo{
 					ID:      request.MeetingID,
 					Started: &params.Started,
 				}
@@ -113,14 +113,14 @@ func StartRetrospective(ctx context.Context, userContext facade.User, request St
 
 			var usersWithRetroItems map[string]userRetroItems
 
-			if isNewRetrospective && retroTeam.Data.UpcomingRetro != nil {
-				if usersWithRetroItems, err = getUsersWithRetroItems(ctx, tx, team, retroTeam); err != nil {
+			if isNewRetrospective && retroSpace.Data.UpcomingRetro != nil {
+				if usersWithRetroItems, err = getUsersWithRetroItems(ctx, tx, team, retroSpace); err != nil {
 					return err
 				}
 			}
 
 			if teamChanged { // All reads should be before any write in transaction
-				if err = txUpdateTeam(ctx, tx, params.Started, team, []dal.Update{
+				if err = txUpdateSpace(ctx, tx, params.Started, team, []dal.Update{
 					{Field: "activeMeetings.retrospective", Value: request.MeetingID},
 				}); err != nil {
 					return err
@@ -146,7 +146,7 @@ func StartRetrospective(ctx context.Context, userContext facade.User, request St
 						MaxVotesPerUser: dbo4retrospectus.DefaultMaxVotesPerUser,
 					},
 				}
-				for contactID, contact := range params.TeamModuleEntry.Data.GetContactBriefsByRoles(const4contactus.TeamMemberRoleMember) {
+				for contactID, contact := range params.SpaceModuleEntry.Data.GetContactBriefsByRoles(const4contactus.SpaceMemberRoleMember) {
 					retrospective.AddContact(team.ID, contactID, &dbo4meetingus.MeetingMemberBrief{
 						ContactBrief: *contact,
 					})
@@ -212,11 +212,11 @@ type userRetroItems struct {
 	byType dbo4retrospectus.RetroItemsByType
 }
 
-func getUsersWithRetroItems(ctx context.Context, tx dal.ReadwriteTransaction, team dal4teamus.TeamEntry, retroTeam dal4retrospectus.RetroTeam) (usersWithRetroItemByUserID map[string]userRetroItems, err error) {
+func getUsersWithRetroItems(ctx context.Context, tx dal.ReadwriteTransaction, team dal4teamus.SpaceEntry, retroSpace dal4retrospectus.RetroSpaceEntry) (usersWithRetroItemByUserID map[string]userRetroItems, err error) {
 	teamUsersCount := len(team.Data.UserIDs)
 	usersWithRetroItemByUserID = make(map[string]userRetroItems, teamUsersCount)
 	userIDs := make([]string, 0, teamUsersCount)
-	for userID := range retroTeam.Data.UpcomingRetro.ItemsByUserAndType {
+	for userID := range retroSpace.Data.UpcomingRetro.ItemsByUserAndType {
 		userIDs = append(userIDs, userID)
 	}
 	userKeys := dbo4userus.NewUserKeys(userIDs)
@@ -234,7 +234,7 @@ func getUsersWithRetroItems(ctx context.Context, tx dal.ReadwriteTransaction, te
 		if !userRecord.Exists() {
 			continue
 		}
-		teamInfo := users[i].GetUserTeamInfoByID(team.ID)
+		teamInfo := users[i].GetUserSpaceInfoByID(team.ID)
 		if teamInfo == nil {
 			continue
 		}

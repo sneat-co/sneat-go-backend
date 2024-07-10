@@ -9,13 +9,13 @@ import (
 
 // ContactRequest defines a request for a single contact
 type ContactRequest struct {
-	dto4teamus.TeamRequest
+	dto4teamus.SpaceRequest
 	ContactID string `json:"contactID"`
 }
 
 // Validate returns error if request is invalid
 func (v ContactRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
 	if strings.TrimSpace(v.ContactID) == "" {
@@ -26,13 +26,13 @@ func (v ContactRequest) Validate() error {
 
 // ContactsRequest defines a request for a single contact
 type ContactsRequest struct {
-	dto4teamus.TeamRequest
+	dto4teamus.SpaceRequest
 	ContactIDs []string `json:"contactIDs"`
 }
 
 // Validate returns error if request is invalid
 func (v ContactsRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
 	if len(v.ContactIDs) == 0 {

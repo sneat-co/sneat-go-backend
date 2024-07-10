@@ -7,16 +7,16 @@ import (
 	"strings"
 )
 
-var _ facade.Request = (*CreateTeamRequest)(nil)
+var _ facade.Request = (*CreateSpaceRequest)(nil)
 
-// CreateTeamRequest request
-type CreateTeamRequest struct {
-	Type  core4teamus.TeamType `json:"type"`
-	Title string               `json:"title,omitempty"`
+// CreateSpaceRequest request
+type CreateSpaceRequest struct {
+	Type  core4teamus.SpaceType `json:"type"`
+	Title string                `json:"title,omitempty"`
 }
 
 // Validate validates request
-func (request *CreateTeamRequest) Validate() error {
+func (request *CreateSpaceRequest) Validate() error {
 	if strings.TrimSpace(string(request.Type)) == "" {
 		return validation.NewErrRecordIsMissingRequiredField("type")
 	}
@@ -26,5 +26,5 @@ func (request *CreateTeamRequest) Validate() error {
 	return nil
 }
 
-// CreateTeamResponse response
-type CreateTeamResponse = TeamResponse
+// CreateSpaceResponse response
+type CreateSpaceResponse = SpaceResponse

@@ -14,10 +14,10 @@ func httpPostAddMetric(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	var request facade4teamus.AddTeamMetricRequest
-	if request.TeamID = r.URL.Query().Get("id"); strings.TrimSpace(request.TeamID) == "" {
+	var request facade4teamus.AddSpaceMetricRequest
+	if request.SpaceID = r.URL.Query().Get("id"); strings.TrimSpace(request.SpaceID) == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("team 'id' should be passed as query parameter"))
+		_, _ = w.Write([]byte("space 'id' should be passed as query parameter"))
 		return
 	}
 	if err = apicore.DecodeRequestBody(w, r, &request); err != nil {

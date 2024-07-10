@@ -43,7 +43,7 @@ func TestDeleteContainerPoints(t *testing.T) {
 					ShippingPointIDs: []string{mocks4logist.ShippingPoint1WithSingleContainerID},
 				},
 				params: OrderWorkerParams{
-					Order: dbo4logist.NewOrderWithData("team1", "order1",
+					Order: dbo4logist.NewOrderWithData("space1", "order1",
 						mocks4logist.ValidOrderDto1(t)),
 				},
 			},
@@ -66,7 +66,7 @@ func TestDeleteContainerPoints(t *testing.T) {
 					ShippingPointIDs: []string{mocks4logist.ShippingPoint2With2ContainersID},
 				},
 				params: OrderWorkerParams{
-					Order: dbo4logist.NewOrderWithData("team1", "order1",
+					Order: dbo4logist.NewOrderWithData("space1", "order1",
 						mocks4logist.ValidOrderDto1(t)),
 				},
 			},

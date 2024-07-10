@@ -87,11 +87,11 @@ func TestCreateTransfer(t *testing.T) {
 		dueOn := time.Now().Add(time.Minute)
 
 		request := dto.CreateTransferRequest{
-			TeamRequest: dto4teamus.TeamRequest{},
-			Amount:      money.NewAmount(currency, 10),
-			DueOn:       &dueOn,
-			Interest:    &interest,
-			IsReturn:    false,
+			SpaceRequest: dto4teamus.SpaceRequest{},
+			Amount:       money.NewAmount(currency, 10),
+			DueOn:        &dueOn,
+			Interest:     &interest,
+			IsReturn:     false,
 		}
 		newTransfer := dto.NewTransferInput(
 			strongoapp.LocalHostEnv,
@@ -425,7 +425,7 @@ func testCreateTransfer(t *testing.T, testCase createTransferTestCase) {
 		}
 
 		request := dto.CreateTransferRequest{
-			TeamRequest:        dto4teamus.TeamRequest{},
+			SpaceRequest:       dto4teamus.SpaceRequest{},
 			IsReturn:           step.input.isReturn,
 			ReturnToTransferID: step.input.returnToTransferID,
 			Amount:             money.NewAmount(currency, step.input.amount),

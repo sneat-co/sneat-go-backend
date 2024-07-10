@@ -14,13 +14,13 @@ import (
 
 // GetPersonalInviteRequest holds parameters for creating a personal invite
 type GetPersonalInviteRequest struct {
-	dto4teamus.TeamRequest
+	dto4teamus.SpaceRequest
 	InviteID string `json:"inviteID"`
 }
 
 // Validate validates request
 func (v *GetPersonalInviteRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
 	if v.InviteID == "" {
@@ -38,7 +38,7 @@ type PersonalInviteResponse struct {
 	Members map[string]*briefs4contactus.ContactBrief `json:"members,omitempty"`
 }
 
-func getPersonalInviteRecords(ctx context.Context, getter dal.ReadSession, params *dal4contactus.ContactusTeamWorkerParams, inviteID, memberID string) (
+func getPersonalInviteRecords(ctx context.Context, getter dal.ReadSession, params *dal4contactus.ContactusSpaceWorkerParams, inviteID, memberID string) (
 	invite PersonalInviteEntry,
 	member dal4contactus.ContactEntry,
 	err error,
@@ -51,16 +51,16 @@ func getPersonalInviteRecords(ctx context.Context, getter dal.ReadSession, param
 
 	records := []dal.Record{invite.Record}
 	if memberID != "" {
-		member = dal4contactus.NewContactEntry(params.Team.ID, memberID)
+		member = dal4contactus.NewContactEntry(params.Space.ID, memberID)
 		records = append(records, member.Record)
 	}
 	if err = params.GetRecords(ctx, getter, records...); err != nil {
 		return
 	}
-	if !params.TeamModuleEntry.Record.Exists() {
-		err = validation.NewErrBadRequestFieldValue("teamID",
-			fmt.Sprintf("contactusTeam record not found by key=%v: record.Error=%v",
-				params.TeamModuleEntry.Key, params.TeamModuleEntry.Record.Error()),
+	if !params.SpaceModuleEntry.Record.Exists() {
+		err = validation.NewErrBadRequestFieldValue("spaceID",
+			fmt.Sprintf("contactusSpace record not found by key=%v: record.Error=%v",
+				params.SpaceModuleEntry.Key, params.SpaceModuleEntry.Record.Error()),
 		)
 		return
 	}
@@ -84,7 +84,7 @@ func GetPersonal(ctx context.Context, user facade.User, request GetPersonalInvit
 	if err = request.Validate(); err != nil {
 		return
 	}
-	return response, dal4contactus.RunReadonlyContactusTeamWorker(ctx, user, request.TeamRequest, func(ctx context.Context, tx dal.ReadTransaction, params *dal4contactus.ContactusTeamWorkerParams) error {
+	return response, dal4contactus.RunReadonlyContactusSpaceWorker(ctx, user, request.SpaceRequest, func(ctx context.Context, tx dal.ReadTransaction, params *dal4contactus.ContactusSpaceWorkerParams) error {
 		invite, _, err := getPersonalInviteRecords(ctx, tx, params, request.InviteID, "")
 		if err != nil {
 			return err
@@ -92,10 +92,10 @@ func GetPersonal(ctx context.Context, user facade.User, request GetPersonalInvit
 		invite.Data.Pin = "" // Hide PIN code from visitor
 		response = PersonalInviteResponse{
 			Invite:  invite.Data,
-			Members: make(map[string]*briefs4contactus.ContactBrief, len(params.TeamModuleEntry.Data.Contacts)),
+			Members: make(map[string]*briefs4contactus.ContactBrief, len(params.SpaceModuleEntry.Data.Contacts)),
 		}
 		// TODO: Is this is a security breach in current implementation?
-		//for id, contact := range contactusTeam.Data.Contacts {
+		//for id, contact := range contactusSpace.Data.Contacts {
 		//	response.Members[id] = contact
 		//}
 		return nil

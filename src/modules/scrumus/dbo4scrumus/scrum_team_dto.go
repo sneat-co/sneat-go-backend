@@ -4,15 +4,15 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
 )
 
-// ScrumTeamDto is a DTO for scrum team
-type ScrumTeamDto struct {
-	ScrumSettings *ScrumSettings              `json:"scrumSettings,omitempty" firestore:"scrumSettings,omitempty"`
-	Active        *dbo4teamus.TeamMeetingInfo `json:"active,omitempty" firestore:"active,omitempty"`
-	Last          *dbo4teamus.TeamMeetingInfo `json:"last,omitempty" firestore:"last,omitempty"`
+// ScrumSpaceDto is a DTO for scrum team
+type ScrumSpaceDto struct {
+	ScrumSettings *ScrumSettings               `json:"scrumSettings,omitempty" firestore:"scrumSettings,omitempty"`
+	Active        *dbo4teamus.SpaceMeetingInfo `json:"active,omitempty" firestore:"active,omitempty"`
+	Last          *dbo4teamus.SpaceMeetingInfo `json:"last,omitempty" firestore:"last,omitempty"`
 }
 
 // Validate returns error if not valid
-func (v ScrumTeamDto) Validate() error {
+func (v ScrumSpaceDto) Validate() error {
 	if v.ScrumSettings != nil {
 		if err := v.ScrumSettings.Validate(); err != nil {
 			return err

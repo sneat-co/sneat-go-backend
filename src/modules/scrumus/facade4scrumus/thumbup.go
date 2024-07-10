@@ -22,7 +22,7 @@ func ThumbUp(ctx context.Context, userContext facade.User, request ThumbUpReques
 		return
 	}
 
-	//err = facade4contactus.RunContactusTeamWorker(ctx, userContext, request.TeamRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *facade4contactus.ContactusTeamWorkerParams) (err error) {
+	//err = facade4contactus.RunContactusTeamWorker(ctx, userContext, request.SpaceRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *facade4contactus.ContactusSpaceWorkerParams) (err error) {
 	//	tx.Get
 	//	return nil
 	//})
@@ -31,11 +31,11 @@ func ThumbUp(ctx context.Context, userContext facade.User, request ThumbUpReques
 
 	return runTaskWorker(ctx, userContext, request.TaskRequest,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params taskWorkerParams) (err error) {
-			if err = tx.Get(ctx, params.TeamModuleEntry.Record); err != nil {
+			if err = tx.Get(ctx, params.SpaceModuleEntry.Record); err != nil {
 				return err
 			}
 			var userContactID string
-			for id, member := range params.TeamModuleEntry.Data.Contacts {
+			for id, member := range params.SpaceModuleEntry.Data.Contacts {
 				if member.UserID == uid {
 					userContactID = id
 				}

@@ -51,8 +51,8 @@ type UserDbo struct {
 	EmailVerified bool   `json:"emailVerified"  firestore:"emailVerified"`
 
 	// List of teams a user belongs to
-	Teams   map[string]*UserTeamBrief `json:"teams,omitempty"   firestore:"teams,omitempty"`
-	TeamIDs []string                  `json:"teamIDs,omitempty" firestore:"teamIDs,omitempty"`
+	Spaces   map[string]*UserSpaceBrief `json:"spaces,omitempty"   firestore:"spaces,omitempty"`
+	SpaceIDs []string                   `json:"spaceIDs,omitempty" firestore:"spaceIDs,omitempty"`
 
 	Created dbmodels.CreatedInfo `json:"created" firestore:"created"`
 	// TODO: Should this be moved to company members?
@@ -63,24 +63,24 @@ func (v *UserDbo) GetFullName() string {
 	return v.Names.GetFullName()
 }
 
-// SetTeamBrief sets team brief and adds teamID to the list of team IDs if needed
-func (v *UserDbo) SetTeamBrief(teamID string, brief *UserTeamBrief) (updates []dal.Update) {
-	if v.Teams == nil {
-		v.Teams = map[string]*UserTeamBrief{teamID: brief}
+// SetSpaceBrief sets team brief and adds teamID to the list of team IDs if needed
+func (v *UserDbo) SetSpaceBrief(teamID string, brief *UserSpaceBrief) (updates []dal.Update) {
+	if v.Spaces == nil {
+		v.Spaces = map[string]*UserSpaceBrief{teamID: brief}
 	} else {
-		v.Teams[teamID] = brief
+		v.Spaces[teamID] = brief
 	}
-	updates = append(updates, dal.Update{Field: "teams." + teamID, Value: brief})
-	if !slice.Contains(v.TeamIDs, teamID) {
-		v.TeamIDs = append(v.TeamIDs, teamID)
-		updates = append(updates, dal.Update{Field: "teamIDs", Value: v.TeamIDs})
+	updates = append(updates, dal.Update{Field: "spaces." + teamID, Value: brief})
+	if !slice.Contains(v.SpaceIDs, teamID) {
+		v.SpaceIDs = append(v.SpaceIDs, teamID)
+		updates = append(updates, dal.Update{Field: "spaceIDs", Value: v.SpaceIDs})
 	}
 	return
 }
 
-// GetTeamBriefByType returns the first team brief that matches a specific type
-func (v *UserDbo) GetTeamBriefByType(t core4teamus.TeamType) (teamID string, teamBrief *UserTeamBrief) {
-	for id, brief := range v.Teams {
+// GetSpaceBriefByType returns the first team brief that matches a specific type
+func (v *UserDbo) GetSpaceBriefByType(t core4teamus.SpaceType) (teamID string, teamBrief *UserSpaceBrief) {
+	for id, brief := range v.Spaces {
 		if brief.Type == t {
 			return id, brief
 		}
@@ -106,7 +106,7 @@ func (v *UserDbo) Validate() error {
 	if err := v.validateEmails(); err != nil {
 		return err
 	}
-	if err := v.validateTeams(); err != nil {
+	if err := v.validateSpaces(); err != nil {
 		return err
 	}
 	if err := dbmodels.ValidateGender(v.Gender, true); err != nil {
@@ -156,38 +156,38 @@ func (v *UserDbo) validateEmails() error {
 	return nil
 }
 
-func (v *UserDbo) validateTeams() error {
-	if len(v.Teams) != len(v.TeamIDs) {
-		return validation.NewErrBadRecordFieldValue("teamIDs",
-			fmt.Sprintf("len(v.Teams) != len(v.TeamIDs): %d != %d", len(v.Teams), len(v.TeamIDs)))
+func (v *UserDbo) validateSpaces() error {
+	if len(v.Spaces) != len(v.SpaceIDs) {
+		return validation.NewErrBadRecordFieldValue("spaceIDs",
+			fmt.Sprintf("len(v.Spaces) != len(v.SpaceIDs): %d != %d", len(v.Spaces), len(v.SpaceIDs)))
 	}
-	if len(v.Teams) > 0 {
-		teamIDs := make([]string, 0, len(v.Teams))
-		teamTitles := make([]string, 0, len(v.Teams))
-		for teamID, t := range v.Teams {
-			if teamID == "" {
-				return validation.NewErrBadRecordFieldValue(fmt.Sprintf("teams['%s']", teamID), "holds empty id")
+	if len(v.Spaces) > 0 {
+		spaceIDs := make([]string, 0, len(v.Spaces))
+		spaceTitles := make([]string, 0, len(v.Spaces))
+		for spaceID, space := range v.Spaces {
+			if spaceID == "" {
+				return validation.NewErrBadRecordFieldValue(fmt.Sprintf("spaces['%s']", spaceID), "holds empty id")
 			}
-			if !slice.Contains(v.TeamIDs, teamID) {
-				return validation.NewErrBadRecordFieldValue("teamIDs", "missing team ID: "+teamID)
+			if !slice.Contains(v.SpaceIDs, spaceID) {
+				return validation.NewErrBadRecordFieldValue("spaceIDs", "missing team ID: "+spaceID)
 			}
-			if err := t.Validate(); err != nil {
-				return validation.NewErrBadRecordFieldValue(fmt.Sprintf("teams[%s]{title=%s}", teamID, t.Title), err.Error())
+			if err := space.Validate(); err != nil {
+				return validation.NewErrBadRecordFieldValue(fmt.Sprintf("spaces[%s]{title=%s}", spaceID, space.Title), err.Error())
 			}
-			if t.Title != "" {
-				if i := slices.Index(teamTitles, t.Title); i >= 0 {
-					return validation.NewErrBadRecordFieldValue("teams",
-						fmt.Sprintf("at least 2 teams (%s & %s) with same title: '%s'", teamID, teamIDs[i], t.Title))
+			if space.Title != "" {
+				if i := slices.Index(spaceTitles, space.Title); i >= 0 {
+					return validation.NewErrBadRecordFieldValue("spaces",
+						fmt.Sprintf("at least 2 spaces (%s & %s) with same title: '%s'", spaceID, spaceIDs[i], space.Title))
 				}
 			}
-			teamIDs = append(teamIDs, teamID)
-			teamTitles = append(teamTitles, t.Title)
+			spaceIDs = append(spaceIDs, spaceID)
+			spaceTitles = append(spaceTitles, space.Title)
 		}
 	}
 	return nil
 }
 
-// GetUserTeamInfoByID returns team info specific to the user by team ID
-func (v *UserDbo) GetUserTeamInfoByID(teamID string) *UserTeamBrief {
-	return v.Teams[teamID]
+// GetUserSpaceInfoByID returns team info specific to the user by team ID
+func (v *UserDbo) GetUserSpaceInfoByID(teamID string) *UserSpaceBrief {
+	return v.Spaces[teamID]
 }

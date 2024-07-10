@@ -24,21 +24,21 @@ func UpdateLastScrumIDIfNeeded(
 	params facade4meetingus.WorkerParams,
 ) (err error) {
 
-	scrumTeamUpdates := make([]dal.Update, 0, 1)
+	scrumSpaceUpdates := make([]dal.Update, 0, 1)
 	scrumID := params.Meeting.GetID()
 	scrum := params.Meeting.Record.Data().(*dbo4scrumus.Scrum)
 
-	var scrumTeam dal4scrumus.ScrumTeam
-	scrumTeam, err = dal4scrumus.GetScrumTeam(ctx, tx, params.Team.ID)
+	var scrumSpace dal4scrumus.ScrumSpaceEntry
+	scrumSpace, err = dal4scrumus.GetScrumSpace(ctx, tx, params.Space.ID)
 	if err != nil && !dal.IsNotFound(err) {
 		return
 	}
-	if lastScrum := scrumTeam.Data.Last; lastScrum != nil && lastScrum.ID != "" && lastScrum.ID < scrumID {
+	if lastScrum := scrumSpace.Data.Last; lastScrum != nil && lastScrum.ID != "" && lastScrum.ID < scrumID {
 		if scrum.ScrumIDs == nil {
 			scrum.ScrumIDs = &dbo4scrumus.ScrumIDs{}
 		}
 		scrum.ScrumIDs.Prev = lastScrum.ID
-		prevScrumKey := dal.NewKeyWithParentAndID(params.Team.Key, "api4meetingus", lastScrum.ID)
+		prevScrumKey := dal.NewKeyWithParentAndID(params.Space.Key, "api4meetingus", lastScrum.ID)
 		prevScrum := new(dbo4scrumus.Scrum)
 		prevScrumRecord := dal.NewRecordWithData(prevScrumKey, prevScrum)
 		if err = tx.Get(ctx, prevScrumRecord); err != nil {
@@ -54,27 +54,27 @@ func UpdateLastScrumIDIfNeeded(
 			}
 		}
 	}
-	if scrumTeam.Data.Last == nil || scrumTeam.Data.Last.ID < scrumID {
-		scrumTeam.Data.Last = &dbo4teamus.TeamMeetingInfo{
+	if scrumSpace.Data.Last == nil || scrumSpace.Data.Last.ID < scrumID {
+		scrumSpace.Data.Last = &dbo4teamus.SpaceMeetingInfo{
 			ID:       scrumID,
 			Stage:    "planning",
 			Started:  scrum.Started,
 			Finished: scrum.Finished,
 		}
-		scrumTeamUpdates = append(scrumTeamUpdates, dal.Update{
+		scrumSpaceUpdates = append(scrumSpaceUpdates, dal.Update{
 			Field: "last",
-			Value: scrumTeam.Data.Last,
+			Value: scrumSpace.Data.Last,
 		})
 	}
-	if len(scrumTeamUpdates) > 0 {
-		if err = scrumTeam.Data.Validate(); err != nil {
+	if len(scrumSpaceUpdates) > 0 {
+		if err = scrumSpace.Data.Validate(); err != nil {
 			return
 		}
-		if scrumTeam.Record.Exists() {
-			if err = tx.Update(ctx, scrumTeam.Key, scrumTeamUpdates); err != nil {
+		if scrumSpace.Record.Exists() {
+			if err = tx.Update(ctx, scrumSpace.Key, scrumSpaceUpdates); err != nil {
 				return fmt.Errorf("failed to update scrum team record: %w", err)
 			}
-		} else if err = tx.Insert(ctx, scrumTeam.Record); err != nil {
+		} else if err = tx.Insert(ctx, scrumSpace.Record); err != nil {
 			return fmt.Errorf("failed to insert new scrum team record")
 		}
 	}

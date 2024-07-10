@@ -63,7 +63,7 @@ var _ MeetingInstance = (*Meeting)(nil)
 // Meeting record
 type Meeting struct {
 	dbmodels.WithUserIDs
-	briefs4contactus.WithMultiTeamContacts[*MeetingMemberBrief]
+	briefs4contactus.WithMultiSpaceContacts[*MeetingMemberBrief]
 	Version  int        `json:"v" firestore:"v"`
 	Started  *time.Time `json:"started,omitempty" firestore:"started,omitempty"`
 	Finished *time.Time `json:"finished,omitempty" firestore:"finished,omitempty"`
@@ -128,9 +128,9 @@ func (v *Meeting) validateUserIDs() error {
 		for _, m := range v.Contacts {
 			if m.UserID == uid {
 				return memberRoles{
-					isParticipant: m.HasRole(const4contactus.TeamMemberRoleContributor),
-					isSpectator:   m.HasRole(const4contactus.TeamMemberRoleSpectator),
-					isExcluded:    m.HasRole(const4contactus.TeamMemberRoleExcluded),
+					isParticipant: m.HasRole(const4contactus.SpaceMemberRoleContributor),
+					isSpectator:   m.HasRole(const4contactus.SpaceMemberRoleSpectator),
+					isExcluded:    m.HasRole(const4contactus.SpaceMemberRoleExcluded),
 					roles:         m.Roles,
 				}
 			}

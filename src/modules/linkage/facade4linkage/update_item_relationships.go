@@ -11,7 +11,7 @@ import (
 )
 
 func UpdateItemRelationships(ctx context.Context, userCtx facade.User, request dto4linkage.UpdateItemRequest) (item record.DataWithID[string, *dbo4linkage.WithRelatedAndIDsAndUserID], err error) {
-	if err = dal4teamus.RunTeamWorker(ctx, userCtx, request.TeamID, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.TeamWorkerParams) (err error) {
+	if err = dal4teamus.RunSpaceWorker(ctx, userCtx, request.SpaceID, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.SpaceWorkerParams) (err error) {
 		item, err = txUpdateItemRelationships(ctx, tx, params, request)
 		return err
 	}); err != nil {
@@ -25,17 +25,17 @@ func UpdateItemRelationships(ctx context.Context, userCtx facade.User, request d
 
 func txUpdateItemRelationships(
 	ctx context.Context, tx dal.ReadwriteTransaction,
-	params *dal4teamus.TeamWorkerParams,
+	params *dal4teamus.SpaceWorkerParams,
 	request dto4linkage.UpdateItemRequest,
 ) (item record.DataWithID[string, *dbo4linkage.WithRelatedAndIDsAndUserID], err error) {
-	key := dal4teamus.NewTeamModuleItemKey(request.TeamID, request.ModuleID, request.Collection, request.ItemID)
+	key := dal4teamus.NewSpaceModuleItemKey(request.SpaceID, request.ModuleID, request.Collection, request.ItemID)
 	item = record.NewDataWithID[string, *dbo4linkage.WithRelatedAndIDsAndUserID](request.ItemID, key, new(dbo4linkage.WithRelatedAndIDsAndUserID))
 	if err = tx.Get(ctx, item.Record); err != nil {
 		return item, err
 	}
 	var itemUpdates []dal.Update
 	params.RecordUpdates, err = UpdateRelatedField(ctx, tx,
-		request.TeamModuleItemRef, request.UpdateRelatedFieldRequest, item.Data,
+		request.SpaceModuleItemRef, request.UpdateRelatedFieldRequest, item.Data,
 		func(updates []dal.Update) {
 			itemUpdates = append(itemUpdates, updates...)
 		})

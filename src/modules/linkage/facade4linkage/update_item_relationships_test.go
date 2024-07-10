@@ -18,7 +18,7 @@ func TestUpdateItemRelationships(t *testing.T) {
 		request dto4linkage.UpdateItemRequest
 	}
 	const testUserID = "test_user_1"
-	const team1ID = "team_1"
+	const space1ID = "space_1"
 	const item1ID = "item_1"
 	const collection1ID = "collection_1"
 	const module1ID = "module_1"
@@ -37,15 +37,15 @@ func TestUpdateItemRelationships(t *testing.T) {
 				ctx:     context.Background(),
 				userCtx: facade.NewUser(testUserID),
 				request: dto4linkage.UpdateItemRequest{
-					TeamModuleItemRef: dbo4linkage.TeamModuleItemRef{
+					SpaceModuleItemRef: dbo4linkage.SpaceModuleItemRef{
 						ModuleID:   const4contactus.ModuleID,
-						TeamID:     team1ID,
+						SpaceID:    space1ID,
 						Collection: const4contactus.ContactsCollection,
 						ItemID:     item1ID,
 					},
 					UpdateRelatedFieldRequest: dto4linkage.UpdateRelatedFieldRequest{
 						Related: map[string]*dbo4linkage.RelationshipRolesCommand{
-							dbo4linkage.NewTeamModuleItemRef(team1ID, module1ID, collection1ID, item1ID).ID(): {
+							dbo4linkage.NewSpaceModuleItemRef(space1ID, module1ID, collection1ID, item1ID).ID(): {
 								Add: &dbo4linkage.RolesCommand{
 									RolesOfItem: []dbo4linkage.RelationshipRoleID{
 										dbo4linkage.RelationshipRoleSpouse,

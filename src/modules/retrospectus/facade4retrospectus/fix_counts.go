@@ -19,27 +19,27 @@ func FixCounts(ctx context.Context, userContext facade.User, request FixCountsRe
 	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		now := time.Now()
 		userRef := dbo4userus.NewUserKey(uid)
-		team := dal4teamus.NewTeamEntry(request.TeamID)
-		var retroTeam dal4retrospectus.RetroTeam
-		retroTeam, err = dal4retrospectus.GetRetroTeam(ctx, tx, request.TeamID)
+		team := dal4teamus.NewSpaceEntry(request.SpaceID)
+		var retroSpace dal4retrospectus.RetroSpaceEntry
+		retroSpace, err = dal4retrospectus.GetRetroSpaceEntry(ctx, tx, request.SpaceID)
 		user := new(dbo4userus.UserDbo)
 		userRecord := dal.NewRecordWithData(userRef, user)
 
 		if err := tx.GetMulti(ctx, []dal.Record{userRecord, team.Record}); err != nil {
 			return err
 		}
-		if retroTeam.Data.UpcomingRetro == nil {
-			retroTeam.Data.UpcomingRetro = &dbo4retrospectus.RetrospectiveCounts{
+		if retroSpace.Data.UpcomingRetro == nil {
+			retroSpace.Data.UpcomingRetro = &dbo4retrospectus.RetrospectiveCounts{
 				ItemsByUserAndType: make(map[string]map[string]int),
 			}
 		}
-		teamInfo := user.GetUserTeamInfoByID(request.TeamID)
+		teamInfo := user.GetUserSpaceInfoByID(request.SpaceID)
 		updates := make([]dal.Update, 0, 1)
 		if teamInfo == nil {
-			if _, ok := retroTeam.Data.UpcomingRetro.ItemsByUserAndType[uid]; ok {
-				delete(retroTeam.Data.UpcomingRetro.ItemsByUserAndType, uid)
-				if len(retroTeam.Data.UpcomingRetro.ItemsByUserAndType) == 0 {
-					retroTeam.Data.UpcomingRetro = nil
+			if _, ok := retroSpace.Data.UpcomingRetro.ItemsByUserAndType[uid]; ok {
+				delete(retroSpace.Data.UpcomingRetro.ItemsByUserAndType, uid)
+				if len(retroSpace.Data.UpcomingRetro.ItemsByUserAndType) == 0 {
+					retroSpace.Data.UpcomingRetro = nil
 					updates = append(updates, dal.Update{Field: "upcomingRetro", Value: dal.DeleteField})
 				} else {
 					path := fmt.Sprintf("upcomingRetro.itemsByUserAndType.%v", uid)
@@ -60,13 +60,13 @@ func FixCounts(ctx context.Context, userContext facade.User, request FixCountsRe
 			//		}
 			//	}
 			//}
-			if len(retroTeam.Data.UpcomingRetro.ItemsByUserAndType[uid]) == 0 {
-				delete(retroTeam.Data.UpcomingRetro.ItemsByUserAndType, uid)
+			if len(retroSpace.Data.UpcomingRetro.ItemsByUserAndType[uid]) == 0 {
+				delete(retroSpace.Data.UpcomingRetro.ItemsByUserAndType, uid)
 				updates = []dal.Update{{Field: "upcomingRetro", Value: dal.DeleteField}}
 			}
 		}
 		if len(updates) > 0 {
-			if err = txUpdateTeam(ctx, tx, now, team, updates); err != nil {
+			if err = txUpdateSpace(ctx, tx, now, team, updates); err != nil {
 				return err
 			}
 		}

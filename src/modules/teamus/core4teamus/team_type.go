@@ -1,25 +1,25 @@
 package core4teamus
 
-type TeamType string
+type SpaceType string
 
 const (
-	// TeamTypeFamily is a "family" team type
-	TeamTypeFamily TeamType = "family"
+	// SpaceTypeFamily is a "family" team type
+	SpaceTypeFamily SpaceType = "family"
 
-	// TeamTypeCompany is a "company" team type
-	TeamTypeCompany TeamType = "company"
+	// SpaceTypeCompany is a "company" team type
+	SpaceTypeCompany SpaceType = "company"
 
-	// TeamTypeTeam is a "team" team type
-	TeamTypeTeam TeamType = "team"
+	// SpaceTypeTeam is a "space" team type
+	SpaceTypeTeam SpaceType = "team"
 
-	// TeamTypeClub is a "club" team type
-	TeamTypeClub TeamType = "club"
+	// SpaceTypeClub is a "club" team type
+	SpaceTypeClub SpaceType = "club"
 )
 
-// IsValidTeamType checks if team has a valid/known type
-func IsValidTeamType(v TeamType) bool {
+// IsValidSpaceType checks if team has a valid/known type
+func IsValidSpaceType(v SpaceType) bool {
 	switch v {
-	case TeamTypeFamily, TeamTypeCompany, TeamTypeTeam, TeamTypeClub:
+	case SpaceTypeFamily, SpaceTypeCompany, SpaceTypeTeam, SpaceTypeClub:
 		return true
 	default:
 		return false

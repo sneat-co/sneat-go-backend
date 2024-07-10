@@ -8,10 +8,8 @@ import (
 	"strconv"
 )
 
-var refuseToJoinTeam = facade4contactus.RefuseToJoinTeam
-
-// httpPostRefuseToJoinTeam an API endpoint that records user refusal to join a team
-func httpPostRefuseToJoinTeam(w http.ResponseWriter, r *http.Request) {
+// httpPostRefuseToJoinSpace an API endpoint that records user refusal to join a team
+func httpPostRefuseToJoinSpace(w http.ResponseWriter, r *http.Request) {
 	ctx, userContext, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithNoAuthRequired)
 	if err != nil {
 		return
@@ -23,10 +21,10 @@ func httpPostRefuseToJoinTeam(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte("pin is expected to be an integer"))
 		return
 	}
-	request := facade4contactus.RefuseToJoinTeamRequest{
-		TeamID: q.Get("id"),
-		Pin:    int32(pin),
+	request := facade4contactus.RefuseToJoinSpaceRequest{
+		SpaceID: q.Get("id"),
+		Pin:     int32(pin),
 	}
-	err = refuseToJoinTeam(ctx, userContext, request)
+	err = facade4contactus.RefuseToJoinSpace(ctx, userContext, request)
 	apicore.IfNoErrorReturnOK(ctx, w, r, err)
 }

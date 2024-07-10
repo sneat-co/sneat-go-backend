@@ -14,7 +14,7 @@ func DeleteHappeningPrices(ctx context.Context, user facade.User, request dto4ca
 	var deleteHappeningPricesWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
 		return deleteHappeningPricesTx(ctx, tx, user, params, request)
 	}
-	return dal4calendarium.RunHappeningTeamWorker(ctx, user, request.HappeningRequest, deleteHappeningPricesWorker)
+	return dal4calendarium.RunHappeningSpaceWorker(ctx, user, request.HappeningRequest, deleteHappeningPricesWorker)
 }
 
 func deleteHappeningPricesTx(ctx context.Context, tx dal.ReadwriteTransaction, _ facade.User, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.DeleteHappeningPricesRequest) (err error) {

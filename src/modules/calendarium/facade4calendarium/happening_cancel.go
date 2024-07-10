@@ -22,9 +22,9 @@ func CancelHappening(ctx context.Context, user facade.User, request dto4calendar
 		return
 	}
 
-	happening := dbo4calendarium.NewHappeningEntry(request.TeamID, request.HappeningID)
-	err = dal4calendarium.RunCalendariumTeamWorker(ctx, user, request.TeamRequest,
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.CalendariumTeamWorkerParams) (err error) {
+	happening := dbo4calendarium.NewHappeningEntry(request.SpaceID, request.HappeningID)
+	err = dal4calendarium.RunCalendariumSpaceWorker(ctx, user, request.SpaceRequest,
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.CalendariumSpaceWorkerParams) (err error) {
 			if err = tx.Get(ctx, happening.Record); err != nil {
 				return fmt.Errorf("failed to get happening: %w", err)
 			}
@@ -77,15 +77,15 @@ func cancelSingleHappening(ctx context.Context, tx dal.ReadwriteTransaction, use
 func cancelRecurringHappeningInstance(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	params *dal4calendarium.CalendariumTeamWorkerParams,
+	params *dal4calendarium.CalendariumSpaceWorkerParams,
 	uid string,
 	happening dbo4calendarium.HappeningEntry,
 	request dto4calendarium.CancelHappeningRequest,
 ) (err error) {
-	if err = tx.Get(ctx, params.TeamModuleEntry.Record); err != nil {
+	if err = tx.Get(ctx, params.SpaceModuleEntry.Record); err != nil {
 		return fmt.Errorf("failed to get team module record: %w", err)
 	}
-	happeningBrief := params.TeamModuleEntry.Data.GetRecurringHappeningBrief(happening.ID)
+	happeningBrief := params.SpaceModuleEntry.Data.GetRecurringHappeningBrief(happening.ID)
 	if happeningBrief == nil {
 		return errors.New("happening brief is not found in team record")
 	}
@@ -100,9 +100,9 @@ func cancelRecurringHappeningInstance(
 		if err := happeningBrief.Validate(); err != nil {
 			return fmt.Errorf("happening brief in team record is not valid: %w", err)
 		}
-		params.TeamModuleUpdates = append(params.TeamModuleUpdates, dal.Update{
+		params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, dal.Update{
 			Field: "recurringHappenings",
-			Value: params.TeamModuleEntry.Data.RecurringHappenings,
+			Value: params.SpaceModuleEntry.Data.RecurringHappenings,
 		})
 	} else {
 		if err = addCancellationToHappeningDbo(happening.Data, cancellation); err != nil {
@@ -132,11 +132,11 @@ func addCancellationToCalendarDayAdjustments(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	request dto4calendarium.CancelHappeningRequest,
-	params *dal4calendarium.CalendariumTeamWorkerParams,
+	params *dal4calendarium.CalendariumSpaceWorkerParams,
 	happening dbo4calendarium.HappeningEntry,
 	cancellation *dbo4calendarium.Cancellation,
 ) (err error) {
-	calendarDay := dbo4calendarium.NewCalendarDayEntry(params.Team.ID, request.Date)
+	calendarDay := dbo4calendarium.NewCalendarDayEntry(params.Space.ID, request.Date)
 
 	var isNewRecord bool
 	if err := tx.Get(ctx, calendarDay.Record); err != nil {

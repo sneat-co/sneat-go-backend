@@ -11,7 +11,7 @@ import (
 // TestCreateOrderRequest_Validate validates CreateOrderRequest.Validate() method
 func TestCreateOrderRequest_Validate(t *testing.T) {
 	type fields struct {
-		TeamRequest        dto4teamus.TeamRequest
+		SpaceRequest       dto4teamus.SpaceRequest
 		Order              dbo4logist.OrderBase
 		NumberOfContainers map[string]int
 	}
@@ -20,9 +20,9 @@ func TestCreateOrderRequest_Validate(t *testing.T) {
 		fields      fields
 		expectedErr string
 	}{
-		{name: "empty", fields: fields{}, expectedErr: "validation error: invalid request: bad value for field [team]: missing required field"},
+		{name: "empty", fields: fields{}, expectedErr: "validation error: invalid request: bad value for field [space]: missing required field"},
 		{name: "should_pass", fields: fields{
-			TeamRequest: dto4teamus.TeamRequest{TeamID: "teamID"},
+			SpaceRequest: dto4teamus.SpaceRequest{SpaceID: "space1"},
 			Order: dbo4logist.OrderBase{
 				Direction: dbo4logist.OrderDirectionExport,
 				Status:    dbo4logist.OrderStatusDraft,
@@ -38,7 +38,7 @@ func TestCreateOrderRequest_Validate(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			v := CreateOrderRequest{
-				TeamRequest:        tt.fields.TeamRequest,
+				SpaceRequest:       tt.fields.SpaceRequest,
 				Order:              tt.fields.Order,
 				NumberOfContainers: tt.fields.NumberOfContainers,
 			}

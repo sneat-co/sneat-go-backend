@@ -46,15 +46,15 @@ func TestStartRetrospective(t *testing.T) {
 	}
 
 	const validRetroID = "retro1"
-	const team1 = "team1"
+	const space1 = "space1"
 	var validDurations = RetroDurations{Feedback: 2, Review: 5}
 
 	var newRequest = func(id, teamID string, durations RetroDurations) StartRetrospectiveRequest {
 		return StartRetrospectiveRequest{
 			RetroRequest: RetroRequest{
 				MeetingID: id,
-				TeamRequest: dto4teamus.TeamRequest{
-					TeamID: teamID,
+				SpaceRequest: dto4teamus.SpaceRequest{
+					SpaceID: teamID,
 				},
 			},
 			DurationsInMinutes: durations,
@@ -62,7 +62,7 @@ func TestStartRetrospective(t *testing.T) {
 	}
 
 	t.Run("should_fail", func(t *testing.T) {
-		t.Run("team_not_found", func(t *testing.T) {
+		t.Run("space_not_found", func(t *testing.T) {
 			if _, _, err := StartRetrospective(ctx, userContext, newRequest(validRetroID, "invalidteamid", validDurations)); err == nil {
 				t.Fatal("expected to get error")
 			}
@@ -74,10 +74,10 @@ func TestStartRetrospective(t *testing.T) {
 			txGetRetrospective = func(ctx context.Context, tx dal.ReadwriteTransaction, record dal.Record) (err error) {
 				return nil
 			}
-			test(t, newRequest(UpcomingRetrospectiveID, team1, validDurations), expects{isNew: true})
+			test(t, newRequest(UpcomingRetrospectiveID, space1, validDurations), expects{isNew: true})
 		})
 		t.Run("existing_record", func(t *testing.T) {
-			test(t, newRequest(validRetroID, team1, validDurations), expects{isNew: false})
+			test(t, newRequest(validRetroID, space1, validDurations), expects{isNew: false})
 		})
 	})
 }

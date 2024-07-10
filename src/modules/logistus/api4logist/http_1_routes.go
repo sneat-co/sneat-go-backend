@@ -10,7 +10,7 @@ const (
 	RoutePathSetOrderCounterparties  = "/v0/logistus/order/set_order_counterparties"
 	RoutePathSetOrderStatus          = "/v0/logistus/order/set_order_status"
 	RoutePathCreateOrder             = "/v0/logistus/create_order"
-	RoutePathSetLogistTeamSettings   = "/v0/logistus/set_logist_team_settings"
+	RoutePathSetLogistSpaceSettings  = "/v0/logistus/set_logist_team_settings"
 	RoutePathCreateCounterparty      = "/v0/logistus/create_counterparty"
 	RoutePathOrderDeleteContainer    = "/v0/logistus/order/delete_container"
 
@@ -33,7 +33,7 @@ const (
 
 // RegisterHttpRoutes registers logistus routes
 func RegisterHttpRoutes(handle modules.HTTPHandleFunc) {
-	handle(http.MethodPost, RoutePathSetLogistTeamSettings, httpSetLogistTeamSettings)
+	handle(http.MethodPost, RoutePathSetLogistSpaceSettings, httpSetLogistSpaceSettings)
 	handle(http.MethodPost, RoutePathCreateCounterparty, httpCreateCounterparty)
 	handle(http.MethodPost, RoutePathCreateOrder, httpCreateOrder)
 	handle(http.MethodPost, RoutePathSetOrderStatus, httpSetOrderStatus)

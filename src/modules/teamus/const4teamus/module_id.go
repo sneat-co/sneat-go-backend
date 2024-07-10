@@ -1,3 +1,3 @@
 package const4teamus
 
-const ModuleID = "teamus"
+const ModuleID = "spaceus"

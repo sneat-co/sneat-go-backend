@@ -8,13 +8,13 @@ import (
 	"strings"
 )
 
-type ShortTeamModuleDocRef struct {
-	ID     string `json:"id" firestore:"id"`
-	TeamID string `json:"teamID,omitempty" firestore:"teamID,omitempty"`
+type ShortSpaceModuleDocRef struct {
+	ID      string `json:"id" firestore:"id"`
+	SpaceID string `json:"spaceID,omitempty" firestore:"spaceID,omitempty"`
 }
 
-func (v *ShortTeamModuleDocRef) Validate() error {
-	// TeamID can be empty for global collections like Happening
+func (v *ShortSpaceModuleDocRef) Validate() error {
+	// SpaceID can be empty for global collections like Happening
 	if v.ID == "" {
 		return validation.NewErrRecordIsMissingRequiredField("itemID")
 	} else if err := validate.RecordID(v.ID); err != nil {
@@ -23,45 +23,45 @@ func (v *ShortTeamModuleDocRef) Validate() error {
 	return nil
 }
 
-type TeamModuleItemRef struct { // TODO: Move to sneat-go-core or document why not
-	TeamID     string `json:"teamID" firestore:"teamID"`
+type SpaceModuleItemRef struct { // TODO: Move to sneat-go-core or document why not
+	SpaceID    string `json:"spaceID" firestore:"spaceID"`
 	ModuleID   string `json:"moduleID" firestore:"moduleID"`
 	Collection string `json:"collection" firestore:"collection"`
 	ItemID     string `json:"itemID" firestore:"itemID"`
 }
 
-func NewTeamModuleItemRef(teamID, moduleID, collection, itemID string) TeamModuleItemRef {
-	return TeamModuleItemRef{
-		TeamID:     teamID,
+func NewSpaceModuleItemRef(teamID, moduleID, collection, itemID string) SpaceModuleItemRef {
+	return SpaceModuleItemRef{
+		SpaceID:    teamID,
 		ModuleID:   moduleID,
 		Collection: collection,
 		ItemID:     itemID,
 	}
 }
 
-func NewTeamModuleItemRefFromString(id string) TeamModuleItemRef {
+func NewSpaceModuleItemRefFromString(id string) SpaceModuleItemRef {
 	ids := strings.Split(id, ".")
 	if len(ids) != 4 {
 		panic(fmt.Sprintf("invalid ID: '%s'", id))
 	}
-	return TeamModuleItemRef{
+	return SpaceModuleItemRef{
 		ModuleID:   ids[0],
 		Collection: ids[1],
-		TeamID:     ids[2],
+		SpaceID:    ids[2],
 		ItemID:     ids[3],
 	}
 }
 
-func (v TeamModuleItemRef) ID() string {
-	return fmt.Sprintf("%s.%s.%s", v.ModuleCollectionPath(), v.TeamID, v.ItemID)
+func (v SpaceModuleItemRef) ID() string {
+	return fmt.Sprintf("%s.%s.%s", v.ModuleCollectionPath(), v.SpaceID, v.ItemID)
 }
 
-func (v TeamModuleItemRef) ModuleCollectionPath() string {
+func (v SpaceModuleItemRef) ModuleCollectionPath() string {
 	return fmt.Sprintf("%s.%s", v.ModuleID, v.Collection)
 }
 
-func (v TeamModuleItemRef) Validate() error {
-	// TeamID can be empty for global collections like Happening
+func (v SpaceModuleItemRef) Validate() error {
+	// SpaceID can be empty for global collections like Happening
 	if v.ModuleID == "" {
 		return validation.NewErrRecordIsMissingRequiredField("moduleID")
 	}
@@ -82,13 +82,13 @@ type RolesCommand struct {
 }
 
 type RelationshipRolesCommand struct {
-	//TeamModuleItemRef
+	//SpaceModuleItemRef
 	Add    *RolesCommand `json:"add,omitempty" firestore:"add,omitempty"`
 	Remove *RolesCommand `json:"remove,omitempty" firestore:"remove,omitempty"`
 }
 
 func (v RelationshipRolesCommand) Validate() error {
-	//if err := v.TeamModuleItemRef.Validate(); err != nil {
+	//if err := v.SpaceModuleItemRef.Validate(); err != nil {
 	//	return err
 	//}
 	if err := v.Add.Validate(); err != nil {

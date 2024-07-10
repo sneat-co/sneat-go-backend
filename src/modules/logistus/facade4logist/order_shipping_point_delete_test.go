@@ -38,11 +38,11 @@ func Test_txDeleteShippingPoint(t *testing.T) {
 			name: "should_pass",
 			args: args{
 				params: &OrderWorkerParams{
-					Order: dbo4logist.NewOrderWithData("team1", "order1", mocks4logist.ValidOrderDto1(t)),
+					Order: dbo4logist.NewOrderWithData("space1", "order1", mocks4logist.ValidOrderDto1(t)),
 				},
 				request: dto4logist.OrderShippingPointRequest{
 					ShippingPointID: mocks4logist.ShippingPoint1WithSingleContainerID,
-					OrderRequest:    dto4logist.NewOrderRequest("team1", "order1"),
+					OrderRequest:    dto4logist.NewOrderRequest("space1", "order1"),
 				},
 			},
 			preAssert: func(t *testing.T, args args) {

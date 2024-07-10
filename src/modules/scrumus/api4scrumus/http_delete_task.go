@@ -22,8 +22,8 @@ func httpDeleteTask(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	request := facade4scrumus.DeleteTaskRequest{
 		Request: facade4meetingus.Request{
-			TeamRequest: dto4teamus.TeamRequest{
-				TeamID: query.Get("team"),
+			SpaceRequest: dto4teamus.SpaceRequest{
+				SpaceID: query.Get("space"),
 			},
 			MeetingID: query.Get("date"),
 		},

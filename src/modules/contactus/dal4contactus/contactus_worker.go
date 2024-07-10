@@ -10,39 +10,39 @@ import (
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
-type ContactusTeamWorkerParams = dal4teamus.ModuleTeamWorkerParams[*models4contactus.ContactusTeamDbo]
+type ContactusSpaceWorkerParams = dal4teamus.ModuleSpaceWorkerParams[*models4contactus.ContactusSpaceDbo]
 
-func NewContactusTeamWorkerParams(userID, teamID string) *ContactusTeamWorkerParams {
-	teamWorkerParams := dal4teamus.NewTeamWorkerParams(userID, teamID)
-	return dal4teamus.NewTeamModuleWorkerParams(const4contactus.ModuleID, teamWorkerParams, new(models4contactus.ContactusTeamDbo))
+func NewContactusSpaceWorkerParams(userID, spaceID string) *ContactusSpaceWorkerParams {
+	teamWorkerParams := dal4teamus.NewSpaceWorkerParams(userID, spaceID)
+	return dal4teamus.NewSpaceModuleWorkerParams(const4contactus.ModuleID, teamWorkerParams, new(models4contactus.ContactusSpaceDbo))
 }
 
-func RunReadonlyContactusTeamWorker(
+func RunReadonlyContactusSpaceWorker(
 	ctx context.Context,
 	user facade.User,
-	request dto4teamus.TeamRequest,
-	worker func(ctx context.Context, tx dal.ReadTransaction, params *ContactusTeamWorkerParams) (err error),
+	request dto4teamus.SpaceRequest,
+	worker func(ctx context.Context, tx dal.ReadTransaction, params *ContactusSpaceWorkerParams) (err error),
 ) error {
-	return dal4teamus.RunReadonlyModuleTeamWorker(ctx, user, request, const4contactus.ModuleID, new(models4contactus.ContactusTeamDbo), worker)
+	return dal4teamus.RunReadonlyModuleSpaceWorker(ctx, user, request, const4contactus.ModuleID, new(models4contactus.ContactusSpaceDbo), worker)
 }
 
-type ContactusModuleWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *ContactusTeamWorkerParams) (err error)
+type ContactusModuleWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *ContactusSpaceWorkerParams) (err error)
 
-func RunContactusTeamWorker(
+func RunContactusSpaceWorker(
 	ctx context.Context,
 	user facade.User,
-	request dto4teamus.TeamRequest,
+	request dto4teamus.SpaceRequest,
 	worker ContactusModuleWorker,
 ) error {
-	return dal4teamus.RunModuleTeamWorker(ctx, user, request, const4contactus.ModuleID, new(models4contactus.ContactusTeamDbo), worker)
+	return dal4teamus.RunModuleSpaceWorker(ctx, user, request, const4contactus.ModuleID, new(models4contactus.ContactusSpaceDbo), worker)
 }
 
-func RunContactusTeamWorkerTx(
+func RunContactusSpaceWorkerTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	user facade.User,
-	request dto4teamus.TeamRequest,
+	request dto4teamus.SpaceRequest,
 	worker ContactusModuleWorker,
 ) error {
-	return dal4teamus.RunModuleTeamWorkerTx(ctx, tx, user, request, const4contactus.ModuleID, new(models4contactus.ContactusTeamDbo), worker)
+	return dal4teamus.RunModuleSpaceWorkerTx(ctx, tx, user, request, const4contactus.ModuleID, new(models4contactus.ContactusSpaceDbo), worker)
 }

@@ -15,29 +15,29 @@ import (
 	"time"
 )
 
-type fooModuleTeamData struct {
+type fooModuleSpaceData struct {
 	Int1 int
 	Str1 string
 }
 
-func (fooModuleTeamData) Validate() error {
+func (fooModuleSpaceData) Validate() error {
 	return nil
 }
 
-func TestRunModuleTeamWorker(t *testing.T) {
+func TestRunModuleSpaceWorker(t *testing.T) {
 	ctx := context.Background()
 	user := &facade.AuthUser{ID: "user1"}
-	request := dto4teamus.TeamRequest{TeamID: "team1"}
+	request := dto4teamus.SpaceRequest{SpaceID: "space1"}
 	const moduleID = "test_module"
-	assertTxWorker := func(ctx context.Context, tx dal.ReadwriteTransaction, params *ModuleTeamWorkerParams[*fooModuleTeamData]) (err error) {
+	assertTxWorker := func(ctx context.Context, tx dal.ReadwriteTransaction, params *ModuleSpaceWorkerParams[*fooModuleSpaceData]) (err error) {
 		if err := params.GetRecords(ctx, tx); err != nil {
 			return err
 		}
 		assert.NotNil(t, params)
-		assert.NotNil(t, params.TeamModuleEntry)
-		assert.NotNil(t, params.TeamModuleEntry.Record)
-		assert.NotNil(t, params.TeamModuleEntry.Data)
-		assert.NotNil(t, params.TeamModuleEntry.Record.Data())
+		assert.NotNil(t, params.SpaceModuleEntry)
+		assert.NotNil(t, params.SpaceModuleEntry.Record)
+		assert.NotNil(t, params.SpaceModuleEntry.Data)
+		assert.NotNil(t, params.SpaceModuleEntry.Record.Data())
 		return nil
 	}
 	facade.GetDatabase = func(ctx context.Context) dal.DB {
@@ -50,12 +50,12 @@ func TestRunModuleTeamWorker(t *testing.T) {
 			tx.EXPECT().GetMulti(ctx, gomock.Any()).DoAndReturn(func(ctx context.Context, records []dal.Record) error {
 				for _, record := range records {
 					record.SetError(nil)
-					if record.Key().Collection() == "teams" {
-						teamData := record.Data().(*dbo4teamus.TeamDbo)
+					if record.Key().Collection() == "spaces" {
+						teamData := record.Data().(*dbo4teamus.SpaceDbo)
 						teamData.CreatedAt = time.Now()
 						teamData.CreatedBy = "test"
 						teamData.IncreaseVersion(teamData.CreatedAt, teamData.CreatedBy)
-						teamData.Type = core4teamus.TeamTypeFamily
+						teamData.Type = core4teamus.SpaceTypeFamily
 						teamData.CountryID = "UK"
 						teamData.Status = dbmodels.StatusActive
 						teamData.UserIDs = []string{user.ID}
@@ -67,16 +67,16 @@ func TestRunModuleTeamWorker(t *testing.T) {
 		})
 		return db
 	}
-	err := RunModuleTeamWorker(ctx, user, request, moduleID, new(fooModuleTeamData), assertTxWorker)
+	err := RunModuleSpaceWorker(ctx, user, request, moduleID, new(fooModuleSpaceData), assertTxWorker)
 	assert.Nil(t, err)
-	//type args[ModuleDbo TeamModuleDbo] struct {
+	//type args[ModuleDbo SpaceModuleDbo] struct {
 	//	ctx      context.Context
 	//	user     facade.User
-	//	request  dto4teamus.TeamRequest
+	//	request  dto4teamus.SpaceRequest
 	//	moduleID string
-	//	worker   func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *ModuleTeamWorkerParams[ModuleDbo]) (err error)
+	//	worker   func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *ModuleSpaceWorkerParams[ModuleDbo]) (err error)
 	//}
-	//type testCase[ModuleDbo TeamModuleDbo] struct {
+	//type testCase[ModuleDbo SpaceModuleDbo] struct {
 	//	name    string
 	//	args    args[ModuleDbo]
 	//	wantErr bool
@@ -86,27 +86,27 @@ func TestRunModuleTeamWorker(t *testing.T) {
 	//}
 	//for _, tt := range tests {
 	//	t.Run(tt.name, func(t *testing.T) {
-	//		if err := RunModuleTeamWorker(tt.args.ctx, tt.args.user, tt.args.request, tt.args.moduleID, tt.args.worker); (err != nil) != tt.wantErr {
-	//			t.Errorf("RunModuleTeamWorker() error = %v, wantErr %v", err, tt.wantErr)
+	//		if err := RunModuleSpaceWorker(tt.args.ctx, tt.args.user, tt.args.request, tt.args.moduleID, tt.args.worker); (err != nil) != tt.wantErr {
+	//			t.Errorf("RunModuleSpaceWorker() error = %v, wantErr %v", err, tt.wantErr)
 	//		}
 	//	})
 	//}
 }
 
-func TestRunModuleTeamWorkerTx(t *testing.T) {
+func TestRunModuleSpaceWorkerTx(t *testing.T) {
 	ctx := context.Background()
 	user := &facade.AuthUser{ID: "user1"}
-	request := dto4teamus.TeamRequest{TeamID: "team1"}
+	request := dto4teamus.SpaceRequest{SpaceID: "space1"}
 	const moduleID = "test_module"
-	//assertTxWorker := func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *ModuleTeamWorkerParams[*fooModuleTeamData]) (err error) {
+	//assertTxWorker := func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *ModuleSpaceWorkerParams[*fooModuleSpaceData]) (err error) {
 	//	assert.NotNil(t, teamWorkerParams)
-	//	assert.NotNil(t, teamWorkerParams.TeamModuleEntry)
-	//	assert.NotNil(t, teamWorkerParams.TeamModuleEntry.Record)
-	//	assert.NotNil(t, teamWorkerParams.TeamModuleEntry.Data)
-	//	assert.NotNil(t, teamWorkerParams.TeamModuleEntry.Record.Data())
+	//	assert.NotNil(t, teamWorkerParams.SpaceModuleEntry)
+	//	assert.NotNil(t, teamWorkerParams.SpaceModuleEntry.Record)
+	//	assert.NotNil(t, teamWorkerParams.SpaceModuleEntry.Data)
+	//	assert.NotNil(t, teamWorkerParams.SpaceModuleEntry.Record.Data())
 	//	return nil
 	//}
 	assert.Panics(t, func() {
-		_ = RunModuleTeamWorkerTx(ctx, nil, user, request, moduleID, new(fooModuleTeamData), nil)
+		_ = RunModuleSpaceWorkerTx(ctx, nil, user, request, moduleID, new(fooModuleSpaceData), nil)
 	})
 }

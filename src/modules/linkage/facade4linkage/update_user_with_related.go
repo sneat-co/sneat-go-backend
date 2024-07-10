@@ -13,7 +13,7 @@ func updateUserWithRelatedTx(
 	tx dal.ReadwriteTransaction,
 	userID string,
 	users map[string]dbo4userus.User,
-	itemRef dbo4linkage.TeamModuleItemRef,
+	itemRef dbo4linkage.SpaceModuleItemRef,
 	relatedItem dbo4linkage.RelatedItem,
 ) (err error) {
 	if users == nil {
@@ -31,7 +31,7 @@ func updateUserWithRelatedTx(
 		users[userID] = user
 	}
 
-	if slice.Contains(user.Data.TeamIDs, itemRef.TeamID) {
+	if slice.Contains(user.Data.SpaceIDs, itemRef.SpaceID) {
 		return nil
 	}
 

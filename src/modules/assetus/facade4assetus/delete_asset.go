@@ -12,29 +12,29 @@ import (
 )
 
 // DeleteAsset deletes an asset
-func DeleteAsset(ctx context.Context, user facade.User, request dal4teamus.TeamItemRequest) (err error) {
+func DeleteAsset(ctx context.Context, user facade.User, request dal4teamus.SpaceItemRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return fmt.Errorf("invalid request to facade4assetus.DeleteAsset: %w", err)
 	}
-	var getBriefsCount = func(teamModuleDbo *dbo4assetus.AssetusTeamDbo) int {
+	var getBriefsCount = func(teamModuleDbo *dbo4assetus.AssetusSpaceDbo) int {
 		return len(teamModuleDbo.Assets)
 	}
-	briefsAdapter := dal4teamus.NewMapBriefsAdapter[*dbo4assetus.AssetusTeamDbo](
+	briefsAdapter := dal4teamus.NewMapBriefsAdapter[*dbo4assetus.AssetusSpaceDbo](
 		getBriefsCount,
-		func(teamModuleDbo *dbo4assetus.AssetusTeamDbo, id string) ([]dal.Update, error) {
+		func(teamModuleDbo *dbo4assetus.AssetusSpaceDbo, id string) ([]dal.Update, error) {
 			delete(teamModuleDbo.Assets, id)
 			return []dal.Update{{Field: "assets." + id, Value: dal.DeleteField}}, teamModuleDbo.Validate()
 		},
 	)
 
-	return dal4teamus.DeleteTeamItem(ctx, user, request,
-		const4assetus.ModuleID, new(dbo4assetus.AssetusTeamDbo),
+	return dal4teamus.DeleteSpaceItem(ctx, user, request,
+		const4assetus.ModuleID, new(dbo4assetus.AssetusSpaceDbo),
 		dal4assetus.AssetsCollection, new(dbo4assetus.AssetDbo),
 		briefsAdapter,
 		deleteAssetTxWorker,
 	)
 }
 
-func deleteAssetTxWorker(_ context.Context, _ dal.ReadwriteTransaction, _ *dal4teamus.TeamItemWorkerParams[*dbo4assetus.AssetusTeamDbo, *dbo4assetus.AssetDbo]) (err error) {
+func deleteAssetTxWorker(_ context.Context, _ dal.ReadwriteTransaction, _ *dal4teamus.SpaceItemWorkerParams[*dbo4assetus.AssetusSpaceDbo, *dbo4assetus.AssetDbo]) (err error) {
 	return nil
 }

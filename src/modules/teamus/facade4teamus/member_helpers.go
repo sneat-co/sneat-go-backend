@@ -30,10 +30,10 @@ func CreateMemberRecordFromBrief(
 	}
 	member = dal4contactus.NewContactEntry(teamID, contactID)
 	//member.Brief = &memberBrief
-	//member.Data.TeamID = teamID
+	//member.Data.SpaceID = teamID
 	member.Data.ContactBrief = memberBrief
 	member.Data.Status = dbmodels.StatusActive
-	_ = member.Data.AddRole(const4contactus.TeamMemberRoleMember)
+	_ = member.Data.AddRole(const4contactus.SpaceMemberRoleMember)
 	member.Data.CreatedAt = now
 	member.Data.CreatedBy = byUserID
 	dbo4linkage.UpdateRelatedIDs(&member.Data.WithRelated, &member.Data.WithRelatedIDs)

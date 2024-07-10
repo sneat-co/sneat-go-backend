@@ -8,11 +8,11 @@ import (
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
-// GetTeam loads team record
-func GetTeam(ctx context.Context, userContext facade.User, id string) (team dal4teamus.TeamEntry, err error) {
+// GetSpace loads team record
+func GetSpace(ctx context.Context, userContext facade.User, id string) (team dal4teamus.SpaceEntry, err error) {
 	db := facade.GetDatabase(ctx)
 	var record dal.Record
-	team, err = GetTeamByID(ctx, db, id)
+	team, err = GetSpaceByID(ctx, db, id)
 	if err != nil || !record.Exists() {
 		return team, err
 	}
@@ -25,18 +25,18 @@ func GetTeam(ctx context.Context, userContext facade.User, id string) (team dal4
 		}
 	}
 	if !found {
-		return team, fmt.Errorf("%w: you do not belong to the TeamIDs", facade.ErrUnauthorized)
+		return team, fmt.Errorf("%w: you do not belong to the SpaceIDs", facade.ErrUnauthorized)
 	}
 	return team, err
 }
 
-// GetTeamByID return TeamIDs record
-func GetTeamByID(ctx context.Context, getter dal.ReadSession, id string) (team dal4teamus.TeamEntry, err error) {
-	team = dal4teamus.NewTeamEntry(id)
+// GetSpaceByID return SpaceIDs record
+func GetSpaceByID(ctx context.Context, getter dal.ReadSession, id string) (team dal4teamus.SpaceEntry, err error) {
+	team = dal4teamus.NewSpaceEntry(id)
 	return team, getter.Get(ctx, team.Record)
 }
 
-// TxGetTeamByID returns TeamIDs record in transaction
-func TxGetTeamByID(ctx context.Context, tx dal.ReadwriteTransaction, id string) (team dal4teamus.TeamEntry, err error) {
-	return GetTeamByID(ctx, tx, id)
+// TxGetSpaceByID returns SpaceIDs record in transaction
+func TxGetSpaceByID(ctx context.Context, tx dal.ReadwriteTransaction, id string) (team dal4teamus.SpaceEntry, err error) {
+	return GetSpaceByID(ctx, tx, id)
 }

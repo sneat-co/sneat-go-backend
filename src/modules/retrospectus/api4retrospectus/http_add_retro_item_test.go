@@ -22,8 +22,8 @@ func TestAddRetroItem(t *testing.T) {
 	req := httpmock.NewPostJSONRequest(http.MethodPost, "/v0/retrospective/add_retro_item", &facade4retrospectus.AddRetroItemRequest{
 		RetroItemRequest: facade4retrospectus.RetroItemRequest{
 			Request: facade4meetingus.Request{
-				TeamRequest: dto4teamus.TeamRequest{
-					TeamID: "team1",
+				SpaceRequest: dto4teamus.SpaceRequest{
+					SpaceID: "space1",
 				},
 				MeetingID: "retro1",
 			},

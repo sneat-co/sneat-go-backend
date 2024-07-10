@@ -19,10 +19,10 @@ func DeleteSlot(ctx context.Context, user facade.User, request dto4calendarium.D
 		return
 	}
 
-	err = dal4teamus.RunModuleTeamWorker(ctx, user, request.TeamRequest,
+	err = dal4teamus.RunModuleSpaceWorker(ctx, user, request.SpaceRequest,
 		const4calendarium.ModuleID,
-		new(dbo4calendarium.CalendariumTeamDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo]) (err error) {
+		new(dbo4calendarium.CalendariumSpaceDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo]) (err error) {
 			return deleteSlotTxWorker(ctx, tx, params, request)
 		})
 	if err != nil {
@@ -31,10 +31,10 @@ func DeleteSlot(ctx context.Context, user facade.User, request dto4calendarium.D
 	return
 }
 
-func deleteSlotTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo], request dto4calendarium.DeleteHappeningSlotRequest) (err error) {
-	happening := dbo4calendarium.NewHappeningEntry(request.TeamID, request.HappeningID)
+func deleteSlotTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo], request dto4calendarium.DeleteHappeningSlotRequest) (err error) {
+	happening := dbo4calendarium.NewHappeningEntry(request.SpaceID, request.HappeningID)
 	hasHappeningRecord := true
-	if err = tx.GetMulti(ctx, []dal.Record{happening.Record, params.TeamModuleEntry.Record}); err != nil {
+	if err = tx.GetMulti(ctx, []dal.Record{happening.Record, params.SpaceModuleEntry.Record}); err != nil {
 		return err
 	}
 	if err = happening.Record.Error(); err != nil {
@@ -82,15 +82,15 @@ func removeSlotFromSingleHappening(
 func removeSlotFromRecurringHappening(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo],
+	params *dal4teamus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo],
 	happening dbo4calendarium.HappeningEntry,
 	request dto4calendarium.DeleteHappeningSlotRequest,
 ) error {
 	if err := removeSlotFromHappeningDbo(ctx, tx, happening, request); err != nil {
 		return fmt.Errorf("failed to remove slot from happening record: %w", err)
 	}
-	if params.TeamModuleEntry.Record.Exists() {
-		if err := removeSlotFromHappeningBriefInTeamRecord(params, happening, request); err != nil {
+	if params.SpaceModuleEntry.Record.Exists() {
+		if err := removeSlotFromHappeningBriefInSpaceRecord(params, happening, request); err != nil {
 			return fmt.Errorf("failed to remove slot from happening brief in team record: %w", err)
 		}
 	}
@@ -142,25 +142,25 @@ func removeSlotFromHappeningDbo(
 	return nil
 }
 
-func removeSlotFromHappeningBriefInTeamRecord(
-	params *dal4teamus.ModuleTeamWorkerParams[*dbo4calendarium.CalendariumTeamDbo],
+func removeSlotFromHappeningBriefInSpaceRecord(
+	params *dal4teamus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo],
 	happening dbo4calendarium.HappeningEntry,
 	request dto4calendarium.DeleteHappeningSlotRequest,
 ) error {
-	brief := params.TeamModuleEntry.Data.GetRecurringHappeningBrief(happening.ID)
+	brief := params.SpaceModuleEntry.Data.GetRecurringHappeningBrief(happening.ID)
 	if brief == nil {
 		return nil
 	}
 	if request.Weekday == "" {
 		removedSlotIDs := removeSlots(brief.Slots, []string{request.SlotID})
 		if len(removedSlotIDs) > 0 {
-			params.TeamModuleUpdates = append(params.TeamModuleUpdates, dal.Update{
+			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, dal.Update{
 				Field: fmt.Sprintf("recurringHappenings.%s.slots.%s", happening.ID, request.SlotID),
 				Value: dal.DeleteField,
 			})
 			if len(happening.Data.Slots) == 0 {
 				happening.Data.Status = dbo4calendarium.HappeningStatusDeleted
-				params.TeamModuleUpdates = append(params.TeamModuleUpdates, dal.Update{
+				params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, dal.Update{
 					Field: fmt.Sprintf("recurringHappenings.%s.status", happening.ID),
 					Value: happening.Data.Status,
 				})

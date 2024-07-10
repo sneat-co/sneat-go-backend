@@ -24,8 +24,8 @@ func CreateOrder(
 ) (
 	orderBrief *dbo4logist.OrderBrief, err error,
 ) {
-	err = dal4teamus.RunTeamWorker(ctx, userContext, request.TeamID,
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.TeamWorkerParams) (err error) {
+	err = dal4teamus.RunSpaceWorker(ctx, userContext, request.SpaceID,
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.SpaceWorkerParams) (err error) {
 			orderBrief, err = createOrderTxWorker(ctx, tx, params, params.UserID, request)
 			return err
 		},
@@ -34,12 +34,12 @@ func CreateOrder(
 }
 
 func createOrderTxWorker(
-	ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.TeamWorkerParams,
+	ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.SpaceWorkerParams,
 	userID string,
 	request dto4logist.CreateOrderRequest,
 ) (orderBrief *dbo4logist.OrderBrief, err error) {
-	logistTeam := dbo4logist.NewLogistTeamEntry(request.TeamID)
-	if err = tx.Get(ctx, logistTeam.Record); err != nil {
+	logistSpace := dbo4logist.NewLogistSpaceEntry(request.SpaceID)
+	if err = tx.Get(ctx, logistSpace.Record); err != nil {
 		if dal.IsNotFound(err) {
 			err = nil // OK
 		} else {
@@ -47,38 +47,38 @@ func createOrderTxWorker(
 		}
 	}
 
-	if logistTeam.Data.OrderCounters == nil {
-		logistTeam.Data.OrderCounters = make(map[string]dbo4logist.OrderCounter, 1)
+	if logistSpace.Data.OrderCounters == nil {
+		logistSpace.Data.OrderCounters = make(map[string]dbo4logist.OrderCounter, 1)
 	}
 	const counterName = "all"
-	counter := logistTeam.Data.OrderCounters[counterName]
+	counter := logistSpace.Data.OrderCounters[counterName]
 	counter.LastNumber++
-	logistTeam.Data.OrderCounters[counterName] = counter
+	logistSpace.Data.OrderCounters[counterName] = counter
 
-	if err := logistTeam.Data.Validate(); err != nil {
+	if err := logistSpace.Data.Validate(); err != nil {
 		return nil, fmt.Errorf("logistus team record is not valid: %w", err)
 	}
 
-	orderNumberPrefixed := logistTeam.Data.OrderCounters["all"].Prefix + strconv.Itoa(counter.LastNumber)
-	order := dbo4logist.NewOrder(params.Team.ID, orderNumberPrefixed)
+	orderNumberPrefixed := logistSpace.Data.OrderCounters["all"].Prefix + strconv.Itoa(counter.LastNumber)
+	order := dbo4logist.NewOrder(params.Space.ID, orderNumberPrefixed)
 	fillOrderDtoFromRequest(order.Dto, request, params, userID)
 
-	if err := addContactsFromCounterparties(ctx, tx, params.Team.ID, order.Dto); err != nil {
+	if err := addContactsFromCounterparties(ctx, tx, params.Space.ID, order.Dto); err != nil {
 		return nil, fmt.Errorf("failed to add contacts from counterparties: %w", err)
 	}
 
-	if logistTeam.Record.Exists() {
-		logistTeamUpdates := []dal.Update{
+	if logistSpace.Record.Exists() {
+		logistSpaceUpdates := []dal.Update{
 			{Field: "orderCounters.all.lastNumber", Value: counter.LastNumber},
 		}
-		if err := tx.Update(ctx, logistTeam.Key, logistTeamUpdates); err != nil {
+		if err := tx.Update(ctx, logistSpace.Key, logistSpaceUpdates); err != nil {
 			return nil, fmt.Errorf("failed to update logistus team record: %w", err)
 		}
-	} else if err := tx.Insert(ctx, logistTeam.Record); err != nil {
+	} else if err := tx.Insert(ctx, logistSpace.Record); err != nil {
 		return nil, fmt.Errorf("failed to insert logistus team record: %w", err)
 	}
 
-	//order.Data.OrderIDs = []string{params.Team.ContactID + ":" + orderNumberPrefixed}
+	//order.Data.OrderIDs = []string{params.Space.ContactID + ":" + orderNumberPrefixed}
 
 	order.Dto.UpdateKeys()
 	order.Dto.UpdateDates()
@@ -97,13 +97,13 @@ func createOrderTxWorker(
 	return orderBrief, err
 }
 
-func fillOrderDtoFromRequest(orderDto *dbo4logist.OrderDbo, request dto4logist.CreateOrderRequest, params *dal4teamus.TeamWorkerParams, userID string) {
+func fillOrderDtoFromRequest(orderDto *dbo4logist.OrderDbo, request dto4logist.CreateOrderRequest, params *dal4teamus.SpaceWorkerParams, userID string) {
 	orderDto.OrderBase = request.Order
 
 	orderDto.Status = "active"
-	orderDto.UserIDs = params.Team.Data.UserIDs
-	orderDto.TeamID = params.Team.ID
-	orderDto.TeamIDs = []string{params.Team.ID}
+	orderDto.UserIDs = params.Space.Data.UserIDs
+	orderDto.SpaceID = params.Space.ID
+	orderDto.SpaceIDs = []string{params.Space.ID}
 	modified := dbmodels2.Modified{
 		By: userID,
 		At: time.Now(),

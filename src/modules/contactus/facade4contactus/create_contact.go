@@ -24,7 +24,7 @@ import (
 func CreateContact(
 	ctx context.Context,
 	userContext facade.User,
-	userCanBeNonTeamMember bool,
+	userCanBeNonSpaceMember bool,
 	request dto4contactus.CreateContactRequest,
 ) (
 	response dto4contactus.CreateContactResponse,
@@ -34,10 +34,10 @@ func CreateContact(
 		return response, fmt.Errorf("invalid CreateContactRequest: %w", err)
 	}
 
-	err = dal4teamus.CreateTeamItem(ctx, userContext, request.TeamRequest, const4contactus.ModuleID, new(models4contactus.ContactusTeamDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*models4contactus.ContactusTeamDbo]) (err error) {
+	err = dal4teamus.CreateSpaceItem(ctx, userContext, request.SpaceRequest, const4contactus.ModuleID, new(models4contactus.ContactusSpaceDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleSpaceWorkerParams[*models4contactus.ContactusSpaceDbo]) (err error) {
 			var contact dal4contactus.ContactEntry
-			if contact, err = CreateContactTx(ctx, tx, userCanBeNonTeamMember, request, params); err != nil {
+			if contact, err = CreateContactTx(ctx, tx, userCanBeNonSpaceMember, request, params); err != nil {
 				return err
 			}
 			response = dto4contactus.CreateContactResponse{
@@ -60,9 +60,9 @@ func CreateContact(
 func CreateContactTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	userCanBeNonTeamMember bool,
+	userCanBeNonSpaceMember bool,
 	request dto4contactus.CreateContactRequest,
-	params *dal4teamus.ModuleTeamWorkerParams[*models4contactus.ContactusTeamDbo],
+	params *dal4teamus.ModuleSpaceWorkerParams[*models4contactus.ContactusSpaceDbo],
 ) (
 	contact dal4contactus.ContactEntry,
 	err error,
@@ -73,8 +73,8 @@ func CreateContactTx(
 	if err = params.GetRecords(ctx, tx); err != nil {
 		return
 	}
-	userContactID, userContactBrief := params.TeamModuleEntry.Data.GetContactBriefByUserID(params.UserID)
-	if !userCanBeNonTeamMember && (userContactBrief == nil || !userContactBrief.IsTeamMember()) {
+	userContactID, userContactBrief := params.SpaceModuleEntry.Data.GetContactBriefByUserID(params.UserID)
+	if !userCanBeNonSpaceMember && (userContactBrief == nil || !userContactBrief.IsSpaceMember()) {
 		err = errors.New("user is not a member of the team")
 		return
 	}
@@ -85,10 +85,10 @@ func CreateContactTx(
 			if len(relatedItems) > 0 {
 				var isRelatedByUserID bool
 				for _, relatedItem := range relatedItems {
-					isRelatedByUserID = dbo4linkage.HasRelatedItem(relatedItems, dbo4linkage.RelatedItemKey{TeamID: params.Team.ID, ItemID: params.UserID})
+					isRelatedByUserID = dbo4linkage.HasRelatedItem(relatedItems, dbo4linkage.RelatedItemKey{SpaceID: params.Space.ID, ItemID: params.UserID})
 					if !isRelatedByUserID {
 						contactID := relatedItem.Keys[0].ItemID
-						if contactBrief := params.TeamModuleEntry.Data.GetContactBriefByContactID(contactID); contactBrief == nil {
+						if contactBrief := params.SpaceModuleEntry.Data.GetContactBriefByContactID(contactID); contactBrief == nil {
 							return contact, fmt.Errorf("contact with ID=[%s] is not found", contactID)
 						}
 					}
@@ -98,7 +98,7 @@ func CreateContactTx(
 							switch relatedAs {
 							case dbmodels.RelationshipSpouse, dbmodels.RelationshipChild:
 								userContactBrief.AgeGroup = dbmodels.AgeGroupAdult
-								userContactKey := dal4contactus.NewContactKey(request.TeamID, userContactID)
+								userContactKey := dal4contactus.NewContactKey(request.SpaceID, userContactID)
 								if err = tx.Update(ctx, userContactKey, []dal.Update{
 									{
 										Field: "ageGroup",
@@ -113,7 +113,7 @@ func CreateContactTx(
 					}
 				}
 				if isRelatedByUserID {
-					userRelatedItem := dbo4linkage.GetRelatedItemByKey(relatedItems, dbo4linkage.RelatedItemKey{TeamID: params.Team.ID, ItemID: params.UserID})
+					userRelatedItem := dbo4linkage.GetRelatedItemByKey(relatedItems, dbo4linkage.RelatedItemKey{SpaceID: params.Space.ID, ItemID: params.UserID})
 					userRelatedItem.Keys[0].ItemID = userContactID
 				}
 			}
@@ -124,7 +124,7 @@ func CreateContactTx(
 
 	var parent dal4contactus.ContactEntry
 	if parentContactID != "" {
-		parent = dal4contactus.NewContactEntry(request.TeamID, parentContactID)
+		parent = dal4contactus.NewContactEntry(request.SpaceID, parentContactID)
 		if err = tx.Get(ctx, parent.Record); err != nil {
 			return contact, fmt.Errorf("failed to get parent contact with ID=[%s]: %w", parentContactID, err)
 		}
@@ -169,45 +169,45 @@ func CreateContactTx(
 	if contactDbo.Address != nil {
 		contactDbo.CountryID = contactDbo.Address.CountryID
 	}
-	contactDbo.ShortTitle = contactDbo.DetermineShortTitle(request.Person.Title, params.TeamModuleEntry.Data.Contacts)
+	contactDbo.ShortTitle = contactDbo.DetermineShortTitle(request.Person.Title, params.SpaceModuleEntry.Data.Contacts)
 	var contactID string
 	if request.ContactID == "" {
-		contactIDs := params.TeamModuleEntry.Data.ContactIDs()
+		contactIDs := params.SpaceModuleEntry.Data.ContactIDs()
 		if contactID, err = person.GenerateIDFromNameOrRandom(request.Person.Names, contactIDs); err != nil {
 			return contact, fmt.Errorf("failed to generate contact ID: %w", err)
 		}
 	} else {
 		contactID = request.ContactID
 	}
-	if contactDbo.CountryID == "" && params.Team.Data.CountryID != "" && params.Team.Data.Type == core4teamus.TeamTypeFamily {
-		contactDbo.CountryID = params.Team.Data.CountryID
+	if contactDbo.CountryID == "" && params.Space.Data.CountryID != "" && params.Space.Data.Type == core4teamus.SpaceTypeFamily {
+		contactDbo.CountryID = params.Space.Data.CountryID
 	}
-	params.TeamModuleEntry.Data.AddContact(contactID, &contactDbo.ContactBrief)
-	if params.TeamModuleEntry.Record.Exists() {
-		if err = tx.Update(ctx, params.TeamModuleEntry.Key, []dal.Update{
+	params.SpaceModuleEntry.Data.AddContact(contactID, &contactDbo.ContactBrief)
+	if params.SpaceModuleEntry.Record.Exists() {
+		if err = tx.Update(ctx, params.SpaceModuleEntry.Key, []dal.Update{
 			{
 				Field: const4contactus.ContactsField,
-				Value: params.TeamModuleEntry.Data.Contacts,
+				Value: params.SpaceModuleEntry.Data.Contacts,
 			},
 		}); err != nil {
 			return contact, fmt.Errorf("failed to update team contact briefs: %w", err)
 		}
 	} else {
-		if err = tx.Insert(ctx, params.TeamModuleEntry.Record); err != nil {
+		if err = tx.Insert(ctx, params.SpaceModuleEntry.Record); err != nil {
 			return contact, fmt.Errorf("faield to insert team contacts brief record: %w", err)
 		}
 	}
 
-	//params.TeamUpdates = append(params.TeamUpdates, params.Team.Data.UpdateNumberOf(const4contactus.ContactsField, len(params.TeamModuleEntry.Data.Contacts)))
+	//params.SpaceUpdates = append(params.SpaceUpdates, params.Space.Data.UpdateNumberOf(const4contactus.ContactsField, len(params.SpaceModuleEntry.Data.Contacts)))
 
 	if request.Related != nil {
-		if err = updateRelationshipsInRelatedItems(ctx, tx, params.UserID, userContactID, params.Team.ID, contactID, params.TeamModuleEntry, contactDbo, request.Related); err != nil {
+		if err = updateRelationshipsInRelatedItems(ctx, tx, params.UserID, userContactID, params.Space.ID, contactID, params.SpaceModuleEntry, contactDbo, request.Related); err != nil {
 			err = fmt.Errorf("failed to update relationships in related items: %w", err)
 			return
 		}
 	}
 
-	contact = dal4contactus.NewContactEntryWithData(request.TeamID, contactID, contactDbo)
+	contact = dal4contactus.NewContactEntryWithData(request.SpaceID, contactID, contactDbo)
 
 	_ = dbo4linkage.UpdateRelatedIDs(&contact.Data.WithRelated, &contact.Data.WithRelatedIDs)
 	if err = contact.Data.Validate(); err != nil {
@@ -226,12 +226,12 @@ func CreateContactTx(
 
 func updateRelationshipsInRelatedItems(ctx context.Context, tx dal.ReadTransaction,
 	userID, userContactID, teamID, contactID string,
-	contactusTeamEntry dal4contactus.ContactusTeamModuleEntry,
+	contactusSpaceEntry dal4contactus.ContactusSpaceModuleEntry,
 	contactDbo *models4contactus.ContactDbo,
 	related dbo4linkage.RelatedByModuleID,
 ) (err error) {
 	if userContactID == "" { // Why we get it 2nd time? Previous is up in stack in CreateContactTx()
-		if userContactID, err = facade4userus.GetUserTeamContactID(ctx, tx, userID, contactusTeamEntry); err != nil {
+		if userContactID, err = facade4userus.GetUserSpaceContactID(ctx, tx, userID, contactusSpaceEntry); err != nil {
 			return
 		}
 		if userContactID == "" {
@@ -244,8 +244,8 @@ func updateRelationshipsInRelatedItems(ctx context.Context, tx dal.ReadTransacti
 		for collection, relatedByItemID := range relatedByCollection {
 			for _, relatedItem := range relatedByItemID {
 				for _, key := range relatedItem.Keys {
-					itemRef := dbo4linkage.TeamModuleItemRef{
-						TeamID:     teamID,
+					itemRef := dbo4linkage.SpaceModuleItemRef{
+						SpaceID:    teamID,
 						ModuleID:   moduleID,
 						Collection: collection,
 						ItemID:     key.ItemID,

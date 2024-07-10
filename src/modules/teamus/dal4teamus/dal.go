@@ -13,21 +13,21 @@ var txUpdate = func(ctx context.Context, tx dal.ReadwriteTransaction, key *dal.K
 	return db.TxUpdate(ctx, tx, key, data, opts...)
 }
 
-func txUpdateTeam(ctx context.Context, tx dal.ReadwriteTransaction, timestamp time.Time, team TeamEntry, data []dal.Update, opts ...dal.Precondition) error {
-	if err := team.Data.Validate(); err != nil {
-		return fmt.Errorf("team record is not valid: %w", err)
+func txUpdateSpace(ctx context.Context, tx dal.ReadwriteTransaction, timestamp time.Time, space SpaceEntry, data []dal.Update, opts ...dal.Precondition) error {
+	if err := space.Data.Validate(); err != nil {
+		return fmt.Errorf("space record is not valid: %w", err)
 	}
-	team.Data.Version++
+	space.Data.Version++
 	data = append(data,
-		dal.Update{Field: "v", Value: team.Data.Version},
+		dal.Update{Field: "v", Value: space.Data.Version},
 		dal.Update{Field: "timestamp", Value: timestamp},
 	)
-	return txUpdate(ctx, tx, team.Key, data, opts...)
+	return txUpdate(ctx, tx, space.Key, data, opts...)
 }
 
-func txUpdateTeamModule[D TeamModuleDbo](ctx context.Context, tx dal.ReadwriteTransaction, _ time.Time, teamModule record.DataWithID[string, D], data []dal.Update, opts ...dal.Precondition) error {
-	if !teamModule.Record.Exists() {
-		return fmt.Errorf("an attempt to update a team module record that does not exist: %s", teamModule.Key.String())
+func txUpdateSpaceModule[D SpaceModuleDbo](ctx context.Context, tx dal.ReadwriteTransaction, _ time.Time, spaceModule record.DataWithID[string, D], data []dal.Update, opts ...dal.Precondition) error {
+	if !spaceModule.Record.Exists() {
+		return fmt.Errorf("an attempt to update a space module record that does not exist: %s", spaceModule.Key.String())
 	}
-	return txUpdate(ctx, tx, teamModule.Key, data, opts...)
+	return txUpdate(ctx, tx, spaceModule.Key, data, opts...)
 }

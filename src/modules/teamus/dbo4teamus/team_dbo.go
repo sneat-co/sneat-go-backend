@@ -24,8 +24,8 @@ type BoolMetric struct {
 	False *BoolMetricVal `json:"false,omitempty" firestore:"false,omitempty"`
 }
 
-// TeamMetric record
-type TeamMetric struct {
+// SpaceMetric record
+type SpaceMetric struct {
 	ID      string      `json:"id" firestore:"id"`
 	Title   string      `json:"title" firestore:"title"`
 	Mode    string      `json:"mode" firestore:"mode"` // Possible values: personal, team
@@ -36,15 +36,15 @@ type TeamMetric struct {
 	Options []string    `json:"options" firestore:"options"`
 }
 
-// Validate validates TeamMetric record
-func (v *TeamMetric) Validate() error {
+// Validate validates SpaceMetric record
+func (v *SpaceMetric) Validate() error {
 	if v.Title == "" {
 		return validation.NewErrRecordIsMissingRequiredField("title")
 	}
 	switch v.Mode {
 	case "":
 		return validation.NewErrRecordIsMissingRequiredField("mode")
-	case "personal", "team":
+	case "personal", "space":
 		break
 	default:
 		return validation.NewErrBadRecordFieldValue("mode", fmt.Sprintf("unknwon value: %s", v.Mode))
@@ -60,8 +60,8 @@ func (v *TeamMetric) Validate() error {
 	return nil
 }
 
-// TeamMeetingInfo record
-type TeamMeetingInfo struct {
+// SpaceMeetingInfo record
+type SpaceMeetingInfo struct {
 	ID       string     `json:"id,omitempty" firestore:"id,omitempty"`
 	Stage    string     `json:"stage" firestore:"stage"`
 	Started  *time.Time `json:"started,omitempty" firestore:"started,omitempty"`
@@ -72,7 +72,7 @@ type TeamMeetingInfo struct {
 var EarliestPossibleTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
 
 // Validate validates record
-func (v *TeamMeetingInfo) Validate() error {
+func (v *SpaceMeetingInfo) Validate() error {
 	if v.ID == "" {
 		return validation.NewErrRecordIsMissingRequiredField("id")
 	}
@@ -93,35 +93,35 @@ func (v *TeamMeetingInfo) Validate() error {
 	return nil
 }
 
-// TeamMeetings record
-type TeamMeetings struct {
-	Retrospective *TeamMeetingInfo `json:"retrospective,omitempty" firestore:"retrospective,omitempty"`
-	Scrum         *TeamMeetingInfo `json:"scrum,omitempty" firestore:"scrum,omitempty"`
+// SpaceMeetings record
+type SpaceMeetings struct {
+	Retrospective *SpaceMeetingInfo `json:"retrospective,omitempty" firestore:"retrospective,omitempty"`
+	Scrum         *SpaceMeetingInfo `json:"scrum,omitempty" firestore:"scrum,omitempty"`
 }
 
-// TeamBrief is a base class for TeamDbo
-type TeamBrief struct {
-	Type   core4teamus.TeamType `json:"type" firestore:"type"`
-	Title  string               `json:"title" firestore:"title"`
-	Status dbmodels.Status      `json:"status" firestore:"status"`
+// SpaceBrief is a base class for SpaceDbo
+type SpaceBrief struct {
+	Type   core4teamus.SpaceType `json:"type" firestore:"type"`
+	Title  string                `json:"title" firestore:"title"`
+	Status dbmodels.Status       `json:"status" firestore:"status"`
 
 	Modules []string `json:"modules,omitempty" firestore:"modules,omitempty"`
 
 	with.RequiredCountryID
 
 	// TODO: This should be populated
-	ParentTeamID string `json:"parentTeamID,omitempty" firestore:"parentTeamID,omitempty"`
+	ParentSpaceID string `json:"parentSpaceID,omitempty" firestore:"parentSpaceID,omitempty"`
 }
 
-func (v TeamBrief) Validate() error {
+func (v SpaceBrief) Validate() error {
 	v.Title = strings.TrimSpace(v.Title)
 	if v.Type == "" {
 		return validation.NewErrRecordIsMissingRequiredField("type")
 	}
-	if v.Type != core4teamus.TeamTypeFamily && v.Title == "" {
+	if v.Type != core4teamus.SpaceTypeFamily && v.Title == "" {
 		return errors.New("non family team is required to have a title")
 	}
-	if !core4teamus.IsValidTeamType(v.Type) {
+	if !core4teamus.IsValidSpaceType(v.Type) {
 		if v.Title == "" {
 			return validation.NewErrBadRecordFieldValue("type", "unknown value")
 		}
@@ -129,7 +129,7 @@ func (v TeamBrief) Validate() error {
 	}
 	if v.Status == "" {
 		return validation.NewErrRequestIsMissingRequiredField("status")
-	} else if !IsKnownTeamStatus(v.Status) {
+	} else if !IsKnownSpaceStatus(v.Status) {
 		return validation.NewErrBadRecordFieldValue("status", "unknown value: "+v.Status)
 	}
 	if err := v.RequiredCountryID.Validate(); err != nil {
@@ -138,7 +138,7 @@ func (v TeamBrief) Validate() error {
 	return nil
 }
 
-func IsKnownTeamStatus(status dbmodels.Status) bool {
+func IsKnownSpaceStatus(status dbmodels.Status) bool {
 	switch status {
 	case dbmodels.StatusActive, dbmodels.StatusArchived, dbmodels.StatusDeleted, dbmodels.StatusDraft:
 		return true
@@ -148,9 +148,9 @@ func IsKnownTeamStatus(status dbmodels.Status) bool {
 
 const NumberOfMembersFieldName = "members"
 
-// TeamDbo record
-type TeamDbo struct {
-	TeamBrief
+// SpaceDbo record
+type SpaceDbo struct {
+	SpaceBrief
 	with.CreatedFields
 	dbmodels.WithUpdatedAndVersion
 	dbmodels.WithUserIDs
@@ -162,10 +162,10 @@ type TeamDbo struct {
 	//
 	Timezone *dbmodels.Timezone `json:"timezone,omitempty" firestore:"timezone,omitempty"`
 	//
-	Metrics []*TeamMetric `json:"metrics,omitempty" firestore:"metrics,omitempty"`
+	Metrics []*SpaceMetric `json:"metrics,omitempty" firestore:"metrics,omitempty"`
 }
 
-//func (v *TeamDbo) SetNumberOf(name string, value int) (update dal.Update) {
+//func (v *SpaceDbo) SetNumberOf(name string, value int) (update dal.Update) {
 //	if v.NumberOf == nil {
 //		v.NumberOf = make(map[string]int)
 //	}
@@ -177,7 +177,7 @@ type TeamDbo struct {
 //}
 
 // IncreaseVersion increases record version and sets timestamp
-func (v *TeamDbo) IncreaseVersion(timestamp time.Time, updatedBy string) int {
+func (v *SpaceDbo) IncreaseVersion(timestamp time.Time, updatedBy string) int {
 	v.Version++
 	v.UpdatedAt = timestamp
 	v.UpdatedBy = updatedBy
@@ -185,8 +185,8 @@ func (v *TeamDbo) IncreaseVersion(timestamp time.Time, updatedBy string) int {
 }
 
 // Validate validates record
-func (v *TeamDbo) Validate() error {
-	if err := v.TeamBrief.Validate(); err != nil {
+func (v *SpaceDbo) Validate() error {
+	if err := v.SpaceBrief.Validate(); err != nil {
 		return err
 	}
 	if err := v.CreatedFields.Validate(); err != nil {
@@ -232,7 +232,7 @@ func (v *TeamDbo) Validate() error {
 }
 
 // HasUser checks if team has a user with given ID
-func (v *TeamDbo) HasUser(uid string) bool {
+func (v *SpaceDbo) HasUser(uid string) bool {
 	return slice.Index(v.UserIDs, uid) >= 0
 }
 
@@ -240,7 +240,7 @@ func (v *TeamDbo) HasUser(uid string) bool {
 //	return "numberOf." + name
 //}
 
-//func (v *TeamDbo) UpdateNumberOf(name string, value int) dal.Update {
+//func (v *SpaceDbo) UpdateNumberOf(name string, value int) dal.Update {
 //	v.NumberOf[name] = value
 //	return dal.Update{
 //		Field: NumberOfUpdateField(name),

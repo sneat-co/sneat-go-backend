@@ -17,8 +17,8 @@ func SetContactsStatus(ctx context.Context, user facade.User, request dto4contac
 		return
 	}
 
-	err = dal4contactus.RunContactusTeamWorker(ctx, user, request.TeamRequest,
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusTeamWorkerParams) (err error) {
+	err = dal4contactus.RunContactusSpaceWorker(ctx, user, request.SpaceRequest,
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) (err error) {
 			return setContactsStatusTxWorker(ctx, tx, params, request.ContactIDs, request.Status)
 		},
 	)
@@ -29,7 +29,7 @@ func SetContactsStatus(ctx context.Context, user facade.User, request dto4contac
 }
 
 func setContactsStatusTxWorker(
-	ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusTeamWorkerParams,
+	ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams,
 	contactIDs []string, status string,
 ) (err error) {
 	for _, contactID := range contactIDs {
@@ -41,17 +41,17 @@ func setContactsStatusTxWorker(
 }
 
 func setContactStatusTxWorker(
-	ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusTeamWorkerParams,
+	ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams,
 	contactID string, status string,
 ) (err error) {
-	contact := dal4contactus.NewContactEntry(params.Team.ID, contactID)
+	contact := dal4contactus.NewContactEntry(params.Space.ID, contactID)
 	if err = tx.Get(ctx, contact.Record); err != nil {
 		return fmt.Errorf("failed to get contact record: %w", err)
 	}
 
 	var relatedContacts []dal4contactus.ContactEntry
 
-	relatedContacts, err = GetRelatedContacts(ctx, tx, params.Team.ID, "child", 0, -1, []dal4contactus.ContactEntry{contact})
+	relatedContacts, err = GetRelatedContacts(ctx, tx, params.Space.ID, "child", 0, -1, []dal4contactus.ContactEntry{contact})
 	if err != nil {
 		return fmt.Errorf("failed to get descendant contacts: %w", err)
 	}
@@ -79,34 +79,34 @@ func setContactStatusTxWorker(
 			contactIDs = append(contactIDs, contactToUpdate.ID)
 		}
 		for _, contactID := range contactIDs {
-			params.TeamModuleUpdates = append(params.TeamModuleUpdates,
-				params.TeamModuleEntry.Data.RemoveContact(contactID))
+			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates,
+				params.SpaceModuleEntry.Data.RemoveContact(contactID))
 		}
-		if err := params.Team.Data.Validate(); err != nil {
+		if err := params.Space.Data.Validate(); err != nil {
 			return err
 		}
-		//params.TeamUpdates = append(params.TeamUpdates, updateTeamDtoWithNumberOfContact(len(params.TeamModuleEntry.Data.Contacts)))
+		//params.SpaceUpdates = append(params.SpaceUpdates, updateTeamDtoWithNumberOfContact(len(params.SpaceModuleEntry.Data.Contacts)))
 	}
 	if status == "active" {
-		params.TeamModuleEntry.Data.AddContact(contact.ID, &contact.Data.ContactBrief)
+		params.SpaceModuleEntry.Data.AddContact(contact.ID, &contact.Data.ContactBrief)
 	}
-	if params.TeamModuleEntry.Record.Exists() {
-		if len(params.TeamModuleEntry.Data.Contacts) == 0 {
-			if err := tx.Delete(ctx, params.TeamModuleEntry.Key); err != nil {
+	if params.SpaceModuleEntry.Record.Exists() {
+		if len(params.SpaceModuleEntry.Data.Contacts) == 0 {
+			if err := tx.Delete(ctx, params.SpaceModuleEntry.Key); err != nil {
 				return fmt.Errorf("failed to delete team contacts brief record: %w", err)
 			}
 		} else {
-			if err := tx.Update(ctx, params.TeamModuleEntry.Key, []dal.Update{
+			if err := tx.Update(ctx, params.SpaceModuleEntry.Key, []dal.Update{
 				{
 					Field: const4contactus.ContactsField,
-					Value: params.TeamModuleEntry.Data.Contacts,
+					Value: params.SpaceModuleEntry.Data.Contacts,
 				},
 			}); err != nil {
 				return fmt.Errorf("failed to put team contacts brief: %w", err)
 			}
 		}
-	} else if len(params.TeamModuleEntry.Data.Contacts) > 0 {
-		if err := tx.Insert(ctx, params.TeamModuleEntry.Record); err != nil {
+	} else if len(params.SpaceModuleEntry.Data.Contacts) > 0 {
+		if err := tx.Insert(ctx, params.SpaceModuleEntry.Record); err != nil {
 			return fmt.Errorf("failed to insert team contacts brief record: %w", err)
 		}
 	}

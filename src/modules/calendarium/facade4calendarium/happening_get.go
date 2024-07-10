@@ -12,7 +12,7 @@ func GetByID(ctx context.Context, getter dal.ReadSession, teamID, happeningID st
 	return record, getter.Get(ctx, record)
 }
 
-// GetForUpdate returns TeamIDs record in transaction
+// GetForUpdate returns SpaceIDs record in transaction
 func GetForUpdate(ctx context.Context, tx dal.ReadwriteTransaction, teamID, happeningID string, dto dbo4calendarium.HappeningDbo) (record dal.Record, err error) {
 	return GetByID(ctx, tx, teamID, happeningID, dto)
 }

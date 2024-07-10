@@ -16,13 +16,13 @@ const OrdersCollection = "orders"
 // OrderDbo is a DTO for an order
 type OrderDbo struct {
 	dbmodels.WithModified
-	dbmodels.WithTeamID  // Owner of an order
-	dbmodels.WithTeamIDs // Teams that can access an order
-	dbmodels.WithUserIDs // Users that can access an order
-	with.CountryIDsField // Countries related to an order
-	with.DatesFields     // Dates related to an order
-	with.KeysField       // Keys related to an order
-	OrderBase            // Order fields that are stored in a record and also passed in a ValidatingRequest
+	dbmodels.WithSpaceID  // Owner of an order
+	dbmodels.WithSpaceIDs // Spaces that can access an order
+	dbmodels.WithUserIDs  // Users that can access an order
+	with.CountryIDsField  // Countries related to an order
+	with.DatesFields      // Dates related to an order
+	with.KeysField        // Keys related to an order
+	OrderBase             // Order fields that are stored in a record and also passed in a ValidatingRequest
 	WithOrderContacts
 	WithOrderContainers // Shipping containers included to an order
 	WithShippingPoints  // Shipping points included to an order
@@ -55,13 +55,13 @@ func (v *OrderDbo) Validate() error {
 	if err := v.CountryIDsField.Validate(); err != nil {
 		return err
 	}
-	if err := v.WithTeamID.Validate(); err != nil {
+	if err := v.WithSpaceID.Validate(); err != nil {
 		return err
 	}
-	if err := v.WithTeamIDs.Validate(); err != nil {
+	if err := v.WithSpaceIDs.Validate(); err != nil {
 		return err
 	}
-	if slice.Index(v.TeamIDs, v.TeamID) < 0 {
+	if slice.Index(v.SpaceIDs, v.SpaceID) < 0 {
 		return validation.NewErrBadRecordFieldValue("field", " should contain value of teamID field")
 	}
 	if err := v.WithUserIDs.Validate(); err != nil {

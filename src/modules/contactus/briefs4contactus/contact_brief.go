@@ -57,8 +57,8 @@ func (v *ContactBrief) SetName(field, value string) {
 	}
 }
 
-func (v *ContactBrief) IsTeamMember() bool {
-	return v.HasRole(const4contactus.TeamMemberRoleMember)
+func (v *ContactBrief) IsSpaceMember() bool {
+	return v.HasRole(const4contactus.SpaceMemberRoleMember)
 }
 
 // GetUserID returns UserID field value
@@ -127,9 +127,9 @@ func (v *ContactBrief) GetTitle() string {
 }
 
 func (v *ContactBrief) DetermineShortTitle(title string, contacts map[string]*ContactBrief) string {
-	if v.Names.FirstName != "" && IsUniqueShortTitle(v.Names.FirstName, contacts, const4contactus.TeamMemberRoleMember) {
+	if v.Names.FirstName != "" && IsUniqueShortTitle(v.Names.FirstName, contacts, const4contactus.SpaceMemberRoleMember) {
 		v.ShortTitle = v.Names.FirstName
-	} else if v.Names.NickName != "" && IsUniqueShortTitle(v.Names.FirstName, contacts, const4contactus.TeamMemberRoleMember) {
+	} else if v.Names.NickName != "" && IsUniqueShortTitle(v.Names.FirstName, contacts, const4contactus.SpaceMemberRoleMember) {
 		return v.Names.NickName
 	} else if v.Names.FullName != "" {
 		return getShortTitle(v.Names.FullName, contacts)

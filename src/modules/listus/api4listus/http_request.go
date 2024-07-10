@@ -7,7 +7,7 @@ import (
 
 func getListRequestParamsFromURL(r *http.Request) (request facade4listus.ListRequest) {
 	query := r.URL.Query()
-	request.TeamID = query.Get("teamID")
+	request.SpaceID = query.Get("spaceID")
 	request.ListID = query.Get("listID")
 	return
 }

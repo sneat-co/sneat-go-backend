@@ -14,7 +14,7 @@ type SetOrderStatusRequest struct {
 
 // Validate returns error if request is invalid
 func (v SetOrderStatusRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
 	if strings.TrimSpace(string(v.Status)) == "" {

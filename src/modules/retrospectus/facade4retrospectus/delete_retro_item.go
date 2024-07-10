@@ -32,9 +32,9 @@ func deleteUserRetroItem(ctx context.Context, userContext facade.User, request R
 		//	return err
 		//}
 		//
-		//userTeamInfo := user.GetUserTeamInfoByID(request.TeamID)
+		//userTeamInfo := user.GetUserSpaceInfoByID(request.SpaceID)
 		//if userTeamInfo == nil {
-		//	return validation.NewErrBadRequestFieldValue("team", fmt.Sprintf("user does not belong to this team %v, uid=%v", request.TeamID, uid))
+		//	return validation.NewErrBadRequestFieldValue("space", fmt.Sprintf("user does not belong to this team %v, uid=%v", request.SpaceID, uid))
 		//}
 		//
 		//if userTeamInfo.RetroItems == nil {
@@ -55,12 +55,12 @@ func deleteUserRetroItem(ctx context.Context, userContext facade.User, request R
 		//if len(items) != len(existingItems) {
 		//	userTeamInfo.RetroItems[request.Role] = items
 		//	if request.MeetingID == "upcoming" {
-		//		if err = updateTeamWithUpcomingRetroUserCounts(ctx, tx, now, uid, request.TeamID, userTeamInfo.RetroItems); err != nil {
+		//		if err = updateTeamWithUpcomingRetroUserCounts(ctx, tx, now, uid, request.SpaceID, userTeamInfo.RetroItems); err != nil {
 		//			return fmt.Errorf("failed to update team record: %w", err)
 		//		}
 		//	}
 		//	if err = txUpdate(ctx, tx, userKey, []dal.Update{
-		//		{Field: fmt.Sprintf("????.%v.retroItems.%v", request.TeamID, request.Role), Value: items},
+		//		{Field: fmt.Sprintf("????.%v.retroItems.%v", request.SpaceID, request.Role), Value: items},
 		//	}); err != nil {
 		//		return fmt.Errorf("failed to update user record after deleting retro item: %w", err)
 		//	}

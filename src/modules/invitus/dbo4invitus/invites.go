@@ -133,15 +133,15 @@ func (v Joiners) Validate() error {
 	return nil
 }
 
-// InviteTeam a summary on team for which an invite has been created
-type InviteTeam struct {
-	ID    string               `json:"id,omitempty" firestore:"id,omitempty"`
-	Type  core4teamus.TeamType `json:"type" firestore:"type"`
-	Title string               `json:"title,omitempty" firestore:"title,omitempty"`
+// InviteSpace a summary on team for which an invitation has been created
+type InviteSpace struct {
+	ID    string                `json:"id,omitempty" firestore:"id,omitempty"`
+	Type  core4teamus.SpaceType `json:"type" firestore:"type"`
+	Title string                `json:"title,omitempty" firestore:"title,omitempty"`
 }
 
 // Validate returns error if not valid
-func (v InviteTeam) Validate() error {
+func (v InviteSpace) Validate() error {
 	//if v.InviteID == "" {
 	//	return validation.NewErrRecordIsMissingRequiredField("id")
 	//}
@@ -229,7 +229,7 @@ type InviteDbo struct {
 	InviteBase
 	Status    string               `json:"status" firestore:"status" `
 	Pin       string               `json:"pin,omitempty" firestore:"pin,omitempty"`
-	TeamID    string               `json:"teamID" firestore:"teamID"`
+	SpaceID   string               `json:"spaceID" firestore:"spaceID"`
 	MessageID string               `json:"messageId" firestore:"messageId"` // e.g. email message ID from AWS SES
 	CreatedAt time.Time            `json:"createdAt" firestore:"createdAt"`
 	Created   dbmodels.CreatedInfo `json:"created" firestore:"created"`
@@ -238,7 +238,7 @@ type InviteDbo struct {
 	Sending   *time.Time           `json:"sending,omitempty" firestore:"sending,omitempty"`
 	Sent      *time.Time           `json:"sent,omitempty" firestore:"sent,omitempty"`
 	Expires   *time.Time           `json:"expires,omitempty" firestore:"expires,omitempty"`
-	Team      InviteTeam           `json:"team" firestore:"team"`
+	Space     InviteSpace          `json:"space" firestore:"space"`
 	Roles     []string             `json:"roles,omitempty" firestore:"roles,omitempty"`
 	//FromUserID string     `json:"fromUserID" firestore:"fromUserID"`
 	//ToUserID   string     `json:"toUserID,omitempty" firestore:"toUserID,omitempty"`
@@ -257,14 +257,14 @@ func (v InviteDbo) Validate() error {
 	default:
 		return validation.NewErrBadRecordFieldValue("status", "unknown value: "+v.Status)
 	}
-	if v.TeamID == "" {
-		return validation.NewErrRecordIsMissingRequiredField("teamID")
+	if v.SpaceID == "" {
+		return validation.NewErrRecordIsMissingRequiredField("spaceID")
 	}
 	if err := v.Created.Validate(); err != nil {
 		return validation.NewErrBadRecordFieldValue("created", err.Error())
 	}
-	if err := v.Team.Validate(); err != nil {
-		return validation.NewErrBadRecordFieldValue("team", err.Error())
+	if err := v.Space.Validate(); err != nil {
+		return validation.NewErrBadRecordFieldValue("space", err.Error())
 	}
 	if err := v.From.Validate(); err != nil {
 		return validation.NewErrBadRecordFieldValue("from", err.Error())
@@ -303,10 +303,10 @@ var _ core.Validatable = (*InviteDbo)(nil)
 // PersonalInviteDbo record
 type PersonalInviteDbo struct {
 	InviteDbo
-	Address string `json:"address,omitempty" firestore:"address,omitempty"` // Can be empty for channel=link
+	Address string `json:"address,omitempty" firestore:"address,omitempty"` // Can be empty for a channel=link
 
 	// in format "<TEAM_ID>:<MEMBER_ID>"
-	ToTeamMemberID string `json:"toTeamMemberId" firestore:"toTeamMemberId"`
+	ToSpaceMemberID string `json:"toSpaceMemberId" firestore:"toSpaceMemberId"`
 
 	ToAvatar *dbprofile.Avatar `json:"toAvatar,omitempty" firestore:"toAvatar,omitempty"`
 	Attempts int               `json:"attempts,omitempty" firestore:"attempts,omitempty"`
@@ -320,13 +320,13 @@ func (v PersonalInviteDbo) Validate() error {
 	if err := v.InviteDbo.validateType("personal"); err != nil {
 		return err
 	}
-	if v.ToTeamMemberID == "" {
-		return validation.NewErrRecordIsMissingRequiredField("ToTeamMemberID")
+	if v.ToSpaceMemberID == "" {
+		return validation.NewErrRecordIsMissingRequiredField("ToSpaceMemberID")
 	}
-	if v.ToTeamMemberID[0] == ':' {
+	if v.ToSpaceMemberID[0] == ':' {
 		return validation.NewErrBadRecordFieldValue("memberID", "starts with ':'")
 	}
-	if v.ToTeamMemberID[len(v.ToTeamMemberID)-1] == ':' {
+	if v.ToSpaceMemberID[len(v.ToSpaceMemberID)-1] == ':' {
 		return validation.NewErrBadRecordFieldValue("memberID", "ends with ':'")
 	}
 	switch v.Channel {

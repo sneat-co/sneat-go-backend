@@ -15,7 +15,7 @@ const ReasonMaxLen = 10000
 
 const DaysCollection = "days"
 
-// CalendarDayDbo is a record in "teams/{teamID}/calendarium/days" collection with ID=YYYY-MM-DD
+// CalendarDayDbo is a record in "spaces/{teamID}/calendarium/days" collection with ID=YYYY-MM-DD
 // It's needed to store adjustments of recurring happenings for a specific days like:
 // - canceled slots
 // - changed slot times
@@ -62,7 +62,7 @@ type CalendarDayEntry = record.DataWithID[string, *CalendarDayDbo]
 
 // NewCalendarDayKey returns key for a record in teams/{teamID}/calendarium/days collection with ID=YYYY-MM-DD
 func NewCalendarDayKey(teamID, date string) *dal.Key {
-	return dal4teamus.NewTeamModuleItemKey(teamID, const4calendarium.ModuleID, DaysCollection, date)
+	return dal4teamus.NewSpaceModuleItemKey(teamID, const4calendarium.ModuleID, DaysCollection, date)
 }
 
 // NewCalendarDayEntry creates a new instance of CalendarDayEntry

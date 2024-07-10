@@ -15,7 +15,7 @@ type contactBrief interface {
 	dbmodels.RelatedAs
 }
 
-type WithSingleTeamContactsWithoutContactIDs[
+type WithSingleSpaceContactsWithoutContactIDs[
 	T interface {
 		contactBrief
 		HasRole(role string) bool
@@ -25,7 +25,7 @@ type WithSingleTeamContactsWithoutContactIDs[
 	WithContactsBase[T]
 }
 
-func (v *WithSingleTeamContactsWithoutContactIDs[T]) Validate() error {
+func (v *WithSingleSpaceContactsWithoutContactIDs[T]) Validate() error {
 	for id, brief := range v.Contacts {
 		if err := validate.RecordID(id); err != nil {
 			return validation.NewErrBadRecordFieldValue(const4contactus.ContactsField,
@@ -38,7 +38,7 @@ func (v *WithSingleTeamContactsWithoutContactIDs[T]) Validate() error {
 	return nil
 }
 
-func (v *WithSingleTeamContactsWithoutContactIDs[T]) ContactIDs() (contactIDs []string) {
+func (v *WithSingleSpaceContactsWithoutContactIDs[T]) ContactIDs() (contactIDs []string) {
 	contactIDs = make([]string, 0, len(v.Contacts))
 	for id := range v.Contacts {
 		contactIDs = append(contactIDs, id)
@@ -46,12 +46,12 @@ func (v *WithSingleTeamContactsWithoutContactIDs[T]) ContactIDs() (contactIDs []
 	return
 }
 
-func (v *WithSingleTeamContactsWithoutContactIDs[T]) HasContact(contactID string) bool {
+func (v *WithSingleSpaceContactsWithoutContactIDs[T]) HasContact(contactID string) bool {
 	_, ok := v.Contacts[contactID]
 	return ok
 }
 
-func (v *WithSingleTeamContactsWithoutContactIDs[T]) AddContact(contactID string, contact T) dal.Update {
+func (v *WithSingleSpaceContactsWithoutContactIDs[T]) AddContact(contactID string, contact T) dal.Update {
 	if v.Contacts == nil {
 		v.Contacts = make(map[string]T)
 	}
@@ -62,7 +62,7 @@ func (v *WithSingleTeamContactsWithoutContactIDs[T]) AddContact(contactID string
 	}
 }
 
-func (v *WithSingleTeamContactsWithoutContactIDs[T]) RemoveContact(contactID string) dal.Update {
+func (v *WithSingleSpaceContactsWithoutContactIDs[T]) RemoveContact(contactID string) dal.Update {
 	delete(v.Contacts, contactID)
 	return dal.Update{
 		Field: "contacts." + contactID,
@@ -70,27 +70,27 @@ func (v *WithSingleTeamContactsWithoutContactIDs[T]) RemoveContact(contactID str
 	}
 }
 
-// WithMultiTeamContacts mixin that adds WithMultiTeamContactIDs.ContactIDs & Contacts fields
-type WithMultiTeamContacts[
+// WithMultiSpaceContacts mixin that adds WithMultiSpaceContactIDs.ContactIDs & Contacts fields
+type WithMultiSpaceContacts[
 	T interface {
 		contactBrief
 		HasRole(role string) bool
 		Equal(v T) bool
 	},
 ] struct {
-	WithMultiTeamContactIDs
+	WithMultiSpaceContactIDs
 	WithContactsBase[T]
 }
 
 // Validate returns error if not valid
-func (v *WithMultiTeamContacts[T]) Validate() error {
-	if err := v.WithMultiTeamContactIDs.Validate(); err != nil {
+func (v *WithMultiSpaceContacts[T]) Validate() error {
+	if err := v.WithMultiSpaceContactIDs.Validate(); err != nil {
 		return nil
 	}
 	return dbmodels.ValidateWithIdsAndBriefs("contactIDs", const4contactus.ContactsField, v.ContactIDs, v.Contacts)
 }
 
-func (v *WithMultiTeamContacts[T]) Updates(contactIDs ...dbmodels.TeamItemID) (updates []dal.Update) {
+func (v *WithMultiSpaceContacts[T]) Updates(contactIDs ...dbmodels.SpaceItemID) (updates []dal.Update) {
 	updates = append(updates,
 		dal.Update{
 			Field: "contactIDs",
@@ -114,8 +114,8 @@ func (v *WithMultiTeamContacts[T]) Updates(contactIDs ...dbmodels.TeamItemID) (u
 }
 
 // SetContactBrief sets contactBrief brief by ID
-func (v *WithMultiTeamContacts[T]) SetContactBrief(teamID, contactID string, contactBrief T) (updates []dal.Update) {
-	id := string(dbmodels.NewTeamItemID(teamID, contactID))
+func (v *WithMultiSpaceContacts[T]) SetContactBrief(teamID, contactID string, contactBrief T) (updates []dal.Update) {
+	id := string(dbmodels.NewSpaceItemID(teamID, contactID))
 	if !slice.Contains(v.ContactIDs, id) {
 		v.ContactIDs = append(v.ContactIDs, id)
 		updates = append(updates, dal.Update{
@@ -134,19 +134,19 @@ func (v *WithMultiTeamContacts[T]) SetContactBrief(teamID, contactID string, con
 }
 
 // ParentContactBrief returns parent contactBrief brief
-func (v *WithMultiTeamContacts[T]) ParentContactBrief() (i int, id dbmodels.TeamItemID, brief T) {
+func (v *WithMultiSpaceContacts[T]) ParentContactBrief() (i int, id dbmodels.SpaceItemID, brief T) {
 	for i, id := range v.ContactIDs {
 		brief := v.Contacts[id]
 		if brief.GetRelatedAs() == "parent" {
-			return i, dbmodels.TeamItemID(id), brief
+			return i, dbmodels.SpaceItemID(id), brief
 		}
 	}
 	return -1, "", brief
 }
 
 // GetContactBriefByID returns contactBrief brief by ID
-func (v *WithMultiTeamContacts[T]) GetContactBriefByID(teamID, contactID string) (i int, brief T) {
-	id := dbmodels.NewTeamItemID(teamID, contactID)
+func (v *WithMultiSpaceContacts[T]) GetContactBriefByID(teamID, contactID string) (i int, brief T) {
+	id := dbmodels.NewSpaceItemID(teamID, contactID)
 	if brief, ok := v.Contacts[string(id)]; !ok {
 		return -1, brief
 	}
@@ -154,17 +154,17 @@ func (v *WithMultiTeamContacts[T]) GetContactBriefByID(teamID, contactID string)
 }
 
 // GetContactBriefByUserID returns contactBrief brief by user ID
-func (v *WithMultiTeamContacts[T]) GetContactBriefByUserID(userID string) (id dbmodels.TeamItemID, t T) {
+func (v *WithMultiSpaceContacts[T]) GetContactBriefByUserID(userID string) (id dbmodels.SpaceItemID, t T) {
 	for cID, c := range v.Contacts {
 		if c.GetUserID() == userID {
-			return dbmodels.TeamItemID(cID), c
+			return dbmodels.SpaceItemID(cID), c
 		}
 	}
 	return
 }
 
-func (v *WithMultiTeamContacts[T]) AddContact(teamID, contactID string, c T) (updates []dal.Update) {
-	id := dbmodels.NewTeamItemID(teamID, contactID)
+func (v *WithMultiSpaceContacts[T]) AddContact(teamID, contactID string, c T) (updates []dal.Update) {
+	id := dbmodels.NewSpaceItemID(teamID, contactID)
 	if !slice.Contains(v.ContactIDs, string(id)) {
 		if len(v.ContactIDs) == 0 {
 			v.ContactIDs = make([]string, 1, 2)
@@ -189,8 +189,8 @@ func (v *WithMultiTeamContacts[T]) AddContact(teamID, contactID string, c T) (up
 	return
 }
 
-func (v *WithMultiTeamContacts[T]) RemoveContact(teamID, contactID string) (updates []dal.Update) {
-	id := dbmodels.NewTeamItemID(teamID, contactID)
+func (v *WithMultiSpaceContacts[T]) RemoveContact(teamID, contactID string) (updates []dal.Update) {
+	id := dbmodels.NewSpaceItemID(teamID, contactID)
 	contactIDs := slice.RemoveInPlace(string(id), v.ContactIDs)
 	if len(contactIDs) != len(v.ContactIDs) {
 		v.ContactIDs = contactIDs

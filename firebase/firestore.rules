@@ -7,15 +7,15 @@ service cloud.firestore {
               ;
     }
 
-    function isTeamItemGrantedToUser(database, team) {
+    function isSpaceItemGrantedToUser(database, team) {
         return isGrantedToUser() ||
               (request.auth != null && request.auth.uid != null && request.auth.uid in get(/databases/$(database)/documents/teams/$(team)).data.userIDs)
               ;
     }
 
-    function isGrantedToTeamUser(database) {
+    function isGrantedToSpaceUser(database) {
         return isGrantedToUser() ||
-              (request.auth != null && request.auth.uid != null && "teamIDs" in resource.data && resource.data.teamIDs.hasAny(get(/databases/$(database)/documents/users/$(request.auth.uid)).data.teamIDs))
+              (request.auth != null && request.auth.uid != null && "spaceIDs" in resource.data && resource.data.teamIDs.hasAny(get(/databases/$(database)/documents/users/$(request.auth.uid)).data.teamIDs))
               ;
     }
 
@@ -23,7 +23,7 @@ service cloud.firestore {
     match /databases/{database}/documents {
 
         match /teams/{team}/{document=**} {
-            allow list, read: if isTeamItemGrantedToUser(database, team);
+            allow list, read: if isSpaceItemGrantedToUser(database, team);
         }
 
         match /users/{user}/{document=**} {

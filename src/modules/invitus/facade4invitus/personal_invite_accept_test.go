@@ -86,7 +86,7 @@ func Test_createOrUpdateUserRecord(t *testing.T) {
 		teamRecordError   error
 		inviteRecordError error
 		request           AcceptPersonalInviteRequest
-		team              dal4teamus.TeamEntry
+		team              dal4teamus.SpaceEntry
 		teamMember        dbmodels.DtoWithID[*briefs4contactus.ContactBase]
 		invite            PersonalInviteEntry
 	}
@@ -101,8 +101,8 @@ func Test_createOrUpdateUserRecord(t *testing.T) {
 			args: args{
 				user:            dbo4userus.NewUserEntry("test_user_id"),
 				userRecordError: dal.ErrRecordNotFound,
-				team: dal4teamus.NewTeamEntryWithDto("testteamid", &dbo4teamus.TeamDbo{
-					TeamBrief: dbo4teamus.TeamBrief{
+				team: dal4teamus.NewSpaceEntryWithDto("testteamid", &dbo4teamus.SpaceDbo{
+					SpaceBrief: dbo4teamus.SpaceBrief{
 						RequiredCountryID: with.RequiredCountryID{
 							CountryID: with.UnknownCountryID,
 						},
@@ -136,8 +136,8 @@ func Test_createOrUpdateUserRecord(t *testing.T) {
 						RemoteAddr: "localhost",
 					},
 					InviteRequest: InviteRequest{
-						TeamRequest: dto4teamus.TeamRequest{
-							TeamID: "testteamid",
+						SpaceRequest: dto4teamus.SpaceRequest{
+							SpaceID: "testteamid",
 						},
 						InviteID: "test_personal_invite_id",
 						Pin:      "1234",
@@ -174,7 +174,7 @@ func Test_createOrUpdateUserRecord(t *testing.T) {
 				tx.EXPECT().Insert(gomock.Any(), tt.args.user.Record).Return(nil)
 			}
 			now := time.Now()
-			params := dal4contactus.NewContactusTeamWorkerParams(tt.args.user.ID, tt.args.team.ID)
+			params := dal4contactus.NewContactusSpaceWorkerParams(tt.args.user.ID, tt.args.team.ID)
 			if err := createOrUpdateUserRecord(ctx, tx, now, tt.args.user, tt.args.request, params, tt.args.teamMember.Data, tt.args.invite); err != nil {
 				if !tt.wantErr {
 					t.Errorf("createOrUpdateUserRecord() error = %v, wantErr %v", err, tt.wantErr)
@@ -184,11 +184,11 @@ func Test_createOrUpdateUserRecord(t *testing.T) {
 			userDto := tt.args.user.Data
 			assert.Equal(t, now, userDto.CreatedAt, "CreatedAt")
 			assert.Equal(t, tt.args.request.Member.Data.Gender, userDto.Gender, "Gender")
-			assert.Equal(t, 1, len(userDto.Teams), "len(Teams)")
-			assert.Equal(t, 1, len(userDto.TeamIDs), "len(TeamIDs)")
-			assert.True(t, slice.Contains(userDto.TeamIDs, tt.args.request.TeamID), "TeamIDs contains tt.args.request.TeamID")
-			teamBrief := userDto.Teams[tt.args.request.TeamID]
-			assert.NotNil(t, teamBrief, "Teams[tt.args.request.TeamID]")
+			assert.Equal(t, 1, len(userDto.Spaces), "len(Spaces)")
+			assert.Equal(t, 1, len(userDto.SpaceIDs), "len(SpaceIDs)")
+			assert.True(t, slice.Contains(userDto.SpaceIDs, tt.args.request.SpaceID), "SpaceIDs contains tt.args.request.SpaceID")
+			teamBrief := userDto.Spaces[tt.args.request.SpaceID]
+			assert.NotNil(t, teamBrief, "Spaces[tt.args.request.SpaceID]")
 		})
 	}
 }
@@ -211,12 +211,12 @@ func Test_updateInviteRecord(t *testing.T) {
 			args: args{
 				status: "accepted",
 				invite: NewPersonalInviteEntryWithDto("test_invite_id1", &dbo4invitus.PersonalInviteDbo{
-					ToTeamMemberID: "to_member_id2",
-					Address:        "to.test.user@example.com",
+					ToSpaceMemberID: "to_member_id2",
+					Address:         "to.test.user@example.com",
 					InviteDbo: dbo4invitus.InviteDbo{
-						Pin:    "1234",
-						TeamID: "testteamid1",
-						Team: dbo4invitus.InviteTeam{
+						Pin:     "1234",
+						SpaceID: "testteamid1",
+						Space: dbo4invitus.InviteSpace{
 							ID:    "testteamid1",
 							Type:  "family",
 							Title: "Family",
@@ -268,24 +268,24 @@ func Test_updateInviteRecord(t *testing.T) {
 	}
 }
 
-func Test_updateTeamRecord(t *testing.T) {
+func Test_updateSpaceRecord(t *testing.T) {
 	type args struct {
-		uid           string
-		memberID      string
-		team          dal4teamus.TeamEntry
-		contactusTeam dal4contactus.ContactusTeamModuleEntry
-		requestMember dbmodels.DtoWithID[*briefs4contactus.ContactBase]
+		uid            string
+		memberID       string
+		team           dal4teamus.SpaceEntry
+		contactusSpace dal4contactus.ContactusSpaceModuleEntry
+		requestMember  dbmodels.DtoWithID[*briefs4contactus.ContactBase]
 	}
 	testMember := dbmodels.DtoWithID[*briefs4contactus.ContactBase]{
 		ID:   "test_member_id1",
 		Data: &briefs4contactus.ContactBase{},
 	}
 	tests := []struct {
-		name           string
-		teamRecordErr  error
-		args           args
-		wantTeamMember dbmodels.DtoWithID[*briefs4contactus.ContactBase]
-		wantErr        bool
+		name            string
+		teamRecordErr   error
+		args            args
+		wantSpaceMember dbmodels.DtoWithID[*briefs4contactus.ContactBase]
+		wantErr         bool
 	}{
 		{
 			name:          "should_pass",
@@ -293,14 +293,14 @@ func Test_updateTeamRecord(t *testing.T) {
 			args: args{
 				uid:      "test_user_id",
 				memberID: "test_member_id1",
-				team: dal4teamus.NewTeamEntryWithDto("testteamid", &dbo4teamus.TeamDbo{
-					TeamBrief: dbo4teamus.TeamBrief{
+				team: dal4teamus.NewSpaceEntryWithDto("testteamid", &dbo4teamus.SpaceDbo{
+					SpaceBrief: dbo4teamus.SpaceBrief{
 						Type:  "family",
 						Title: "Family",
 					},
 				}),
-				contactusTeam: dal4contactus.NewContactusTeamModuleEntryWithData("testteamid", &models4contactus.ContactusTeamDbo{
-					WithSingleTeamContactsWithoutContactIDs: briefs4contactus.WithSingleTeamContactsWithoutContactIDs[*briefs4contactus.ContactBrief]{
+				contactusSpace: dal4contactus.NewContactusSpaceModuleEntryWithData("testteamid", &models4contactus.ContactusSpaceDbo{
+					WithSingleSpaceContactsWithoutContactIDs: briefs4contactus.WithSingleSpaceContactsWithoutContactIDs[*briefs4contactus.ContactBrief]{
 						WithContactsBase: briefs4contactus.WithContactsBase[*briefs4contactus.ContactBrief]{
 							WithContactBriefs: briefs4contactus.WithContactBriefs[*briefs4contactus.ContactBrief]{
 								Contacts: map[string]*briefs4contactus.ContactBrief{
@@ -321,8 +321,8 @@ func Test_updateTeamRecord(t *testing.T) {
 					},
 				},
 			},
-			wantErr:        false,
-			wantTeamMember: testMember,
+			wantErr:         false,
+			wantSpaceMember: testMember,
 		},
 	}
 	for _, tt := range tests {
@@ -330,20 +330,20 @@ func Test_updateTeamRecord(t *testing.T) {
 			//mockCtrl := gomock.NewController(t)
 			//tx := mocks4dal.NewMockReadwriteTransaction(mockCtrl)
 			//tx.EXPECT().Update(gomock.Any(), tt.args.team.Key, gomock.Any()).Return(nil)
-			//tx.EXPECT().Update(gomock.Any(), tt.args.contactusTeam.Key, gomock.Any()).Return(nil)
-			tt.args.contactusTeam.Record.SetError(tt.teamRecordErr)
-			params := dal4contactus.NewContactusTeamWorkerParams(tt.args.uid, tt.args.team.ID)
-			params.TeamModuleEntry.Data.AddContact(tt.args.memberID, &tt.args.requestMember.Data.ContactBrief)
-			params.TeamModuleEntry.Data.AddUserID(tt.args.uid)
-			params.Team.Data.AddUserID(tt.args.uid)
-			gotTeamMember, err := updateTeamRecord(tt.args.uid, tt.args.memberID, params, tt.args.requestMember)
+			//tx.EXPECT().Update(gomock.Any(), tt.args.contactusSpace.Key, gomock.Any()).Return(nil)
+			tt.args.contactusSpace.Record.SetError(tt.teamRecordErr)
+			params := dal4contactus.NewContactusSpaceWorkerParams(tt.args.uid, tt.args.team.ID)
+			params.SpaceModuleEntry.Data.AddContact(tt.args.memberID, &tt.args.requestMember.Data.ContactBrief)
+			params.SpaceModuleEntry.Data.AddUserID(tt.args.uid)
+			params.Space.Data.AddUserID(tt.args.uid)
+			gotSpaceMember, err := updateSpaceRecord(tt.args.uid, tt.args.memberID, params, tt.args.requestMember)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("updateTeamRecord() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("updateSpaceRecord() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			assert.NotNil(t, gotTeamMember, "gotTeamMember is nil")
-			//if !reflect.DeepEqual(gotTeamMember, tt.wantTeamMember) {
-			//	t.Errorf("updateTeamRecord() gotTeamMember = %v, want %v", gotTeamMember, tt.wantTeamMember)
+			assert.NotNil(t, gotSpaceMember, "gotSpaceMember is nil")
+			//if !reflect.DeepEqual(gotSpaceMember, tt.wantSpaceMember) {
+			//	t.Errorf("updateSpaceRecord() gotSpaceMember = %v, want %v", gotSpaceMember, tt.wantSpaceMember)
 			//}
 		})
 	}

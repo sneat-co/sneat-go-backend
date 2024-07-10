@@ -7,7 +7,7 @@ import (
 
 func getHappeningRequestParamsFromURL(r *http.Request) (request dto4calendarium.HappeningRequest) {
 	query := r.URL.Query()
-	request.TeamID = query.Get("teamID")
+	request.SpaceID = query.Get("spaceID")
 	request.HappeningID = query.Get("happeningID")
 	request.HappeningType = query.Get("happeningType")
 	return

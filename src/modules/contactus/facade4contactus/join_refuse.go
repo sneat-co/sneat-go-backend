@@ -6,25 +6,25 @@ import (
 	"github.com/strongo/validation"
 )
 
-// RefuseToJoinTeamRequest request
-type RefuseToJoinTeamRequest struct {
-	TeamID string `json:"id"`
-	Pin    int32  `json:"pin"`
+// RefuseToJoinSpaceRequest request
+type RefuseToJoinSpaceRequest struct {
+	SpaceID string `json:"id"`
+	Pin     int32  `json:"pin"`
 }
 
 // Validate validates request
-func (v *RefuseToJoinTeamRequest) Validate() error {
-	if v.TeamID == "" {
-		return validation.NewErrRecordIsMissingRequiredField("team")
+func (v *RefuseToJoinSpaceRequest) Validate() error {
+	if v.SpaceID == "" {
+		return validation.NewErrRecordIsMissingRequiredField("space")
 	}
-	if v.TeamID == "" {
+	if v.SpaceID == "" {
 		return validation.NewErrRecordIsMissingRequiredField("pin")
 	}
 	return nil
 }
 
-// RefuseToJoinTeam refuses to join team
-func RefuseToJoinTeam(_ context.Context, userContext facade.User, request RefuseToJoinTeamRequest) (err error) {
+// RefuseToJoinSpace refuses to join team
+func RefuseToJoinSpace(_ context.Context, userContext facade.User, request RefuseToJoinSpaceRequest) (err error) {
 	err = request.Validate()
 	return
 }

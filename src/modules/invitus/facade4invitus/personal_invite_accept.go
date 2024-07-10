@@ -53,8 +53,8 @@ func AcceptPersonalInvite(ctx context.Context, userContext facade.User, request 
 	}
 	uid := userContext.GetID()
 
-	return dal4contactus.RunContactusTeamWorker(ctx, userContext, request.TeamRequest,
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusTeamWorkerParams) error {
+	return dal4contactus.RunContactusSpaceWorker(ctx, userContext, request.SpaceRequest,
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) error {
 			invite, member, err := getPersonalInviteRecords(ctx, tx, params, request.InviteID, request.Member.ID)
 			if err != nil {
 				return err
@@ -80,18 +80,18 @@ func AcceptPersonalInvite(ctx context.Context, userContext facade.User, request 
 				return fmt.Errorf("failed to update invite record: %w", err)
 			}
 
-			var teamMember *briefs4contactus.ContactBase
-			if teamMember, err = updateTeamRecord(uid, invite.Data.ToTeamMemberID, params, request.Member); err != nil {
+			var spaceMember *briefs4contactus.ContactBase
+			if spaceMember, err = updateSpaceRecord(uid, invite.Data.ToSpaceMemberID, params, request.Member); err != nil {
 				return fmt.Errorf("failed to update team record: %w", err)
 			}
 
-			memberContext := dal4contactus.NewContactEntry(params.Team.ID, member.ID)
+			memberContext := dal4contactus.NewContactEntry(params.Space.ID, member.ID)
 
-			if err = updateMemberRecord(ctx, tx, uid, memberContext, request.Member.Data, teamMember); err != nil {
+			if err = updateMemberRecord(ctx, tx, uid, memberContext, request.Member.Data, spaceMember); err != nil {
 				return fmt.Errorf("failed to update team member record: %w", err)
 			}
 
-			if err = createOrUpdateUserRecord(ctx, tx, now, user, request, params, teamMember, invite); err != nil {
+			if err = createOrUpdateUserRecord(ctx, tx, now, user, request, params, spaceMember, invite); err != nil {
 				return fmt.Errorf("failed to create or update user record: %w", err)
 			}
 
@@ -151,9 +151,9 @@ func updateMemberRecord(
 	return err
 }
 
-func updateTeamRecord(
+func updateSpaceRecord(
 	uid, memberID string,
-	params *dal4contactus.ContactusTeamWorkerParams,
+	params *dal4contactus.ContactusSpaceWorkerParams,
 	requestMember dbmodels.DtoWithID[*briefs4contactus.ContactBase],
 ) (teamMember *briefs4contactus.ContactBase, err error) {
 	if uid == "" {
@@ -161,11 +161,11 @@ func updateTeamRecord(
 	}
 
 	inviteToMemberID := memberID[strings.Index(memberID, ":")+1:]
-	for contactID, m := range params.TeamModuleEntry.Data.Contacts {
+	for contactID, m := range params.SpaceModuleEntry.Data.Contacts {
 		if contactID == inviteToMemberID {
 			m.UserID = uid
-			params.TeamModuleEntry.Data.AddUserID(uid)
-			params.TeamModuleEntry.Data.AddContact(contactID, m)
+			params.SpaceModuleEntry.Data.AddUserID(uid)
+			params.SpaceModuleEntry.Data.AddContact(contactID, m)
 			//request.ID.Roles = m.Roles
 			//m = request.ID
 			m.UserID = uid
@@ -174,23 +174,23 @@ func updateTeamRecord(
 			}
 			//team.Members[i] = m
 			updatePersonDetails(teamMember, requestMember.Data, teamMember, nil)
-			if u, ok := params.TeamModuleEntry.Data.AddUserID(uid); ok {
-				params.TeamModuleUpdates = append(params.TeamModuleUpdates, u)
+			if u, ok := params.SpaceModuleEntry.Data.AddUserID(uid); ok {
+				params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, u)
 			}
-			if m.AddRole(const4contactus.TeamMemberRoleMember) {
-				params.TeamModuleUpdates = append(params.TeamModuleUpdates, dal.Update{Field: "contacts." + contactID + ".roles", Value: m.Roles})
+			if m.AddRole(const4contactus.SpaceMemberRoleMember) {
+				params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, dal.Update{Field: "contacts." + contactID + ".roles", Value: m.Roles})
 			}
 			break
 		}
 	}
 	if teamMember == nil {
-		return teamMember, fmt.Errorf("team member is not found by ID=%s", inviteToMemberID)
+		return teamMember, fmt.Errorf("space member is not found by ID=%s", inviteToMemberID)
 	}
 
-	if params.Team.Data.HasUserID(uid) {
+	if params.Space.Data.HasUserID(uid) {
 		goto UserIdAdded
 	}
-	params.TeamUpdates = append(params.TeamUpdates, dal.Update{Field: "userIDs", Value: params.Team.Data.UserIDs})
+	params.SpaceUpdates = append(params.SpaceUpdates, dal.Update{Field: "userIDs", Value: params.Space.Data.UserIDs})
 UserIdAdded:
 	return teamMember, err
 }
@@ -201,35 +201,35 @@ func createOrUpdateUserRecord(
 	now time.Time,
 	user dbo4userus.UserEntry,
 	request AcceptPersonalInviteRequest,
-	params *dal4contactus.ContactusTeamWorkerParams,
+	params *dal4contactus.ContactusSpaceWorkerParams,
 	teamMember *briefs4contactus.ContactBase,
 	invite PersonalInviteEntry,
 ) (err error) {
 	if teamMember == nil {
-		panic("teamMember == nil")
+		panic("spaceMember == nil")
 	}
 	existingUser := user.Record.Exists()
 	if existingUser {
-		teamInfo := user.Data.GetUserTeamInfoByID(request.TeamID)
+		teamInfo := user.Data.GetUserSpaceInfoByID(request.SpaceID)
 		if teamInfo != nil {
 			return nil
 		}
 	}
 
-	userTeamInfo := dbo4userus.UserTeamBrief{
-		TeamBrief: params.Team.Data.TeamBrief,
-		Roles:     invite.Data.Roles, // TODO: Validate roles?
+	userSpaceInfo := dbo4userus.UserSpaceBrief{
+		SpaceBrief: params.Space.Data.SpaceBrief,
+		Roles:      invite.Data.Roles, // TODO: Validate roles?
 	}
-	if err = userTeamInfo.Validate(); err != nil {
+	if err = userSpaceInfo.Validate(); err != nil {
 		return fmt.Errorf("invalid user team info: %w", err)
 	}
-	user.Data.Teams[request.TeamID] = &userTeamInfo
-	user.Data.TeamIDs = append(user.Data.TeamIDs, request.TeamID)
+	user.Data.Spaces[request.SpaceID] = &userSpaceInfo
+	user.Data.SpaceIDs = append(user.Data.SpaceIDs, request.SpaceID)
 	if existingUser {
 		userUpdates := []dal.Update{
 			{
-				Field: "teams",
-				Value: user.Data.Teams,
+				Field: "spaces",
+				Value: user.Data.Spaces,
 			},
 		}
 		userUpdates = updatePersonDetails(&user.Data.ContactBase, request.Member.Data, teamMember, userUpdates)

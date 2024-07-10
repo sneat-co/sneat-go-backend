@@ -9,18 +9,18 @@ import (
 	"strings"
 )
 
-// SetLogistTeamSettingsRequest represents a request to set logistus team settings
-type SetLogistTeamSettingsRequest struct {
-	dto4teamus.TeamRequest
-	Roles             []dbo4logist.LogistTeamRole `json:"roles"`
-	Address           dbmodels.Address            `json:"address"`
-	VATNumber         string                      `json:"vatNumber,omitempty"`
-	OrderNumberPrefix string                      `json:"orderNumberPrefix,omitempty"`
+// SetLogistSpaceSettingsRequest represents a request to set logistus team settings
+type SetLogistSpaceSettingsRequest struct {
+	dto4teamus.SpaceRequest
+	Roles             []dbo4logist.LogistSpaceRole `json:"roles"`
+	Address           dbmodels.Address             `json:"address"`
+	VATNumber         string                       `json:"vatNumber,omitempty"`
+	OrderNumberPrefix string                       `json:"orderNumberPrefix,omitempty"`
 }
 
 // Validate returns error if request is invalid
-func (v SetLogistTeamSettingsRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+func (v SetLogistSpaceSettingsRequest) Validate() error {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
 	if len(v.Roles) == 0 {

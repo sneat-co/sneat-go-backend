@@ -30,7 +30,7 @@ func GetRelatedContacts(
 	for _, contact := range contacts {
 		for relatedContactID, relatedContact := range contact.Data.Contacts {
 			if relatedContact.RelatedAs == relatedAs {
-				itemID := dbmodels.TeamItemID(relatedContactID).ItemID()
+				itemID := dbmodels.SpaceItemID(relatedContactID).ItemID()
 				if _, found := dal4contactus.FindContactEntryByContactID(related, itemID); !found {
 					if _, found = dal4contactus.FindContactEntryByContactID(directlyRelated, itemID); !found {
 						directlyRelated = append(related, dal4contactus.NewContactEntry(teamID, itemID))

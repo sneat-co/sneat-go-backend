@@ -23,10 +23,10 @@ func Test_deleteSegments(t *testing.T) {
 			name: "should_pass",
 			args: args{
 				params: &OrderWorkerParams{
-					Order: dbo4logist.NewOrderWithData("team1", "order1", mocks4logist.ValidOrderDto1(t)),
+					Order: dbo4logist.NewOrderWithData("space1", "order1", mocks4logist.ValidOrderDto1(t)),
 				},
 				request: dto4logist.DeleteSegmentsRequest{
-					OrderRequest: dto4logist.NewOrderRequest("team1", "order1"),
+					OrderRequest: dto4logist.NewOrderRequest("space1", "order1"),
 					SegmentsFilter: dbo4logist.SegmentsFilter{
 						ContainerIDs:      []string{mocks4logist.Container2ID},
 						ToShippingPointID: mocks4logist.ShippingPoint1WithSingleContainerID,

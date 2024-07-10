@@ -10,14 +10,14 @@ import (
 
 // CreateCounterpartyRequest defines a request to create a new counterparty
 type CreateCounterpartyRequest struct {
-	dto4teamus.TeamRequest
+	dto4teamus.SpaceRequest
 	with.RolesField
 	Company dto4contactus.CreateCompanyRequest `json:"company"`
 }
 
 // Validate returns error if request is invalid
 func (v CreateCounterpartyRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
 	if err := v.Company.Validate(); err != nil {

@@ -9,11 +9,11 @@ import (
 	"github.com/sneat-co/sneat-go-core"
 )
 
-// NewContactKey creates a new contact's key in format "teamID:memberID"
+// NewContactKey creates a new contact's key in format "spaceID:memberID"
 func NewContactKey(teamID, contactID string) *dal.Key {
 	if !core.IsAlphanumericOrUnderscore(contactID) {
 		panic(fmt.Errorf("contactID should be alphanumeric, got: [%s]", contactID))
 	}
-	teamModuleKey := dal4teamus.NewTeamModuleKey(teamID, const4contactus.ModuleID)
-	return dal.NewKeyWithParentAndID(teamModuleKey, models4contactus.TeamContactsCollection, contactID)
+	teamModuleKey := dal4teamus.NewSpaceModuleKey(teamID, const4contactus.ModuleID)
+	return dal.NewKeyWithParentAndID(teamModuleKey, models4contactus.SpaceContactsCollection, contactID)
 }

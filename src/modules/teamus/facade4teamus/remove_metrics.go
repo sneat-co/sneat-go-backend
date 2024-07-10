@@ -10,16 +10,16 @@ import (
 )
 
 // RemoveMetrics removes a metric
-func RemoveMetrics(ctx context.Context, user facade.User, request dto4teamus.TeamMetricsRequest) (err error) {
+func RemoveMetrics(ctx context.Context, user facade.User, request dto4teamus.SpaceMetricsRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4teamus.RunTeamWorker(ctx, user, request.TeamID,
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.TeamWorkerParams) (err error) {
+	err = dal4teamus.RunSpaceWorker(ctx, user, request.SpaceID,
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.SpaceWorkerParams) (err error) {
 			changed := false
-			team := params.Team
+			team := params.Space
 
-			metrics := make([]*dbo4teamus.TeamMetric, 0, len(team.Data.Metrics))
+			metrics := make([]*dbo4teamus.SpaceMetric, 0, len(team.Data.Metrics))
 		Metrics:
 			for _, metric := range team.Data.Metrics {
 				for i, metricID := range request.Metrics {
@@ -42,7 +42,7 @@ func RemoveMetrics(ctx context.Context, user facade.User, request dto4teamus.Tea
 						{Field: "metrics", Value: metrics},
 					}
 				}
-				if err = dal4teamus.TxUpdateTeam(ctx, tx, params.Started, params.Team, updates); err != nil {
+				if err = dal4teamus.TxUpdateSpace(ctx, tx, params.Started, params.Space, updates); err != nil {
 					return err
 				}
 			}

@@ -2,6 +2,7 @@ package dto4userus
 
 import (
 	"fmt"
+	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/core4teamus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
@@ -15,13 +16,13 @@ import (
 
 var _ facade.Request = (*InitUserRecordRequest)(nil)
 
-type InitTeamInfo struct {
-	Type  string `json:"type"`
-	Title string `json:"title"`
+type InitSpaceInfo struct {
+	Type  core4teamus.SpaceType `json:"type"`
+	Title string                `json:"title"`
 }
 
-func (v InitTeamInfo) Validate() error {
-	if strings.TrimSpace(v.Type) == "" {
+func (v InitSpaceInfo) Validate() error {
+	if strings.TrimSpace(string(v.Type)) == "" {
 		return validation.NewErrRequestIsMissingRequiredField("type")
 	}
 	if strings.TrimSpace(v.Title) == "" {
@@ -32,12 +33,12 @@ func (v InitTeamInfo) Validate() error {
 
 // InitUserRecordRequest request
 type InitUserRecordRequest struct {
-	AuthProvider    string                        `json:"authProvider,omitempty"`
-	Email           string                        `json:"email,omitempty"`
-	EmailIsVerified bool                          `json:"emailIsVerified,omitempty"`
-	IanaTimezone    string                        `json:"ianaTimezone,omitempty"`
-	Names           *person.NameFields            `json:"names"`
-	Team            *dto4teamus.CreateTeamRequest `json:"team,omitempty"`
+	AuthProvider    string                         `json:"authProvider,omitempty"`
+	Email           string                         `json:"email,omitempty"`
+	EmailIsVerified bool                           `json:"emailIsVerified,omitempty"`
+	IanaTimezone    string                         `json:"ianaTimezone,omitempty"`
+	Names           *person.NameFields             `json:"names"`
+	Space           *dto4teamus.CreateSpaceRequest `json:"space,omitempty"`
 	//
 	RemoteClient dbmodels.RemoteClientInfo `json:"remoteClient"`
 }
@@ -57,9 +58,9 @@ func (v *InitUserRecordRequest) Validate() error {
 			return validation.NewErrBadRequestFieldValue("email", err.Error())
 		}
 	}
-	if v.Team != nil {
-		if err := v.Team.Validate(); err != nil {
-			return validation.NewErrBadRecordFieldValue("team", err.Error())
+	if v.Space != nil {
+		if err := v.Space.Validate(); err != nil {
+			return validation.NewErrBadRecordFieldValue("space", err.Error())
 		}
 	}
 	return nil

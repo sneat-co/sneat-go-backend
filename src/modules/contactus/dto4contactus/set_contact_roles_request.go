@@ -26,7 +26,7 @@ func (v SetRolesRequest) Validate() error {
 	}
 
 	for _, remove := range v.Remove {
-		if remove == const4contactus.TeamMemberRoleMember {
+		if remove == const4contactus.SpaceMemberRoleMember {
 			return validation.NewErrBadRequestFieldValue("remove", "use remove_member endpoint to remove members from team")
 		}
 	}

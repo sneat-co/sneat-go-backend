@@ -14,8 +14,8 @@ func TestAddTaskRequest_Validate(t *testing.T) {
 	validRequest := AddTaskRequest{
 		TaskRequest: TaskRequest{
 			Request: facade4meetingus.Request{
-				TeamRequest: dto4teamus.TeamRequest{
-					TeamID: "team1",
+				SpaceRequest: dto4teamus.SpaceRequest{
+					SpaceID: "space1",
 				},
 				MeetingID: now.Format(validDateFormat),
 			},
@@ -31,13 +31,13 @@ func TestAddTaskRequest_Validate(t *testing.T) {
 		}
 	})
 	t.Run("missing", func(t *testing.T) {
-		t.Run("team", func(t *testing.T) {
+		t.Run("space", func(t *testing.T) {
 			request := validRequest
-			request.TeamID = " "
+			request.SpaceID = " "
 			if err := request.Validate(); err == nil {
 				t.Error("Should return error for empty team, got err == nil")
 			} else {
-				validation.MustBeFieldError(t, err, "team")
+				validation.MustBeFieldError(t, err, "space")
 			}
 		})
 		t.Run("members", func(t *testing.T) {
@@ -103,8 +103,8 @@ func TestTaskRequest_Validate(t *testing.T) {
 			Type:      "done",
 			ContactID: "member1",
 			Request: facade4meetingus.Request{
-				TeamRequest: dto4teamus.TeamRequest{
-					TeamID: "team1",
+				SpaceRequest: dto4teamus.SpaceRequest{
+					SpaceID: "space1",
 				},
 				MeetingID: "2020-12-13",
 			},

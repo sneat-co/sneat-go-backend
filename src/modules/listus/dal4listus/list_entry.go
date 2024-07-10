@@ -10,14 +10,14 @@ import (
 
 type ListEntry = record.DataWithID[string, *dbo4listus.ListDbo]
 
-// NewTeamListKey creates new list key
-func NewTeamListKey(teamID, id string) *dal.Key {
-	teamModuleKey := dal4teamus.NewTeamModuleKey(teamID, const4listus.ModuleID)
-	return dal.NewKeyWithParentAndID(teamModuleKey, dbo4listus.ListsCollection, id)
+// NewSpaceListKey creates a new list key
+func NewSpaceListKey(teamID, id string) *dal.Key {
+	key := dal4teamus.NewSpaceModuleKey(teamID, const4listus.ModuleID)
+	return dal.NewKeyWithParentAndID(key, dbo4listus.ListsCollection, id)
 }
 
-func NewTeamListEntry(teamID, listID string) (list ListEntry) {
-	key := NewTeamListKey(teamID, listID)
+func NewSpaceListEntry(teamID, listID string) (list ListEntry) {
+	key := NewSpaceListKey(teamID, listID)
 	list.ID = listID
 	list.FullID = teamID + dbo4listus.ListIDSeparator + listID
 	list.Key = key

@@ -11,12 +11,12 @@ package facade4retrospectus
 //		return errors.New("uid is a required parameter")
 //	}
 //	if teamID == "" {
-//		return errors.New("teamID is a required parameter")
+//		return errors.New("spaceID is a required parameter")
 //	}
 //	if now.IsZero() {
 //		return errors.New("now is a required parameter")
 //	}
-//	teamKey := newTeamKey(teamID)
+//	teamKey := newSpaceKey(teamID)
 //	var team dbo4teamus.TeamContext
 //	var teamRecord dal.Record
 //	if team, err = txGetTeamByID(ctx, tx, teamID); err != nil {
@@ -63,7 +63,7 @@ package facade4retrospectus
 //		team.Data.UpcomingRetro.ItemsByUserAndType[uid] = currentUserCounts
 //	}
 //	if len(teamUpdates) > 0 {
-//		if err = txUpdateTeam(ctx, tx, now, team, teamUpdates); err != nil {
+//		if err = txUpdateSpace(ctx, tx, now, team, teamUpdates); err != nil {
 //			return err
 //		}
 //	}

@@ -27,7 +27,7 @@ func PutSlot(ctx context.Context, user facade.User, putMode PutMode, request dto
 		return putSlotTxWorker(ctx, tx, params, putMode, request)
 	}
 
-	return dal4calendarium.RunHappeningTeamWorker(ctx, user, request.HappeningRequest, worker)
+	return dal4calendarium.RunHappeningSpaceWorker(ctx, user, request.HappeningRequest, worker)
 }
 
 func putSlotTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams, putMode PutMode, request dto4calendarium.HappeningSlotRequest) (err error) {
@@ -50,7 +50,7 @@ func putSlotTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *d
 	}
 
 	if params.Happening.Data.Type == dbo4calendarium.HappeningTypeRecurring {
-		if happeningBrief := params.TeamModuleEntry.Data.GetRecurringHappeningBrief(params.Happening.ID); happeningBrief != nil {
+		if happeningBrief := params.SpaceModuleEntry.Data.GetRecurringHappeningBrief(params.Happening.ID); happeningBrief != nil {
 			if err = happeningBrief.Validate(); err != nil {
 				return fmt.Errorf("happening brief is not valid before update: %w", err)
 			}
@@ -71,8 +71,8 @@ func putSlotTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *d
 			if err = happeningBrief.Validate(); err != nil {
 				return fmt.Errorf("happening brief is not valid after update: %w", err)
 			}
-			params.TeamModuleEntry.Record.MarkAsChanged()
-			params.TeamModuleUpdates = append(params.TeamModuleUpdates, dal.Update{
+			params.SpaceModuleEntry.Record.MarkAsChanged()
+			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, dal.Update{
 				Field: "recurringHappenings." + params.Happening.ID + ".slots",
 				Value: happeningBrief.Slots,
 			})

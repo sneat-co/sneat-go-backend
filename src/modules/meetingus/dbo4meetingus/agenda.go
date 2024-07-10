@@ -8,9 +8,9 @@ import (
 // Agenda record
 type Agenda struct {
 	dbmodels.WithUserIDs
-	Status string                        `json:"status" firestore:"status"` // active, archived
-	Title  string                        `json:"title" firestore:"title"`
-	Teams  []*dbo4teamus.TeamMeetingInfo `json:"api4meetingus" firestore:"api4meetingus"`
+	Status string                         `json:"status" firestore:"status"` // active, archived
+	Title  string                         `json:"title" firestore:"title"`
+	Spaces []*dbo4teamus.SpaceMeetingInfo `json:"api4meetingus" firestore:"api4meetingus"`
 }
 
 // AgendaTopic record

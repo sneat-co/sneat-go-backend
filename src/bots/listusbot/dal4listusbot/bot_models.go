@@ -12,6 +12,6 @@ type WithModuleIDs struct {
 
 type ListusChatData struct {
 	botsfwmodels.ChatBaseData
-	TeamID string `json:"teamID" firestore:"teamID"`
-	ListID string `json:"listID" firestore:"listID"`
+	SpaceID string `json:"spaceID" firestore:"spaceID"`
+	ListID  string `json:"listID" firestore:"listID"`
 }

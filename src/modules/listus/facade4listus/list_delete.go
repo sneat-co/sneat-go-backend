@@ -23,24 +23,24 @@ func DeleteList(ctx context.Context, user facade.User, request ListRequest) (err
 	listType := request.ListType()
 	id := dbo4listus.GetFullListID(listType, request.ListID)
 	briefsAdapter := dal4teamus.NewMapBriefsAdapter(
-		func(teamModuleDbo *dbo4listus.ListusTeamDbo) int {
+		func(teamModuleDbo *dbo4listus.ListusSpaceDbo) int {
 			return len(teamModuleDbo.Lists)
 		},
-		func(teamModuleDbo *dbo4listus.ListusTeamDbo, id string) ([]dal.Update, error) {
+		func(teamModuleDbo *dbo4listus.ListusSpaceDbo, id string) ([]dal.Update, error) {
 			delete(teamModuleDbo.Lists, id)
 			return []dal.Update{{Field: "lists." + id, Value: dal.DeleteField}}, teamModuleDbo.Validate()
 		},
 	)
-	teamItemRequest := dal4teamus.TeamItemRequest{
-		TeamRequest: request.TeamRequest,
-		ID:          id,
+	spaceItemRequest := dal4teamus.SpaceItemRequest{
+		SpaceRequest: request.SpaceRequest,
+		ID:           id,
 	}
-	err = dal4teamus.DeleteTeamItem(
+	err = dal4teamus.DeleteSpaceItem(
 		ctx,
 		user,
-		teamItemRequest,
+		spaceItemRequest,
 		const4listus.ModuleID,
-		new(dbo4listus.ListusTeamDbo),
+		new(dbo4listus.ListusSpaceDbo),
 		dbo4listus.ListsCollection,
 		new(dbo4listus.ListDbo),
 		briefsAdapter,
@@ -50,6 +50,6 @@ func DeleteList(ctx context.Context, user facade.User, request ListRequest) (err
 	return
 }
 
-func deleteListTxWorker(_ context.Context, _ dal.ReadwriteTransaction, _ *dal4teamus.TeamItemWorkerParams[*dbo4listus.ListusTeamDbo, *dbo4listus.ListDbo]) (err error) {
+func deleteListTxWorker(_ context.Context, _ dal.ReadwriteTransaction, _ *dal4teamus.SpaceItemWorkerParams[*dbo4listus.ListusSpaceDbo, *dbo4listus.ListDbo]) (err error) {
 	return errors.New("not implemented")
 }

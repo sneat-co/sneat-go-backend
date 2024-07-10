@@ -24,8 +24,8 @@ func TestHttpAddMember(t *testing.T) {
 
 	const teamID = "unit-test"
 	request := dal4contactus.CreateMemberRequest{
-		TeamRequest: dto4teamus.TeamRequest{
-			TeamID: teamID,
+		SpaceRequest: dto4teamus.SpaceRequest{
+			SpaceID: teamID,
 		},
 		WithRelated: dbo4linkage.WithRelated{
 			Related: dbo4linkage.RelatedByModuleID{
@@ -33,7 +33,7 @@ func TestHttpAddMember(t *testing.T) {
 					const4contactus.ContactsCollection: []*dbo4linkage.RelatedItem{
 						{
 							Keys: []dbo4linkage.RelatedItemKey{
-								{TeamID: "team1", ItemID: "c1"},
+								{SpaceID: "space1", ItemID: "c1"},
 							},
 							RolesOfItem: map[dbo4linkage.RelationshipRoleID]*dbo4linkage.RelationshipRole{
 								"spouse": {
@@ -58,7 +58,7 @@ func TestHttpAddMember(t *testing.T) {
 					Title:    "Some new members",
 					AgeGroup: "unknown",
 					RolesField: with.RolesField{
-						Roles: []string{const4contactus.TeamMemberRoleContributor},
+						Roles: []string{const4contactus.SpaceMemberRoleContributor},
 					},
 				},
 				Status: "active",
@@ -87,8 +87,8 @@ func TestHttpAddMember(t *testing.T) {
 	req.Header.Set("Origin", "http://localhost:3000")
 
 	createMember = func(ctx context.Context, userCtx facade.User, request dal4contactus.CreateMemberRequest) (response dto4contactus.CreateContactResponse, err error) {
-		if request.TeamID != teamID {
-			t.Fatalf("Expected teamID=%s, got: %s", teamID, request.TeamID)
+		if request.SpaceID != teamID {
+			t.Fatalf("Expected teamID=%s, got: %s", teamID, request.SpaceID)
 		}
 		response.ID = "abc1"
 		response.Data = &models4contactus.ContactDbo{
@@ -100,7 +100,7 @@ func TestHttpAddMember(t *testing.T) {
 						CountryID: "IE",
 					},
 					RolesField: with.RolesField{
-						Roles: []string{const4contactus.TeamMemberRoleContributor},
+						Roles: []string{const4contactus.SpaceMemberRoleContributor},
 					},
 				},
 				Status: "active",

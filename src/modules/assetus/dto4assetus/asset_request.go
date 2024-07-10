@@ -9,11 +9,11 @@ import (
 type AssetRequest struct {
 	AssetID       string
 	AssetCategory string
-	dto4teamus.TeamRequest
+	dto4teamus.SpaceRequest
 }
 
 func (v AssetRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
 	if err := validate.RecordID(v.AssetID); err != nil {

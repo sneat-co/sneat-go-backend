@@ -20,7 +20,7 @@ func Test_txSetContainerPointTask(t *testing.T) {
 				ContainerPointRequest: dto4logist.ContainerPointRequest{
 					ContainerID:     containerID,
 					ShippingPointID: shippingPointID,
-					OrderRequest:    dto4logist.NewOrderRequest("team1", "order1"),
+					OrderRequest:    dto4logist.NewOrderRequest("space1", "order1"),
 				},
 				Task:  task,
 				Value: value,

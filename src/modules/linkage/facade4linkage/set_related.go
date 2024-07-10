@@ -8,26 +8,26 @@ import (
 )
 
 //type RelatableAdapter[D dbo4linkage.Relatable] interface {
-//	VerifyItem(ctx context.Context, tx dal.ReadTransaction, recordRef dbo4linkage.TeamModuleItemRef) (err error)
-//	//GetRecord(ctx context.Context, tx dal.ReadTransaction, recordRef dbo4linkage.TeamModuleItemRef) (record.DataWithID[string, D], error)
+//	VerifyItem(ctx context.Context, tx dal.ReadTransaction, recordRef dbo4linkage.SpaceModuleItemRef) (err error)
+//	//GetRecord(ctx context.Context, tx dal.ReadTransaction, recordRef dbo4linkage.SpaceModuleItemRef) (record.DataWithID[string, D], error)
 //}
 //type relatableAdapter[D dbo4linkage.Relatable] struct {
-//	verifyItem func(ctx context.Context, tx dal.ReadTransaction, recordRef dbo4linkage.TeamModuleItemRef) (err error)
+//	verifyItem func(ctx context.Context, tx dal.ReadTransaction, recordRef dbo4linkage.SpaceModuleItemRef) (err error)
 //}
 //
-//func (v relatableAdapter[D]) VerifyItem(ctx context.Context, tx dal.ReadTransaction, recordRef dbo4linkage.TeamModuleItemRef) (err error) {
+//func (v relatableAdapter[D]) VerifyItem(ctx context.Context, tx dal.ReadTransaction, recordRef dbo4linkage.SpaceModuleItemRef) (err error) {
 //	return v.verifyItem(ctx, tx, recordRef)
 //}
 //
 //func NewRelatableAdapter[D dbo4linkage.Relatable](
-//	verifyItem func(ctx context.Context, tx dal.ReadTransaction, recordRef dbo4linkage.TeamModuleItemRef) (err error),
+//	verifyItem func(ctx context.Context, tx dal.ReadTransaction, recordRef dbo4linkage.SpaceModuleItemRef) (err error),
 //) RelatableAdapter[D] {
 //	return relatableAdapter[D]{
 //		verifyItem: verifyItem,
 //	}
 //}
 
-//func (relatableAdapter[D]) GetRecord(ctx context.Context, tx dal.ReadTransaction, recordRef dbo4linkage.TeamModuleItemRef) (record.DataWithID[string, D], error) {
+//func (relatableAdapter[D]) GetRecord(ctx context.Context, tx dal.ReadTransaction, recordRef dbo4linkage.SpaceModuleItemRef) (record.DataWithID[string, D], error) {
 //	return nil, nil
 //}
 
@@ -40,8 +40,8 @@ func SetRelated(
 	_ context.Context,
 	_ dal.ReadwriteTransaction,
 	object dbo4linkage.Relatable,
-	objectRef dbo4linkage.TeamModuleItemRef,
-	itemRef dbo4linkage.TeamModuleItemRef,
+	objectRef dbo4linkage.SpaceModuleItemRef,
+	itemRef dbo4linkage.SpaceModuleItemRef,
 	rolesCommand dbo4linkage.RelationshipRolesCommand,
 ) (
 	result SetRelatedResult,
@@ -52,7 +52,7 @@ func SetRelated(
 	{
 		const invalidArgPrefix = "facade4linkage.SetRelated got invalid argument"
 		if err = objectRef.Validate(); err != nil {
-			err = fmt.Errorf("%s `objectRef dbo4linkage.TeamModuleItemRef`: %w", invalidArgPrefix, err)
+			err = fmt.Errorf("%s `objectRef dbo4linkage.SpaceModuleItemRef`: %w", invalidArgPrefix, err)
 			return
 		}
 		if err = rolesCommand.Validate(); err != nil {

@@ -352,15 +352,12 @@ func (v *Retrospective) Validate() error {
 	}
 
 	for memberID, counts := range v.CountsByMemberAndType {
-		var member *dbo4meetingus.MeetingMemberBrief
+		//var member *dbo4meetingus.MeetingMemberBrief
 		for id /*, m*/ := range v.Contacts {
-			if dbmodels.TeamItemID(id).ItemID() == memberID {
+			if dbmodels.SpaceItemID(id).ItemID() == memberID {
 				//member = m
-				panic("TODO: add team ID validation") // TODO: add team ID validation
+				panic("TODO: add space ID validation") // TODO: add team ID validation
 			}
-		}
-		if member == nil {
-			return validation.NewErrBadRecordFieldValue("countsByMemberAndType", fmt.Sprintf("reference unknown members id: %v", memberID))
 		}
 		for itemType, count := range counts {
 			if !IsKnownItemType(itemType) {
@@ -382,6 +379,6 @@ type RetroDurations struct {
 // RetroProfile record
 type RetroProfile struct {
 	Title     string         `json:"title" firestore:"title"`
-	TeamID    string         `json:"teamId" firestore:"teamId"`
+	SpaceID   string         `json:"spaceId" firestore:"spaceId"`
 	Durations RetroDurations `json:"durations" firestore:"durations"`
 }

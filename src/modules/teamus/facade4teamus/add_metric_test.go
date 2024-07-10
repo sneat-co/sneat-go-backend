@@ -6,9 +6,9 @@ import (
 	"testing"
 )
 
-func TestAddTeamMetricRequest_Decoding(t *testing.T) {
+func TestAddSpaceMetricRequest_Decoding(t *testing.T) {
 	decoder := json.NewDecoder(strings.NewReader(`{"metric":{"title": "Test metric"}}`))
-	var request AddTeamMetricRequest
+	var request AddSpaceMetricRequest
 	if err := decoder.Decode(&request); err != nil {
 		t.Fatal(err)
 	}

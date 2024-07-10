@@ -93,11 +93,11 @@ func NewUser(clientInfo ClientInfo) AppUser {
 }
 
 // DebutsAppUserDataOBSOLETE is obsolete
-// Should be replaced with sneat app user and DebtusTeamData
+// Should be replaced with sneat app user and DebtusSpaceData
 type DebutsAppUserDataOBSOLETE struct { // TODO: Remove obsolete struct
 
-	DebtusUserData // TODO: to be used on it's OWN
-	DebtusTeamData // TODO: to be used on it's OWN
+	DebtusUserData  // TODO: to be used on it's OWN
+	DebtusSpaceData // TODO: to be used on it's OWN
 
 	appuser.BaseUserFields
 	UserRewardBalance

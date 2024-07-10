@@ -24,14 +24,14 @@ func CreateMember(
 		return response, fmt.Errorf("invalid CreateMemberRequest: %w", err)
 	}
 	createContactRequest := dto4contactus.CreateContactRequest{
-		TeamRequest: request.TeamRequest,
-		WithRelated: request.WithRelated,
-		Status:      request.Status,
-		Type:        briefs4contactus.ContactTypePerson,
-		Person:      &request.CreatePersonRequest,
+		SpaceRequest: request.SpaceRequest,
+		WithRelated:  request.WithRelated,
+		Status:       request.Status,
+		Type:         briefs4contactus.ContactTypePerson,
+		Person:       &request.CreatePersonRequest,
 	}
-	if !checks4contactus.IsTeamMember(request.Roles) {
-		createContactRequest.Roles = append(createContactRequest.Roles, const4contactus.TeamMemberRoleMember)
+	if !checks4contactus.IsSpaceMember(request.Roles) {
+		createContactRequest.Roles = append(createContactRequest.Roles, const4contactus.SpaceMemberRoleMember)
 	}
 	if response, err = CreateContact(ctx, user, false, createContactRequest); err != nil {
 		return response, err
@@ -39,7 +39,7 @@ func CreateMember(
 	if response.Data == nil {
 		return response, fmt.Errorf("CreateContact returned nil response data")
 	}
-	if !checks4contactus.IsTeamMember(response.Data.Roles) {
+	if !checks4contactus.IsSpaceMember(response.Data.Roles) {
 		err = fmt.Errorf("created contact does not have team member role")
 		return response, err
 	}

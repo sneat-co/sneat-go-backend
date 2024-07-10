@@ -14,8 +14,8 @@ import (
 // httpDeleteAsset deletes assets
 func httpDeleteAsset(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
-	var request dal4teamus.TeamItemRequest
-	request.TeamID = q.Get("team")
+	var request dal4teamus.SpaceItemRequest
+	request.SpaceID = q.Get("space")
 	request.ID = q.Get("id")
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.NoContentAuthRequired, http.StatusNoContent,
 		func(ctx context.Context, userCtx facade.User) (interface{}, error) {

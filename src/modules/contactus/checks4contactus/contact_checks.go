@@ -5,6 +5,6 @@ import (
 	"github.com/strongo/slice"
 )
 
-func IsTeamMember(roles []string) bool {
-	return slice.Contains(roles, const4contactus.TeamMemberRoleMember)
+func IsSpaceMember(roles []string) bool {
+	return slice.Contains(roles, const4contactus.SpaceMemberRoleMember)
 }

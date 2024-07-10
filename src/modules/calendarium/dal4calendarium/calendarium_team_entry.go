@@ -9,18 +9,18 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 )
 
-type CalendariumTeamEntry = record.DataWithID[string, *dbo4calendarium.CalendariumTeamDbo]
+type CalendariumSpaceEntry = record.DataWithID[string, *dbo4calendarium.CalendariumSpaceDbo]
 
-func NewCalendariumTeamKey(teamID string) *dal.Key {
-	return dal4teamus.NewTeamModuleKey(teamID, const4calendarium.ModuleID)
+func NewCalendariumSpaceKey(teamID string) *dal.Key {
+	return dal4teamus.NewSpaceModuleKey(teamID, const4calendarium.ModuleID)
 }
 
-func NewCalendariumTeamEntry(teamID string) CalendariumTeamEntry {
-	key := NewCalendariumTeamKey(teamID)
-	return record.NewDataWithID(teamID, key, new(dbo4calendarium.CalendariumTeamDbo))
+func NewCalendariumSpaceEntry(teamID string) CalendariumSpaceEntry {
+	key := NewCalendariumSpaceKey(teamID)
+	return record.NewDataWithID(teamID, key, new(dbo4calendarium.CalendariumSpaceDbo))
 }
 
-func GetCalendariumTeam(ctx context.Context, tx dal.ReadwriteTransaction, teamID string) (CalendariumTeamEntry, error) {
-	calendariumTeam := NewCalendariumTeamEntry(teamID)
-	return calendariumTeam, tx.Get(ctx, calendariumTeam.Record)
+func GetCalendariumSpace(ctx context.Context, tx dal.ReadwriteTransaction, teamID string) (CalendariumSpaceEntry, error) {
+	v := NewCalendariumSpaceEntry(teamID)
+	return v, tx.Get(ctx, v.Record)
 }

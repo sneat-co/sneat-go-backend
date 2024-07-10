@@ -17,39 +17,39 @@ func DeleteContact(ctx context.Context, userContext facade.User, request dto4con
 		return
 	}
 
-	return dal4contactus.RunContactusTeamWorker(ctx, userContext, request.TeamRequest,
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusTeamWorkerParams) (err error) {
+	return dal4contactus.RunContactusSpaceWorker(ctx, userContext, request.SpaceRequest,
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) (err error) {
 			return deleteContactTxWorker(ctx, tx, params, request.ContactID)
 		},
 	)
 }
 
 func deleteContactTxWorker(
-	ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusTeamWorkerParams,
+	ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams,
 	contactID string,
 ) (err error) {
-	if contactID == params.Team.ID {
+	if contactID == params.Space.ID {
 		return validation.NewErrBadRequestFieldValue("contactID", "cannot delete contact that represents team/company itself")
 	}
-	contact := dal4contactus.NewContactEntry(params.Team.ID, contactID)
-	if err = params.GetRecords(ctx, tx, params.Team.Record); err != nil {
+	contact := dal4contactus.NewContactEntry(params.Space.ID, contactID)
+	if err = params.GetRecords(ctx, tx, params.Space.Record); err != nil {
 		return err
 	}
 
 	var subContacts []dal4contactus.ContactEntry
-	subContacts, err = GetRelatedContacts(ctx, tx, params.Team.ID, RelatedAsChild, 0, -1, []dal4contactus.ContactEntry{contact})
+	subContacts, err = GetRelatedContacts(ctx, tx, params.Space.ID, RelatedAsChild, 0, -1, []dal4contactus.ContactEntry{contact})
 	if err != nil {
 		return fmt.Errorf("failed to get related contacts: %w", err)
 	}
 
-	params.TeamModuleUpdates = append(params.TeamModuleUpdates,
-		params.TeamModuleEntry.Data.RemoveContact(contactID))
+	params.SpaceModuleUpdates = append(params.SpaceModuleUpdates,
+		params.SpaceModuleEntry.Data.RemoveContact(contactID))
 
-	if err := params.Team.Data.Validate(); err != nil {
+	if err := params.Space.Data.Validate(); err != nil {
 		return err
 	}
 
-	//params.TeamUpdates = append(params.TeamUpdates, updateTeamDtoWithNumberOfContact(len(params.TeamModuleEntry.Data.Contacts)))
+	//params.SpaceUpdates = append(params.SpaceUpdates, updateTeamDtoWithNumberOfContact(len(params.SpaceModuleEntry.Data.Contacts)))
 
 	contactKeysToDelete := make([]*dal.Key, 0, len(subContacts)+1)
 	contactKeysToDelete = append(contactKeysToDelete, contact.Key)

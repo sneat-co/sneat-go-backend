@@ -8,9 +8,9 @@ import (
 	"github.com/strongo/validation"
 )
 
-// UserTeamBrief hold info on a team in the UserDbo record
-type UserTeamBrief struct {
-	dbo4teamus.TeamBrief
+// UserSpaceBrief hold info on a team in the UserDbo record
+type UserSpaceBrief struct {
+	dbo4teamus.SpaceBrief
 
 	// UserContactID is a contact ID of a user in the team
 	UserContactID string `json:"userContactID" firestore:"userContactID"`
@@ -25,7 +25,7 @@ type UserTeamBrief struct {
 }
 
 // HasRole checks if a user has a role
-func (v UserTeamBrief) HasRole(role string) bool {
+func (v UserSpaceBrief) HasRole(role string) bool {
 	for _, r := range v.Roles {
 		if r == role {
 			return true
@@ -35,7 +35,7 @@ func (v UserTeamBrief) HasRole(role string) bool {
 }
 
 // Validate validates user record
-func (v UserTeamBrief) Validate() error {
+func (v UserSpaceBrief) Validate() error {
 	//if err := models.ValidateTitle(v.Title); err != nil {
 	//	return err
 	//}
@@ -48,7 +48,7 @@ func (v UserTeamBrief) Validate() error {
 	//if v.MemberType == "" {
 	//	return validation.NewErrRecordIsMissingRequiredField("memberType")
 	//}
-	if !core4teamus.IsValidTeamType(v.Type) {
+	if !core4teamus.IsValidSpaceType(v.Type) {
 		return validation.NewErrBadRecordFieldValue("type", "unknown team type")
 	}
 	if len(v.Roles) == 0 {
@@ -58,9 +58,9 @@ func (v UserTeamBrief) Validate() error {
 		if role == "" {
 			return validation.NewErrRecordIsMissingRequiredField(fmt.Sprintf("roles[%d]", i))
 		}
-		if !const4contactus.IsKnownTeamMemberRole(role, nil) {
+		if !const4contactus.IsKnownSpaceMemberRole(role, nil) {
 			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("roles[%d]", i), fmt.Sprintf("unknown role (expected one of this role: %+v): %s",
-				const4contactus.TeamMemberWellKnownRoles, role))
+				const4contactus.SpaceMemberWellKnownRoles, role))
 		}
 	}
 	//if len(v.RetroItems) > 0 {

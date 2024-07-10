@@ -23,7 +23,7 @@ func RemoveParticipantFromHappening(ctx context.Context, user facade.User, reque
 		return removeParticipantFromHappeningTxWorker(ctx, tx, params, request)
 	}
 
-	if err = dal4calendarium.RunHappeningTeamWorker(ctx, user, request.HappeningRequest, worker); err != nil {
+	if err = dal4calendarium.RunHappeningSpaceWorker(ctx, user, request.HappeningRequest, worker); err != nil {
 		return err
 	}
 	return nil
@@ -34,23 +34,23 @@ func removeParticipantFromHappeningTxWorker(ctx context.Context, tx dal.Readwrit
 	if err != nil {
 		return err
 	}
-	contactShortRef := dbmodels.NewTeamItemID(request.Contact.TeamID, request.Contact.ID)
+	contactShortRef := dbmodels.NewSpaceItemID(request.Contact.SpaceID, request.Contact.ID)
 	switch params.Happening.Data.Type {
 	case dbo4calendarium.HappeningTypeSingle:
 		break // nothing to do
 	case dbo4calendarium.HappeningTypeRecurring:
 		var updates []dal.Update
-		if updates, err = removeContactFromHappeningBriefInContactusTeamDbo(params.TeamModuleEntry, params.Happening, contactShortRef); err != nil {
-			return fmt.Errorf("failed to remove member from happening brief in team DBO: %w", err)
+		if updates, err = removeContactFromHappeningBriefInContactusSpaceDbo(params.SpaceModuleEntry, params.Happening, contactShortRef); err != nil {
+			return fmt.Errorf("failed to remove member from happening brief in space DBO: %w", err)
 		}
-		params.TeamModuleUpdates = append(params.TeamModuleUpdates, updates...)
-		params.TeamModuleEntry.Record.MarkAsChanged()
+		params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, updates...)
+		params.SpaceModuleEntry.Record.MarkAsChanged()
 	default:
 		return fmt.Errorf("invalid happenning record: %w",
 			validation.NewErrBadRecordFieldValue("type",
 				fmt.Sprintf("unknown value: [%v]", params.Happening.Data.Type)))
 	}
-	contactFullRef := models4contactus.NewContactFullRef(contactShortRef.TeamID(), contactShortRef.ItemID())
+	contactFullRef := models4contactus.NewContactFullRef(contactShortRef.SpaceID(), contactShortRef.ItemID())
 	params.HappeningUpdates = append(
 		params.HappeningUpdates,
 		dbo4linkage.RemoveRelatedAndID(
@@ -63,16 +63,16 @@ func removeParticipantFromHappeningTxWorker(ctx context.Context, tx dal.Readwrit
 	return err
 }
 
-func removeContactFromHappeningBriefInContactusTeamDbo(
-	calendariumTeam dal4calendarium.CalendariumTeamEntry,
+func removeContactFromHappeningBriefInContactusSpaceDbo(
+	calendariumSpace dal4calendarium.CalendariumSpaceEntry,
 	happening dbo4calendarium.HappeningEntry,
-	contactShortRef dbmodels.TeamItemID,
+	contactShortRef dbmodels.SpaceItemID,
 ) (updates []dal.Update, err error) {
-	calendarHappeningBrief := calendariumTeam.Data.GetRecurringHappeningBrief(happening.ID)
+	calendarHappeningBrief := calendariumSpace.Data.GetRecurringHappeningBrief(happening.ID)
 	if calendarHappeningBrief == nil {
 		return nil, err
 	}
-	contactFullRef := models4contactus.NewContactFullRef(contactShortRef.TeamID(), contactShortRef.ItemID())
+	contactFullRef := models4contactus.NewContactFullRef(contactShortRef.SpaceID(), contactShortRef.ItemID())
 	updates = calendarHappeningBrief.WithRelated.RemoveRelatedItem(contactFullRef)
 	if len(updates) > 0 {
 		for i := range updates {

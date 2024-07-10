@@ -22,11 +22,11 @@ func (v *WithContactIDs) Validate() error {
 	return nil
 }
 
-type WithSingleTeamContactIDs struct {
+type WithSingleSpaceContactIDs struct {
 	WithContactIDs
 }
 
-func (v *WithSingleTeamContactIDs) AddContactID(contactID string) {
+func (v *WithSingleSpaceContactIDs) AddContactID(contactID string) {
 	if len(v.ContactIDs) == 0 {
 		v.ContactIDs = make([]string, 1, 2)
 		v.ContactIDs[0] = "*"
@@ -34,26 +34,26 @@ func (v *WithSingleTeamContactIDs) AddContactID(contactID string) {
 	v.ContactIDs = append(v.ContactIDs, contactID)
 }
 
-func (v *WithSingleTeamContactIDs) HasContactID(contactID string) bool {
+func (v *WithSingleSpaceContactIDs) HasContactID(contactID string) bool {
 	return slice.Contains(v.ContactIDs, contactID)
 }
 
-func (v *WithSingleTeamContactIDs) Validate() error {
+func (v *WithSingleSpaceContactIDs) Validate() error {
 
 	return nil
 }
 
-// WithMultiTeamContactIDs mixin that adds ContactIDs field
-type WithMultiTeamContactIDs struct {
+// WithMultiSpaceContactIDs mixin that adds ContactIDs field
+type WithMultiSpaceContactIDs struct {
 	WithContactIDs
 }
 
-func (v *WithMultiTeamContactIDs) AddTeamContactID(teamContactID dbmodels.TeamItemID) {
+func (v *WithMultiSpaceContactIDs) AddSpaceContactID(teamContactID dbmodels.SpaceItemID) {
 	v.ContactIDs = append(v.ContactIDs, string(teamContactID))
 }
 
 // Validate  returns error if not valid
-func (v *WithMultiTeamContactIDs) Validate() error {
+func (v *WithMultiSpaceContactIDs) Validate() error {
 	if err := v.WithContactIDs.Validate(); err != nil {
 		return err
 	}
@@ -65,13 +65,13 @@ func (v *WithMultiTeamContactIDs) Validate() error {
 		default:
 			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("contactIDs[%d]", i), "leading or trailing whitespaces")
 		}
-		ids := strings.Split(string(id), dbmodels.TeamItemIDSeparator)
+		ids := strings.Split(string(id), dbmodels.SpaceItemIDSeparator)
 		if len(ids) != 2 {
 			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("contactIDs[%d]", i),
-				fmt.Sprintf("should be in format '%s', got: %s", dbmodels.NewTeamItemID("teamID", "contactID"), id))
+				fmt.Sprintf("should be in format '%s', got: %s", dbmodels.NewSpaceItemID("spaceID", "contactID"), id))
 		}
 		if ids[0] == "" {
-			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("contactIDs[%d]", i), "teamID can not be empty string")
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("contactIDs[%d]", i), "spaceID can not be empty string")
 		}
 		if ids[1] == "" {
 			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("contactIDs[%d]", i), "contactID can not be empty string")
@@ -80,7 +80,7 @@ func (v *WithMultiTeamContactIDs) Validate() error {
 	return nil
 }
 
-// HasTeamContactID check if a record has a specific contactBrief ID
-func (v *WithMultiTeamContactIDs) HasTeamContactID(teamItemID dbmodels.TeamItemID) bool {
+// HasSpaceContactID check if a record has a specific contactBrief ID
+func (v *WithMultiSpaceContactIDs) HasSpaceContactID(teamItemID dbmodels.SpaceItemID) bool {
 	return slice.Contains(v.ContactIDs, string(teamItemID))
 }

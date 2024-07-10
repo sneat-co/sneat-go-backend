@@ -18,25 +18,25 @@ func CreateListItems(ctx context.Context, userContext facade.User, request Creat
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4teamus.RunModuleTeamWorker(ctx, userContext, request.TeamRequest, const4listus.ModuleID, new(dbo4listus.ListusTeamDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4listus.ListusTeamDbo]) error {
+	err = dal4teamus.RunModuleSpaceWorker(ctx, userContext, request.SpaceRequest, const4listus.ModuleID, new(dbo4listus.ListusSpaceDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) error {
 			return createListItemTxWorker(ctx, request, tx, params)
 		})
 	return
 }
 
-func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleTeamWorkerParams[*dbo4listus.ListusTeamDbo]) (err error) {
+func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) (err error) {
 	if err = params.GetRecords(ctx, tx); err != nil {
 		return err
 	}
-	//if slice.Index(params.Team.Data.UserIDs, uid) < 0 {
-	//	// TODO: check if user is a member of the team at RunModuleTeamWorker() level
+	//if slice.Index(params.Space.Data.UserIDs, uid) < 0 {
+	//	// TODO: check if user is a member of the team at RunModuleSpaceWorker() level
 	//	return fmt.Errorf("user have no access to this team")
 	//}
 
 	listType := request.ListType()
 	listID := request.ListID
-	listKey := dal4listus.NewTeamListKey(request.TeamID, listID)
+	listKey := dal4listus.NewSpaceListKey(request.SpaceID, listID)
 	var listDto dbo4listus.ListDbo
 	var listRecord = dal.NewRecordWithData(listKey, &listDto)
 	if err = tx.Get(ctx, listRecord); err != nil && !dal.IsNotFound(err) {
@@ -54,7 +54,7 @@ func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest,
 			return err
 		}
 
-		listDto.TeamIDs = []string{request.TeamID}
+		listDto.SpaceIDs = []string{request.SpaceID}
 		listDto.UserIDs = []string{params.UserID}
 		listDto.Type = listType
 		listDto.Title = request.ListID
@@ -68,9 +68,9 @@ func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest,
 		}
 	}
 
-	listBrief, isExistingBrief := params.TeamModuleEntry.Data.Lists[listID]
+	listBrief, isExistingBrief := params.SpaceModuleEntry.Data.Lists[listID]
 	if !isExistingBrief {
-		params.TeamModuleEntry.Data.Lists = make(map[string]*dbo4listus.ListBrief, 1)
+		params.SpaceModuleEntry.Data.Lists = make(map[string]*dbo4listus.ListBrief, 1)
 		listBrief = &dbo4listus.ListBrief{
 			ListBase: dbo4listus.ListBase{
 				Type:  request.ListType(),
@@ -80,7 +80,7 @@ func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest,
 		if listBrief.Type == dbo4listus.ListTypeToBuy && request.ListID == "groceries" {
 			listBrief.Emoji = "🛒"
 		}
-		params.TeamModuleEntry.Data.Lists[listID] = listBrief
+		params.SpaceModuleEntry.Data.Lists[listID] = listBrief
 	}
 
 	for i, item := range request.Items {
@@ -123,15 +123,15 @@ func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest,
 		}
 	}
 
-	if params.TeamModuleEntry.Record.Exists() {
-		params.TeamModuleUpdates = append(params.TeamModuleUpdates, dal.Update{
+	if params.SpaceModuleEntry.Record.Exists() {
+		params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, dal.Update{
 			Field: "lists." + listID,
 			Value: listBrief,
 		})
 	} else {
-		params.TeamModuleEntry.Data.CreatedAt = params.Started
-		params.TeamModuleEntry.Data.CreatedBy = params.UserID
-		if err = tx.Insert(ctx, params.TeamModuleEntry.Record); err != nil {
+		params.SpaceModuleEntry.Data.CreatedAt = params.Started
+		params.SpaceModuleEntry.Data.CreatedBy = params.UserID
+		if err = tx.Insert(ctx, params.SpaceModuleEntry.Record); err != nil {
 			return fmt.Errorf("failed to insert team module entry record: %w", err)
 		}
 	}

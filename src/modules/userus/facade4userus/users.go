@@ -114,9 +114,9 @@ var RunUserWorker = func(ctx context.Context, db dal.DB, user facade.User, worke
 	})
 }
 
-func GetUserTeamContactID(ctx context.Context, tx dal.ReadSession, userID string, contactusTeamEntry dal4contactus.ContactusTeamModuleEntry) (userContactID string, err error) {
+func GetUserSpaceContactID(ctx context.Context, tx dal.ReadSession, userID string, contactusSpaceEntry dal4contactus.ContactusSpaceModuleEntry) (userContactID string, err error) {
 
-	userContactID, _ = contactusTeamEntry.Data.GetContactBriefByUserID(userID)
+	userContactID, _ = contactusSpaceEntry.Data.GetContactBriefByUserID(userID)
 
 	if userContactID != "" {
 		return userContactID, nil
@@ -128,17 +128,17 @@ func GetUserTeamContactID(ctx context.Context, tx dal.ReadSession, userID string
 		return "", err
 	}
 
-	teamID := contactusTeamEntry.Key.Parent().ID.(string)
+	spaceID := contactusSpaceEntry.Key.Parent().ID.(string)
 
-	userTeamBrief := user.Data.Teams[teamID]
+	userSpaceBrief := user.Data.Spaces[spaceID]
 
-	if userTeamBrief == nil {
+	if userSpaceBrief == nil {
 		return "", errors.New("user's team brief is not found in user record")
 	}
 
-	if userTeamBrief.UserContactID == "" {
+	if userSpaceBrief.UserContactID == "" {
 		return "", errors.New("user's team brief has no value in 'userContactID' field")
 	}
 
-	return userTeamBrief.UserContactID, nil
+	return userSpaceBrief.UserContactID, nil
 }

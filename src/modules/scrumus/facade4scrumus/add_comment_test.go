@@ -23,8 +23,8 @@ func TestAddCommentRequest_Validate(t *testing.T) {
 			Type:      "done",
 			Task:      "task1",
 			Request: facade4meetingus.Request{
-				TeamRequest: dto4teamus.TeamRequest{
-					TeamID: "team1",
+				SpaceRequest: dto4teamus.SpaceRequest{
+					SpaceID: "space1",
 				},
 				MeetingID: "2020-12-13",
 			},
@@ -49,7 +49,7 @@ func TestAddComment(t *testing.T) {
 
 	t.Run("add 1st comment", func(t *testing.T) {
 		body := []byte(strings.Replace(strings.Replace(`{
-	"teamID":"team1",
+	"spaceID":"space1",
 	"meetingID":"2019-11-22",
 	"type":"done",
 	"task":"d1","

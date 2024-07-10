@@ -8,8 +8,8 @@ import (
 
 func ValidOrderRequest() OrderRequest {
 	return OrderRequest{
-		TeamRequest: dto4teamus.ValidTeamRequest(),
-		OrderID:     "test-order-id",
+		SpaceRequest: dto4teamus.ValidSpaceRequest(),
+		OrderID:      "test-order-id",
 	}
 }
 
@@ -21,7 +21,7 @@ func TestOrderRequest_Validate(t *testing.T) {
 		assert.Nil(t, ValidOrderRequest().Validate())
 	})
 	t.Run("no_order_id", func(t *testing.T) {
-		assert.NotNil(t, OrderRequest{TeamRequest: dto4teamus.ValidTeamRequest()}.Validate())
+		assert.NotNil(t, OrderRequest{SpaceRequest: dto4teamus.ValidSpaceRequest()}.Validate())
 	})
 	t.Run("no_team_id", func(t *testing.T) {
 		assert.NotNil(t, OrderRequest{OrderID: "test-order-id"}.Validate())

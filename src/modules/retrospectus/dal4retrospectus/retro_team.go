@@ -10,19 +10,19 @@ import (
 
 const RetrospectusModuleID = "retrospectus"
 
-type RetroTeam = record.DataWithID[string, *dbo4retrospectus.RetroTeamDbo]
+type RetroSpaceEntry = record.DataWithID[string, *dbo4retrospectus.RetroSpaceDbo]
 
-func NewRetroTeamKey(id string) *dal.Key {
-	teamKey := dal4teamus.NewTeamKey(id)
-	return dal.NewKeyWithParentAndID(teamKey, dal4teamus.TeamModulesCollection, RetrospectusModuleID)
+func NewRetroSpaceKey(id string) *dal.Key {
+	key := dal4teamus.NewSpaceKey(id)
+	return dal.NewKeyWithParentAndID(key, dal4teamus.SpaceModulesCollection, RetrospectusModuleID)
 }
 
-func NewRetroTeam(id string) RetroTeam {
-	key := NewRetroTeamKey(id)
-	return record.NewDataWithID(id, key, new(dbo4retrospectus.RetroTeamDbo))
+func NewRetroSpaceEntry(id string) RetroSpaceEntry {
+	key := NewRetroSpaceKey(id)
+	return record.NewDataWithID(id, key, new(dbo4retrospectus.RetroSpaceDbo))
 }
 
-func GetRetroTeam(ctx context.Context, tx dal.ReadTransaction, id string) (RetroTeam, error) {
-	retro := NewRetroTeam(id)
-	return retro, tx.Get(ctx, retro.Record)
+func GetRetroSpaceEntry(ctx context.Context, tx dal.ReadTransaction, id string) (RetroSpaceEntry, error) {
+	v := NewRetroSpaceEntry(id)
+	return v, tx.Get(ctx, v.Record)
 }

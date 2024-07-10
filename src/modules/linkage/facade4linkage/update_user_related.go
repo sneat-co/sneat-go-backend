@@ -13,7 +13,7 @@ func updateUserRelated(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	userID string,
-	objectRef dbo4linkage.TeamModuleItemRef,
+	objectRef dbo4linkage.SpaceModuleItemRef,
 	item record.DataWithID[string, *dbo4linkage.WithRelated],
 ) (userUpdates dal4teamus.RecordUpdates, err error) {
 	user := dbo4userus.NewUser(userID)

@@ -9,20 +9,20 @@ import (
 // NewOrderRequest creates new OrderRequest
 func NewOrderRequest(teamID, orderID string) OrderRequest {
 	return OrderRequest{
-		TeamRequest: dto4teamus.NewTeamRequest(teamID),
-		OrderID:     orderID,
+		SpaceRequest: dto4teamus.NewSpaceRequest(teamID),
+		OrderID:      orderID,
 	}
 }
 
-// OrderRequest is a request regards an order that refers to a team with TeamRequest and points to a specific order by OrderID
+// OrderRequest is a request regards an order that refers to a team with SpaceRequest and points to a specific order by OrderID
 type OrderRequest struct {
-	dto4teamus.TeamRequest
+	dto4teamus.SpaceRequest
 	OrderID string `json:"orderID"`
 }
 
 // Validate returns error if request is invalid
 func (v OrderRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
 	if strings.TrimSpace(v.OrderID) == "" {

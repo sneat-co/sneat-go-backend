@@ -31,16 +31,16 @@ func AdjustSlot(ctx context.Context, user facade.User, request dto4calendarium.H
 		return
 	}
 
-	if err = dal4calendarium.RunHappeningTeamWorker(ctx, user, request.HappeningRequest, worker); err != nil {
+	if err = dal4calendarium.RunHappeningSpaceWorker(ctx, user, request.HappeningRequest, worker); err != nil {
 		return err
 	}
 	return nil
 }
 
 func adjustRecurringSlot(ctx context.Context, tx dal.ReadwriteTransaction, happening dbo4calendarium.HappeningEntry, request dto4calendarium.HappeningSlotDateRequest) (err error) {
-	//for _, teamID := range happening.Data.TeamIDs { // TODO: run in parallel in go routine if > 1
-	if err := adjustSlotInCalendarDay(ctx, tx, request.TeamID, happening.ID, request); err != nil {
-		return fmt.Errorf("failed to adjust slot in calendar day record for teamID=%v: %w", request.TeamID, err)
+	//for _, spaceID := range happening.Data.SpaceIDs { // TODO: run in parallel in go routine if > 1
+	if err := adjustSlotInCalendarDay(ctx, tx, request.SpaceID, happening.ID, request); err != nil {
+		return fmt.Errorf("failed to adjust slot in calendar day record for teamID=%v: %w", request.SpaceID, err)
 	}
 	//}
 	return nil

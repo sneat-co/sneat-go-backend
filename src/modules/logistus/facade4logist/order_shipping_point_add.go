@@ -44,7 +44,7 @@ func addOrderShippingPointTx(
 		return nil, fmt.Errorf("order record is not valid after loading from DB: %w", err)
 	}
 
-	locationContact := dal4contactus.NewContactEntry(request.TeamID, request.LocationContactID)
+	locationContact := dal4contactus.NewContactEntry(request.SpaceID, request.LocationContactID)
 	if err := tx.Get(ctx, locationContact.Record); err != nil {
 		return nil, fmt.Errorf("failed to get locationContact referenced by shipping point: %w", err)
 	}
@@ -58,7 +58,7 @@ func addOrderShippingPointTx(
 	if locationContact.Data.ParentID == "" {
 		return nil, validation.NewErrBadRecordFieldValue("parentContactID", "locationContact referenced by shipping point has no parent contact ContactID")
 	}
-	counterpartyContact := dal4contactus.NewContactEntry(request.TeamID, locationContact.Data.ParentID)
+	counterpartyContact := dal4contactus.NewContactEntry(request.SpaceID, locationContact.Data.ParentID)
 	if err := tx.Get(ctx, counterpartyContact.Record); err != nil {
 		return nil, fmt.Errorf("failed to get counterpartyContact referenced by location point: %w", err)
 		//} else if !counterpartyContact.Record.Exists() {

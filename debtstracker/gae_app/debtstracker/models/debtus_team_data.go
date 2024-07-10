@@ -2,7 +2,7 @@ package models
 
 import "github.com/crediterra/money"
 
-type DebtusTeamData struct {
+type DebtusSpaceData struct {
 	money.Balanced
 	billsHolder
 	TransfersWithInterestCount int  `datastore:",noindex"`

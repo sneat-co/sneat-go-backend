@@ -6,15 +6,15 @@ import (
 	"strings"
 )
 
-// TeamMetricsRequest request
-type TeamMetricsRequest struct {
-	TeamRequest
+// SpaceMetricsRequest request
+type SpaceMetricsRequest struct {
+	SpaceRequest
 	Metrics []string `json:"metrics"`
 }
 
 // Validate validates request
-func (v *TeamMetricsRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+func (v *SpaceMetricsRequest) Validate() error {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
 	if len(v.Metrics) == 0 {

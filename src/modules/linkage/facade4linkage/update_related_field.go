@@ -13,7 +13,7 @@ import (
 func UpdateRelatedField(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	objectRef dbo4linkage.TeamModuleItemRef,
+	objectRef dbo4linkage.SpaceModuleItemRef,
 	request dto4linkage.UpdateRelatedFieldRequest,
 	item *dbo4linkage.WithRelatedAndIDsAndUserID,
 	addUpdates func(updates []dal.Update),
@@ -21,7 +21,7 @@ func UpdateRelatedField(
 	var setRelatedResult SetRelatedResult
 
 	for itemID, itemRolesCommand := range request.Related {
-		itemRef := dbo4linkage.NewTeamModuleItemRefFromString(itemID)
+		itemRef := dbo4linkage.NewSpaceModuleItemRefFromString(itemID)
 		if objectRef == itemRef {
 			return recordsUpdates, validation.NewErrBadRequestFieldValue("itemRef", fmt.Sprintf("objectRef and itemRef are the same: %+v", objectRef))
 		}
@@ -31,7 +31,7 @@ func UpdateRelatedField(
 		}
 
 		addUpdates(setRelatedResult.ItemUpdates)
-		//params.TeamModuleUpdates = append(params.TeamModuleUpdates, setRelatedResult.TeamModuleUpdates...)
+		//params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, setRelatedResult.SpaceModuleUpdates...)
 
 		if recordsUpdates, err = updateRelatedItem(ctx, tx, itemRef, nil); err != nil {
 			return recordsUpdates, fmt.Errorf("failed to update related record: %w", err)

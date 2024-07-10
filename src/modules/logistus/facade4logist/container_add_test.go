@@ -36,10 +36,10 @@ func Test_addContainersTx(t *testing.T) {
 			name: "single_container_with_2_points",
 			args: args{
 				params: &OrderWorkerParams{
-					Order: dbo4logist.NewOrderWithData("team1", "order1", mocks4logist.ValidOrderDto1(t)),
+					Order: dbo4logist.NewOrderWithData("space1", "order1", mocks4logist.ValidOrderDto1(t)),
 				},
 				request: dto4logist.AddContainersRequest{
-					OrderRequest: dto4logist.NewOrderRequest("team1", "order1"),
+					OrderRequest: dto4logist.NewOrderRequest("space1", "order1"),
 					Containers: []dto4logist.NewContainer{
 						{
 							OrderContainerBase: dbo4logist.OrderContainerBase{

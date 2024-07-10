@@ -6,14 +6,14 @@ import (
 
 type ContactGroupDto struct {
 	briefs4contactus.ContactGroupBrief
-	briefs4contactus.WithMultiTeamContacts[*briefs4contactus.ContactBrief]
+	briefs4contactus.WithMultiSpaceContacts[*briefs4contactus.ContactBrief]
 }
 
 func (v *ContactGroupDto) Validate() error {
 	if err := v.ContactGroupBrief.Validate(); err != nil {
 		return err
 	}
-	if err := v.WithMultiTeamContacts.Validate(); err != nil {
+	if err := v.WithMultiSpaceContacts.Validate(); err != nil {
 		return err
 	}
 	return nil

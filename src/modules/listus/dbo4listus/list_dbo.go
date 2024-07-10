@@ -117,7 +117,7 @@ type ListDbo struct {
 	ListBase
 	dbmodels.WithModified
 	dbmodels.WithUserIDs
-	dbmodels.WithTeamIDs
+	dbmodels.WithSpaceIDs
 
 	Items []*ListItemBrief `json:"items,omitempty" firestore:"items,omitempty"`
 	Count int              `json:"count" firestore:"count"`
@@ -125,7 +125,7 @@ type ListDbo struct {
 
 // Validate returns error if not valid
 func (v ListDbo) Validate() error {
-	if err := v.WithTeamIDs.Validate(); err != nil {
+	if err := v.WithSpaceIDs.Validate(); err != nil {
 		return err
 	}
 	if err := v.WithUserIDs.Validate(); err != nil {

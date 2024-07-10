@@ -10,7 +10,7 @@ import (
 
 // NewHappeningKey creates a new happening key
 func NewHappeningKey(teamID, happeningID string) *dal.Key {
-	return dal4teamus.NewTeamModuleItemKey(teamID, const4calendarium.ModuleID, const4calendarium.HappeningsCollection, happeningID)
+	return dal4teamus.NewSpaceModuleItemKey(teamID, const4calendarium.ModuleID, const4calendarium.HappeningsCollection, happeningID)
 }
 
 // HappeningType is either "recurring" or "single"

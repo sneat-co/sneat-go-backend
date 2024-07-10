@@ -71,7 +71,7 @@ func txSetContainerEndpointFields(
 		if byContactID != endpoint.ByContactID {
 			_, orderContact := orderDto.WithOrderContacts.GetContactByID(byContactID)
 			if orderContact == nil {
-				byContact, err := facade4contactus.GetContactByID(ctx, tx, params.TeamWorkerParams.Team.ID, byContactID)
+				byContact, err := facade4contactus.GetContactByID(ctx, tx, params.SpaceWorkerParams.Space.ID, byContactID)
 				if err != nil {
 					return fmt.Errorf("failed to load 'by' contact: %w", err)
 				}

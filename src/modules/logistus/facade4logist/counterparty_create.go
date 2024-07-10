@@ -21,8 +21,8 @@ func CreateCounterparty(
 		return response, validation.NewErrRequestIsMissingRequiredField("company.roles")
 	}
 	createContactRequest := dto4contactus.CreateContactRequest{
-		TeamRequest: request.TeamRequest,
-		Company:     &request.Company,
+		SpaceRequest: request.SpaceRequest,
+		Company:      &request.Company,
 	}
 	return facade4contactus.CreateContact(ctx, userContext, false, createContactRequest)
 }

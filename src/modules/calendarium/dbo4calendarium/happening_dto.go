@@ -18,8 +18,8 @@ type HappeningDbo struct {
 	with.DatesFields
 	dbo4linkage.WithRelatedIDs
 	Adjustments HappeningAdjustment `json:"adjustments,omitempty" firestore:"adjustments,omitempty"`
-	//dbmodels.WithTeamDates
-	//briefs4contactus.WithMultiTeamContacts[*briefs4contactus.ContactBrief]
+	//dbmodels.WithSpaceDates
+	//briefs4contactus.WithMultiSpaceContacts[*briefs4contactus.ContactBrief]
 }
 
 // Validate returns error if not valid
@@ -39,11 +39,11 @@ func (v *HappeningDbo) Validate() error {
 	if err := v.Adjustments.Validate(); err != nil {
 		return err
 	}
-	//if err := v.WithTeamDates.Validate(); err != nil {
+	//if err := v.WithSpaceDates.Validate(); err != nil {
 	//	return err
 	//}
-	//if len(v.TeamIDs) == 0 {
-	//	return validation.NewErrRecordIsMissingRequiredField("teamIDs")
+	//if len(v.SpaceIDs) == 0 {
+	//	return validation.NewErrRecordIsMissingRequiredField("spaceIDs")
 	//}
 	for i, level := range v.Levels {
 		if l := strings.TrimSpace(level); l == "" {
@@ -68,7 +68,7 @@ func (v *HappeningDbo) Validate() error {
 			return validation.NewErrRecordIsMissingRequiredField("dates")
 		}
 		//if len(v.TeamDates) == 0 {
-		//	return validation.NewErrRecordIsMissingRequiredField("teamDates")
+		//	return validation.NewErrRecordIsMissingRequiredField("spaceDates")
 		//}
 	case HappeningTypeRecurring:
 		if len(v.Dates) > 0 {
@@ -85,7 +85,7 @@ func (v *HappeningDbo) Validate() error {
 		return err
 	}
 
-	//if err := v.WithMultiTeamContacts.Validate(); err != nil {
+	//if err := v.WithMultiSpaceContacts.Validate(); err != nil {
 	//	return err
 	//}
 	return nil

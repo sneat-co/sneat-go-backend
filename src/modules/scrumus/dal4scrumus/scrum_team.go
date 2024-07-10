@@ -10,19 +10,19 @@ import (
 
 const ScrumusModuleID = "scrumus"
 
-type ScrumTeam = record.DataWithID[string, *dbo4scrumus.ScrumTeamDto]
+type ScrumSpaceEntry = record.DataWithID[string, *dbo4scrumus.ScrumSpaceDto]
 
-func NewScrumTeamKey(id string) *dal.Key {
-	teamKey := dal4teamus.NewTeamKey(id)
-	return dal.NewKeyWithParentAndID(teamKey, dal4teamus.TeamModulesCollection, ScrumusModuleID)
+func NewScrumSpaceKey(id string) *dal.Key {
+	key := dal4teamus.NewSpaceKey(id)
+	return dal.NewKeyWithParentAndID(key, dal4teamus.SpaceModulesCollection, ScrumusModuleID)
 }
 
-func NewScrumTeam(id string) ScrumTeam {
-	key := NewScrumTeamKey(id)
-	return record.NewDataWithID(id, key, new(dbo4scrumus.ScrumTeamDto))
+func NewScrumSpaceEntry(id string) ScrumSpaceEntry {
+	key := NewScrumSpaceKey(id)
+	return record.NewDataWithID(id, key, new(dbo4scrumus.ScrumSpaceDto))
 }
 
-func GetScrumTeam(ctx context.Context, tx dal.ReadTransaction, id string) (ScrumTeam, error) {
-	retro := NewScrumTeam(id)
-	return retro, tx.Get(ctx, retro.Record)
+func GetScrumSpace(ctx context.Context, tx dal.ReadTransaction, id string) (ScrumSpaceEntry, error) {
+	v := NewScrumSpaceEntry(id)
+	return v, tx.Get(ctx, v.Record)
 }

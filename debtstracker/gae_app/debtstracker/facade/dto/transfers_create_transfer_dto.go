@@ -12,7 +12,7 @@ import (
 )
 
 type CreateTransferRequest struct {
-	dto4teamus.TeamRequest
+	dto4teamus.SpaceRequest
 	Direction          models.TransferDirection `json:"direction"`
 	Amount             money.Amount             `json:"amount"`
 	FromContactID      string                   `json:"fromContactID"`
@@ -30,7 +30,7 @@ var (
 )
 
 func (v *CreateTransferRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
 	switch v.Direction {

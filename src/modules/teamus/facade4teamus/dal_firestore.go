@@ -14,6 +14,6 @@ package facade4teamus
 //	fsClient *firestore.Client
 //}
 //
-//func (dal dalFirestore) GetTeamByID(ctx context.Context, id string) (TeamIDs *models2spotbuddies.TeamIDs, err error) {
-//	return GetTeamByID(ctx, dal.fsClient, id)
+//func (dal dalFirestore) GetSpaceByID(ctx context.Context, id string) (SpaceIDs *models2spotbuddies.SpaceIDs, err error) {
+//	return GetSpaceByID(ctx, dal.fsClient, id)
 //}

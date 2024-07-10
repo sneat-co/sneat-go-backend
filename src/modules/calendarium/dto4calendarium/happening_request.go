@@ -9,7 +9,7 @@ import (
 
 // HappeningRequest DTO
 type HappeningRequest struct {
-	dto4teamus.TeamRequest
+	dto4teamus.SpaceRequest
 	HappeningID   string `json:"happeningID"`
 	HappeningType string `json:"happeningType,omitempty"`
 	//ListType      dbo4listus.ListType `json:"listType,omitempty"` // TODO: Document what it is and why we need it here
@@ -17,7 +17,7 @@ type HappeningRequest struct {
 
 // Validate returns error if not valid
 func (v HappeningRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
 	if strings.TrimSpace(v.HappeningID) == "" {

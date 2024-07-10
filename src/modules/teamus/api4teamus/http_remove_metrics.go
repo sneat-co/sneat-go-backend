@@ -16,7 +16,7 @@ func httpPostRemoveMetrics(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	var request dto4teamus.TeamMetricsRequest
+	var request dto4teamus.SpaceMetricsRequest
 	if err = apicore.DecodeRequestBody(w, r, &request); err != nil {
 		return
 	}

@@ -6,52 +6,52 @@ import (
 	"github.com/strongo/validation"
 )
 
-type AssetusTeamBrief struct { // TODO: document intended usage & provide example use cases
+type AssetusSpaceBrief struct { // TODO: document intended usage & provide example use cases
 	briefs4assetus.WithAssets
 }
 
-type WithAssetTeams struct { // TODO: document intended usage & provide example use cases
-	Teams map[string]*AssetusTeamBrief `json:"teams,omitempty" firestore:"teams,omitempty"`
+type WithAssetSpaces struct { // TODO: document intended usage & provide example use cases
+	Spaces map[string]*AssetusSpaceBrief `json:"spaces,omitempty" firestore:"spaces,omitempty"`
 }
 
 // Validate returns error if not valid
-func (v *WithAssetTeams) Validate() error {
-	for id, assetusTeamBrief := range v.Teams {
+func (v *WithAssetSpaces) Validate() error {
+	for id, assetusSpaceBrief := range v.Spaces {
 		if id == "" {
-			return validation.NewErrBadRecordFieldValue("teams", "teamID can not be empty string")
+			return validation.NewErrBadRecordFieldValue("spaces", "spaceID can not be empty string")
 		}
-		if assetusTeamBrief == nil {
-			return validation.NewErrBadRecordFieldValue("teams."+id, "can not be nil")
+		if assetusSpaceBrief == nil {
+			return validation.NewErrBadRecordFieldValue("spaces."+id, "can not be nil")
 		}
-		if err := assetusTeamBrief.Validate(); err != nil {
-			return validation.NewErrBadRecordFieldValue("teams."+id, err.Error())
+		if err := assetusSpaceBrief.Validate(); err != nil {
+			return validation.NewErrBadRecordFieldValue("spaces."+id, err.Error())
 		}
 	}
 	return nil
 }
 
 // AddAsset adds an asset to a team
-func (v *WithAssetTeams) AddAsset(teamID string, asset AssetEntry) (updates []dal.Update, err error) {
-	if v.Teams == nil {
-		v.Teams = make(map[string]*AssetusTeamBrief)
+func (v *WithAssetSpaces) AddAsset(teamID string, asset AssetEntry) (updates []dal.Update, err error) {
+	if v.Spaces == nil {
+		v.Spaces = make(map[string]*AssetusSpaceBrief)
 	}
-	assetusTeamBrief := v.Teams[teamID]
-	if assetusTeamBrief == nil {
-		assetusTeamBrief = new(AssetusTeamBrief)
-		v.Teams[teamID] = assetusTeamBrief
+	assetusSpaceBrief := v.Spaces[teamID]
+	if assetusSpaceBrief == nil {
+		assetusSpaceBrief = new(AssetusSpaceBrief)
+		v.Spaces[teamID] = assetusSpaceBrief
 	}
-	if assetusTeamBrief.Assets == nil {
-		assetusTeamBrief.Assets = make(map[string]*briefs4assetus.AssetBrief)
+	if assetusSpaceBrief.Assets == nil {
+		assetusSpaceBrief.Assets = make(map[string]*briefs4assetus.AssetBrief)
 	}
 	var assetBrief briefs4assetus.AssetBrief
 	if assetBrief, err = asset.Data.GetAssetBrief(); err != nil {
 		return
 	}
-	if updates, err = assetusTeamBrief.AddAssetBrief(asset.ID, assetBrief); err != nil {
+	if updates, err = assetusSpaceBrief.AddAssetBrief(asset.ID, assetBrief); err != nil {
 		return
 	}
 	for i, u := range updates {
-		u.Field = "teams." + teamID + "." + u.Field
+		u.Field = "spaces." + teamID + "." + u.Field
 		updates[i] = u
 	}
 	return

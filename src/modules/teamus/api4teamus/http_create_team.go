@@ -10,18 +10,18 @@ import (
 	"net/http"
 )
 
-// httpPostCreateTeam is an API endpoint that creates a new team
-func httpPostCreateTeam(w http.ResponseWriter, r *http.Request) {
-	var request dto4teamus.CreateTeamRequest
+// httpPostCreateSpace is an API endpoint that creates a new team
+func httpPostCreateSpace(w http.ResponseWriter, r *http.Request) {
+	var request dto4teamus.CreateSpaceRequest
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.DefaultJsonWithAuthRequired, http.StatusCreated,
 		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
-			facadeResponse, err := facade4teamus.CreateTeam(ctx, userCtx, request)
+			facadeResponse, err := facade4teamus.CreateSpace(ctx, userCtx, request)
 			if err != nil {
 				return nil, err
 			}
-			var apiResponse dto4teamus.CreateTeamResponse
-			apiResponse.Team.ID = facadeResponse.Team.ID
-			apiResponse.Team.Dto = *facadeResponse.Team.Data
+			var apiResponse dto4teamus.CreateSpaceResponse
+			apiResponse.Space.ID = facadeResponse.Space.ID
+			apiResponse.Space.Dto = *facadeResponse.Space.Data
 			return apiResponse, err
 		})
 }

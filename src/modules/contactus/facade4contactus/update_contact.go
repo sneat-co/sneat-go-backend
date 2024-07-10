@@ -56,7 +56,7 @@ func updateContactTxWorker(
 		return fmt.Errorf("contact DTO is not valid after loading from DB: %w", err)
 	}
 
-	contactBrief := params.TeamModuleEntry.Data.Contacts[request.ContactID]
+	contactBrief := params.SpaceModuleEntry.Data.Contacts[request.ContactID]
 
 	var updatedContactFields []string
 
@@ -83,7 +83,7 @@ func updateContactTxWorker(
 			params.ContactUpdates = append(params.ContactUpdates, dal.Update{Field: "ageGroup", Value: contact.Data.AgeGroup})
 		}
 		if contactBrief != nil && contactBrief.AgeGroup != request.AgeGroup {
-			params.TeamModuleUpdates = append(params.TeamModuleUpdates,
+			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates,
 				dal.Update{
 					Field: fmt.Sprintf("contacts.%s.ageGroup", request.ContactID),
 					Value: contact.Data.AgeGroup,
@@ -100,10 +100,10 @@ func updateContactTxWorker(
 	}
 
 	if request.Related != nil {
-		itemRef := dbo4linkage.TeamModuleItemRef{
+		itemRef := dbo4linkage.SpaceModuleItemRef{
 			ModuleID:   const4contactus.ModuleID,
 			Collection: const4contactus.ContactsCollection,
-			TeamID:     request.TeamID,
+			SpaceID:    request.SpaceID,
 			ItemID:     request.ContactID,
 		}
 		var recordsUpdates []dal4teamus.RecordUpdates

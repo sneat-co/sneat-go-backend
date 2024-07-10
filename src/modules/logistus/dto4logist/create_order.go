@@ -8,14 +8,14 @@ import (
 
 // CreateOrderRequest is a request to create an order
 type CreateOrderRequest struct {
-	dto4teamus.TeamRequest
+	dto4teamus.SpaceRequest
 	Order              dbo4logist.OrderBase `json:"order"`
 	NumberOfContainers map[string]int       `json:"numberOfContainers"`
 }
 
 // Validate returns error if request is invalid
 func (v CreateOrderRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return validation.NewBadRequestError(err)
 	}
 	if err := v.Order.Validate(); err != nil {

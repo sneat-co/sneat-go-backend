@@ -8,14 +8,14 @@ import (
 	"github.com/strongo/strongoapp/with"
 )
 
-// TeamContactsCollection defines  collection name for team contacts.
-// We have `Team` prefix as it can belong only to single team
-// and TeamID is also in record key as prefix.
-const TeamContactsCollection = "contacts"
+// SpaceContactsCollection defines collection name for team contacts.
+// We have `Space` prefix as it can belong only to a single team
+// and SpaceID is also in record key as prefix.
+const SpaceContactsCollection = "contacts"
 
 // ContactDbo belongs only to a single team
 type ContactDbo struct {
-	//dbmodels.WithTeamID -- not needed as it's in record key
+	//dbmodels.WithSpaceID -- not needed as it's in record key
 	//dbmodels.WithUserIDs
 
 	briefs4contactus.ContactBase
@@ -23,7 +23,7 @@ type ContactDbo struct {
 	dbo4linkage.WithRelatedAndIDs
 	with.CreatedFields
 	with.TagsField
-	briefs4contactus.WithMultiTeamContacts[*briefs4contactus.ContactBrief]
+	briefs4contactus.WithMultiSpaceContacts[*briefs4contactus.ContactBrief]
 	dbo4invitus.WithInvites // Invites to become a team member
 }
 

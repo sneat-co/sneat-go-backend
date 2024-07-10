@@ -4,16 +4,16 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
 )
 
-// CreateTeamItemRequest DTO
-type CreateTeamItemRequest struct {
-	dto4teamus.TeamRequest
+// CreateSpaceItemRequest DTO
+type CreateSpaceItemRequest struct {
+	dto4teamus.SpaceRequest
 	ContactID string `json:"contactID,omitempty"`
 	MemberID  string `json:"memberID,omitempty"`
 }
 
 // Validate returns error if not valid
-func (v CreateTeamItemRequest) Validate() error {
-	if err := v.TeamRequest.Validate(); err != nil {
+func (v CreateSpaceItemRequest) Validate() error {
+	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
 	return nil

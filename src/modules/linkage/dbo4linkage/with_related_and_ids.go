@@ -19,9 +19,9 @@ type WithRelatedAndIDs struct {
 	//	Example of related field as a JSON and relevant relatedIDs field:
 	/*
 	   ContactEntry(id="child1") {
-	   	relatedIDs: ["team1:parent1:contactus:contacts:parent"],
+	   	relatedIDs: ["space1:parent1:contactus:contacts:parent"],
 	   	related: {
-	   		"team1": { // Team ID
+	   		"space1": { // Space ID
 	   			"contactus": { // Module ID
 	   				"contacts": { // Collection
 	   					"parent1": { // Item ID
@@ -82,19 +82,19 @@ func ValidateRelatedAndRelatedIDs(withRelated WithRelated, relatedIDs []string) 
 			// TODO: Validate search index values
 			continue
 		}
-		relatedRef := NewTeamModuleItemRefFromString(relatedID)
+		relatedRef := NewSpaceModuleItemRefFromString(relatedID)
 
 		relatedByCollectionID := withRelated.Related[relatedRef.ModuleID]
 		if relatedByCollectionID == nil {
-			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), fmt.Sprintf("field 'related[%s]' does not have value for module ID=%s", relatedRef.TeamID, relatedRef.ModuleID))
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), fmt.Sprintf("field 'related[%s]' does not have value for module ID=%s", relatedRef.SpaceID, relatedRef.ModuleID))
 		}
 		relatedItems := relatedByCollectionID[relatedRef.Collection]
 		if relatedItems == nil {
-			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), fmt.Sprintf("field 'related[%s][%s]' does not have value for collection ID=%s", relatedRef.TeamID, relatedRef.ModuleID, relatedRef.Collection))
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), fmt.Sprintf("field 'related[%s][%s]' does not have value for collection ID=%s", relatedRef.SpaceID, relatedRef.ModuleID, relatedRef.Collection))
 		}
 
-		if !HasRelatedItem(relatedItems, RelatedItemKey{TeamID: relatedRef.TeamID, ItemID: relatedRef.ItemID}) {
-			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), fmt.Sprintf("field 'related[%s][%s][%s]' does not have value for item ID=%s", relatedRef.TeamID, relatedRef.ModuleID, relatedRef.Collection, relatedRef.ItemID))
+		if !HasRelatedItem(relatedItems, RelatedItemKey{SpaceID: relatedRef.SpaceID, ItemID: relatedRef.ItemID}) {
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), fmt.Sprintf("field 'related[%s][%s][%s]' does not have value for item ID=%s", relatedRef.SpaceID, relatedRef.ModuleID, relatedRef.Collection, relatedRef.ItemID))
 		}
 	}
 	return nil
@@ -109,7 +109,7 @@ func (v *WithRelatedAndIDs) Validate() error {
 }
 
 func (v *WithRelatedAndIDs) AddRelationshipsAndIDs(
-	itemRef TeamModuleItemRef,
+	itemRef SpaceModuleItemRef,
 	rolesOfItem RelationshipRoles,
 	rolesToItem RelationshipRoles, // TODO: needs implementation
 ) (updates []dal.Update, err error) {
@@ -144,11 +144,11 @@ func UpdateRelatedIDs(withRelated *WithRelated, withRelatedIDs *WithRelatedIDs) 
 			teamIDs := make([]string, 0, len(relatedItems))
 			for _, relatedItem := range relatedItems {
 				for _, k := range relatedItem.Keys {
-					if !slice.Contains(teamIDs, k.TeamID) {
-						teamIDs = append(teamIDs, k.TeamID)
-						searchIndex = append(searchIndex, fmt.Sprintf("%s.%s.%s.%s", moduleID, collectionID, k.TeamID, AnyRelatedID))
+					if !slice.Contains(teamIDs, k.SpaceID) {
+						teamIDs = append(teamIDs, k.SpaceID)
+						searchIndex = append(searchIndex, fmt.Sprintf("%s.%s.%s.%s", moduleID, collectionID, k.SpaceID, AnyRelatedID))
 					}
-					id := NewTeamModuleItemRef(k.TeamID, moduleID, collectionID, k.ItemID).ID()
+					id := NewSpaceModuleItemRef(k.SpaceID, moduleID, collectionID, k.ItemID).ID()
 					withRelatedIDs.RelatedIDs = append(withRelatedIDs.RelatedIDs, id)
 				}
 			}
@@ -165,7 +165,7 @@ func UpdateRelatedIDs(withRelated *WithRelated, withRelatedIDs *WithRelatedIDs) 
 }
 
 func (v *WithRelatedAndIDs) AddRelationshipAndID(
-	itemRef TeamModuleItemRef,
+	itemRef SpaceModuleItemRef,
 	link RelationshipRolesCommand,
 ) (updates []dal.Update, err error) {
 	updates, err = v.WithRelated.AddRelationship(itemRef, link)
@@ -176,7 +176,7 @@ func (v *WithRelatedAndIDs) AddRelationshipAndID(
 func AddRelationshipAndID(
 	withRelated *WithRelated,
 	withRelatedIDs *WithRelatedIDs,
-	itemRef TeamModuleItemRef,
+	itemRef SpaceModuleItemRef,
 	link RelationshipRolesCommand,
 ) (updates []dal.Update, err error) {
 	updates, err = withRelated.AddRelationship(itemRef, link)
@@ -184,7 +184,7 @@ func AddRelationshipAndID(
 	return
 }
 
-func RemoveRelatedAndID(withRelated *WithRelated, withRelatedIDs *WithRelatedIDs, ref TeamModuleItemRef) (updates []dal.Update) {
+func RemoveRelatedAndID(withRelated *WithRelated, withRelatedIDs *WithRelatedIDs, ref SpaceModuleItemRef) (updates []dal.Update) {
 	updates = withRelated.RemoveRelatedItem(ref)
 	updates = append(updates, UpdateRelatedIDs(withRelated, withRelatedIDs)...)
 	return updates
@@ -197,7 +197,7 @@ const (
 	RelationshipRoleCousin   = "cousin"
 	RelationshipRoleSibling  = "sibling"
 	RelationshipRolePartner  = "partner"
-	RelationshipRoleTeammate = "team-mate"
+	RelationshipRoleTeammate = "space-mate"
 )
 
 // Should provide a way for modules to register opposite roles?

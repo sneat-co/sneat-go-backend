@@ -60,17 +60,17 @@ func (v InviteInfo) Validate() error {
 
 // JoinInfoResponse response
 type JoinInfoResponse struct {
-	Team   dbo4invitus.InviteTeam                              `json:"team"`
+	Space  dbo4invitus.InviteSpace                             `json:"space"`
 	Invite InviteInfo                                          `json:"invite"`
 	Member *dbmodels.DtoWithID[*briefs4contactus.ContactBrief] `json:"member"`
 }
 
 func (v JoinInfoResponse) Validated() error {
-	if err := v.Team.Validate(); err != nil {
-		return validation.NewErrBadRecordFieldValue("team", err.Error())
+	if err := v.Space.Validate(); err != nil {
+		return validation.NewErrBadRecordFieldValue("space", err.Error())
 	}
 	if err := v.Invite.Validate(); err != nil {
-		return validation.NewErrBadRecordFieldValue("team", err.Error())
+		return validation.NewErrBadRecordFieldValue("space", err.Error())
 	}
 	if nil == v.Member {
 		return validation.NewErrRecordIsMissingRequiredField("member")
@@ -81,8 +81,8 @@ func (v JoinInfoResponse) Validated() error {
 	return nil
 }
 
-// GetTeamJoinInfo return join info
-func GetTeamJoinInfo(ctx context.Context, request JoinInfoRequest) (response JoinInfoResponse, err error) {
+// GetSpaceJoinInfo return join info
+func GetSpaceJoinInfo(ctx context.Context, request JoinInfoRequest) (response JoinInfoResponse, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
@@ -108,15 +108,15 @@ func GetTeamJoinInfo(ctx context.Context, request JoinInfoRequest) (response Joi
 	}
 	var member dal4contactus.ContactEntry
 	if inviteDto.To.MemberID != "" {
-		member = dal4contactus.NewContactEntry(inviteDto.TeamID, inviteDto.To.MemberID)
+		member = dal4contactus.NewContactEntry(inviteDto.SpaceID, inviteDto.To.MemberID)
 		db := facade.GetDatabase(ctx)
 		if err = db.Get(ctx, member.Record); err != nil {
 			err = fmt.Errorf("failed to get team member's contact record: %w", err)
 			return
 		}
 	}
-	response.Team = inviteDto.Team
-	response.Team.ID = inviteDto.TeamID
+	response.Space = inviteDto.Space
+	response.Space.ID = inviteDto.SpaceID
 	response.Invite.Status = inviteDto.Status
 	response.Invite.Created = inviteDto.CreatedAt
 	response.Invite.From = inviteDto.From

@@ -4,4 +4,4 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
 )
 
-var newTeamKey = dal4teamus.NewTeamKey
+var newSpaceKey = dal4teamus.NewSpaceKey

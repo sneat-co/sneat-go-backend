@@ -15,7 +15,7 @@ import (
 )
 
 func TestCreateMassInvite(t *testing.T) {
-	const teamID = "unit-test"
+	const spaceID = "unit-test"
 	var invite dbo4invitus.MassInvite
 	invite.Type = "mass"
 	invite.Channel = "email"
@@ -35,11 +35,11 @@ func TestCreateMassInvite(t *testing.T) {
 	//	Channel:      "email",
 	//	Address:      "to@example.com",
 	//	Title:        "To Title",
-	//	ToTeamMemberID: "t1",
+	//	ToSpaceMemberID: "t1",
 	//}
-	invite.TeamID = teamID
-	invite.Team.Type = "family"
-	invite.Team.Title = "Unit Test"
+	invite.SpaceID = spaceID
+	invite.Space.Type = "family"
+	invite.Space.Title = "Unit Test"
 	invite.Created.Client.HostOrApp = "unit-test"
 	invite.Created.Client.RemoteAddr = "127.0.0.1"
 	invite.CreatedAt = time.Now()

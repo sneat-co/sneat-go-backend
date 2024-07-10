@@ -30,7 +30,7 @@ func httpPostCreateOrReuseInviteForMember(w http.ResponseWriter, r *http.Request
 func httpGetOrCreateInviteLink(w http.ResponseWriter, r *http.Request) {
 	var request facade4invitus.InviteMemberRequest
 	q := r.URL.Query()
-	request.TeamID = q.Get("team")
+	request.SpaceID = q.Get("space")
 	request.To.MemberID = q.Get("member")
 	request.To.Channel = "link"
 	ctx, userContext, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
