@@ -7,7 +7,7 @@ service cloud.firestore {
               ;
     }
 
-    function isSpaceItemGrantedToUser(database, team) {
+    function isSpaceItemGrantedToUser(database, space) {
         return isGrantedToUser() ||
               (request.auth != null && request.auth.uid != null && request.auth.uid in get(/databases/$(database)/documents/spaces/$(space)).data.userIDs)
               ;
@@ -23,7 +23,7 @@ service cloud.firestore {
     match /databases/{database}/documents {
 
         match /spaces/{space}/{document=**} {
-            allow list, read: if isSpaceItemGrantedToUser(database, team);
+            allow list, read: if isSpaceItemGrantedToUser(database, space);
         }
 
         match /users/{user}/{document=**} {
