@@ -7,7 +7,7 @@ import (
 
 // RegisterHttpRoutes registers team routes
 func RegisterHttpRoutes(handle modules.HTTPHandleFunc) {
-	handle(http.MethodPost, "/v0/space/create_space", httpPostCreateSpace)
+	handle(http.MethodPost, "/v0/spaces/create_space", httpPostCreateSpace)
 	//
 	handle(http.MethodPost, "/v0/space/join_info", httpPostGetSpaceJoinInfo)
 	handle(http.MethodPost, "/v0/space/join_team", httpPostJoinSpace)
