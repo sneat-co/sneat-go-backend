@@ -118,10 +118,10 @@ func runModuleSpaceWorkerReadwriteTx[D SpaceModuleDbo](
 		return fmt.Errorf("failed to execute module team worker: %w", err)
 	}
 	if err = applySpaceUpdates(ctx, tx, params.SpaceWorkerParams); err != nil {
-		return fmt.Errorf("module team worker failed to apply team record updates: %w", err)
+		return fmt.Errorf("space module worker failed to apply space record updates: %w", err)
 	}
 	if err = applySpaceModuleUpdates(ctx, tx, params); err != nil {
-		return fmt.Errorf("module team worker failed to apply team module record updates: %w", err)
+		return fmt.Errorf("space module worker failed to apply space module record updates: %w", err)
 	}
 	return nil
 }

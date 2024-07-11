@@ -83,6 +83,7 @@ func updateContactTxWorker(
 			params.ContactUpdates = append(params.ContactUpdates, dal.Update{Field: "ageGroup", Value: contact.Data.AgeGroup})
 		}
 		if contactBrief != nil && contactBrief.AgeGroup != request.AgeGroup {
+			params.SpaceModuleEntry.Record.MarkAsChanged()
 			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates,
 				dal.Update{
 					Field: fmt.Sprintf("contacts.%s.ageGroup", request.ContactID),
