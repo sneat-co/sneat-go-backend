@@ -9,37 +9,25 @@ service cloud.firestore {
 
     function isSpaceItemGrantedToUser(database, team) {
         return isGrantedToUser() ||
-              (request.auth != null && request.auth.uid != null && request.auth.uid in get(/databases/$(database)/documents/teams/$(team)).data.userIDs)
+              (request.auth != null && request.auth.uid != null && request.auth.uid in get(/databases/$(database)/documents/spaces/$(space)).data.userIDs)
               ;
     }
 
     function isGrantedToSpaceUser(database) {
         return isGrantedToUser() ||
-              (request.auth != null && request.auth.uid != null && "spaceIDs" in resource.data && resource.data.teamIDs.hasAny(get(/databases/$(database)/documents/users/$(request.auth.uid)).data.teamIDs))
+              (request.auth != null && request.auth.uid != null && "spaceIDs" in resource.data && resource.data.spaceIDs.hasAny(get(/databases/$(database)/documents/users/$(request.auth.uid)).data.spaceIDs))
               ;
     }
 
     //    match /{document=**} { allow read: if true; allow write: if true; }
     match /databases/{database}/documents {
 
-        match /teams/{team}/{document=**} {
+        match /spaces/{space}/{document=**} {
             allow list, read: if isSpaceItemGrantedToUser(database, team);
         }
 
         match /users/{user}/{document=**} {
             allow read: if request.auth != null && request.auth.uid == user;
-        }
-
-        match /documents/{document} {
-            allow read: if isGrantedToUser();
-        }
-
-        match /happenings/{happening} {
-            allow read: if isGrantedToUser();
-        }
-
-        match /schedule_days/{day} {
-            allow read: if true;
         }
 
         match /datatug_projects/{project} {
@@ -58,7 +46,7 @@ service cloud.firestore {
         }
 
         match /{document=**} {
-            allow list, read: if isGrantedToTeamUser(database);
+            allow list, read: if isGrantedToSpaceUser(database);
         }
     }
 }
