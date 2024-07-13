@@ -49,12 +49,12 @@ func TestStartRetrospective(t *testing.T) {
 	const space1 = "space1"
 	var validDurations = RetroDurations{Feedback: 2, Review: 5}
 
-	var newRequest = func(id, teamID string, durations RetroDurations) StartRetrospectiveRequest {
+	var newRequest = func(id, spaceID string, durations RetroDurations) StartRetrospectiveRequest {
 		return StartRetrospectiveRequest{
 			RetroRequest: RetroRequest{
 				MeetingID: id,
 				SpaceRequest: dto4teamus.SpaceRequest{
-					SpaceID: teamID,
+					SpaceID: spaceID,
 				},
 			},
 			DurationsInMinutes: durations,

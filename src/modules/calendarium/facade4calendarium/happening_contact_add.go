@@ -56,7 +56,7 @@ func addParticipantToHappeningTxWorker(ctx context.Context, tx dal.ReadwriteTran
 		&params.Happening.Data.WithRelated,
 		&params.Happening.Data.WithRelatedIDs,
 		contactFullRef,
-		dbo4linkage.RelationshipRolesCommand{
+		dbo4linkage.RelationshipItemRolesCommand{
 			Add: &dbo4linkage.RolesCommand{
 				RolesOfItem: []string{"participant"},
 			},
@@ -91,7 +91,7 @@ func addContactToHappeningBriefInSpaceDbo(
 
 	updates, err = happeningBriefPointer.AddRelationship(
 		contactRef,
-		dbo4linkage.RelationshipRolesCommand{
+		dbo4linkage.RelationshipItemRolesCommand{
 			Add: &dbo4linkage.RolesCommand{
 				RolesOfItem: []string{"participant"},
 			},

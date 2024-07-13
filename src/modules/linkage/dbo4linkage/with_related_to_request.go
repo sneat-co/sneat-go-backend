@@ -4,7 +4,7 @@ package dbo4linkage
 //
 //type RelatedToRequest struct {
 //	dto4teamus.SpaceRequest
-//	ModuleID   string               `json:"moduleID"`
+//	Module   string               `json:"moduleID"`
 //	Collection string               `json:"collection"`
 //	ID     string               `json:"itemID"`
 //	Add        *RelationshipRequest `json:"add,omitempty"`

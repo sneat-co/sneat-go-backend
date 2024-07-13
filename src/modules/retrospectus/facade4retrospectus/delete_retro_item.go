@@ -19,7 +19,7 @@ func DeleteRetroItem(ctx context.Context, userContext facade.User, request Retro
 	return
 }
 
-func deleteUserRetroItem(ctx context.Context, userContext facade.User, request RetroItemRequest) (err error) {
+func deleteUserRetroItem(ctx context.Context, _ facade.User, _ RetroItemRequest) (err error) {
 	//uid := userContext.ContactID()
 	db := facade.GetDatabase(ctx)
 	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
@@ -32,9 +32,9 @@ func deleteUserRetroItem(ctx context.Context, userContext facade.User, request R
 		//	return err
 		//}
 		//
-		//userTeamInfo := user.GetUserSpaceInfoByID(request.SpaceID)
+		//userTeamInfo := user.GetUserSpaceInfoByID(request.Space)
 		//if userTeamInfo == nil {
-		//	return validation.NewErrBadRequestFieldValue("space", fmt.Sprintf("user does not belong to this team %v, uid=%v", request.SpaceID, uid))
+		//	return validation.NewErrBadRequestFieldValue("space", fmt.Sprintf("user does not belong to this team %v, uid=%v", request.Space, uid))
 		//}
 		//
 		//if userTeamInfo.RetroItems == nil {
@@ -55,12 +55,12 @@ func deleteUserRetroItem(ctx context.Context, userContext facade.User, request R
 		//if len(items) != len(existingItems) {
 		//	userTeamInfo.RetroItems[request.Role] = items
 		//	if request.MeetingID == "upcoming" {
-		//		if err = updateTeamWithUpcomingRetroUserCounts(ctx, tx, now, uid, request.SpaceID, userTeamInfo.RetroItems); err != nil {
+		//		if err = updateTeamWithUpcomingRetroUserCounts(ctx, tx, now, uid, request.Space, userTeamInfo.RetroItems); err != nil {
 		//			return fmt.Errorf("failed to update team record: %w", err)
 		//		}
 		//	}
 		//	if err = txUpdate(ctx, tx, userKey, []dal.Update{
-		//		{Field: fmt.Sprintf("????.%v.retroItems.%v", request.SpaceID, request.Role), Value: items},
+		//		{Field: fmt.Sprintf("????.%v.retroItems.%v", request.Space, request.Role), Value: items},
 		//	}); err != nil {
 		//		return fmt.Errorf("failed to update user record after deleting retro item: %w", err)
 		//	}

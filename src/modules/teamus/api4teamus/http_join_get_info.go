@@ -27,8 +27,8 @@ func httpPostGetSpaceJoinInfo(w http.ResponseWriter, r *http.Request) {
 	if response, err = facade4invitus.GetSpaceJoinInfo(ctx, request); err != nil {
 		return
 		//} else {
-		//	for i, m := range response.SpaceID.Members {
-		//		response.SpaceID.Members[i] = &briefs4memberus.MemberBrief{
+		//	for i, m := range response.Space.Members {
+		//		response.Space.Members[i] = &briefs4memberus.MemberBrief{
 		//			MemberBase: briefs4memberus.MemberBase{
 		//				ContactBaseWithUserID: dbmodels.ContactBaseWithUserID{
 		//					Title:  m.Title,

@@ -225,7 +225,7 @@ func CreateContactTx(
 }
 
 func updateRelationshipsInRelatedItems(ctx context.Context, tx dal.ReadTransaction,
-	userID, userContactID, teamID, contactID string,
+	userID, userContactID, spaceID, contactID string,
 	contactusSpaceEntry dal4contactus.ContactusSpaceModuleEntry,
 	contactDbo *models4contactus.ContactDbo,
 	related dbo4linkage.RelatedByModuleID,
@@ -235,7 +235,7 @@ func updateRelationshipsInRelatedItems(ctx context.Context, tx dal.ReadTransacti
 			return
 		}
 		if userContactID == "" {
-			err = errors.New("user is not associated with the teamID=" + teamID)
+			err = errors.New("user is not associated with the spaceID=" + spaceID)
 			return
 		}
 	}
@@ -245,8 +245,8 @@ func updateRelationshipsInRelatedItems(ctx context.Context, tx dal.ReadTransacti
 			for _, relatedItem := range relatedByItemID {
 				for _, key := range relatedItem.Keys {
 					itemRef := dbo4linkage.SpaceModuleItemRef{
-						SpaceID:    teamID,
-						ModuleID:   moduleID,
+						Space:      spaceID,
+						Module:     moduleID,
 						Collection: collection,
 						ItemID:     key.ItemID,
 					}

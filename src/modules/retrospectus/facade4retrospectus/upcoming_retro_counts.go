@@ -4,22 +4,22 @@ package facade4retrospectus
 //	ctx context.Context,
 //	tx dal.ReadwriteTransaction,
 //	now time.Time,
-//	uid, teamID string,
+//	uid, spaceID string,
 //	itemsByType dbretro.RetroItemsByType,
 //) (err error) {
 //	if uid == "" {
 //		return errors.New("uid is a required parameter")
 //	}
-//	if teamID == "" {
+//	if spaceID == "" {
 //		return errors.New("spaceID is a required parameter")
 //	}
 //	if now.IsZero() {
 //		return errors.New("now is a required parameter")
 //	}
-//	teamKey := newSpaceKey(teamID)
+//	teamKey := newSpaceKey(spaceID)
 //	var team dbo4teamus.TeamContext
 //	var teamRecord dal.Record
-//	if team, err = txGetTeamByID(ctx, tx, teamID); err != nil {
+//	if team, err = txGetTeamByID(ctx, tx, spaceID); err != nil {
 //		return err
 //	}
 //	if !teamRecord.Exists() {

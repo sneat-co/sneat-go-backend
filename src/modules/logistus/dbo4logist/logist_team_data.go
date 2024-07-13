@@ -77,9 +77,9 @@ func newLogistSpaceKey(spaceID string) *dal.Key {
 }
 
 // NewLogistSpaceEntry creates new LogistSpaceEntry
-func NewLogistSpaceEntry(teamID string) (logistSpace LogistSpaceEntry) {
-	logistSpace.ID = teamID
-	logistSpace.Key = newLogistSpaceKey(teamID)
+func NewLogistSpaceEntry(spaceID string) (logistSpace LogistSpaceEntry) {
+	logistSpace.ID = spaceID
+	logistSpace.Key = newLogistSpaceKey(spaceID)
 	logistSpace.Data = new(LogistSpaceDbo)
 	logistSpace.Record = dal.NewRecordWithData(logistSpace.Key, logistSpace.Data)
 	return logistSpace

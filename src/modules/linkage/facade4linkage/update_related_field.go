@@ -20,13 +20,12 @@ func UpdateRelatedField(
 ) (recordsUpdates []dal4teamus.RecordUpdates, err error) {
 	var setRelatedResult SetRelatedResult
 
-	for itemID, itemRolesCommand := range request.Related {
-		itemRef := dbo4linkage.NewSpaceModuleItemRefFromString(itemID)
+	for i, itemRolesCommand := range request.Related {
+		itemRef := itemRolesCommand.ItemRef
 		if objectRef == itemRef {
 			return recordsUpdates, validation.NewErrBadRequestFieldValue("itemRef", fmt.Sprintf("objectRef and itemRef are the same: %+v", objectRef))
 		}
-		if setRelatedResult, err = SetRelated(ctx, tx,
-			item, objectRef, itemRef, *itemRolesCommand); err != nil {
+		if setRelatedResult, err = SetRelated(ctx, tx, item, objectRef, itemRef, itemRolesCommand); err != nil {
 			return recordsUpdates, err
 		}
 
@@ -34,7 +33,7 @@ func UpdateRelatedField(
 		//params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, setRelatedResult.SpaceModuleUpdates...)
 
 		if recordsUpdates, err = updateRelatedItem(ctx, tx, itemRef, nil); err != nil {
-			return recordsUpdates, fmt.Errorf("failed to update related record: %w", err)
+			return recordsUpdates, fmt.Errorf("failed to update related record for command [%d=%s]: %w", i, itemRef.ID(), err)
 		}
 	}
 

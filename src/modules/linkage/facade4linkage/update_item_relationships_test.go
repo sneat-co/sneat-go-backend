@@ -38,14 +38,15 @@ func TestUpdateItemRelationships(t *testing.T) {
 				userCtx: facade.NewUser(testUserID),
 				request: dto4linkage.UpdateItemRequest{
 					SpaceModuleItemRef: dbo4linkage.SpaceModuleItemRef{
-						ModuleID:   const4contactus.ModuleID,
-						SpaceID:    space1ID,
+						Module:     const4contactus.ModuleID,
+						Space:      space1ID,
 						Collection: const4contactus.ContactsCollection,
 						ItemID:     item1ID,
 					},
 					UpdateRelatedFieldRequest: dto4linkage.UpdateRelatedFieldRequest{
-						Related: map[string]*dbo4linkage.RelationshipRolesCommand{
-							dbo4linkage.NewSpaceModuleItemRef(space1ID, module1ID, collection1ID, item1ID).ID(): {
+						Related: []dbo4linkage.RelationshipItemRolesCommand{
+							{
+								ItemRef: dbo4linkage.NewSpaceModuleItemRef(space1ID, module1ID, collection1ID, item1ID),
 								Add: &dbo4linkage.RolesCommand{
 									RolesOfItem: []dbo4linkage.RelationshipRoleID{
 										dbo4linkage.RelationshipRoleSpouse,

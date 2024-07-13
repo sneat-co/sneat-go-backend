@@ -150,7 +150,7 @@ func fillOrderDtoFromRequest(orderDto *dbo4logist.OrderDbo, request dto4logist.C
 	}
 }
 
-func addContactsFromCounterparties(ctx context.Context, tx dal.ReadTransaction, teamID string, order *dbo4logist.OrderDbo) error {
+func addContactsFromCounterparties(ctx context.Context, tx dal.ReadTransaction, spaceID string, order *dbo4logist.OrderDbo) error {
 	if len(order.Counterparties) == 0 {
 		panic("at least 1 counterparty should be added to a new order")
 	}
@@ -160,7 +160,7 @@ func addContactsFromCounterparties(ctx context.Context, tx dal.ReadTransaction, 
 	for _, cp := range order.Counterparties {
 		if slice.Index(contactIDs, cp.ContactID) < 0 {
 			contactIDs = append(contactIDs, cp.ContactID)
-			contact := dal4contactus.NewContactEntry(teamID, cp.ContactID)
+			contact := dal4contactus.NewContactEntry(spaceID, cp.ContactID)
 			contacts = append(contacts, contact)
 			records = append(records, contact.Record)
 		}

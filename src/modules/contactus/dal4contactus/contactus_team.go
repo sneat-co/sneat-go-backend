@@ -10,14 +10,14 @@ import (
 
 type ContactusSpaceModuleEntry = record.DataWithID[string, *models4contactus.ContactusSpaceDbo]
 
-func NewContactusSpaceModuleKey(teamID string) *dal.Key {
-	return dal4teamus.NewSpaceModuleKey(teamID, const4contactus.ModuleID)
+func NewContactusSpaceModuleKey(spaceID string) *dal.Key {
+	return dal4teamus.NewSpaceModuleKey(spaceID, const4contactus.ModuleID)
 }
 
-func NewContactusSpaceModuleEntry(teamID string) ContactusSpaceModuleEntry {
-	return NewContactusSpaceModuleEntryWithData(teamID, new(models4contactus.ContactusSpaceDbo))
+func NewContactusSpaceModuleEntry(spaceID string) ContactusSpaceModuleEntry {
+	return NewContactusSpaceModuleEntryWithData(spaceID, new(models4contactus.ContactusSpaceDbo))
 }
 
-func NewContactusSpaceModuleEntryWithData(teamID string, data *models4contactus.ContactusSpaceDbo) ContactusSpaceModuleEntry {
-	return dal4teamus.NewSpaceModuleEntry(teamID, const4contactus.ModuleID, data)
+func NewContactusSpaceModuleEntryWithData(spaceID string, data *models4contactus.ContactusSpaceDbo) ContactusSpaceModuleEntry {
+	return dal4teamus.NewSpaceModuleEntry(spaceID, const4contactus.ModuleID, data)
 }

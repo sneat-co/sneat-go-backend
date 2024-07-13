@@ -113,8 +113,8 @@ func RunSpaceItemWorker[ModuleDbo SpaceModuleDbo, ItemDbo SpaceItemDbo](
 //		}
 //		if request.IsTeamRecordNeeded {
 //			params.TeamKey = dal.NewKeyWithID(dbo4teamus.SpacesCollection, request.InviteID)
-//			params.SpaceID = new(dbo4teamus.TeamDto)
-//			teamRecord := dal.NewRecordWithData(params.TeamKey, params.SpaceID)
+//			params.Space = new(dbo4teamus.TeamDto)
+//			teamRecord := dal.NewRecordWithData(params.TeamKey, params.Space)
 //			if err = tx.Get(ctx, teamRecord); err != nil {
 //				return
 //			}
@@ -128,7 +128,7 @@ func RunSpaceItemWorker[ModuleDbo SpaceModuleDbo, ItemDbo SpaceItemDbo](
 //		}
 //		if len(params.SpaceUpdates) > 0 {
 //			if request.IsTeamRecordNeeded {
-//				if err = TxUpdateSpace(ctx, tx, params.Started, params.SpaceID, params.TeamKey, params.SpaceUpdates); err != nil {
+//				if err = TxUpdateSpace(ctx, tx, params.Started, params.Space, params.TeamKey, params.SpaceUpdates); err != nil {
 //					return fmt.Errorf("failed to update team record: %w", err)
 //				}
 //			} else {

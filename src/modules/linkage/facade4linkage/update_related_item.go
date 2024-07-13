@@ -15,19 +15,20 @@ func updateRelatedItem(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	objectRef dbo4linkage.SpaceModuleItemRef,
-	related map[string]*dbo4linkage.RelationshipRolesCommand,
+	relateds []*dbo4linkage.RelationshipItemRolesCommand,
 ) (recordsUpdates []dal4teamus.RecordUpdates, err error) {
 	itemKey := dal4teamus.NewSpaceModuleItemKeyFromItemRef(objectRef)
-	object := record.NewDataWithID(objectRef.ItemID, itemKey, new(dbo4linkage.WithRelatedAndIDsAndUserID))
-	if err := tx.Get(ctx, object.Record); err != nil {
+	itemDbo := new(dbo4linkage.WithRelatedAndIDsAndUserID)
+	itemDbo.WithRelatedAndIDs = new(dbo4linkage.WithRelatedAndIDs)
+	object := record.NewDataWithID(objectRef.ItemID, itemKey, itemDbo)
+	if err = tx.Get(ctx, object.Record); err != nil {
 		return recordsUpdates, fmt.Errorf("failed to get object record: %w", err)
 	}
-	if err := object.Data.Validate(); err != nil {
+	if err = object.Data.Validate(); err != nil {
 		return recordsUpdates, fmt.Errorf("record is not valid after loading from DB: %w", err)
 	}
-	for itemID /*, itemRolesCommand*/ := range related {
-		itemRef := dbo4linkage.NewSpaceModuleItemRefFromString(itemID)
-		if objectRef == itemRef {
+	for _, related := range relateds {
+		if objectRef == related.ItemRef {
 			return recordsUpdates, validation.NewErrBadRequestFieldValue("itemRef", fmt.Sprintf("objectRef and itemRef are the same: %+v", objectRef))
 		}
 		/*
@@ -41,7 +42,7 @@ func updateRelatedItem(
 			object.Data.UserID, objectRef,
 			record.NewDataWithID(object.ID, object.Key, &object.Data.WithRelated),
 		); err != nil {
-			key := dal4userus.NewUserModuleKey(object.Data.UserID, objectRef.ModuleID)
+			key := dal4userus.NewUserModuleKey(object.Data.UserID, objectRef.Module)
 			return recordsUpdates, fmt.Errorf("failed to update related field in %s: %w", key.String(), err)
 		} else {
 			recordsUpdates = append(recordsUpdates, userUpdates)

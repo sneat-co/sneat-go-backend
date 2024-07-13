@@ -133,23 +133,23 @@ func createSpaceTxWorker(ctx context.Context, userContext facade.User, tx dal.Re
 		return response, fmt.Errorf("spaceDbo reacord is not valid: %w", err)
 	}
 
-	var teamID string
+	var spaceID string
 	title := request.Title
 	if request.Type == "family" {
 		title = ""
 	}
-	teamID, err = getUniqueSpaceID(ctx, tx, title)
+	spaceID, err = getUniqueSpaceID(ctx, tx, title)
 	if err != nil {
 		return response, fmt.Errorf("failed to get an unique ID for a new teamDbo: %w", err)
 	}
-	teamKey := dal.NewKeyWithID(dal4teamus.SpacesCollection, teamID)
+	teamKey := dal.NewKeyWithID(dal4teamus.SpacesCollection, spaceID)
 
 	teamRecord := dal.NewRecordWithData(teamKey, teamDbo)
 	if err = tx.Insert(ctx, teamRecord); err != nil {
 		return response, fmt.Errorf("failed to insert a new teamDbo record: %w", err)
 	}
 
-	teamContactus := dal4contactus.NewContactusSpaceModuleEntry(teamID)
+	teamContactus := dal4contactus.NewContactusSpaceModuleEntry(spaceID)
 
 	teamMember := user.Data.ContactBrief // This should copy data from user's contact brief as it's not a pointer
 
@@ -182,7 +182,7 @@ func createSpaceTxWorker(ctx context.Context, userContext facade.User, tx dal.Re
 	if user.Data.Spaces == nil {
 		user.Data.Spaces = make(map[string]*dbo4userus.UserSpaceBrief, 1)
 	}
-	updates := user.Data.SetSpaceBrief(teamID, &userSpaceBrief)
+	updates := user.Data.SetSpaceBrief(spaceID, &userSpaceBrief)
 
 	updates = append(updates, dbo4linkage.UpdateRelatedIDs(&user.Data.WithRelated, &user.Data.WithRelatedIDs)...)
 
@@ -200,11 +200,11 @@ func createSpaceTxWorker(ctx context.Context, userContext facade.User, tx dal.Re
 	}
 
 	teamMember.Roles = roles
-	if _, err = CreateMemberRecordFromBrief(ctx, tx, teamID, userSpaceContactID, teamMember, now, userID); err != nil {
+	if _, err = CreateMemberRecordFromBrief(ctx, tx, spaceID, userSpaceContactID, teamMember, now, userID); err != nil {
 		return response, fmt.Errorf("failed to create member's record: %w", err)
 	}
 
-	response.Space.ID = teamID
+	response.Space.ID = spaceID
 	response.Space.Data = teamDbo
 	return
 }

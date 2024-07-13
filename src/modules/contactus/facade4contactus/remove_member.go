@@ -72,9 +72,9 @@ func removeSpaceMemberTx(
 	return
 }
 
-func updateUserRecordOnSpaceMemberRemoved(user *dbo4userus.UserDbo, teamID string) *dal.Update {
-	delete(user.Spaces, teamID)
-	user.SpaceIDs = slice.RemoveInPlace(teamID, user.SpaceIDs)
+func updateUserRecordOnSpaceMemberRemoved(user *dbo4userus.UserDbo, spaceID string) *dal.Update {
+	delete(user.Spaces, spaceID)
+	user.SpaceIDs = slice.RemoveInPlace(spaceID, user.SpaceIDs)
 	return &dal.Update{
 		Field: "spaces",
 		Value: user.Spaces,

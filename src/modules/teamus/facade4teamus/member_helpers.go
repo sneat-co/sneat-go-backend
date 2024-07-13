@@ -16,7 +16,7 @@ import (
 func CreateMemberRecordFromBrief(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	teamID string,
+	spaceID string,
 	contactID string,
 	memberBrief briefs4contactus.ContactBrief,
 	now time.Time,
@@ -28,9 +28,9 @@ func CreateMemberRecordFromBrief(
 	if err = memberBrief.Validate(); err != nil {
 		return member, fmt.Errorf("supplied member brief is not valid: %w", err)
 	}
-	member = dal4contactus.NewContactEntry(teamID, contactID)
+	member = dal4contactus.NewContactEntry(spaceID, contactID)
 	//member.Brief = &memberBrief
-	//member.Data.SpaceID = teamID
+	//member.Data.Space = spaceID
 	member.Data.ContactBrief = memberBrief
 	member.Data.Status = dbmodels.StatusActive
 	_ = member.Data.AddRole(const4contactus.SpaceMemberRoleMember)

@@ -13,8 +13,8 @@ import (
 
 type AssetusSpaceWorkerParams = dal4teamus.ModuleSpaceWorkerParams[*dbo4assetus.AssetusSpaceDbo]
 
-func NewAssetusSpaceWorkerParams(userID, teamID string) *AssetusSpaceWorkerParams {
-	spaceWorkerParams := dal4teamus.NewSpaceWorkerParams(userID, teamID)
+func NewAssetusSpaceWorkerParams(userID, spaceID string) *AssetusSpaceWorkerParams {
+	spaceWorkerParams := dal4teamus.NewSpaceWorkerParams(userID, spaceID)
 	return dal4teamus.NewSpaceModuleWorkerParams(const4assetus.ModuleID, spaceWorkerParams, new(dbo4assetus.AssetusSpaceDbo))
 }
 

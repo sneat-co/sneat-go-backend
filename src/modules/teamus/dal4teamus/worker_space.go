@@ -15,10 +15,10 @@ import (
 
 type spaceWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *SpaceWorkerParams) (err error)
 
-func NewSpaceWorkerParams(userID, teamID string) *SpaceWorkerParams {
+func NewSpaceWorkerParams(userID, spaceID string) *SpaceWorkerParams {
 	return &SpaceWorkerParams{
 		UserID:  userID,
-		Space:   NewSpaceEntry(teamID),
+		Space:   NewSpaceEntry(spaceID),
 		Started: time.Now(),
 	}
 }
@@ -161,11 +161,11 @@ func RunModuleSpaceWorker[D SpaceModuleDbo](
 }
 
 // RunSpaceWorker executes a team worker
-var RunSpaceWorker = func(ctx context.Context, user facade.User, teamID string, worker spaceWorker) (err error) {
+var RunSpaceWorker = func(ctx context.Context, user facade.User, spaceID string, worker spaceWorker) (err error) {
 	if user == nil {
 		panic("user is nil")
 	}
-	if strings.TrimSpace(teamID) == "" {
+	if strings.TrimSpace(spaceID) == "" {
 		return fmt.Errorf("spaceID is empty")
 	}
 	userID := user.GetID()
@@ -175,7 +175,7 @@ var RunSpaceWorker = func(ctx context.Context, user facade.User, teamID string, 
 	}
 	db := facade.GetDatabase(ctx)
 	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
-		params := NewSpaceWorkerParams(userID, teamID)
+		params := NewSpaceWorkerParams(userID, spaceID)
 		if err = tx.Get(ctx, params.Space.Record); err != nil {
 			return fmt.Errorf("failed to load team record: %w", err)
 		}

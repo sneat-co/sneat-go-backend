@@ -14,7 +14,7 @@ type ShortSpaceModuleDocRef struct {
 }
 
 func (v *ShortSpaceModuleDocRef) Validate() error {
-	// SpaceID can be empty for global collections like Happening
+	// Space can be empty for global collections like Happening
 	if v.ID == "" {
 		return validation.NewErrRecordIsMissingRequiredField("itemID")
 	} else if err := validate.RecordID(v.ID); err != nil {
@@ -24,45 +24,60 @@ func (v *ShortSpaceModuleDocRef) Validate() error {
 }
 
 type SpaceModuleItemRef struct { // TODO: Move to sneat-go-core or document why not
-	SpaceID    string `json:"spaceID" firestore:"spaceID"`
-	ModuleID   string `json:"moduleID" firestore:"moduleID"`
+	Space      string `json:"space" firestore:"space"`
+	Module     string `json:"module" firestore:"module"`
 	Collection string `json:"collection" firestore:"collection"`
 	ItemID     string `json:"itemID" firestore:"itemID"`
 }
 
-func NewSpaceModuleItemRef(teamID, moduleID, collection, itemID string) SpaceModuleItemRef {
+func NewSpaceModuleItemRef(space, module, collection, itemID string) SpaceModuleItemRef {
 	return SpaceModuleItemRef{
-		SpaceID:    teamID,
-		ModuleID:   moduleID,
+		Space:      space,
+		Module:     module,
 		Collection: collection,
 		ItemID:     itemID,
 	}
 }
 
-func NewSpaceModuleItemRefFromString(id string) SpaceModuleItemRef {
-	ids := strings.Split(id, ".")
+func NewSpaceModuleItemRefFromString(id string) (itemRef SpaceModuleItemRef, err error) {
+	ids := strings.Split(id, "&")
 	if len(ids) != 4 {
 		panic(fmt.Sprintf("invalid ID: '%s'", id))
 	}
-	return SpaceModuleItemRef{
-		ModuleID:   ids[0],
-		Collection: ids[1],
-		SpaceID:    ids[2],
-		ItemID:     ids[3],
+	for i, s := range ids {
+		switch s[0] {
+		case 'm':
+			itemRef.Module = s[2:]
+		case 'c':
+			itemRef.Collection = s[2:]
+		case 's':
+			itemRef.Space = s[2:]
+		case 'i':
+			itemRef.ItemID = s[2:]
+		default:
+			err = fmt.Errorf("unexpected character at position %d in ID: '%s'", i, id)
+			return
+		}
 	}
+	return
 }
 
 func (v SpaceModuleItemRef) ID() string {
-	return fmt.Sprintf("%s.%s.%s", v.ModuleCollectionPath(), v.SpaceID, v.ItemID)
+	// The order is important for RelatedIDs field
+	return fmt.Sprintf("s=%s&m=%s&c=%s&i=%s", v.Space, v.Module, v.Collection, v.ItemID)
+}
+
+func (v SpaceModuleItemRef) String() string {
+	return fmt.Sprintf("{Space=%s, Module=%s. Collection=%s, ItemID=%s}", v.Module, v.Space, v.Collection, v.ItemID)
 }
 
 func (v SpaceModuleItemRef) ModuleCollectionPath() string {
-	return fmt.Sprintf("%s.%s", v.ModuleID, v.Collection)
+	return fmt.Sprintf("%s.%s", v.Module, v.Collection)
 }
 
 func (v SpaceModuleItemRef) Validate() error {
-	// SpaceID can be empty for global collections like Happening
-	if v.ModuleID == "" {
+	// Space can be empty for global collections like Happening
+	if v.Module == "" {
 		return validation.NewErrRecordIsMissingRequiredField("moduleID")
 	}
 	if v.Collection == "" {
@@ -81,13 +96,13 @@ type RolesCommand struct {
 	RolesToItem []RelationshipRoleID `json:"rolesToItem,omitempty" firestore:"rolesToItem,omitempty"`
 }
 
-type RelationshipRolesCommand struct {
-	//SpaceModuleItemRef
-	Add    *RolesCommand `json:"add,omitempty" firestore:"add,omitempty"`
-	Remove *RolesCommand `json:"remove,omitempty" firestore:"remove,omitempty"`
+type RelationshipItemRolesCommand struct {
+	ItemRef SpaceModuleItemRef `json:"itemRef"`
+	Add     *RolesCommand      `json:"add,omitempty"`
+	Remove  *RolesCommand      `json:"remove,omitempty"`
 }
 
-func (v RelationshipRolesCommand) Validate() error {
+func (v RelationshipItemRolesCommand) Validate() error {
 	//if err := v.SpaceModuleItemRef.Validate(); err != nil {
 	//	return err
 	//}

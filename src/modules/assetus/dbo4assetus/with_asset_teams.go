@@ -31,14 +31,14 @@ func (v *WithAssetSpaces) Validate() error {
 }
 
 // AddAsset adds an asset to a team
-func (v *WithAssetSpaces) AddAsset(teamID string, asset AssetEntry) (updates []dal.Update, err error) {
+func (v *WithAssetSpaces) AddAsset(spaceID string, asset AssetEntry) (updates []dal.Update, err error) {
 	if v.Spaces == nil {
 		v.Spaces = make(map[string]*AssetusSpaceBrief)
 	}
-	assetusSpaceBrief := v.Spaces[teamID]
+	assetusSpaceBrief := v.Spaces[spaceID]
 	if assetusSpaceBrief == nil {
 		assetusSpaceBrief = new(AssetusSpaceBrief)
-		v.Spaces[teamID] = assetusSpaceBrief
+		v.Spaces[spaceID] = assetusSpaceBrief
 	}
 	if assetusSpaceBrief.Assets == nil {
 		assetusSpaceBrief.Assets = make(map[string]*briefs4assetus.AssetBrief)
@@ -51,7 +51,7 @@ func (v *WithAssetSpaces) AddAsset(teamID string, asset AssetEntry) (updates []d
 		return
 	}
 	for i, u := range updates {
-		u.Field = "spaces." + teamID + "." + u.Field
+		u.Field = "spaces." + spaceID + "." + u.Field
 		updates[i] = u
 	}
 	return

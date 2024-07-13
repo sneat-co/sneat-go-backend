@@ -186,9 +186,9 @@ func Test_createOrUpdateUserRecord(t *testing.T) {
 			assert.Equal(t, tt.args.request.Member.Data.Gender, userDto.Gender, "Gender")
 			assert.Equal(t, 1, len(userDto.Spaces), "len(Spaces)")
 			assert.Equal(t, 1, len(userDto.SpaceIDs), "len(SpaceIDs)")
-			assert.True(t, slice.Contains(userDto.SpaceIDs, tt.args.request.SpaceID), "SpaceIDs contains tt.args.request.SpaceID")
+			assert.True(t, slice.Contains(userDto.SpaceIDs, tt.args.request.SpaceID), "SpaceIDs contains tt.args.request.Space")
 			teamBrief := userDto.Spaces[tt.args.request.SpaceID]
-			assert.NotNil(t, teamBrief, "Spaces[tt.args.request.SpaceID]")
+			assert.NotNil(t, teamBrief, "Spaces[tt.args.request.Space]")
 		})
 	}
 }

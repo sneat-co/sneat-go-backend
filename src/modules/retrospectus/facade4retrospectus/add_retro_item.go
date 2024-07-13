@@ -134,7 +134,7 @@ func addRetroItemToUserRetro(ctx context.Context, userContext facade.User, reque
 			return err
 		}
 
-		//if err := updateTeamWithUpcomingRetroUserCounts(ctx, transaction, started, uid, request.SpaceID, userSpaceInfo.RetroItems); err != nil {
+		//if err := updateTeamWithUpcomingRetroUserCounts(ctx, transaction, started, uid, request.Space, userSpaceInfo.RetroItems); err != nil {
 		//	return fmt.Errorf("failed to update team record: %w", err)
 		//}
 

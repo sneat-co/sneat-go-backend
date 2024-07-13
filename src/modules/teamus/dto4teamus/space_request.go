@@ -6,8 +6,8 @@ import (
 )
 
 // NewSpaceRequest creates new team request
-func NewSpaceRequest(teamID string) SpaceRequest {
-	return SpaceRequest{SpaceID: teamID}
+func NewSpaceRequest(spaceID string) SpaceRequest {
+	return SpaceRequest{SpaceID: spaceID}
 }
 
 // SpaceRequest request

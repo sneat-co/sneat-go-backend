@@ -8,12 +8,12 @@ import (
 
 const SpaceModulesCollection = coremodels.ModulesCollection
 
-func NewSpaceModuleKey(teamID, moduleID string) *dal.Key {
-	teamKey := NewSpaceKey(teamID)
+func NewSpaceModuleKey(spaceID, moduleID string) *dal.Key {
+	teamKey := NewSpaceKey(spaceID)
 	return dal.NewKeyWithParentAndID(teamKey, SpaceModulesCollection, moduleID)
 }
 
-func NewSpaceModuleEntry[D any](teamID, moduleID string, data D) record.DataWithID[string, D] {
-	key := NewSpaceModuleKey(teamID, moduleID)
+func NewSpaceModuleEntry[D any](spaceID, moduleID string, data D) record.DataWithID[string, D] {
+	key := NewSpaceModuleKey(spaceID, moduleID)
 	return record.NewDataWithID(moduleID, key, data)
 }

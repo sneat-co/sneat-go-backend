@@ -42,7 +42,7 @@ func SetRelated(
 	object dbo4linkage.Relatable,
 	objectRef dbo4linkage.SpaceModuleItemRef,
 	itemRef dbo4linkage.SpaceModuleItemRef,
-	rolesCommand dbo4linkage.RelationshipRolesCommand,
+	rolesCommand dbo4linkage.RelationshipItemRolesCommand,
 ) (
 	result SetRelatedResult,
 	//teamModuleUpdates []dal.Update,

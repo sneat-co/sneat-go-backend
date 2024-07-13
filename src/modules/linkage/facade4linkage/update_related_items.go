@@ -20,11 +20,10 @@ func UpdateRelatedItemsWithLatestRelationships(
 	itemData dbo4linkage.WithRelatedAndIDs,
 ) (err error) {
 	var updateErrors []error
-	for itemID := range request.Related {
-		itemRef := dbo4linkage.NewSpaceModuleItemRefFromString(itemID)
-		err = updateItemWithLatestRelationshipsFromRelatedItem(ctx, userCtx, itemRef, request.SpaceModuleItemRef, itemData.Related)
+	for i, related := range request.Related {
+		err = updateItemWithLatestRelationshipsFromRelatedItem(ctx, userCtx, related.ItemRef, request.SpaceModuleItemRef, itemData.Related)
 		if err != nil {
-			updateErrors = append(updateErrors, err)
+			updateErrors = append(updateErrors, fmt.Errorf("failed to update related item (%d=%s): %w", i, related.ItemRef.ID(), err))
 		}
 	}
 	if len(updateErrors) > 0 {
@@ -35,7 +34,7 @@ func UpdateRelatedItemsWithLatestRelationships(
 
 func updateItemWithLatestRelationshipsFromRelatedItem(
 	ctx context.Context,
-	userCtx facade.User,
+	_ facade.User,
 	itemRef dbo4linkage.SpaceModuleItemRef,
 	relatedItemRef dbo4linkage.SpaceModuleItemRef,
 	relatedByModuleOfRelatedItem dbo4linkage.RelatedByModuleID,
@@ -49,7 +48,7 @@ func updateItemWithLatestRelationshipsFromRelatedItem(
 
 	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 
-		key := dal4teamus.NewSpaceModuleItemKey(itemRef.SpaceID, itemRef.ModuleID, itemRef.Collection, itemRef.ItemID)
+		key := dal4teamus.NewSpaceModuleItemKey(itemRef.Space, itemRef.Module, itemRef.Collection, itemRef.ItemID)
 		item := record.NewDataWithID(itemRef.ItemID, key, new(dbo4linkage.WithRelatedAndIDsAndUserID))
 		if err = tx.Get(ctx, item.Record); err != nil {
 			return err

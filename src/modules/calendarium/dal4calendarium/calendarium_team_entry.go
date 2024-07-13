@@ -11,16 +11,16 @@ import (
 
 type CalendariumSpaceEntry = record.DataWithID[string, *dbo4calendarium.CalendariumSpaceDbo]
 
-func NewCalendariumSpaceKey(teamID string) *dal.Key {
-	return dal4teamus.NewSpaceModuleKey(teamID, const4calendarium.ModuleID)
+func NewCalendariumSpaceKey(spaceID string) *dal.Key {
+	return dal4teamus.NewSpaceModuleKey(spaceID, const4calendarium.ModuleID)
 }
 
-func NewCalendariumSpaceEntry(teamID string) CalendariumSpaceEntry {
-	key := NewCalendariumSpaceKey(teamID)
-	return record.NewDataWithID(teamID, key, new(dbo4calendarium.CalendariumSpaceDbo))
+func NewCalendariumSpaceEntry(spaceID string) CalendariumSpaceEntry {
+	key := NewCalendariumSpaceKey(spaceID)
+	return record.NewDataWithID(spaceID, key, new(dbo4calendarium.CalendariumSpaceDbo))
 }
 
-func GetCalendariumSpace(ctx context.Context, tx dal.ReadwriteTransaction, teamID string) (CalendariumSpaceEntry, error) {
-	v := NewCalendariumSpaceEntry(teamID)
+func GetCalendariumSpace(ctx context.Context, tx dal.ReadwriteTransaction, spaceID string) (CalendariumSpaceEntry, error) {
+	v := NewCalendariumSpaceEntry(spaceID)
 	return v, tx.Get(ctx, v.Record)
 }

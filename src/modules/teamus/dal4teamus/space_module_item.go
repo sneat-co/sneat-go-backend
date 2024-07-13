@@ -14,7 +14,7 @@ func NewSpaceModuleItemKey[K comparable](teamID, moduleID, collection string, it
 }
 
 func NewSpaceModuleItemKeyFromItemRef(itemRef dbo4linkage.SpaceModuleItemRef) *dal.Key {
-	return NewSpaceModuleItemKey(itemRef.SpaceID, itemRef.ModuleID, itemRef.Collection, itemRef.ItemID)
+	return NewSpaceModuleItemKey(itemRef.Space, itemRef.Module, itemRef.Collection, itemRef.ItemID)
 }
 
 func GenerateNewSpaceModuleItemKey(ctx context.Context, tx dal.ReadwriteTransaction, teamID, moduleID, collection string, length, maxAttempts int) (id string, key *dal.Key, err error) {

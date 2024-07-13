@@ -39,7 +39,7 @@ func CreateHappening(
 		},
 		//WithTeamDates: dbmodels.WithSpaceDates{
 		//	WithTeamIDs: dbmodels.WithSpaceIDs{
-		//		SpaceIDs: []string{request.SpaceID},
+		//		SpaceIDs: []string{request.Space},
 		//	},
 		//},
 	}
@@ -104,7 +104,7 @@ func createHappeningTx(
 
 	//for participantID := range happeningDto.Participants {
 	//	participantKey := dbmodels.SpaceItemID(participantID)
-	//	spaceID := participantKey.SpaceID()
+	//	spaceID := participantKey.Space()
 	//	if spaceID == params.Space.ID {
 	//		contactBrief := contactusSpace.Data.Contacts[participantKey.ItemID()]
 	//		if contactBrief == nil {

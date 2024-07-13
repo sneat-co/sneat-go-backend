@@ -20,11 +20,11 @@ type WithUserIDs struct {
 	UserIDs map[string]string `json:"userIDs,omitempty" firestore:"userIDs,omitempty"`
 }
 
-func (v *WithUserIDs) SetUserID(teamID string, userID string) {
+func (v *WithUserIDs) SetUserID(spaceID string, userID string) {
 	if v.UserIDs == nil {
-		v.UserIDs = map[string]string{teamID: userID}
+		v.UserIDs = map[string]string{spaceID: userID}
 	} else {
-		v.UserIDs[teamID] = userID
+		v.UserIDs[spaceID] = userID
 	}
 }
 
@@ -64,22 +64,22 @@ func (v *UserDbo) GetFullName() string {
 }
 
 // SetSpaceBrief sets team brief and adds teamID to the list of team IDs if needed
-func (v *UserDbo) SetSpaceBrief(teamID string, brief *UserSpaceBrief) (updates []dal.Update) {
+func (v *UserDbo) SetSpaceBrief(spaceID string, brief *UserSpaceBrief) (updates []dal.Update) {
 	if v.Spaces == nil {
-		v.Spaces = map[string]*UserSpaceBrief{teamID: brief}
+		v.Spaces = map[string]*UserSpaceBrief{spaceID: brief}
 	} else {
-		v.Spaces[teamID] = brief
+		v.Spaces[spaceID] = brief
 	}
-	updates = append(updates, dal.Update{Field: "spaces." + teamID, Value: brief})
-	if !slice.Contains(v.SpaceIDs, teamID) {
-		v.SpaceIDs = append(v.SpaceIDs, teamID)
+	updates = append(updates, dal.Update{Field: "spaces." + spaceID, Value: brief})
+	if !slice.Contains(v.SpaceIDs, spaceID) {
+		v.SpaceIDs = append(v.SpaceIDs, spaceID)
 		updates = append(updates, dal.Update{Field: "spaceIDs", Value: v.SpaceIDs})
 	}
 	return
 }
 
 // GetSpaceBriefByType returns the first team brief that matches a specific type
-func (v *UserDbo) GetSpaceBriefByType(t core4teamus.SpaceType) (teamID string, teamBrief *UserSpaceBrief) {
+func (v *UserDbo) GetSpaceBriefByType(t core4teamus.SpaceType) (spaceID string, teamBrief *UserSpaceBrief) {
 	for id, brief := range v.Spaces {
 		if brief.Type == t {
 			return id, brief
@@ -188,6 +188,6 @@ func (v *UserDbo) validateSpaces() error {
 }
 
 // GetUserSpaceInfoByID returns team info specific to the user by team ID
-func (v *UserDbo) GetUserSpaceInfoByID(teamID string) *UserSpaceBrief {
-	return v.Spaces[teamID]
+func (v *UserDbo) GetUserSpaceInfoByID(spaceID string) *UserSpaceBrief {
+	return v.Spaces[spaceID]
 }

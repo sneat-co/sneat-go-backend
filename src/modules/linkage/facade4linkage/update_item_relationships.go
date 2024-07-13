@@ -11,7 +11,7 @@ import (
 )
 
 func UpdateItemRelationships(ctx context.Context, userCtx facade.User, request dto4linkage.UpdateItemRequest) (item record.DataWithID[string, *dbo4linkage.WithRelatedAndIDsAndUserID], err error) {
-	if err = dal4teamus.RunSpaceWorker(ctx, userCtx, request.SpaceID, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.SpaceWorkerParams) (err error) {
+	if err = dal4teamus.RunSpaceWorker(ctx, userCtx, request.Space, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.SpaceWorkerParams) (err error) {
 		item, err = txUpdateItemRelationships(ctx, tx, params, request)
 		return err
 	}); err != nil {
@@ -28,7 +28,7 @@ func txUpdateItemRelationships(
 	params *dal4teamus.SpaceWorkerParams,
 	request dto4linkage.UpdateItemRequest,
 ) (item record.DataWithID[string, *dbo4linkage.WithRelatedAndIDsAndUserID], err error) {
-	key := dal4teamus.NewSpaceModuleItemKey(request.SpaceID, request.ModuleID, request.Collection, request.ItemID)
+	key := dal4teamus.NewSpaceModuleItemKey(request.Space, request.Module, request.Collection, request.ItemID)
 	item = record.NewDataWithID[string, *dbo4linkage.WithRelatedAndIDsAndUserID](request.ItemID, key, new(dbo4linkage.WithRelatedAndIDsAndUserID))
 	if err = tx.Get(ctx, item.Record); err != nil {
 		return item, err

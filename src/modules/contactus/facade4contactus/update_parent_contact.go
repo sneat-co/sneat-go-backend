@@ -23,7 +23,7 @@ func updateParentContact(
 	contactBrief.RelatedAs = RelatedAsChild
 	updates := parent.Data.SetContactBrief(contact.Key.Parent().ID.(string), contact.ID, contactBrief)
 	if err := parent.Data.Validate(); err != nil {
-		return fmt.Errorf("parent contact DTO validation error: %w", err)
+		return fmt.Errorf("parent contact DBO validation error: %w", err)
 	}
 	if err := tx.Update(ctx, parent.Key, updates); err != nil {
 		return fmt.Errorf("failed to update parent contact record: %w", err)

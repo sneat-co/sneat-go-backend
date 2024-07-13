@@ -53,7 +53,7 @@ func updateContactTxWorker(
 	contact := params.Contact
 
 	if err := contact.Data.Validate(); err != nil {
-		return fmt.Errorf("contact DTO is not valid after loading from DB: %w", err)
+		return fmt.Errorf("contact DBO is not valid after loading from DB: %w", err)
 	}
 
 	contactBrief := params.SpaceModuleEntry.Data.Contacts[request.ContactID]
@@ -102,9 +102,9 @@ func updateContactTxWorker(
 
 	if request.Related != nil {
 		itemRef := dbo4linkage.SpaceModuleItemRef{
-			ModuleID:   const4contactus.ModuleID,
+			Module:     const4contactus.ModuleID,
 			Collection: const4contactus.ContactsCollection,
-			SpaceID:    request.SpaceID,
+			Space:      request.SpaceID,
 			ItemID:     request.ContactID,
 		}
 		var recordsUpdates []dal4teamus.RecordUpdates
@@ -126,7 +126,7 @@ func updateContactTxWorker(
 		contact.Data.IncreaseVersion(params.Started, params.UserID)
 		params.ContactUpdates = append(params.ContactUpdates, contact.Data.WithUpdatedAndVersion.GetUpdates()...)
 		if err := contact.Data.Validate(); err != nil {
-			return fmt.Errorf("contact DTO is not valid after updating %d fields (%+v) and before storing changes DB: %w",
+			return fmt.Errorf("contact DBO is not valid after updating %d fields (%+v) and before storing changes DB: %w",
 				len(updatedContactFields), updatedContactFields, err)
 		}
 		if err := tx.Update(ctx, contact.Key, params.ContactUpdates); err != nil {

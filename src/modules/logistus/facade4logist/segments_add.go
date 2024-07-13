@@ -236,7 +236,7 @@ func addOrUpdateShippingPoints(
 func addShippingPointsToOrderIfNeeded(
 	ctx context.Context,
 	tx dal.ReadTransaction,
-	teamID string,
+	spaceID string,
 	orderDto *dbo4logist.OrderDbo,
 	segment *dbo4logist.ContainerSegment,
 ) (fromShippingPoint, toShippingPoint *dbo4logist.OrderShippingPoint, err error) {
@@ -244,7 +244,7 @@ func addShippingPointsToOrderIfNeeded(
 		shippingPoint *dbo4logist.OrderShippingPoint,
 		err error,
 	) {
-		if shippingPoint, err = addShippingPointToOrderIfNeeded(ctx, tx, teamID, orderDto, end, point.SegmentCounterparty); err != nil {
+		if shippingPoint, err = addShippingPointToOrderIfNeeded(ctx, tx, spaceID, orderDto, end, point.SegmentCounterparty); err != nil {
 			return shippingPoint, fmt.Errorf("failed to add shipping point for segment endpoint '%s': %w", end, err)
 		} else if shippingPoint != nil {
 			point.ShippingPointID = shippingPoint.ID
@@ -263,7 +263,7 @@ func addShippingPointsToOrderIfNeeded(
 func addShippingPointToOrderIfNeeded(
 	ctx context.Context,
 	tx dal.ReadTransaction,
-	teamID string,
+	spaceID string,
 	orderDto *dbo4logist.OrderDbo,
 	end string,
 	segmentCounterparty dbo4logist.SegmentCounterparty,
@@ -276,7 +276,7 @@ func addShippingPointToOrderIfNeeded(
 		return shippingPoint, nil
 	}
 
-	location := dal4contactus.NewContactEntry(teamID, segmentCounterparty.ContactID)
+	location := dal4contactus.NewContactEntry(spaceID, segmentCounterparty.ContactID)
 	if err := tx.Get(ctx, location.Record); err != nil {
 		return nil, fmt.Errorf("failed to get location contact: %w", err)
 	}
@@ -291,7 +291,7 @@ func addShippingPointToOrderIfNeeded(
 			validation.NewErrRecordIsMissingRequiredField("parentContactID"))
 	}
 
-	parent := dal4contactus.NewContactEntry(teamID, location.Data.ParentID)
+	parent := dal4contactus.NewContactEntry(spaceID, location.Data.ParentID)
 	if err := tx.Get(ctx, parent.Record); err != nil {
 		return shippingPoint, fmt.Errorf("failed to get counterparty contact: %w", err)
 	}
@@ -349,7 +349,7 @@ func addShippingPointToOrderIfNeeded(
 func addCounterpartyToOrderIfNeeded(
 	ctx context.Context,
 	tx dal.ReadTransaction,
-	teamID string,
+	spaceID string,
 	order *dbo4logist.OrderDbo,
 	endpointType string, // Either "from", "to" or "by"
 	segmentEndpoint dto4logist.AddSegmentEndpoint,
@@ -366,7 +366,7 @@ func addCounterpartyToOrderIfNeeded(
 	if _, c := order.GetCounterpartyByRoleAndContactID(counterpartyRole, segmentCounterparty.ContactID); c != nil {
 		return changes, nil
 	}
-	contact := dal4contactus.NewContactEntry(teamID, segmentCounterparty.ContactID)
+	contact := dal4contactus.NewContactEntry(spaceID, segmentCounterparty.ContactID)
 	if err := tx.Get(ctx, contact.Record); err != nil {
 		return changes, fmt.Errorf("failed to get %v contact: %w", segmentCounterparty.Role, err)
 	}
@@ -390,7 +390,7 @@ func addCounterpartyToOrderIfNeeded(
 		if contact.Data.ParentID != "" {
 			_, parentOrderContact := order.GetContactByID(contact.Data.ParentID)
 			if parentOrderContact == nil {
-				parentContact := dal4contactus.NewContactEntry(teamID, contact.Data.ParentID)
+				parentContact := dal4contactus.NewContactEntry(spaceID, contact.Data.ParentID)
 				if err := tx.Get(ctx, parentContact.Record); err != nil {
 					return changes, fmt.Errorf("failed to get parent contact: %w", err)
 				}
@@ -422,7 +422,7 @@ func addCounterpartyToOrderIfNeeded(
 	order.Counterparties = append(order.Counterparties, &counterparty)
 	changes.Counterparties = true
 	if contact.Data.ParentID != "" {
-		parent := dal4contactus.NewContactEntry(teamID, contact.Data.ParentID)
+		parent := dal4contactus.NewContactEntry(spaceID, contact.Data.ParentID)
 		if err := tx.Get(ctx, parent.Record); err != nil {
 			return changes, fmt.Errorf("failed to get parent contact by ID=[%s]: %w", contact.Data.ParentID, err)
 		}

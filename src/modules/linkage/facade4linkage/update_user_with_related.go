@@ -31,7 +31,7 @@ func updateUserWithRelatedTx(
 		users[userID] = user
 	}
 
-	if slice.Contains(user.Data.SpaceIDs, itemRef.SpaceID) {
+	if slice.Contains(user.Data.SpaceIDs, itemRef.Space) {
 		return nil
 	}
 

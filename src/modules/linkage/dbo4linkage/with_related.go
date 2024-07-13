@@ -53,7 +53,7 @@ func HasRelatedItem(relatedItems []*RelatedItem, key RelatedItemKey) bool {
 }
 
 func GetRelatedItemByRef(related RelatedByModuleID, itemRef SpaceModuleItemRef, createIfMissing bool) *RelatedItem {
-	relatedByCollection := related[itemRef.ModuleID]
+	relatedByCollection := related[itemRef.Module]
 	if !createIfMissing && len(relatedByCollection) == 0 {
 		return nil
 	}
@@ -63,14 +63,14 @@ func GetRelatedItemByRef(related RelatedByModuleID, itemRef SpaceModuleItemRef, 
 	}
 	for _, ri := range relatedByItem {
 		for _, k := range ri.Keys {
-			if k.SpaceID == itemRef.SpaceID && k.ItemID == itemRef.ItemID {
+			if k.SpaceID == itemRef.Space && k.ItemID == itemRef.ItemID {
 				return ri
 			}
 
 		}
 	}
 	if createIfMissing {
-		relatedItem := NewRelatedItem(RelatedItemKey{SpaceID: itemRef.SpaceID, ItemID: itemRef.ItemID})
+		relatedItem := NewRelatedItem(RelatedItemKey{SpaceID: itemRef.Space, ItemID: itemRef.ItemID})
 		relatedByItem = append(relatedByItem, relatedItem)
 		if relatedByCollection == nil {
 			relatedByCollection = make(RelatedByCollectionID, 1)
@@ -79,7 +79,7 @@ func GetRelatedItemByRef(related RelatedByModuleID, itemRef SpaceModuleItemRef, 
 		if related == nil {
 			related = make(RelatedByModuleID, 1)
 		}
-		related[itemRef.ModuleID] = relatedByCollection
+		related[itemRef.Module] = relatedByCollection
 		return relatedItem
 	}
 	return nil
@@ -175,7 +175,7 @@ func (v *WithRelated) Validate() error {
 // RemoveRelatedItem removes all relationships to a given item
 // TODO(help-wanted): needs 100% code coverage by tests
 func (v *WithRelated) RemoveRelatedItem(ref SpaceModuleItemRef) (updates []dal.Update) {
-	collectionsRelated := v.Related[ref.ModuleID]
+	collectionsRelated := v.Related[ref.Module]
 	if collectionsRelated == nil {
 		return
 	}
@@ -188,18 +188,18 @@ func (v *WithRelated) RemoveRelatedItem(ref SpaceModuleItemRef) (updates []dal.U
 relatedItemCycle:
 	for _, relatedItem := range relatedItems {
 		for _, key := range relatedItem.Keys {
-			if key.SpaceID == ref.SpaceID && key.ItemID == ref.ItemID {
+			if key.SpaceID == ref.Space && key.ItemID == ref.ItemID {
 				continue relatedItemCycle
 			}
 		}
 		newRelatedItems = append(newRelatedItems, relatedItem)
 	}
-	field := fmt.Sprintf("%s.%s.%s", relatedField, ref.ModuleID, ref.Collection)
+	field := fmt.Sprintf("%s.%s.%s", relatedField, ref.Module, ref.Collection)
 	if len(newRelatedItems) != len(relatedItems) {
 		if len(newRelatedItems) == 0 {
 			delete(collectionsRelated, ref.Collection)
 			if len(collectionsRelated) == 0 {
-				delete(v.Related, ref.ModuleID)
+				delete(v.Related, ref.Module)
 				if len(v.Related) == 0 {
 					updates = append(updates, dal.Update{
 						Field: relatedField,
@@ -207,7 +207,7 @@ relatedItemCycle:
 					})
 				} else {
 					updates = append(updates, dal.Update{
-						Field: fmt.Sprintf("%s.%s", relatedField, ref.ModuleID),
+						Field: fmt.Sprintf("%s.%s", relatedField, ref.Module),
 						Value: dal.DeleteField,
 					})
 				}
@@ -260,7 +260,7 @@ func (v *WithRelated) ValidateRelated(validateID func(relatedID string) error) e
 	return nil
 }
 
-func (v *WithRelated) AddRelationship(itemRef SpaceModuleItemRef, rolesCommand RelationshipRolesCommand) (updates []dal.Update, err error) {
+func (v *WithRelated) AddRelationship(itemRef SpaceModuleItemRef, rolesCommand RelationshipItemRolesCommand) (updates []dal.Update, err error) {
 	if err := rolesCommand.Validate(); err != nil {
 		return nil, err
 	}
@@ -281,7 +281,7 @@ func (v *WithRelated) AddRelationship(itemRef SpaceModuleItemRef, rolesCommand R
 		rolesCommand.Add.RolesOfItem = addOppositeRoles(rolesCommand.Add.RolesToItem, rolesCommand.Add.RolesOfItem)
 	}
 
-	relatedByCollectionID := v.Related[itemRef.ModuleID]
+	relatedByCollectionID := v.Related[itemRef.Module]
 	if relatedByCollectionID == nil {
 		relatedByCollectionID = make(RelatedByCollectionID, 1)
 		v.Related[const4contactus.ModuleID] = relatedByCollectionID
@@ -289,7 +289,7 @@ func (v *WithRelated) AddRelationship(itemRef SpaceModuleItemRef, rolesCommand R
 
 	relatedItems := relatedByCollectionID[const4contactus.ContactsCollection]
 
-	relatedItemKey := RelatedItemKey{SpaceID: itemRef.SpaceID, ItemID: itemRef.ItemID}
+	relatedItemKey := RelatedItemKey{SpaceID: itemRef.Space, ItemID: itemRef.ItemID}
 	relatedItem := GetRelatedItemByKey(relatedItems, relatedItemKey)
 	if relatedItem == nil {
 		relatedItem = NewRelatedItem(relatedItemKey)
@@ -335,7 +335,7 @@ func (v *WithRelated) AddRelationship(itemRef SpaceModuleItemRef, rolesCommand R
 
 //func (v *WithRelated) SetRelationshipToItem(
 //	userID string,
-//	link RelationshipRolesCommand,
+//	link RelationshipItemRolesCommand,
 //	now time.Time,
 //) (updates []dal.Update, err error) {
 //	if err = link.Validate(); err != nil {
@@ -349,17 +349,17 @@ func (v *WithRelated) AddRelationship(itemRef SpaceModuleItemRef, rolesCommand R
 //	if v.Related == nil {
 //		v.Related = make(RelatedByModuleID, 1)
 //	}
-//	relatedByCollectionID := v.Related[link.ModuleID]
+//	relatedByCollectionID := v.Related[link.Module]
 //	if relatedByCollectionID == nil {
 //		relatedByCollectionID = make(RelatedByCollectionID, 1)
-//		v.Related[link.ModuleID] = relatedByCollectionID
+//		v.Related[link.Module] = relatedByCollectionID
 //	}
 //	relatedItems := relatedByCollectionID[const4contactus.ContactsCollection]
 //	//if relatedItems == nil {
 //	//	relatedItems = make([]*RelatedItem, 0, 1)
 //	//	relatedByCollectionID[const4contactus.ContactsCollection] = relatedItems
 //	//}
-//	relatedItemKey := RelatedItemKey{SpaceID: link.SpaceID, ItemID: link.ItemID}
+//	relatedItemKey := RelatedItemKey{Space: link.Space, ItemID: link.ItemID}
 //	relatedItem := GetRelatedItemByKey(relatedItems, relatedItemKey)
 //	if relatedItem == nil {
 //		relatedItem = NewRelatedItem(relatedItemKey)

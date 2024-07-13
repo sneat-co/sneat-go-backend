@@ -16,7 +16,7 @@ type CreateMemberRequest struct {
 	dto4contactus.CreatePersonRequest
 	dbo4linkage.WithRelated
 	Message string `json:"message"`
-	//RelatedTo *dbo4linkage.RelationshipRolesCommand `json:"relatedTo,omitempty"`
+	//RelatedTo *dbo4linkage.RelationshipItemRolesCommand `json:"relatedTo,omitempty"`
 }
 
 // Validate validates request
