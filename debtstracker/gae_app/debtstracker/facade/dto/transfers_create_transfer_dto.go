@@ -6,13 +6,13 @@ import (
 	"github.com/crediterra/money"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/strongo/validation"
 	"time"
 )
 
 type CreateTransferRequest struct {
-	dto4teamus.SpaceRequest
+	dto4spaceus.SpaceRequest
 	Direction          models.TransferDirection `json:"direction"`
 	Amount             money.Amount             `json:"amount"`
 	FromContactID      string                   `json:"fromContactID"`

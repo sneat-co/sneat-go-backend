@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/facade4retrospectus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/apicore/httpmock"
 	"github.com/sneat-co/sneat-go-core/apicore/verify"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -22,7 +22,7 @@ func TestAddRetroItem(t *testing.T) {
 	req := httpmock.NewPostJSONRequest(http.MethodPost, "/v0/retrospective/add_retro_item", &facade4retrospectus.AddRetroItemRequest{
 		RetroItemRequest: facade4retrospectus.RetroItemRequest{
 			Request: facade4meetingus.Request{
-				SpaceRequest: dto4teamus.SpaceRequest{
+				SpaceRequest: dto4spaceus.SpaceRequest{
 					SpaceID: "space1",
 				},
 				MeetingID: "retro1",

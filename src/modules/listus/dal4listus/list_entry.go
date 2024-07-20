@@ -5,14 +5,14 @@ import (
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/const4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 )
 
 type ListEntry = record.DataWithID[string, *dbo4listus.ListDbo]
 
 // NewSpaceListKey creates a new list key
 func NewSpaceListKey(teamID, id string) *dal.Key {
-	key := dal4teamus.NewSpaceModuleKey(teamID, const4listus.ModuleID)
+	key := dal4spaceus.NewSpaceModuleKey(teamID, const4listus.ModuleID)
 	return dal.NewKeyWithParentAndID(key, dbo4listus.ListsCollection, id)
 }
 

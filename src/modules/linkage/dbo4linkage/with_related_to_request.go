@@ -1,9 +1,9 @@
 package dbo4linkage
 
-//import "github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+//import "github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 //
 //type RelatedToRequest struct {
-//	dto4teamus.SpaceRequest
+//	dto4spaceus.SpaceRequest
 //	Module   string               `json:"moduleID"`
 //	Collection string               `json:"collection"`
 //	ID     string               `json:"itemID"`

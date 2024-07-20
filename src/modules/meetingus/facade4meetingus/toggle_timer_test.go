@@ -3,8 +3,8 @@ package facade4meetingus
 import (
 	"context"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/dbo4meetingus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"testing"
@@ -46,7 +46,7 @@ func TestToggleTimer(t *testing.T) { // TODO(help-wanted): add more test cases
 		timestamps []dbmodels.Timestamp,
 		expected expecting,
 		initMeeting func(meeting *dbo4meetingus.Meeting),
-		assert func(response ToggleTimerResponse, meeting dbo4meetingus.Meeting, team dbo4teamus.SpaceDbo),
+		assert func(response ToggleTimerResponse, meeting dbo4meetingus.Meeting, team dbo4spaceus.SpaceDbo),
 	) {
 		assertTimer := func(source string, timer *dbo4meetingus.Timer) {
 			if timer == nil {
@@ -78,7 +78,7 @@ func TestToggleTimer(t *testing.T) { // TODO(help-wanted): add more test cases
 			Operation: op,
 			Member:    member,
 			Request: Request{
-				SpaceRequest: dto4teamus.SpaceRequest{
+				SpaceRequest: dto4spaceus.SpaceRequest{
 					SpaceID: space1ID,
 				},
 				MeetingID: "2010-11-22",
@@ -135,7 +135,7 @@ func TestToggleTimer(t *testing.T) { // TODO(help-wanted): add more test cases
 					func(meeting *dbo4meetingus.Meeting) {
 
 					},
-					func(response ToggleTimerResponse, meeting dbo4meetingus.Meeting, team dbo4teamus.SpaceDbo) {
+					func(response ToggleTimerResponse, meeting dbo4meetingus.Meeting, team dbo4spaceus.SpaceDbo) {
 						if meeting.Timer.ActiveMemberID != request.Member {
 							t.Errorf("api4meetingus.Timer.ActiveMemberID !== request.MemberDto: %v != %v", meeting.Timer.ActiveMemberID, request.Member)
 						}

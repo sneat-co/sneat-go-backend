@@ -3,14 +3,14 @@ package dbo4userus
 import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/core4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/strongo/validation"
 )
 
 // UserSpaceBrief hold info on a team in the UserDbo record
 type UserSpaceBrief struct {
-	dbo4teamus.SpaceBrief
+	dbo4spaceus.SpaceBrief
 
 	// UserContactID is a contact ID of a user in the team
 	UserContactID string `json:"userContactID" firestore:"userContactID"`

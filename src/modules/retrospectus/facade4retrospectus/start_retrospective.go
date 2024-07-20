@@ -10,8 +10,8 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/dbo4meetingus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dal4retrospectus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -59,7 +59,7 @@ func StartRetrospective(ctx context.Context, userContext facade.User, request St
 				if activeRetroID == "" {
 					request.MeetingID = params.Started.Format("2006-01-02")
 
-					retroSpace.Data.Active = &dbo4teamus.SpaceMeetingInfo{
+					retroSpace.Data.Active = &dbo4spaceus.SpaceMeetingInfo{
 						ID:      request.MeetingID,
 						Started: &params.Started,
 					}
@@ -71,7 +71,7 @@ func StartRetrospective(ctx context.Context, userContext facade.User, request St
 			} else if activeRetrospective := retroSpace.Data.ActiveRetro(); activeRetrospective.ID == request.MeetingID {
 				return nil
 			} else if activeRetrospective.ID == "" {
-				retroSpace.Data.Active = &dbo4teamus.SpaceMeetingInfo{
+				retroSpace.Data.Active = &dbo4spaceus.SpaceMeetingInfo{
 					ID:      request.MeetingID,
 					Started: &params.Started,
 				}
@@ -212,7 +212,7 @@ type userRetroItems struct {
 	byType dbo4retrospectus.RetroItemsByType
 }
 
-func getUsersWithRetroItems(ctx context.Context, tx dal.ReadwriteTransaction, team dal4teamus.SpaceEntry, retroSpace dal4retrospectus.RetroSpaceEntry) (usersWithRetroItemByUserID map[string]userRetroItems, err error) {
+func getUsersWithRetroItems(ctx context.Context, tx dal.ReadwriteTransaction, team dal4spaceus.SpaceEntry, retroSpace dal4retrospectus.RetroSpaceEntry) (usersWithRetroItemByUserID map[string]userRetroItems, err error) {
 	teamUsersCount := len(team.Data.UserIDs)
 	usersWithRetroItemByUserID = make(map[string]userRetroItems, teamUsersCount)
 	userIDs := make([]string, 0, teamUsersCount)

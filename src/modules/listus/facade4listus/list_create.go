@@ -8,7 +8,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/const4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/random"
@@ -23,8 +23,8 @@ func CreateList(ctx context.Context, user facade.User, request CreateListRequest
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4teamus.CreateSpaceItem(ctx, user, request.SpaceRequest, const4listus.ModuleID, new(dbo4listus.ListusSpaceDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) (err error) {
+	err = dal4spaceus.CreateSpaceItem(ctx, user, request.SpaceRequest, const4listus.ModuleID, new(dbo4listus.ListusSpaceDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) (err error) {
 
 			for id, brief := range params.SpaceModuleEntry.Data.Lists {
 				if brief.Title == request.Title {

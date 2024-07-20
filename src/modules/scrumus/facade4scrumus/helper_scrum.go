@@ -7,7 +7,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dal4scrumus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
@@ -55,7 +55,7 @@ func UpdateLastScrumIDIfNeeded(
 		}
 	}
 	if scrumSpace.Data.Last == nil || scrumSpace.Data.Last.ID < scrumID {
-		scrumSpace.Data.Last = &dbo4teamus.SpaceMeetingInfo{
+		scrumSpace.Data.Last = &dbo4spaceus.SpaceMeetingInfo{
 			ID:       scrumID,
 			Stage:    "planning",
 			Started:  scrum.Started,

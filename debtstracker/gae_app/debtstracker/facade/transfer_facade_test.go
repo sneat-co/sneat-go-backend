@@ -10,7 +10,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtmocks"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/strongo/decimal"
 	"github.com/strongo/strongoapp"
 	"runtime/debug"
@@ -87,7 +87,7 @@ func TestCreateTransfer(t *testing.T) {
 		dueOn := time.Now().Add(time.Minute)
 
 		request := dto.CreateTransferRequest{
-			SpaceRequest: dto4teamus.SpaceRequest{},
+			SpaceRequest: dto4spaceus.SpaceRequest{},
 			Amount:       money.NewAmount(currency, 10),
 			DueOn:        &dueOn,
 			Interest:     &interest,
@@ -425,7 +425,7 @@ func testCreateTransfer(t *testing.T, testCase createTransferTestCase) {
 		}
 
 		request := dto.CreateTransferRequest{
-			SpaceRequest:       dto4teamus.SpaceRequest{},
+			SpaceRequest:       dto4spaceus.SpaceRequest{},
 			IsReturn:           step.input.isReturn,
 			ReturnToTransferID: step.input.returnToTransferID,
 			Amount:             money.NewAmount(currency, step.input.amount),

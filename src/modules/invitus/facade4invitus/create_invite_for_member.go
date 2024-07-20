@@ -6,7 +6,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/dbo4invitus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
@@ -14,7 +14,7 @@ import (
 
 // InviteMemberRequest is a request DTO
 type InviteMemberRequest struct {
-	dto4teamus.SpaceRequest
+	dto4spaceus.SpaceRequest
 	RemoteClient dbmodels.RemoteClientInfo `json:"remoteClient"`
 
 	To    dbo4invitus.InviteToMember `json:"to"`

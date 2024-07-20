@@ -7,7 +7,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	dbmodels2 "github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/slice"
@@ -24,8 +24,8 @@ func CreateOrder(
 ) (
 	orderBrief *dbo4logist.OrderBrief, err error,
 ) {
-	err = dal4teamus.RunSpaceWorker(ctx, userContext, request.SpaceID,
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.SpaceWorkerParams) (err error) {
+	err = dal4spaceus.RunSpaceWorker(ctx, userContext, request.SpaceID,
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.SpaceWorkerParams) (err error) {
 			orderBrief, err = createOrderTxWorker(ctx, tx, params, params.UserID, request)
 			return err
 		},
@@ -34,7 +34,7 @@ func CreateOrder(
 }
 
 func createOrderTxWorker(
-	ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.SpaceWorkerParams,
+	ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.SpaceWorkerParams,
 	userID string,
 	request dto4logist.CreateOrderRequest,
 ) (orderBrief *dbo4logist.OrderBrief, err error) {
@@ -97,7 +97,7 @@ func createOrderTxWorker(
 	return orderBrief, err
 }
 
-func fillOrderDtoFromRequest(orderDto *dbo4logist.OrderDbo, request dto4logist.CreateOrderRequest, params *dal4teamus.SpaceWorkerParams, userID string) {
+func fillOrderDtoFromRequest(orderDto *dbo4logist.OrderDbo, request dto4logist.CreateOrderRequest, params *dal4spaceus.SpaceWorkerParams, userID string) {
 	orderDto.OrderBase = request.Order
 
 	orderDto.Status = "active"

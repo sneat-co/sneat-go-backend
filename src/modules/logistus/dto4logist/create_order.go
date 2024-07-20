@@ -2,13 +2,13 @@ package dto4logist
 
 import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/strongo/validation"
 )
 
 // CreateOrderRequest is a request to create an order
 type CreateOrderRequest struct {
-	dto4teamus.SpaceRequest
+	dto4spaceus.SpaceRequest
 	Order              dbo4logist.OrderBase `json:"order"`
 	NumberOfContainers map[string]int       `json:"numberOfContainers"`
 }

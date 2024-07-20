@@ -6,7 +6,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/dbo4meetingus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )
@@ -31,9 +31,9 @@ type WorkerSpaceDbo struct {
 	workerItem
 }
 
-// Data returns *dbo4teamus.SpaceDbo
-func (v WorkerSpaceDbo) Data() *dbo4teamus.SpaceDbo {
-	return v.Record.Data().(*dbo4teamus.SpaceDbo)
+// Data returns *dbo4spaceus.SpaceDbo
+func (v WorkerSpaceDbo) Data() *dbo4spaceus.SpaceDbo {
+	return v.Record.Data().(*dbo4spaceus.SpaceDbo)
 }
 
 // WorkerMeeting a worker for a meeting

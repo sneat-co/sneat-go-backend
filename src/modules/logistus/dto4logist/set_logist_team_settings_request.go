@@ -3,7 +3,7 @@ package dto4logist
 import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
 	"strings"
@@ -11,7 +11,7 @@ import (
 
 // SetLogistSpaceSettingsRequest represents a request to set logistus team settings
 type SetLogistSpaceSettingsRequest struct {
-	dto4teamus.SpaceRequest
+	dto4spaceus.SpaceRequest
 	Roles             []dbo4logist.LogistSpaceRole `json:"roles"`
 	Address           dbmodels.Address             `json:"address"`
 	VATNumber         string                       `json:"vatNumber,omitempty"`

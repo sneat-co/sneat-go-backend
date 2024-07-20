@@ -7,9 +7,9 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/dbo4invitus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/strongoapp/with"
@@ -20,7 +20,7 @@ import (
 
 // JoinSpaceRequest request
 type JoinSpaceRequest struct {
-	dto4teamus.SpaceRequest
+	dto4spaceus.SpaceRequest
 	InviteID string `json:"inviteID"`
 	Pin      string `json:"pin"`
 }
@@ -40,7 +40,7 @@ func (v *JoinSpaceRequest) Validate() error {
 }
 
 // JoinSpace joins space
-func JoinSpace(ctx context.Context, userContext facade.User, request JoinSpaceRequest) (team *dbo4teamus.SpaceDbo, err error) {
+func JoinSpace(ctx context.Context, userContext facade.User, request JoinSpaceRequest) (team *dbo4spaceus.SpaceDbo, err error) {
 	if err = request.Validate(); err != nil {
 		err = fmt.Errorf("invalid request: %w", err)
 		return
@@ -122,7 +122,7 @@ func JoinSpace(ctx context.Context, userContext facade.User, request JoinSpaceRe
 	return
 }
 
-//func joinAddUserToLastScrum(ctx context.Context, tx dal.ReadwriteTransaction, teamKey *dal.Key, team dbo4teamus.SpaceDbo, uID string) (err error) {
+//func joinAddUserToLastScrum(ctx context.Context, tx dal.ReadwriteTransaction, teamKey *dal.Key, team dbo4spaceus.SpaceDbo, uID string) (err error) {
 //	scrumKey := dal.NewKeyWithID("scrums", team.Last.Scrum.ID, dal.WithParentKey(teamKey))
 //	scrum := new(dbscrum.Scrum)
 //	scrumRecord := dal.NewRecordWithData(scrumKey, scrum)
@@ -171,7 +171,7 @@ func onJoinAddSpaceToUser(
 	userDto *dbo4userus.UserDbo,
 	userRecord dal.Record,
 	spaceID string,
-	space *dbo4teamus.SpaceDbo,
+	space *dbo4spaceus.SpaceDbo,
 	member dal4contactus.ContactEntry,
 ) (err error) {
 	var updates []dal.Update
@@ -207,7 +207,7 @@ func onJoinAddSpaceToUser(
 	}
 	updates = []dal.Update{
 		{
-			Field: dal4teamus.SpacesFiled,
+			Field: dal4spaceus.SpacesFiled,
 			Value: userDto.Spaces,
 		},
 		{

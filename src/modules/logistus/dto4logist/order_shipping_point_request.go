@@ -1,7 +1,7 @@
 package dto4logist
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/strongo/validation"
 )
 
@@ -16,7 +16,7 @@ func (v OrderShippingPointRequest) Validate() error {
 	if err := v.OrderRequest.Validate(); err != nil {
 		return validation.NewErrBadRequestFieldValue("OrderRequest", err.Error())
 	}
-	if err := dbo4teamus.ValidateShippingPointID(v.ShippingPointID); err != nil {
+	if err := dbo4spaceus.ValidateShippingPointID(v.ShippingPointID); err != nil {
 		return validation.NewErrBadRequestFieldValue("shippingPointID", err.Error())
 	}
 	return nil

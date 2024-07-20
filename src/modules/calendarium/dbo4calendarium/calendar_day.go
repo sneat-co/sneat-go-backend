@@ -6,7 +6,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/const4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
 )
@@ -62,7 +62,7 @@ type CalendarDayEntry = record.DataWithID[string, *CalendarDayDbo]
 
 // NewCalendarDayKey returns key for a record in teams/{teamID}/calendarium/days collection with ID=YYYY-MM-DD
 func NewCalendarDayKey(teamID, date string) *dal.Key {
-	return dal4teamus.NewSpaceModuleItemKey(teamID, const4calendarium.ModuleID, DaysCollection, date)
+	return dal4spaceus.NewSpaceModuleItemKey(teamID, const4calendarium.ModuleID, DaysCollection, date)
 }
 
 // NewCalendarDayEntry creates a new instance of CalendarDayEntry

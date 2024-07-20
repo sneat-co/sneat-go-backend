@@ -3,7 +3,7 @@ package facade4retrospectus
 import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"testing"
 )
@@ -53,7 +53,7 @@ func TestStartRetrospective(t *testing.T) {
 		return StartRetrospectiveRequest{
 			RetroRequest: RetroRequest{
 				MeetingID: id,
-				SpaceRequest: dto4teamus.SpaceRequest{
+				SpaceRequest: dto4spaceus.SpaceRequest{
 					SpaceID: spaceID,
 				},
 			},

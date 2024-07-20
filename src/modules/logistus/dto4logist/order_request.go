@@ -1,7 +1,7 @@
 package dto4logist
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/strongo/validation"
 	"strings"
 )
@@ -9,14 +9,14 @@ import (
 // NewOrderRequest creates new OrderRequest
 func NewOrderRequest(teamID, orderID string) OrderRequest {
 	return OrderRequest{
-		SpaceRequest: dto4teamus.NewSpaceRequest(teamID),
+		SpaceRequest: dto4spaceus.NewSpaceRequest(teamID),
 		OrderID:      orderID,
 	}
 }
 
 // OrderRequest is a request regards an order that refers to a team with SpaceRequest and points to a specific order by OrderID
 type OrderRequest struct {
-	dto4teamus.SpaceRequest
+	dto4spaceus.SpaceRequest
 	OrderID string `json:"orderID"`
 }
 

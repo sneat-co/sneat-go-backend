@@ -2,14 +2,14 @@ package dto4calendarium
 
 import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/strongo/validation"
 	"strings"
 )
 
 // HappeningRequest DTO
 type HappeningRequest struct {
-	dto4teamus.SpaceRequest
+	dto4spaceus.SpaceRequest
 	HappeningID   string `json:"happeningID"`
 	HappeningType string `json:"happeningType,omitempty"`
 	//ListType      dbo4listus.ListType `json:"listType,omitempty"` // TODO: Document what it is and why we need it here

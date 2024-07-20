@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"strings"
 	"testing"
@@ -23,7 +23,7 @@ func TestAddCommentRequest_Validate(t *testing.T) {
 			Type:      "done",
 			Task:      "task1",
 			Request: facade4meetingus.Request{
-				SpaceRequest: dto4teamus.SpaceRequest{
+				SpaceRequest: dto4spaceus.SpaceRequest{
 					SpaceID: "space1",
 				},
 				MeetingID: "2020-12-13",

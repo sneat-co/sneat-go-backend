@@ -2,7 +2,7 @@ package facade4scrumus
 
 import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/strongo/validation"
 	"testing"
 	"time"
@@ -14,7 +14,7 @@ func TestAddTaskRequest_Validate(t *testing.T) {
 	validRequest := AddTaskRequest{
 		TaskRequest: TaskRequest{
 			Request: facade4meetingus.Request{
-				SpaceRequest: dto4teamus.SpaceRequest{
+				SpaceRequest: dto4spaceus.SpaceRequest{
 					SpaceID: "space1",
 				},
 				MeetingID: now.Format(validDateFormat),
@@ -103,7 +103,7 @@ func TestTaskRequest_Validate(t *testing.T) {
 			Type:      "done",
 			ContactID: "member1",
 			Request: facade4meetingus.Request{
-				SpaceRequest: dto4teamus.SpaceRequest{
+				SpaceRequest: dto4spaceus.SpaceRequest{
 					SpaceID: "space1",
 				},
 				MeetingID: "2020-12-13",

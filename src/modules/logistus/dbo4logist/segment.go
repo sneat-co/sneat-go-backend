@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/slice"
 	"github.com/strongo/validation"
@@ -93,10 +93,10 @@ type SegmentsFilter struct {
 
 // Validate returns nil if the SegmentsFilter is valid, otherwise returns the first error.
 func (v SegmentsFilter) Validate() error {
-	if err := dbo4teamus.ValidateShippingPointID(v.FromShippingPointID); err != nil {
+	if err := dbo4spaceus.ValidateShippingPointID(v.FromShippingPointID); err != nil {
 		return validation.NewErrBadRequestFieldValue("fromShippingPointID", err.Error())
 	}
-	if err := dbo4teamus.ValidateShippingPointID(v.ToShippingPointID); err != nil {
+	if err := dbo4spaceus.ValidateShippingPointID(v.ToShippingPointID); err != nil {
 		return validation.NewErrBadRequestFieldValue("toShippingPointID", err.Error())
 	}
 	if err := briefs4contactus.ValidateContactIDRecordField("byContactID", v.ByContactID, false); err != nil {

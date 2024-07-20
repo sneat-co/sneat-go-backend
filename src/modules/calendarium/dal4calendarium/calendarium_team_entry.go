@@ -6,13 +6,13 @@ import (
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/const4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 )
 
 type CalendariumSpaceEntry = record.DataWithID[string, *dbo4calendarium.CalendariumSpaceDbo]
 
 func NewCalendariumSpaceKey(spaceID string) *dal.Key {
-	return dal4teamus.NewSpaceModuleKey(spaceID, const4calendarium.ModuleID)
+	return dal4spaceus.NewSpaceModuleKey(spaceID, const4calendarium.ModuleID)
 }
 
 func NewCalendariumSpaceEntry(spaceID string) CalendariumSpaceEntry {

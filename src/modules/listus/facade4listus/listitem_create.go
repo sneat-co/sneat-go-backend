@@ -8,7 +8,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/const4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/slice"
 )
@@ -18,14 +18,14 @@ func CreateListItems(ctx context.Context, userContext facade.User, request Creat
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4teamus.RunModuleSpaceWorker(ctx, userContext, request.SpaceRequest, const4listus.ModuleID, new(dbo4listus.ListusSpaceDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) error {
+	err = dal4spaceus.RunModuleSpaceWorker(ctx, userContext, request.SpaceRequest, const4listus.ModuleID, new(dbo4listus.ListusSpaceDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) error {
 			return createListItemTxWorker(ctx, request, tx, params)
 		})
 	return
 }
 
-func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) (err error) {
+func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) (err error) {
 	if err = params.GetRecords(ctx, tx); err != nil {
 		return err
 	}

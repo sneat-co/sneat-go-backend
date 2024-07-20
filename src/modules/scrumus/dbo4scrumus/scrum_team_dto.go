@@ -1,14 +1,14 @@
 package dbo4scrumus
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 )
 
 // ScrumSpaceDto is a DTO for scrum team
 type ScrumSpaceDto struct {
-	ScrumSettings *ScrumSettings               `json:"scrumSettings,omitempty" firestore:"scrumSettings,omitempty"`
-	Active        *dbo4teamus.SpaceMeetingInfo `json:"active,omitempty" firestore:"active,omitempty"`
-	Last          *dbo4teamus.SpaceMeetingInfo `json:"last,omitempty" firestore:"last,omitempty"`
+	ScrumSettings *ScrumSettings                `json:"scrumSettings,omitempty" firestore:"scrumSettings,omitempty"`
+	Active        *dbo4spaceus.SpaceMeetingInfo `json:"active,omitempty" firestore:"active,omitempty"`
+	Last          *dbo4spaceus.SpaceMeetingInfo `json:"last,omitempty" firestore:"last,omitempty"`
 }
 
 // Validate returns error if not valid

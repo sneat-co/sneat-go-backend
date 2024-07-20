@@ -2,14 +2,14 @@ package dto4contactus
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/strongo/validation"
 	"strings"
 )
 
 // ContactRequest defines a request for a single contact
 type ContactRequest struct {
-	dto4teamus.SpaceRequest
+	dto4spaceus.SpaceRequest
 	ContactID string `json:"contactID"`
 }
 
@@ -26,7 +26,7 @@ func (v ContactRequest) Validate() error {
 
 // ContactsRequest defines a request for a single contact
 type ContactsRequest struct {
-	dto4teamus.SpaceRequest
+	dto4spaceus.SpaceRequest
 	ContactIDs []string `json:"contactIDs"`
 }
 

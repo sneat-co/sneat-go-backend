@@ -3,7 +3,7 @@ package facade4retrospectus
 import (
 	"context"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"testing"
 )
@@ -19,7 +19,7 @@ func TestMoveRetroItem(t *testing.T) {
 			request := MoveRetroItemRequest{
 				Request: RetroRequest{
 					MeetingID: "non_existing_retro",
-					SpaceRequest: dto4teamus.SpaceRequest{
+					SpaceRequest: dto4spaceus.SpaceRequest{
 						SpaceID: "space1",
 					},
 				},
@@ -42,7 +42,7 @@ func TestMoveRetroItem(t *testing.T) {
 		request := MoveRetroItemRequest{
 			Request: RetroRequest{
 				MeetingID: "retro1",
-				SpaceRequest: dto4teamus.SpaceRequest{
+				SpaceRequest: dto4spaceus.SpaceRequest{
 					SpaceID: "space1",
 				},
 			},

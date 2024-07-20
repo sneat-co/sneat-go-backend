@@ -1,12 +1,12 @@
 package dbo4scrumus
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 )
 
 // ScrumSettings record
 type ScrumSettings struct {
-	Duration *dbo4teamus.MeetingDurationSettings `json:"duration" firestore:"duration"`
+	Duration *dbo4spaceus.MeetingDurationSettings `json:"duration" firestore:"duration"`
 }
 
 // Validate validates record

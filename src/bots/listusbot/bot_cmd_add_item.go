@@ -6,8 +6,8 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/bots/listusbot/dal4listusbot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/facade4listus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/core4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -57,7 +57,7 @@ var addBuyItemCommand = botsfw.Command{
 		request := facade4listus.CreateListItemsRequest{
 			ListRequest: facade4listus.ListRequest{
 				ListID: dbo4listus.GetFullListID(dbo4listus.ListTypeToBuy, "groceries"),
-				SpaceRequest: dto4teamus.SpaceRequest{
+				SpaceRequest: dto4spaceus.SpaceRequest{
 					SpaceID: spaceID,
 				},
 			},

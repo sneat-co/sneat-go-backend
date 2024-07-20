@@ -8,7 +8,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dbo4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )
@@ -22,7 +22,7 @@ func SetMetric(ctx context.Context, userContext facade.User, request SetMetricRe
 	uid := userContext.GetID()
 	err = runScrumWorker(ctx, userContext, request.Request,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params facade4meetingus.WorkerParams) (err error) {
-			var teamMetric *dbo4teamus.SpaceMetric
+			var teamMetric *dbo4spaceus.SpaceMetric
 			for _, m := range params.Space.Data.Metrics {
 				if m.ID == request.Metric {
 					teamMetric = m
@@ -65,7 +65,7 @@ type setMetricParams struct {
 	uid        string
 	request    SetMetricRequest
 	scrum      *dbo4scrumus.Scrum
-	teamMetric *dbo4teamus.SpaceMetric
+	teamMetric *dbo4spaceus.SpaceMetric
 }
 
 func setPersonalMetric(p setMetricParams, contactusSpace *models4contactus.ContactusSpaceDbo) (scrumUpdates []dal.Update, err error) {

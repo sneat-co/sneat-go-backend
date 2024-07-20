@@ -7,7 +7,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/const4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"github.com/strongo/validation"
@@ -21,10 +21,10 @@ func RevokeHappeningCancellation(ctx context.Context, user facade.User, request 
 	}
 
 	happening := dbo4calendarium.NewHappeningEntry(request.SpaceID, request.HappeningID)
-	err = dal4teamus.RunModuleSpaceWorker(ctx, user, request.SpaceRequest,
+	err = dal4spaceus.RunModuleSpaceWorker(ctx, user, request.SpaceRequest,
 		const4calendarium.ModuleID,
 		new(dbo4calendarium.CalendariumSpaceDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo]) (err error) {
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo]) (err error) {
 			if err = tx.Get(ctx, happening.Record); err != nil {
 				return fmt.Errorf("failed to get happening: %w", err)
 			}
@@ -52,7 +52,7 @@ func revokeSingleHappeningCancellation(ctx context.Context, tx dal.ReadwriteTran
 func revokeRecurringHappeningCancellation(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	params *dal4teamus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo],
+	params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo],
 	happening dbo4calendarium.HappeningEntry,
 	dateID string,
 	slotID string,
@@ -73,7 +73,7 @@ func revokeRecurringHappeningCancellation(
 	return nil
 }
 
-func removeCancellationFromHappeningBrief(params *dal4teamus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo], happening dbo4calendarium.HappeningEntry) error {
+func removeCancellationFromHappeningBrief(params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo], happening dbo4calendarium.HappeningEntry) error {
 	happeningBrief := params.SpaceModuleEntry.Data.GetRecurringHappeningBrief(happening.ID)
 	if happeningBrief == nil {
 		return nil

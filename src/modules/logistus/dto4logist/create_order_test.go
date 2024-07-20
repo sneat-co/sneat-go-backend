@@ -1,9 +1,9 @@
 package dto4logist
 
 import (
-	//"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	//"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -11,7 +11,7 @@ import (
 // TestCreateOrderRequest_Validate validates CreateOrderRequest.Validate() method
 func TestCreateOrderRequest_Validate(t *testing.T) {
 	type fields struct {
-		SpaceRequest       dto4teamus.SpaceRequest
+		SpaceRequest       dto4spaceus.SpaceRequest
 		Order              dbo4logist.OrderBase
 		NumberOfContainers map[string]int
 	}
@@ -22,7 +22,7 @@ func TestCreateOrderRequest_Validate(t *testing.T) {
 	}{
 		{name: "empty", fields: fields{}, expectedErr: "validation error: invalid request: bad value for field [space]: missing required field"},
 		{name: "should_pass", fields: fields{
-			SpaceRequest: dto4teamus.SpaceRequest{SpaceID: "space1"},
+			SpaceRequest: dto4spaceus.SpaceRequest{SpaceID: "space1"},
 			Order: dbo4logist.OrderBase{
 				Direction: dbo4logist.OrderDirectionExport,
 				Status:    dbo4logist.OrderStatusDraft,

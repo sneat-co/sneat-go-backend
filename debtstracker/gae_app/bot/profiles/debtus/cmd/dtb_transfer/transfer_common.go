@@ -10,7 +10,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/strongo/i18n"
 	"github.com/strongo/logus"
 	"math"
@@ -598,7 +598,7 @@ func CreateTransferFromBot(
 		return
 	}
 	request := dto.CreateTransferRequest{
-		SpaceRequest: dto4teamus.SpaceRequest{},
+		SpaceRequest: dto4spaceus.SpaceRequest{},
 		Amount:       amount,
 		DueOn:        &dueOn,
 		Interest:     &transferInterest,

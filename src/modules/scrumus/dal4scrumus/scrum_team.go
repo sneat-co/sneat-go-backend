@@ -5,7 +5,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 )
 
 const ScrumusModuleID = "scrumus"
@@ -13,8 +13,8 @@ const ScrumusModuleID = "scrumus"
 type ScrumSpaceEntry = record.DataWithID[string, *dbo4scrumus.ScrumSpaceDto]
 
 func NewScrumSpaceKey(id string) *dal.Key {
-	key := dal4teamus.NewSpaceKey(id)
-	return dal.NewKeyWithParentAndID(key, dal4teamus.SpaceModulesCollection, ScrumusModuleID)
+	key := dal4spaceus.NewSpaceKey(id)
+	return dal.NewKeyWithParentAndID(key, dal4spaceus.SpaceModulesCollection, ScrumusModuleID)
 }
 
 func NewScrumSpaceEntry(id string) ScrumSpaceEntry {

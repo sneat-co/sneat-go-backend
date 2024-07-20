@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"testing"
 )
@@ -20,13 +20,13 @@ func TestAddRetroItem(t *testing.T) {
 	t.Run("should_succeed", func(t *testing.T) {
 		t.Run("upcoming_retrospective", func(t *testing.T) {
 			newSpaceKey = func(id string) *dal.Key {
-				return dal.NewKeyWithID(dal4teamus.SpacesCollection, id)
+				return dal.NewKeyWithID(dal4spaceus.SpacesCollection, id)
 			}
 
 			request := AddRetroItemRequest{
 				RetroItemRequest: RetroItemRequest{
 					Request: facade4meetingus.Request{
-						SpaceRequest: dto4teamus.SpaceRequest{
+						SpaceRequest: dto4spaceus.SpaceRequest{
 							SpaceID: "space1",
 						},
 						MeetingID: UpcomingRetrospectiveID,

@@ -6,12 +6,12 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )
 
-type CalendariumSpaceWorkerParams = dal4teamus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo]
+type CalendariumSpaceWorkerParams = dal4spaceus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo]
 
 type HappeningWorkerParams struct {
 	*CalendariumSpaceWorkerParams
@@ -33,7 +33,7 @@ func RunHappeningSpaceWorker(
 	moduleSpaceWorker := func(
 		ctx context.Context,
 		tx dal.ReadwriteTransaction,
-		moduleSpaceParams *dal4teamus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo],
+		moduleSpaceParams *dal4spaceus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo],
 	) (err error) {
 		params := &HappeningWorkerParams{
 			CalendariumSpaceWorkerParams: moduleSpaceParams,

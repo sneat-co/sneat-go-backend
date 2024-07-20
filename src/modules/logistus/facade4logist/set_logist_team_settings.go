@@ -12,9 +12,9 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/const4logistus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/slice"
 )
@@ -28,10 +28,10 @@ func SetLogistSpaceSettings(
 	if err := request.Validate(); err != nil {
 		return err
 	}
-	return dal4teamus.RunModuleSpaceWorker(ctx, userContext, request.SpaceRequest,
+	return dal4spaceus.RunModuleSpaceWorker(ctx, userContext, request.SpaceRequest,
 		const4logistus.ModuleID,
 		new(dbo4logist.LogistSpaceDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4teamus.ModuleSpaceWorkerParams[*dbo4logist.LogistSpaceDbo]) (err error) {
+		func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4spaceus.ModuleSpaceWorkerParams[*dbo4logist.LogistSpaceDbo]) (err error) {
 			return setLogistSpaceSettingsTx(ctx /*userContext,*/, request, tx, teamWorkerParams)
 		},
 	)
@@ -42,7 +42,7 @@ func setLogistSpaceSettingsTx(
 	//userContext facade.User,
 	request dto4logist.SetLogistSpaceSettingsRequest,
 	tx dal.ReadwriteTransaction,
-	workerParams *dal4teamus.ModuleSpaceWorkerParams[*dbo4logist.LogistSpaceDbo],
+	workerParams *dal4spaceus.ModuleSpaceWorkerParams[*dbo4logist.LogistSpaceDbo],
 ) (err error) {
 	if workerParams.Space.Data.CountryID != request.Address.CountryID {
 		workerParams.Space.Data.CountryID = request.Address.CountryID
@@ -82,7 +82,7 @@ func setLogistSpaceSettingsTx(
 			createContactRequest.Roles = append(createContactRequest.Roles, string(role))
 		}
 
-		contactusWorkerParams := &dal4teamus.ModuleSpaceWorkerParams[*models4contactus.ContactusSpaceDbo]{
+		contactusWorkerParams := &dal4spaceus.ModuleSpaceWorkerParams[*models4contactus.ContactusSpaceDbo]{
 			SpaceWorkerParams: workerParams.SpaceWorkerParams,
 			SpaceModuleEntry:  dal4contactus.NewContactusSpaceModuleEntry(request.SpaceID),
 		}
@@ -95,7 +95,7 @@ func setLogistSpaceSettingsTx(
 		request := dto4contactus.UpdateContactRequest{
 			ContactRequest: dto4contactus.ContactRequest{
 				ContactID:    teamContact.ID,
-				SpaceRequest: dto4teamus.SpaceRequest{SpaceID: request.SpaceID},
+				SpaceRequest: dto4spaceus.SpaceRequest{SpaceID: request.SpaceID},
 			},
 			VatNumber: &request.VATNumber,
 		}
@@ -122,7 +122,7 @@ func setLogistSpaceSettingsTx(
 	return nil
 }
 
-func updateLogistSpace(logistSpaceDbo *dbo4logist.LogistSpaceDbo, spaceDbo *dbo4teamus.SpaceDbo, teamContact dal4contactus.ContactEntry, request dto4logist.SetLogistSpaceSettingsRequest) (updates []dal.Update) {
+func updateLogistSpace(logistSpaceDbo *dbo4logist.LogistSpaceDbo, spaceDbo *dbo4spaceus.SpaceDbo, teamContact dal4contactus.ContactEntry, request dto4logist.SetLogistSpaceSettingsRequest) (updates []dal.Update) {
 	if logistSpaceDbo.ContactID != teamContact.ID {
 		logistSpaceDbo.ContactID = teamContact.ID
 		updates = append(updates, dal.Update{Field: "contactID", Value: teamContact.ID})

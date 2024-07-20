@@ -1,7 +1,7 @@
 package dto4assetus
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
 )
@@ -9,7 +9,7 @@ import (
 type AssetRequest struct {
 	AssetID       string
 	AssetCategory string
-	dto4teamus.SpaceRequest
+	dto4spaceus.SpaceRequest
 }
 
 func (v AssetRequest) Validate() error {

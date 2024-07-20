@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 )
 
 //var fsRunTransaction = db.RunTransaction
@@ -17,7 +17,7 @@ var txUpdate = func(ctx context.Context, updater dal.ReadwriteTransaction, key *
 	return updater.Update(ctx, key, updates, preconditions...)
 }
 
-var txUpdateSpace = dal4teamus.TxUpdateSpace
+var txUpdateSpace = dal4spaceus.TxUpdateSpace
 
 var txCreateRetrospective = func(ctx context.Context, tx dal.ReadwriteTransaction, key *dal.Key, retrospective *dbo4retrospectus.Retrospective) error {
 	if retrospective.Version == 0 {

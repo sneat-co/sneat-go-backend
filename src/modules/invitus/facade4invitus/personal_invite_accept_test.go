@@ -9,9 +9,9 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dbo4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/dbo4invitus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
@@ -86,7 +86,7 @@ func Test_createOrUpdateUserRecord(t *testing.T) {
 		teamRecordError   error
 		inviteRecordError error
 		request           AcceptPersonalInviteRequest
-		team              dal4teamus.SpaceEntry
+		team              dal4spaceus.SpaceEntry
 		teamMember        dbmodels.DtoWithID[*briefs4contactus.ContactBase]
 		invite            PersonalInviteEntry
 	}
@@ -101,8 +101,8 @@ func Test_createOrUpdateUserRecord(t *testing.T) {
 			args: args{
 				user:            dbo4userus.NewUserEntry("test_user_id"),
 				userRecordError: dal.ErrRecordNotFound,
-				team: dal4teamus.NewSpaceEntryWithDto("testteamid", &dbo4teamus.SpaceDbo{
-					SpaceBrief: dbo4teamus.SpaceBrief{
+				team: dal4spaceus.NewSpaceEntryWithDto("testteamid", &dbo4spaceus.SpaceDbo{
+					SpaceBrief: dbo4spaceus.SpaceBrief{
 						RequiredCountryID: with.RequiredCountryID{
 							CountryID: with.UnknownCountryID,
 						},
@@ -136,7 +136,7 @@ func Test_createOrUpdateUserRecord(t *testing.T) {
 						RemoteAddr: "localhost",
 					},
 					InviteRequest: InviteRequest{
-						SpaceRequest: dto4teamus.SpaceRequest{
+						SpaceRequest: dto4spaceus.SpaceRequest{
 							SpaceID: "testteamid",
 						},
 						InviteID: "test_personal_invite_id",
@@ -272,7 +272,7 @@ func Test_updateSpaceRecord(t *testing.T) {
 	type args struct {
 		uid            string
 		memberID       string
-		team           dal4teamus.SpaceEntry
+		team           dal4spaceus.SpaceEntry
 		contactusSpace dal4contactus.ContactusSpaceModuleEntry
 		requestMember  dbmodels.DtoWithID[*briefs4contactus.ContactBase]
 	}
@@ -293,8 +293,8 @@ func Test_updateSpaceRecord(t *testing.T) {
 			args: args{
 				uid:      "test_user_id",
 				memberID: "test_member_id1",
-				team: dal4teamus.NewSpaceEntryWithDto("testteamid", &dbo4teamus.SpaceDbo{
-					SpaceBrief: dbo4teamus.SpaceBrief{
+				team: dal4spaceus.NewSpaceEntryWithDto("testteamid", &dbo4spaceus.SpaceDbo{
+					SpaceBrief: dbo4spaceus.SpaceBrief{
 						Type:  "family",
 						Title: "Family",
 					},

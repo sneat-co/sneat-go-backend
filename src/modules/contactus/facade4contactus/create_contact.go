@@ -11,8 +11,8 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dbo4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dto4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/core4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
@@ -34,8 +34,8 @@ func CreateContact(
 		return response, fmt.Errorf("invalid CreateContactRequest: %w", err)
 	}
 
-	err = dal4teamus.CreateSpaceItem(ctx, userContext, request.SpaceRequest, const4contactus.ModuleID, new(models4contactus.ContactusSpaceDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleSpaceWorkerParams[*models4contactus.ContactusSpaceDbo]) (err error) {
+	err = dal4spaceus.CreateSpaceItem(ctx, userContext, request.SpaceRequest, const4contactus.ModuleID, new(models4contactus.ContactusSpaceDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*models4contactus.ContactusSpaceDbo]) (err error) {
 			var contact dal4contactus.ContactEntry
 			if contact, err = CreateContactTx(ctx, tx, userCanBeNonSpaceMember, request, params); err != nil {
 				return err
@@ -62,7 +62,7 @@ func CreateContactTx(
 	tx dal.ReadwriteTransaction,
 	userCanBeNonSpaceMember bool,
 	request dto4contactus.CreateContactRequest,
-	params *dal4teamus.ModuleSpaceWorkerParams[*models4contactus.ContactusSpaceDbo],
+	params *dal4spaceus.ModuleSpaceWorkerParams[*models4contactus.ContactusSpaceDbo],
 ) (
 	contact dal4contactus.ContactEntry,
 	err error,

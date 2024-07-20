@@ -5,7 +5,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dbo4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/strongoapp/with"
@@ -14,7 +14,7 @@ import (
 
 // CreateContactRequest DTO
 type CreateContactRequest struct {
-	dto4teamus.SpaceRequest
+	dto4spaceus.SpaceRequest
 	with.RolesField
 	ParentContactID string                       `json:"parentContactID,omitempty"`
 	Type            briefs4contactus.ContactType `json:"type"`

@@ -6,7 +6,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/const4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )
@@ -22,7 +22,7 @@ func DeleteList(ctx context.Context, user facade.User, request ListRequest) (err
 	}
 	listType := request.ListType()
 	id := dbo4listus.GetFullListID(listType, request.ListID)
-	briefsAdapter := dal4teamus.NewMapBriefsAdapter(
+	briefsAdapter := dal4spaceus.NewMapBriefsAdapter(
 		func(teamModuleDbo *dbo4listus.ListusSpaceDbo) int {
 			return len(teamModuleDbo.Lists)
 		},
@@ -31,11 +31,11 @@ func DeleteList(ctx context.Context, user facade.User, request ListRequest) (err
 			return []dal.Update{{Field: "lists." + id, Value: dal.DeleteField}}, teamModuleDbo.Validate()
 		},
 	)
-	spaceItemRequest := dal4teamus.SpaceItemRequest{
+	spaceItemRequest := dal4spaceus.SpaceItemRequest{
 		SpaceRequest: request.SpaceRequest,
 		ID:           id,
 	}
-	err = dal4teamus.DeleteSpaceItem(
+	err = dal4spaceus.DeleteSpaceItem(
 		ctx,
 		user,
 		spaceItemRequest,
@@ -50,6 +50,6 @@ func DeleteList(ctx context.Context, user facade.User, request ListRequest) (err
 	return
 }
 
-func deleteListTxWorker(_ context.Context, _ dal.ReadwriteTransaction, _ *dal4teamus.SpaceItemWorkerParams[*dbo4listus.ListusSpaceDbo, *dbo4listus.ListDbo]) (err error) {
+func deleteListTxWorker(_ context.Context, _ dal.ReadwriteTransaction, _ *dal4spaceus.SpaceItemWorkerParams[*dbo4listus.ListusSpaceDbo, *dbo4listus.ListDbo]) (err error) {
 	return errors.New("not implemented")
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dto4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -82,7 +82,7 @@ func updateUserRecordOnSpaceMemberRemoved(user *dbo4userus.UserDbo, spaceID stri
 }
 
 func removeMemberFromSpaceRecord(
-	params *dal4teamus.SpaceWorkerParams,
+	params *dal4spaceus.SpaceWorkerParams,
 	contactUserID string,
 	membersCount int,
 ) {
@@ -90,8 +90,8 @@ func removeMemberFromSpaceRecord(
 		params.Space.Data.UserIDs = slice.RemoveInPlace(contactUserID, params.Space.Data.UserIDs)
 		params.SpaceUpdates = append(params.SpaceUpdates, dal.Update{Field: "userIDs", Value: params.Space.Data.UserIDs})
 	}
-	//if params.Space.Data.NumberOf[dbo4teamus.NumberOfMembersFieldName] != membersCount {
-	//	params.SpaceUpdates = append(params.SpaceUpdates, params.Space.Data.SetNumberOf(dbo4teamus.NumberOfMembersFieldName, membersCount))
+	//if params.Space.Data.NumberOf[dbo4spaceus.NumberOfMembersFieldName] != membersCount {
+	//	params.SpaceUpdates = append(params.SpaceUpdates, params.Space.Data.SetNumberOf(dbo4spaceus.NumberOfMembersFieldName, membersCount))
 	//}
 }
 

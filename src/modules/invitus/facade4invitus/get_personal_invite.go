@@ -7,14 +7,14 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/dbo4invitus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )
 
 // GetPersonalInviteRequest holds parameters for creating a personal invite
 type GetPersonalInviteRequest struct {
-	dto4teamus.SpaceRequest
+	dto4spaceus.SpaceRequest
 	InviteID string `json:"inviteID"`
 }
 

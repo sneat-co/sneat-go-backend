@@ -4,15 +4,15 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 	"time"
 )
 
 type InviteRequest struct {
-	dto4teamus.SpaceRequest
+	dto4spaceus.SpaceRequest
 	InviteID string `json:"inviteID"`
 	Pin      string `json:"pin"`
 }
@@ -39,7 +39,7 @@ func RejectPersonalInvite(ctx context.Context, userContext facade.User, request 
 	if err = request.Validate(); err != nil {
 		return err
 	}
-	team := dal4teamus.NewSpaceEntry(request.SpaceID)
+	team := dal4spaceus.NewSpaceEntry(request.SpaceID)
 	invite := NewPersonalInviteEntry(request.InviteID)
 	uid := userContext.GetID()
 

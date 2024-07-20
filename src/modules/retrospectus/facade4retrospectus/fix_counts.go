@@ -6,7 +6,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dal4retrospectus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"time"
@@ -19,7 +19,7 @@ func FixCounts(ctx context.Context, userContext facade.User, request FixCountsRe
 	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		now := time.Now()
 		userRef := dbo4userus.NewUserKey(uid)
-		team := dal4teamus.NewSpaceEntry(request.SpaceID)
+		team := dal4spaceus.NewSpaceEntry(request.SpaceID)
 		var retroSpace dal4retrospectus.RetroSpaceEntry
 		retroSpace, err = dal4retrospectus.GetRetroSpaceEntry(ctx, tx, request.SpaceID)
 		user := new(dbo4userus.UserDbo)

@@ -9,7 +9,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/slice"
 	"github.com/strongo/strongoapp/with"
@@ -53,10 +53,10 @@ func CreateHappening(
 			}
 		}
 	}
-	err = dal4teamus.CreateSpaceItem(ctx, user, request.SpaceRequest,
+	err = dal4spaceus.CreateSpaceItem(ctx, user, request.SpaceRequest,
 		const4calendarium.ModuleID,
 		new(dbo4calendarium.CalendariumSpaceDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo]) (err error) {
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo]) (err error) {
 			response, err = createHappeningTx(ctx, tx, happeningDto, params)
 			return
 		},
@@ -69,7 +69,7 @@ func createHappeningTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	happeningDto *dbo4calendarium.HappeningDbo,
-	params *dal4teamus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo],
+	params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo],
 ) (
 	response dto4calendarium.CreateHappeningResponse, err error,
 ) {
@@ -140,7 +140,7 @@ func createHappeningTx(
 
 	var happeningID string
 	var happeningKey *dal.Key
-	if happeningID, happeningKey, err = dal4teamus.GenerateNewSpaceModuleItemKey(
+	if happeningID, happeningKey, err = dal4spaceus.GenerateNewSpaceModuleItemKey(
 		ctx, tx, params.Space.ID, moduleID, happeningsCollection, 5, 10); err != nil {
 		return response, err
 	}

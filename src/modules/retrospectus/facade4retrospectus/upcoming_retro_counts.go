@@ -17,7 +17,7 @@ package facade4retrospectus
 //		return errors.New("now is a required parameter")
 //	}
 //	teamKey := newSpaceKey(spaceID)
-//	var team dbo4teamus.TeamContext
+//	var team dbo4spaceus.TeamContext
 //	var teamRecord dal.Record
 //	if team, err = txGetTeamByID(ctx, tx, spaceID); err != nil {
 //		return err

@@ -3,7 +3,7 @@ package dto4logist
 import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
 )
@@ -34,7 +34,7 @@ func (v ContainerPointsRequest) Validate() error {
 		return validation.NewErrRequestIsMissingRequiredField("shippingPointIDs")
 	}
 	for i, shippingPointID := range v.ShippingPointIDs {
-		if err := dbo4teamus.ValidateShippingPointID(shippingPointID); err != nil {
+		if err := dbo4spaceus.ValidateShippingPointID(shippingPointID); err != nil {
 			return validation.NewErrBadRequestFieldValue(fmt.Sprintf("shippingPointIDs[%v]", i), err.Error())
 		}
 	}
@@ -49,7 +49,7 @@ func (v ContainerPointRequest) Validate() error {
 	if err := validateContainerID("containerID", v.ContainerID); err != nil {
 		return validation.NewBadRequestError(err)
 	}
-	if err := dbo4teamus.ValidateShippingPointID(v.ShippingPointID); err != nil {
+	if err := dbo4spaceus.ValidateShippingPointID(v.ShippingPointID); err != nil {
 		return validation.NewErrBadRequestFieldValue("shippingPointID", err.Error())
 	}
 	return nil
@@ -87,7 +87,7 @@ func (v UpdateContainerPointRequest) Validate() error {
 	if err := v.OrderRequest.Validate(); err != nil {
 		return err
 	}
-	if err := dbo4teamus.ValidateShippingPointID(v.ShippingPointID); err != nil {
+	if err := dbo4spaceus.ValidateShippingPointID(v.ShippingPointID); err != nil {
 		return validation.NewErrBadRequestFieldValue("shippingPointID", err.Error())
 	}
 	if err := validateContainerID("containerID", v.ContainerID); err != nil {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
 	"strings"
@@ -72,8 +72,8 @@ func (v LogistSpaceDbo) Validate() error {
 type LogistSpaceEntry = record.DataWithID[string, *LogistSpaceDbo]
 
 func newLogistSpaceKey(spaceID string) *dal.Key {
-	key := dal4teamus.NewSpaceKey(spaceID)
-	return dal.NewKeyWithParentAndID(key, dal4teamus.SpaceModulesCollection, ModuleID)
+	key := dal4spaceus.NewSpaceKey(spaceID)
+	return dal.NewKeyWithParentAndID(key, dal4spaceus.SpaceModulesCollection, ModuleID)
 }
 
 // NewLogistSpaceEntry creates new LogistSpaceEntry

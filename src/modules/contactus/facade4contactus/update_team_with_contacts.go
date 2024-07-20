@@ -8,7 +8,7 @@ package facade4contactus
 //		value = numberOfContacts
 //	}
 //	return dal.Update{
-//		Field: dbo4teamus.NumberOfUpdateField(const4contactus.ContactsField),
+//		Field: dbo4spaceus.NumberOfUpdateField(const4contactus.ContactsField),
 //		Value: value,
 //	}
 //}

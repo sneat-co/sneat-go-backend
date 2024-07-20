@@ -7,7 +7,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/const4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"github.com/strongo/validation"
@@ -19,10 +19,10 @@ func DeleteSlot(ctx context.Context, user facade.User, request dto4calendarium.D
 		return
 	}
 
-	err = dal4teamus.RunModuleSpaceWorker(ctx, user, request.SpaceRequest,
+	err = dal4spaceus.RunModuleSpaceWorker(ctx, user, request.SpaceRequest,
 		const4calendarium.ModuleID,
 		new(dbo4calendarium.CalendariumSpaceDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo]) (err error) {
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo]) (err error) {
 			return deleteSlotTxWorker(ctx, tx, params, request)
 		})
 	if err != nil {
@@ -31,7 +31,7 @@ func DeleteSlot(ctx context.Context, user facade.User, request dto4calendarium.D
 	return
 }
 
-func deleteSlotTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4teamus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo], request dto4calendarium.DeleteHappeningSlotRequest) (err error) {
+func deleteSlotTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo], request dto4calendarium.DeleteHappeningSlotRequest) (err error) {
 	happening := dbo4calendarium.NewHappeningEntry(request.SpaceID, request.HappeningID)
 	hasHappeningRecord := true
 	if err = tx.GetMulti(ctx, []dal.Record{happening.Record, params.SpaceModuleEntry.Record}); err != nil {
@@ -82,7 +82,7 @@ func removeSlotFromSingleHappening(
 func removeSlotFromRecurringHappening(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	params *dal4teamus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo],
+	params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo],
 	happening dbo4calendarium.HappeningEntry,
 	request dto4calendarium.DeleteHappeningSlotRequest,
 ) error {
@@ -143,7 +143,7 @@ func removeSlotFromHappeningDbo(
 }
 
 func removeSlotFromHappeningBriefInSpaceRecord(
-	params *dal4teamus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo],
+	params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo],
 	happening dbo4calendarium.HappeningEntry,
 	request dto4calendarium.DeleteHappeningSlotRequest,
 ) error {

@@ -5,7 +5,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	core "github.com/sneat-co/sneat-go-core"
 )
 
@@ -23,6 +23,6 @@ func NewAssetKey(teamID, assetID string) *dal.Key {
 	if !core.IsAlphanumericOrUnderscore(assetID) {
 		panic(fmt.Errorf("assetID should be alphanumeric, got: [%s]", assetID))
 	}
-	teamModuleKey := dal4teamus.NewSpaceModuleKey(teamID, const4assetus.ModuleID)
+	teamModuleKey := dal4spaceus.NewSpaceModuleKey(teamID, const4assetus.ModuleID)
 	return dal.NewKeyWithParentAndID(teamModuleKey, dbo4assetus.SpaceAssetsCollection, assetID)
 }

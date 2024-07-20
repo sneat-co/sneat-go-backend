@@ -6,7 +6,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dal4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
@@ -34,7 +34,7 @@ func (v *OrderChanges) AddChanges(v2 OrderChanges) OrderChanges {
 
 // OrderWorkerParams passes data to a order worker
 type OrderWorkerParams struct {
-	SpaceWorkerParams *dal4teamus.SpaceWorkerParams
+	SpaceWorkerParams *dal4spaceus.SpaceWorkerParams
 	Order             dbo4logist.Order
 	Changed           OrderChanges
 	// OrderUpdates     []dal.Update
@@ -45,7 +45,7 @@ var RunOrderWorker = func(ctx context.Context, user facade.User, request dto4log
 	if err := request.Validate(); err != nil {
 		return fmt.Errorf("invalid order request: %w", err)
 	}
-	return dal4teamus.RunSpaceWorker(ctx, user, request.SpaceID, func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4teamus.SpaceWorkerParams) (err error) {
+	return dal4spaceus.RunSpaceWorker(ctx, user, request.SpaceID, func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4spaceus.SpaceWorkerParams) (err error) {
 		order := dbo4logist.NewOrder(teamWorkerParams.Space.ID, request.OrderID)
 		params := OrderWorkerParams{
 			SpaceWorkerParams: teamWorkerParams,

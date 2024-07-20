@@ -3,7 +3,7 @@ package facade4listus
 import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
 	"strings"
@@ -11,7 +11,7 @@ import (
 
 // ListRequest DTO
 type ListRequest struct {
-	dto4teamus.SpaceRequest
+	dto4spaceus.SpaceRequest
 	ListID   string `json:"listID"`
 	listType dbo4listus.ListType
 }
@@ -48,7 +48,7 @@ func (v *ListRequest) Validate() error {
 
 // CreateListRequest DTO
 type CreateListRequest struct {
-	dto4teamus.SpaceRequest
+	dto4spaceus.SpaceRequest
 	Type  string `json:"type"`
 	Title string `json:"title"`
 }

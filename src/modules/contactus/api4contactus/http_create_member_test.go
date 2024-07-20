@@ -8,7 +8,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dbo4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dto4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/apicore/httpmock"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -24,7 +24,7 @@ func TestHttpAddMember(t *testing.T) {
 
 	const teamID = "unit-test"
 	request := dal4contactus.CreateMemberRequest{
-		SpaceRequest: dto4teamus.SpaceRequest{
+		SpaceRequest: dto4spaceus.SpaceRequest{
 			SpaceID: teamID,
 		},
 		WithRelated: dbo4linkage.WithRelated{

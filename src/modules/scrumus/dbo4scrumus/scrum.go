@@ -3,7 +3,7 @@ package dbo4scrumus
 import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/dbo4meetingus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dbo4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
 	"strings"
@@ -176,12 +176,12 @@ func (v *MetricRecord) Validate() error {
 // Scrum record
 type Scrum struct {
 	dbo4meetingus.Meeting
-	RisksCount     int                       `json:"risksCount,omitempty" firestore:"risksCount,omitempty"`
-	QuestionsCount int                       `json:"questionsCount,omitempty" firestore:"questionsCount,omitempty"`
-	Statuses       ScrumStatusByMember       `json:"statuses,omitempty" firestore:"statuses,omitempty"`
-	ScrumIDs       *ScrumIDs                 `json:"scrumIDs,omitempty" firestore:"scrumIDs,omitempty"`
-	Metrics        []*dbo4teamus.SpaceMetric `json:"metrics,omitempty" firestore:"metrics,omitempty"`
-	SpaceMetrics   []*MetricRecord           `json:"spaceMetrics,omitempty" firestore:"spaceMetrics,omitempty"`
+	RisksCount     int                        `json:"risksCount,omitempty" firestore:"risksCount,omitempty"`
+	QuestionsCount int                        `json:"questionsCount,omitempty" firestore:"questionsCount,omitempty"`
+	Statuses       ScrumStatusByMember        `json:"statuses,omitempty" firestore:"statuses,omitempty"`
+	ScrumIDs       *ScrumIDs                  `json:"scrumIDs,omitempty" firestore:"scrumIDs,omitempty"`
+	Metrics        []*dbo4spaceus.SpaceMetric `json:"metrics,omitempty" firestore:"metrics,omitempty"`
+	SpaceMetrics   []*MetricRecord            `json:"spaceMetrics,omitempty" firestore:"spaceMetrics,omitempty"`
 }
 
 var _ dbo4meetingus.MeetingInstance = (*Scrum)(nil)

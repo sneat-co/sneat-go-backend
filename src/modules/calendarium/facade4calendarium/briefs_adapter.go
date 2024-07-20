@@ -1,7 +1,7 @@
 package facade4calendarium
 
 //var briefsAdapter = func(listType dbo4listus.ListType, listID string) facade4teamus.BriefsAdapter {
-//	getListGroupByListID := func(team *dbo4teamus.TeamDto) *dbo4listus.ListGroup {
+//	getListGroupByListID := func(team *dbo4spaceus.TeamDto) *dbo4listus.ListGroup {
 //		for _, lg := range team.ListGroups {
 //			for _, l := range lg.Lists {
 //				if l.ContactID == listID {
@@ -15,7 +15,7 @@ package facade4calendarium
 //		return nil
 //	}
 //
-//	getListGroupByID := func(team *dbo4teamus.TeamDto) *dbo4listus.ListGroup {
+//	getListGroupByID := func(team *dbo4spaceus.TeamDto) *dbo4listus.ListGroup {
 //		for _, lg := range team.ListGroups {
 //			if lg.Role == listType {
 //				return lg
@@ -26,10 +26,10 @@ package facade4calendarium
 //		return lg
 //	}
 //
-//	var teamCache *dbo4teamus.TeamDto
+//	var teamCache *dbo4spaceus.TeamDto
 //	var listGroupCache *dbo4listus.ListGroup
 //
-//	getListGroup := func(team *dbo4teamus.TeamDto) *dbo4listus.ListGroup {
+//	getListGroup := func(team *dbo4spaceus.TeamDto) *dbo4listus.ListGroup {
 //		if team == nil {
 //			panic("space == nil")
 //		}
@@ -50,26 +50,26 @@ package facade4calendarium
 //
 //	return facade4teamus.BriefsAdapter{
 //		BriefsFieldName: "listGroups." + listType,
-//		BriefsValue: func(team *dbo4teamus.TeamDto) interface{} {
+//		BriefsValue: func(team *dbo4spaceus.TeamDto) interface{} {
 //			lg := getListGroup(team)
 //			return lg.Lists
 //		},
-//		GetBriefsCount: func(team *dbo4teamus.TeamDto) int {
+//		GetBriefsCount: func(team *dbo4spaceus.TeamDto) int {
 //			lg := getListGroup(team)
 //			return len(lg.Lists)
 //		},
-//		GetBriefItemID: func(team *dbo4teamus.TeamDto, i int) (id string) {
+//		GetBriefItemID: func(team *dbo4spaceus.TeamDto, i int) (id string) {
 //			lg := getListGroup(team)
 //			return lg.Lists[i].ContactID
 //		},
-//		ShiftBriefs: func(team *dbo4teamus.TeamDto, from facade4teamus.SliceIndexes, to facade4teamus.SliceIndexes) {
+//		ShiftBriefs: func(team *dbo4spaceus.TeamDto, from facade4teamus.SliceIndexes, to facade4teamus.SliceIndexes) {
 //			lg := getListGroup(team)
 //			copy(
 //				lg.Lists[to.Departs:to.Arrives],
 //				lg.Lists[from.Departs:from.Arrives],
 //			)
 //		},
-//		TrimBriefs: func(team *dbo4teamus.TeamDto, count int) {
+//		TrimBriefs: func(team *dbo4spaceus.TeamDto, count int) {
 //			lg := getListGroup(team)
 //			lg.Lists = lg.Lists[:count]
 //		},

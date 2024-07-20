@@ -3,13 +3,13 @@ package dto4calendarium
 import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/strongo/validation"
 )
 
 // CreateHappeningRequest DTO
 type CreateHappeningRequest struct {
-	dto4teamus.SpaceRequest
+	dto4spaceus.SpaceRequest
 	Happening *dbo4calendarium.HappeningBrief `json:"happening"`
 }
 

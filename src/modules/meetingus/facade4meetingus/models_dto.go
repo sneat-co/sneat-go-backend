@@ -2,7 +2,7 @@ package facade4meetingus
 
 import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/dbo4meetingus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 	"strings"
@@ -10,7 +10,7 @@ import (
 
 // Request base for api4meetingus requests
 type Request struct {
-	dto4teamus.SpaceRequest
+	dto4spaceus.SpaceRequest
 	MeetingID string `json:"meetingID"`
 }
 

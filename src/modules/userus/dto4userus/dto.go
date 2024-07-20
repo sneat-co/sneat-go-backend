@@ -2,8 +2,8 @@ package dto4userus
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/core4teamus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/teamus/dto4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/sneat-co/sneat-go-core/security"
@@ -33,12 +33,12 @@ func (v InitSpaceInfo) Validate() error {
 
 // InitUserRecordRequest request
 type InitUserRecordRequest struct {
-	AuthProvider    string                         `json:"authProvider,omitempty"`
-	Email           string                         `json:"email,omitempty"`
-	EmailIsVerified bool                           `json:"emailIsVerified,omitempty"`
-	IanaTimezone    string                         `json:"ianaTimezone,omitempty"`
-	Names           *person.NameFields             `json:"names"`
-	Space           *dto4teamus.CreateSpaceRequest `json:"space,omitempty"`
+	AuthProvider    string                          `json:"authProvider,omitempty"`
+	Email           string                          `json:"email,omitempty"`
+	EmailIsVerified bool                            `json:"emailIsVerified,omitempty"`
+	IanaTimezone    string                          `json:"ianaTimezone,omitempty"`
+	Names           *person.NameFields              `json:"names"`
+	Space           *dto4spaceus.CreateSpaceRequest `json:"space,omitempty"`
 	//
 	RemoteClient dbmodels.RemoteClientInfo `json:"remoteClient"`
 }
