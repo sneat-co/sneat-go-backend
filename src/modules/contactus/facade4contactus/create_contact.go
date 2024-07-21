@@ -11,7 +11,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dbo4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dto4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -179,7 +179,7 @@ func CreateContactTx(
 	} else {
 		contactID = request.ContactID
 	}
-	if contactDbo.CountryID == "" && params.Space.Data.CountryID != "" && params.Space.Data.Type == core4teamus.SpaceTypeFamily {
+	if contactDbo.CountryID == "" && params.Space.Data.CountryID != "" && params.Space.Data.Type == core4spaceus.SpaceTypeFamily {
 		contactDbo.CountryID = params.Space.Data.CountryID
 	}
 	params.SpaceModuleEntry.Data.AddContact(contactID, &contactDbo.ContactBrief)

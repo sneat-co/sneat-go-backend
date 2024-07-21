@@ -3,7 +3,7 @@ package dbo4spaceus
 import (
 	"errors"
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/slice"
 	"github.com/strongo/strongoapp/with"
@@ -101,9 +101,9 @@ type SpaceMeetings struct {
 
 // SpaceBrief is a base class for SpaceDbo
 type SpaceBrief struct {
-	Type   core4teamus.SpaceType `json:"type" firestore:"type"`
-	Title  string                `json:"title" firestore:"title"`
-	Status dbmodels.Status       `json:"status" firestore:"status"`
+	Type   core4spaceus.SpaceType `json:"type" firestore:"type"`
+	Title  string                 `json:"title" firestore:"title"`
+	Status dbmodels.Status        `json:"status" firestore:"status"`
 
 	Modules []string `json:"modules,omitempty" firestore:"modules,omitempty"`
 
@@ -118,10 +118,10 @@ func (v SpaceBrief) Validate() error {
 	if v.Type == "" {
 		return validation.NewErrRecordIsMissingRequiredField("type")
 	}
-	if v.Type != core4teamus.SpaceTypeFamily && v.Title == "" {
+	if v.Type != core4spaceus.SpaceTypeFamily && v.Title == "" {
 		return errors.New("non family team is required to have a title")
 	}
-	if !core4teamus.IsValidSpaceType(v.Type) {
+	if !core4spaceus.IsValidSpaceType(v.Type) {
 		if v.Title == "" {
 			return validation.NewErrBadRecordFieldValue("type", "unknown value")
 		}

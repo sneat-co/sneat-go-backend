@@ -6,7 +6,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/bots/listusbot/dal4listusbot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/facade4listus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
@@ -46,7 +46,7 @@ var addBuyItemCommand = botsfw.Command{
 		spaceID := listusChatData.SpaceID
 
 		if spaceID == "" {
-			familySpaceID, familySpaceBrief := user.Data.GetSpaceBriefByType(core4teamus.SpaceTypeFamily)
+			familySpaceID, familySpaceBrief := user.Data.GetSpaceBriefByType(core4spaceus.SpaceTypeFamily)
 			if familySpaceBrief == nil {
 				m = whc.NewMessage("You are not a member of any family team")
 				return m, nil

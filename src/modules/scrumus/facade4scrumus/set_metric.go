@@ -34,10 +34,10 @@ func SetMetric(ctx context.Context, userContext facade.User, request SetMetricRe
 			}
 			var scrumUpdates []dal.Update
 			p := setMetricParams{
-				uid:        uid,
-				request:    request,
-				scrum:      params.Meeting.Record.Data().(*dbo4scrumus.Scrum),
-				teamMetric: teamMetric,
+				uid:         uid,
+				request:     request,
+				scrum:       params.Meeting.Record.Data().(*dbo4scrumus.Scrum),
+				spaceMetric: teamMetric,
 			}
 			switch teamMetric.Mode {
 			case "space":
@@ -62,10 +62,10 @@ func SetMetric(ctx context.Context, userContext facade.User, request SetMetricRe
 }
 
 type setMetricParams struct {
-	uid        string
-	request    SetMetricRequest
-	scrum      *dbo4scrumus.Scrum
-	teamMetric *dbo4spaceus.SpaceMetric
+	uid         string
+	request     SetMetricRequest
+	scrum       *dbo4scrumus.Scrum
+	spaceMetric *dbo4spaceus.SpaceMetric
 }
 
 func setPersonalMetric(p setMetricParams, contactusSpace *models4contactus.ContactusSpaceDbo) (scrumUpdates []dal.Update, err error) {
@@ -137,7 +137,7 @@ func setMetric(p setMetricParams, metrics []*dbo4scrumus.MetricRecord) (changed 
 	}
 	isExistingRecord = false
 UpdateMetric:
-	switch p.teamMetric.Type {
+	switch p.spaceMetric.Type {
 	case "bool":
 		if p.request.Bool == nil {
 			err = validation.NewErrRecordIsMissingRequiredField("bool")
@@ -169,7 +169,7 @@ UpdateMetric:
 	metrics = append(metrics, metric)
 	changed = true
 	if !isExistingRecord {
-		p.scrum.Metrics = append(p.scrum.Metrics, p.teamMetric)
+		p.scrum.Metrics = append(p.scrum.Metrics, p.spaceMetric)
 		scrumUpdates = []dal.Update{{
 			Field: "spaceMetrics",
 			Value: metrics,

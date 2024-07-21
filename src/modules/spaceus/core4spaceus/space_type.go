@@ -1,4 +1,4 @@
-package core4teamus
+package core4spaceus
 
 type SpaceType string
 

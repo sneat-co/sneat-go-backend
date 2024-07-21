@@ -6,7 +6,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/facade4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/facade4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dto4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -46,7 +46,7 @@ func InitUserRecord(ctx context.Context, userContext facade.User, request dto4us
 			}
 		}
 		if !hasSpaceOfSameType && request.Space != nil {
-			if _, err = facade4teamus.CreateSpace(ctx, userContext, *request.Space); err != nil {
+			if _, err = facade4spaceus.CreateSpace(ctx, userContext, *request.Space); err != nil {
 				err = fmt.Errorf("failed to create team for user: %w", err)
 				return
 			}

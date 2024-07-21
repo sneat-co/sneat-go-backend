@@ -2,7 +2,7 @@ package dbo4invitus
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
 	"github.com/sneat-co/sneat-go-core"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/sneat-co/sneat-go-core/models/dbprofile"
@@ -135,9 +135,9 @@ func (v Joiners) Validate() error {
 
 // InviteSpace a summary on team for which an invitation has been created
 type InviteSpace struct {
-	ID    string                `json:"id,omitempty" firestore:"id,omitempty"`
-	Type  core4teamus.SpaceType `json:"type" firestore:"type"`
-	Title string                `json:"title,omitempty" firestore:"title,omitempty"`
+	ID    string                 `json:"id,omitempty" firestore:"id,omitempty"`
+	Type  core4spaceus.SpaceType `json:"type" firestore:"type"`
+	Title string                 `json:"title,omitempty" firestore:"title,omitempty"`
 }
 
 // Validate returns error if not valid

@@ -5,7 +5,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/mocks4dalgo/mocks4dal"
 	"github.com/golang/mock/gomock"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -55,7 +55,7 @@ func TestRunModuleSpaceWorker(t *testing.T) {
 						teamData.CreatedAt = time.Now()
 						teamData.CreatedBy = "test"
 						teamData.IncreaseVersion(teamData.CreatedAt, teamData.CreatedBy)
-						teamData.Type = core4teamus.SpaceTypeFamily
+						teamData.Type = core4spaceus.SpaceTypeFamily
 						teamData.CountryID = "UK"
 						teamData.Status = dbmodels.StatusActive
 						teamData.UserIDs = []string{user.ID}

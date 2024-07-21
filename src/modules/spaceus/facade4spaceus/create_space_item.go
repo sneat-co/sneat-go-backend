@@ -1,4 +1,4 @@
-package facade4teamus
+package facade4spaceus
 
 import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"

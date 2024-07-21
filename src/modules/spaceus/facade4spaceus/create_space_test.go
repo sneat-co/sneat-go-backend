@@ -1,4 +1,4 @@
-package facade4teamus
+package facade4spaceus
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"github.com/dal-go/mocks4dalgo/mocks4dal"
 	"github.com/golang/mock/gomock"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -72,7 +72,7 @@ func TestCreateSpace(t *testing.T) { // TODO: Implement unit tests
 		facade.GetDatabase = func(ctx context.Context) dal.DB {
 			return db
 		}
-		response, err := CreateSpace(ctx, user, dto4spaceus.CreateSpaceRequest{Type: core4teamus.SpaceTypeFamily})
+		response, err := CreateSpace(ctx, user, dto4spaceus.CreateSpaceRequest{Type: core4spaceus.SpaceTypeFamily})
 		assert.Nil(t, err)
 
 		assert.NotEqual(t, "", response.Space.ID)

@@ -1,7 +1,7 @@
 package dto4spaceus
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 	"strings"
@@ -11,8 +11,8 @@ var _ facade.Request = (*CreateSpaceRequest)(nil)
 
 // CreateSpaceRequest request
 type CreateSpaceRequest struct {
-	Type  core4teamus.SpaceType `json:"type"`
-	Title string                `json:"title,omitempty"`
+	Type  core4spaceus.SpaceType `json:"type"`
+	Title string                 `json:"title,omitempty"`
 }
 
 // Validate validates request

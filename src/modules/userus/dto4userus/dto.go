@@ -2,7 +2,7 @@ package dto4userus
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
@@ -17,8 +17,8 @@ import (
 var _ facade.Request = (*InitUserRecordRequest)(nil)
 
 type InitSpaceInfo struct {
-	Type  core4teamus.SpaceType `json:"type"`
-	Title string                `json:"title"`
+	Type  core4spaceus.SpaceType `json:"type"`
+	Title string                 `json:"title"`
 }
 
 func (v InitSpaceInfo) Validate() error {

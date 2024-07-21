@@ -1,6 +1,6 @@
 package facade4calendarium
 
-//var briefsAdapter = func(listType dbo4listus.ListType, listID string) facade4teamus.BriefsAdapter {
+//var briefsAdapter = func(listType dbo4listus.ListType, listID string) facade4spaceus.BriefsAdapter {
 //	getListGroupByListID := func(team *dbo4spaceus.TeamDto) *dbo4listus.ListGroup {
 //		for _, lg := range team.ListGroups {
 //			for _, l := range lg.Lists {
@@ -48,7 +48,7 @@ package facade4calendarium
 //		return listGroupCache
 //	}
 //
-//	return facade4teamus.BriefsAdapter{
+//	return facade4spaceus.BriefsAdapter{
 //		BriefsFieldName: "listGroups." + listType,
 //		BriefsValue: func(team *dbo4spaceus.TeamDto) interface{} {
 //			lg := getListGroup(team)
@@ -62,7 +62,7 @@ package facade4calendarium
 //			lg := getListGroup(team)
 //			return lg.Lists[i].ContactID
 //		},
-//		ShiftBriefs: func(team *dbo4spaceus.TeamDto, from facade4teamus.SliceIndexes, to facade4teamus.SliceIndexes) {
+//		ShiftBriefs: func(team *dbo4spaceus.TeamDto, from facade4spaceus.SliceIndexes, to facade4spaceus.SliceIndexes) {
 //			lg := getListGroup(team)
 //			copy(
 //				lg.Lists[to.Departs:to.Arrives],

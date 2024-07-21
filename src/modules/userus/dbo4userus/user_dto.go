@@ -6,7 +6,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/slice"
 	"github.com/strongo/strongoapp/with"
@@ -79,7 +79,7 @@ func (v *UserDbo) SetSpaceBrief(spaceID string, brief *UserSpaceBrief) (updates 
 }
 
 // GetSpaceBriefByType returns the first team brief that matches a specific type
-func (v *UserDbo) GetSpaceBriefByType(t core4teamus.SpaceType) (spaceID string, teamBrief *UserSpaceBrief) {
+func (v *UserDbo) GetSpaceBriefByType(t core4spaceus.SpaceType) (spaceID string, teamBrief *UserSpaceBrief) {
 	for id, brief := range v.Spaces {
 		if brief.Type == t {
 			return id, brief

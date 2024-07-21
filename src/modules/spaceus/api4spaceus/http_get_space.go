@@ -2,13 +2,13 @@ package api4spaceus
 
 import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/facade4teamus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/facade4spaceus"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/apicore/verify"
 	"net/http"
 )
 
-//var getSpaceByID = facade4teamus.GetSpaceByID
+//var getSpaceByID = facade4spaceus.GetSpaceByID
 
 // httpGetSpace is an API endpoint that return team data
 func httpGetSpace(w http.ResponseWriter, r *http.Request) {
@@ -20,7 +20,7 @@ func httpGetSpace(w http.ResponseWriter, r *http.Request) {
 	}
 	var space dal4spaceus.SpaceEntry
 	var response any
-	if space, err = facade4teamus.GetSpace(ctx, userContext, id); err == nil {
+	if space, err = facade4spaceus.GetSpace(ctx, userContext, id); err == nil {
 		response = space.Data
 	}
 	apicore.ReturnJSON(ctx, w, r, http.StatusOK, err, response)
