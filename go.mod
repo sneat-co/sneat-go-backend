@@ -43,7 +43,7 @@ require (
 	github.com/shiyanhui/hero v0.0.2
 	github.com/sneat-co/debtstracker-translations v0.0.21
 	github.com/sneat-co/sneat-go-core v0.25.0
-	github.com/sneat-co/sneat-go-firebase v0.4.55
+	github.com/sneat-co/sneat-go-firebase v0.4.56
 	github.com/stretchr/testify v1.9.0
 	github.com/strongo/app-host-gae v0.1.28
 	github.com/strongo/decimal v0.1.1
@@ -77,7 +77,7 @@ require (
 	github.com/AlekSi/pointer v1.2.0 // indirect
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
 	github.com/alexsergivan/transliterator v1.0.1 // indirect
-	github.com/dal-go/dalgo2firestore v0.1.70 // indirect
+	github.com/dal-go/dalgo2firestore v0.1.71 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/fgprof v0.9.4 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect

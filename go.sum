@@ -79,6 +79,8 @@ github.com/dal-go/dalgo2firestore v0.1.69 h1:W04VA+o6Dh/1hpa6WFJZZ52cmMZJ3aAL8Jg
 github.com/dal-go/dalgo2firestore v0.1.69/go.mod h1:FLVkY2aziH3v0C3G9gRhkd/MWwVZm21veIte8t7NPs4=
 github.com/dal-go/dalgo2firestore v0.1.70 h1:Nb/MF5Cq8zdwHQ1me6/1EQcTyx4DF81Hv7yoo3VYDqY=
 github.com/dal-go/dalgo2firestore v0.1.70/go.mod h1:BW4uDcqK/OSy9eI2lT2aNO/njbbX9uuEncPusI00ZLY=
+github.com/dal-go/dalgo2firestore v0.1.71 h1:Yq5Cm/7wBa8P8VNwe4ZJ2YTiSRMG7GWmirfYzUj7XdE=
+github.com/dal-go/dalgo2firestore v0.1.71/go.mod h1:na1V5EBI0z58E2TYoT2oAlDfjrxFTbml9UG3XjNKzck=
 github.com/dal-go/mocks4dalgo v0.1.19 h1:ylcFHCSwJwwNpUKsiUB42BP0RKFGRu44VySQI0qgbRU=
 github.com/dal-go/mocks4dalgo v0.1.19/go.mod h1:b6auVWLTgMZcmHtT3c1G4qpASZrlroEiTV8sr3UaGdA=
 github.com/davecgh/go-spew v0.0.0-20161028175848-04cdfd42973b/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -210,6 +212,8 @@ github.com/sneat-co/sneat-go-firebase v0.4.54 h1:gjY9h3Tkg6t8e5f/4xc+v4ULGSQUELT
 github.com/sneat-co/sneat-go-firebase v0.4.54/go.mod h1:9hU6HIUNNUh7OIbE77rHPcKS20ZyyIxttmHmVUEP9P0=
 github.com/sneat-co/sneat-go-firebase v0.4.55 h1:1uaY2vMeGrojTsrFOHIjoaMdiPYv/tVVJdYqPlUEDtE=
 github.com/sneat-co/sneat-go-firebase v0.4.55/go.mod h1:OynuDUgl+dBBWYHYdG5u+R0Au0b0yx7p5VoxTz+vWKE=
+github.com/sneat-co/sneat-go-firebase v0.4.56 h1:MHXxiaeCvCwN3H0p3hgPNk8oH/mu9VSL4hHd23yc6Co=
+github.com/sneat-co/sneat-go-firebase v0.4.56/go.mod h1:MMsD/9cFmWnsVJLiqmjYsjW7Oa69G9MMECcKeX/qnhc=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
 github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=
