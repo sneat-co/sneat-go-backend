@@ -1,4 +1,6 @@
 #!/bin/sh
+# To setup git hooks run:
+#   > git config core.hooksPath .git-hooks || echo 'Not in a git repo'
 echo "Running .git-hooks/pre-commit..."
 if git diff --name-only --cached | grep -q ":\s*go\.mod"; then
   gomodlint
