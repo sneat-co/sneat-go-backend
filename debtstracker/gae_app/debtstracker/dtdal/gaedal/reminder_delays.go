@@ -5,6 +5,7 @@ import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/delaying"
 	"github.com/strongo/i18n"
 	"github.com/strongo/logus"
@@ -17,7 +18,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/platforms/tgbots"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 )
 
@@ -49,13 +50,9 @@ func delayedCreateReminderForTransferUser(c context.Context, transferID string, 
 		return nil
 	}
 
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return
-	}
-	return db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	return facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		var transfer models.TransferEntry
-		transfer, err = facade.Transfers.GetTransferByID(c, tx, transferID)
+		transfer, err = facade2debtus.Transfers.GetTransferByID(c, tx, transferID)
 		if err != nil {
 			if dal.IsNotFound(err) {
 				logus.Errorf(c, fmt.Errorf("not able to create reminder for specified transfer: %w", err).Error())
@@ -99,7 +96,7 @@ func delayedCreateReminderForTransferUser(c context.Context, transferID string, 
 		}
 		transferUserInfo.ReminderID = reminderID
 
-		if err = facade.Transfers.SaveTransfer(c, tx, transfer); err != nil {
+		if err = facade2debtus.Transfers.SaveTransfer(c, tx, transfer); err != nil {
 			return fmt.Errorf("failed to save transfer to db: %w", err)
 		}
 
@@ -165,21 +162,13 @@ func discardRemindersForTransfer(c context.Context, transferID, returnTransferID
 }
 
 func DiscardReminder(c context.Context, reminderID, transferID, returnTransferID string) (err error) {
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return err
-	}
-	return db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	return facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		return discardReminder(c, tx, reminderID, transferID, returnTransferID)
 	})
 }
 
 func delayedDiscardReminder(c context.Context, reminderID, transferID, returnTransferID string) (err error) {
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return err
-	}
-	return db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	return facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		if err = discardReminder(c, tx, reminderID, transferID, returnTransferID); err == ErrDuplicateAttemptToDiscardReminder {
 			logus.Errorf(c, err.Error())
 			return nil
@@ -231,7 +220,7 @@ func discardReminder(c context.Context, tx dal.ReadwriteTransaction, reminderID,
 
 		if reminder.Data.Locale == "" {
 			logus.Errorf(c, "reminder.Locale == ''")
-			if user, err := facade.User.GetUserByID(c, nil, reminder.Data.UserID); err != nil {
+			if user, err := facade2debtus.User.GetUserByID(c, nil, reminder.Data.UserID); err != nil {
 				return err
 			} else if user.Data.PreferredLanguage != "" {
 				reminder.Data.Locale = user.Data.PreferredLanguage
@@ -290,11 +279,7 @@ func (ReminderDalGae) SetReminderStatus(c context.Context, reminderID, returnTra
 		changed        bool
 		previousStatus string
 	)
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return
-	}
-	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		if reminder, err = dtdal.Reminder.GetReminderByID(c, tx, reminderID); err != nil {
 			return
 		} else {

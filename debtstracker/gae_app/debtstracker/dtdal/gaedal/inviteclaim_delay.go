@@ -6,8 +6,8 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/delaying"
 	"github.com/strongo/logus"
 )
@@ -18,11 +18,7 @@ func DelayUpdateInviteClaimedCount(c context.Context, claimID int64) error {
 
 func delayedUpdateInviteClaimedCount(c context.Context, claimID int64) (err error) {
 	logus.Debugf(c, "delayUpdateInviteClaimedCount(claimID=%v)", claimID)
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return err
-	}
-	err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
+	err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
 		claim := models.NewInviteClaim(claimID, nil)
 		err = tx.Get(c, claim.Record)
 		if err != nil {

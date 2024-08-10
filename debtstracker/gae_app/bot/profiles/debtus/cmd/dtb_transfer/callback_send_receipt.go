@@ -7,6 +7,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"html"
 	"net/url"
@@ -17,7 +18,7 @@ import (
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/general"
 )
@@ -29,11 +30,7 @@ func CallbackSendReceipt(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 	q := callbackUrl.Query()
 	sendBy := q.Get("by")
 	logus.Debugf(c, "CallbackSendReceipt(callbackUrl=%v)", callbackUrl)
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return m, err
-	}
-	return m, db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	return m, facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		var (
 			transferID string
 			transfer   models.TransferEntry
@@ -42,13 +39,13 @@ func CallbackSendReceipt(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 		if transferID == "" {
 			return fmt.Errorf("missing transfer ID")
 		}
-		transfer, err = facade.Transfers.GetTransferByID(c, tx, transferID)
+		transfer, err = facade2debtus.Transfers.GetTransferByID(c, tx, transferID)
 		if err != nil {
 			return fmt.Errorf("failed to get transfer by ID: %w", err)
 		}
 		//chatEntity := whc.ChatData() //TODO: Need this to get appUser, has to be refactored
 		//appUser, err := whc.GetAppUser()
-		counterparty, err := facade.GetContactByID(c, tx, transfer.Data.Counterparty().ContactID)
+		counterparty, err := facade2debtus.GetContactByID(c, tx, transfer.Data.Counterparty().ContactID)
 		if err != nil {
 			return err
 		}

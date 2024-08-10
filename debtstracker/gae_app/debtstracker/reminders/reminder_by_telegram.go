@@ -12,8 +12,9 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/analytics"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/delaying"
 	"github.com/strongo/i18n"
 	"github.com/strongo/logus"
@@ -32,7 +33,7 @@ func sendReminderByTelegram(c context.Context, transfer models.TransferEntry, re
 
 	var locale i18n.Locale
 
-	if locale, err = facade.GetLocale(c, tgBot, tgChatID, reminder.Data.UserID); err != nil {
+	if locale, err = facade2debtus.GetLocale(c, tgBot, tgChatID, reminder.Data.UserID); err != nil {
 		return
 	}
 
@@ -65,11 +66,7 @@ func sendReminderByTelegram(c context.Context, transfer models.TransferEntry, re
 
 		messageConfig := tgbotapi.NewMessage(tgChatID, messageText)
 
-		var db dal.DB
-		if db, err = facade.GetDatabase(c); err != nil {
-			return
-		}
-		err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
+		err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
 			reminder, err = dtdal.Reminder.GetReminderByID(c, tx, reminder.ID)
 			if err != nil {
 				return err

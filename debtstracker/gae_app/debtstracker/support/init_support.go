@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"google.golang.org/appengine/v2"
 	"net/http"
@@ -164,12 +164,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	fixUserCounterparties := func() {
 		var txUser models.AppUser
-		var db dal.DB
-		if db, err = facade.GetDatabase(c); err != nil {
-			logus.Errorf(c, "Failed to get database: %v", err)
-			return
-		}
-		err := db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+		err := facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 			logus.Debugf(c, "Transaction started..")
 			txUser = models.NewAppUser(userID, nil)
 			if err := tx.Get(c, txUser.Record); err != nil {
@@ -237,12 +232,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 	if len(transferRecords) > 0 && user.Data.LastTransferID == "" {
 		if doFixes {
 			var txUser models.AppUser
-			var db dal.DB
-			if db, err = facade.GetDatabase(c); err != nil {
-				logus.Errorf(c, "Failed to get database: %v", err)
-				return
-			}
-			err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+			err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 				txUser = models.NewAppUser(userID, nil)
 				if err = tx.Get(c, txUser.Record); err != nil {
 					return err
@@ -351,12 +341,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 		if !doFixes {
 			logus.Debugf(c, "Pass fix=all to fix user balance")
 		} else {
-			var db dal.DB
-			if db, err = facade.GetDatabase(c); err != nil {
-				logus.Errorf(c, "Failed to get database: %v", err)
-				return
-			}
-			err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+			err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 				txUser := models.NewAppUser(userID, nil)
 				if err := tx.Get(c, txUser.Record); err != nil {
 					return err
@@ -399,12 +384,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 			counterpartyIDsWithMatchingBalance = append(counterpartyIDsWithMatchingBalance, counterpartyID)
 			if counterparty.BalanceCount != len(counterpartyBalance) {
 				if doFixes {
-					var db dal.DB
-					if db, err = facade.GetDatabase(c); err != nil {
-						logus.Errorf(c, "Failed to get database: %v", err)
-						return
-					}
-					err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+					err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 						txCounterparty := models.NewDebtusContact(counterpartyKey.ID.(string), nil)
 						if err = tx.Get(c, txCounterparty.Record); err != nil {
 							return err

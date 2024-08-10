@@ -139,7 +139,7 @@ package maintainance
 //	//	return
 //	//}
 //	//if err = dtdal.DB.RunInTransaction(c, func(c context.Context) (err error) {
-//	//	if user, err = facade.User.GetUserByID(c, tgChat.AppUserIntID); err != nil {
+//	//	if user, err = facade2debtus.User.GetUserByID(c, tgChat.AppUserIntID); err != nil {
 //	//		if dal.IsNotFound(err) {
 //	//			logus.Errorf(c, "Failed to process %v: %v", tgChat.ID, err)
 //	//			err = nil
@@ -175,7 +175,7 @@ package maintainance
 //	//				err = fmt.Errorf("panic on saving user %v: %v", user.ID, r)
 //	//			}
 //	//		}()
-//	//		if err = facade.User.SaveUser(c, tx, user); err != nil {
+//	//		if err = facade2debtus.User.SaveUser(c, tx, user); err != nil {
 //	//			return
 //	//		}
 //	//		//} else {

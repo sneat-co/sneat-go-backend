@@ -32,7 +32,7 @@ func (mock *UserDalMock) GetUserByStrID(c context.Context, userID string) (user 
 	// if user.ID, err = strconv.ParseInt(userID, 10, 64); err != nil {
 	// 	return
 	// }
-	// return facade.User.GetUserByID(c, user.ID)
+	// return facade2debtus.User.GetUserByID(c, user.ID)
 }
 
 func (mock *UserDalMock) GetUserByEmail(c context.Context, email string) (models.AppUser, error) {

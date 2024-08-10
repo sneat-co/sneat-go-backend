@@ -7,7 +7,7 @@ import (
 func RegisterMappers() {
 	//mapperServer, _ := mapper.NewServer(
 	//	mapper.DefaultPath,
-	//	mapper.DefaultQueue(common.QUEUE_MAPREDUCE),
+	//	mapper.DefaultQueue(shared.QUEUE_MAPREDUCE),
 	//)
 	//http.Handle(mapper.DefaultPath, mapperServer)
 

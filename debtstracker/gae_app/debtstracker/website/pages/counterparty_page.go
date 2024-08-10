@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"golang.org/x/net/html"
 )
 
@@ -21,7 +21,7 @@ func CounterpartyPage(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 		return
 	}
 
-	counterparty, err := facade.GetContactByID(c, nil, counterpartyID)
+	counterparty, err := facade2debtus.GetContactByID(c, nil, counterpartyID)
 	if err != nil {
 		w.WriteHeader(500)
 		_, _ = w.Write([]byte(err.Error()))

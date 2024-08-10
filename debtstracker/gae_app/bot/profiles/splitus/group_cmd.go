@@ -52,8 +52,8 @@ var groupCommand = botsfw.NewCallbackCommand(groupCommandCode,
 		//do := query.Get("do")
 		//switch do {
 		//case "leave":
-		//	if _, _, err = facade.Group.LeaveGroup(c, userGroupJson.ID, whc.AppUserID()); err != nil {
-		//		if err == facade.ErrAttemptToLeaveUnsettledGroup {
+		//	if _, _, err = facade2debtus.Group.LeaveGroup(c, userGroupJson.ID, whc.AppUserID()); err != nil {
+		//		if err == facade2debtus.ErrAttemptToLeaveUnsettledGroup {
 		//			err = nil
 		//			m.BotMessage = telegram.CallbackAnswer(tgbotapi.AnswerCallbackQueryConfig{Text: "Please settle group debts before leaving it."})
 		//		}

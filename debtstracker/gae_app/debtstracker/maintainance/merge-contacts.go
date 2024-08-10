@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"google.golang.org/appengine/v2"
 	"google.golang.org/appengine/v2/datastore"
@@ -53,13 +54,13 @@ func mergeContacts(c context.Context, tx dal.ReadwriteTransaction, targetContact
 		user          models.AppUser
 	)
 
-	if targetContact, err = facade.GetContactByID(c, tx, targetContactID); err != nil {
+	if targetContact, err = facade2debtus.GetContactByID(c, tx, targetContactID); err != nil {
 		if dal.IsNotFound(err) && len(sourceContactIDs) == 1 {
-			if targetContact, err = facade.GetContactByID(c, tx, sourceContactIDs[0]); err != nil {
+			if targetContact, err = facade2debtus.GetContactByID(c, tx, sourceContactIDs[0]); err != nil {
 				return
 			}
 			targetContact.ID = targetContactID
-			if err = facade.SaveContact(c, targetContact); err != nil {
+			if err = facade2debtus.SaveContact(c, targetContact); err != nil {
 				return
 			}
 		} else {
@@ -67,7 +68,7 @@ func mergeContacts(c context.Context, tx dal.ReadwriteTransaction, targetContact
 		}
 	}
 
-	if user, err = facade.User.GetUserByID(c, nil, targetContact.Data.UserID); err != nil {
+	if user, err = facade2debtus.User.GetUserByID(c, nil, targetContact.Data.UserID); err != nil {
 		return
 	}
 
@@ -77,7 +78,7 @@ func mergeContacts(c context.Context, tx dal.ReadwriteTransaction, targetContact
 			return
 		}
 		var sourceContact models.ContactEntry
-		if sourceContact, err = facade.GetContactByID(c, tx, sourceContactID); err != nil {
+		if sourceContact, err = facade2debtus.GetContactByID(c, tx, sourceContactID); err != nil {
 			if dal.IsNotFound(err) {
 				continue
 			}
@@ -109,12 +110,8 @@ func mergeContacts(c context.Context, tx dal.ReadwriteTransaction, targetContact
 		return
 	}
 
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return
-	}
-	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-		if user, err = facade.User.GetUserByID(c, tx, user.ID); err != nil {
+	if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+		if user, err = facade2debtus.User.GetUserByID(c, tx, user.ID); err != nil {
 			return
 		}
 		var contacts []models.UserContactJson
@@ -127,7 +124,7 @@ func mergeContacts(c context.Context, tx dal.ReadwriteTransaction, targetContact
 						targetContactBalance.Add(money.NewAmount(currency, value))
 					}
 					var sourceContact models.ContactEntry
-					if sourceContact, err = facade.GetContactByID(c, tx, sourceContactID); err != nil {
+					if sourceContact, err = facade2debtus.GetContactByID(c, tx, sourceContactID); err != nil {
 						if !dal.IsNotFound(err) {
 							return
 						}
@@ -139,13 +136,13 @@ func mergeContacts(c context.Context, tx dal.ReadwriteTransaction, targetContact
 						}
 						if sourceContact.Data.CounterpartyCounterpartyID != "" {
 							var counterpartyContact models.ContactEntry
-							if counterpartyContact, err = facade.GetContactByID(c, tx, sourceContact.Data.CounterpartyCounterpartyID); err != nil {
+							if counterpartyContact, err = facade2debtus.GetContactByID(c, tx, sourceContact.Data.CounterpartyCounterpartyID); err != nil {
 								if !dal.IsNotFound(err) {
 									return
 								}
 							} else if counterpartyContact.Data.CounterpartyCounterpartyID == sourceContactID {
 								counterpartyContact.Data.CounterpartyCounterpartyID = targetContactID
-								if err = facade.SaveContact(c, counterpartyContact); err != nil {
+								if err = facade2debtus.SaveContact(c, counterpartyContact); err != nil {
 									return
 								}
 							} else if counterpartyContact.Data.CounterpartyCounterpartyID != "" && counterpartyContact.Data.CounterpartyCounterpartyID != targetContactID {
@@ -156,7 +153,7 @@ func mergeContacts(c context.Context, tx dal.ReadwriteTransaction, targetContact
 							}
 						}
 					}
-					if _, err = facade.DeleteContact(c, sourceContactID); err != nil {
+					if _, err = facade2debtus.DeleteContact(c, sourceContactID); err != nil {
 						return
 					}
 				} else {
@@ -174,7 +171,7 @@ func mergeContacts(c context.Context, tx dal.ReadwriteTransaction, targetContact
 			}
 		}
 
-		if err = facade.User.SaveUser(c, tx, user); err != nil {
+		if err = facade2debtus.User.SaveUser(c, tx, user); err != nil {
 			return
 		}
 		return
@@ -223,7 +220,7 @@ func mergeContactTransfers(c context.Context, tx dal.ReadwriteTransaction, wg *s
 		case transfer.Data.BothCounterpartyIDs[1]:
 			transfer.Data.BothCounterpartyIDs[1] = targetContactID
 		}
-		if err = facade.Transfers.SaveTransfer(c, tx, transfer); err != nil {
+		if err = facade2debtus.Transfers.SaveTransfer(c, tx, transfer); err != nil {
 			logus.Errorf(c, "Failed to save transfer #%v: %v", transfer.ID, err)
 		}
 	}

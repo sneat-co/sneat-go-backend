@@ -1,10 +1,11 @@
-package facade
+package facade2debtus
 
 import (
 	"bytes"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus/dto"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"github.com/strongo/slice"
 	"time"
@@ -70,7 +71,7 @@ func (transferFacade TransfersFacade) CreateTransfer(c context.Context, input dt
 	var returnToTransferIDs []string
 
 	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(c); err != nil {
 		return
 	}
 
@@ -224,7 +225,7 @@ func (transferFacade TransfersFacade) checkOutstandingTransfersForReturns(c cont
 	reversedDirection := input.Direction().Reverse()
 
 	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(c); err != nil {
 		return
 	}
 	outstandingTransfers, err = dtdal.Transfer.LoadOutstandingTransfers(c, db, now, creatorUserID, creatorContactID, input.Request.Amount.Currency, reversedDirection)
@@ -237,7 +238,7 @@ func (transferFacade TransfersFacade) checkOutstandingTransfersForReturns(c cont
 		return
 	}
 
-	logus.Debugf(c, "facade.checkOutstandingTransfersForReturns() => dtdal.TransferEntry.LoadOutstandingTransfers(userID=%v, currency=%v) => %d transfers", input.CreatorUser.ID, input.Request.Amount.Currency, len(outstandingTransfers))
+	logus.Debugf(c, "facade2debtus.checkOutstandingTransfersForReturns() => dtdal.TransferEntry.LoadOutstandingTransfers(userID=%v, currency=%v) => %d transfers", input.CreatorUser.ID, input.Request.Amount.Currency, len(outstandingTransfers))
 
 	if outstandingTransfersCount := len(outstandingTransfers); outstandingTransfersCount > 0 { // Assign the return to specific transfers
 		var (
@@ -708,7 +709,7 @@ func (transferFacade TransfersFacade) createTransferWithinTransaction(
 
 func (TransfersFacade) GetTransferByID(c context.Context, tx dal.ReadSession, id string) (transfer models.TransferEntry, err error) {
 	if tx == nil {
-		if tx, err = GetDatabase(c); err != nil {
+		if tx, err = facade.GetDatabase(c); err != nil {
 			return
 		}
 	}

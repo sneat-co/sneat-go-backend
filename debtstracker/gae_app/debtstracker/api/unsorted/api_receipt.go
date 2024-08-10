@@ -6,7 +6,8 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus/dto"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/i18n"
 	"github.com/strongo/logus"
 	"github.com/strongo/strongoapp"
@@ -21,7 +22,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/general"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/invites"
@@ -70,20 +71,14 @@ func HandleGetReceipt(c context.Context, w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-	}
 	var transfer models.TransferEntry
-	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-		transfer, err = facade.Transfers.GetTransferByID(c, tx, receipt.Data.TransferID)
+	if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+		transfer, err = facade2debtus.Transfers.GetTransferByID(c, tx, receipt.Data.TransferID)
 		if api.HasError(c, w, err, models.TransfersCollection, receipt.Data.TransferID, http.StatusInternalServerError) {
 			return
 		}
 
-		if err = facade.CheckTransferCreatorNameAndFixIfNeeded(c, tx, transfer); api.HasError(c, w, err, models.TransfersCollection, receipt.Data.TransferID, http.StatusInternalServerError) {
+		if err = facade2debtus.CheckTransferCreatorNameAndFixIfNeeded(c, tx, transfer); api.HasError(c, w, err, models.TransfersCollection, receipt.Data.TransferID, http.StatusInternalServerError) {
 			return
 		}
 		return nil
@@ -194,7 +189,7 @@ func HandleSendReceipt(c context.Context, w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	transfer, err := facade.Transfers.GetTransferByID(c, nil, receipt.Data.TransferID)
+	transfer, err := facade2debtus.Transfers.GetTransferByID(c, nil, receipt.Data.TransferID)
 	if err != nil {
 		api.ErrorAsJson(c, w, http.StatusInternalServerError, err)
 		return
@@ -206,7 +201,7 @@ func HandleSendReceipt(c context.Context, w http.ResponseWriter, r *http.Request
 	}
 
 	locale := i18n.GetLocaleByCode5(user.Data.GetPreferredLocale()) // TODO: Get language from request
-	translator := i18n.NewSingleMapTranslator(locale, nil /*common.TheAppContext.GetTranslator(c)*/)
+	translator := i18n.NewSingleMapTranslator(locale, nil /*shared.TheAppContext.GetTranslator(c)*/)
 
 	if _, err = invites.SendReceiptByEmail(c, translator, receipt, user.Data.FullName(), transfer.Data.Counterparty().ContactName, toAddress); err != nil {
 		logus.Errorf(c, err.Error())
@@ -225,17 +220,13 @@ func HandleSendReceipt(c context.Context, w http.ResponseWriter, r *http.Request
 }
 
 func updateReceiptAndTransferOnSent(c context.Context, receiptID string, channel, sentTo, lang string) (receipt models.Receipt, transfer models.TransferEntry, err error) {
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return
-	}
 
-	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		if receipt, err = dtdal.Receipt.GetReceiptByID(c, tx, receiptID); err != nil {
 			return err
 		}
 		if receipt.Data.SentVia == RECEIPT_CHANNEL_DRAFT {
-			if transfer, err = facade.Transfers.GetTransferByID(c, tx, receipt.Data.TransferID); err != nil {
+			if transfer, err = facade2debtus.Transfers.GetTransferByID(c, tx, receipt.Data.TransferID); err != nil {
 				return err
 			}
 			receipt.Data.DtSent = time.Now()
@@ -351,7 +342,7 @@ func HandleCreateReceipt(c context.Context, w http.ResponseWriter, r *http.Reque
 		_, _ = w.Write([]byte("Missing transfer parameter"))
 		return
 	}
-	transfer, err := facade.Transfers.GetTransferByID(c, nil, transferID)
+	transfer, err := facade2debtus.Transfers.GetTransferByID(c, nil, transferID)
 	if err != nil {
 		if dal.IsNotFound(err) {
 			w.WriteHeader(http.StatusBadRequest)
@@ -363,7 +354,7 @@ func HandleCreateReceipt(c context.Context, w http.ResponseWriter, r *http.Reque
 		return
 	}
 	var user models.AppUser
-	if user, err = facade.User.GetUserByID(c, nil, authInfo.UserID); err != nil {
+	if user, err = facade2debtus.User.GetUserByID(c, nil, authInfo.UserID); err != nil {
 		api.ErrorAsJson(c, w, http.StatusInternalServerError, err)
 		return
 	}
@@ -417,7 +408,7 @@ func HandleCreateReceipt(c context.Context, w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	//user, err = facade.User.GetUserByID(c, transfer.CreatorUserID)
+	//user, err = facade2debtus.User.GetUserByID(c, transfer.CreatorUserID)
 	//if err != nil {
 	//	w.WriteHeader(http.StatusInternalServerError)
 	//	err = errors.Wrapf(err, "Failed to get user by ID=%v", transfer.CreatorUserID)
@@ -439,7 +430,7 @@ func HandleCreateReceipt(c context.Context, w http.ResponseWriter, r *http.Reque
 		messageToSend = fmt.Sprintf("https://telegram.me/%s?start=send-receipt_%s", tgBotID, receipt.ID) // TODO:
 	} else {
 		locale := i18n.GetLocaleByCode5(user.Data.GetPreferredLocale())
-		translator := i18n.NewSingleMapTranslator(locale, nil /*common.TheAppContext.GetTranslator(c)*/)
+		translator := i18n.NewSingleMapTranslator(locale, nil /*shared.TheAppContext.GetTranslator(c)*/)
 		//ec := strongoapp.NewExecutionContext(c, translator)
 
 		logus.Debugf(c, "r.Host: %s", r.Host)
@@ -465,7 +456,7 @@ func HandleCreateReceipt(c context.Context, w http.ResponseWriter, r *http.Reque
 	}{
 		receipt.ID,
 		// TODO: It seems wrong to use request host!
-		//common.GetReceiptUrlForUser(receipt, receiptData.CreatorUserID, receiptData.CreatedOnPlatform, receiptData.CreatedOnID)
+		//shared.GetReceiptUrlForUser(receipt, receiptData.CreatorUserID, receiptData.CreatedOnPlatform, receiptData.CreatedOnID)
 		fmt.Sprintf("https://%s/receipt?id=%s&t=%s", r.Host, receipt.ID, time.Now().Format("20060102-150405")),
 		messageToSend,
 	})

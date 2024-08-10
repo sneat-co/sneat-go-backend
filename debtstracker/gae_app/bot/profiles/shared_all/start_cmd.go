@@ -10,8 +10,9 @@ import (
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/platforms/tgbots"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/i18n"
 	"github.com/strongo/logus"
 	"net/url"
@@ -59,7 +60,7 @@ func createStartCommand(botParams BotParams) botsfw.Command {
 					//case strings.HasPrefix(textToMatchNoStart, JOIN_BILL_COMMAND):
 					//	return JoinBillCommand.Action(whc)
 				case strings.HasPrefix(startParam, "refbytguser-") && startParam != "refbytguser-YOUR_CHANNEL":
-					facade.Referer.AddTelegramReferrer(c, whc.AppUserID(), strings.TrimPrefix(startParam, "refbytguser-"), whc.GetBotCode())
+					facade2debtus.Referer.AddTelegramReferrer(c, whc.AppUserID(), strings.TrimPrefix(startParam, "refbytguser-"), whc.GetBotCode())
 				}
 				return startInBotAction(whc, startParams, botParams)
 			}
@@ -70,7 +71,7 @@ func createStartCommand(botParams BotParams) botsfw.Command {
 func startLoginGac(whc botsfw.WebhookContext, loginID int) (m botsfw.MessageFromBot, err error) {
 	c := whc.Context()
 	var loginPin models.LoginPin
-	if loginPin, err = facade.AuthFacade.AssignPinCode(c, loginID, whc.AppUserID()); err != nil {
+	if loginPin, err = facade2debtus.AuthFacade.AssignPinCode(c, loginID, whc.AppUserID()); err != nil {
 		return
 	}
 	return whc.NewMessageByCode(trans.MESSAGE_TEXT_LOGIN_CODE, models.LoginCodeToString(loginPin.Data.Code)), nil
@@ -124,20 +125,15 @@ func onStartCallbackCommand(params BotParams) botsfw.Command {
 
 			whc.ChatData().SetPreferredLanguage(lang)
 
-			var db dal.DB
-			if db, err = facade.GetDatabase(c); err != nil {
-				return
-			}
-
-			if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-				user, err := facade.User.GetUserByID(c, tx, whc.AppUserID())
+			if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+				user, err := facade2debtus.User.GetUserByID(c, tx, whc.AppUserID())
 				if err != nil {
 					return err
 				}
 				if err = user.Data.SetPreferredLocale(lang); err != nil {
 					return err
 				}
-				if err = facade.User.SaveUser(c, tx, user); err != nil {
+				if err = facade2debtus.User.SaveUser(c, tx, user); err != nil {
 					return err
 				}
 				return nil

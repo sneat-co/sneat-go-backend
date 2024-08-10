@@ -9,8 +9,9 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal/gaedal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"net/http"
 	"time"
@@ -56,7 +57,7 @@ func sendReminder(c context.Context, reminderID string) (err error) {
 		return nil
 	}
 
-	transfer, err := facade.Transfers.GetTransferByID(c, nil, reminder.Data.TransferID)
+	transfer, err := facade2debtus.Transfers.GetTransferByID(c, nil, reminder.Data.TransferID)
 	if err != nil {
 		if dal.IsNotFound(err) {
 			logus.Errorf(c, err.Error())
@@ -102,12 +103,8 @@ func sendReminderToUser(c context.Context, reminderID string, transfer models.Tr
 
 	var reminder models.Reminder
 
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return fmt.Errorf("failed to get database: %w", err)
-	}
 	// If sending notification failed do not try to resend - to prevent spamming.
-	if err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
+	if err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
 		if reminder, err = dtdal.Reminder.GetReminderByID(c, tx, reminderID); err != nil {
 			return fmt.Errorf("failed to get reminder by id=%v: %w", reminderID, err)
 		}
@@ -131,6 +128,10 @@ func sendReminderToUser(c context.Context, reminderID string, transfer models.Tr
 		logus.Infof(c, "Updated Reminder(id=%v) status to '%v'.", reminderID, models.ReminderStatusSending)
 	}
 
+	var db dal.DB
+	if db, err = facade.GetDatabase(c); err != nil {
+		return fmt.Errorf("failed to get database: %w", err)
+	}
 	user := models.NewAppUser(reminder.Data.UserID, nil)
 	if err = db.Get(c, user.Record); err != nil {
 		return err

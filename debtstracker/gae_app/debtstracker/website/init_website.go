@@ -14,7 +14,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/website/admin"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/website/pages"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/website/redirects"
-	//"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
+	//"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/shared"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
 	//"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
 	"github.com/julienschmidt/httprouter"
@@ -52,7 +52,7 @@ func CreateInvitePage(w http.ResponseWriter, r *http.Request, authInfo auth.Auth
 	logus.Infof(c, "CreateInvitePage()")
 	//panic("Not implemented")
 	userID := authInfo.UserID
-	//session, _ := common.GetSession(r)
+	//session, _ := shared.GetSession(r)
 	//userID := session.GetUserID()
 	//if userID == 0 {
 	//	w.WriteHeader(http.StatusUnauthorized)

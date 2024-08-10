@@ -19,8 +19,7 @@ func MoveRetroItem(ctx context.Context, userFacade facade.User, request MoveRetr
 		retrospectiveKey = dbo4retrospectus.NewRetrospectiveKey(request.MeetingID, newSpaceKey(request.SpaceID))
 	}
 
-	db := facade.GetDatabase(ctx)
-	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		retrospective := new(dbo4retrospectus.Retrospective)
 		retrospectiveRecord := dal.NewRecordWithData(retrospectiveKey, retrospective)
 

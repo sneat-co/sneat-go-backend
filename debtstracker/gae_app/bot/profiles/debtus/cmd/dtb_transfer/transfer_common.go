@@ -9,8 +9,9 @@ import (
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus/dto"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/i18n"
 	"github.com/strongo/logus"
 	"math"
@@ -29,7 +30,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/analytics"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/decimal"
 	"golang.org/x/net/html"
@@ -286,7 +287,7 @@ func CreateAskTransferCounterpartyCommand(
 							contactID := contactIDs[0]
 							chatEntity.AddWizardParam(WIZARD_PARAM_COUNTERPARTY, contactID)
 							var contact models.ContactEntry
-							if contact, err = facade.GetContactByID(c, nil, contactID); err != nil {
+							if contact, err = facade2debtus.GetContactByID(c, nil, contactID); err != nil {
 								return
 							}
 							m, err = onContactSelectedAction(whc, contact)
@@ -307,7 +308,7 @@ func CreateAskTransferCounterpartyCommand(
 			default:
 				logus.Debugf(c, "default:")
 				var user models.AppUser
-				if user, err = facade.User.GetUserByID(c, nil, whc.AppUserID()); err != nil {
+				if user, err = facade2debtus.User.GetUserByID(c, nil, whc.AppUserID()); err != nil {
 					return
 				}
 				if isReturn && user.Data.BalanceCount <= 3 && user.Data.TotalContactsCount() <= 3 {
@@ -375,7 +376,7 @@ func listCounterpartiesAsButtons(whc botsfw.WebhookContext, user models.AppUser,
 	}
 	m.Format = botsfw.MessageFormatHTML
 	if user.Data == nil {
-		if user, err = facade.User.GetUserByID(c, nil, whc.AppUserID()); err != nil {
+		if user, err = facade2debtus.User.GetUserByID(c, nil, whc.AppUserID()); err != nil {
 			return
 		}
 	}
@@ -591,10 +592,10 @@ func CreateTransferFromBot(
 		return m, err
 	}
 
-	from, to := facade.TransferCounterparties(direction, creatorInfo)
+	from, to := facade2debtus.TransferCounterparties(direction, creatorInfo)
 
 	var appUser models.AppUser
-	if appUser, err = facade.User.GetUserByID(c, nil, whc.AppUserID()); err != nil {
+	if appUser, err = facade2debtus.User.GetUserByID(c, nil, whc.AppUserID()); err != nil {
 		return
 	}
 	request := dto.CreateTransferRequest{
@@ -612,15 +613,15 @@ func CreateTransferFromBot(
 		from, to,
 	)
 
-	output, err := facade.Transfers.CreateTransfer(whc.Context(), newTransfer)
+	output, err := facade2debtus.Transfers.CreateTransfer(whc.Context(), newTransfer)
 
 	if err != nil {
 		switch err {
-		case facade.ErrNoOutstandingTransfers:
+		case facade2debtus.ErrNoOutstandingTransfers:
 			m.Text = whc.Translate(trans.MT_NO_OUTSTANDING_TRANSFERS)
 			logus.Warningf(c, "Attempt to create return but no outstanding debts: %v", err)
 			return
-		case facade.ErrAttemptToCreateDebtWithInterestAffectingOutstandingTransfers:
+		case facade2debtus.ErrAttemptToCreateDebtWithInterestAffectingOutstandingTransfers:
 			//err = nil
 			buf := new(bytes.Buffer)
 			buf.WriteString(whc.Translate(trans.MT_ATTEMPT_TO_CREATE_DEBT_WITH_INTEREST_AFFECTING_OUTSTANDING) + "\n")
@@ -632,7 +633,7 @@ func CreateTransferFromBot(
 			if outstandingTransfer, err := dtdal.Transfer.LoadOutstandingTransfers(c, db, now, appUser.ID, creatorInfo.ContactID, amount.Currency, newTransfer.Direction().Reverse()); err != nil {
 				buf.WriteString(fmt.Errorf("failed to load outstanding transfers: %w", err).Error() + "\n")
 			} else if len(outstandingTransfer) == 0 {
-				return m, errors.New("got facade.ErrAttemptToCreateDebtWithInterestAffectingOutstandingTransfers but no outstanding transfers found")
+				return m, errors.New("got facade2debtus.ErrAttemptToCreateDebtWithInterestAffectingOutstandingTransfers but no outstanding transfers found")
 			} else {
 				for _, ot := range outstandingTransfer {
 					_, _ = fmt.Fprintf(buf, "\tDebt #%v for %v => outstanding: %v\n", ot.ID, ot.Data.GetAmount(), ot.Data.GetOutstandingAmount(now))
@@ -642,7 +643,7 @@ func CreateTransferFromBot(
 			return m, err
 		}
 		logus.Errorf(c, "Failed to create transfer: %v", err)
-		if errors.Is(err, facade.ErrNotImplemented) {
+		if errors.Is(err, facade2debtus.ErrNotImplemented) {
 			m.Text = whc.Translate(trans.MESSAGE_TEXT_NOT_IMPLEMENTED_YET) + "\n\n" + err.Error()
 			err = nil
 		}
@@ -763,7 +764,7 @@ func createSendReceiptOptionsMessage(whc botsfw.WebhookContext, transfer models.
 	var telegramKeyboard tgbotapi.InlineKeyboardMarkup
 	var isCounterpartyUserHasTelegram bool
 	if transfer.Data.Creator().ContactID != "" {
-		if user, err := facade.User.GetUserByID(c, nil, transfer.Data.Counterparty().UserID); err != nil {
+		if user, err := facade2debtus.User.GetUserByID(c, nil, transfer.Data.Counterparty().UserID); err != nil {
 			err = fmt.Errorf("failed to get counterparty user by ID=%v: %w", transfer.Data.Counterparty().UserID, err)
 			return m, err
 		} else {
@@ -840,7 +841,7 @@ func GetTransferSource(whc botsfw.WebhookContext) dtdal.TransferSource {
 //	CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 //		q := callbackUrl.Query()
 //		transferEncodedID := q.Get(WIZARD_PARAM_TRANSFER)
-//		transferID, err := common.DecodeID(transferEncodedID)
+//		transferID, err := shared.DecodeID(transferEncodedID)
 //		if err != nil {
 //			return m, err
 //		}

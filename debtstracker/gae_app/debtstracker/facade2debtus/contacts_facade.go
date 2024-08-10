@@ -1,4 +1,4 @@
-package facade
+package facade2debtus
 
 import (
 	"context"
@@ -9,13 +9,14 @@ import (
 	"github.com/sanity-io/litter"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"reflect"
 	"strconv"
 )
 
 func ChangeContactStatus(c context.Context, contactID string, newStatus string) (contact models.ContactEntry, err error) {
-	err = RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		if contact, err = GetContactByID(c, tx, contactID); err != nil {
 			return err
 		}
@@ -170,7 +171,7 @@ type createContactDbChanges struct {
 
 func CreateContact(c context.Context, tx dal.ReadwriteTransaction, userID string, contactDetails models.ContactDetails) (contact models.ContactEntry, user models.AppUser, err error) {
 	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(c); err != nil {
 		return
 	}
 	var contactIDs []string
@@ -231,11 +232,7 @@ func CreateContact(c context.Context, tx dal.ReadwriteTransaction, userID string
 }
 
 func UpdateContact(c context.Context, contactID string, values map[string]string) (contactEntity *models.DebtusContactDbo, err error) {
-	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
-		return
-	}
-	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		if contact, err := GetContactByID(c, tx, contactID); err != nil {
 			return err
 		} else {
@@ -297,12 +294,8 @@ var ErrContactIsNotDeletable = errors.New("contact is not deletable")
 
 func DeleteContact(c context.Context, contactID string) (user models.AppUser, err error) {
 	logus.Warningf(c, "ContactDalGae.DeleteContact(%s)", contactID)
-	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
-		return
-	}
 	var contact models.ContactEntry
-	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		if contact, err = GetContactByID(c, tx, contactID); err != nil {
 			if dal.IsNotFound(err) {
 				logus.Warningf(c, "ContactEntry not found by ID: %v", contactID)
@@ -348,18 +341,14 @@ func DeleteContact(c context.Context, contactID string) (user models.AppUser, er
 }
 
 func SaveContact(c context.Context, contact models.ContactEntry) error {
-	db, err := GetDatabase(c)
-	if err != nil {
-		return err
-	}
-	return db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+	return facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		return tx.Set(c, contact.Record)
 	})
 }
 
 func GetContactsByIDs(c context.Context, tx dal.ReadSession, contactsIDs []string) (contacts []models.ContactEntry, err error) {
 	if tx == nil {
-		if tx, err = GetDatabase(c); err != nil {
+		if tx, err = facade.GetDatabase(c); err != nil {
 			return
 		}
 	}
@@ -371,7 +360,7 @@ func GetContactsByIDs(c context.Context, tx dal.ReadSession, contactsIDs []strin
 func GetContactByID(c context.Context, tx dal.ReadSession, contactID string) (contact models.ContactEntry, err error) {
 	contact = models.NewDebtusContact(contactID, nil)
 	if tx == nil {
-		tx, err = GetDatabase(c)
+		tx, err = facade.GetDatabase(c)
 	}
 	if err != nil {
 		return contact, err

@@ -2,6 +2,7 @@ package facade4linkage
 
 import (
 	"context"
+	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
@@ -22,6 +23,10 @@ func TestUpdateItemRelationships(t *testing.T) {
 	const item1ID = "item_1"
 	const collection1ID = "collection_1"
 	const module1ID = "module_1"
+
+	facade.GetDatabase = func(ctx context.Context) (dal.DB, error) {
+		return nil, nil
+	}
 
 	tests := []struct {
 		name      string

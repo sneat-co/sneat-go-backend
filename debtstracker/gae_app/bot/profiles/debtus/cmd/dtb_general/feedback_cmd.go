@@ -12,9 +12,10 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/platforms/tgbots"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/debtus/admin"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/general"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/i18n"
 	"github.com/strongo/logus"
 	"net/url"
@@ -137,7 +138,7 @@ var FeedbackCommand = botsfw.Command{
 
 			c := whc.Context()
 			whc.GetAppUser()
-			if _, _, err = facade.SaveFeedback(c, &feedbackEntity); err != nil {
+			if _, _, err = facade2debtus.SaveFeedback(c, &feedbackEntity); err != nil {
 				return m, errors.Wrap(err, "Failed to save Feedback to DB")
 			}
 			if feedbackEntity.Rate == FEEDBACK_UNDECIDED {
@@ -202,13 +203,8 @@ var FeedbackCommand = botsfw.Command{
 			return
 		}
 		var feedback models.Feedback
-		var db dal.DB
-		db, err = facade.GetDatabase(whc.Context())
-		if err != nil {
-			return
-		}
-		if err = db.RunReadwriteTransaction(whc.Context(), func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-			if feedback, _, err = facade.SaveFeedback(c, tx, 0, &feedbackEntity); err != nil {
+		if err = facade.RunReadwriteTransaction(whc.Context(), func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+			if feedback, _, err = facade2debtus.SaveFeedback(c, tx, 0, &feedbackEntity); err != nil {
 				return
 			}
 			return nil
@@ -338,11 +334,7 @@ var FeedbackTextCommand = botsfw.Command{
 
 			var feedback models.Feedback
 			c := whc.Context()
-			var db dal.DB
-			if db, err = facade.GetDatabase(c); err != nil {
-				return
-			}
-			if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+			if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 				if feedbackParam == "" {
 					feedback.FeedbackData = &models.FeedbackData{
 						Rate:      "none",
@@ -362,7 +354,7 @@ var FeedbackTextCommand = botsfw.Command{
 					}
 					feedback.Text = mt
 				}
-				if feedback, _, err = facade.SaveFeedback(c, tx, 0, feedback.FeedbackData); err != nil {
+				if feedback, _, err = facade2debtus.SaveFeedback(c, tx, 0, feedback.FeedbackData); err != nil {
 					return
 				}
 				return nil

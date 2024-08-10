@@ -39,7 +39,8 @@ var addBuyItemCommand = botsfw.Command{
 		userCtx := facade.NewUser(whc.AppUserID())
 
 		user := dbo4userus.NewUser(userCtx.GetID())
-		if err = facade4userus.GetUserByID(ctx, facade.GetDatabase(ctx), user.Record); err != nil {
+
+		if err = facade4userus.GetUserByID(ctx, whc.DB(), user.Record); err != nil {
 			return m, err
 		}
 

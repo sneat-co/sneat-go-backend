@@ -1,4 +1,4 @@
-package facade
+package facade2debtus
 
 //"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 //"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"

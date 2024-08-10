@@ -159,7 +159,7 @@ func signInFbUser(c context.Context, fbAppID, fbUserID string, r *http.Request, 
 //	)
 //	emailConfirmed, email, firstName, lastName, err = getFbUserInfo(c, fbSession, isFbm, fbUserID)
 //
-//	userFacebook, user, err = facade.User.GetOrCreateUserFacebookOnSignIn(c, authInfo.UserID, fbAppID, fbUserID, firstName, lastName, email, emailConfirmed, clientInfo)
+//	userFacebook, user, err = facade2debtus.User.GetOrCreateUserFacebookOnSignIn(c, authInfo.UserID, fbAppID, fbUserID, firstName, lastName, email, emailConfirmed, clientInfo)
 //	if err != nil {
 //		return
 //	}

@@ -3,7 +3,7 @@ package gaedal
 import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"math/rand"
 	"time"
@@ -30,7 +30,7 @@ func (LoginCodeDalGae) NewLoginCode(c context.Context, userID string) (code int,
 		loginCode := models.NewLoginCode(code, nil)
 		if err = db.Get(c, loginCode.Record); dal.IsNotFound(err) {
 			var created bool
-			err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+			err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 				if err := tx.Get(c, loginCode.Record); dal.IsNotFound(err) || err == nil && loginCode.Data.Created.Add(time.Hour).Before(time.Now()) {
 					loginCode.Data.Created = time.Now()
 					loginCode.Data.UserID = userID
@@ -61,11 +61,7 @@ func (LoginCodeDalGae) NewLoginCode(c context.Context, userID string) (code int,
 }
 
 func (LoginCodeDalGae) ClaimLoginCode(c context.Context, code int) (userID string, err error) {
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return
-	}
-	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		loginCode := models.NewLoginCode(code, nil)
 		if err = tx.Get(c, loginCode.Record); err != nil {
 			if dal.IsNotFound(err) {

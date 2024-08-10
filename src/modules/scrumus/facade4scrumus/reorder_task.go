@@ -17,8 +17,7 @@ func ReorderTask(ctx context.Context, userContext facade.User, request ReorderTa
 	}
 
 	uid := userContext.GetID()
-	db := facade.GetDatabase(ctx)
-	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		var params facade4meetingus.WorkerParams
 		scrum := dbo4scrumus.Scrum{}
 		if params, err = facade4meetingus.GetMeetingAndSpace(ctx, tx, uid, request.SpaceID, request.MeetingID, MeetingRecordFactory{}); err != nil {

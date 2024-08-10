@@ -7,8 +7,9 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/decimal"
 	"github.com/strongo/delaying"
 	"github.com/strongo/logus"
@@ -50,15 +51,11 @@ func delayedUpdateUserWithBill(c context.Context, billID, userID string) (err er
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		if bill, billErr = facade.GetBillByID(c, nil, billID); err != nil {
+		if bill, billErr = facade2debtus.GetBillByID(c, nil, billID); err != nil {
 			return
 		}
 	}()
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return
-	}
-	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		var user models.AppUser
 		if user, err = dtdal.User.GetUserByStrID(c, userID); err != nil {
 			return
@@ -134,7 +131,7 @@ func delayedUpdateUserWithBill(c context.Context, billID, userID string) (err er
 			if _, err = user.Data.SetOutstandingBills(userOutstandingBills); err != nil {
 				return
 			}
-			if err = facade.User.SaveUser(c, tx, user); err != nil {
+			if err = facade2debtus.User.SaveUser(c, tx, user); err != nil {
 				return
 			}
 		} else {

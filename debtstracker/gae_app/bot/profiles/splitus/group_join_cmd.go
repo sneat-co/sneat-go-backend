@@ -6,6 +6,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"net/url"
 	"strconv"
@@ -14,7 +15,7 @@ import (
 	"github.com/bots-go-framework/bots-fw-telegram"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/shared_group"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 )
 
@@ -35,11 +36,7 @@ var joinGroupCommand = shared_group.GroupCallbackCommand(joinGroupCommanCode,
 			callbackAnswer.ShowAlert = true
 			m.BotMessage = telegram.CallbackAnswer(callbackAnswer)
 		} else {
-			var db dal.DB
-			if db, err = facade.GetDatabase(c); err != nil {
-				return
-			}
-			err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+			err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 				if appUser, err = dtdal.User.GetUserByStrID(c, userID); err != nil {
 					return err
 				}
@@ -81,7 +78,7 @@ var joinGroupCommand = shared_group.GroupCallbackCommand(joinGroupCommanCode,
 					logus.Debugf(c, "GroupEntry member not changed")
 				}
 				if userChanged := appUser.Data.AddGroup(group, whc.GetBotCode()); userChanged {
-					if err = facade.User.SaveUser(c, tx, appUser); err != nil {
+					if err = facade2debtus.User.SaveUser(c, tx, appUser); err != nil {
 						return err
 					}
 				}
@@ -93,7 +90,7 @@ var joinGroupCommand = shared_group.GroupCallbackCommand(joinGroupCommanCode,
 						}
 					}
 					if groupUsersCount > 1 {
-						if err = facade.Group.DelayUpdateGroupUsers(c, group.ID); err != nil {
+						if err = facade2debtus.Group.DelayUpdateGroupUsers(c, group.ID); err != nil {
 							return err
 						}
 					}

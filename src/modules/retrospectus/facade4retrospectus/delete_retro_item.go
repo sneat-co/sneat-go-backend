@@ -21,8 +21,7 @@ func DeleteRetroItem(ctx context.Context, userContext facade.User, request Retro
 
 func deleteUserRetroItem(ctx context.Context, _ facade.User, _ RetroItemRequest) (err error) {
 	//uid := userContext.ContactID()
-	db := facade.GetDatabase(ctx)
-	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		//user := new(dbo4userus.User)
 		//userKey := facade4userus.NewUserKey(uid)
 		//userRecord := dal.NewRecordWithData(userKey, user)
@@ -67,5 +66,4 @@ func deleteUserRetroItem(ctx context.Context, _ facade.User, _ RetroItemRequest)
 		//}
 		return err
 	})
-	return
 }

@@ -1,4 +1,4 @@
-package facade
+package facade2debtus
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"strings"
 	"time"
@@ -22,7 +23,7 @@ var ErrEmailAlreadyRegistered = errors.New("email already registered")
 
 func (userFacade) GetUserByID(c context.Context, tx dal.ReadSession, userID string) (user models.AppUser, err error) {
 	if tx == nil {
-		if tx, err = GetDatabase(c); err != nil {
+		if tx, err = facade.GetDatabase(c); err != nil {
 			return
 		}
 	}
@@ -47,7 +48,7 @@ func (userFacade) GetUsersByIDs(c context.Context, userIDs []string) (users []*m
 	appUsers := models.NewAppUsers(userIDs)
 	records := models.AppUserRecords(appUsers)
 	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(c); err != nil {
 		return
 	}
 	if err = db.GetMulti(c, records); err != nil {
@@ -68,11 +69,7 @@ func (uf userFacade) CreateUserByEmail(
 	userEmail models.UserEmailEntry,
 	err error,
 ) {
-	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
-		return
-	}
-	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		if userEmail, err = dtdal.UserEmail.GetUserEmailByID(c, tx, email); err == nil {
 			return ErrEmailAlreadyRegistered
 		} else if !dal.IsNotFound(err) {
@@ -121,11 +118,7 @@ func (uf userFacade) GetOrCreateEmailUser(
 
 	var appUser models.AppUser
 
-	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
-		return
-	}
-	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		if userEmail, err = dtdal.UserEmail.GetUserEmailByID(c, tx, email); err == nil {
 			return // User found
 		} else if !dal.IsNotFound(err) { //

@@ -144,8 +144,7 @@ func RunReadonlyModuleSpaceWorker[D SpaceModuleDbo](
 	spaceWorkerParams := NewSpaceWorkerParams(user.GetID(), request.SpaceID)
 	params := NewSpaceModuleWorkerParams(moduleID, spaceWorkerParams, data)
 
-	db := facade.GetDatabase(ctx)
-	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		return runModuleSpaceWorkerReadonlyTx(ctx, tx, params, worker)
 	})
 }
@@ -160,9 +159,7 @@ func RunModuleSpaceWorker[D SpaceModuleDbo](
 ) (err error) {
 	teamWorkerParams := NewSpaceWorkerParams(user.GetID(), request.SpaceID)
 	params := NewSpaceModuleWorkerParams(moduleID, teamWorkerParams, data)
-
-	db := facade.GetDatabase(ctx)
-	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		return runModuleSpaceWorkerReadwriteTx(ctx, tx, params, worker)
 	})
 }
@@ -180,8 +177,7 @@ var RunSpaceWorker = func(ctx context.Context, user facade.User, spaceID string,
 		err = facade.ErrUnauthorized
 		return
 	}
-	db := facade.GetDatabase(ctx)
-	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		params := NewSpaceWorkerParams(userID, spaceID)
 		if err = tx.Get(ctx, params.Space.Record); err != nil {
 			return fmt.Errorf("failed to load team record: %w", err)

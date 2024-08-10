@@ -12,7 +12,7 @@ import (
 	"errors"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/debtus/cmd/dtb_general"
 	dtb_common "github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/debtus/dtb_common"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 )
 
@@ -98,7 +98,7 @@ func NewCounterpartyCommand(nextCommand botsfw.Command) botsfw.Command {
 
 				if !existingContact {
 					var user models.AppUser
-					if user, err = facade.User.GetUserByID(whc.Context(), nil, whc.AppUserID()); err != nil {
+					if user, err = facade2debtus.User.GetUserByID(whc.Context(), nil, whc.AppUserID()); err != nil {
 						return
 					}
 
@@ -113,7 +113,7 @@ func NewCounterpartyCommand(nextCommand botsfw.Command) botsfw.Command {
 				}
 
 				if !existingContact {
-					if contact, user, err = facade.CreateContact(whc.Context(), nil, whc.AppUserID(), contactDetails); err != nil {
+					if contact, user, err = facade2debtus.CreateContact(whc.Context(), nil, whc.AppUserID(), contactDetails); err != nil {
 						return m, err
 					}
 					ga := whc.GA()

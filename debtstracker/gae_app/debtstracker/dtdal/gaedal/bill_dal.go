@@ -6,7 +6,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/delaying"
 	"github.com/strongo/logus"
@@ -41,7 +41,7 @@ func (billDalGae) DelayUpdateBillDependencies(c context.Context, billID string) 
 func delayedUpdateBillDependencies(c context.Context, billID string) (err error) {
 	logus.Debugf(c, "delayUpdateBillDependencies(billID=%s)", billID)
 	var bill models.Bill
-	if bill, err = facade.GetBillByID(c, nil, billID); err != nil {
+	if bill, err = facade2debtus.GetBillByID(c, nil, billID); err != nil {
 		if dal.IsNotFound(err) {
 			logus.Warningf(c, err.Error())
 			err = nil

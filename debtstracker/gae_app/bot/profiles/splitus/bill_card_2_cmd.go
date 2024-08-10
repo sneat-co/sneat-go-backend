@@ -16,7 +16,7 @@ import (
 	"errors"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/decimal"
 )
@@ -41,7 +41,7 @@ func startBillAction(whc botsfw.WebhookContext, billParam string) (m botsfw.Mess
 	if bill.ID = billParam[len("bill-"):]; bill.ID == "" {
 		return m, errors.New("Invalid bill parameter")
 	}
-	if bill, err = facade.GetBillByID(whc.Context(), nil, bill.ID); err != nil {
+	if bill, err = facade2debtus.GetBillByID(whc.Context(), nil, bill.ID); err != nil {
 		return
 	}
 	return ShowBillCard(whc, false, bill, "")

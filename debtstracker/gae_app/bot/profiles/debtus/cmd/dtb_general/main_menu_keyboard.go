@@ -150,14 +150,14 @@ func SetMainMenuKeyboard(whc botsfw.WebhookContext, m *botsfw.MessageFromBot) {
 //				BgColor:    viberbots.ButtonBgColor,
 //				Text:       lendingText,
 //				ActionType: viberinterface.ActionTypeOpenUrl,
-//				ActionBody: common.GetNewDebtPageUrl(whc, models.TransferDirectionUser2Counterparty, UTM_CAMPAIGN_BOT_MAIN_MENU),
+//				ActionBody: shared.GetNewDebtPageUrl(whc, models.TransferDirectionUser2Counterparty, UTM_CAMPAIGN_BOT_MAIN_MENU),
 //			},
 //			{
 //				Columns:    in3columns,
 //				BgColor:    viberbots.ButtonBgColor,
 //				Text:       borrowText,
 //				ActionType: viberinterface.ActionTypeOpenUrl,
-//				ActionBody: common.GetNewDebtPageUrl(whc, models.TransferDirectionCounterparty2User, UTM_CAMPAIGN_BOT_MAIN_MENU),
+//				ActionBody: shared.GetNewDebtPageUrl(whc, models.TransferDirectionCounterparty2User, UTM_CAMPAIGN_BOT_MAIN_MENU),
 //			},
 //			{Columns: in3columns, ActionBody: returnText, Text: returnText, BgColor: viberbots.ButtonBgColor},
 //		}
@@ -170,8 +170,8 @@ func SetMainMenuKeyboard(whc botsfw.WebhookContext, m *botsfw.MessageFromBot) {
 //	if params.showBalanceAndHistory {
 //		userID := whc.AppUserID()
 //		locale := whc.Locale()
-//		balanceUrl := common.GetBalanceUrlForUser(userID, locale, whc.BotPlatform().ID(), whc.GetBotCode())
-//		historyUrl := common.GetHistoryUrlForUser(userID, locale, whc.BotPlatform().ID(), whc.GetBotCode())
+//		balanceUrl := shared.GetBalanceUrlForUser(userID, locale, whc.BotPlatform().ID(), whc.GetBotCode())
+//		historyUrl := shared.GetHistoryUrlForUser(userID, locale, whc.BotPlatform().ID(), whc.GetBotCode())
 //		buttons = append(buttons, []viberinterface.Button{
 //			{Columns: in2columns, ActionType: "open-url", ActionBody: balanceUrl, Text: whc.CommandText(trans.COMMAND_TEXT_BALANCE, emoji.BALANCE_ICON), BgColor: viberbots.ButtonBgColor},
 //			{Columns: in2columns, ActionType: "open-url", ActionBody: historyUrl, Text: whc.CommandText(trans.COMMAND_TEXT_HISTORY, emoji.HISTORY_ICON), BgColor: viberbots.ButtonBgColor},

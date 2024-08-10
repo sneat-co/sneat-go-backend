@@ -10,7 +10,7 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 )
 
 func LoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -51,7 +51,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 
-	if _user, err := facade.User.GetUserByID(c, nil, userID); err != nil {
+	if _user, err := facade2debtus.User.GetUserByID(c, nil, userID); err != nil {
 		if dal.IsNotFound(err) {
 			w.WriteHeader(http.StatusNotFound)
 			logus.Infof(c, err.Error())
@@ -74,19 +74,19 @@ func LoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			//	} else {
 			//		logus.Infof(c, "gaeUser.Email: %v", gaeUser.Email)
 			//		var db dal.DB
-			//		if db, err = facade.GetDatabase(c); err != nil {
+			//		if db, err = facade2debtus.GetDatabase(c); err != nil {
 			//			w.WriteHeader(http.StatusInternalServerError)
 			//			logus.Errorf(c, err.Error())
 			//			return
 			//		}
 			//		err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
-			//			u, err := facade.User.GetUserByID(tc, tx, userID)
+			//			u, err := facade2debtus.User.GetUserByID(tc, tx, userID)
 			//			if err != nil {
 			//				return err
 			//			}
 			//			if u.Data.EmailAddress == "" {
 			//				u.Data.SetEmail(gaeUser.Email, true)
-			//				if err = facade.User.SaveUser(c, tx, u); err != nil {
+			//				if err = facade2debtus.User.SaveUser(c, tx, u); err != nil {
 			//					return fmt.Errorf("failed to save user: %w", err)
 			//				}
 			//			}
@@ -102,7 +102,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	}
 
 	panic("Not implemented")
-	//session, _ := common.GetSession(r)
+	//session, _ := shared.GetSession(r)
 	//session.SetUserID(userID, w)
 	//if err = session.Save(r, w); err != nil {
 	//	w.WriteHeader(http.StatusInternalServerError)

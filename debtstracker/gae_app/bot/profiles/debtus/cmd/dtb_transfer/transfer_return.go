@@ -15,7 +15,7 @@ import (
 	"errors"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/decimal"
 	"golang.org/x/net/html"
@@ -155,7 +155,7 @@ var AskIfReturnedInFullCommand = botsfw.Command{
 			switch whc.Input().(botsfw.WebhookTextMessage).Text() {
 			case whc.Translate(trans.BUTTON_TEXT_DEBT_RETURNED_FULLY):
 				m, err = processReturnCommand(whc, 0)
-				//common.CreateTransfer(whc.Context(), whc.AppUserID(), )
+				//shared.CreateTransfer(whc.Context(), whc.AppUserID(), )
 			case whc.Translate(trans.BUTTON_TEXT_DEBT_RETURNED_PARTIALLY):
 				m, err = AskHowMuchHaveBeenReturnedCommand.Action(whc)
 			default:
@@ -200,7 +200,7 @@ func processReturnCommand(whc botsfw.WebhookContext, returnValue decimal.Decimal
 
 	if transferID != "" && returnValue > 0 {
 		var transfer models.TransferEntry
-		if transfer, err = facade.Transfers.GetTransferByID(whc.Context(), nil, transferID); err != nil {
+		if transfer, err = facade2debtus.Transfers.GetTransferByID(whc.Context(), nil, transferID); err != nil {
 			return
 		}
 
@@ -378,7 +378,7 @@ func getReturnWizardParams(whc botsfw.WebhookContext) (counterpartyID string, tr
 
 func getCounterparty(whc botsfw.WebhookContext, counterpartyID string) (counterparty models.ContactEntry, err error) {
 	//counterparty = new(models.ContactEntry)
-	if counterparty, err = facade.GetContactByID(whc.Context(), nil, counterpartyID); err != nil {
+	if counterparty, err = facade2debtus.GetContactByID(whc.Context(), nil, counterpartyID); err != nil {
 		return
 	}
 	return

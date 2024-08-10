@@ -1,4 +1,4 @@
-package facade
+package facade2debtus
 
 import (
 	"context"
@@ -9,6 +9,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/delaying"
 	"github.com/strongo/logus"
 	"github.com/strongo/slices"
@@ -25,11 +26,7 @@ func (groupFacade groupFacade) CreateGroup(c context.Context,
 	beforeGroupInsert func(tc context.Context, groupEntity *models.GroupDbo) (group models.GroupEntry, err error),
 	afterGroupInsert func(c context.Context, group models.GroupEntry, user models.AppUser) (err error),
 ) (group models.GroupEntry, groupMember models.GroupMember, err error) {
-	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
-		return
-	}
-	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+	if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		user, err := User.GetUserByID(c, tx, groupEntity.CreatorUserID)
 		if err != nil {
 			return err
@@ -108,7 +105,7 @@ type NewUser struct {
 	ChatMember botsfw.WebhookActor
 }
 
-func (groupFacade) AddUsersToTheGroupAndOutstandingBills(c context.Context, groupID string, newUsers []NewUser) (models.GroupEntry, []NewUser, error) {
+func (groupFacade) AddUsersToTheGroupAndOutstandingBills(c context.Context, groupID string, newUsers []NewUser) (group models.GroupEntry, newUsers2 []NewUser, err error) {
 	logus.Debugf(c, "groupFacade.AddUsersToTheGroupAndOutstandingBills(groupID=%v, newUsers=%v)", groupID, newUsers)
 	if groupID == "" {
 		panic("groupID is empty string")
@@ -116,13 +113,7 @@ func (groupFacade) AddUsersToTheGroupAndOutstandingBills(c context.Context, grou
 	if len(newUsers) == 0 {
 		panic("len(newUsers) == 0")
 	}
-	var group models.GroupEntry
-	var db dal.DB
-	var err error
-	if db, err = GetDatabase(c); err != nil {
-		return group, nil, err
-	}
-	if err := db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		changed := false
 		if group, err = dtdal.Group.GetGroupByID(c, tx, groupID); err != nil {
 			return
@@ -169,11 +160,7 @@ func updateGroupUsers(c context.Context, groupID string) (err error) {
 	}
 
 	logus.Debugf(c, "updateGroupUsers(groupID=%v)", groupID)
-	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
-		return err
-	}
-	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		group, err := dtdal.Group.GetGroupByID(c, tx, groupID)
 		if err != nil {
 			return err
@@ -193,11 +180,7 @@ func updateGroupUsers(c context.Context, groupID string) (err error) {
 
 func delayedUpdateUserWithGroups(c context.Context, userID string, groupIDs2add, groupIDs2remove []string) (err error) {
 	logus.Debugf(c, "delayedUpdateUserWithGroups(userID=%s, groupIDs2add=%+v, groupIDs2remove=%+v)", userID, groupIDs2add, groupIDs2remove)
-	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
-		return
-	}
-	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		groups2add := make([]models.GroupEntry, len(groupIDs2add))
 		for i, groupID := range groupIDs2add {
 			if groups2add[i], err = dtdal.Group.GetGroupByID(c, tx, groupID); err != nil {
@@ -248,12 +231,7 @@ func (userFacade) DelayUpdateContactWithGroups(c context.Context, contactID stri
 
 func delayedUpdateContactWithGroup(c context.Context, contactID string, addGroupIDs, removeGroupIDs []string) (err error) {
 	logus.Debugf(c, "delayedUpdateContactWithGroup(contactID=%s, addGroupIDs=%v, removeGroupIDs=%v)", contactID, addGroupIDs, removeGroupIDs)
-	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
-		return
-	}
-
-	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+	if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		if _, err = GetContactByID(c, tx, contactID); err != nil {
 			return err
 		}
@@ -283,11 +261,7 @@ func (userFacade) UpdateContactWithGroups(c context.Context, contactID string, a
 var ErrAttemptToLeaveUnsettledGroup = errors.New("an attept to leave unsettled group")
 
 func (groupFacade) LeaveGroup(c context.Context, groupID string, userID string) (group models.GroupEntry, user models.AppUser, err error) {
-	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
-		return
-	}
-	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		group.ID = groupID
 		user.ID = userID
 		if err = tx.GetMulti(c, []dal.Record{group.Record, user.Record}); err != nil {

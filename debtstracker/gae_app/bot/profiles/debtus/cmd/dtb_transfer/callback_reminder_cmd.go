@@ -13,14 +13,14 @@ import (
 	"github.com/strongo/logus"
 
 	//"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/platforms/telegram"
-	//"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	//"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	//apphostgae "github.com/strongo/app-host-gae"
 	//"github.com/strongo/strongoapp"
 	//apphostgae "github.com/strongo/app-host-gae"
 	//"context"
 	//"google.golang.org/appengine/v2/delay"
 	//"net/http"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"net/url"
 	"strconv"
 	"strings"
@@ -76,7 +76,7 @@ func rescheduleReminder(whc botsfw.WebhookContext, reminderID string, remindInDu
 		return m, err
 	}
 	var transfer models.TransferEntry
-	if transfer, err = facade.Transfers.GetTransferByID(c, nil, oldReminder.Data.TransferID); err != nil {
+	if transfer, err = facade2debtus.Transfers.GetTransferByID(c, nil, oldReminder.Data.TransferID); err != nil {
 		return m, fmt.Errorf("failed to get transferEntity by id: %w", err)
 	}
 	var messageText string
@@ -124,12 +124,12 @@ func rescheduleReminder(whc botsfw.WebhookContext, reminderID string, remindInDu
 //const ASK_FOR_FEEDBACK_TASK = "ask-for-feedback"
 //
 //func delayAskForFeedback(c context.Context, botCode string, chatID int64, userID int64) error {
-//	task, err := apphostgae.EnqueueWork(c, common.QUEUE_CHATS, ASK_FOR_FEEDBACK_TASK, 0, delayedAskForFeedback, botCode, chatID, userID)
+//	task, err := apphostgae.EnqueueWork(c, shared.QUEUE_CHATS, ASK_FOR_FEEDBACK_TASK, 0, delayedAskForFeedback, botCode, chatID, userID)
 //	if err != nil {
 //		return err
 //	}
 //	task.Delay = time.Second / 2
-//	task, err = apphostgae.AddTaskToQueue(c, task, common.QUEUE_CHATS)
+//	task, err = apphostgae.AddTaskToQueue(c, task, shared.QUEUE_CHATS)
 //	return err
 //}
 //
@@ -140,7 +140,7 @@ func rescheduleReminder(whc botsfw.WebhookContext, reminderID string, remindInDu
 //			logus.Errorf(c, "Bot settings not found by ID: "+botID)
 //			return nil
 //		} else {
-//			locale, err := facade.GetLocale(c, botID, chatID, userID)
+//			locale, err := facade2debtus.GetLocale(c, botID, chatID, userID)
 //			if err != nil {
 //				return err
 //			}
@@ -166,7 +166,7 @@ func rescheduleReminder(whc botsfw.WebhookContext, reminderID string, remindInDu
 
 //func disableReminders(whc botsfw.WebhookContext, transferID int) (m botsfw.MessageFromBot, err error) {
 //	c := whc.Context()
-//	transferKey, transfer, err := facade.Transfers.GetTransferByID(c, transferID)
+//	transferKey, transfer, err := facade2debtus.Transfers.GetTransferByID(c, transferID)
 //	userID := whc.AppUserID()
 //	if !transfer.IsRemindersDisabled(userID) {
 //		err = dtdal.DB.RunInTransaction(c, func(tc context.Context) error {

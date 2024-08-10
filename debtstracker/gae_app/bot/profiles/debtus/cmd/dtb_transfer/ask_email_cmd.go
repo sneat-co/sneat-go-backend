@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/general"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/invites"
@@ -28,7 +28,7 @@ var AskEmailForReceiptCommand = botsfw.Command{
 
 		chatEntity := whc.ChatData()
 		transferID := chatEntity.GetWizardParam(WIZARD_PARAM_TRANSFER)
-		transfer, err := facade.Transfers.GetTransferByID(c, nil, transferID)
+		transfer, err := facade2debtus.Transfers.GetTransferByID(c, nil, transferID)
 		if err != nil {
 			return m, err
 		}

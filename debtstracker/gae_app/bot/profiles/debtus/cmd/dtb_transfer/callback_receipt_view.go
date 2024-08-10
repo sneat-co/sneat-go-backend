@@ -10,7 +10,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/delaying"
 	"github.com/strongo/logus"
@@ -44,7 +44,7 @@ var ViewReceiptInTelegramCallbackCommand = botsfw.NewCallbackCommand(
 
 		callbackAnswer := tgbotapi.NewCallbackWithURL(
 			GetUrlForReceiptInTelegram(whc.GetBotCode(), receiptID, localeCode5),
-			//common.GetReceiptUrlForUser(
+			//shared.GetReceiptUrlForUser(
 			//	receiptID,
 			//	whc.AppUserID(),
 			//	whc.BotPlatform().ID(),
@@ -91,7 +91,7 @@ func linkUsersByReceiptNowOrDelay(c context.Context, receipt models.Receipt, inv
 
 func linkUsersByReceipt(c context.Context, receipt models.Receipt, invitedUserID string) (err error) {
 	if receipt.Data.CounterpartyUserID == "" {
-		linker := facade.NewReceiptUsersLinker(nil) // TODO: Link users
+		linker := facade2debtus.NewReceiptUsersLinker(nil) // TODO: Link users
 		if _, err = linker.LinkReceiptUsers(c, receipt.ID, invitedUserID); err != nil {
 			return err
 		}

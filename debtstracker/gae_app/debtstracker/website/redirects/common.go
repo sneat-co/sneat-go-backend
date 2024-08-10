@@ -13,7 +13,7 @@ import (
 
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 )
 
 func redirectToWebApp(w http.ResponseWriter, r *http.Request, authRequired bool, path string, p2p map[string]string, optionalParams []string) {
@@ -31,7 +31,7 @@ func redirectToWebApp(w http.ResponseWriter, r *http.Request, authRequired bool,
 	lang := query.Get("lang")
 	if lang == "" {
 		if authInfo.UserID != "" {
-			user, err := facade.User.GetUserByID(c, nil, authInfo.UserID)
+			user, err := facade2debtus.User.GetUserByID(c, nil, authInfo.UserID)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				_, _ = w.Write([]byte(err.Error()))

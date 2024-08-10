@@ -121,7 +121,7 @@ func HandleSignedInWithGooglePlus(c context.Context, w http.ResponseWriter, r *h
 	//			//	LastName:     userGooglePlus.NameLast,
 	//			//}
 	//			var user models.AppUser
-	//			//if user, isNewUser, err = facade.User.GetOrCreateEmailUser(c, googleAuthData.Email, userGooglePlus.EmailVerified, &createUserData); err != nil {
+	//			//if user, isNewUser, err = facade2debtus.User.GetOrCreateEmailUser(c, googleAuthData.Email, userGooglePlus.EmailVerified, &createUserData); err != nil {
 	//			//	return
 	//			//}
 	//			userGooglePlus.AppUserIntID = user.ID

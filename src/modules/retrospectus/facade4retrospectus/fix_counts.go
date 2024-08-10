@@ -15,8 +15,7 @@ import (
 // FixCounts fixes counts
 func FixCounts(ctx context.Context, userContext facade.User, request FixCountsRequest) (err error) {
 	uid := userContext.GetID()
-	db := facade.GetDatabase(ctx)
-	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		now := time.Now()
 		userRef := dbo4userus.NewUserKey(uid)
 		team := dal4spaceus.NewSpaceEntry(request.SpaceID)

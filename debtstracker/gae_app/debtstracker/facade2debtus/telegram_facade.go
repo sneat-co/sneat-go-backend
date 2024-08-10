@@ -1,4 +1,4 @@
-package facade
+package facade2debtus
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/i18n"
 	"github.com/strongo/logus"
 	"strconv"
@@ -21,7 +22,7 @@ func GetLocale(c context.Context, botID string, tgChatIntID int64, userID string
 	key := dal.NewKeyWithID(botsfwtgmodels.TgChatCollection, chatID)
 	var tgChat = record.NewDataWithID[string, *models.DebtusTelegramChatData](chatID, key, new(models.DebtusTelegramChatData))
 	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(c); err != nil {
 		return
 	}
 	if err = db.Get(c, tgChat.Record); err != nil {
@@ -42,10 +43,6 @@ func GetLocale(c context.Context, botID string, tgChatIntID int64, userID string
 			userID = tgChat.Data.BaseChatData().AppUserID
 		}
 		if userID != "" {
-			var db dal.DB
-			if db, err = GetDatabase(c); err != nil {
-				return
-			}
 			user, err := User.GetUserByID(c, db, userID)
 			if err != nil {
 				logus.Errorf(c, fmt.Errorf("failed to get user by ID=%v: %w", userID, err).Error())

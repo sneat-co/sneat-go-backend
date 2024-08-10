@@ -12,7 +12,7 @@ import (
 	"strings"
 
 	"errors"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"golang.org/x/net/html"
 )
 
@@ -154,7 +154,7 @@ func createTransferAskNoteOrCommentCommand(code string, nextCommand botsfw.Comma
 			if counterpartyID == "" {
 				return m, errors.New("transferWizard.CounterpartyID() == 0")
 			}
-			counterparty, err := facade.GetContactByID(whc.Context(), nil, counterpartyID)
+			counterparty, err := facade2debtus.GetContactByID(whc.Context(), nil, counterpartyID)
 			m.Text = strings.TrimLeft(fmt.Sprintf("%v\n(<i>%v</i>)",
 				whc.Translate(trans.MESSAGE_TEXT_TRANSFER_ASK_FOR_COMMENT_ONLY),
 				whc.Translate(trans.MESSAGE_TEXT_VISIBLE_TO_YOU_AND_COUNTERPARTY, html.EscapeString(counterparty.Data.FullName()))),

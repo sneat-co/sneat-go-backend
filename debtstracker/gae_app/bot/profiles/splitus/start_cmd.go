@@ -28,7 +28,7 @@ func startInGroupAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err
 	//	return
 	//}
 	//
-	//if group, _, err = facade.Group.AddUsersToTheGroupAndOutstandingBills(c, group.ID, []facade.NewUser{
+	//if group, _, err = facade2debtus.Group.AddUsersToTheGroupAndOutstandingBills(c, group.ID, []facade2debtus.NewUser{
 	//	{
 	//		//Name:        appUserData.FullName(),
 	//		BotUserData: botUser.Data,

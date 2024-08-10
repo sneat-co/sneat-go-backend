@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus/dto"
 	"github.com/strongo/logus"
 	"net/http"
 	"sync"
@@ -13,7 +13,7 @@ import (
 	"context"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 )
 
 func HandleAdminLatestUsers(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
@@ -43,7 +43,7 @@ func HandleAdminLatestUsers(c context.Context, w http.ResponseWriter, r *http.Re
 		if len(userCounterpartiesIDs) > 0 {
 			wg.Add(1)
 			go func(i int, userCounterpartiesIDs []string) {
-				counterparties, err := facade.GetContactsByIDs(c, nil, userCounterpartiesIDs)
+				counterparties, err := facade2debtus.GetContactsByIDs(c, nil, userCounterpartiesIDs)
 				if err != nil {
 					logus.Errorf(c, fmt.Errorf("failed to get counterparties by ids=%+v: %w", userCounterpartiesIDs, err).Error())
 					wg.Done()
@@ -69,7 +69,7 @@ func HandleAdminLatestUsers(c context.Context, w http.ResponseWriter, r *http.Re
 		if user.Data.InvitedByUserID != "" {
 			wg.Add(1)
 			go func(i int, userID string) {
-				inviter, err := facade.User.GetUserByID(c, nil, userID)
+				inviter, err := facade2debtus.User.GetUserByID(c, nil, userID)
 				if err != nil {
 					logus.Errorf(c, fmt.Errorf("failed to get user by id=%v: %w", userID, err).Error())
 					return

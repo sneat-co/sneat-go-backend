@@ -3,7 +3,7 @@ package splitus
 import (
 	"fmt"
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/logus"
 	"net/url"
@@ -26,7 +26,7 @@ func settleBillsAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err 
 	c := whc.Context()
 	logus.Debugf(c, "settleBillsAction()")
 	var user models.AppUser
-	if user, err = facade.User.GetUserByID(c, nil, whc.AppUserID()); err != nil {
+	if user, err = facade2debtus.User.GetUserByID(c, nil, whc.AppUserID()); err != nil {
 		return
 	}
 

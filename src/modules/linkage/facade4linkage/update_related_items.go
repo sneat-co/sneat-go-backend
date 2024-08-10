@@ -44,7 +44,10 @@ func updateItemWithLatestRelationshipsFromRelatedItem(
 		return nil
 	}
 
-	db := facade.GetDatabase(ctx)
+	var db dal.DB
+	if db, err = facade.GetDatabase(ctx); err != nil {
+		return err
+	}
 
 	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 

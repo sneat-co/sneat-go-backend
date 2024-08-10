@@ -8,7 +8,7 @@ import (
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/debtus/cmd/dtb_inline"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 )
 
 func showReceiptAnnouncement(whc botsfw.WebhookContext, receiptID string, creatorName string) (m botsfw.MessageFromBot, err error) {
@@ -29,7 +29,7 @@ func showReceiptAnnouncement(whc botsfw.WebhookContext, receiptID string, creato
 		return m, err
 	}
 	if creatorName == "" {
-		user, err := facade.User.GetUserByID(c, nil, receipt.Data.CreatorUserID)
+		user, err := facade2debtus.User.GetUserByID(c, nil, receipt.Data.CreatorUserID)
 		if err != nil {
 			return m, err
 		}

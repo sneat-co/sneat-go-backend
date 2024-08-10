@@ -9,25 +9,27 @@ import (
 )
 
 // GetSpace loads team record
-func GetSpace(ctx context.Context, userContext facade.User, id string) (team dal4spaceus.SpaceEntry, err error) {
-	db := facade.GetDatabase(ctx)
-	var record dal.Record
-	team, err = GetSpaceByID(ctx, db, id)
-	if err != nil || !record.Exists() {
-		return team, err
+func GetSpace(ctx context.Context, userContext facade.User, id string) (space dal4spaceus.SpaceEntry, err error) {
+	var db dal.DB
+	if db, err = facade.GetDatabase(ctx); err != nil {
+		return space, err
+	}
+	space, err = GetSpaceByID(ctx, db, id)
+	if err != nil || !space.Record.Exists() {
+		return space, err
 	}
 	userID := userContext.GetID()
 	var found bool
-	for _, uid := range team.Data.UserIDs {
+	for _, uid := range space.Data.UserIDs {
 		if uid == userID {
 			found = true
 			break
 		}
 	}
 	if !found {
-		return team, fmt.Errorf("%w: you do not belong to the SpaceIDs", facade.ErrUnauthorized)
+		return space, fmt.Errorf("%w: you do not belong to the SpaceIDs", facade.ErrUnauthorized)
 	}
-	return team, err
+	return space, err
 }
 
 // GetSpaceByID return SpaceIDs record

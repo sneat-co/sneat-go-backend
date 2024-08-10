@@ -39,7 +39,7 @@ func SetLogistSpaceSettings(
 
 func setLogistSpaceSettingsTx(
 	ctx context.Context,
-	//userContext facade.User,
+	//userContext facade2debtus.User,
 	request dto4logist.SetLogistSpaceSettingsRequest,
 	tx dal.ReadwriteTransaction,
 	workerParams *dal4spaceus.ModuleSpaceWorkerParams[*dbo4logist.LogistSpaceDbo],

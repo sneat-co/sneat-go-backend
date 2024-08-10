@@ -13,7 +13,7 @@ func NewUserKey(id string) *dal.Key {
 	return dal.NewKeyWithID(Kind, id)
 }
 
-// UserEntry defines implementation of `interface facade.UserEntry`
+// UserEntry defines implementation of `interface facade2debtus.UserEntry`
 type UserEntry struct {
 	record.DataWithID[string, *UserDbo]
 }

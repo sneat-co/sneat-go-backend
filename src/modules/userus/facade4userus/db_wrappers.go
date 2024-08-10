@@ -7,6 +7,5 @@ import (
 )
 
 var runReadwriteTransaction = func(ctx context.Context, f dal.RWTxWorker, options ...dal.TransactionOption) error {
-	db := facade.GetDatabase(ctx)
-	return db.RunReadwriteTransaction(ctx, f, options...)
+	return facade.RunReadwriteTransaction(ctx, f, options...)
 }

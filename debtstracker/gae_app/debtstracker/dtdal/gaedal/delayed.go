@@ -14,7 +14,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/platforms/tgbots"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/general"
 	"github.com/strongo/delaying"
@@ -38,7 +38,7 @@ func delayedSetUserPreferredLocale(c context.Context, userID string, localeCode5
 		return fmt.Errorf("failed to get database: %w", err)
 	}
 	return db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
-		user, err := facade.User.GetUserByID(tc, tx, userID)
+		user, err := facade2debtus.User.GetUserByID(tc, tx, userID)
 		if dal.IsNotFound(err) {
 			logus.Errorf(c, "User not found by ID: %v", err)
 			return nil
@@ -46,7 +46,7 @@ func delayedSetUserPreferredLocale(c context.Context, userID string, localeCode5
 		if err == nil && user.Data.PreferredLanguage != localeCode5 {
 			user.Data.PreferredLanguage = localeCode5
 
-			if err = facade.User.SaveUser(tc, tx, user); err != nil {
+			if err = facade2debtus.User.SaveUser(tc, tx, user); err != nil {
 				err = fmt.Errorf("failed to save user to db: %w", err)
 			}
 		}
@@ -72,7 +72,7 @@ func delayedUpdateTransferWithCreatorReceiptTgMessageID(c context.Context, botCo
 		return fmt.Errorf("failed to get database: %w", err)
 	}
 	return db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
-		transfer, err := facade.Transfers.GetTransferByID(c, tx, transferID)
+		transfer, err := facade2debtus.Transfers.GetTransferByID(c, tx, transferID)
 		if err != nil {
 			logus.Errorf(c, "Failed to get transfer by ID: %v", err)
 			if dal.IsNotFound(err) {
@@ -86,7 +86,7 @@ func delayedUpdateTransferWithCreatorReceiptTgMessageID(c context.Context, botCo
 			transfer.Data.Creator().TgBotID = botCode
 			transfer.Data.Creator().TgChatID = creatorTgChatID
 			transfer.Data.CreatorTgReceiptByTgMsgID = creatorTgReceiptMessageID
-			if err = facade.Transfers.SaveTransfer(c, tx, transfer); err != nil {
+			if err = facade2debtus.Transfers.SaveTransfer(c, tx, transfer); err != nil {
 				err = fmt.Errorf("failed to save transfer to db: %w", err)
 			}
 		}
@@ -284,7 +284,7 @@ func onReceiptSendFail(c context.Context, receiptID string, tgChatID int64, tgMs
 // 		//transfer models.TransferEntry
 // 		user models.AppUser
 // 	)
-// 	if user, err = facade.User.GetUserByID(c, userID); err != nil {
+// 	if user, err = facade2debtus.User.GetUserByID(c, userID); err != nil {
 // 		return
 // 	}
 // 	if user.TelegramUserID == 0 {
@@ -309,12 +309,12 @@ func getTranslator(c context.Context, localeCode string) (translator i18n.Single
 	logus.Debugf(c, "getTranslator(localeCode=%v)", localeCode)
 	return nil, errors.New("not implemented")
 	//var locale i18n.Locale
-	//if locale, err = common.TheAppContext.SupportedLocales().GetLocaleByCode5(localeCode); errors.Is(err, trans.ErrUnsupportedLocale) {
-	//	if locale, err = common.TheAppContext.SupportedLocales().GetLocaleByCode5(i18n.LocaleCodeEnUS); err != nil {
+	//if locale, err = shared.TheAppContext.SupportedLocales().GetLocaleByCode5(localeCode); errors.Is(err, trans.ErrUnsupportedLocale) {
+	//	if locale, err = shared.TheAppContext.SupportedLocales().GetLocaleByCode5(i18n.LocaleCodeEnUS); err != nil {
 	//		return
 	//	}
 	//}
-	//translator = i18n.NewSingleMapTranslator(locale, common.TheAppContext.GetTranslator(c))
+	//translator = i18n.NewSingleMapTranslator(locale, shared.TheAppContext.GetTranslator(c))
 	//return
 }
 
@@ -382,7 +382,7 @@ func sendReceiptToCounterpartyByTelegram(c context.Context, receiptID string, tg
 		}
 
 		var transfer models.TransferEntry
-		if transfer, err = facade.Transfers.GetTransferByID(c, tx, receipt.Data.TransferID); err != nil {
+		if transfer, err = facade2debtus.Transfers.GetTransferByID(c, tx, receipt.Data.TransferID); err != nil {
 			logus.Errorf(c, err.Error())
 			if dal.IsNotFound(err) {
 				err = nil
@@ -393,7 +393,7 @@ func sendReceiptToCounterpartyByTelegram(c context.Context, receiptID string, tg
 
 		var counterpartyUser models.AppUser
 
-		if counterpartyUser, err = facade.User.GetUserByID(c, tx, receipt.Data.CounterpartyUserID); err != nil {
+		if counterpartyUser, err = facade2debtus.User.GetUserByID(c, tx, receipt.Data.CounterpartyUserID); err != nil {
 			return
 		}
 
@@ -576,7 +576,7 @@ func delayedCreateAndSendReceiptToCounterpartyByTelegram(c context.Context, env 
 		return err
 	}
 	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-		transfer, err := facade.Transfers.GetTransferByID(c, tx, transferID)
+		transfer, err := facade2debtus.Transfers.GetTransferByID(c, tx, transferID)
 		if err != nil {
 			if dal.IsNotFound(err) {
 				logus.Errorf(c, err.Error())
@@ -585,7 +585,7 @@ func delayedCreateAndSendReceiptToCounterpartyByTelegram(c context.Context, env 
 			return fmt.Errorf("failed to get transfer by id=%v: %v", transferID, err)
 		}
 		if localeCode == "" {
-			toUser, err := facade.User.GetUserByID(c, tx, toUserID)
+			toUser, err := facade2debtus.User.GetUserByID(c, tx, toUserID)
 			if err != nil {
 				return err
 			}
@@ -636,7 +636,7 @@ func delayedUpdateUserHasDueTransfers(c context.Context, userID string) (err err
 		logus.Errorf(c, "userID == 0")
 		return nil
 	}
-	user, err := facade.User.GetUserByID(c, nil, userID)
+	user, err := facade2debtus.User.GetUserByID(c, nil, userID)
 	if err != nil {
 		if dal.IsNotFound(err) {
 			logus.Errorf(c, err.Error())
@@ -673,7 +673,7 @@ func delayedUpdateUserHasDueTransfers(c context.Context, userID string) (err err
 		// panic("Not implemented - refactoring in progress")
 		// reminder := reminders[0]
 		err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
-			if user, err := facade.User.GetUserByID(tc, tx, userID); err != nil {
+			if user, err := facade2debtus.User.GetUserByID(tc, tx, userID); err != nil {
 				if dal.IsNotFound(err) {
 					logus.Errorf(c, err.Error())
 					return nil // Do not retry

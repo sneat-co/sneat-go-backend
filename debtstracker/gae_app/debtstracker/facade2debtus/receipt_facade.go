@@ -1,8 +1,9 @@
-package facade
+package facade2debtus
 
 import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"time"
 
@@ -76,12 +77,7 @@ func AcknowledgeReceipt(c context.Context, receiptID, currentUserID string, oper
 
 	var invitedContact models.ContactEntry
 
-	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
-		return
-	}
-
-	err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
+	err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
 		var inviterUser, invitedUser models.AppUser
 		var inviterContact models.ContactEntry
 
@@ -168,7 +164,7 @@ func AcknowledgeReceipt(c context.Context, receiptID, currentUserID string, oper
 		//if _, err = GetContactByID(c, invitedContact.ID); err != nil {
 		//	if dal.IsNotFound(err) {
 		//		logus.Errorf(c, "Invited contact is not found by ID, let's try to re-insert.")
-		//		if err = facade.SaveContact(c, invitedContact); err != nil {
+		//		if err = facade2debtus.SaveContact(c, invitedContact); err != nil {
 		//			return
 		//		}
 		//	} else {
@@ -203,11 +199,7 @@ func AcknowledgeReceipt(c context.Context, receiptID, currentUserID string, oper
 }
 
 func MarkReceiptAsViewed(c context.Context, receiptID, userID string) (receipt models.Receipt, err error) {
-	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
-		return
-	}
-	err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
 		receipt, err = dtdal.Receipt.GetReceiptByID(tc, tx, receiptID)
 		if err != nil {
 			return err

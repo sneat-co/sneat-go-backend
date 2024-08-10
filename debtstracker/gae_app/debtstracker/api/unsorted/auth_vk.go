@@ -187,7 +187,7 @@ func HandleSignedWithVK(c context.Context, w http.ResponseWriter, r *http.Reques
 	//}
 	//
 	//if authInfo.UserID != 0 {
-	//	if user, err = facade.User.GetUserByID(c, authInfo.UserID); err != nil {
+	//	if user, err = facade2debtus.User.GetUserByID(c, authInfo.UserID); err != nil {
 	//		if err == datastore.ErrNoSuchEntity {
 	//			logus.Warningf(c, "User not found ID=%v", authInfo.UserID)
 	//		} else {
@@ -214,7 +214,7 @@ func HandleSignedWithVK(c context.Context, w http.ResponseWriter, r *http.Reques
 	//	Nickname: vkUser.Nickname,
 	//}
 	//
-	//userID, _, err = facade.User.GetOrCreateUserByEmail(c, "", false, &createUserData)
+	//userID, _, err = facade2debtus.User.GetOrCreateUserByEmail(c, "", false, &createUserData)
 	//if err != nil {
 	//	InternalError(c, hashedWriter, err)
 	//	return

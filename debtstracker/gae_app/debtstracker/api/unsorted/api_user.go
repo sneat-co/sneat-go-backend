@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus/dto"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"io"
 	"net/http"
@@ -16,7 +17,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal/gaedal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 )
 
@@ -26,7 +27,7 @@ func getApiUser(c context.Context, w http.ResponseWriter, r *http.Request, authI
 		return
 	}
 
-	if user, err = facade.User.GetUserByID(c, nil, user.ID); api.HasError(c, w, err, models.AppUserKind, user.ID, 0) {
+	if user, err = facade2debtus.User.GetUserByID(c, nil, user.ID); api.HasError(c, w, err, models.AppUserKind, user.ID, 0) {
 		return
 	} else if user.Data == nil {
 		_, _ = w.Write([]byte(fmt.Sprintf("User not found by ID=%v", user.ID)))
@@ -122,17 +123,13 @@ func SetUserName(c context.Context, w http.ResponseWriter, r *http.Request, auth
 		return
 	}
 
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return
-	}
-	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-		user, err := facade.User.GetUserByID(c, tx, authInfo.UserID)
+	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+		user, err := facade2debtus.User.GetUserByID(c, tx, authInfo.UserID)
 		if err != nil {
 			return err
 		}
 		user.Data.Username = string(body)
-		if err = facade.User.SaveUser(c, tx, user); err != nil {
+		if err = facade2debtus.User.SaveUser(c, tx, user); err != nil {
 			return err
 		}
 		if err = gaedal.DelayUpdateTransfersWithCreatorName(c, user.ID); err != nil {

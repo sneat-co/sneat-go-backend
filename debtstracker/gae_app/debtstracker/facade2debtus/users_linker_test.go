@@ -1,7 +1,8 @@
-package facade
+package facade2debtus
 
 import (
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"testing"
 
 	"context"
@@ -45,11 +46,7 @@ func TestUsersLinker_LinkUsersWithinTransaction(t *testing.T) {
 		t.Error("inviterContact.CounterpartyCounterpartyID != 0")
 	}
 
-	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
-		return
-	}
-	err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
+	err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
 		usersLinker = newUsersLinker(&usersLinkingDbChanges{
 			inviterUser:    &inviterUser,
 			invitedUser:    &invitedUser,

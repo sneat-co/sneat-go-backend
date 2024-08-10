@@ -10,15 +10,15 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/debtus/cmd/dtb_general"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 )
 
 func AcknowledgeReceipt(whc botsfw.WebhookContext, receiptID, operation string) (m botsfw.MessageFromBot, err error) {
 	c := whc.Context()
 
-	_, transfer, isCounterpartiesJustConnected, err := facade.AcknowledgeReceipt(c, receiptID, whc.AppUserID(), operation)
+	_, transfer, isCounterpartiesJustConnected, err := facade2debtus.AcknowledgeReceipt(c, receiptID, whc.AppUserID(), operation)
 	if err != nil {
-		if errors.Is(err, facade.ErrSelfAcknowledgement) {
+		if errors.Is(err, facade2debtus.ErrSelfAcknowledgement) {
 			m = whc.NewMessage(whc.Translate(trans.MESSAGE_TEXT_SELF_ACKNOWLEDGEMENT, html.EscapeString(transfer.Data.Counterparty().ContactName)))
 			return m, nil
 		}
@@ -94,7 +94,7 @@ func AcknowledgeReceipt(whc botsfw.WebhookContext, receiptID, operation string) 
 		}
 		// Seems we can edit message just once after callback :(
 		//if transferEntity.CounterpartyTgReceiptInlineMessageID != "" {
-		//	mt = common.TextReceiptForTransfer(whc, transferID, transferEntity, transferEntity.CounterpartyCounterpartyID)
+		//	mt = shared.TextReceiptForTransfer(whc, transferID, transferEntity, transferEntity.CounterpartyCounterpartyID)
 		//	editMessage := tgbotapi.NewEditMessageTextByInlineMessageID(transferEntity.CounterpartyTgReceiptInlineMessageID, mt + fmt.Sprintf("\n\n Acknowledged by %v", transferEntity.ContactEntry().ContactName))
 		//
 		//	if values, err := editMessage.Values(); err != nil {

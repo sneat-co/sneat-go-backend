@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus/dto"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"net/http"
 	"net/url"
@@ -15,7 +16,7 @@ import (
 	"context"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 )
 
@@ -62,14 +63,9 @@ func HandleCreateCounterparty(c context.Context, w http.ResponseWriter, r *http.
 		contactDetails.PhoneNumber = telNumber
 	}
 	var err error
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		api.InternalError(c, w, err)
-		return
-	}
 	var counterparty models.ContactEntry
-	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-		counterparty, _, err = facade.CreateContact(c, tx, authInfo.UserID, contactDetails)
+	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+		counterparty, _, err = facade2debtus.CreateContact(c, tx, authInfo.UserID, contactDetails)
 		return err
 	})
 
@@ -95,7 +91,7 @@ func HandleGetContact(c context.Context, w http.ResponseWriter, r *http.Request,
 	if counterpartyID == "" {
 		return
 	}
-	counterparty, err := facade.GetContactByID(c, nil, counterpartyID)
+	counterparty, err := facade2debtus.GetContactByID(c, nil, counterpartyID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
@@ -189,7 +185,7 @@ func HandleDeleteContact(c context.Context, w http.ResponseWriter, r *http.Reque
 		return
 	}
 	logus.Debugf(c, "contactID: %v", contactID)
-	if _, err := facade.DeleteContact(c, contactID); err != nil {
+	if _, err := facade2debtus.DeleteContact(c, contactID); err != nil {
 		api.InternalError(c, w, err)
 		return
 	}
@@ -206,7 +202,7 @@ func HandleArchiveCounterparty(c context.Context, w http.ResponseWriter, r *http
 	if contactID == "" {
 		return
 	}
-	if contact, err := facade.ChangeContactStatus(c, contactID, models.STATUS_ARCHIVED); err != nil {
+	if contact, err := facade2debtus.ChangeContactStatus(c, contactID, models.STATUS_ARCHIVED); err != nil {
 		api.InternalError(c, w, err)
 		return
 	} else {
@@ -225,7 +221,7 @@ func HandleActivateCounterparty(c context.Context, w http.ResponseWriter, r *htt
 	if contactID == "" {
 		return
 	}
-	if contact, err := facade.ChangeContactStatus(c, contactID, models.STATUS_ACTIVE); err != nil {
+	if contact, err := facade2debtus.ChangeContactStatus(c, contactID, models.STATUS_ACTIVE); err != nil {
 		api.InternalError(c, w, err)
 		return
 	} else {
@@ -252,7 +248,7 @@ func HandleUpdateCounterparty(c context.Context, w http.ResponseWriter, r *http.
 		}
 	}
 
-	if counterpartyEntity, err := facade.UpdateContact(c, counterpartyID, values); err != nil {
+	if counterpartyEntity, err := facade2debtus.UpdateContact(c, counterpartyID, values); err != nil {
 		api.InternalError(c, w, err)
 		return
 	} else {

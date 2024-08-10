@@ -8,8 +8,8 @@ import (
 	"github.com/crediterra/money"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus/dto"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/decimal"
 	"github.com/strongo/logus"
@@ -87,7 +87,7 @@ var ParseTransferCommand = botsfw.Command{
 		}
 		c := whc.Context()
 
-		from, to := facade.TransferCounterparties(direction, creatorInfo)
+		from, to := facade2debtus.TransferCounterparties(direction, creatorInfo)
 
 		//var botUserEntity botsfwmodels.AppUserData
 		//if botUserEntity, err = whc.AppUserData(); err != nil {
@@ -109,7 +109,7 @@ var ParseTransferCommand = botsfw.Command{
 			from, to,
 		)
 
-		output, err := facade.Transfers.CreateTransfer(c, newTransfer)
+		output, err := facade2debtus.Transfers.CreateTransfer(c, newTransfer)
 
 		//transferKey, err = nds.Put(ctx, transferKey, transfer)
 

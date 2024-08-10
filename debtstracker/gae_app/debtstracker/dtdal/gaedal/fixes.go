@@ -3,13 +3,14 @@ package gaedal
 import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 
 	//"errors"
 	"sync"
 
 	"context"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 )
 
 type TransferFixer struct {
@@ -43,7 +44,7 @@ func (f *TransferFixer) needFixCounterpartyCounterpartyName() bool {
 //			}
 //		}
 //		if f.transfer.Creator().ContactName == "" { // Not fixed from counterparty
-//			user, err := facade.User.GetUserByID(c, f.transfer.CreatorUserID)
+//			user, err := facade2debtus.User.GetUserByID(c, f.transfer.CreatorUserID)
 //			if err != nil {
 //				return err
 //			}
@@ -72,13 +73,8 @@ func (f *TransferFixer) needFixes(_ context.Context) bool {
 
 func (f *TransferFixer) FixAllIfNeeded(c context.Context) (err error) {
 	if f.needFixes(c) {
-		var db dal.DB
-		if db, err = facade.GetDatabase(c); err != nil {
-			return
-		}
-
-		err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
-			transfer, err := facade.Transfers.GetTransferByID(tc, tx, f.transferKey.ID.(string))
+		err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
+			transfer, err := facade2debtus.Transfers.GetTransferByID(tc, tx, f.transferKey.ID.(string))
 			if err != nil {
 				return err
 			}

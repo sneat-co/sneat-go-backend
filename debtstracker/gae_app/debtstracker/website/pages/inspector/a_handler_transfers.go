@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"google.golang.org/appengine/v2"
 	"net/http"
 	"sync"
@@ -13,7 +14,7 @@ import (
 
 	"context"
 	"github.com/julienschmidt/httprouter"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/decimal"
 	"google.golang.org/appengine/v2/datastore"
@@ -50,12 +51,12 @@ func (h transfersPage) transfersPageHandler(w http.ResponseWriter, r *http.Reque
 	go func() {
 		defer wg.Done()
 		var err error
-		if contact, err = facade.GetContactByID(c, nil, contactID); err != nil {
+		if contact, err = facade2debtus.GetContactByID(c, nil, contactID); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			_, _ = fmt.Fprint(w, err)
 			return
 		}
-		if user, err = facade.User.GetUserByID(c, nil, contact.Data.UserID); err != nil {
+		if user, err = facade2debtus.User.GetUserByID(c, nil, contact.Data.UserID); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			_, _ = fmt.Fprint(w, err)
 			return

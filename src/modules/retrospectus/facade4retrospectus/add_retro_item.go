@@ -102,8 +102,7 @@ func addRetroItemToUserRetro(ctx context.Context, userContext facade.User, reque
 	userKey := dal.NewKeyWithID(dbo4userus.UsersCollection, uid)
 	userRecord := dal.NewRecordWithData(userKey, user)
 
-	db := facade.GetDatabase(ctx)
-	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, transaction dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, transaction dal.ReadwriteTransaction) error {
 		started := time.Now()
 
 		if err = facade4userus.TxGetUserByID(ctx, transaction, userRecord); err != nil {
@@ -165,13 +164,12 @@ func addRetroItemToSpaceRetro(ctx context.Context, userContext facade.User, requ
 	userKey := dal.NewKeyWithID(dbo4userus.UsersCollection, uid)
 	userRecord := dal.NewRecordWithData(userKey, user)
 
-	db := facade.GetDatabase(ctx)
-	if err = facade4userus.GetUserByID(ctx, db, userRecord); err != nil {
+	if err = facade4userus.GetUserByID(ctx, nil, userRecord); err != nil {
 		err = fmt.Errorf("failed to get user record: %w", err)
 		return
 	}
 
-	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, transaction dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, transaction dal.ReadwriteTransaction) error {
 		now := time.Now()
 		retrospective := new(dbo4retrospectus.Retrospective)
 		retrospectiveRecord := dal.NewRecordWithData(retrospectiveKey, retrospective)

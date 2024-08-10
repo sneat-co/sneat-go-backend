@@ -7,8 +7,9 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"github.com/strongo/strongoapp/appuser"
 	"net/http"
@@ -17,14 +18,8 @@ import (
 func HandleDisconnect(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
 	provider := r.URL.Query().Get("provider")
 
-	var err error
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		api.ErrorAsJson(c, w, http.StatusInternalServerError, err)
-		return
-	}
-	if err := db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-		appUser, err := facade.User.GetUserByID(c, tx, authInfo.UserID)
+	if err := facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+		appUser, err := facade2debtus.User.GetUserByID(c, tx, authInfo.UserID)
 		if err != nil {
 			return err
 		}
@@ -98,7 +93,7 @@ func HandleDisconnect(c context.Context, w http.ResponseWriter, r *http.Request,
 		}
 
 		if changed {
-			if err = facade.User.SaveUser(c, tx, appUser); err != nil {
+			if err = facade2debtus.User.SaveUser(c, tx, appUser); err != nil {
 				return err
 			}
 		}

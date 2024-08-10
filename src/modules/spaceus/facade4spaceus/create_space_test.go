@@ -69,8 +69,8 @@ func TestCreateSpace(t *testing.T) { // TODO: Implement unit tests
 			return worker(ctx, tx)
 		}).AnyTimes()
 
-		facade.GetDatabase = func(ctx context.Context) dal.DB {
-			return db
+		facade.GetDatabase = func(ctx context.Context) (dal.DB, error) {
+			return db, nil
 		}
 		response, err := CreateSpace(ctx, user, dto4spaceus.CreateSpaceRequest{Type: core4spaceus.SpaceTypeFamily})
 		assert.Nil(t, err)

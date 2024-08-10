@@ -19,8 +19,7 @@ func SetListItemsIsDone(ctx context.Context, userContext facade.User, request Li
 	if uid == "" {
 		return validation.NewErrRequestIsMissingRequiredField("userContext.ContactID()")
 	}
-	db := facade.GetDatabase(ctx)
-	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		listID := request.ListID
 		list := dal4listus.NewSpaceListEntry(request.SpaceID, listID)
 

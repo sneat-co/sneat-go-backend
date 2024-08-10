@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"github.com/strongo/strongoapp"
 	"io"
@@ -14,7 +15,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 )
 
@@ -41,7 +42,7 @@ func AuthOnlyWithUser(handler AuthHandlerWithUser) strongoapp.HttpHandlerWithCon
 			return
 		}
 
-		user, err := facade.User.GetUserByID(c, nil, userID)
+		user, err := facade2debtus.User.GetUserByID(c, nil, userID)
 
 		if api.HasError(c, w, err, models.AppUserKind, userID, http.StatusInternalServerError) {
 			return
@@ -151,12 +152,7 @@ func HandleAuthLoginId(c context.Context, w http.ResponseWriter, r *http.Request
 		}
 	}
 
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		api.InternalError(c, w, err)
-		return
-	}
-	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		var loginPin models.LoginPin
 		if loginPin, err = dtdal.LoginPin.CreateLoginPin(c, tx, channel, gaClientID, authInfo.UserID); err != nil {
 			api.ErrorAsJson(c, w, http.StatusInternalServerError, err)

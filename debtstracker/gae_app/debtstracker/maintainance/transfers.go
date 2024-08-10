@@ -33,7 +33,7 @@ package maintainance
 //	transfer := m.Transfer(key)
 //	w := func() Worker {
 //		return func(counters *asyncCounters) error {
-//			db, err := facade.GetDatabase(c)
+//			db, err := facade2debtus.GetDatabase(c)
 //			if err != nil {
 //				return err
 //			}

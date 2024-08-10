@@ -36,7 +36,10 @@ func AddComment(ctx context.Context, userContext facade.User, request AddComment
 		return
 	}
 
-	db := facade.GetDatabase(ctx)
+	var db dal.DB
+	if db, err = facade.GetDatabase(ctx); err != nil {
+		return nil, err
+	}
 
 	uid := userContext.GetID()
 

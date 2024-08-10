@@ -3,6 +3,7 @@ package gaedal
 import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/delaying"
 	"github.com/strongo/logus"
 	"reflect"
@@ -13,7 +14,7 @@ import (
 	"errors"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 )
 
@@ -109,7 +110,7 @@ func delayedUpdateTransferWithCounterparty(c context.Context, transferID string,
 		return err
 	}
 
-	counterpartyCounterparty, err := facade.GetContactByID(c, db, counterpartyCounterpartyID)
+	counterpartyCounterparty, err := facade2debtus.GetContactByID(c, db, counterpartyCounterpartyID)
 	if err != nil {
 		logus.Errorf(c, err.Error())
 		if dal.IsNotFound(err) {
@@ -120,7 +121,7 @@ func delayedUpdateTransferWithCounterparty(c context.Context, transferID string,
 
 	logus.Debugf(c, "counterpartyCounterparty: %v", counterpartyCounterparty)
 
-	counterpartyUser, err := facade.User.GetUserByID(c, db, counterpartyCounterparty.Data.UserID)
+	counterpartyUser, err := facade2debtus.User.GetUserByID(c, db, counterpartyCounterparty.Data.UserID)
 	if err != nil {
 		logus.Errorf(c, err.Error())
 		if dal.IsNotFound(err) {
@@ -132,7 +133,7 @@ func delayedUpdateTransferWithCounterparty(c context.Context, transferID string,
 	logus.Debugf(c, "counterpartyUser: %v", *counterpartyUser.Data)
 
 	if err := db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
-		transfer, err := facade.Transfers.GetTransferByID(tc, tx, transferID)
+		transfer, err := facade2debtus.Transfers.GetTransferByID(tc, tx, transferID)
 		if err != nil {
 			return err
 		}
@@ -188,12 +189,12 @@ func delayedUpdateTransferWithCounterparty(c context.Context, transferID string,
 		logus.Debugf(c, "transfer.To() after: %v", transfer.Data.To())
 
 		if changed {
-			if err = facade.Transfers.SaveTransfer(tc, tx, transfer); err != nil {
+			if err = facade2debtus.Transfers.SaveTransfer(tc, tx, transfer); err != nil {
 				return err
 			}
 			if !transfer.Data.DtDueOn.IsZero() {
 				var counterpartyUser models.AppUser
-				if counterpartyUser, err = facade.User.GetUserByID(c, tx, counterpartyCounterparty.Data.UserID); err != nil {
+				if counterpartyUser, err = facade2debtus.User.GetUserByID(c, tx, counterpartyCounterparty.Data.UserID); err != nil {
 					return err
 				}
 
@@ -232,7 +233,7 @@ func delayedUpdateTransfersWithCreatorName(c context.Context, userID string) (er
 	if db, err = GetDatabase(c); err != nil {
 		return err
 	}
-	user, err := facade.User.GetUserByID(c, db, userID)
+	user, err := facade2debtus.User.GetUserByID(c, db, userID)
 	if err != nil {
 		logus.Errorf(c, err.Error())
 		if dal.IsNotFound(err) {
@@ -269,7 +270,7 @@ func delayedUpdateTransfersWithCreatorName(c context.Context, userID string) (er
 		go func(transferID string) {
 			defer wg.Done()
 			err := db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-				transfer, err := facade.Transfers.GetTransferByID(c, tx, transferID)
+				transfer, err := facade2debtus.Transfers.GetTransferByID(c, tx, transferID)
 				if err != nil {
 					return err
 				}
@@ -289,7 +290,7 @@ func delayedUpdateTransfersWithCreatorName(c context.Context, userID string) (er
 					logus.Infof(c, "TransferEntry() creator is not a counterparty")
 				}
 				if changed {
-					if err = facade.Transfers.SaveTransfer(c, tx, transfer); err != nil {
+					if err = facade2debtus.Transfers.SaveTransfer(c, tx, transfer); err != nil {
 						return err
 					}
 				}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"net/http"
 	"regexp"
@@ -15,7 +16,7 @@ import (
 	"errors"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/emailing"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/strongoapp/appuser"
 )
@@ -51,13 +52,13 @@ func HandleSignUpWithEmail(c context.Context, w http.ResponseWriter, r *http.Req
 			api.ErrorAsJson(c, w, http.StatusInternalServerError, err)
 			return
 		} else {
-			api.ErrorAsJson(c, w, http.StatusConflict, facade.ErrEmailAlreadyRegistered)
+			api.ErrorAsJson(c, w, http.StatusConflict, facade2debtus.ErrEmailAlreadyRegistered)
 			return
 		}
 	}
 
-	if user, userEmail, err := facade.User.CreateUserByEmail(c, email, userName); err != nil {
-		if errors.Is(err, facade.ErrEmailAlreadyRegistered) {
+	if user, userEmail, err := facade2debtus.User.CreateUserByEmail(c, email, userName); err != nil {
+		if errors.Is(err, facade2debtus.ErrEmailAlreadyRegistered) {
 			api.ErrorAsJson(c, w, http.StatusConflict, err)
 			return
 		} else {
@@ -120,11 +121,7 @@ func HandleRequestPasswordReset(c context.Context, w http.ResponseWriter, r *htt
 		OwnedByUserWithID: appuser.NewOwnedByUserWithID(userEmail.Data.AppUserID, now),
 	}
 
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return
-	}
-	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		_, err = dtdal.PasswordReset.CreatePasswordResetByID(c, tx, &pwdResetEntity)
 		return err
 	})
@@ -162,12 +159,7 @@ func HandleChangePasswordAndSignIn(c context.Context, w http.ResponseWriter, r *
 
 	isAdmin := IsAdmin(passwordReset.Data.Email)
 
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		api.ErrorAsJson(c, w, http.StatusInternalServerError, err)
-		return
-	}
-	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+	if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 
 		now := time.Now()
 		appUser := models.NewAppUser(passwordReset.Data.AppUserID, nil)
@@ -175,11 +167,11 @@ func HandleChangePasswordAndSignIn(c context.Context, w http.ResponseWriter, r *
 
 		records := []dal.Record{appUser.Record, userEmail.Record, passwordReset.Record}
 
-		var db dal.DB
-		if db, err = facade.GetDatabase(c); err != nil {
-			return err
-		}
-		if err = db.GetMulti(c, records); err != nil {
+		//var db dal.DB
+		//if db, err = facade.GetDatabase(c); err != nil {
+		//	return err
+		//}
+		if err = tx.GetMulti(c, records); err != nil {
 			return err
 		}
 
@@ -228,11 +220,7 @@ func HandleConfirmEmailAndSignIn(c context.Context, w http.ResponseWriter, r *ht
 		return
 	}
 
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return
-	}
-	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+	if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		now := time.Now()
 
 		if userEmail, err = dtdal.UserEmail.GetUserEmailByID(c, tx, userEmail.ID); err != nil {
@@ -240,7 +228,7 @@ func HandleConfirmEmailAndSignIn(c context.Context, w http.ResponseWriter, r *ht
 		}
 
 		var appUser models.AppUser
-		if appUser, err = facade.User.GetUserByID(c, tx, userEmail.Data.AppUserID); err != nil {
+		if appUser, err = facade2debtus.User.GetUserByID(c, tx, userEmail.Data.AppUserID); err != nil {
 			return err
 		}
 

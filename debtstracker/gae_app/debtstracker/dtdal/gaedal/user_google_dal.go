@@ -58,11 +58,11 @@ func (UserGoogleDalGae) SaveUserGoogle(c context.Context, userGoogle models.User
 //				if appUserID != 0 && entity.AppUserIntID != appUserID { // Reconnect Google account to different user
 //
 //					if entity.AppUserIntID == 0 {
-//						if appUser, err := facade.User.GetUserByID(c, appUserID); err != nil {
+//						if appUser, err := facade2debtus.User.GetUserByID(c, appUserID); err != nil {
 //							return err
 //						} else /* if appUser.GoogleUniqueUserID == "" */ {
 //							appUser.GoogleUniqueUserID = user.ID
-//							if err = facade.User.SaveUser(c, appUser); err != nil {
+//							if err = facade2debtus.User.SaveUser(c, appUser); err != nil {
 //								return err
 //							}
 //						} // TODO: Handle case when appUser.GoogleUniqueUserID is not empty
@@ -107,14 +107,14 @@ func (UserGoogleDalGae) SaveUserGoogle(c context.Context, userGoogle models.User
 //		}
 //
 //		if entity.AppUserIntID != 0 {
-//			if user, err := facade.User.GetUserByID(c, entity.AppUserIntID); err != nil {
+//			if user, err := facade2debtus.User.GetUserByID(c, entity.AppUserIntID); err != nil {
 //				return err
 //			} else if user.GoogleUniqueUserID != entity.ID {
 //				if user.GoogleUniqueUserID != "" {
 //					logus.Warningf(c, "TODO: Handle case when connect with to user with different linked Google ID")
 //				}
 //				user.GoogleUniqueUserID = entity.ID
-//				if err = facade.User.SaveUser(c, user); err != nil {
+//				if err = facade2debtus.User.SaveUser(c, user); err != nil {
 //					return err
 //				}
 //			}

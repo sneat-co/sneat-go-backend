@@ -17,8 +17,7 @@ func UpdateAsset(ctx context.Context, user facade.User, request dto4assetus.Upda
 	if err = request.Validate(); err != nil {
 		return
 	}
-	db := facade.GetDatabase(ctx)
-	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		return UpdateAssetTx(ctx, tx, user, request)
 	})
 }

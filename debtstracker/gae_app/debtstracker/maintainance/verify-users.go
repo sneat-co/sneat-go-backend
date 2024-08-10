@@ -45,7 +45,7 @@ package maintainance
 //	for i, userContact := range userContacts {
 //		contactID := userContact.ID
 //		var contact models.ContactEntry
-//		if contact, err = facade.GetContactByID(c, nil, contactID); err != nil {
+//		if contact, err = facade2debtus.GetContactByID(c, nil, contactID); err != nil {
 //			if dal.IsNotFound(err) {
 //				if err = m.createContact(c, buf, counters, user, userContact); err != nil {
 //					logus.Errorf(c, "Failed to create contact %v", userContact.ID)
@@ -71,15 +71,15 @@ package maintainance
 //	}
 //	if userChanged {
 //		var db dal.DB
-//		if db, err = facade.GetDatabase(c); err != nil {
+//		if db, err = facade2debtus.GetDatabase(c); err != nil {
 //			return user, err
 //		}
 //		if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-//			if user, err = facade.User.GetUserByID(c, tx, user.ID); err != nil {
+//			if user, err = facade2debtus.User.GetUserByID(c, tx, user.ID); err != nil {
 //				return err
 //			}
 //			user.Data.SetContacts(userContacts)
-//			if err = facade.User.SaveUser(c, tx, user); err != nil {
+//			if err = facade2debtus.User.SaveUser(c, tx, user); err != nil {
 //				return err
 //			}
 //			return nil
@@ -94,11 +94,11 @@ package maintainance
 //func (m *verifyUsers) createContact(c context.Context, buf *bytes.Buffer, counters *asyncCounters, user models.AppUser, userContact models.UserContactJson) (err error) {
 //	var contact models.ContactEntry
 //	var db dal.DB
-//	if db, err = facade.GetDatabase(c); err != nil {
+//	if db, err = facade2debtus.GetDatabase(c); err != nil {
 //		return
 //	}
 //	if err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
-//		if contact, err = facade.GetContactByID(tc, nil, userContact.ID); err != nil {
+//		if contact, err = facade2debtus.GetContactByID(tc, nil, userContact.ID); err != nil {
 //			if dal.IsNotFound(err) {
 //				contact = models.NewContact(userContact.ID, &models.ContactData{
 //					UserID:    user.ID,
@@ -115,7 +115,7 @@ package maintainance
 //				if err = contact.Data.SetTransfersInfo(*contact.Data.GetTransfersInfo()); err != nil {
 //					return
 //				}
-//				if err = facade.SaveContact(tc, contact); err != nil {
+//				if err = facade2debtus.SaveContact(tc, contact); err != nil {
 //					return
 //				}
 //			}
@@ -138,11 +138,11 @@ package maintainance
 //			return err
 //		} else if fixedContactsBalances || FixBalanceCurrencies(balance) {
 //			var db dal.DB
-//			if db, err = facade.GetDatabase(c); err != nil {
+//			if db, err = facade2debtus.GetDatabase(c); err != nil {
 //				return err
 //			}
 //			if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-//				if user, err = facade.User.GetUserByID(c, tx, user.ID); err != nil {
+//				if user, err = facade2debtus.User.GetUserByID(c, tx, user.ID); err != nil {
 //					return err
 //				}
 //				balance = m.entity.Balance()
@@ -162,7 +162,7 @@ package maintainance
 //					changed = true
 //				}
 //				if changed {
-//					if err = facade.User.SaveUser(c, tx, user); err != nil {
+//					if err = facade2debtus.User.SaveUser(c, tx, user); err != nil {
 //						return err
 //					}
 //					fmt.Fprintf(buf, "User fixed: %d ", user.ID)

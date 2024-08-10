@@ -12,7 +12,7 @@ import (
 	"github.com/bots-go-framework/bots-fw-telegram"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"strings"
 )
@@ -38,12 +38,12 @@ func ShowReceipt(whc botsfw.WebhookContext, receiptID string) (m botsfw.MessageF
 		return
 	}
 
-	receipt, err = facade.MarkReceiptAsViewed(c, receiptID, whc.AppUserID())
+	receipt, err = facade2debtus.MarkReceiptAsViewed(c, receiptID, whc.AppUserID())
 	if err != nil {
 		return
 	}
 
-	transfer, err := facade.Transfers.GetTransferByID(c, nil, receipt.Data.TransferID)
+	transfer, err := facade2debtus.Transfers.GetTransferByID(c, nil, receipt.Data.TransferID)
 	if err != nil {
 		return m, err
 	}
@@ -57,9 +57,9 @@ func ShowReceipt(whc botsfw.WebhookContext, receiptID string) (m botsfw.MessageF
 	counterpartyCounterparty := transfer.Data.Creator()
 
 	if counterpartyCounterparty.ContactID != "" {
-		counterparty, err = facade.GetContactByID(c, nil, counterpartyCounterparty.ContactID)
+		counterparty, err = facade2debtus.GetContactByID(c, nil, counterpartyCounterparty.ContactID)
 	} else {
-		if user, err := facade.User.GetUserByID(c, nil, transfer.Data.CreatorUserID); err != nil {
+		if user, err := facade2debtus.User.GetUserByID(c, nil, transfer.Data.CreatorUserID); err != nil {
 			return m, err
 		} else {
 			counterparty.Data = &models.DebtusContactDbo{}
@@ -203,7 +203,7 @@ func viewReceiptCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) 
 //			if transferID, err = invite.RelatedIntID(); err != nil {
 //				return
 //			}
-//			if transfer, err = facade.Transfers.GetTransferByID(c, transferID); err != nil {
+//			if transfer, err = facade2debtus.Transfers.GetTransferByID(c, transferID); err != nil {
 //				return
 //			}
 //			sender := whc.GetSender()

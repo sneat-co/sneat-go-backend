@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/dbo4invitus"
@@ -86,7 +87,10 @@ func GetSpaceJoinInfo(ctx context.Context, request JoinInfoRequest) (response Jo
 	if err = request.Validate(); err != nil {
 		return
 	}
-	db := facade.GetDatabase(ctx)
+	var db dal.DB
+	if db, err = facade.GetDatabase(ctx); err != nil {
+		return
+	}
 
 	var inviteDto *dbo4invitus.InviteDbo
 	inviteDto, _, err = GetInviteByID(ctx, db, request.InviteID)
@@ -109,7 +113,6 @@ func GetSpaceJoinInfo(ctx context.Context, request JoinInfoRequest) (response Jo
 	var member dal4contactus.ContactEntry
 	if inviteDto.To.MemberID != "" {
 		member = dal4contactus.NewContactEntry(inviteDto.SpaceID, inviteDto.To.MemberID)
-		db := facade.GetDatabase(ctx)
 		if err = db.Get(ctx, member.Record); err != nil {
 			err = fmt.Errorf("failed to get team member's contact record: %w", err)
 			return

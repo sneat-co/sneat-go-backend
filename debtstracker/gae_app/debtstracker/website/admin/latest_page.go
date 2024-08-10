@@ -45,7 +45,7 @@ func LatestPage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	//	_, _ = b.WriteString(user.BalanceJson)
 	//	_, _ = b.WriteString("</td><td>")
 	//	if user.InvitedByUserID != "" {
-	//		if invitedByUser, err := facade.User.GetUserByID(c, nil, user.InvitedByUserID); err != nil {
+	//		if invitedByUser, err := facade2debtus.User.GetUserByID(c, nil, user.InvitedByUserID); err != nil {
 	//			_, _ = b.WriteString(err.Error())
 	//		} else {
 	//			_, _ = b.WriteString(fmt.Sprintf("<a href='user?id=%v>%v</a>')", user.InvitedByUserID, invitedByUser.Data.FullName()))

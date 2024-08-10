@@ -61,7 +61,7 @@ package maintainance
 //		})
 //
 //	var db dal.DB
-//	if db, err = facade.GetDatabase(c); err != nil {
+//	if db, err = facade2debtus.GetDatabase(c); err != nil {
 //		return err
 //	}
 //	var transferRecords []dal.Record
@@ -94,7 +94,7 @@ package maintainance
 //				changed = true
 //			}
 //			if counterparty.UserName == "" && counterparty.UserID != 0 {
-//				if user, err := facade.User.GetUserByID(c, db, counterparty.UserID); err != nil {
+//				if user, err := facade2debtus.User.GetUserByID(c, db, counterparty.UserID); err != nil {
 //					logus.Errorf(c, err.Error())
 //					return err
 //				} else {
@@ -109,7 +109,7 @@ package maintainance
 //			}
 //
 //			if self.ContactID != 0 && self.ContactName == "" {
-//				if counterpartyContact, err := facade.GetContactByID(c, nil, self.ContactID); err != nil {
+//				if counterpartyContact, err := facade2debtus.GetContactByID(c, nil, self.ContactID); err != nil {
 //					logus.Errorf(c, err.Error())
 //					return err
 //				} else {
@@ -119,7 +119,7 @@ package maintainance
 //			}
 //
 //			if self.UserID != 0 && self.UserName == "" {
-//				if user, err := facade.User.GetUserByID(c, nil, self.UserID); err != nil {
+//				if user, err := facade2debtus.User.GetUserByID(c, nil, self.UserID); err != nil {
 //					logus.Errorf(c, err.Error())
 //					return err
 //				} else {
@@ -131,7 +131,7 @@ package maintainance
 //			if changed {
 //				logus.Warningf(c, "Fixing contact details for transfer %v: From:%v, To: %v\n\noriginal: %v\n\n new: %v", transfer.ID, litter.Sdump(transfer.Data.From()), litter.Sdump(transfer.Data.To()), litter.Sdump(originalTransfer), litter.Sdump(transfer))
 //				err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-//					return facade.Transfers.SaveTransfer(c, tx, transfer)
+//					return facade2debtus.Transfers.SaveTransfer(c, tx, transfer)
 //				})
 //				if err != nil {
 //					logus.Errorf(c, fmt.Errorf("failed to save transfer: %w", err).Error())
@@ -237,7 +237,7 @@ package maintainance
 //	}
 //
 //	if outstandingIsValid {
-//		if user, err = facade.User.GetUserByID(c, nil, contact.Data.UserID); err != nil {
+//		if user, err = facade2debtus.User.GetUserByID(c, nil, contact.Data.UserID); err != nil {
 //			logus.Errorf(c, fmt.Errorf("contact{ID=%v}: user not found by ID: %w", contact.ID, err).Error())
 //			return
 //		}
@@ -249,7 +249,7 @@ package maintainance
 //
 //	if !needsFixingContactOrUser && contact.Data.CounterpartyCounterpartyID != 0 {
 //		var counterpartyContact models.ContactEntry
-//		if counterpartyContact, err = facade.GetContactByID(c, nil, contact.Data.CounterpartyCounterpartyID); err != nil {
+//		if counterpartyContact, err = facade2debtus.GetContactByID(c, nil, contact.Data.CounterpartyCounterpartyID); err != nil {
 //			return
 //		}
 //		fmt.Fprintf(buf, "contact.Balance(): %v\n", contact.Data.Balance())
@@ -315,7 +315,7 @@ package maintainance
 //
 //func (m *verifyContactTransfers) fixContactAndUser(c context.Context, buf *bytes.Buffer, counters *asyncCounters, contactID int64, transfersBalance money.Balance, transfersCount int, lastTransfer models.Transfer) (contact models.ContactEntry, user models.AppUser, err error) {
 //	var db dal.DB
-//	if db, err = facade.GetDatabase(c); err != nil {
+//	if db, err = facade2debtus.GetDatabase(c); err != nil {
 //		return
 //	}
 //	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
@@ -336,7 +336,7 @@ package maintainance
 //
 //func (m *verifyContactTransfers) fixContactAndUserWithinTransaction(c context.Context, tx dal.ReadwriteTransaction, buf *bytes.Buffer, counters *asyncCounters, contactID int64, transfersBalance money.Balance, transfersCount int, lastTransfer models.Transfer) (contact models.ContactEntry, user models.AppUser, err error) {
 //	fmt.Fprintf(buf, "Fixing contact %v...\n", contactID)
-//	if contact, err = facade.GetContactByID(c, tx, contactID); err != nil {
+//	if contact, err = facade2debtus.GetContactByID(c, tx, contactID); err != nil {
 //		return
 //	}
 //	changed := false
@@ -364,11 +364,11 @@ package maintainance
 //		changed = true
 //	}
 //	if changed {
-//		if err = facade.SaveContact(c, contact); err != nil {
+//		if err = facade2debtus.SaveContact(c, contact); err != nil {
 //			return
 //		}
 //		//var user models.AppUser
-//		if user, err = facade.User.GetUserByID(c, nil, contact.Data.UserID); err != nil {
+//		if user, err = facade2debtus.User.GetUserByID(c, nil, contact.Data.UserID); err != nil {
 //			return
 //		}
 //		userContacts := user.Data.Contacts()
@@ -404,7 +404,7 @@ package maintainance
 //			fmt.Fprintf(buf, "user total balance update from contacts\nwas: %v\nnew: %v\n", userTotalBalance, userContactsBalance)
 //		}
 //		if userChanged {
-//			if err = facade.User.SaveUser(c, tx, user); err != nil {
+//			if err = facade2debtus.User.SaveUser(c, tx, user); err != nil {
 //				return
 //			}
 //		}

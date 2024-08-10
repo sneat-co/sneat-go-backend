@@ -8,6 +8,17 @@ var Commands = []botsfw.Command{
 	remindCommand,
 }
 
-var listusBotCommands = append(Commands,
-	startCommand,
-)
+// addListusBotCommands adds listus commands to a Listus bot
+func addListusBotCommands(commandsByType map[botsfw.WebhookInputType][]botsfw.Command) {
+	commandsByType[botsfw.WebhookInputText] = append(commandsByType[botsfw.WebhookInputText], startCommand)
+	AddListusCommands(commandsByType)
+}
+
+// AddListusCommands adds shared listus commands to a Sneat bot
+func AddListusCommands(commandsByType map[botsfw.WebhookInputType][]botsfw.Command) {
+	commandsByType[botsfw.WebhookInputText] = append(commandsByType[botsfw.WebhookInputText],
+		listCommand,
+		addBuyItemCommand,
+		remindCommand,
+	)
+}

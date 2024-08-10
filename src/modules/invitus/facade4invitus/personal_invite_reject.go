@@ -43,8 +43,7 @@ func RejectPersonalInvite(ctx context.Context, userContext facade.User, request 
 	invite := NewPersonalInviteEntry(request.InviteID)
 	uid := userContext.GetID()
 
-	db := facade.GetDatabase(ctx)
-	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		records := []dal.Record{team.Record, invite.Record}
 		err := tx.GetMulti(ctx, records)
 		if err != nil {

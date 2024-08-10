@@ -9,9 +9,10 @@ import (
 	"github.com/pquerna/ffjson/ffjson"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus/dto"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/decimal"
 	"net/http"
 )
@@ -22,7 +23,7 @@ func HandleGetBill(c context.Context, w http.ResponseWriter, r *http.Request, au
 		api.BadRequestError(c, w, errors.New("Missing id parameter"))
 		return
 	}
-	bill, err := facade.GetBillByID(c, nil, billID)
+	bill, err := facade2debtus.GetBillByID(c, nil, billID)
 	if err != nil {
 		api.InternalError(c, w, err)
 		return
@@ -90,7 +91,7 @@ func HandleCreateBill(c context.Context, w http.ResponseWriter, r *http.Request,
 
 	var contacts []models.ContactEntry
 	if len(contactIDs) > 0 {
-		if contacts, err = facade.GetContactsByIDs(c, nil, contactIDs); err != nil {
+		if contacts, err = facade2debtus.GetContactsByIDs(c, nil, contactIDs); err != nil {
 			api.InternalError(c, w, err)
 			return
 		}
@@ -98,7 +99,7 @@ func HandleCreateBill(c context.Context, w http.ResponseWriter, r *http.Request,
 
 	var memberUsers []*models.AppUser
 	if len(memberUserIDs) > 0 {
-		if memberUsers, err = facade.User.GetUsersByIDs(c, memberUserIDs); err != nil {
+		if memberUsers, err = facade2debtus.User.GetUsersByIDs(c, memberUserIDs); err != nil {
 			api.InternalError(c, w, err)
 			return
 		}
@@ -161,15 +162,9 @@ func HandleCreateBill(c context.Context, w http.ResponseWriter, r *http.Request,
 		return
 	}
 
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		api.InternalError(c, w, err)
-		return
-	}
-
 	var bill models.Bill
-	err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
-		bill, err = facade.Bill.CreateBill(c, tx, billEntity)
+	err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
+		bill, err = facade2debtus.Bill.CreateBill(c, tx, billEntity)
 		return
 	})
 

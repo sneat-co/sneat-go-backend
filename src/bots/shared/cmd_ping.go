@@ -1,4 +1,4 @@
-package common
+package shared
 
 import "github.com/bots-go-framework/bots-fw/botsfw"
 

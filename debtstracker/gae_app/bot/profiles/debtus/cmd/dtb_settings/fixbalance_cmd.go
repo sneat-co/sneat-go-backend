@@ -5,20 +5,17 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
+	"github.com/sneat-co/sneat-go-core/facade"
 )
 
 var FixBalanceCommand = botsfw.Command{
 	Code:     "fixbalance",
 	Commands: []string{"/fixbalance"},
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-		var db dal.DB
-		if db, err = facade.GetDatabase(whc.Context()); err != nil {
-			return
-		}
-		if err = db.RunReadwriteTransaction(whc.Context(), func(c context.Context, tx dal.ReadwriteTransaction) error {
+		if err = facade.RunReadwriteTransaction(whc.Context(), func(c context.Context, tx dal.ReadwriteTransaction) error {
 			//goland:noinspection GoDeprecation
-			user, err := facade.User.GetUserByID(c, tx, whc.AppUserID())
+			user, err := facade2debtus.User.GetUserByID(c, tx, whc.AppUserID())
 			if err != nil {
 				return err
 			}
@@ -33,7 +30,7 @@ var FixBalanceCommand = botsfw.Command{
 			if err = user.Data.SetBalance(balance); err != nil {
 				return err
 			}
-			return facade.User.SaveUser(c, tx, user)
+			return facade2debtus.User.SaveUser(c, tx, user)
 		}); err != nil {
 			return
 		}

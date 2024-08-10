@@ -5,6 +5,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"net/url"
 
@@ -15,7 +16,7 @@ import (
 	"github.com/bots-go-framework/bots-fw-telegram"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/shared_all"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"strconv"
 )
@@ -46,12 +47,8 @@ func GetGroup(whc botsfw.WebhookContext, callbackUrl *url.URL) (group models.Gro
 	if tgChatEntity, err = getTgChatEntity(whc); err != nil {
 		return
 	}
-	var db dal.DB
 	c := whc.Context()
-	if db, err = facade.GetDatabase(c); err != nil {
-		return
-	}
-	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		group, err = createGroupFromTelegram(c, whc, tx, tgChatEntity, tgChat)
 		return err
 	})
@@ -143,7 +140,7 @@ func createGroupFromTelegram(c context.Context, whc botsfw.WebhookContext, tx da
 		return
 	}
 
-	if group, _, err = facade.Group.CreateGroup(c, &groupEntity, whc.GetBotCode(), beforeGroupInsert, afterGroupInsert); err != nil {
+	if group, _, err = facade2debtus.Group.CreateGroup(c, &groupEntity, whc.GetBotCode(), beforeGroupInsert, afterGroupInsert); err != nil {
 		return
 	}
 	return

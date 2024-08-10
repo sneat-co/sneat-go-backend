@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/decimal"
 	"google.golang.org/appengine/v2/datastore"
@@ -168,7 +168,7 @@ func validateContacts(c context.Context,
 
 	for i, userContactInfo := range userContactsJson {
 		var contact models.ContactEntry
-		if contact, err = facade.GetContactByID(c, nil, userContactInfo.ID); err != nil {
+		if contact, err = facade2debtus.GetContactByID(c, nil, userContactInfo.ID); err != nil {
 			if dal.IsNotFound(err) {
 				contactInfosNotFoundInDb = append(contactInfosNotFoundInDb, userContactInfo)
 			} else {
@@ -207,7 +207,7 @@ func validateContacts(c context.Context,
 			matchedContacts = append(matchedContacts, contactInfo)
 		} else {
 			var contact models.ContactEntry
-			if contact, err = facade.GetContactByID(c, nil, key.StringID()); err != nil {
+			if contact, err = facade2debtus.GetContactByID(c, nil, key.StringID()); err != nil {
 				return
 			}
 			if contactInfo, err = updateBalance(contact); err != nil {
@@ -261,7 +261,7 @@ func userPage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		err                                                           error
 	)
 
-	if user, err = facade.User.GetUserByID(c, nil, userID); err != nil {
+	if user, err = facade2debtus.User.GetUserByID(c, nil, userID); err != nil {
 		_, _ = w.Write([]byte(err.Error()))
 		return
 	}

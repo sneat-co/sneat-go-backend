@@ -43,8 +43,8 @@ func TestAddComment(t *testing.T) {
 	//var db dal.DB
 	//testdb.NewMockDB(t, db, testdb.WithProfile1())
 
-	facade.GetDatabase = func(ctx context.Context) dal.DB {
-		return nil //db
+	facade.GetDatabase = func(ctx context.Context) (dal.DB, error) {
+		return nil, nil //db
 	}
 
 	t.Run("add 1st comment", func(t *testing.T) {

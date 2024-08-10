@@ -10,7 +10,7 @@ import (
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/shared_group"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"net/url"
 )
@@ -32,7 +32,7 @@ func billsAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error)
 	c := whc.Context()
 	if !whc.IsInGroup() {
 		var user models.AppUser
-		if user, err = facade.User.GetUserByID(c, nil, whc.AppUserID()); err != nil {
+		if user, err = facade2debtus.User.GetUserByID(c, nil, whc.AppUserID()); err != nil {
 			return
 		}
 		if user.Data.OutstandingBillsCount == 0 {

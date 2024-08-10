@@ -9,7 +9,7 @@ import (
 	"net/url"
 
 	"github.com/sneat-co/debtstracker-translations/emoji"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 )
 
 const REFERRERS_COMMAND = "referrers"
@@ -34,7 +34,7 @@ func topReferrersMessageText(whc botsfw.WebhookContext) (m botsfw.MessageFromBot
 	c := whc.Context()
 
 	var topTelegramReferrers []string
-	if topTelegramReferrers, err = facade.Referer.TopTelegramReferrers(c, whc.GetBotCode(), 5); err != nil {
+	if topTelegramReferrers, err = facade2debtus.Referer.TopTelegramReferrers(c, whc.GetBotCode(), 5); err != nil {
 		return
 	} else if len(topTelegramReferrers) == 0 {
 		topTelegramReferrers = []string{"meduzalive", "varlamov"}

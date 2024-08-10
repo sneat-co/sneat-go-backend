@@ -14,7 +14,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/debtus/cmd/dtb_general"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/debtus/dtb_common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 )
 
@@ -45,7 +45,7 @@ func ProcessReturnAnswer(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 	}
 
 	howMuch := q.Get("how-much")
-	transfer, err := facade.Transfers.GetTransferByID(c, nil, transferID)
+	transfer, err := facade2debtus.Transfers.GetTransferByID(c, nil, transferID)
 	if err != nil {
 		return m, err
 	}
@@ -82,7 +82,7 @@ var EnableReminderAgainCallbackCommand = botsfw.NewCallbackCommand(commandCodeEn
 		return
 	}
 
-	if transfer, err = facade.Transfers.GetTransferByID(c, nil, transfer.ID); err != nil {
+	if transfer, err = facade2debtus.Transfers.GetTransferByID(c, nil, transfer.ID); err != nil {
 		return
 	}
 
@@ -235,7 +235,7 @@ var SetNextReminderDateCallbackCommand = botsfw.Command{
 		if err != nil {
 			return m, fmt.Errorf("failed to get reminder by id: %w", err)
 		}
-		transfer, err := facade.Transfers.GetTransferByID(c, nil, reminder.Data.TransferID)
+		transfer, err := facade2debtus.Transfers.GetTransferByID(c, nil, reminder.Data.TransferID)
 		if err != nil {
 			return m, fmt.Errorf("failed to get transfer by id: %w", err)
 		}

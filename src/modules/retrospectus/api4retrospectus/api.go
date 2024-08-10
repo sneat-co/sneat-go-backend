@@ -11,7 +11,7 @@ import (
 var verifyRequest = apicore.VerifyRequestAndCreateUserContext /* func(
 	w http.ResponseWriter, r *http.Request,
 	options verify.RequestOptions,
-) (ctx context.Context, userContext facade.User, err error) {
+) (ctx context.Context, userContext facade2debtus.User, err error) {
 	return apicore.VerifyRequestAndCreateUserContext(w, r, options)
 }
 */

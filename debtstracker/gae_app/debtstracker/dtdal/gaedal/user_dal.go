@@ -6,8 +6,9 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/delaying"
 	"github.com/strongo/logus"
 	"strings"
@@ -24,22 +25,18 @@ func NewUserDalGae() UserDalGae {
 var _ dtdal.UserDal = (*UserDalGae)(nil)
 
 func (userDal UserDalGae) SetLastCurrency(c context.Context, userID string, currency money.CurrencyCode) (err error) {
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return err
-	}
-	return db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-		user, err := facade.User.GetUserByID(c, tx, userID)
+	return facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+		user, err := facade2debtus.User.GetUserByID(c, tx, userID)
 		if err != nil {
 			return err
 		}
 		user.Data.SetLastCurrency(string(currency))
-		return facade.User.SaveUser(c, tx, user)
+		return facade2debtus.User.SaveUser(c, tx, user)
 	})
 }
 
 func (userDal UserDalGae) GetUserByStrID(c context.Context, userID string) (user models.AppUser, err error) {
-	return facade.User.GetUserByID(c, nil, userID)
+	return facade2debtus.User.GetUserByID(c, nil, userID)
 }
 
 func (userDal UserDalGae) GetUserByVkUserID(c context.Context, vkUserID int64) (models.AppUser, error) {
@@ -111,11 +108,7 @@ func (userDal UserDalGae) CreateAnonymousUser(c context.Context) (user models.Ap
 func (userDal UserDalGae) CreateUser(c context.Context, userData *models.DebutsAppUserDataOBSOLETE) (user models.AppUser, err error) {
 	user = models.NewAppUser("", userData)
 
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return
-	}
-	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		if err = tx.Insert(c, user.Record); err != nil {
 			return err
 		}
@@ -142,13 +135,9 @@ func (UserDalGae) DelayUpdateUserWithContact(c context.Context, userID string, c
 
 func updateUserWithContact(c context.Context, userID, contactID string) (err error) {
 	logus.Debugf(c, "updateUserWithContact(userID=%v, contactID=%v)", userID, contactID)
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return
-	}
-	return db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	return facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		var contact models.ContactEntry
-		if contact, err = facade.GetContactByID(c, tx, contactID); err != nil {
+		if contact, err = facade2debtus.GetContactByID(c, tx, contactID); err != nil {
 			if dal.IsNotFound(err) {
 				logus.Warningf(c, "contact not found: %v", err)
 				return nil
@@ -158,7 +147,7 @@ func updateUserWithContact(c context.Context, userID, contactID string) (err err
 		}
 		var user models.AppUser
 
-		if user, err = facade.User.GetUserByID(c, tx, userID); err != nil {
+		if user, err = facade2debtus.User.GetUserByID(c, tx, userID); err != nil {
 			return
 		}
 		if dal.IsNotFound(err) {
@@ -167,7 +156,7 @@ func updateUserWithContact(c context.Context, userID, contactID string) (err err
 		}
 
 		if _, changed := models.AddOrUpdateContact(&user, contact); changed {
-			if err = facade.User.SaveUser(c, tx, user); err != nil {
+			if err = facade2debtus.User.SaveUser(c, tx, user); err != nil {
 				return
 			}
 		} else {

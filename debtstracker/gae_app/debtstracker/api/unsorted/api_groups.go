@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus/dto"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"github.com/strongo/validation"
 	"io"
@@ -18,7 +19,7 @@ import (
 	"github.com/pquerna/ffjson/ffjson"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 )
 
@@ -39,7 +40,7 @@ func HandlerCreateGroup(c context.Context, w http.ResponseWriter, r *http.Reques
 		groupEntity.Note = note
 	}
 
-	group, _, err := facade.Group.CreateGroup(c, &groupEntity, "", nil, nil)
+	group, _, err := facade2debtus.Group.CreateGroup(c, &groupEntity, "", nil, nil)
 	if err != nil {
 		api.ErrorAsJson(c, w, http.StatusInternalServerError, err)
 		return
@@ -148,14 +149,8 @@ func HandleJoinGroups(c context.Context, w http.ResponseWriter, r *http.Request,
 	groups := make([]models.GroupEntry, len(groupIDs))
 	var user models.AppUser
 
-	db, err := facade.GetDatabase(c)
-	if err != nil {
-		api.ErrorAsJson(c, w, http.StatusInternalServerError, err)
-		return
-	}
-
-	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-		if user, err = facade.User.GetUserByID(c, tx, authInfo.UserID); err != nil {
+	err := facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+		if user, err = facade2debtus.User.GetUserByID(c, tx, authInfo.UserID); err != nil {
 			return
 		}
 		var waitGroup sync.WaitGroup
@@ -181,7 +176,7 @@ func HandleJoinGroups(c context.Context, w http.ResponseWriter, r *http.Request,
 						return
 					}
 				}
-				if errs[i] = facade.Group.DelayUpdateGroupUsers(c, groupID); errs[i] != nil {
+				if errs[i] = facade2debtus.Group.DelayUpdateGroupUsers(c, groupID); errs[i] != nil {
 					waitGroup.Done()
 					return
 				}
@@ -195,7 +190,7 @@ func HandleJoinGroups(c context.Context, w http.ResponseWriter, r *http.Request,
 			}
 		}
 
-		if err = facade.User.UpdateUserWithGroups(c, tx, user, groups, []string{}); err != nil {
+		if err = facade2debtus.User.UpdateUserWithGroups(c, tx, user, groups, []string{}); err != nil {
 			return
 		}
 
@@ -243,13 +238,7 @@ func HandlerUpdateGroup(c context.Context, w http.ResponseWriter, r *http.Reques
 	groupName := strings.TrimSpace(r.FormValue("name"))
 	groupNote := strings.TrimSpace(r.FormValue("note"))
 
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		api.ErrorAsJson(c, w, http.StatusInternalServerError, err)
-		return
-	}
-
-	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		if group, err = dtdal.Group.GetGroupByID(c, tx, group.ID); err != nil {
 			return
 		}
@@ -273,15 +262,15 @@ func HandlerUpdateGroup(c context.Context, w http.ResponseWriter, r *http.Reques
 				return
 			}
 		}
-		if user, err = facade.User.GetUserByID(c, tx, authInfo.UserID); err != nil {
+		if user, err = facade2debtus.User.GetUserByID(c, tx, authInfo.UserID); err != nil {
 			return
 		}
 
-		if err = facade.User.UpdateUserWithGroups(c, tx, user, []models.GroupEntry{group}, nil); err != nil {
+		if err = facade2debtus.User.UpdateUserWithGroups(c, tx, user, []models.GroupEntry{group}, nil); err != nil {
 			return
 		}
 
-		if err = facade.Group.DelayUpdateGroupUsers(c, group.ID); err != nil {
+		if err = facade2debtus.Group.DelayUpdateGroupUsers(c, group.ID); err != nil {
 			return
 		}
 
@@ -320,15 +309,9 @@ func HandlerSetContactsToGroup(c context.Context, w http.ResponseWriter, r *http
 	//addContactIDs := strings.Split(r.FormValue("addContactIDs"), ",")
 	removeMemberIDs = strings.Split(r.FormValue("removeMemberIDs"), ",")
 
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		api.ErrorAsJson(c, w, http.StatusInternalServerError, err)
-		return
-	}
-
-	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+	if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		var contacts2add []models.ContactEntry
-		if contacts2add, err = facade.GetContactsByIDs(c, tx, addContactIDs); err != nil {
+		if contacts2add, err = facade2debtus.GetContactsByIDs(c, tx, addContactIDs); err != nil {
 			return err
 		}
 
@@ -399,10 +382,10 @@ func HandlerSetContactsToGroup(c context.Context, w http.ResponseWriter, r *http
 		}
 
 		{ // Executing this block outside of IF just in case for self-healing.
-			if user, err = facade.User.GetUserByID(c, tx, user.ID); err != nil {
+			if user, err = facade2debtus.User.GetUserByID(c, tx, user.ID); err != nil {
 				return err
 			}
-			if err = facade.User.UpdateUserWithGroups(c, tx, user, []models.GroupEntry{group}, []string{}); err != nil {
+			if err = facade2debtus.User.UpdateUserWithGroups(c, tx, user, []models.GroupEntry{group}, []string{}); err != nil {
 				return err
 			}
 
@@ -411,16 +394,16 @@ func HandlerSetContactsToGroup(c context.Context, w http.ResponseWriter, r *http
 			}
 
 			if len(groupUserIDs) > 0 {
-				if err = facade.Group.DelayUpdateGroupUsers(c, groupID); err != nil {
+				if err = facade2debtus.Group.DelayUpdateGroupUsers(c, groupID); err != nil {
 					return err
 				}
 			}
 
 			if len(changedContactIDs) == 1 {
-				err = facade.User.UpdateContactWithGroups(c, changedContactIDs[0], []string{groupID}, []string{})
+				err = facade2debtus.User.UpdateContactWithGroups(c, changedContactIDs[0], []string{groupID}, []string{})
 			} else {
 				for _, contactID := range changedContactIDs {
-					if err = facade.User.DelayUpdateContactWithGroups(c, contactID, []string{groupID}, []string{}); err != nil {
+					if err = facade2debtus.User.DelayUpdateContactWithGroups(c, contactID, []string{groupID}, []string{}); err != nil {
 						return err
 					}
 				}

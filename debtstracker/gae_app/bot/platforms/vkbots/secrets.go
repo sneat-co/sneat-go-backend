@@ -31,6 +31,6 @@ package vkbots
 //	"iframe",
 //	"5764562",
 //	"MMtMQJvwfRhvSc0SoLbC",
-//	common.GA_TRACKING_ID,
+//	shared.GA_TRACKING_ID,
 //	trans.SupportedLocalesByCode5[i18n.LocalCodeRuRu],
 //),

@@ -46,8 +46,11 @@ func validateBrands(ctx context.Context, brands []string, db dal.DB) error {
 
 // CreateWanted creates wanted records
 func CreateWanted(ctx context.Context, userContext facade.User, request CreateWantedRequest) (id string, err error) {
-	db := facade.GetDatabase(ctx)
-	if err := validateBrands(ctx, request.Wanted.Brands, db); err != nil {
+	var db dal.DB
+	if db, err = facade.GetDatabase(ctx); err != nil {
+		return "", err
+	}
+	if err = validateBrands(ctx, request.Wanted.Brands, db); err != nil {
 		return "", err
 	}
 	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
@@ -59,7 +62,7 @@ func CreateWanted(ctx context.Context, userContext facade.User, request CreateWa
 		id = fmt.Sprintf("%v", record.Key().ID)
 		return nil
 	})
-	return
+	return id, err
 }
 
 // DeleteWantedRequest defines delete w
@@ -77,7 +80,10 @@ func (v *DeleteWantedRequest) Validate() error {
 
 // DeleteWanted deletes wanted records
 func DeleteWanted(ctx context.Context, userContext facade.User, request DeleteWantedRequest) error {
-	db := facade.GetDatabase(ctx)
+	db, err := facade.GetDatabase(ctx)
+	if err != nil {
+		return err
+	}
 	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		key := dal.NewKeyWithID(dbo4sportus.QuiverWantedCollection, request.ID)
 		var wanted dbo4sportus.Wanted

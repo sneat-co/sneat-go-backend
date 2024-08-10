@@ -3,13 +3,14 @@ package splitus
 import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"net/url"
 
 	"context"
 	"errors"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/shared_group"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 )
 
@@ -28,7 +29,7 @@ func getBill(c context.Context, tx dal.ReadSession, callbackUrl *url.URL) (bill 
 	if bill.ID, err = GetBillID(callbackUrl); err != nil {
 		return
 	}
-	if bill, err = facade.GetBillByID(c, tx, bill.ID); err != nil {
+	if bill, err = facade2debtus.GetBillByID(c, tx, bill.ID); err != nil {
 		return
 	}
 	return
@@ -47,11 +48,7 @@ func billCallbackCommand(code string, f billCallbackActionHandler) (command bots
 func billCallbackAction(f billCallbackActionHandler) func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 	return func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 		c := whc.Context()
-		var db dal.DB
-		if db, err = facade.GetDatabase(c); err != nil {
-			return
-		}
-		if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+		if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 			var bill models.Bill
 			if bill, err = getBill(c, tx, callbackUrl); err != nil {
 				return
@@ -62,7 +59,7 @@ func billCallbackAction(f billCallbackActionHandler) func(whc botsfw.WebhookCont
 					if group.ID, err = shared_group.GetUserGroupID(whc); err != nil {
 						return
 					}
-					if bill, group, err = facade.Bill.AssignBillToGroup(c, tx, bill, group.ID, whc.AppUserID()); err != nil {
+					if bill, group, err = facade2debtus.Bill.AssignBillToGroup(c, tx, bill, group.ID, whc.AppUserID()); err != nil {
 						return
 					}
 				} else {

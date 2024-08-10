@@ -2,7 +2,7 @@ package gaedal
 
 import (
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"strings"
 	"time"
@@ -21,11 +21,7 @@ func NewUserBrowserDalGae() UserBrowserDalGae {
 func (UserBrowserDalGae) insertUserBrowser(c context.Context, data *models.UserBrowserData) (userBrowser models.UserBrowser, err error) {
 
 	userBrowser = models.NewUserBrowserWithIncompleteKey(data)
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return
-	}
-	return userBrowser, db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	return userBrowser, facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		return tx.Insert(c, userBrowser.Record)
 	})
 }

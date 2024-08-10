@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-core/facade"
 	apphostgae "github.com/strongo/app-host-gae"
 	"google.golang.org/appengine/v2"
 	"net/http"
@@ -13,7 +13,7 @@ import (
 func RegisterDal() {
 
 	//dtdal.DB = gaedb.NewDatabase()
-	//telegramBot.Init(facade.GetDatabase)
+	//telegramBot.Init(facade2debtus.GetDatabase)
 	//
 	dtdal.Contact = NewContactDalGae()
 	dtdal.Transfer = NewTransferDalGae()

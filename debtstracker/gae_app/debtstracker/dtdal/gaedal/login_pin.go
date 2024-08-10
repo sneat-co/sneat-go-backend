@@ -9,7 +9,7 @@ import (
 
 	"context"
 	"errors"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 )
 
@@ -41,7 +41,7 @@ func (loginPinDalGae LoginPinDalGae) CreateLoginPin(c context.Context, tx dal.Re
 		return loginPin, fmt.Errorf("Unknown channel: %v", channel)
 	}
 	if createdUserID != "" {
-		if _, err := facade.User.GetUserByID(c, nil, createdUserID); err != nil {
+		if _, err := facade2debtus.User.GetUserByID(c, nil, createdUserID); err != nil {
 			return loginPin, fmt.Errorf("unknown createdUserID=%s: %w", createdUserID, err)
 		}
 	}

@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/api"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus/dto"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/apicore/verify"
@@ -20,7 +20,7 @@ func HandleCreateTransfer(c context.Context, w http.ResponseWriter, r *http.Requ
 		func(ctx context.Context, userCtx sneatfacade.User) (interface{}, error) {
 			var from, to *models.TransferCounterpartyInfo
 
-			appUser, err := facade.User.GetUserByID(c, nil, authInfo.UserID)
+			appUser, err := facade2debtus.User.GetUserByID(c, nil, authInfo.UserID)
 			if err != nil {
 				return nil, err
 			}
@@ -32,7 +32,7 @@ func HandleCreateTransfer(c context.Context, w http.ResponseWriter, r *http.Requ
 				from, to,
 			)
 
-			output, err := facade.Transfers.CreateTransfer(c, newTransfer)
+			output, err := facade2debtus.Transfers.CreateTransfer(c, newTransfer)
 			if err != nil {
 				return nil, err
 			}

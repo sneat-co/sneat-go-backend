@@ -8,7 +8,7 @@ package maintainance
 //	"strings"
 //
 //	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-//	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+//	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 //	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 //	"context"
 //	"github.com/captaincodeman/datastore-mapper"
@@ -51,7 +51,7 @@ package maintainance
 //func (m *verifyTransfers) verifyTransferUsers(c context.Context, tx dal.ReadwriteTransaction, transfer models.Transfer, buf *bytes.Buffer, counters *asyncCounters) (err error) {
 //	for _, userID := range transfer.Data.BothUserIDs {
 //		if userID != 0 {
-//			if _, err2 := facade.User.GetUserByID(c, tx, userID); dal.IsNotFound(err2) {
+//			if _, err2 := facade2debtus.User.GetUserByID(c, tx, userID); dal.IsNotFound(err2) {
 //				counters.Increment(fmt.Sprintf("User:%d", userID), 1)
 //				fmt.Fprintf(buf, "Unknown user %d\n", userID)
 //			} else if err2 != nil {
@@ -66,7 +66,7 @@ package maintainance
 //func (m *verifyTransfers) verifyTransferContacts(c context.Context, tx dal.ReadwriteTransaction, transfer models.Transfer, buf *bytes.Buffer, counters *asyncCounters) (err error) {
 //	for _, contactID := range transfer.Data.BothCounterpartyIDs {
 //		if contactID != 0 {
-//			if _, err2 := facade.GetContactByID(c, tx, contactID); dal.IsNotFound(err2) {
+//			if _, err2 := facade2debtus.GetContactByID(c, tx, contactID); dal.IsNotFound(err2) {
 //				counters.Increment(fmt.Sprintf("ContactEntry:%d", contactID), 1)
 //				_, _ = fmt.Fprintf(buf, "Unknown contact %d\n", contactID)
 //			} else if err2 != nil {
@@ -84,14 +84,14 @@ package maintainance
 //				panic("toFix.ContactID != 0")
 //			}
 //			var user models.AppUser
-//			if user, err = facade.User.GetUserByID(c, tx, toUse.UserID); err != nil {
+//			if user, err = facade2debtus.User.GetUserByID(c, tx, toUse.UserID); err != nil {
 //				return changed, fmt.Errorf("failed to get user by ID: %w", err)
 //			}
 //			contactIDs := make([]int64, 0, user.Data.ContactsCount)
 //			for _, c := range user.Data.Contacts() {
 //				contactIDs = append(contactIDs, c.ID)
 //			}
-//			contacts, err := facade.GetContactsByIDs(c, nil, contactIDs)
+//			contacts, err := facade2debtus.GetContactsByIDs(c, nil, contactIDs)
 //			if err != nil {
 //				return false, fmt.Errorf("failed to get contacts by IDs=%+v: %w", contactIDs, err)
 //			}
@@ -137,12 +137,12 @@ package maintainance
 //	}
 //	if currency != "" {
 //		if err = nds.RunInTransaction(c, func(c context.Context) error {
-//			if transfer, err = facade.Transfers.GetTransferByID(c, tx, transfer.ID); err != nil {
+//			if transfer, err = facade2debtus.Transfers.GetTransferByID(c, tx, transfer.ID); err != nil {
 //				return fmt.Errorf("failed to get transfer by ID=%d: %w", transfer.ID, err)
 //			}
 //			if transfer.Data.Currency != currency {
 //				transfer.Data.Currency = currency
-//				if err = facade.Transfers.SaveTransfer(c, tx, transfer); err != nil {
+//				if err = facade2debtus.Transfers.SaveTransfer(c, tx, transfer); err != nil {
 //					return fmt.Errorf("failed to save transfer: %w", err)
 //				}
 //				_, _ = fmt.Fprintf(buf, "Currency fixed: %d\n", transfer.ID)

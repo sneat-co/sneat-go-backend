@@ -2,7 +2,7 @@ package unsorted
 
 import (
 	"encoding/json"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus/dto"
 	"net/http"
 	"net/http/httptest"
 	"net/url"

@@ -11,8 +11,9 @@ import (
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/shared_group"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/decimal"
 	"github.com/strongo/logus"
 	"net/url"
@@ -122,18 +123,14 @@ func createBillFromInlineChosenResult(whc botsfw.WebhookContext, chosenResult bo
 			}
 		}()
 
-		var db dal.DB
-		if db, err = facade.GetDatabase(c); err != nil {
-			return
-		}
-		err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-			if bill, err = facade.Bill.CreateBill(c, tx, bill.Data); err != nil {
+		err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+			if bill, err = facade2debtus.Bill.CreateBill(c, tx, bill.Data); err != nil {
 				return
 			}
 			return
 		})
 		if err != nil {
-			err = fmt.Errorf("failed to call facade.Bill.CreateBill(): %w", err)
+			err = fmt.Errorf("failed to call facade2debtus.Bill.CreateBill(): %w", err)
 			return
 		}
 		logus.Infof(c, "createBillFromInlineChosenResult() => Bill created")
@@ -231,18 +228,14 @@ var EditedBillCardHookCommand = botsfw.Command{ // TODO: seems to be not used an
 
 		changed := false
 
-		var db dal.DB
-		if db, err = facade.GetDatabase(c); err != nil {
-			return
-		}
-		err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
+		err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
 			var bill models.Bill
-			if bill, err = facade.GetBillByID(c, tx, billID); err != nil {
+			if bill, err = facade2debtus.GetBillByID(c, tx, billID); err != nil {
 				return err
 			}
 
 			if groupID != "" && bill.Data.GetUserGroupID() != groupID { // TODO: Should we check for empty bill.GetUserGroupID() or better fail?
-				if bill, _, err = facade.Bill.AssignBillToGroup(c, tx, bill, groupID, whc.AppUserID()); err != nil {
+				if bill, _, err = facade2debtus.Bill.AssignBillToGroup(c, tx, bill, groupID, whc.AppUserID()); err != nil {
 					return err
 				}
 				changed = true

@@ -7,6 +7,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/i18n"
 	"github.com/strongo/logus"
 	"net/url"
@@ -15,7 +16,7 @@ import (
 	"bytes"
 	"context"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/debtus/cmd/dtb_general"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 )
 
@@ -139,13 +140,9 @@ func setPreferredLanguageAction(whc botsfw.WebhookContext, code5, mode string, b
 			if locale.Code5 == code5 {
 				_ = whc.SetLocale(locale.Code5)
 
-				var db dal.DB
-				if db, err = facade.GetDatabase(c); err != nil {
-					return
-				}
-				if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+				if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 					var user models.AppUser
-					if user, err = facade.User.GetUserByID(c, tx, whc.AppUserID()); err != nil {
+					if user, err = facade2debtus.User.GetUserByID(c, tx, whc.AppUserID()); err != nil {
 						return
 					}
 					if err = user.Data.SetPreferredLocale(locale.Code5); err != nil {
@@ -157,7 +154,7 @@ func setPreferredLanguageAction(whc botsfw.WebhookContext, code5, mode string, b
 					if err = whc.SaveBotChat(c); err != nil {
 						return
 					}
-					return facade.User.SaveUser(c, tx, user)
+					return facade2debtus.User.SaveUser(c, tx, user)
 				}); err != nil {
 					return
 				}

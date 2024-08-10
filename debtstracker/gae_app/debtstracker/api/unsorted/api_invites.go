@@ -14,7 +14,7 @@ func CreateInvite(_ context.Context, _ http.ResponseWriter, _ *http.Request) {
 	//
 	//createUserData := &dtdal.CreateUserData{}
 	//clientInfo := models.NewClientInfoFromRequest(r)
-	//userEmail, _, err := facade.User.GetOrCreateEmailUser(c, gaeUser.Email, true, createUserData, clientInfo)
+	//userEmail, _, err := facade2debtus.User.GetOrCreateEmailUser(c, gaeUser.Email, true, createUserData, clientInfo)
 	//if err != nil {
 	//	api.ErrorAsJson(c, w, http.StatusInternalServerError, err)
 	//	return

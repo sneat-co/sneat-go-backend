@@ -26,8 +26,7 @@ func (v SetUserCountryRequest) Validate() error {
 }
 
 func SetUserCountry(ctx context.Context, userContext facade.User, request SetUserCountryRequest) (err error) {
-	db := facade.GetDatabase(ctx)
-	return RunUserWorker(ctx, db, userContext, func(ctx context.Context, tx dal.ReadwriteTransaction, params *UserWorkerParams) error {
+	return RunUserWorker(ctx, userContext, func(ctx context.Context, tx dal.ReadwriteTransaction, params *UserWorkerParams) error {
 		if params.User.Data.CountryID != request.CountryID {
 			params.User.Data.CountryID = request.CountryID
 			params.UserUpdates = append(params.UserUpdates,

@@ -5,7 +5,7 @@ package maintainance
 //	"github.com/dal-go/dalgo/dal"
 //	"runtime/debug"
 //
-//	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+//	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 //	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 //	"context"
 //	"github.com/captaincodeman/datastore-mapper"
@@ -38,9 +38,9 @@ package maintainance
 //func verifyAndFixMissingTransferContacts(c context.Context, tx dal.ReadwriteTransaction, transfer models.Transfer) (fixed bool, err error) {
 //	isMissingAndCanBeFixed := func(contactID, contactUserID, counterpartyContactID int64) (bool, error) {
 //		if contactID != 0 && contactUserID != 0 && counterpartyContactID != 0 {
-//			if _, err := facade.GetContactByID(c, tx, contactID); err != nil {
+//			if _, err := facade2debtus.GetContactByID(c, tx, contactID); err != nil {
 //				if dal.IsNotFound(err) {
-//					if user, err := facade.User.GetUserByID(c, tx, contactUserID); err != nil {
+//					if user, err := facade2debtus.User.GetUserByID(c, tx, contactUserID); err != nil {
 //						return false, err
 //					} else {
 //						for _, c := range user.Data.Contacts() {
@@ -59,22 +59,22 @@ package maintainance
 //
 //	doFix := func(contactInfo *models.TransferCounterpartyInfo, counterpartyInfo *models.TransferCounterpartyInfo) (err error) {
 //		var db dal.DB
-//		if db, err = facade.GetDatabase(c); err != nil {
+//		if db, err = facade2debtus.GetDatabase(c); err != nil {
 //			return
 //		}
 //		err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
 //			logus.Debugf(c, "Recreating contact # %v", contactInfo.ContactID)
 //			var counterpartyContact models.ContactEntry
-//			if counterpartyContact, err = facade.GetContactByID(c, tx, counterpartyInfo.ContactID); err != nil {
+//			if counterpartyContact, err = facade2debtus.GetContactByID(c, tx, counterpartyInfo.ContactID); err != nil {
 //				return
 //			}
 //			var contactUser, counterpartyUser models.AppUser
 //
-//			if contactUser, err = facade.User.GetUserByID(c, tx, counterpartyInfo.UserID); err != nil {
+//			if contactUser, err = facade2debtus.User.GetUserByID(c, tx, counterpartyInfo.UserID); err != nil {
 //				return
 //			}
 //
-//			if counterpartyUser, err = facade.User.GetUserByID(c, tx, contactInfo.UserID); err != nil {
+//			if counterpartyUser, err = facade2debtus.User.GetUserByID(c, tx, contactInfo.UserID); err != nil {
 //				return
 //			}
 //
@@ -100,7 +100,7 @@ package maintainance
 //					logus.Errorf(c, "counterpartyContact.CounterpartyCounterpartyID != contact.ID: %v != %v", counterpartyContact.Data.CounterpartyCounterpartyID, contactInfo.ContactID)
 //					return
 //				}
-//				if err = facade.SaveContact(c, counterpartyContact); err != nil {
+//				if err = facade2debtus.SaveContact(c, counterpartyContact); err != nil {
 //					return err
 //				}
 //			}
@@ -126,7 +126,7 @@ package maintainance
 //				err = fmt.Errorf("contact(%v).Balance != contactUserContactJson.Balance(): %v != %v", contact.ID, contact.Data.Balance(), contactUserContactJson.Balance())
 //				return
 //			}
-//			if err = facade.SaveContact(c, contact); err != nil {
+//			if err = facade2debtus.SaveContact(c, contact); err != nil {
 //				return
 //			}
 //

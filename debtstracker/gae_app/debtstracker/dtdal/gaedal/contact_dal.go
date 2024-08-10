@@ -7,8 +7,9 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/delaying"
 	"github.com/strongo/logus"
 	"strings"
@@ -28,7 +29,7 @@ func (contactDalGae ContactDalGae) DeleteContact(c context.Context, tx dal.Readw
 	if err = tx.Delete(c, models.NewDebtusContactKey(contactID)); err != nil {
 		return
 	}
-	if err = delayDeleteContactTransfers(c, contactID, ""); err != nil { // TODO: Move to facade!
+	if err = delayDeleteContactTransfers(c, contactID, ""); err != nil { // TODO: Move to facade2debtus!
 		return
 	}
 	return
@@ -55,11 +56,7 @@ func delayedDeleteContactTransfers(c context.Context, contactID string, cursor s
 	for i, transferID := range transferIDs {
 		keys[i] = models.NewTransferKey(transferID)
 	}
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return
-	}
-	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		if err = tx.DeleteMulti(c, keys); err != nil {
 			return err
 		}
@@ -139,7 +136,7 @@ func (ContactDalGae) GetLatestContacts(whc botsfw.WebhookContext, tx dal.ReadSes
 
 func (contactDalGae ContactDalGae) GetContactIDsByTitle(c context.Context, tx dal.ReadSession, userID string, title string, caseSensitive bool) (contactIDs []string, err error) {
 	var user models.AppUser
-	if user, err = facade.User.GetUserByID(c, tx, userID); err != nil {
+	if user, err = facade2debtus.User.GetUserByID(c, tx, userID); err != nil {
 		return
 	}
 	if caseSensitive {

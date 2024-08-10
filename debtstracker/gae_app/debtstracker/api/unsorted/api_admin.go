@@ -9,9 +9,10 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade/dto"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus/dto"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/delaying"
 	"github.com/strongo/logus"
 	"net/http"
@@ -67,14 +68,8 @@ func HandleAdminMergeUserContacts(c context.Context, w http.ResponseWriter, r *h
 
 	logus.Infof(c, "keepID: %s, deleteID: %s", keepID, deleteID)
 
-	db, err := facade.GetDatabase(c)
-	if err != nil {
-		api.ErrorAsJson(c, w, http.StatusInternalServerError, err)
-		return
-	}
-
-	if err := db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-		contacts, err := facade.GetContactsByIDs(c, tx, []string{keepID, deleteID})
+	if err := facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+		contacts, err := facade2debtus.GetContactsByIDs(c, tx, []string{keepID, deleteID})
 		if err != nil {
 			return err
 		}
@@ -89,7 +84,7 @@ func HandleAdminMergeUserContacts(c context.Context, w http.ResponseWriter, r *h
 		if contactToDelete.Data.CounterpartyUserID != "" && contactToKeep.Data.CounterpartyUserID == "" {
 			return errors.New("contactToDelete.CounterpartyUserID != 0 && contactToKeep.CounterpartyUserID == 0")
 		}
-		user, err := facade.User.GetUserByID(c, tx, contactToKeep.Data.UserID)
+		user, err := facade2debtus.User.GetUserByID(c, tx, contactToKeep.Data.UserID)
 		if err != nil {
 			return err
 		}
@@ -97,7 +92,7 @@ func HandleAdminMergeUserContacts(c context.Context, w http.ResponseWriter, r *h
 			return errors.New("not implemented yet: Need to update counterparty & user balances + last transfer info")
 		}
 		if userChanged := user.Data.RemoveContact(deleteID); userChanged {
-			if err = facade.User.SaveUser(c, tx, user); err != nil {
+			if err = facade2debtus.User.SaveUser(c, tx, user); err != nil {
 				return err
 			}
 		}
@@ -124,8 +119,14 @@ func DelayedChangeTransfersCounterparty(c context.Context, oldID, newID int64, c
 		Limit(100).
 		SelectKeysOnly(reflect.Int)
 
+	var db dal.DB
+
+	if db, err = facade.GetDatabase(c); err != nil {
+		return err
+	}
+
 	var reader dal.Reader
-	if reader, err = facade.DB().QueryReader(c, q); err != nil {
+	if reader, err = db.QueryReader(c, q); err != nil {
 		return err
 	}
 	transferIDs, err := dal.SelectAllIDs[int](reader, dal.WithLimit(q.Limit()))
@@ -143,15 +144,11 @@ func DelayedChangeTransfersCounterparty(c context.Context, oldID, newID int64, c
 
 func DelayedChangeTransferCounterparty(c context.Context, transferID string, oldID, newID string, cursor string) (err error) {
 	logus.Debugf(c, "delayedChangeTransferCounterparty(oldID=%s, newID=%s, cursor=%s)", oldID, newID, cursor)
-	if _, err = facade.GetContactByID(c, nil, newID); err != nil {
+	if _, err = facade2debtus.GetContactByID(c, nil, newID); err != nil {
 		return err
 	}
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return err
-	}
-	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-		transfer, err := facade.Transfers.GetTransferByID(c, tx, transferID)
+	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+		transfer, err := facade2debtus.Transfers.GetTransferByID(c, tx, transferID)
 		if err != nil {
 			return err
 		}
@@ -169,7 +166,7 @@ func DelayedChangeTransferCounterparty(c context.Context, transferID string, old
 			} else if to := transfer.Data.To(); to.ContactID == oldID {
 				to.ContactID = newID
 			}
-			err = facade.Transfers.SaveTransfer(c, tx, transfer)
+			err = facade2debtus.Transfers.SaveTransfer(c, tx, transfer)
 		}
 		return err
 	})

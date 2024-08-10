@@ -17,7 +17,7 @@ type Facade interface {
 	GetByID(ctx context.Context, user dal.Record) error
 }
 
-// DbFacade is a facade interface
+// DbFacade is a facade2debtus interface
 type DbFacade struct {
 	//db dal.DB
 }
@@ -26,13 +26,18 @@ type DbFacade struct {
 //	return get()
 //}
 
-// TxFacade is a facade interface
+// TxFacade is a facade2debtus interface
 //type TxFacade struct {
 //	tx dal.ReadwriteTransaction
 //}
 
 // GetUserByID load user record by ID
 var GetUserByID = func(ctx context.Context, getter dal.ReadSession, user dal.Record) (err error) {
+	if getter == nil {
+		if getter, err = facade.GetDatabase(ctx); err != nil {
+			return err
+		}
+	}
 	if err = getter.Get(ctx, user); err != nil {
 		return fmt.Errorf("failed to get user record by user=%s: %w", user.Key().ID, err)
 	}
@@ -84,7 +89,7 @@ type UserWorkerParams struct {
 
 type userWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, userWorkerParams *UserWorkerParams) (err error)
 
-var RunUserWorker = func(ctx context.Context, db dal.DB, user facade.User, worker userWorker) (err error) {
+var RunUserWorker = func(ctx context.Context, user facade.User, worker userWorker) (err error) {
 	if user == nil {
 		panic("user == nil")
 	}
@@ -92,7 +97,7 @@ var RunUserWorker = func(ctx context.Context, db dal.DB, user facade.User, worke
 		User:    dbo4userus.NewUser(user.GetID()),
 		Started: time.Now(),
 	}
-	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		if err = tx.Get(ctx, params.User.Record); err != nil {
 			return fmt.Errorf("failed to load user record: %w", err)
 		}

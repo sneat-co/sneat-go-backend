@@ -1,4 +1,4 @@
-package facade
+package facade2debtus
 
 import (
 	"errors"
@@ -7,6 +7,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"math"
 
@@ -358,7 +359,7 @@ func (billFacade) CreateBill(c context.Context, tx dal.ReadwriteTransaction, bil
 }
 
 //func (billFacade) CreateBillTransfers(c context.Context, billID string) error {
-//	bill, err := facade.GetBillByID(c, billID)
+//	bill, err := facade2debtus.GetBillByID(c, billID)
 //	if err != nil {
 //		return err
 //	}
@@ -392,7 +393,7 @@ func (billFacade) CreateBill(c context.Context, tx dal.ReadwriteTransaction, bil
 //
 //func (billFacade) createBillTransfer(c context.Context, billID string, creatorCounterpartyID int64) error {
 //	err := dtdal.DB.RunInTransaction(c, func(c context.Context) error {
-//		bill, err := facade.GetBillByID(c, billID)
+//		bill, err := facade2debtus.GetBillByID(c, billID)
 //
 //		if err != nil {
 //			return err
@@ -612,11 +613,7 @@ var (
 )
 
 func (billFacade) DeleteBill(c context.Context, billID string, userID string) (bill models.Bill, err error) {
-	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
-		return
-	}
-	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		if bill, err = GetBillByID(c, nil, billID); err != nil {
 			return
 		}
@@ -673,11 +670,7 @@ func (billFacade) DeleteBill(c context.Context, billID string, userID string) (b
 }
 
 func (billFacade) RestoreBill(c context.Context, billID string, userID string) (bill models.Bill, err error) {
-	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
-		return
-	}
-	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		if bill, err = GetBillByID(c, nil, billID); err != nil {
 			return
 		}
@@ -721,7 +714,7 @@ func (billFacade) RestoreBill(c context.Context, billID string, userID string) (
 
 func GetBillByID(c context.Context, tx dal.ReadSession, billID string) (bill models.Bill, err error) {
 	if tx == nil {
-		if tx, err = GetDatabase(c); err != nil {
+		if tx, err = facade.GetDatabase(c); err != nil {
 			return bill, err
 		}
 	}

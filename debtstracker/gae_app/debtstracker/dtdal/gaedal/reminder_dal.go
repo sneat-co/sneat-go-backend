@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"reflect"
 	"time"
@@ -82,11 +82,7 @@ func (reminderDalGae ReminderDalGae) SetReminderIsSent(c context.Context, remind
 		return err
 	}
 	reminder := models.NewReminder(reminderID, nil)
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return
-	}
-	return db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+	return facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		return reminderDalGae.SetReminderIsSentInTransaction(c, tx, reminder, sentAt, messageIntID, messageStrID, locale, errDetails)
 	})
 }
@@ -131,7 +127,7 @@ func (reminderDalGae ReminderDalGae) RescheduleReminder(_ context.Context, remin
 	//	newReminderEntity *models.ReminderDbo
 	//)
 	//var db dal.DB
-	//if db, err = facade.GetDatabase(c); err != nil {
+	//if db, err = facade2debtus.GetDatabase(c); err != nil {
 	//	return
 	//}
 	//err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {

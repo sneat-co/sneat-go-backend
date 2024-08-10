@@ -60,8 +60,7 @@ type Worker = func(ctx context.Context, tx dal.ReadwriteTransaction, params Work
 
 // RunMeetingWorker runs api4meetingus worker
 func RunMeetingWorker(ctx context.Context, userID string, request Request, recordFactory RecordFactory, worker Worker) error {
-	db := facade.GetDatabase(ctx)
-	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		params, err := GetMeetingAndSpace(ctx, tx, userID, request.SpaceID, request.MeetingID, recordFactory)
 		if err != nil {
 			return fmt.Errorf("failed to get api4meetingus & team records: %w", err)

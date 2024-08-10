@@ -25,8 +25,7 @@ func CreateCompany(ctx context.Context, request CreateCompanyRequest) (response 
 	if userID == "" {
 		return response, fmt.Errorf("context is missing user ContactID")
 	}
-	db := facade.GetDatabase(ctx)
-	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		key, err := dal.NewKeyWithOptions("facade4meetingus", dal.WithRandomStringID(dal.RandomLength(5)))
 		if err != nil {
 			return err

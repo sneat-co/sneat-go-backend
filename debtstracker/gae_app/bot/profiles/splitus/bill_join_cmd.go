@@ -14,8 +14,9 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/shared_all"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/shared_group"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/decimal"
 	"github.com/strongo/i18n"
 	"github.com/strongo/logus"
@@ -36,12 +37,8 @@ var joinBillCommand = botsfw.Command{
 			err = errors.New("Missing bill ID")
 			return
 		}
-		var db dal.DB
-		if db, err = facade.GetDatabase(whc.Context()); err != nil {
-			return
-		}
-		if err = db.RunReadwriteTransaction(whc.Context(), func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-			if bill, err = facade.GetBillByID(whc.Context(), tx, bill.ID); err != nil {
+		if err = facade.RunReadwriteTransaction(whc.Context(), func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+			if bill, err = facade2debtus.GetBillByID(whc.Context(), tx, bill.ID); err != nil {
 				return
 			}
 			m, err = joinBillAction(whc, tx, bill, "", false)
@@ -130,7 +127,7 @@ func joinBillAction(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, bill
 	}
 
 	//if err = dtdal.DB.RunInTransaction(c, func(c context.Context) (err error) {
-	//if bill, err = facade.GetBillByID(c, bill.ID); err != nil {
+	//if bill, err = facade2debtus.GetBillByID(c, bill.ID); err != nil {
 	//	return
 	//}
 
@@ -183,7 +180,7 @@ func joinBillAction(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, bill
 	}
 
 	billChanged2 := false
-	if bill, _, billChanged2, isJoined, err = facade.Bill.AddBillMember(c, tx, userID, bill, "", userID, userName, paid); err != nil {
+	if bill, _, billChanged2, isJoined, err = facade2debtus.Bill.AddBillMember(c, tx, userID, bill, "", userID, userName, paid); err != nil {
 		return
 	}
 	if billChanged = billChanged2 || billChanged; billChanged {

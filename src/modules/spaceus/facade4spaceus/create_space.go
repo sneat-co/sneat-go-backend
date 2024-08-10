@@ -32,10 +32,8 @@ func CreateSpace(ctx context.Context, userContext facade.User, request dto4space
 	if err = request.Validate(); err != nil {
 		return
 	}
-	db := facade.GetDatabase(ctx)
-
 	// We do not use facade4userus.RunUserWorker dues to cycle dependency
-	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		response, err = createSpaceTxWorker(ctx, userContext, tx, request)
 		return err
 	})

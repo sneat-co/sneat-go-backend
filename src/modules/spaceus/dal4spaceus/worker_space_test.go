@@ -40,7 +40,7 @@ func TestRunModuleSpaceWorker(t *testing.T) {
 		assert.NotNil(t, params.SpaceModuleEntry.Record.Data())
 		return nil
 	}
-	facade.GetDatabase = func(ctx context.Context) dal.DB {
+	facade.GetDatabase = func(ctx context.Context) (dal.DB, error) {
 		ctrl := gomock.NewController(t)
 		db := mocks4dal.NewMockDatabase(ctrl)
 		//var db2 dal.DB
@@ -65,13 +65,13 @@ func TestRunModuleSpaceWorker(t *testing.T) {
 			})
 			return worker(ctx, tx)
 		})
-		return db
+		return db, nil
 	}
 	err := RunModuleSpaceWorker(ctx, user, request, moduleID, new(fooModuleSpaceData), assertTxWorker)
 	assert.Nil(t, err)
 	//type args[ModuleDbo SpaceModuleDbo] struct {
 	//	ctx      context.Context
-	//	user     facade.User
+	//	user     facade2debtus.User
 	//	request  dto4spaceus.SpaceRequest
 	//	moduleID string
 	//	worker   func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *ModuleSpaceWorkerParams[ModuleDbo]) (err error)

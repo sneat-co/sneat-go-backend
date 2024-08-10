@@ -7,8 +7,9 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 )
 
@@ -46,19 +47,15 @@ var SetPrimaryCurrency = botsfw.Command{
 		logus.Debugf(c, "SetPrimaryCurrency.Action()")
 		whc.ChatData().SetAwaitingReplyTo("")
 		primaryCurrency := whc.Input().(botsfw.WebhookTextMessage).Text()
-		var db dal.DB
-		if db, err = facade.GetDatabase(c); err != nil {
-			return
-		}
-		if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+		if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 			var user models.AppUser
 
 			//goland:noinspection GoDeprecation
-			if user, err = facade.User.GetUserByID(c, tx, whc.AppUserID()); err != nil {
+			if user, err = facade2debtus.User.GetUserByID(c, tx, whc.AppUserID()); err != nil {
 				return
 			}
 			user.Data.PrimaryCurrency = primaryCurrency
-			return facade.User.SaveUser(c, tx, user)
+			return facade2debtus.User.SaveUser(c, tx, user)
 		}, nil); err != nil {
 			return
 		}

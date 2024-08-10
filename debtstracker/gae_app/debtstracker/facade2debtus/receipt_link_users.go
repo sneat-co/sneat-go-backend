@@ -1,8 +1,9 @@
-package facade
+package facade2debtus
 
 import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"time"
 
@@ -29,7 +30,7 @@ func NewReceiptUsersLinker(changes *receiptDbChanges) *ReceiptUsersLinker {
 func (linker *ReceiptUsersLinker) LinkReceiptUsers(c context.Context, receiptID, invitedUserID string) (isJustLinked bool, err error) {
 	logus.Debugf(c, "ReceiptUsersLinker.LinkReceiptUsers(receiptID=%v, invitedUserID=%v)", receiptID, invitedUserID)
 	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(c); err != nil {
 		return false, err
 	}
 	if invitedUser, err := User.GetUserByID(c, db, invitedUserID); err != nil {

@@ -8,7 +8,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/platforms/tgbots"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/delaying"
 	"github.com/strongo/i18n"
@@ -30,7 +30,7 @@ func delayUpdateBillCardOnUserJoin(c context.Context, billID string, message str
 
 func delayedUpdateBillCards(c context.Context, billID string, footer string) error {
 	logus.Debugf(c, "delayedUpdateBillCards(billID=%s)", billID)
-	if bill, err := facade.GetBillByID(c, nil, billID); err != nil {
+	if bill, err := facade2debtus.GetBillByID(c, nil, billID); err != nil {
 		return err
 	} else {
 		for _, tgChatMessageID := range bill.Data.TgChatMessageIDs {
@@ -45,7 +45,7 @@ func delayedUpdateBillCards(c context.Context, billID string, footer string) err
 
 func delayedUpdateBillTgChartCard(c context.Context, billID string, tgChatMessageID, footer string) error {
 	logus.Debugf(c, "delayedUpdateBillTgChartCard(billID=%s, tgChatMessageID=%v)", billID, tgChatMessageID)
-	if bill, err := facade.GetBillByID(c, nil, billID); err != nil {
+	if bill, err := facade2debtus.GetBillByID(c, nil, billID); err != nil {
 		return err
 	} else {
 		ids := strings.Split(tgChatMessageID, "@")

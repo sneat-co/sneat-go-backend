@@ -12,7 +12,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/auth"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 )
 
@@ -64,11 +64,11 @@ func HandleSignInWithPin(c context.Context, w http.ResponseWriter, r *http.Reque
 		api.ErrorAsJson(c, w, http.StatusBadRequest, errors.New("Parameter 'loginCode' should not be 0."))
 		return
 	} else {
-		if userID, err := facade.AuthFacade.SignInWithPin(c, loginID, int32(loginCode)); err != nil {
+		if userID, err := facade2debtus.AuthFacade.SignInWithPin(c, loginID, int32(loginCode)); err != nil {
 			switch err {
-			case facade.ErrLoginExpired:
+			case facade2debtus.ErrLoginExpired:
 				_, _ = w.Write([]byte("expired"))
-			case facade.ErrLoginAlreadySigned:
+			case facade2debtus.ErrLoginAlreadySigned:
 				_, _ = w.Write([]byte("claimed"))
 			default:
 				err = fmt.Errorf("failed to claim loginCode: %w", err)

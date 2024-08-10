@@ -3,7 +3,7 @@ package support
 import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"reflect"
 	"time"
 
@@ -61,11 +61,7 @@ func (s AuditGaeStore) LogAuditRecord(c context.Context, action, message string,
 	audit.Data = NewAuditData(action, message, related...)
 	audit.Record = dal.NewRecordWithIncompleteKey("Audit", reflect.Int, audit.Data)
 	audit.Key = audit.Record.Key()
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return
-	}
-	err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
 		return tx.Insert(c, audit.Record)
 	})
 	audit.ID = audit.Record.Key().ID.(int64)

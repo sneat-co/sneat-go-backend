@@ -10,6 +10,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/sms"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 
 	//"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/invites"
@@ -24,7 +25,7 @@ import (
 	"github.com/bots-go-framework/bots-fw-telegram"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/analytics"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/general"
 )
 
@@ -41,11 +42,7 @@ var AskPhoneNumberForReceiptCommand = botsfw.Command{
 	Code: ASK_PHONE_NUMBER_FOR_RECEIPT_COMMAND,
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		c := whc.Context()
-		var db dal.DB
-		if db, err = facade.GetDatabase(c); err != nil {
-			return m, err
-		}
-		return m, db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+		return m, facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 			logus.Debugf(c, "AskPhoneNumberForReceiptCommand.Action()")
 
 			input := whc.Input()
@@ -63,7 +60,7 @@ var AskPhoneNumberForReceiptCommand = botsfw.Command{
 					m = whc.NewMessageByCode(trans.MESSAGE_TEXT_INVALID_PHONE_NUMBER)
 					return nil
 				}
-				user, err := facade.User.GetUserByID(c, tx, whc.AppUserID())
+				user, err := facade2debtus.User.GetUserByID(c, tx, whc.AppUserID())
 				if err != nil {
 					return err
 				}
@@ -73,14 +70,14 @@ var AskPhoneNumberForReceiptCommand = botsfw.Command{
 						logus.Warningf(c, "Failed to parse contact's phone number: [%v]", phoneNumberStr)
 						return err
 					} else if user.Data.PhoneNumber == 0 {
-						user, err := facade.User.GetUserByID(c, tx, whc.AppUserID())
+						user, err := facade2debtus.User.GetUserByID(c, tx, whc.AppUserID())
 						if err != nil {
 							return err
 						}
 						if user.Data.PhoneNumber == 0 {
 							user.Data.PhoneNumber = phoneNumber
 							user.Data.PhoneNumberConfirmed = true
-							if err = facade.User.SaveUser(c, tx, user); err != nil {
+							if err = facade2debtus.User.SaveUser(c, tx, user); err != nil {
 								logus.Errorf(c, fmt.Errorf("failed to update user with phone number: %w", err).Error())
 								return err
 							}
@@ -118,11 +115,11 @@ var AskPhoneNumberForReceiptCommand = botsfw.Command{
 			if transferID == "" {
 				return fmt.Errorf("empty transferID")
 			}
-			transfer, err := facade.Transfers.GetTransferByID(c, tx, transferID)
+			transfer, err := facade2debtus.Transfers.GetTransferByID(c, tx, transferID)
 			if err != nil {
 				return fmt.Errorf("failed to get transfer by ID: %w", err)
 			}
-			counterparty, err := facade.GetContactByID(c, tx, transfer.Data.Counterparty().ContactID)
+			counterparty, err := facade2debtus.GetContactByID(c, tx, transfer.Data.Counterparty().ContactID)
 			if err != nil {
 				return err
 			}
@@ -142,7 +139,7 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, ph
 	c := whc.Context()
 
 	if transfer.Data == nil {
-		if transfer, err = facade.Transfers.GetTransferByID(c, tx, transfer.ID); err != nil {
+		if transfer, err = facade2debtus.Transfers.GetTransferByID(c, tx, transfer.ID); err != nil {
 			return m, err
 		}
 	}
@@ -182,7 +179,7 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, ph
 		//}
 		//inviteCode = inviteKey.StringID()
 	} else {
-		panic("Not implemented, need to call common.GetReceiptUrlForUser(...)")
+		panic("Not implemented, need to call shared.GetReceiptUrlForUser(...)")
 	}
 
 	// You've got $10 from Jack
@@ -271,7 +268,7 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, ph
 	if err != nil {
 		return m, fmt.Errorf("failed to send SMS: %w", err)
 	}
-	//sms := common.Sms{
+	//sms := shared.Sms{
 	//	DtCreated: smsResponse.DateCreated,
 	//	DtUpdate: smsResponse.DateUpdate,
 	//	DtSent: smsResponse.DateSent,
@@ -298,13 +295,13 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, ph
 		}
 		if counterparty.Data.PhoneNumber == phoneContact.PhoneNumber {
 			var counterparty models.ContactEntry
-			counterparty, err = facade.GetContactByID(c, tx, transfer.Data.Counterparty().ContactID)
+			counterparty, err = facade2debtus.GetContactByID(c, tx, transfer.Data.Counterparty().ContactID)
 			if err != nil {
 				return
 			}
 			if counterparty.Data.PhoneNumber != phoneContact.PhoneNumber {
 				counterparty.Data.PhoneNumber = phoneContact.PhoneNumber
-				err = facade.SaveContact(c, counterparty)
+				err = facade2debtus.SaveContact(c, counterparty)
 			}
 		}
 		if m, err = whc.NewEditMessage(fmt.Sprintf("<b>Exception</b>\n%v\n\n<b>SMS text</b>\n%v", twilioException, smsText), botsfw.MessageFormatHTML); err != nil {

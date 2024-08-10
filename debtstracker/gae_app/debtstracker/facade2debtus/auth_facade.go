@@ -1,8 +1,9 @@
-package facade
+package facade2debtus
 
 import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"math/rand"
 	"time"
 
@@ -18,11 +19,7 @@ type authFacade struct {
 var AuthFacade = authFacade{}
 
 func (authFacade) AssignPinCode(c context.Context, loginID int, userID string) (loginPin models.LoginPin, err error) {
-	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
-		return
-	}
-	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		if loginPin, err = dtdal.LoginPin.GetLoginPinByID(c, tx, loginID); err != nil {
 			return fmt.Errorf("failed to get LoginPin entity by ID=%v: %w", loginID, err)
 		}
@@ -46,11 +43,7 @@ func (authFacade) AssignPinCode(c context.Context, loginID int, userID string) (
 
 func (authFacade) SignInWithPin(c context.Context, loginID int, loginPinCode int32) (userID string, err error) {
 	_ = loginPinCode
-	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
-		return
-	}
-	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		var loginPin models.LoginPin
 		if loginPin, err = dtdal.LoginPin.GetLoginPinByID(c, tx, loginID); err != nil {
 			return fmt.Errorf("failed to get LoginPin entity by ID=%v: %w", loginID, err)

@@ -16,7 +16,7 @@ import (
 	"github.com/bots-go-framework/bots-fw-telegram"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/analytics"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/general"
 )
@@ -60,7 +60,7 @@ func InlineSendReceipt(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err 
 		return m, fmt.Errorf("missing transfer ID")
 	}
 	var transfer models.TransferEntry
-	transfer, err = facade.Transfers.GetTransferByID(c, nil, transferID)
+	transfer, err = facade2debtus.Transfers.GetTransferByID(c, nil, transferID)
 	if err != nil {
 		logus.Infof(c, "Faield to get transfer by ID: %v", transferID)
 		return m, err
@@ -152,7 +152,7 @@ func OnInlineChosenCreateReceipt(whc botsfw.WebhookContext, inlineMessageID stri
 	creator := whc.GetSender()
 	creatorName := fmt.Sprintf("%v %v", creator.GetFirstName(), creator.GetLastName())
 
-	transfer, err := facade.Transfers.GetTransferByID(c, nil, transferID)
+	transfer, err := facade2debtus.Transfers.GetTransferByID(c, nil, transferID)
 	if err != nil {
 		return m, err
 	}

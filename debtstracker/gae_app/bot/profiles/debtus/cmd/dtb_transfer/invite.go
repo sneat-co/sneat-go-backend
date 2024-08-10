@@ -86,7 +86,7 @@ package dtb_transfer
 //				logus.Warningf(c, "Transfer %v had CounterpartyCounterpartyID != 0", transferID)
 //			}
 //			transferCreatorUser := new(models.AppUser)
-//			if transferCreatorUser, err = facade.User.GetUserByID(tc, transfer.CreatorUserID); err != nil {
+//			if transferCreatorUser, err = facade2debtus.User.GetUserByID(tc, transfer.CreatorUserID); err != nil {
 //				logus.Errorf(c, "Failed to load transferCreatorUser by ID (%v): %err", transfer.CreatorUserID, err)
 //				return err
 //			}

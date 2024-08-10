@@ -1,4 +1,4 @@
-package facade
+package facade2debtus
 
 import (
 	"fmt"
@@ -157,7 +157,7 @@ func (linker usersLinker) getOrCreateInvitedContactByInviterUserAndInviterContac
 		// Use non transaction context
 		invitedUserContacts, err = GetContactsByIDs(tc, tx, invitedUser.Data.ContactIDs())
 		if err != nil {
-			err = fmt.Errorf("failed to call facade.GetContactsByIDs(): %w", err)
+			err = fmt.Errorf("failed to call facade2debtus.GetContactsByIDs(): %w", err)
 			return
 		}
 		for _, invitedUserContact := range invitedUserContacts {

@@ -28,7 +28,7 @@ func pageContext(r *http.Request, locale i18n.Locale) (translator i18n.SingleLoc
 		userVoiceID = "47c67b85-d064-4727-b149-bda58cfe6c2d"
 	}
 
-	//appTranslator := common.TheAppContext.GetTranslator(c)
+	//appTranslator := shared.TheAppContext.GetTranslator(c)
 	var appTranslator i18n.Translator
 	translator = i18n.NewSingleMapTranslator(locale, appTranslator)
 

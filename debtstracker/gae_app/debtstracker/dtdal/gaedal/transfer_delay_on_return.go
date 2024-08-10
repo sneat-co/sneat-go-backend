@@ -6,7 +6,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/decimal"
 	"github.com/strongo/delaying"
@@ -63,7 +63,7 @@ func updateTransferOnReturn(c context.Context, returnTransferID, transferID stri
 	}
 
 	return db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-		if returnTransfer, err = facade.Transfers.GetTransferByID(c, tx, returnTransferID); err != nil {
+		if returnTransfer, err = facade2debtus.Transfers.GetTransferByID(c, tx, returnTransferID); err != nil {
 			if dal.IsNotFound(err) {
 				logus.Errorf(c, fmt.Errorf("return transfer not found: %w", err).Error())
 				err = nil
@@ -71,14 +71,14 @@ func updateTransferOnReturn(c context.Context, returnTransferID, transferID stri
 			return
 		}
 
-		if transfer, err = facade.Transfers.GetTransferByID(c, tx, transferID); err != nil {
+		if transfer, err = facade2debtus.Transfers.GetTransferByID(c, tx, transferID); err != nil {
 			if dal.IsNotFound(err) {
 				logus.Errorf(c, err.Error())
 				err = nil
 			}
 			return
 		}
-		if err = facade.Transfers.UpdateTransferOnReturn(c, tx, returnTransfer, transfer, returnedAmount); err != nil {
+		if err = facade2debtus.Transfers.UpdateTransferOnReturn(c, tx, returnTransfer, transfer, returnedAmount); err != nil {
 			return
 		}
 		if transfer.Data.HasInterest() && !transfer.Data.IsOutstanding {
@@ -105,7 +105,7 @@ func removeFromOutstandingWithInterest(c context.Context, tx dal.ReadwriteTransa
 				//contact models.ContactEntry
 			)
 
-			if user, err = facade.User.GetUserByID(c, tx, userID); err != nil {
+			if user, err = facade2debtus.User.GetUserByID(c, tx, userID); err != nil {
 				return
 			}
 			contacts := user.Data.Contacts()
@@ -117,7 +117,7 @@ func removeFromOutstandingWithInterest(c context.Context, tx dal.ReadwriteTransa
 						userContact.Transfers.OutstandingWithInterest = append(a[:i], a[i+1:]...)
 						user.Data.SetContacts(contacts)
 						user.Data.TransfersWithInterestCount -= 1
-						err = facade.User.SaveUser(c, tx, user)
+						err = facade2debtus.User.SaveUser(c, tx, user)
 					}
 				}
 			}
@@ -127,7 +127,7 @@ func removeFromOutstandingWithInterest(c context.Context, tx dal.ReadwriteTransa
 			var (
 				contact models.ContactEntry
 			)
-			if contact, err = facade.GetContactByID(c, tx, contactID); err != nil {
+			if contact, err = facade2debtus.GetContactByID(c, tx, contactID); err != nil {
 				return
 			}
 			if contact.Data.UserID != userID {
@@ -142,7 +142,7 @@ func removeFromOutstandingWithInterest(c context.Context, tx dal.ReadwriteTransa
 					if err = contact.Data.SetTransfersInfo(transfersInfo); err != nil {
 						return
 					}
-					return facade.SaveContact(c, contact)
+					return facade2debtus.SaveContact(c, contact)
 				}
 			}
 			return

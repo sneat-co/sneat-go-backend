@@ -7,11 +7,12 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"net/url"
 
 	"errors"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/strongo/decimal"
 )
@@ -83,13 +84,9 @@ var newBillCommand = botsfw.Command{
 			return
 		}
 
-		var db dal.DB
-		if db, err = facade.GetDatabase(c); err != nil {
-			return
-		}
-		return m, db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
+		return m, facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
 			var bill models.Bill
-			if bill, err = facade.Bill.CreateBill(c, tx, billEntity); err != nil {
+			if bill, err = facade2debtus.Bill.CreateBill(c, tx, billEntity); err != nil {
 				return
 			}
 			m, err = ShowBillCard(whc, true, bill, "")

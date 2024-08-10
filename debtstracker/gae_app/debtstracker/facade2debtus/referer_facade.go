@@ -1,4 +1,4 @@
-package facade
+package facade2debtus
 
 import (
 	"bytes"
@@ -9,6 +9,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/delaying"
 	"github.com/strongo/logus"
 	"google.golang.org/appengine/v2/memcache"
@@ -30,11 +31,7 @@ const lastTgReferrers = "lastTgReferrers"
 
 func setUserReferrer(c context.Context, userID string, referredBy string) (err error) {
 	userChanged := false
-	var db dal.DB
-	if db, err = GetDatabase(c); err != nil {
-		return
-	}
-	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+	if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		user, err := User.GetUserByID(c, tx, userID)
 		if err != nil {
 			return err
@@ -71,12 +68,7 @@ func (f refererFacade) AddTelegramReferrer(c context.Context, userID string, tgU
 				logus.Errorf(c, "panic in refererFacade.AddTelegramReferrer(): %v", r)
 			}
 		}()
-		var db dal.DB
-		var err error
-		if db, err = GetDatabase(c); err != nil {
-			return
-		}
-		if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+		if err := facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 			user, err := User.GetUserByID(c, tx, userID)
 			if err != nil {
 				logus.Errorf(c, err.Error())

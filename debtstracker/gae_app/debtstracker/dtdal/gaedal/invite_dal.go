@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/general"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"github.com/strongo/strongoapp"
 	"strconv"
@@ -34,11 +35,7 @@ func (InviteDalGae) GetInvite(c context.Context, tx dal.ReadSession, inviteCode 
 
 // ClaimInvite claims invite by user - TODO compare with ClaimInvite2 and get rid of one of them
 func (InviteDalGae) ClaimInvite(c context.Context, userID string, inviteCode, claimedOn, claimedVia string) (err error) {
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return
-	}
-	err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
 		invite := models.NewInvite(inviteCode, nil)
 
 		if err = tx.Get(tc, invite.Record); err != nil {
@@ -127,11 +124,7 @@ func createInvite(ec strongoapp.ExecutionContext, inviteType models.InviteType, 
 		}
 		invite.Data.ToPhoneNumber = phoneNumber
 	}
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return
-	}
-	err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
 		if inviteCode != AUTO_GENERATE_INVITE_CODE {
 			//inviteKey = models.NewInviteKey(inviteCode)
 		} else {
@@ -162,12 +155,11 @@ func createInvite(ec strongoapp.ExecutionContext, inviteType models.InviteType, 
 
 // ClaimInvite2 claims invite by user - TODO compare with ClaimInvite and get rid of one of them
 func (InviteDalGae) ClaimInvite2(c context.Context, inviteCode string, invite models.Invite, claimedByUserID string, claimedOn, claimedVia string) (err error) {
-	var db dal.DB
+	var db dal.DB // Needed for query records outside of transaction
 	if db, err = facade.GetDatabase(c); err != nil {
-		return fmt.Errorf("failed to create database: %w", err)
+		return
 	}
-
-	err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
 		//userKey := models.NewAppUserKey(claimedByUserID)
 		user := models.NewAppUser(claimedByUserID, nil)
 		if err = tx.GetMulti(tc, []dal.Record{invite.Record, user.Record}); err != nil {
@@ -207,7 +199,7 @@ func (InviteDalGae) ClaimInvite2(c context.Context, inviteCode string, invite mo
 			}
 			if len(counterpartyRecords) == 0 {
 				//counterpartyKey := NewContactIncompleteKey(tc)
-				inviteCreator, err := facade.User.GetUserByID(c, tx, invite.Data.CreatedByUserID)
+				inviteCreator, err := facade2debtus.User.GetUserByID(c, tx, invite.Data.CreatedByUserID)
 				if err != nil {
 					return fmt.Errorf("ailed to get invite creator user: %w", err)
 				}

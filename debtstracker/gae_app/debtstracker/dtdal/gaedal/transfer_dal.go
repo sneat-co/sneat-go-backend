@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/delaying"
 	"github.com/strongo/logus"
 	"time"
@@ -13,7 +14,7 @@ import (
 	"errors"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 )
 
@@ -143,17 +144,13 @@ func fixTransfersIsOutstanding(c context.Context, transferIDs []string) (err err
 }
 
 func fixTransferIsOutstanding(c context.Context, transferID string) (transfer models.TransferEntry, err error) {
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return
-	}
-	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-		if transfer, err = facade.Transfers.GetTransferByID(c, tx, transferID); err != nil {
+	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+		if transfer, err = facade2debtus.Transfers.GetTransferByID(c, tx, transferID); err != nil {
 			return err
 		}
 		if transfer.Data.GetOutstandingValue(time.Now()) == 0 {
 			transfer.Data.IsOutstanding = false
-			return facade.Transfers.SaveTransfer(c, tx, transfer)
+			return facade2debtus.Transfers.SaveTransfer(c, tx, transfer)
 		}
 		return nil
 	})

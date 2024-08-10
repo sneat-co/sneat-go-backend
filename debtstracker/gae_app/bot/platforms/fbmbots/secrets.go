@@ -56,7 +56,7 @@ func Bots(_ context.Context) botsfw.SettingsBy {
 	//			"1587055508253137",
 	//			fbmProdPageAccessToken,
 	//			"d6087a01-c728-4fdf-983c-1695d76236dc",
-	//			common.GA_TRACKING_ID,
+	//			shared.GA_TRACKING_ID,
 	//			trans.SupportedLocalesByCode5[i18n.LocaleCodeEnUS],
 	//		),
 	//		fbm.NewFbmBot(
@@ -66,7 +66,7 @@ func Bots(_ context.Context) botsfw.SettingsBy {
 	//			"286238251784027",
 	//			fbmSplitBillProdPageAccessToken,
 	//			"e8535dd1-df3b-4c3f-bd2c-d4a822509bb3",
-	//			common.GA_TRACKING_ID,
+	//			shared.GA_TRACKING_ID,
 	//			trans.SupportedLocalesByCode5[i18n.LocaleCodeEnUS],
 	//		),
 	//		fbm.NewFbmBot(

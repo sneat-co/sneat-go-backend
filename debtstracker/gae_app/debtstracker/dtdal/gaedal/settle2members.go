@@ -6,8 +6,9 @@ import (
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/decimal"
 	"github.com/strongo/logus"
 	"reflect"
@@ -93,7 +94,7 @@ func Settle2members(c context.Context, groupID, debtorID, sponsorID string, curr
 				panic(fmt.Sprintf("amount < 0: %v", amount))
 			}
 			var bill models.Bill
-			if bill, err = facade.GetBillByID(c, tx, id); err != nil {
+			if bill, err = facade2debtus.GetBillByID(c, tx, id); err != nil {
 				return
 			}
 			billMembers := bill.Data.GetBillMembers()

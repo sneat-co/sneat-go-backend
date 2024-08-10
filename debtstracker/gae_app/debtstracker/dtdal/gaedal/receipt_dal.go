@@ -3,6 +3,7 @@ package gaedal
 import (
 	"errors"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/delaying"
 	"github.com/strongo/logus"
 	"time"
@@ -10,7 +11,7 @@ import (
 	"context"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 )
 
@@ -32,15 +33,11 @@ func (receiptDalGae ReceiptDalGae) GetReceiptByID(c context.Context, tx dal.Read
 	return receipt, tx.Get(c, receipt.Record)
 }
 
-func (receiptDalGae ReceiptDalGae) CreateReceipt(c context.Context, data *models.ReceiptData) (receipt models.Receipt, err error) { // TODO: Move to facade
-	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
-		return
-	}
-	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+func (receiptDalGae ReceiptDalGae) CreateReceipt(c context.Context, data *models.ReceiptData) (receipt models.Receipt, err error) { // TODO: Move to facade2debtus
+	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
 		receipt = models.NewReceiptWithoutID(data)
 		var user models.AppUser
-		if user, err = facade.User.GetUserByID(c, tx, data.CreatorUserID); err != nil {
+		if user, err = facade2debtus.User.GetUserByID(c, tx, data.CreatorUserID); err != nil {
 			return err
 		}
 		user.Data.CountOfReceiptsCreated += 1
@@ -69,7 +66,7 @@ func (receiptDalGae ReceiptDalGae) MarkReceiptAsSent(c context.Context, receiptI
 	//		if receipt, err = receiptDalGae.GetReceiptByID(c, receiptID); err != nil {
 	//			return err
 	//		}
-	//		if transfer, err = facade.Transfers.GetTransferByID(c, transferID); err != nil {
+	//		if transfer, err = facade2debtus.Transfers.GetTransferByID(c, transferID); err != nil {
 	//			return err
 	//		}
 	//		transferKey = NewTransferKey(c, transferID)

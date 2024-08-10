@@ -1,7 +1,7 @@
 package maintainance
 
 //import (
-//	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+//	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 //	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 //	"context"
 //	"github.com/captaincodeman/datastore-mapper"
@@ -27,16 +27,16 @@ package maintainance
 //		return
 //	}
 //	var db dal.DB
-//	if db, err = facade.GetDatabase(c); err != nil {
+//	if db, err = facade2debtus.GetDatabase(c); err != nil {
 //		return err
 //	}
 //
 //	if err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
-//		if transfer, err = facade.Transfers.GetTransferByID(c, tx, transfer.ID); err != nil {
+//		if transfer, err = facade2debtus.Transfers.GetTransferByID(c, tx, transfer.ID); err != nil {
 //			return
 //		}
 //		if transfer.Data.HasObsoleteProps() {
-//			if err = facade.Transfers.SaveTransfer(tc, tx, transfer); err != nil {
+//			if err = facade2debtus.Transfers.SaveTransfer(tc, tx, transfer); err != nil {
 //				return
 //			}
 //			logus.Infof(c, "Transfer %v fixed", transfer.ID)

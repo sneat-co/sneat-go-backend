@@ -12,7 +12,7 @@ import (
 
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/bot/profiles/shared_group"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
+	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade2debtus"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 )
 
@@ -42,7 +42,7 @@ var newChatMembersCommand = botsfw.Command{
 			return
 		}
 
-		var newUsers []facade.NewUser
+		var newUsers []facade2debtus.NewUser
 
 		{ // Get or create related user records
 			for _, chatMember := range newMembers {
@@ -61,7 +61,7 @@ var newChatMembersCommand = botsfw.Command{
 						return
 					}
 				}
-				newUsers = append(newUsers, facade.NewUser{
+				newUsers = append(newUsers, facade2debtus.NewUser{
 					Name:        tgChatMember.GetFullName(),
 					BotUserData: botUser.Data,
 					ChatMember:  chatMember,
@@ -73,7 +73,7 @@ var newChatMembersCommand = botsfw.Command{
 		if group, err = shared_group.GetGroup(whc, nil); err != nil {
 			return
 		}
-		if group, newUsers, err = facade.Group.AddUsersToTheGroupAndOutstandingBills(whc.Context(), group.ID, newUsers); err != nil {
+		if group, newUsers, err = facade2debtus.Group.AddUsersToTheGroupAndOutstandingBills(whc.Context(), group.ID, newUsers); err != nil {
 			return
 		}
 

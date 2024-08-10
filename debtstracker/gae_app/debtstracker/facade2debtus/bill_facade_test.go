@@ -1,4 +1,4 @@
-package facade
+package facade2debtus
 
 import (
 	// "github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"

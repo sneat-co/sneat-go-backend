@@ -7,9 +7,9 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/common"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/facade"
 	"github.com/sneat-co/sneat-go-backend/debtstracker/gae_app/debtstracker/models"
 	"github.com/sneat-co/sneat-go-core/emails"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/i18n"
 )
 
@@ -67,7 +67,7 @@ func SendEmail(c context.Context, email emails.Email) (messageID string, err err
 	return sent.MessageID(), err
 	//
 	//var awsSession *session.Session
-	//if awsSession, err = common.NewAwsSession(); err != nil {
+	//if awsSession, err = shared.NewAwsSession(); err != nil {
 	//	return
 	//}
 	//svc := ses.New(awsSession)
