@@ -1,0 +1,76 @@
+# Copyright 2020 Sneat.app
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either logistus or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+runtime: go120
+
+includes:
+   - env_variables.yaml
+
+app_engine_apis: true
+
+handlers:
+  - url: /((wp|wordpress|blog|member/|data/).*|.+\.(aspx?|php)(\..+)?)
+    static_files: static/no-robots.txt
+    upload: static/no-robots.txt
+    expiration: "1d"
+
+
+  - url: /robots.txt
+    static_files: static/robots.txt
+    upload: static/robots.txt
+    expiration: "1h"
+
+  - url: /favicon.ico
+    static_files: static/favicon.ico
+    upload: static/favicon.ico
+    expiration: "1h"
+
+  - url: /5F4BAA801B97B9A93D1F038177783A83.txt
+    static_files: static/5F4BAA801B97B9A93D1F038177783A83.txt
+    upload: static/5F4BAA801B97B9A93D1F038177783A83.txt
+    expiration: "1m"
+
+  - url: /((admin|cron|task-?queue?|support)/.*)
+    login: admin
+    script: auto
+
+  - url: /_ah/.*
+    login: admin
+    script: auto
+
+  - url: /apps/vk/iframe$
+    script: auto
+    secure: always
+    redirect_http_response_code: 301
+
+  - url: /auth/google/sign(in|ed)$
+    script: auto
+    secure: always
+    redirect_http_response_code: 301
+
+  - url: /inspector/.*
+    script: auto
+    secure: always
+    redirect_http_response_code: 301
+
+  - url: /(receipt|transfer|confirm|contact|open/new-debt|test-pointer)?$|/(api|webhooks/(twilio)|bot/(tg|viber|fbm|skype|kik|line|wechat)|((\w{2})(-\w{2})?))/.*
+    script: auto
+    secure: always
+    redirect_http_response_code: 301
+
+   # Use HTTPS for all requests.
+  - url: /.*
+    secure: always
+    redirect_http_response_code: 301
+    script: auto
