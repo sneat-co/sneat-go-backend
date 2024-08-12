@@ -12,14 +12,14 @@ var profile botsfw.BotProfile
 
 func GetProfile(errFooterText func() string) botsfw.BotProfile {
 	if profile == nil {
-		profile = createProfile(errFooterText)
+		profile = createSneatBotProfile(errFooterText)
 	}
 	return profile
 }
 
-func createProfile(errFooterText func() string) botsfw.BotProfile {
+func createSneatBotProfile(errFooterText func() string) botsfw.BotProfile {
 	commandsByType := map[botsfw.WebhookInputType][]botsfw.Command{
-		botsfw.WebhookInputText: []botsfw.Command{startCommand},
+		botsfw.WebhookInputText: {startCommand},
 	}
 	shared.AddSharedCommands(commandsByType)
 	listusbot.AddListusCommands(commandsByType)
