@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	logus.AddLogEntryHandler(logus.StandardGoLogger())
+	logus.AddLogEntryHandler(logus.NewStandardGoLogger())
 	gaeapp.Init(gae.BotHost())
 	appengine.Main()
 }

@@ -20,7 +20,7 @@ toolchain go1.22.6
 
 require (
 	github.com/bots-go-framework/bots-api-telegram v0.4.4
-	github.com/bots-go-framework/bots-fw v0.25.2
+	github.com/bots-go-framework/bots-fw v0.26.0
 	github.com/bots-go-framework/bots-fw-store v0.4.0
 	github.com/bots-go-framework/bots-fw-telegram v0.8.8
 	github.com/bots-go-framework/bots-fw-telegram-models v0.1.6
@@ -52,7 +52,7 @@ require (
 	github.com/strongo/gamp v0.0.1
 	github.com/strongo/gotwilio v0.0.0-20160123000810-f024bbefe80f
 	github.com/strongo/i18n v0.0.4
-	github.com/strongo/logus v0.0.0-20240628225821-04cf45b5968f
+	github.com/strongo/logus v0.2.0
 	github.com/strongo/random v0.0.1
 	github.com/strongo/slice v0.1.4
 	github.com/strongo/slices v0.0.0-20231201223919-29a6c669158a
