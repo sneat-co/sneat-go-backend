@@ -52,18 +52,18 @@ type CreateInviteResponse struct {
 }
 
 // CreateOrReuseInviteForMember creates or reuses an invitation for a member
-func CreateOrReuseInviteForMember(ctx context.Context, user facade.User, request InviteMemberRequest) (response CreateInviteResponse, err error) {
+func CreateOrReuseInviteForMember(ctx context.Context, userCtx facade.UserContext, request InviteMemberRequest) (response CreateInviteResponse, err error) {
 	if err = request.Validate(); err != nil {
 		err = fmt.Errorf("invalid request: %w", err)
 		return
 	}
-	err = dal4contactus.RunContactusSpaceWorker(ctx, user, request.SpaceRequest,
+	err = dal4contactus.RunContactusSpaceWorker(ctx, userCtx, request.SpaceRequest,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) (err error) {
 			fromContactID, fromContactBrief := params.SpaceModuleEntry.Data.GetContactBriefByUserID(params.UserID)
 
 			if fromContactBrief == nil {
 				// TODO: Should return specific error so we can return HTTP 401
-				return fmt.Errorf("current user does not belong to the team")
+				return fmt.Errorf("current userCtx does not belong to the team")
 			}
 			var (
 				inviteID       string
@@ -129,7 +129,7 @@ func createPersonalInvite(
 
 	toMember := param.SpaceModuleEntry.Data.Contacts[request.To.MemberID]
 	if toMember == nil {
-		err = fmt.Errorf("space has no 'to' member with id=" + request.To.MemberID)
+		err = fmt.Errorf("space has no 'to' member with id=%s", request.To.MemberID)
 		return
 	}
 	request.To.Title = toMember.GetTitle()
@@ -174,7 +174,7 @@ func createPersonalInvite(
 			[]dal.Update{
 				{Field: "messageId", Value: personalInvite.MessageID},
 			}); err != nil {
-			err = fmt.Errorf("failed to update invite record with message ID: %w", err)
+			err = fmt.Errorf("failed to update invite record with message ContactID: %w", err)
 			return inviteID, personalInvite, err
 		}
 	}

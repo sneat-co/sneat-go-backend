@@ -7,8 +7,8 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/strongoapp/person"
@@ -47,16 +47,18 @@ func (v *AcceptPersonalInviteRequest) Validate() error {
 
 // AcceptPersonalInvite accepts personal invite and joins user to a team.
 // If needed a user record should be created
-func AcceptPersonalInvite(ctx context.Context, userContext facade.User, request AcceptPersonalInviteRequest) (err error) {
+func AcceptPersonalInvite(ctx context.Context, userCtx facade.UserContext, request AcceptPersonalInviteRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return err
 	}
-	uid := userContext.GetID()
+	uid := userCtx.GetUserID()
 
-	return dal4contactus.RunContactusSpaceWorker(ctx, userContext, request.SpaceRequest,
+	return dal4contactus.RunContactusSpaceWorker(ctx, userCtx, request.SpaceRequest,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) error {
-			invite, member, err := getPersonalInviteRecords(ctx, tx, params, request.InviteID, request.Member.ID)
-			if err != nil {
+			var invite PersonalInviteEntry
+			var member dal4contactus.ContactEntry
+
+			if invite, member, err = getPersonalInviteRecords(ctx, tx, params, request.InviteID, request.Member.ID); err != nil {
 				return err
 			}
 			if invite.Data.Status != "active" {
@@ -68,7 +70,7 @@ func AcceptPersonalInvite(ctx context.Context, userContext facade.User, request 
 			}
 
 			user := dbo4userus.NewUserEntry(uid)
-			if err = facade4userus.GetUserByID(ctx, tx, user.Record); err != nil {
+			if err = dal4userus.GetUser(ctx, tx, user); err != nil {
 				if !dal.IsNotFound(err) {
 					return err
 				}
@@ -166,8 +168,8 @@ func updateSpaceRecord(
 			m.UserID = uid
 			params.SpaceModuleEntry.Data.AddUserID(uid)
 			params.SpaceModuleEntry.Data.AddContact(contactID, m)
-			//request.ID.Roles = m.Roles
-			//m = request.ID
+			//request.ContactID.Roles = m.Roles
+			//m = request.ContactID
 			m.UserID = uid
 			teamMember = &briefs4contactus.ContactBase{
 				ContactBrief: *m,
@@ -184,7 +186,7 @@ func updateSpaceRecord(
 		}
 	}
 	if teamMember == nil {
-		return teamMember, fmt.Errorf("space member is not found by ID=%s", inviteToMemberID)
+		return teamMember, fmt.Errorf("space member is not found by ContactID=%s", inviteToMemberID)
 	}
 
 	if params.Space.Data.HasUserID(uid) {

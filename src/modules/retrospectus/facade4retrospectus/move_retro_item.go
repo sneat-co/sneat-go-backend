@@ -10,8 +10,8 @@ import (
 )
 
 // MoveRetroItem moves item
-func MoveRetroItem(ctx context.Context, userFacade facade.User, request MoveRetroItemRequest) (err error) {
-	uid := userFacade.GetID()
+func MoveRetroItem(ctx context.Context, userCtx facade.UserContext, request MoveRetroItemRequest) (err error) {
+	uid := userCtx.GetUserID()
 	var retrospectiveKey *dal.Key
 	if request.MeetingID == UpcomingRetrospectiveID {
 		retrospectiveKey = dbo4retrospectus.NewRetrospectiveKey(request.SpaceID, dbo4userus.NewUserKey(uid))

@@ -10,23 +10,22 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/dbo4meetingus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dal4retrospectus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 )
 
 // StartRetrospective starts retro
-func StartRetrospective(ctx context.Context, userContext facade.User, request StartRetrospectiveRequest) (response *RetrospectiveResponse, isNewRetrospective bool, err error) {
-	uid := userContext.GetID()
+func StartRetrospective(ctx context.Context, userCtx facade.UserContext, request StartRetrospectiveRequest) (response *RetrospectiveResponse, isNewRetrospective bool, err error) {
+	uid := userCtx.GetUserID()
 
 	teamKey := newSpaceKey(request.SpaceID)
 
 	retrospective := new(dbo4retrospectus.Retrospective)
 
-	err = dal4contactus.RunContactusSpaceWorker(ctx, userContext, request.SpaceRequest,
+	err = dal4contactus.RunContactusSpaceWorker(ctx, userCtx, request.SpaceRequest,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) (err error) {
 			team := params.Space
 
@@ -212,7 +211,7 @@ type userRetroItems struct {
 	byType dbo4retrospectus.RetroItemsByType
 }
 
-func getUsersWithRetroItems(ctx context.Context, tx dal.ReadwriteTransaction, team dal4spaceus.SpaceEntry, retroSpace dal4retrospectus.RetroSpaceEntry) (usersWithRetroItemByUserID map[string]userRetroItems, err error) {
+func getUsersWithRetroItems(ctx context.Context, tx dal.ReadwriteTransaction, team dbo4spaceus.SpaceEntry, retroSpace dal4retrospectus.RetroSpaceEntry) (usersWithRetroItemByUserID map[string]userRetroItems, err error) {
 	teamUsersCount := len(team.Data.UserIDs)
 	usersWithRetroItemByUserID = make(map[string]userRetroItems, teamUsersCount)
 	userIDs := make([]string, 0, teamUsersCount)
@@ -226,7 +225,7 @@ func getUsersWithRetroItems(ctx context.Context, tx dal.ReadwriteTransaction, te
 		users[i] = new(dbo4userus.UserDbo)
 		usersRecords[i] = dal.NewRecordWithData(userKey, users)
 	}
-	err = facade4userus.TxGetUsers(ctx, tx, usersRecords)
+	err = dal4userus.TxGetUsers(ctx, tx, usersRecords)
 	if err != nil {
 		return nil, err
 	}

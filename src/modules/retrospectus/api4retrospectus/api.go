@@ -11,7 +11,7 @@ import (
 var verifyRequest = apicore.VerifyRequestAndCreateUserContext /* func(
 	w http.ResponseWriter, r *http.Request,
 	options verify.RequestOptions,
-) (ctx context.Context, userContext facade2debtus.User, err error) {
+) (ctx context.Context, userContext facade4debtus.User, err error) {
 	return apicore.VerifyRequestAndCreateUserContext(w, r, options)
 }
 */
@@ -19,7 +19,7 @@ var verifyRequest = apicore.VerifyRequestAndCreateUserContext /* func(
 func verifyAuthorizedJSONRequest(
 	w http.ResponseWriter, r *http.Request,
 	minSize, maxSize int64,
-) (ctx context.Context, userContext facade.User, err error) {
+) (ctx context.Context, userCtx facade.UserContext, err error) {
 	o := verify.Request(
 		verify.AuthenticationRequired(true),
 		verify.MinimumContentLength(minSize),

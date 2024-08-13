@@ -14,12 +14,12 @@ import (
 )
 
 // DeleteSlot deletes happening
-func DeleteSlot(ctx context.Context, user facade.User, request dto4calendarium.DeleteHappeningSlotRequest) (err error) {
+func DeleteSlot(ctx context.Context, userCtx facade.UserContext, request dto4calendarium.DeleteHappeningSlotRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 
-	err = dal4spaceus.RunModuleSpaceWorker(ctx, user, request.SpaceRequest,
+	err = dal4spaceus.RunModuleSpaceWorker(ctx, userCtx, request.SpaceID,
 		const4calendarium.ModuleID,
 		new(dbo4calendarium.CalendariumSpaceDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo]) (err error) {

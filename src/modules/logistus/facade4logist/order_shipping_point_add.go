@@ -16,13 +16,13 @@ import (
 // AddOrderShippingPoint adds shipping point to an order
 func AddOrderShippingPoint(
 	ctx context.Context,
-	user facade.User,
+	userCtx facade.UserContext,
 	request dto4logist.AddOrderShippingPointRequest,
 ) (
 	response dto4logist.OrderResponse,
 	err error,
 ) {
-	err = RunOrderWorker(ctx, user, request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) (err error) {
+	err = RunOrderWorker(ctx, userCtx, request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) (err error) {
 		_, err = addOrderShippingPointTx(ctx, tx, request, params)
 		response.OrderDto = params.Order.Dto
 		return
@@ -50,7 +50,7 @@ func addOrderShippingPointTx(
 	}
 	dbo4linkage.UpdateRelatedIDs(&locationContact.Data.WithRelated, &locationContact.Data.WithRelatedIDs)
 	if err := locationContact.Data.Validate(); err != nil {
-		return nil, fmt.Errorf("locationContact record referenced by request.LocationContactID is not valid (ID=%s): %w", locationContact.ID, err)
+		return nil, fmt.Errorf("locationContact record referenced by request.LocationContactID is not valid (ContactID=%s): %w", locationContact.ID, err)
 	}
 	if locationContact.Data.Type != "location" {
 		return nil, fmt.Errorf("locationContact referenced by shipping point is not a location: %w", err)
@@ -66,7 +66,7 @@ func addOrderShippingPointTx(
 	}
 	dbo4linkage.UpdateRelatedIDs(&counterpartyContact.Data.WithRelated, &counterpartyContact.Data.WithRelatedIDs)
 	if err := counterpartyContact.Data.Validate(); err != nil {
-		return nil, fmt.Errorf("counterpartyContact record referenced by location contact and loaded from DB is not valid (ID=%s): %w", counterpartyContact.ID, err)
+		return nil, fmt.Errorf("counterpartyContact record referenced by location contact and loaded from DB is not valid (ContactID=%s): %w", counterpartyContact.ID, err)
 	}
 
 	for _, container := range request.Containers {

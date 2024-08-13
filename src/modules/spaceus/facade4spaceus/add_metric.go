@@ -30,11 +30,11 @@ func (v *AddSpaceMetricRequest) Validate() error {
 }
 
 // AddMetric adds metric
-func AddMetric(ctx context.Context, user facade.User, request AddSpaceMetricRequest) (err error) {
+func AddMetric(ctx context.Context, userCtx facade.UserContext, request AddSpaceMetricRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4spaceus.RunSpaceWorker(ctx, user, request.SpaceID, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.SpaceWorkerParams) (err error) {
+	err = dal4spaceus.RunSpaceWorker(ctx, userCtx, request.SpaceID, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.SpaceWorkerParams) (err error) {
 		request.Metric.ID = strings.Replace(slug.Make(request.Metric.Title), "-", "_", -1)
 		for _, m := range params.Space.Data.Metrics {
 			if m.ID == request.Metric.ID {

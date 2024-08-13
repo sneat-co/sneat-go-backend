@@ -356,7 +356,7 @@ func (v *Retrospective) Validate() error {
 		for id /*, m*/ := range v.Contacts {
 			if dbmodels.SpaceItemID(id).ItemID() == memberID {
 				//member = m
-				panic("TODO: add space ID validation") // TODO: add team ID validation
+				panic("TODO: add space ContactID validation") // TODO: add team ContactID validation
 			}
 		}
 		for itemType, count := range counts {

@@ -23,7 +23,7 @@ type HappeningWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, pa
 
 func RunHappeningSpaceWorker(
 	ctx context.Context,
-	user facade.User,
+	userCtx facade.UserContext,
 	request dto4calendarium.HappeningRequest,
 	happeningWorker HappeningWorker,
 ) (err error) {
@@ -66,5 +66,5 @@ func RunHappeningSpaceWorker(
 		}
 		return nil
 	}
-	return RunCalendariumSpaceWorker(ctx, user, request.SpaceRequest, moduleSpaceWorker)
+	return RunCalendariumSpaceWorker(ctx, userCtx, request.SpaceRequest, moduleSpaceWorker)
 }

@@ -9,11 +9,11 @@ import (
 )
 
 // DeleteSegments deletes segments from an order
-func DeleteSegments(ctx context.Context, user facade.User, request dto4logist.DeleteSegmentsRequest) error {
+func DeleteSegments(ctx context.Context, userCtx facade.UserContext, request dto4logist.DeleteSegmentsRequest) error {
 	if err := request.Validate(); err != nil {
 		return err
 	}
-	return RunOrderWorker(ctx, user, request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) error {
+	return RunOrderWorker(ctx, userCtx, request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) error {
 		return deleteSegments(params, request)
 	})
 }

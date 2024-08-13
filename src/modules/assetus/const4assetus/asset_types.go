@@ -2,8 +2,8 @@ package const4assetus
 
 import (
 	"fmt"
-	"github.com/strongo/slice"
 	"github.com/strongo/validation"
+	"slices"
 )
 
 // AssetType is a type of asset, e.g. house, apartment, car, boat, etc
@@ -109,7 +109,7 @@ var assetTypesByCategory = map[AssetCategory][]string{
 
 func ValidateAssetType(assetCategory AssetCategory, assetType AssetType) error {
 	if types, ok := assetTypesByCategory[assetCategory]; ok {
-		if !slice.Contains(types, assetType) {
+		if !slices.Contains(types, assetType) {
 			return validation.NewErrBadRecordFieldValue("type", fmt.Sprintf("unknown %s type: %s", assetCategory, assetType))
 		}
 		return nil

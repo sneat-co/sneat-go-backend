@@ -6,6 +6,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/mocks4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -60,7 +61,7 @@ func TestAddSegmentsTx(t *testing.T) { // TODO: create few test cases
 
 	params := &OrderWorkerParams{
 		SpaceWorkerParams: &dal4spaceus.SpaceWorkerParams{
-			Space: dal4spaceus.NewSpaceEntry("space1"),
+			Space: dbo4spaceus.NewSpaceEntry("space1"),
 		},
 		Order: dbo4logist.NewOrderWithData("space1", "order1", order),
 	}

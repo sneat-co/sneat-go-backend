@@ -2,8 +2,8 @@ package extras4assetus
 
 import (
 	"fmt"
-	"github.com/strongo/slice"
 	"github.com/strongo/validation"
+	"slices"
 )
 
 // WithEngineData is a struct for engine data
@@ -67,7 +67,7 @@ type FuelType string
 
 // IsKnownFuelType returns true if a given fuel type is known
 func IsKnownFuelType(v FuelType) bool {
-	return slice.Contains(FuelTypes, v)
+	return slices.Contains(FuelTypes, v)
 }
 
 const (

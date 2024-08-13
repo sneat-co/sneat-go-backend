@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
 // GetSpace loads team record
-func GetSpace(ctx context.Context, userContext facade.User, id string) (space dal4spaceus.SpaceEntry, err error) {
+func GetSpace(ctx context.Context, userCtx facade.UserContext, id string) (space dbo4spaceus.SpaceEntry, err error) {
 	var db dal.DB
 	if db, err = facade.GetDatabase(ctx); err != nil {
 		return space, err
@@ -18,7 +18,7 @@ func GetSpace(ctx context.Context, userContext facade.User, id string) (space da
 	if err != nil || !space.Record.Exists() {
 		return space, err
 	}
-	userID := userContext.GetID()
+	userID := userCtx.GetUserID()
 	var found bool
 	for _, uid := range space.Data.UserIDs {
 		if uid == userID {
@@ -33,12 +33,12 @@ func GetSpace(ctx context.Context, userContext facade.User, id string) (space da
 }
 
 // GetSpaceByID return SpaceIDs record
-func GetSpaceByID(ctx context.Context, getter dal.ReadSession, id string) (team dal4spaceus.SpaceEntry, err error) {
-	team = dal4spaceus.NewSpaceEntry(id)
-	return team, getter.Get(ctx, team.Record)
+func GetSpaceByID(ctx context.Context, getter dal.ReadSession, id string) (space dbo4spaceus.SpaceEntry, err error) {
+	space = dbo4spaceus.NewSpaceEntry(id)
+	return space, getter.Get(ctx, space.Record)
 }
 
 // TxGetSpaceByID returns SpaceIDs record in transaction
-func TxGetSpaceByID(ctx context.Context, tx dal.ReadwriteTransaction, id string) (team dal4spaceus.SpaceEntry, err error) {
+func TxGetSpaceByID(ctx context.Context, tx dal.ReadwriteTransaction, id string) (team dbo4spaceus.SpaceEntry, err error) {
 	return GetSpaceByID(ctx, tx, id)
 }

@@ -8,8 +8,8 @@ import (
 )
 
 // SetOrderStatus changes order status
-func SetOrderStatus(ctx context.Context, user facade.User, request dto4logist.SetOrderStatusRequest) error {
-	return RunOrderWorker(ctx, user, request.OrderRequest, func(_ context.Context, _ dal.ReadwriteTransaction, params *OrderWorkerParams) error {
+func SetOrderStatus(ctx context.Context, userCtx facade.UserContext, request dto4logist.SetOrderStatusRequest) error {
+	return RunOrderWorker(ctx, userCtx, request.OrderRequest, func(_ context.Context, _ dal.ReadwriteTransaction, params *OrderWorkerParams) error {
 		return setOrderStatusTx(params, request)
 	})
 }

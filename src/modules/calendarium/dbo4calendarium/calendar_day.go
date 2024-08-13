@@ -6,7 +6,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/const4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
 )
@@ -15,7 +15,7 @@ const ReasonMaxLen = 10000
 
 const DaysCollection = "days"
 
-// CalendarDayDbo is a record in "spaces/{teamID}/calendarium/days" collection with ID=YYYY-MM-DD
+// CalendarDayDbo is a record in "spaces/{teamID}/calendarium/days" collection with ContactID=YYYY-MM-DD
 // It's needed to store adjustments of recurring happenings for a specific days like:
 // - canceled slots
 // - changed slot times
@@ -60,9 +60,9 @@ func (v CalendarDayDbo) Validate() error {
 // CalendarDayEntry is a helper type to work with CalendarDayDbo and it's key
 type CalendarDayEntry = record.DataWithID[string, *CalendarDayDbo]
 
-// NewCalendarDayKey returns key for a record in teams/{teamID}/calendarium/days collection with ID=YYYY-MM-DD
+// NewCalendarDayKey returns key for a record in teams/{teamID}/calendarium/days collection with ContactID=YYYY-MM-DD
 func NewCalendarDayKey(teamID, date string) *dal.Key {
-	return dal4spaceus.NewSpaceModuleItemKey(teamID, const4calendarium.ModuleID, DaysCollection, date)
+	return dbo4spaceus.NewSpaceModuleItemKey(teamID, const4calendarium.ModuleID, DaysCollection, date)
 }
 
 // NewCalendarDayEntry creates a new instance of CalendarDayEntry

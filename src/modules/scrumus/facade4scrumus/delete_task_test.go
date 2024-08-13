@@ -19,7 +19,7 @@ func TestDeleteTask(t *testing.T) {
 		return nil, nil //db
 	}
 
-	userContext := facade.NewUser("user1")
+	userContext := facade.NewUserContext("user1")
 
 	ctx := context.Background()
 

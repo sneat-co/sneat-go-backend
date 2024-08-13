@@ -6,7 +6,7 @@ package dbo4linkage
 //	dto4spaceus.SpaceRequest
 //	Module   string               `json:"moduleID"`
 //	Collection string               `json:"collection"`
-//	ID     string               `json:"itemID"`
+//	ContactID     string               `json:"itemID"`
 //	Add        *RelationshipRequest `json:"add,omitempty"`
 //	Remove     *RelationshipRequest `json:"remove,omitempty"`
 //}

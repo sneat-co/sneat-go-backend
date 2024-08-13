@@ -14,14 +14,14 @@ import (
 func httpPostCreateSpace(w http.ResponseWriter, r *http.Request) {
 	var request dto4spaceus.CreateSpaceRequest
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.DefaultJsonWithAuthRequired, http.StatusCreated,
-		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
-			facadeResponse, err := facade4spaceus.CreateSpace(ctx, userCtx, request)
+		func(ctx context.Context, userCtx facade.UserContext) (interface{}, error) {
+			space, _, err := facade4spaceus.CreateSpace(ctx, userCtx, request)
 			if err != nil {
 				return nil, err
 			}
 			var apiResponse dto4spaceus.CreateSpaceResponse
-			apiResponse.Space.ID = facadeResponse.Space.ID
-			apiResponse.Space.Dto = *facadeResponse.Space.Data
+			apiResponse.Space.ID = space.ID
+			apiResponse.Space.Dto = *space.Data
 			return apiResponse, err
 		})
 }

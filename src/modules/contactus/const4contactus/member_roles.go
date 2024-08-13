@@ -1,11 +1,14 @@
 package const4contactus
 
-import "github.com/strongo/slice"
+import (
+	"slices"
+)
 
 type SpaceMemberRole = string
 
 const (
-	SpaceMemberRoleMember = "member"
+	SpaceMemberRoleMember   = "member"
+	SpaceMemberRoleExMember = "ex-member"
 
 	SpaceMemberRoleAdult = "adult"
 
@@ -25,7 +28,7 @@ const (
 	// SpaceMemberRoleSpectator role of spectator
 	SpaceMemberRoleSpectator SpaceMemberRole = "spectator"
 
-	// SpaceMemberRoleExcluded if team members are excluded
+	// SpaceMemberRoleExcluded if space members are excluded
 	SpaceMemberRoleExcluded SpaceMemberRole = "excluded"
 )
 
@@ -35,6 +38,7 @@ var SpaceMemberWellKnownRoles = []SpaceMemberRole{
 	SpaceMemberRoleContributor,
 	SpaceMemberRoleCreator,
 	SpaceMemberRoleMember,
+	SpaceMemberRoleExMember,
 	SpaceMemberRoleChild,
 	SpaceMemberRoleAdult,
 	SpaceMemberRoleSpectator,
@@ -43,5 +47,5 @@ var SpaceMemberWellKnownRoles = []SpaceMemberRole{
 
 // IsKnownSpaceMemberRole checks if a role has a valid value
 func IsKnownSpaceMemberRole(role SpaceMemberRole, teamRoles []SpaceMemberRole) bool {
-	return teamRoles == nil || slice.Contains(SpaceMemberWellKnownRoles, role) || slice.Contains(teamRoles, role)
+	return teamRoles == nil || slices.Contains(SpaceMemberWellKnownRoles, role) || slices.Contains(teamRoles, role)
 }

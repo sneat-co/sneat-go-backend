@@ -17,7 +17,7 @@ import (
 
 // JoinInfoRequest request
 type JoinInfoRequest struct {
-	InviteID string `json:"inviteID"` // InviteDbo ID
+	InviteID string `json:"inviteID"` // InviteDbo ContactID
 	Pin      string `json:"pin"`
 }
 
@@ -95,11 +95,11 @@ func GetSpaceJoinInfo(ctx context.Context, request JoinInfoRequest) (response Jo
 	var inviteDto *dbo4invitus.InviteDbo
 	inviteDto, _, err = GetInviteByID(ctx, db, request.InviteID)
 	if err != nil {
-		err = fmt.Errorf("failed to get invite record by ID=%s: %w", request.InviteID, err)
+		err = fmt.Errorf("failed to get invite record by ContactID=%s: %w", request.InviteID, err)
 		return
 	}
 	if inviteDto == nil {
-		err = errors.New("invite record not found by ID: " + request.InviteID)
+		err = errors.New("invite record not found by ContactID: " + request.InviteID)
 		return
 	}
 

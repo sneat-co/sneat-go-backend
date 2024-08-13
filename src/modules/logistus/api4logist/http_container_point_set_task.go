@@ -12,7 +12,7 @@ import (
 func httpSetContainerPointTask(w http.ResponseWriter, r *http.Request) {
 	var request dto4logist.SetContainerPointTaskRequest
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, defaultJsonWithAuthRequired, http.StatusNoContent,
-		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
+		func(ctx context.Context, userCtx facade.UserContext) (interface{}, error) {
 			return nil, facade4logist.SetContainerPointTask(ctx, userCtx, request)
 		})
 }

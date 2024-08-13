@@ -5,6 +5,7 @@ import (
 	"github.com/sneat-co/sneat-go-core"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/sneat-co/sneat-go-core/models/dbprofile"
+	"github.com/strongo/strongoapp/appuser"
 	"github.com/strongo/strongoapp/person"
 	"github.com/strongo/strongoapp/with"
 	"github.com/strongo/validation"
@@ -18,6 +19,7 @@ type ContactBrief struct {
 	dbmodels.WithOptionalRelatedAs // This is used in `Related` field of `ContactDbo`
 	with.OptionalCountryID
 	with.RolesField
+	appuser.AccountsOfUser
 
 	Type       ContactType        `json:"type" firestore:"type"` // "person", "company", "location"
 	Gender     dbmodels.Gender    `json:"gender,omitempty" firestore:"gender,omitempty"`

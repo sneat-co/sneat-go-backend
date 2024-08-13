@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
-	"github.com/strongo/slice"
 	"github.com/strongo/validation"
+	"slices"
 	"strings"
 )
 
@@ -164,7 +164,7 @@ func (v *WithRelatedAndIDs) GetRelated() *WithRelatedAndIDs {
 
 type WithRelated struct {
 	// Related defines relationships of the current contact to other contacts.
-	// Key is team ID.
+	// Key is team ContactID.
 	Related RelatedByModuleID `json:"related,omitempty" firestore:"related,omitempty"`
 }
 
@@ -231,13 +231,13 @@ relatedItemCycle:
 func (v *WithRelated) ValidateRelated(validateID func(relatedID string) error) error {
 	for moduleID, relatedByCollectionID := range v.Related {
 		if moduleID == "" {
-			return validation.NewErrBadRecordFieldValue(relatedField, "has empty module ID")
+			return validation.NewErrBadRecordFieldValue(relatedField, "has empty module ContactID")
 		}
 		for collectionID, relatedItems := range relatedByCollectionID {
 			if collectionID == "" {
 				return validation.NewErrBadRecordFieldValue(
 					fmt.Sprintf("%s.%s", relatedField, moduleID),
-					"has empty collection ID",
+					"has empty collection ContactID",
 				)
 			}
 			for i, relatedItem := range relatedItems {
@@ -271,7 +271,7 @@ func (v *WithRelated) AddRelationship(itemRef SpaceModuleItemRef, rolesCommand R
 	if rolesCommand.Add != nil {
 		addOppositeRoles := func(roles []RelationshipRoleID, oppositeRoles []RelationshipRoleID) []RelationshipRoleID {
 			for _, roleOfItem := range roles {
-				if oppositeRole := GetOppositeRole(roleOfItem); oppositeRole != "" && !slice.Contains(rolesCommand.Add.RolesToItem, oppositeRole) {
+				if oppositeRole := GetOppositeRole(roleOfItem); oppositeRole != "" && !slices.Contains(rolesCommand.Add.RolesToItem, oppositeRole) {
 					oppositeRoles = append(oppositeRoles, oppositeRole)
 				}
 			}
@@ -370,7 +370,7 @@ func (v *WithRelated) AddRelationship(itemRef SpaceModuleItemRef, rolesCommand R
 //
 //	//addIfNeeded := func(f string, itemRelationships RelationshipRoles, linkRelationshipIDs []RelationshipRoleID) {
 //	//	field := func() string {
-//	//		return fmt.Sprintf("%s.%s.%s", relatedField, link.ID(), f)
+//	//		return fmt.Sprintf("%s.%s.%s", relatedField, link.ContactID(), f)
 //	//	}
 //	//	for _, linkRelationshipID := range linkRelationshipIDs {
 //	//		itemRelationship := itemRelationships[linkRelationshipID]

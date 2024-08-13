@@ -10,20 +10,20 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
-	"github.com/strongo/slice"
 	"github.com/strongo/validation"
+	"slices"
 	"strings"
 	"time"
 )
 
 // CancelHappening marks happening as canceled
-func CancelHappening(ctx context.Context, user facade.User, request dto4calendarium.CancelHappeningRequest) (err error) {
+func CancelHappening(ctx context.Context, userCtx facade.UserContext, request dto4calendarium.CancelHappeningRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 
 	happening := dbo4calendarium.NewHappeningEntry(request.SpaceID, request.HappeningID)
-	err = dal4calendarium.RunCalendariumSpaceWorker(ctx, user, request.SpaceRequest,
+	err = dal4calendarium.RunCalendariumSpaceWorker(ctx, userCtx, request.SpaceRequest,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.CalendariumSpaceWorkerParams) (err error) {
 			if err = tx.Get(ctx, happening.Record); err != nil {
 				return fmt.Errorf("failed to get happening: %w", err)
@@ -170,7 +170,7 @@ func addCancellationToCalendarDayAdjustments(
 		}
 		happeningAdjustment.Slots[request.SlotID] = slotAdjustment
 	}
-	if !slice.Contains(calendarDay.Data.HappeningIDs, happening.ID) {
+	if !slices.Contains(calendarDay.Data.HappeningIDs, happening.ID) {
 		calendarDay.Data.HappeningIDs = append(calendarDay.Data.HappeningIDs, happening.ID)
 		dayUpdates = append(dayUpdates, dal.Update{
 			Field: "happeningIDs", Value: calendarDay.Data.HappeningIDs,

@@ -12,7 +12,7 @@ import (
 // CreateCounterparty creates a new counterparty
 func CreateCounterparty(
 	ctx context.Context,
-	userContext facade.User,
+	userCtx facade.UserContext,
 	request dto4logist.CreateCounterpartyRequest,
 ) (
 	response dto4contactus.CreateContactResponse, err error,
@@ -24,5 +24,5 @@ func CreateCounterparty(
 		SpaceRequest: request.SpaceRequest,
 		Company:      &request.Company,
 	}
-	return facade4contactus.CreateContact(ctx, userContext, false, createContactRequest)
+	return facade4contactus.CreateContact(ctx, userCtx, false, createContactRequest)
 }

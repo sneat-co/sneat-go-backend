@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/sneat-co/sneat-go-core/validate"
-	"github.com/strongo/slice"
 	"github.com/strongo/strongoapp/with"
 	"github.com/strongo/validation"
+	"slices"
 )
 
 // WithGroupIDs is a mixin that adds groupIDs field
@@ -43,7 +43,7 @@ var ContactTypes = []ContactType{
 	//ContactTypePet,
 }
 
-// ValidateContactIDRecordField validates contactBrief ID record field
+// ValidateContactIDRecordField validates contactBrief ContactID record field
 func ValidateContactIDRecordField(name, value string, isRequired bool) error {
 	if !isRequired && value == "" {
 		return nil
@@ -59,7 +59,7 @@ func ValidateContactType(v ContactType) error {
 	if v == "" {
 		return validation.NewErrRecordIsMissingRequiredField("type")
 	}
-	if !slice.Contains(ContactTypes, v) {
+	if !slices.Contains(ContactTypes, v) {
 		return validation.NewErrBadRecordFieldValue("type",
 			fmt.Sprintf("unknown value: [%s]", v))
 	}

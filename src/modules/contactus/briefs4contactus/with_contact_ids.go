@@ -3,8 +3,8 @@ package briefs4contactus
 import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
-	"github.com/strongo/slice"
 	"github.com/strongo/validation"
+	"slices"
 	"strings"
 )
 
@@ -35,7 +35,7 @@ func (v *WithSingleSpaceContactIDs) AddContactID(contactID string) {
 }
 
 func (v *WithSingleSpaceContactIDs) HasContactID(contactID string) bool {
-	return slice.Contains(v.ContactIDs, contactID)
+	return slices.Contains(v.ContactIDs, contactID)
 }
 
 func (v *WithSingleSpaceContactIDs) Validate() error {
@@ -80,7 +80,7 @@ func (v *WithMultiSpaceContactIDs) Validate() error {
 	return nil
 }
 
-// HasSpaceContactID check if a record has a specific contactBrief ID
+// HasSpaceContactID check if a record has a specific contactBrief ContactID
 func (v *WithMultiSpaceContactIDs) HasSpaceContactID(teamItemID dbmodels.SpaceItemID) bool {
-	return slice.Contains(v.ContactIDs, string(teamItemID))
+	return slices.Contains(v.ContactIDs, string(teamItemID))
 }

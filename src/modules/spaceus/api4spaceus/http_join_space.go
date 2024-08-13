@@ -13,7 +13,7 @@ import (
 func httpPostJoinSpace(w http.ResponseWriter, r *http.Request) {
 	var request facade4invitus.JoinSpaceRequest
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.DefaultJsonWithAuthRequired, http.StatusOK,
-		func(ctx context.Context, userCtx facade.User) (response interface{}, err error) {
+		func(ctx context.Context, userCtx facade.UserContext) (response interface{}, err error) {
 			return facade4invitus.JoinSpace(ctx, userCtx, request)
 		})
 }

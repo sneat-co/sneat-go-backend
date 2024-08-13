@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/facade4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -15,8 +15,8 @@ import (
 )
 
 // SetContainerEndpointFields sets dates for a container point
-func SetContainerEndpointFields(ctx context.Context, user facade.User, request dto4logist.SetContainerEndpointFieldsRequest) error {
-	return RunOrderWorker(ctx, user, request.OrderRequest,
+func SetContainerEndpointFields(ctx context.Context, userCtx facade.UserContext, request dto4logist.SetContainerEndpointFieldsRequest) error {
+	return RunOrderWorker(ctx, userCtx, request.OrderRequest,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) error {
 			return txSetContainerEndpointFields(ctx, tx, params, request)
 		},
@@ -71,7 +71,7 @@ func txSetContainerEndpointFields(
 		if byContactID != endpoint.ByContactID {
 			_, orderContact := orderDto.WithOrderContacts.GetContactByID(byContactID)
 			if orderContact == nil {
-				byContact, err := facade4contactus.GetContactByID(ctx, tx, params.SpaceWorkerParams.Space.ID, byContactID)
+				byContact, err := dal4contactus.GetContactByID(ctx, tx, params.SpaceWorkerParams.Space.ID, byContactID)
 				if err != nil {
 					return fmt.Errorf("failed to load 'by' contact: %w", err)
 				}

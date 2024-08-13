@@ -6,8 +6,8 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/random"
@@ -63,17 +63,17 @@ func (v *AddRetroItemRequest) Validate() error {
 }
 
 // AddRetroItem adds item to retrospective
-func AddRetroItem(ctx context.Context, userContext facade.User, request AddRetroItemRequest) (response AddRetroItemResponse, err error) {
+func AddRetroItem(ctx context.Context, userCtx facade.UserContext, request AddRetroItemRequest) (response AddRetroItemResponse, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 	if request.MeetingID == UpcomingRetrospectiveID {
-		response, err = addRetroItemToUserRetro(ctx, userContext, request)
+		response, err = addRetroItemToUserRetro(ctx, userCtx, request)
 		if err != nil {
 			err = fmt.Errorf("failed to add item to future retrospective: %w", err)
 		}
 	} else {
-		response, err = addRetroItemToSpaceRetro(ctx, userContext, request)
+		response, err = addRetroItemToSpaceRetro(ctx, userCtx, request)
 		if err != nil {
 			err = fmt.Errorf("failed to add item to specific retrospective: %w", err)
 		}
@@ -95,21 +95,19 @@ UniqueID:
 	return append(items, item)
 }
 
-func addRetroItemToUserRetro(ctx context.Context, userContext facade.User, request AddRetroItemRequest) (response AddRetroItemResponse, err error) {
-	uid := userContext.GetID()
+func addRetroItemToUserRetro(ctx context.Context, userCtx facade.UserContext, request AddRetroItemRequest) (response AddRetroItemResponse, err error) {
+	uid := userCtx.GetUserID()
 
-	user := new(dbo4userus.UserDbo)
-	userKey := dal.NewKeyWithID(dbo4userus.UsersCollection, uid)
-	userRecord := dal.NewRecordWithData(userKey, user)
+	user := dbo4userus.NewUserEntry(uid)
 
-	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, transaction dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		started := time.Now()
 
-		if err = facade4userus.TxGetUserByID(ctx, transaction, userRecord); err != nil {
+		if err = dal4userus.GetUser(ctx, tx, user); err != nil {
 			return err
 		}
 
-		userSpaceInfo := user.GetUserSpaceInfoByID(request.SpaceID)
+		userSpaceInfo := user.Data.GetUserSpaceInfoByID(request.SpaceID)
 		if userSpaceInfo == nil {
 			return validation.NewErrBadRequestFieldValue("space", fmt.Sprintf("user does not belong to this team %v, uid=%v", request.SpaceID, uid))
 		}
@@ -129,11 +127,11 @@ func addRetroItemToUserRetro(ctx context.Context, userContext facade.User, reque
 		}
 		//userSpaceInfo.RetroItems[request.Role] = addItemWithUniqueID(&item, items)
 
-		if err = user.Validate(); err != nil {
+		if err = user.Data.Validate(); err != nil {
 			return err
 		}
 
-		//if err := updateTeamWithUpcomingRetroUserCounts(ctx, transaction, started, uid, request.Space, userSpaceInfo.RetroItems); err != nil {
+		//if err := updateTeamWithUpcomingRetroUserCounts(ctx, tx, started, uid, request.Space, userSpaceInfo.RetroItems); err != nil {
 		//	return fmt.Errorf("failed to update team record: %w", err)
 		//}
 
@@ -143,7 +141,7 @@ func addRetroItemToUserRetro(ctx context.Context, userContext facade.User, reque
 				Value: dal.ArrayUnion(item),
 			},
 		}
-		if err = facade4userus.TxUpdateUser(ctx, transaction, started, userKey, updates); err != nil {
+		if err = dal4userus.TxUpdateUser(ctx, tx, started, user.Key, updates); err != nil {
 			return fmt.Errorf("failed to update retrospective record: %w", err)
 		}
 		response = AddRetroItemResponse{
@@ -156,15 +154,13 @@ func addRetroItemToUserRetro(ctx context.Context, userContext facade.User, reque
 	return
 }
 
-func addRetroItemToSpaceRetro(ctx context.Context, userContext facade.User, request AddRetroItemRequest) (response AddRetroItemResponse, err error) {
-	uid := userContext.GetID()
+func addRetroItemToSpaceRetro(ctx context.Context, userCtx facade.UserContext, request AddRetroItemRequest) (response AddRetroItemResponse, err error) {
+	uid := userCtx.GetUserID()
 	retrospectiveKey := getSpaceRetroDocKey(request.SpaceID, request.MeetingID)
 
-	user := new(dbo4userus.UserDbo)
-	userKey := dal.NewKeyWithID(dbo4userus.UsersCollection, uid)
-	userRecord := dal.NewRecordWithData(userKey, user)
+	user := dbo4userus.NewUserEntry(uid)
 
-	if err = facade4userus.GetUserByID(ctx, nil, userRecord); err != nil {
+	if err = dal4userus.GetUser(ctx, nil, user); err != nil {
 		err = fmt.Errorf("failed to get user record: %w", err)
 		return
 	}
@@ -196,14 +192,17 @@ func addRetroItemToSpaceRetro(ctx context.Context, userContext facade.User, requ
 
 		// adds item to retrospective
 		{
-			if user.Names.FullName == "" {
+			if user.Data.Names.FullName == "" {
 				return fmt.Errorf("user[%v].Title is empty: %+v", uid, user)
 			}
 
 			if request.MeetingID != UpcomingRetrospectiveID {
 				item.By = &dbo4retrospectus.RetroUser{
 					UserID: uid,
-					Title:  user.Names.FullName,
+					Title:  user.Data.Names.FullName,
+				}
+				if item.By.Title == "" {
+					item.By.Title = user.Data.Names.GetFullName()
 				}
 			}
 			retrospective.Items = addItemWithUniqueID(&item, retrospective.Items)

@@ -7,6 +7,7 @@ import (
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/strongo/validation"
 )
@@ -17,7 +18,7 @@ func updateRelatedItem(
 	objectRef dbo4linkage.SpaceModuleItemRef,
 	relateds []*dbo4linkage.RelationshipItemRolesCommand,
 ) (recordsUpdates []dal4spaceus.RecordUpdates, err error) {
-	itemKey := dal4spaceus.NewSpaceModuleItemKeyFromItemRef(objectRef)
+	itemKey := dbo4spaceus.NewSpaceModuleItemKeyFromItemRef(objectRef)
 	itemDbo := new(dbo4linkage.WithRelatedAndIDsAndUserID)
 	itemDbo.WithRelatedAndIDs = new(dbo4linkage.WithRelatedAndIDs)
 	object := record.NewDataWithID(objectRef.ItemID, itemKey, itemDbo)
@@ -32,7 +33,7 @@ func updateRelatedItem(
 			return recordsUpdates, validation.NewErrBadRequestFieldValue("itemRef", fmt.Sprintf("objectRef and itemRef are the same: %+v", objectRef))
 		}
 		/*
-			if itemUpdates, teamModuleUpdates, err := facade4linkage.SetRelated(ctx, tx, relatableAdapted, params.ContactEntry, objectRef, itemRef, *itemRolesCommand); err != nil {
+			if itemUpdates, teamModuleUpdates, err := facade4linkage.SetRelated(ctx, tx, relatableAdapted, params.DebtusSpaceContactEntry, objectRef, itemRef, *itemRolesCommand); err != nil {
 				return err
 			}
 		*/

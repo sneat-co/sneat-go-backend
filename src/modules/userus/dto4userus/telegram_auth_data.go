@@ -39,7 +39,7 @@ func (v TelegramAuthData) Validate() error {
 }
 
 func (v TelegramAuthData) String() string {
-	return fmt.Sprintf("TelegramAuthData{ID:%d, Username:%s, FirstName:%s, LastName:%s, AuthDate:%d, PhotoURL:%s}",
+	return fmt.Sprintf("TelegramAuthData{ContactID:%d, Username:%s, FirstName:%s, LastName:%s, AuthDate:%d, PhotoURL:%s}",
 		v.ID, v.Username, v.FirstName, v.LastName, v.AuthDate, v.PhotoURL,
 	)
 }

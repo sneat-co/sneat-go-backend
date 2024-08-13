@@ -8,7 +8,7 @@ import (
 )
 
 func TestToggleMeetingTimer(t *testing.T) {
-	toggleTimer = func(ctx context.Context, userContext facade.User, params facade4meetingus.ToggleParams) (response facade4meetingus.ToggleTimerResponse, err error) {
+	toggleTimer = func(ctx context.Context, userCtx facade.UserContext, params facade4meetingus.ToggleParams) (response facade4meetingus.ToggleTimerResponse, err error) {
 		return
 	}
 	params := facade4meetingus.Params{
@@ -23,7 +23,7 @@ func TestToggleMeetingTimer(t *testing.T) {
 }
 
 func TestToggleMemberTimer(t *testing.T) {
-	toggleTimer = func(ctx context.Context, userContext facade.User, params facade4meetingus.ToggleParams) (response facade4meetingus.ToggleTimerResponse, err error) {
+	toggleTimer = func(ctx context.Context, userCtx facade.UserContext, params facade4meetingus.ToggleParams) (response facade4meetingus.ToggleTimerResponse, err error) {
 		return
 	}
 	params := facade4meetingus.Params{

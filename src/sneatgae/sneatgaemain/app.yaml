@@ -64,7 +64,7 @@ handlers:
     secure: always
     redirect_http_response_code: 301
 
-  - url: /(receipt|transfer|confirm|contact|open/new-debt|test-pointer)?$|/(api|webhooks/(twilio)|bot/(tg|viber|fbm|skype|kik|line|wechat)|((\w{2})(-\w{2})?))/.*
+  - url: /(receipt|transfer|confirm|contact|open/new-debt|test-pointer)?$|/(api4debtus|webhooks/(twilio)|bot/(tg|viber|fbm|skype|kik|line|wechat)|((\w{2})(-\w{2})?))/.*
     script: auto
     secure: always
     redirect_http_response_code: 301

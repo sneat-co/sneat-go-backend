@@ -1,7 +1,7 @@
 package facade4retrospectus
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 )
 
-var newSpaceKey = dal4spaceus.NewSpaceKey
+var newSpaceKey = dbo4spaceus.NewSpaceKey

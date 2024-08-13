@@ -1,12 +1,12 @@
 package api4calendarium
 
 import (
-	"github.com/sneat-co/sneat-go-core/modules"
+	"github.com/sneat-co/sneat-go-core/module"
 	"net/http"
 )
 
 // RegisterHttpRoutes register calendarium routes
-func RegisterHttpRoutes(handle modules.HTTPHandleFunc) {
+func RegisterHttpRoutes(handle module.HTTPHandleFunc) {
 	handle(http.MethodPost, "/v0/happenings/create_happening", httpPostCreateHappening)
 	handle(http.MethodDelete, "/v0/happenings/delete_happening", httpDeleteHappening)
 	handle(http.MethodDelete, "/v0/happenings/delete_slot", httpDeleteSlot)

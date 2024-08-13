@@ -162,6 +162,10 @@ type SpaceDbo struct {
 	//
 	Timezone *dbmodels.Timezone `json:"timezone,omitempty" firestore:"timezone,omitempty"`
 	//
+	dbmodels.WithPreferredLocale
+	dbmodels.WithPrimaryCurrency
+
+	//
 	Metrics []*SpaceMetric `json:"metrics,omitempty" firestore:"metrics,omitempty"`
 }
 
@@ -231,7 +235,7 @@ func (v *SpaceDbo) Validate() error {
 	return nil
 }
 
-// HasUser checks if team has a user with given ID
+// HasUser checks if team has a user with given ContactID
 func (v *SpaceDbo) HasUser(uid string) bool {
 	return slice.Index(v.UserIDs, uid) >= 0
 }

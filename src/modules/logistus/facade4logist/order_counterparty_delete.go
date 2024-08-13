@@ -15,10 +15,10 @@ import (
 // DeleteOrderCounterparty deletes counterparty from an order
 func DeleteOrderCounterparty(
 	ctx context.Context,
-	userContext facade.User,
+	userCtx facade.UserContext,
 	request dto4logist.DeleteOrderCounterpartyRequest,
 ) (err error) {
-	err = RunOrderWorker(ctx, userContext, request.OrderRequest,
+	err = RunOrderWorker(ctx, userCtx, request.OrderRequest,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) (err error) {
 			return deleteOrderCounterpartyTxWorker(params, request)
 		},
@@ -136,7 +136,7 @@ func deleteOrderCounterpartyTxWorker(
 	}
 
 	//{ // Clear truckers
-	//	for _, counterparty := range order.Data.Counterparties {
+	//	for _, counterparty := range order.Data.Contacts {
 	//		if counterparty.Role == dbo4logist.CounterpartyRoleTrucker {
 	//			hasSegments := false
 	//			for _, segment := range order.Data.Segments {

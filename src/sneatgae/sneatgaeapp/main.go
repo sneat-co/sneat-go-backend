@@ -16,11 +16,12 @@ package sneatgaeapp
 
 import (
 	"github.com/julienschmidt/httprouter"
-	sneatgomodules "github.com/sneat-co/sneat-go-backend/src/modules"
+	"github.com/sneat-co/sneat-go-backend/src/modules"
 	"github.com/sneat-co/sneat-go-backend/src/modules/healthcheck"
 	"github.com/sneat-co/sneat-go-backend/src/sneatgae/sneatgaeapp/pages"
 	"github.com/sneat-co/sneat-go-core/emails"
-	"github.com/sneat-co/sneat-go-core/modules"
+	"github.com/sneat-co/sneat-go-core/module"
+	"github.com/strongo/delaying"
 	"net/http"
 )
 
@@ -28,7 +29,7 @@ func CreateHttpRouter() *httprouter.Router {
 	return initHTTPRouter(globalOptionsHandler)
 }
 
-func Start(reportPanic func(err any), wrapHandler HandlerWrapper, httpRouter *httprouter.Router, emailClient emails.Client, extraModule ...modules.Module) {
+func Start(reportPanic func(err any), wrapHandler HandlerWrapper, httpRouter *httprouter.Router, emailClient emails.Client, extraModule ...module.Module) {
 	if reportPanic != nil {
 		ReportPanic = reportPanic
 	}
@@ -56,7 +57,7 @@ func Start(reportPanic func(err any), wrapHandler HandlerWrapper, httpRouter *ht
 	//appengine.Main()
 }
 
-func initHtmlPageHandlers(handle modules.HTTPHandleFunc) {
+func initHtmlPageHandlers(handle module.HTTPHandleFunc) {
 	handle(http.MethodGet, "/", pages.IndexHandler)
 }
 
@@ -65,9 +66,9 @@ func initInfrastructure(emailClient emails.Client) {
 	emails.Init(emailClient)
 }
 
-func RegisterModules(handle modules.HTTPHandleFunc, extraModule []modules.Module) {
-	args := modules.NewModuleRegistrationArgs(handle)
-	standardModules := sneatgomodules.Modules()
+func RegisterModules(handle module.HTTPHandleFunc, extraModule []module.Module) {
+	args := module.NewModuleRegistrationArgs(handle, delaying.MustRegisterFunc)
+	standardModules := modules.Modules()
 	for _, m := range standardModules {
 		m.Register(args)
 	}

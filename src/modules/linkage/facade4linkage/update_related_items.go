@@ -8,14 +8,14 @@ import (
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dto4linkage"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
 func UpdateRelatedItemsWithLatestRelationships(
 	ctx context.Context,
-	userCtx facade.User,
+	userCtx facade.UserContext,
 	request dto4linkage.UpdateItemRequest,
 	itemData dbo4linkage.WithRelatedAndIDs,
 ) (err error) {
@@ -34,7 +34,7 @@ func UpdateRelatedItemsWithLatestRelationships(
 
 func updateItemWithLatestRelationshipsFromRelatedItem(
 	ctx context.Context,
-	_ facade.User,
+	_ facade.UserContext,
 	itemRef dbo4linkage.SpaceModuleItemRef,
 	relatedItemRef dbo4linkage.SpaceModuleItemRef,
 	relatedByModuleOfRelatedItem dbo4linkage.RelatedByModuleID,
@@ -51,7 +51,7 @@ func updateItemWithLatestRelationshipsFromRelatedItem(
 
 	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 
-		key := dal4spaceus.NewSpaceModuleItemKey(itemRef.Space, itemRef.Module, itemRef.Collection, itemRef.ItemID)
+		key := dbo4spaceus.NewSpaceModuleItemKey(itemRef.Space, itemRef.Module, itemRef.Collection, itemRef.ItemID)
 		item := record.NewDataWithID(itemRef.ItemID, key, new(dbo4linkage.WithRelatedAndIDsAndUserID))
 		if err = tx.Get(ctx, item.Record); err != nil {
 			return err

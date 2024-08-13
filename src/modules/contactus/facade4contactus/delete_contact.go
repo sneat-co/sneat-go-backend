@@ -12,12 +12,12 @@ import (
 )
 
 // DeleteContact deletes team contact
-func DeleteContact(ctx context.Context, userContext facade.User, request dto4contactus.ContactRequest) (err error) {
+func DeleteContact(ctx context.Context, userCtx facade.UserContext, request dto4contactus.ContactRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 
-	return dal4contactus.RunContactusSpaceWorker(ctx, userContext, request.SpaceRequest,
+	return dal4contactus.RunContactusSpaceWorker(ctx, userCtx, request.SpaceRequest,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) (err error) {
 			return deleteContactTxWorker(ctx, tx, params, request.ContactID)
 		},

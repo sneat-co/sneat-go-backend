@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade/db"
 	"time"
 )
@@ -13,7 +14,7 @@ var txUpdate = func(ctx context.Context, tx dal.ReadwriteTransaction, key *dal.K
 	return db.TxUpdate(ctx, tx, key, data, opts...)
 }
 
-func txUpdateSpace(ctx context.Context, tx dal.ReadwriteTransaction, timestamp time.Time, space SpaceEntry, data []dal.Update, opts ...dal.Precondition) error {
+func txUpdateSpace(ctx context.Context, tx dal.ReadwriteTransaction, timestamp time.Time, space dbo4spaceus.SpaceEntry, data []dal.Update, opts ...dal.Precondition) error {
 	if err := space.Data.Validate(); err != nil {
 		return fmt.Errorf("space record is not valid: %w", err)
 	}

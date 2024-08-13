@@ -7,6 +7,6 @@ import (
 )
 
 // GetScrum returns scrum data
-func GetScrum(_ context.Context, user facade.User, _ facade.IDRequest) (scrum dbo4scrumus.Scrum, err error) {
+func GetScrum(_ context.Context, userCtx facade.UserContext, _ facade.IDRequest) (scrum dbo4scrumus.Scrum, err error) {
 	return
 }

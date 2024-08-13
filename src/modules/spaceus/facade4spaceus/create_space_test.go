@@ -18,13 +18,14 @@ import (
 
 func TestCreateSpace(t *testing.T) { // TODO: Implement unit tests
 	ctx := context.Background()
-	user := facade.NewUser("TestUser")
+	user := facade.NewUserContext("TestUser")
 	//userKey := dbo4userus.NewUserKey(user.GetID())
 
 	t.Run("error on bad request", func(t *testing.T) {
-		response, err := CreateSpace(ctx, user, dto4spaceus.CreateSpaceRequest{})
+		space, contactusSpace, err := CreateSpace(ctx, user, dto4spaceus.CreateSpaceRequest{})
 		assert.Error(t, err)
-		assert.Equal(t, "", response.Space.ID)
+		assert.Equal(t, "", space.ID)
+		assert.Equal(t, "", contactusSpace.ID)
 	})
 
 	t.Run("user's 1st team", func(t *testing.T) {
@@ -72,18 +73,14 @@ func TestCreateSpace(t *testing.T) { // TODO: Implement unit tests
 		facade.GetDatabase = func(ctx context.Context) (dal.DB, error) {
 			return db, nil
 		}
-		response, err := CreateSpace(ctx, user, dto4spaceus.CreateSpaceRequest{Type: core4spaceus.SpaceTypeFamily})
+		space, contactusSpace, err := CreateSpace(ctx, user, dto4spaceus.CreateSpaceRequest{Type: core4spaceus.SpaceTypeFamily})
 		assert.Nil(t, err)
 
-		assert.NotEqual(t, "", response.Space.ID)
-		assert.Nil(t, response.Space.Data.Validate())
-		assert.Equal(t, 1, len(response.Space.Data.UserIDs))
-		assert.Equal(t, 1, response.Space.Data.Version)
-		//assert.Equal(t, 2, len(response.Space.Data.UserIDs))
-
-		assert.Nil(t, response.User.Data.Validate())
-		assert.Equal(t, 1, len(response.User.Data.SpaceIDs))
-		assert.Equal(t, 1, len(response.User.Data.Spaces))
+		assert.NotEqual(t, "", space.ID)
+		assert.Nil(t, space.Data.Validate())
+		assert.Equal(t, 1, len(space.Data.UserIDs))
+		assert.Equal(t, 1, space.Data.Version)
+		assert.Equal(t, "contactus", contactusSpace.ID)
 	})
 
 }

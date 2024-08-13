@@ -5,4 +5,4 @@ import (
 )
 
 // ListusChat is not used by bots framework
-type ListusChat = record.DataWithID[string, ListusChatData]
+type ListusChat = record.DataWithID[string, *ListusChatData]

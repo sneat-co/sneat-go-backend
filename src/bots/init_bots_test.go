@@ -31,7 +31,7 @@ func TestInitializeBots(t *testing.T) {
 					if r := recover(); r == nil {
 						t.Error("Expected panic: " + tt.expectsPanic)
 					} else if p := fmt.Sprintf("%v", r); !strings.Contains(p, tt.expectsPanic) {
-						t.Errorf("Expected panic '%s', got: %s" + tt.expectsPanic)
+						t.Errorf("Expected panic '%s', got: %s", tt.expectsPanic, p)
 					}
 				}()
 			}

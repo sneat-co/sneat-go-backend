@@ -12,11 +12,11 @@ import (
 )
 
 // AddSegments adds segments to an order
-func AddSegments(ctx context.Context, user facade.User, request dto4logist.AddSegmentsRequest) error {
+func AddSegments(ctx context.Context, userCtx facade.UserContext, request dto4logist.AddSegmentsRequest) error {
 	if err := request.Validate(); err != nil {
 		return err
 	}
-	return RunOrderWorker(ctx, user, request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) error {
+	return RunOrderWorker(ctx, userCtx, request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) error {
 		return addSegmentsTx(ctx, tx, params, request)
 	})
 }
@@ -45,7 +45,7 @@ func updateContainerWithAddedSegment(orderDto *dbo4logist.OrderDbo, containerDat
 	_, container := orderDto.GetContainerByID(containerData.ID)
 
 	if container == nil {
-		return fmt.Errorf("container not found in order by ID=%s", containerData.ID)
+		return fmt.Errorf("container not found in order by ContactID=%s", containerData.ID)
 	}
 
 	//if !containerData.ToLoad.IsEmpty() {
@@ -176,7 +176,7 @@ func addContainerPoint(
 
 //func updateContainerLoadForSegment(params *OrderWorkerParams, containerData dto4logist.SegmentContainerData, segment *dbo4logist.ContainerSegment) error {
 //	orderDto := params.Order.Data
-//	containerPoint := orderDto.WithContainerPoints.GetContainerPoint(containerData.ID, segment.From.ShippingPointID)
+//	containerPoint := orderDto.WithContainerPoints.GetContainerPoint(containerData.ContactID, segment.From.ShippingPointID)
 //	if containerPoint == nil {
 //		return fmt.Errorf("container point not found")
 //	}
@@ -282,11 +282,11 @@ func addShippingPointToOrderIfNeeded(
 	}
 
 	if err := location.Data.Validate(); err != nil {
-		return nil, fmt.Errorf("contact loaded from DB failed validation (ID=%s): %w", location.ID, err)
+		return nil, fmt.Errorf("contact loaded from DB failed validation (ContactID=%s): %w", location.ID, err)
 	}
 
 	if location.Data.ParentID == "" {
-		return shippingPoint, fmt.Errorf("segment counteparty with role=[%s] reference contact by ID=[%s] that has no reference to parent: %w",
+		return shippingPoint, fmt.Errorf("segment counteparty with role=[%s] reference contact by ContactID=[%s] that has no reference to parent: %w",
 			segmentCounterparty.Role, segmentCounterparty.ContactID,
 			validation.NewErrRecordIsMissingRequiredField("parentContactID"))
 	}
@@ -296,7 +296,7 @@ func addShippingPointToOrderIfNeeded(
 		return shippingPoint, fmt.Errorf("failed to get counterparty contact: %w", err)
 	}
 	if err := parent.Data.Validate(); err != nil {
-		return shippingPoint, fmt.Errorf("parent contact with ID=[%v] loaded from DB failed validation: %w", parent.ID, err)
+		return shippingPoint, fmt.Errorf("parent contact with ContactID=[%v] loaded from DB failed validation: %w", parent.ID, err)
 	}
 
 	shippingPoint = &dbo4logist.OrderShippingPoint{
@@ -327,7 +327,7 @@ func addShippingPointToOrderIfNeeded(
 	if parent.Data == nil {
 		panic(fmt.Sprintf("parent.Data is nil: %+v", parent))
 		//shippingPoint.Counterparty = dbo4logist.ShippingPointCounterparty{
-		//	ContactID: location.ID,
+		//	ContactID: location.ContactID,
 		//	Title:     location.Data.Title,
 		//}
 	} else {
@@ -424,7 +424,7 @@ func addCounterpartyToOrderIfNeeded(
 	if contact.Data.ParentID != "" {
 		parent := dal4contactus.NewContactEntry(spaceID, contact.Data.ParentID)
 		if err := tx.Get(ctx, parent.Record); err != nil {
-			return changes, fmt.Errorf("failed to get parent contact by ID=[%s]: %w", contact.Data.ParentID, err)
+			return changes, fmt.Errorf("failed to get parent contact by ContactID=[%s]: %w", contact.Data.ParentID, err)
 		}
 
 		var parentCounterpartyRole dbo4logist.CounterpartyRole
@@ -439,7 +439,7 @@ func addCounterpartyToOrderIfNeeded(
 		case dbo4logist.CounterpartyRoleDropPoint:
 			parentCounterpartyRole = dbo4logist.CounterpartyRolePortTo
 		default:
-			return changes, fmt.Errorf("counterparty with role=%s references a contact with ID=%s that unexpectedely has non empty parentContactID=%s",
+			return changes, fmt.Errorf("counterparty with role=%s references a contact with ContactID=%s that unexpectedely has non empty parentContactID=%s",
 				counterpartyRole, contact.ID, contact.Data.ParentID)
 		}
 

@@ -6,7 +6,7 @@ import (
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/apicore/verify"
 	"github.com/sneat-co/sneat-go-core/httpserver"
-	"github.com/sneat-co/sneat-go-core/modules"
+	"github.com/sneat-co/sneat-go-core/module"
 	"net/http"
 )
 
@@ -16,7 +16,7 @@ const (
 	quiverWantedPathPrefix = quiverPathPrefix + "wanted/"
 )
 
-func registerQuiverHandlers(handle modules.HTTPHandleFunc) {
+func registerQuiverHandlers(handle module.HTTPHandleFunc) {
 	handle(http.MethodPost, quiverWantedPathPrefix+"create_wanted", createWantedItem)
 	handle(http.MethodPut, quiverWantedPathPrefix+"update_wanted", updateWantedItem)
 	handle(http.MethodDelete, quiverWantedPathPrefix+"delete_wanted", deleteWantedItem)

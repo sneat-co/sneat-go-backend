@@ -12,7 +12,7 @@ import (
 )
 
 // DeleteAsset deletes an asset
-func DeleteAsset(ctx context.Context, user facade.User, request dal4spaceus.SpaceItemRequest) (err error) {
+func DeleteAsset(ctx context.Context, userCtx facade.UserContext, request dal4spaceus.SpaceItemRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return fmt.Errorf("invalid request to facade4assetus.DeleteAsset: %w", err)
 	}
@@ -27,7 +27,7 @@ func DeleteAsset(ctx context.Context, user facade.User, request dal4spaceus.Spac
 		},
 	)
 
-	return dal4spaceus.DeleteSpaceItem(ctx, user, request,
+	return dal4spaceus.DeleteSpaceItem(ctx, userCtx, request,
 		const4assetus.ModuleID, new(dbo4assetus.AssetusSpaceDbo),
 		dal4assetus.AssetsCollection, new(dbo4assetus.AssetDbo),
 		briefsAdapter,

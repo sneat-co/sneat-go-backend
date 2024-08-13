@@ -41,11 +41,11 @@ type OrderWorkerParams struct {
 }
 
 // RunOrderWorker executes an order worker with transaction
-var RunOrderWorker = func(ctx context.Context, user facade.User, request dto4logist.OrderRequest, worker orderWorker) (err error) {
+var RunOrderWorker = func(ctx context.Context, userCtx facade.UserContext, request dto4logist.OrderRequest, worker orderWorker) (err error) {
 	if err := request.Validate(); err != nil {
 		return fmt.Errorf("invalid order request: %w", err)
 	}
-	return dal4spaceus.RunSpaceWorker(ctx, user, request.SpaceID, func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4spaceus.SpaceWorkerParams) (err error) {
+	return dal4spaceus.RunSpaceWorker(ctx, userCtx, request.SpaceID, func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4spaceus.SpaceWorkerParams) (err error) {
 		order := dbo4logist.NewOrder(teamWorkerParams.Space.ID, request.OrderID)
 		params := OrderWorkerParams{
 			SpaceWorkerParams: teamWorkerParams,
@@ -55,7 +55,7 @@ var RunOrderWorker = func(ctx context.Context, user facade.User, request dto4log
 			return fmt.Errorf("failed to load order record: %w", err)
 		}
 		if err := order.Dto.Validate(); err != nil {
-			return fmt.Errorf("loaded order is not valid (ID=%s): %w", order.ID, err)
+			return fmt.Errorf("loaded order is not valid (ContactID=%s): %w", order.ID, err)
 		}
 		if err := worker(ctx, tx, &params); err != nil {
 			return fmt.Errorf("failed in order worker: %w", err)
@@ -87,7 +87,7 @@ var RunOrderWorker = func(ctx context.Context, user facade.User, request dto4log
 		}
 		order.Dto.UpdateKeys()
 		if err := order.Dto.Validate(); err != nil {
-			return fmt.Errorf("order is not valid before preparing updates for DB (ID=%s): %w", order.ID, err)
+			return fmt.Errorf("order is not valid before preparing updates for DB (ContactID=%s): %w", order.ID, err)
 		}
 		if err := order.Dto.KeysField.Validate(); err != nil {
 			return err
@@ -103,7 +103,7 @@ var RunOrderWorker = func(ctx context.Context, user facade.User, request dto4log
 		order.Dto.WithModified.MarkAsUpdated(params.SpaceWorkerParams.UserID)
 		if err := order.Dto.Validate(); err != nil {
 			return fmt.Errorf(
-				"order is not valid before pushing updates to DB (ID=%s): %w",
+				"order is not valid before pushing updates to DB (ContactID=%s): %w",
 				order.ID, err)
 		}
 		orderUpdates = append(orderUpdates, order.Dto.UpdatedFields.UpdatesWhenUpdatedFieldsChanged()...)

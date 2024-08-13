@@ -26,7 +26,7 @@ func (fooModuleSpaceData) Validate() error {
 
 func TestRunModuleSpaceWorker(t *testing.T) {
 	ctx := context.Background()
-	user := &facade.AuthUser{ID: "user1"}
+	user := &facade.AuthUserContext{ID: "user1"}
 	request := dto4spaceus.SpaceRequest{SpaceID: "space1"}
 	const moduleID = "test_module"
 	assertTxWorker := func(ctx context.Context, tx dal.ReadwriteTransaction, params *ModuleSpaceWorkerParams[*fooModuleSpaceData]) (err error) {
@@ -67,11 +67,11 @@ func TestRunModuleSpaceWorker(t *testing.T) {
 		})
 		return db, nil
 	}
-	err := RunModuleSpaceWorker(ctx, user, request, moduleID, new(fooModuleSpaceData), assertTxWorker)
+	err := RunModuleSpaceWorker(ctx, user, request.SpaceID, moduleID, new(fooModuleSpaceData), assertTxWorker)
 	assert.Nil(t, err)
 	//type args[ModuleDbo SpaceModuleDbo] struct {
 	//	ctx      context.Context
-	//	user     facade2debtus.User
+	//	user     facade4debtus.User
 	//	request  dto4spaceus.SpaceRequest
 	//	moduleID string
 	//	worker   func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *ModuleSpaceWorkerParams[ModuleDbo]) (err error)
@@ -95,7 +95,7 @@ func TestRunModuleSpaceWorker(t *testing.T) {
 
 func TestRunModuleSpaceWorkerTx(t *testing.T) {
 	ctx := context.Background()
-	user := &facade.AuthUser{ID: "user1"}
+	user := &facade.AuthUserContext{ID: "user1"}
 	request := dto4spaceus.SpaceRequest{SpaceID: "space1"}
 	const moduleID = "test_module"
 	//assertTxWorker := func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *ModuleSpaceWorkerParams[*fooModuleSpaceData]) (err error) {

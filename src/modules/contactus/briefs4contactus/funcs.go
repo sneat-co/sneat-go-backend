@@ -1,6 +1,6 @@
 package briefs4contactus
 
-// GetFullContactID returns full member ID
+// GetFullContactID returns full member ContactID
 func GetFullContactID(teamID, memberID string) string {
 	if teamID == "" {
 		panic("spaceID is required parameter")

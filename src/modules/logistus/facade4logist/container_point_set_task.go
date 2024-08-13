@@ -10,8 +10,8 @@ import (
 )
 
 // SetContainerPointTask adds/remove task for a container point
-func SetContainerPointTask(ctx context.Context, user facade.User, request dto4logist.SetContainerPointTaskRequest) error {
-	return RunOrderWorker(ctx, user, request.OrderRequest,
+func SetContainerPointTask(ctx context.Context, userCtx facade.UserContext, request dto4logist.SetContainerPointTaskRequest) error {
+	return RunOrderWorker(ctx, userCtx, request.OrderRequest,
 		func(_ context.Context, _ dal.ReadwriteTransaction, params *OrderWorkerParams) error {
 			return txSetContainerPointTask(params, request)
 		},

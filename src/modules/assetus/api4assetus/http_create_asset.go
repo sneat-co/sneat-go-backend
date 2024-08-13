@@ -27,16 +27,16 @@ func httpPostCreateAsset(w http.ResponseWriter, r *http.Request) {
 	}
 
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.DefaultJsonWithAuthRequired, http.StatusCreated,
-		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
+		func(ctx context.Context, userCtx facade.UserContext) (interface{}, error) {
 			asset, err := facade4assetus.CreateAsset(ctx, userCtx, request)
 			if err != nil {
 				return nil, fmt.Errorf("failed to create asset: %w", err)
 			}
 			if asset.ID == "" {
-				return nil, errors.New("asset created by facade2debtus does not have an ContactID")
+				return nil, errors.New("asset created by facade4debtus does not have an ContactID")
 			}
 			if err = asset.Data.Validate(); err != nil {
-				err = fmt.Errorf("asset created by facade2debtus is not valid: %w", err)
+				err = fmt.Errorf("asset created by facade4debtus is not valid: %w", err)
 				return asset, err
 			}
 			return asset, nil

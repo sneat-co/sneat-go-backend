@@ -17,7 +17,7 @@ var createOrReuseInviteForMember = facade4invitus.CreateOrReuseInviteForMember
 func httpPostCreateOrReuseInviteForMember(w http.ResponseWriter, r *http.Request) {
 	var request facade4invitus.InviteMemberRequest
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.DefaultJsonWithAuthRequired, http.StatusCreated,
-		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
+		func(ctx context.Context, userCtx facade.UserContext) (interface{}, error) {
 			if request.To.Channel == "link" {
 				return nil, fmt.Errorf("%w: link invites should be requested via GET", facade.ErrBadRequest)
 			}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -33,7 +34,7 @@ func TestTxGetUsers(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.wantErr(t, TxGetUsers(tt.args.ctx, tt.args.tx, tt.args.users), fmt.Sprintf("TxGetUsers(%v, %v, %v)", tt.args.ctx, tt.args.tx, tt.args.users))
+			tt.wantErr(t, dal4userus.TxGetUsers(tt.args.ctx, tt.args.tx, tt.args.users), fmt.Sprintf("TxGetUsers(%v, %v, %v)", tt.args.ctx, tt.args.tx, tt.args.users))
 		})
 	}
 }

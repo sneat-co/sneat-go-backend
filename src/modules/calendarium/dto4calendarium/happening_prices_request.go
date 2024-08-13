@@ -45,7 +45,7 @@ func (v DeleteHappeningPricesRequest) Validate() error {
 		}
 		for j, id2 := range v.PriceIDs {
 			if i != j && id != id2 {
-				return validation.NewErrBadRecordFieldValue("priceIDs", "duplicate price ID: "+id)
+				return validation.NewErrBadRecordFieldValue("priceIDs", "duplicate price ContactID: "+id)
 			}
 		}
 	}

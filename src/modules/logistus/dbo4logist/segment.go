@@ -190,7 +190,7 @@ func (v WithSegments) GetSegmentsByFilter(filter SegmentsFilter) (segment []*Con
 // GetSegmentByKey returns a segment by the given key.
 func (v WithSegments) GetSegmentByKey(k ContainerSegmentKey) *ContainerSegment {
 	if k.ContainerID == "" {
-		panic("container ID is required")
+		panic("container ContactID is required")
 	}
 	for _, s := range v.Segments {
 		if s.ContainerID != k.ContainerID {
@@ -252,7 +252,7 @@ func (v WithSegments) validateOrder(order OrderDbo) error {
 
 func validateOrderSegment(order OrderDbo, segment *ContainerSegment) (err error) {
 	if _, container := order.GetContainerByID(segment.ContainerID); container == nil {
-		return validation.NewErrBadRecordFieldValue("containerID", fmt.Sprintf("container with ID=[%s] does not exist", segment.ContainerID))
+		return validation.NewErrBadRecordFieldValue("containerID", fmt.Sprintf("container with ContactID=[%s] does not exist", segment.ContainerID))
 	}
 	//var fromPoint, toPoint *OrderShippingPoint
 	if err = validateSegmentEndpoint(order, segment, "from", segment.ContainerSegmentKey.From); err != nil {

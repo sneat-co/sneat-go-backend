@@ -3,14 +3,14 @@ package dbo4calendarium
 import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/const4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 )
 
 //const SingleHappeningsCollection = "single_happenings"
 
 // NewHappeningKey creates a new happening key
 func NewHappeningKey(teamID, happeningID string) *dal.Key {
-	return dal4spaceus.NewSpaceModuleItemKey(teamID, const4calendarium.ModuleID, const4calendarium.HappeningsCollection, happeningID)
+	return dbo4spaceus.NewSpaceModuleItemKey(teamID, const4calendarium.ModuleID, const4calendarium.HappeningsCollection, happeningID)
 }
 
 // HappeningType is either "recurring" or "single"

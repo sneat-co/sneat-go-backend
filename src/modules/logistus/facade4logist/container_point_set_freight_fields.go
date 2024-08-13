@@ -10,8 +10,8 @@ import (
 )
 
 // SetContainerPointFreightFields adds/remove task for a container point
-func SetContainerPointFreightFields(ctx context.Context, user facade.User, request dto4logist.SetContainerPointFreightFieldsRequest) error {
-	return RunOrderWorker(ctx, user, request.OrderRequest,
+func SetContainerPointFreightFields(ctx context.Context, userCtx facade.UserContext, request dto4logist.SetContainerPointFreightFieldsRequest) error {
+	return RunOrderWorker(ctx, userCtx, request.OrderRequest,
 		func(_ context.Context, _ dal.ReadwriteTransaction, params *OrderWorkerParams) error {
 			return txSetContainerPointFreightFields(params, request)
 		},

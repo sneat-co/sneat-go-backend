@@ -13,21 +13,21 @@ import (
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
-func UpdateAsset(ctx context.Context, user facade.User, request dto4assetus.UpdateAssetRequest) (err error) {
+func UpdateAsset(ctx context.Context, userCtx facade.UserContext, request dto4assetus.UpdateAssetRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
-		return UpdateAssetTx(ctx, tx, user, request)
+		return UpdateAssetTx(ctx, tx, userCtx, request)
 	})
 }
 
-func UpdateAssetTx(ctx context.Context, tx dal.ReadwriteTransaction, user facade.User, request dto4assetus.UpdateAssetRequest) (err error) {
+func UpdateAssetTx(ctx context.Context, tx dal.ReadwriteTransaction, userCtx facade.UserContext, request dto4assetus.UpdateAssetRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 	extraData := extra.NewExtraData(extra.Type(request.AssetCategory))
-	return runAssetWorker(ctx, tx, user, request, extraData)
+	return runAssetWorker(ctx, tx, userCtx, request, extraData)
 }
 
 type AssetWorkerParams struct {
@@ -36,9 +36,9 @@ type AssetWorkerParams struct {
 	AssetUpdates []dal.Update
 }
 
-func runAssetWorker(ctx context.Context, tx dal.ReadwriteTransaction, user facade.User, request dto4assetus.UpdateAssetRequest, extraData extra.Data) (err error) {
+func runAssetWorker(ctx context.Context, tx dal.ReadwriteTransaction, userCtx facade.UserContext, request dto4assetus.UpdateAssetRequest, extraData extra.Data) (err error) {
 	// TODO: Replace with future RunTeamModuleItemWorkerTx
-	return dal4spaceus.RunModuleSpaceWorkerTx[*dbo4assetus.AssetusSpaceDbo](ctx, tx, user, request.SpaceRequest, const4assetus.ModuleID, new(dbo4assetus.AssetusSpaceDbo),
+	return dal4spaceus.RunModuleSpaceWorkerTx[*dbo4assetus.AssetusSpaceDbo](ctx, tx, userCtx, request.SpaceRequest, const4assetus.ModuleID, new(dbo4assetus.AssetusSpaceDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4spaceus.ModuleSpaceWorkerParams[*dbo4assetus.AssetusSpaceDbo]) (err error) {
 			extraType := extra.Type(request.AssetCategory)
 			params := AssetWorkerParams{

@@ -13,7 +13,7 @@ import (
 )
 
 // AdjustSlot temporary changes slot (for example, time changed for a specific date, or first class has been canceled)
-func AdjustSlot(ctx context.Context, user facade.User, request dto4calendarium.HappeningSlotDateRequest) (err error) {
+func AdjustSlot(ctx context.Context, userCtx facade.UserContext, request dto4calendarium.HappeningSlotDateRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
@@ -31,7 +31,7 @@ func AdjustSlot(ctx context.Context, user facade.User, request dto4calendarium.H
 		return
 	}
 
-	if err = dal4calendarium.RunHappeningSpaceWorker(ctx, user, request.HappeningRequest, worker); err != nil {
+	if err = dal4calendarium.RunHappeningSpaceWorker(ctx, userCtx, request.HappeningRequest, worker); err != nil {
 		return err
 	}
 	return nil

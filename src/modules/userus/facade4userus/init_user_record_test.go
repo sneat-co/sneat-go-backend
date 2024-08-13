@@ -18,7 +18,7 @@ import (
 func Test_InitUserRecord(t *testing.T) {
 	ctx := context.Background()
 	type args struct {
-		user    facade.User
+		user    facade.UserContext
 		request dto4userus.InitUserRecordRequest
 	}
 	tests := []struct {
@@ -30,7 +30,7 @@ func Test_InitUserRecord(t *testing.T) {
 		{
 			name: "should_create_user_record",
 			args: args{
-				user: dbo4userus.NewUserEntry("test_user_1"),
+				user: facade.NewUserContext("test_user_1"),
 				request: dto4userus.InitUserRecordRequest{
 					AuthProvider: "password",
 					Names: &person.NameFields{

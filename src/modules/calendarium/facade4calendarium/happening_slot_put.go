@@ -18,7 +18,7 @@ const (
 	UpdateSlot PutMode = "UpdateSlot"
 )
 
-func PutSlot(ctx context.Context, user facade.User, putMode PutMode, request dto4calendarium.HappeningSlotRequest) (err error) {
+func PutSlot(ctx context.Context, userCtx facade.UserContext, putMode PutMode, request dto4calendarium.HappeningSlotRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return validation.NewBadRequestError(err)
 	}
@@ -27,7 +27,7 @@ func PutSlot(ctx context.Context, user facade.User, putMode PutMode, request dto
 		return putSlotTxWorker(ctx, tx, params, putMode, request)
 	}
 
-	return dal4calendarium.RunHappeningSpaceWorker(ctx, user, request.HappeningRequest, worker)
+	return dal4calendarium.RunHappeningSpaceWorker(ctx, userCtx, request.HappeningRequest, worker)
 }
 
 func putSlotTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams, putMode PutMode, request dto4calendarium.HappeningSlotRequest) (err error) {
@@ -36,7 +36,7 @@ func putSlotTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *d
 	}
 
 	if existingSlot := params.Happening.Data.GetSlot(request.Slot.ID); existingSlot == nil && putMode == UpdateSlot {
-		return validation.NewErrBadRequestFieldValue("slot.id", "slot not found by ID="+request.Slot.ID)
+		return validation.NewErrBadRequestFieldValue("slot.id", "slot not found by ContactID="+request.Slot.ID)
 	} else {
 		slot := &request.Slot.HappeningSlot
 		params.Happening.Record.MarkAsChanged()
@@ -58,11 +58,11 @@ func putSlotTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *d
 			case AddSlot:
 				if happeningBrief.HasSlot(request.Slot.ID) {
 					return validation.NewErrBadRequestFieldValue("slotID",
-						"happening already have slot with ID="+request.Slot.ID)
+						"happening already have slot with ContactID="+request.Slot.ID)
 				}
 			case UpdateSlot:
 				if !happeningBrief.HasSlot(request.Slot.ID) {
-					return validation.NewErrBadRequestFieldValue("slotID", "slot not found by ID="+request.Slot.ID)
+					return validation.NewErrBadRequestFieldValue("slotID", "slot not found by ContactID="+request.Slot.ID)
 				}
 			default:
 				return fmt.Errorf("unsupported put mode: %v", putMode)

@@ -36,7 +36,7 @@ func (v *WithContainerPoints) validateOrder(order OrderDbo) error {
 		}
 		for j, p2 := range v.ContainerPoints {
 			if j != i && p2.ContainerID == p.ContainerID && p2.ShippingPointID == p.ShippingPointID {
-				msg := fmt.Sprintf("duplicate container point ID for items %d & %d: [containerID=%v & shippingPointID=%v]", i, j, p.ContainerID, p.ShippingPointID)
+				msg := fmt.Sprintf("duplicate container point ContactID for items %d & %d: [containerID=%v & shippingPointID=%v]", i, j, p.ContainerID, p.ShippingPointID)
 				return validation.NewErrBadRecordFieldValue(field, msg)
 			}
 			{ // Validate dates for overlapping

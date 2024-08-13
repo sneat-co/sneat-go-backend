@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/random"
@@ -30,7 +30,7 @@ func (v *AddCommentRequest) Validate() error {
 }
 
 // AddComment adds comment
-func AddComment(ctx context.Context, userContext facade.User, request AddCommentRequest) (comment *dbo4scrumus.Comment, err error) {
+func AddComment(ctx context.Context, userCtx facade.UserContext, request AddCommentRequest) (comment *dbo4scrumus.Comment, err error) {
 	if err = request.Validate(); err != nil {
 		err = fmt.Errorf("facade4retrospectus bad request: %v", err)
 		return
@@ -41,16 +41,14 @@ func AddComment(ctx context.Context, userContext facade.User, request AddComment
 		return nil, err
 	}
 
-	uid := userContext.GetID()
+	uid := userCtx.GetUserID()
 
-	userKey := dbo4userus.NewUserKey(uid)
-	var user dbo4userus.UserDbo
-	userRecord := dal.NewRecordWithData(userKey, &user)
-	if err = facade4userus.GetUserByID(ctx, db, userRecord); err != nil {
+	user := dbo4userus.NewUserEntry(uid)
+	if err = dal4userus.GetUser(ctx, db, user); err != nil {
 		return nil, err
 	}
 
-	err = runTaskWorker(ctx, userContext, request.TaskRequest,
+	err = runTaskWorker(ctx, userCtx, request.TaskRequest,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params taskWorkerParams) (err error) {
 			if params.task == nil {
 				return errors.New("task not found by ContactID: " + request.TaskRequest.Task)
@@ -60,7 +58,7 @@ func AddComment(ctx context.Context, userContext facade.User, request AddComment
 				Message: request.Message,
 				By: &dbmodels.ByUser{
 					UID:   uid,
-					Title: user.Names.FullName,
+					Title: user.Data.Names.FullName,
 				},
 			}
 

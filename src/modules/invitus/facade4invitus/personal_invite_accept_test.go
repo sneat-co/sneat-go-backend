@@ -9,25 +9,24 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dbo4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/dbo4invitus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/stretchr/testify/assert"
-	"github.com/strongo/slice"
 	"github.com/strongo/strongoapp/person"
 	"github.com/strongo/strongoapp/with"
+	"slices"
 	"testing"
 	"time"
 )
 
 func TestAcceptPersonalInvite(t *testing.T) {
 	type args struct {
-		ctx         context.Context
-		userContext facade.User
-		request     AcceptPersonalInviteRequest
+		ctx     context.Context
+		userCtx facade.UserContext
+		request AcceptPersonalInviteRequest
 	}
 	ctx := context.Background()
 	tests := []struct {
@@ -43,7 +42,7 @@ func TestAcceptPersonalInvite(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := AcceptPersonalInvite(tt.args.ctx, tt.args.userContext, tt.args.request); (err != nil) != tt.wantErr {
+			if err := AcceptPersonalInvite(tt.args.ctx, tt.args.userCtx, tt.args.request); (err != nil) != tt.wantErr {
 				t.Errorf("AcceptPersonalInvite() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -86,7 +85,7 @@ func Test_createOrUpdateUserRecord(t *testing.T) {
 		teamRecordError   error
 		inviteRecordError error
 		request           AcceptPersonalInviteRequest
-		team              dal4spaceus.SpaceEntry
+		team              dbo4spaceus.SpaceEntry
 		teamMember        dbmodels.DtoWithID[*briefs4contactus.ContactBase]
 		invite            PersonalInviteEntry
 	}
@@ -101,7 +100,7 @@ func Test_createOrUpdateUserRecord(t *testing.T) {
 			args: args{
 				user:            dbo4userus.NewUserEntry("test_user_id"),
 				userRecordError: dal.ErrRecordNotFound,
-				team: dal4spaceus.NewSpaceEntryWithDto("testteamid", &dbo4spaceus.SpaceDbo{
+				team: dbo4spaceus.NewSpaceEntryWithDbo("testteamid", &dbo4spaceus.SpaceDbo{
 					SpaceBrief: dbo4spaceus.SpaceBrief{
 						RequiredCountryID: with.RequiredCountryID{
 							CountryID: with.UnknownCountryID,
@@ -186,7 +185,7 @@ func Test_createOrUpdateUserRecord(t *testing.T) {
 			assert.Equal(t, tt.args.request.Member.Data.Gender, userDto.Gender, "Gender")
 			assert.Equal(t, 1, len(userDto.Spaces), "len(Spaces)")
 			assert.Equal(t, 1, len(userDto.SpaceIDs), "len(SpaceIDs)")
-			assert.True(t, slice.Contains(userDto.SpaceIDs, tt.args.request.SpaceID), "SpaceIDs contains tt.args.request.Space")
+			assert.True(t, slices.Contains(userDto.SpaceIDs, tt.args.request.SpaceID), "SpaceIDs contains tt.args.request.Space")
 			teamBrief := userDto.Spaces[tt.args.request.SpaceID]
 			assert.NotNil(t, teamBrief, "Spaces[tt.args.request.Space]")
 		})
@@ -235,12 +234,12 @@ func Test_updateInviteRecord(t *testing.T) {
 								InviteContact: dbo4invitus.InviteContact{
 									UserID:   "from_user_id1",
 									MemberID: "from_member_id1",
-									Title:    "From ID 1",
+									Title:    "From ContactID 1",
 								},
 							},
 							To: &dbo4invitus.InviteTo{
 								InviteContact: dbo4invitus.InviteContact{
-									Title:    "To ID 2",
+									Title:    "To ContactID 2",
 									MemberID: "to_member_id2",
 									Channel:  "email",
 									Address:  "to.test.user@example.com",
@@ -272,8 +271,8 @@ func Test_updateSpaceRecord(t *testing.T) {
 	type args struct {
 		uid            string
 		memberID       string
-		team           dal4spaceus.SpaceEntry
-		contactusSpace dal4contactus.ContactusSpaceModuleEntry
+		team           dbo4spaceus.SpaceEntry
+		contactusSpace dal4contactus.ContactusSpaceEntry
 		requestMember  dbmodels.DtoWithID[*briefs4contactus.ContactBase]
 	}
 	testMember := dbmodels.DtoWithID[*briefs4contactus.ContactBase]{
@@ -293,13 +292,13 @@ func Test_updateSpaceRecord(t *testing.T) {
 			args: args{
 				uid:      "test_user_id",
 				memberID: "test_member_id1",
-				team: dal4spaceus.NewSpaceEntryWithDto("testteamid", &dbo4spaceus.SpaceDbo{
+				team: dbo4spaceus.NewSpaceEntryWithDbo("testteamid", &dbo4spaceus.SpaceDbo{
 					SpaceBrief: dbo4spaceus.SpaceBrief{
 						Type:  "family",
 						Title: "Family",
 					},
 				}),
-				contactusSpace: dal4contactus.NewContactusSpaceModuleEntryWithData("testteamid", &models4contactus.ContactusSpaceDbo{
+				contactusSpace: dal4contactus.NewContactusSpaceEntryWithData("testteamid", &models4contactus.ContactusSpaceDbo{
 					WithSingleSpaceContactsWithoutContactIDs: briefs4contactus.WithSingleSpaceContactsWithoutContactIDs[*briefs4contactus.ContactBrief]{
 						WithContactsBase: briefs4contactus.WithContactsBase[*briefs4contactus.ContactBrief]{
 							WithContactBriefs: briefs4contactus.WithContactBriefs[*briefs4contactus.ContactBrief]{

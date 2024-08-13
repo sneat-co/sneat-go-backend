@@ -3,8 +3,8 @@ package dbo4calendarium
 import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-core/validate"
-	"github.com/strongo/slice"
 	"github.com/strongo/validation"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -38,7 +38,7 @@ var KnownRepeatPeriods = []RepeatPeriod{
 }
 
 func IsKnownRepeatPeriod(repeat RepeatPeriod) bool {
-	return slice.Contains(KnownRepeatPeriods, repeat)
+	return slices.Contains(KnownRepeatPeriods, repeat)
 }
 
 // WeekdayCode defines weekday 2 chars code. Values: mo, tu, we, th, fr, sa, su
@@ -200,7 +200,7 @@ func (v HappeningSlotTiming) Validate() error {
 		if wd < 1 || wd > 5 {
 			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("weeks[%v]", i), "should be in range 1-5, got: "+strconv.Itoa(wd))
 		}
-		if i+1 < len(v.Weeks) && slice.Contains(v.Weeks[i+1:], wd) {
+		if i+1 < len(v.Weeks) && slices.Contains(v.Weeks[i+1:], wd) {
 			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("weeks[%v]", i), "duplicated value: "+strconv.Itoa(wd))
 		}
 	}

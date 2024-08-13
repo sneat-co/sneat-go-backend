@@ -11,12 +11,12 @@ import (
 )
 
 // ReorderTask reorders tasks
-func ReorderTask(ctx context.Context, userContext facade.User, request ReorderTaskRequest) (err error) {
+func ReorderTask(ctx context.Context, userCtx facade.UserContext, request ReorderTaskRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 
-	uid := userContext.GetID()
+	uid := userCtx.GetUserID()
 	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		var params facade4meetingus.WorkerParams
 		scrum := dbo4scrumus.Scrum{}

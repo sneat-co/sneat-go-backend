@@ -7,5 +7,5 @@ import (
 
 func TestModule(t *testing.T) {
 	m := Module()
-	tests.VerifyModule(t, m)
+	tests.VerifyModule(t, m, false)
 }

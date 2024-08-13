@@ -12,12 +12,12 @@ import (
 )
 
 // SetContactsStatus sets contacts status
-func SetContactsStatus(ctx context.Context, user facade.User, request dto4contactus.SetContactsStatusRequest) (err error) {
+func SetContactsStatus(ctx context.Context, userCtx facade.UserContext, request dto4contactus.SetContactsStatusRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 
-	err = dal4contactus.RunContactusSpaceWorker(ctx, user, request.SpaceRequest,
+	err = dal4contactus.RunContactusSpaceWorker(ctx, userCtx, request.SpaceRequest,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) (err error) {
 			return setContactsStatusTxWorker(ctx, tx, params, request.ContactIDs, request.Status)
 		},

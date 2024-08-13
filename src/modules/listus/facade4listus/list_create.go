@@ -18,12 +18,12 @@ import (
 )
 
 // CreateList creates a new list
-func CreateList(ctx context.Context, user facade.User, request CreateListRequest) (response CreateListResponse, err error) {
+func CreateList(ctx context.Context, userCtx facade.UserContext, request CreateListRequest) (response CreateListResponse, err error) {
 	request.Title = strings.TrimSpace(request.Title)
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4spaceus.CreateSpaceItem(ctx, user, request.SpaceRequest, const4listus.ModuleID, new(dbo4listus.ListusSpaceDbo),
+	err = dal4spaceus.CreateSpaceItem(ctx, userCtx, request.SpaceRequest, const4listus.ModuleID, new(dbo4listus.ListusSpaceDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) (err error) {
 
 			for id, brief := range params.SpaceModuleEntry.Data.Lists {
@@ -51,7 +51,7 @@ func CreateList(ctx context.Context, user facade.User, request CreateListRequest
 				}
 			}
 			modified := dbmodels.Modified{
-				By: user.GetID(),
+				By: userCtx.GetUserID(),
 				At: time.Now(),
 			}
 			list := dbo4listus.ListDbo{

@@ -95,7 +95,7 @@ type ListBrief struct {
 func validateListBriefs(lists map[string]*ListBrief) error {
 	for id, list := range lists {
 		if err := list.Validate(); err != nil {
-			return fmt.Errorf("invalid list brief ID=%s: %w", id, err)
+			return fmt.Errorf("invalid list brief ContactID=%s: %w", id, err)
 		}
 	}
 	return nil

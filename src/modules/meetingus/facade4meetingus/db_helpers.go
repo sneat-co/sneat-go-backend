@@ -117,7 +117,7 @@ var GetMeetingAndSpace = func(ctx context.Context, tx dal.ReadwriteTransaction, 
 	if !params.Meeting.Record.Exists() {
 		meeting := params.Meeting.Data()
 		team := params.Space.Data
-		contactusSpace := dal4contactus.NewContactusSpaceModuleEntry(params.Space.ID)
+		contactusSpace := dal4contactus.NewContactusSpaceEntry(params.Space.ID)
 		if err := tx.Get(ctx, contactusSpace.Record); err != nil {
 			return params, fmt.Errorf("failed to get contactus team record: %w", err)
 		}

@@ -12,7 +12,7 @@ type WithHappeningPrices struct {
 	Prices []*HappeningPrice `json:"prices,omitempty" firestore:"prices,omitempty"`
 }
 
-// GetPriceByID returns price by ID
+// GetPriceByID returns price by ContactID
 func (v WithHappeningPrices) GetPriceByID(priceID string) *HappeningPrice {
 	for _, price := range v.Prices {
 		if price.ID == priceID {
@@ -35,7 +35,7 @@ func (v WithHappeningPrices) Validate() error {
 		for j, p := range v.Prices {
 			if i != j && p.ID == id {
 				return validation.NewErrBadRecordFieldValue("prices",
-					fmt.Sprintf("duplicate price ID at indexes %d & %d: %s", i, j, id))
+					fmt.Sprintf("duplicate price ContactID at indexes %d & %d: %s", i, j, id))
 			}
 		}
 	}
@@ -54,7 +54,7 @@ type HappeningPrice struct {
 
 // Validate returns error if not valid
 func (v HappeningPrice) Validate() error {
-	// We do not validate ID for "" here as it will be empty in request to create a new price entry
+	// We do not validate ContactID for "" here as it will be empty in request to create a new price entry
 	// Though we validate it's not empty in HappeningBrief
 	if v.ID == "*" {
 		return validation.NewErrBadRecordFieldValue("id", "should not be '*'")

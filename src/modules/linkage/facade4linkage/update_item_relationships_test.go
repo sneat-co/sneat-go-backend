@@ -15,7 +15,7 @@ import (
 func TestUpdateItemRelationships(t *testing.T) {
 	type args struct {
 		ctx     context.Context
-		userCtx facade.User
+		userCtx facade.UserContext
 		request dto4linkage.UpdateItemRequest
 	}
 	const testUserID = "test_user_1"
@@ -40,7 +40,7 @@ func TestUpdateItemRelationships(t *testing.T) {
 			wantPanic: true, // TODO: Fix this test
 			args: args{
 				ctx:     context.Background(),
-				userCtx: facade.NewUser(testUserID),
+				userCtx: facade.NewUserContext(testUserID),
 				request: dto4linkage.UpdateItemRequest{
 					SpaceModuleItemRef: dbo4linkage.SpaceModuleItemRef{
 						Module:     const4contactus.ModuleID,
