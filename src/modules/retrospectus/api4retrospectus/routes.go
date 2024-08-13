@@ -2,12 +2,12 @@ package api4retrospectus
 
 import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/api4meetingus"
-	"github.com/sneat-co/sneat-go-core/modules"
+	"github.com/sneat-co/sneat-go-core/module"
 	"net/http"
 )
 
 // RegisterHttpRoutes registers retrospective routes
-func RegisterHttpRoutes(handle modules.HTTPHandleFunc) {
+func RegisterHttpRoutes(handle module.HTTPHandleFunc) {
 	handle(http.MethodPost, "/v0/retrospective/toggle_meeting_timer", api4meetingus.ToggleMeetingTimer(meetingParams))
 	handle(http.MethodPost, "/v0/retrospective/toggle_member_timer", api4meetingus.ToggleMemberTimer(meetingParams))
 

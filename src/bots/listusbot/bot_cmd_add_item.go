@@ -8,8 +8,8 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/facade4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"strings"
 )
@@ -36,11 +36,11 @@ var addBuyItemCommand = botsfw.Command{
 		input := whc.Input().(botsfw.WebhookTextMessage)
 		text := strings.TrimSpace(input.Text())
 		text = text[strings.Index(text, " ")+1:]
-		userCtx := facade.NewUser(whc.AppUserID())
+		userCtx := facade.NewUserContext(whc.AppUserID())
 
-		user := dbo4userus.NewUser(userCtx.GetID())
+		user := dbo4userus.NewUserEntry(userCtx.GetUserID())
 
-		if err = facade4userus.GetUserByID(ctx, whc.DB(), user.Record); err != nil {
+		if err = dal4userus.GetUser(ctx, whc.DB(), user); err != nil {
 			return m, err
 		}
 

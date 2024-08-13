@@ -12,9 +12,9 @@ import (
 
 func RunCalendariumSpaceWorker(
 	ctx context.Context,
-	user facade.User,
+	userCtx facade.UserContext,
 	request dto4spaceus.SpaceRequest,
 	worker func(ctx context.Context, tx dal.ReadwriteTransaction, params *CalendariumSpaceWorkerParams) (err error),
 ) error {
-	return dal4spaceus.RunModuleSpaceWorker(ctx, user, request, const4calendarium.ModuleID, new(dbo4calendarium.CalendariumSpaceDbo), worker)
+	return dal4spaceus.RunModuleSpaceWorker(ctx, userCtx, request.SpaceID, const4calendarium.ModuleID, new(dbo4calendarium.CalendariumSpaceDbo), worker)
 }

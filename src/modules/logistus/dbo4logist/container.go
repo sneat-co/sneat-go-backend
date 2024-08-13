@@ -64,7 +64,7 @@ type OrderContainer struct {
 
 // String returns string representation of the OrderContainer
 func (v OrderContainer) String() string {
-	return fmt.Sprintf("OrderContainer{ID=%s,ExtraType=%s,Number=%s}", v.ID, v.Type, v.Number)
+	return fmt.Sprintf("OrderContainer{ContactID=%s,ExtraType=%s,Number=%s}", v.ID, v.Type, v.Number)
 }
 
 func validateContainerID(field, id string) error {
@@ -93,7 +93,7 @@ type WithOrderContainers struct {
 	Containers []*OrderContainer `json:"containers,omitempty" firestore:"containers,omitempty"`
 }
 
-// RemoveContainer removes container by ID
+// RemoveContainer removes container by ContactID
 func (v WithOrderContainers) RemoveContainer(id string) (containers []*OrderContainer, found bool) {
 	i, _ := v.GetContainerByID(id)
 	if i >= 0 {
@@ -111,7 +111,7 @@ func (v WithOrderContainers) GetContainerIDs() (containerIDs []string) {
 	return containerIDs
 }
 
-// GenerateRandomContainerID generates random container ID that is not used in the list of containers
+// GenerateRandomContainerID generates random container ContactID that is not used in the list of containers
 func (v WithOrderContainers) GenerateRandomContainerID() string {
 	var attempt int
 	for {
@@ -128,7 +128,7 @@ func (v WithOrderContainers) GenerateRandomContainerID() string {
 	}
 }
 
-// GetContainerByID returns container by ID
+// GetContainerByID returns container by ContactID
 func (v WithOrderContainers) GetContainerByID(id string) (i int, container *OrderContainer) {
 	for i, c := range v.Containers {
 		if c.ID == id {

@@ -1,6 +1,9 @@
 package dbo4logist
 
-import "github.com/strongo/slice"
+import (
+	"github.com/strongo/slice"
+	"slices"
+)
 
 type LogistSpaceRole string
 
@@ -14,7 +17,7 @@ func ConvertLogistSpaceRolesToStringSlice(roles []LogistSpaceRole) []string {
 
 func RolesChanged(currentRoles []string, newRoles []LogistSpaceRole) bool {
 	for _, r := range newRoles {
-		if role := string(r); !slice.Contains(currentRoles, role) {
+		if role := string(r); !slices.Contains(currentRoles, role) {
 			return true
 		}
 	}

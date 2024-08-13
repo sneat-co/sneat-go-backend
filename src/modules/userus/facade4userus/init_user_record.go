@@ -7,6 +7,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/facade4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dto4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -19,12 +20,12 @@ import (
 )
 
 // InitUserRecord sets user title
-func InitUserRecord(ctx context.Context, userContext facade.User, request dto4userus.InitUserRecordRequest) (user dbo4userus.UserEntry, err error) {
+func InitUserRecord(ctx context.Context, userCtx facade.UserContext, request dto4userus.InitUserRecordRequest) (user dbo4userus.UserEntry, err error) {
 	if err = request.Validate(); err != nil {
 		err = fmt.Errorf("%w: %v", facade.ErrBadRequest, err)
 		return
 	}
-	userID := userContext.GetID()
+	userID := userCtx.GetUserID()
 	var userInfo *sneatauth.AuthUserInfo
 	if userInfo, err = sneatauth.GetUserInfo(ctx, userID); err != nil {
 		return user, fmt.Errorf("failed to get user info: %w", err)
@@ -46,7 +47,7 @@ func InitUserRecord(ctx context.Context, userContext facade.User, request dto4us
 			}
 		}
 		if !hasSpaceOfSameType && request.Space != nil {
-			if _, err = facade4spaceus.CreateSpace(ctx, userContext, *request.Space); err != nil {
+			if _, _, err = facade4spaceus.CreateSpace(ctx, userCtx, *request.Space); err != nil {
 				err = fmt.Errorf("failed to create team for user: %w", err)
 				return
 			}
@@ -59,7 +60,7 @@ func InitUserRecord(ctx context.Context, userContext facade.User, request dto4us
 func initUserRecordTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, uid string, userInfo *sneatauth.AuthUserInfo, request dto4userus.InitUserRecordRequest) (user dbo4userus.UserEntry, err error) {
 	var isNewUser bool
 	user = dbo4userus.NewUserEntry(uid)
-	if err = TxGetUserByID(ctx, tx, user.Record); err != nil {
+	if err = dal4userus.GetUser(ctx, tx, user); err != nil {
 		if dal.IsNotFound(err) {
 			isNewUser = true
 		} else {

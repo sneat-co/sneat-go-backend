@@ -29,7 +29,7 @@ func TestToggleTimer(t *testing.T) { // TODO(help-wanted): add more test cases
 	//var db dal.DB
 	//testdb.NewMockDB(t, db, testdb.WithProfile1())
 
-	userContext := facade.NewUser("user1")
+	userContext := facade.NewUserContext("user1")
 
 	const (
 		space1ID = "space1"
@@ -50,7 +50,7 @@ func TestToggleTimer(t *testing.T) { // TODO(help-wanted): add more test cases
 	) {
 		assertTimer := func(source string, timer *dbo4meetingus.Timer) {
 			if timer == nil {
-				t.Fatalf(source + ".Timer == nil")
+				t.Fatal(source + ".Timer == nil")
 			}
 			if timer.Status != expected.status {
 				t.Errorf(source+".Timer.Status != expected.status: `%s` != `%s`", timer.Status, expected.status)

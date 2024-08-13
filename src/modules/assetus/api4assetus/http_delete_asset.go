@@ -17,7 +17,7 @@ func httpDeleteAsset(w http.ResponseWriter, r *http.Request) {
 	request.SpaceID = q.Get("space")
 	request.ID = q.Get("id")
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.NoContentAuthRequired, http.StatusNoContent,
-		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
+		func(ctx context.Context, userCtx facade.UserContext) (interface{}, error) {
 			if err := facade4assetus.DeleteAsset(ctx, userCtx, request); err != nil {
 				return nil, fmt.Errorf("failed to delete asset: %w", err)
 			}

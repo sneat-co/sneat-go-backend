@@ -14,7 +14,7 @@ func updateParentContact(
 	tx dal.ReadwriteTransaction,
 	contact, parent dal4contactus.ContactEntry,
 ) error {
-	//logus.Debugf(ctx, "updateParentContact(contact=%s, parentID=%s)", contact.ID, parent.ID)
+	//logus.Debugf(ctx, "updateParentContact(contact=%s, parentID=%s)", contact.ContactID, parent.ContactID)
 	contactBrief := &briefs4contactus.ContactBrief{
 		Type:   contact.Data.Type,
 		Gender: contact.Data.Gender,

@@ -1,0 +1,36 @@
+queue:
+
+- name: default
+  rate: 2/s
+
+- name: chats
+  rate: 2/s
+
+- name: invites
+  rate: 1/s
+
+- name: reminders
+  rate: 1/s
+
+- name: receipts
+  rate: 1/s
+
+- name: api4transfers
+  rate: 5/s
+
+- name: bills
+  rate: 5/s
+
+- name: users
+  rate: 5/s
+
+- name: mapreduce
+  rate: 10/s
+  bucket_size: 64
+  max_concurrent_requests: 70
+
+- name: support
+  rate: 20/s
+
+- name: emailing
+  rate: 2/s

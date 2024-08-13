@@ -2,8 +2,8 @@ package const4assetus
 
 import (
 	"fmt"
-	"github.com/strongo/slice"
 	"github.com/strongo/validation"
+	"slices"
 )
 
 // AssetPossession is a type of asset possession
@@ -31,7 +31,7 @@ func ValidateAssetPossession(v AssetPossession, required bool) error {
 	if required && v == "" {
 		return validation.NewErrRecordIsMissingRequiredField("possession")
 	}
-	if !slice.Contains(AssetPossessions, v) {
+	if !slices.Contains(AssetPossessions, v) {
 		return validation.NewErrBadRecordFieldValue("possession", fmt.Sprintf("unknown possession '%s', expected values: %s", v, AssetPossessions))
 	}
 	return nil

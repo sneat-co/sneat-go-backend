@@ -17,8 +17,8 @@ type taskWorkerParams struct {
 
 type taskWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, params taskWorkerParams) (err error)
 
-func runTaskWorker(ctx context.Context, userContext facade.User, request TaskRequest, worker taskWorker) (err error) {
-	return runScrumWorker(ctx, userContext, request.Request,
+func runTaskWorker(ctx context.Context, userCtx facade.UserContext, request TaskRequest, worker taskWorker) (err error) {
+	return runScrumWorker(ctx, userCtx, request.Request,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params facade4meetingus.WorkerParams) (err error) {
 			taskParams := taskWorkerParams{
 				WorkerParams: params,

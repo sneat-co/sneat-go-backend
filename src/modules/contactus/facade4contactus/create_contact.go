@@ -13,17 +13,17 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
-	"github.com/strongo/slice"
 	"github.com/strongo/strongoapp/person"
+	"slices"
 )
 
 // CreateContact creates team contact
 func CreateContact(
 	ctx context.Context,
-	userContext facade.User,
+	userCtx facade.UserContext,
 	userCanBeNonSpaceMember bool,
 	request dto4contactus.CreateContactRequest,
 ) (
@@ -34,7 +34,7 @@ func CreateContact(
 		return response, fmt.Errorf("invalid CreateContactRequest: %w", err)
 	}
 
-	err = dal4spaceus.CreateSpaceItem(ctx, userContext, request.SpaceRequest, const4contactus.ModuleID, new(models4contactus.ContactusSpaceDbo),
+	err = dal4spaceus.CreateSpaceItem(ctx, userCtx, request.SpaceRequest, const4contactus.ModuleID, new(models4contactus.ContactusSpaceDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*models4contactus.ContactusSpaceDbo]) (err error) {
 			var contact dal4contactus.ContactEntry
 			if contact, err = CreateContactTx(ctx, tx, userCanBeNonSpaceMember, request, params); err != nil {
@@ -89,7 +89,7 @@ func CreateContactTx(
 					if !isRelatedByUserID {
 						contactID := relatedItem.Keys[0].ItemID
 						if contactBrief := params.SpaceModuleEntry.Data.GetContactBriefByContactID(contactID); contactBrief == nil {
-							return contact, fmt.Errorf("contact with ID=[%s] is not found", contactID)
+							return contact, fmt.Errorf("contact with ContactID=[%s] is not found", contactID)
 						}
 					}
 					switch userContactBrief.AgeGroup {
@@ -126,7 +126,7 @@ func CreateContactTx(
 	if parentContactID != "" {
 		parent = dal4contactus.NewContactEntry(request.SpaceID, parentContactID)
 		if err = tx.Get(ctx, parent.Record); err != nil {
-			return contact, fmt.Errorf("failed to get parent contact with ID=[%s]: %w", parentContactID, err)
+			return contact, fmt.Errorf("failed to get parent contact with ContactID=[%s]: %w", parentContactID, err)
 		}
 	}
 
@@ -147,7 +147,7 @@ func CreateContactTx(
 		}
 		contactDbo.ContactBase = request.Person.ContactBase
 		for _, role := range request.Roles {
-			if !slice.Contains(contactDbo.Roles, role) {
+			if !slices.Contains(contactDbo.Roles, role) {
 				contactDbo.Roles = append(contactDbo.Roles, role)
 			}
 		}
@@ -174,7 +174,7 @@ func CreateContactTx(
 	if request.ContactID == "" {
 		contactIDs := params.SpaceModuleEntry.Data.ContactIDs()
 		if contactID, err = person.GenerateIDFromNameOrRandom(request.Person.Names, contactIDs); err != nil {
-			return contact, fmt.Errorf("failed to generate contact ID: %w", err)
+			return contact, fmt.Errorf("failed to generate contact ContactID: %w", err)
 		}
 	} else {
 		contactID = request.ContactID
@@ -226,12 +226,12 @@ func CreateContactTx(
 
 func updateRelationshipsInRelatedItems(ctx context.Context, tx dal.ReadTransaction,
 	userID, userContactID, spaceID, contactID string,
-	contactusSpaceEntry dal4contactus.ContactusSpaceModuleEntry,
+	contactusSpaceEntry dal4contactus.ContactusSpaceEntry,
 	contactDbo *models4contactus.ContactDbo,
 	related dbo4linkage.RelatedByModuleID,
 ) (err error) {
 	if userContactID == "" { // Why we get it 2nd time? Previous is up in stack in CreateContactTx()
-		if userContactID, err = facade4userus.GetUserSpaceContactID(ctx, tx, userID, contactusSpaceEntry); err != nil {
+		if userContactID, err = dal4userus.GetUserSpaceContactID(ctx, tx, userID, contactusSpaceEntry); err != nil {
 			return
 		}
 		if userContactID == "" {

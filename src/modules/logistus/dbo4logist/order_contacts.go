@@ -29,13 +29,13 @@ func (v WithOrderContacts) Validate() error {
 			)
 		}
 		if j := slice.Index(contactIDs, contact.ID); j >= 0 {
-			return validation.NewErrBadRecordFieldValue("contacts", fmt.Sprintf("duplicate contact ID at index %d & %d: ID=[%s]", j, i, contact.ID))
+			return validation.NewErrBadRecordFieldValue("contacts", fmt.Sprintf("duplicate contact ContactID at index %d & %d: ContactID=[%s]", j, i, contact.ID))
 		}
 		contactIDs = append(contactIDs, contact.ID)
 		if contact.ParentID != "" {
 			_, parent := v.GetContactByID(contact.ParentID)
 			if parent == nil {
-				return fmt.Errorf("parent contact not found in `contacts` by ID=[%s]", contact.ParentID)
+				return fmt.Errorf("parent contact not found in `contacts` by ContactID=[%s]", contact.ParentID)
 			}
 		}
 		//if contact.ExtraType == dbmodels.ContactTypeLocation && strings.TrimSpace(contact.Address.Lines) == "" {
@@ -52,7 +52,7 @@ func (v WithOrderContacts) Updates() []dal.Update {
 	}
 }
 
-// GetContactByID returns contact by ID
+// GetContactByID returns contact by ContactID
 func (v WithOrderContacts) GetContactByID(id string) (int, *OrderContact) {
 	for i, contact := range v.Contacts {
 		if contact.ID == id {
@@ -62,7 +62,7 @@ func (v WithOrderContacts) GetContactByID(id string) (int, *OrderContact) {
 	return -1, nil
 }
 
-// MustGetContactByID must return contact by ID
+// MustGetContactByID must return contact by ContactID
 func (v WithOrderContacts) MustGetContactByID(id string) *OrderContact {
 	if strings.TrimSpace(id) == "" {
 		panic("id is required parameter")
@@ -72,10 +72,10 @@ func (v WithOrderContacts) MustGetContactByID(id string) *OrderContact {
 			return contact
 		}
 	}
-	panic("contact not found by ID=" + id)
+	panic("contact not found by ContactID=" + id)
 }
 
-// GetContactByParentID returns first contact by parent ID
+// GetContactByParentID returns first contact by parent ContactID
 func (v WithOrderContacts) GetContactByParentID(parentID string) (int, *OrderContact) {
 	for i, contact := range v.Contacts {
 		if contact.ParentID == parentID {
@@ -103,7 +103,7 @@ type OrderContact struct {
 }
 
 func (v OrderContact) String() string {
-	return fmt.Sprintf(`OrderContact{ID=%s, ExtraType=%s, ParentID=%s, Title=%s}`, v.ID, v.Type, v.ParentID, v.Title)
+	return fmt.Sprintf(`OrderContact{ContactID=%s, ExtraType=%s, ParentID=%s, Title=%s}`, v.ID, v.Type, v.ParentID, v.Title)
 }
 
 // Validate returns error if OrderContact is not valid
@@ -115,7 +115,7 @@ func (v OrderContact) Validate() error {
 		return validation.NewErrBadRecordFieldValue("contactID", err.Error())
 	}
 	if v.ParentID == v.ID {
-		return validation.NewErrBadRecordFieldValue("parentID", "parentID cannot be the same as ID")
+		return validation.NewErrBadRecordFieldValue("parentID", "parentID cannot be the same as ContactID")
 	}
 	if strings.TrimSpace(v.Title) == "" {
 		return validation.NewErrRecordIsMissingRequiredField("title")

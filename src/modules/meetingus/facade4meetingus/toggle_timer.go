@@ -52,9 +52,9 @@ type ToggleParams struct {
 }
 
 // ToggleTimer toggles timer
-func ToggleTimer(ctx context.Context, userContext facade.User, params ToggleParams) (response ToggleTimerResponse, err error) {
-	if userContext == nil {
-		err = errors.New("required parameter userContext == nil")
+func ToggleTimer(ctx context.Context, userCtx facade.UserContext, params ToggleParams) (response ToggleTimerResponse, err error) {
+	if userCtx == nil {
+		err = errors.New("required parameter userCtx == nil")
 		return
 	}
 	if err = params.Request.Validate(); err != nil {
@@ -62,7 +62,7 @@ func ToggleTimer(ctx context.Context, userContext facade.User, params TogglePara
 		return
 	}
 
-	uid := userContext.GetID()
+	uid := userCtx.GetUserID()
 
 	request := params.Request
 

@@ -2,7 +2,7 @@ package const4assetus
 
 import (
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
-	"github.com/strongo/slice"
+	"slices"
 )
 
 type AssetStatus = string
@@ -20,5 +20,5 @@ var AssetStatuses = []AssetStatus{
 }
 
 func IsValidAssetStatus(status AssetStatus) bool {
-	return slice.Contains(AssetStatuses, status)
+	return slices.Contains(AssetStatuses, status)
 }

@@ -28,7 +28,7 @@ type ContactWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, para
 
 func RunContactWorker(
 	ctx context.Context,
-	user facade.User,
+	userCtx facade.UserContext,
 	request dto4contactus.ContactRequest,
 	worker ContactWorker,
 ) error {
@@ -42,7 +42,7 @@ func RunContactWorker(
 		}
 		return err
 	}
-	return RunContactusSpaceWorker(ctx, user, request.SpaceRequest, contactWorker)
+	return RunContactusSpaceWorker(ctx, userCtx, request.SpaceRequest, contactWorker)
 }
 
 func applyContactUpdates(ctx context.Context, tx dal.ReadwriteTransaction, params *ContactWorkerParams) (err error) {

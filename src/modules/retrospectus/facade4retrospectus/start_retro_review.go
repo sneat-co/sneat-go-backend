@@ -13,11 +13,11 @@ import (
 )
 
 // StartRetroReview starts review
-func StartRetroReview(ctx context.Context, userContext facade.User, request RetroRequest) (response RetrospectiveResponse, err error) {
+func StartRetroReview(ctx context.Context, userCtx facade.UserContext, request RetroRequest) (response RetrospectiveResponse, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
-	uid := userContext.GetID()
+	uid := userCtx.GetUserID()
 	err = runRetroWorker(ctx, uid, request,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params facade4meetingus.WorkerParams) error {
 			retrospective := params.Meeting.Record.Data().(*dbo4retrospectus.Retrospective)

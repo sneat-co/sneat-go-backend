@@ -7,19 +7,19 @@ import (
 )
 
 // DeleteRetroItem deletes item from retrospective
-func DeleteRetroItem(ctx context.Context, userContext facade.User, request RetroItemRequest) (err error) {
+func DeleteRetroItem(ctx context.Context, userCtx facade.UserContext, request RetroItemRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 
 	if request.MeetingID == UpcomingRetrospectiveID {
-		return deleteUserRetroItem(ctx, userContext, request)
+		return deleteUserRetroItem(ctx, userCtx, request)
 	}
 
 	return
 }
 
-func deleteUserRetroItem(ctx context.Context, _ facade.User, _ RetroItemRequest) (err error) {
+func deleteUserRetroItem(ctx context.Context, _ facade.UserContext, _ RetroItemRequest) (err error) {
 	//uid := userContext.ContactID()
 	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		//user := new(dbo4userus.User)

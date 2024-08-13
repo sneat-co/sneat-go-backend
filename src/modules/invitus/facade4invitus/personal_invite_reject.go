@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
@@ -35,13 +35,13 @@ func (v *InviteRequest) Validate() error {
 }
 
 // RejectPersonalInvite rejects personal invite
-func RejectPersonalInvite(ctx context.Context, userContext facade.User, request RejectPersonalInviteRequest) (err error) {
+func RejectPersonalInvite(ctx context.Context, userCtx facade.UserContext, request RejectPersonalInviteRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return err
 	}
-	team := dal4spaceus.NewSpaceEntry(request.SpaceID)
+	team := dbo4spaceus.NewSpaceEntry(request.SpaceID)
 	invite := NewPersonalInviteEntry(request.InviteID)
-	uid := userContext.GetID()
+	uid := userCtx.GetUserID()
 
 	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		records := []dal.Record{team.Record, invite.Record}

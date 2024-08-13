@@ -80,11 +80,11 @@ func getPersonalInviteRecords(ctx context.Context, getter dal.ReadSession, param
 }
 
 // GetPersonal returns personal invite data
-func GetPersonal(ctx context.Context, user facade.User, request GetPersonalInviteRequest) (response PersonalInviteResponse, err error) {
+func GetPersonal(ctx context.Context, userCtx facade.UserContext, request GetPersonalInviteRequest) (response PersonalInviteResponse, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
-	return response, dal4contactus.RunReadonlyContactusSpaceWorker(ctx, user, request.SpaceRequest, func(ctx context.Context, tx dal.ReadTransaction, params *dal4contactus.ContactusSpaceWorkerParams) error {
+	return response, dal4contactus.RunReadonlyContactusSpaceWorker(ctx, userCtx, request.SpaceRequest, func(ctx context.Context, tx dal.ReadTransaction, params *dal4contactus.ContactusSpaceWorkerParams) error {
 		invite, _, err := getPersonalInviteRecords(ctx, tx, params, request.InviteID, "")
 		if err != nil {
 			return err

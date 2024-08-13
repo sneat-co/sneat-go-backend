@@ -8,6 +8,7 @@ import (
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/slice"
 	"github.com/strongo/validation"
+	"slices"
 )
 
 type contactBrief interface {
@@ -29,7 +30,7 @@ func (v *WithSingleSpaceContactsWithoutContactIDs[T]) Validate() error {
 	for id, brief := range v.Contacts {
 		if err := validate.RecordID(id); err != nil {
 			return validation.NewErrBadRecordFieldValue(const4contactus.ContactsField,
-				fmt.Sprintf("invalid contact ID=%s: %v", id, err))
+				fmt.Sprintf("invalid contact ContactID=%s: %v", id, err))
 		}
 		if err := brief.Validate(); err != nil {
 			return validation.NewErrBadRecordFieldValue("contacts."+id, err.Error())
@@ -113,10 +114,10 @@ func (v *WithMultiSpaceContacts[T]) Updates(contactIDs ...dbmodels.SpaceItemID) 
 	return
 }
 
-// SetContactBrief sets contactBrief brief by ID
+// SetContactBrief sets contactBrief brief by ContactID
 func (v *WithMultiSpaceContacts[T]) SetContactBrief(teamID, contactID string, contactBrief T) (updates []dal.Update) {
 	id := string(dbmodels.NewSpaceItemID(teamID, contactID))
-	if !slice.Contains(v.ContactIDs, id) {
+	if !slices.Contains(v.ContactIDs, id) {
 		v.ContactIDs = append(v.ContactIDs, id)
 		updates = append(updates, dal.Update{
 			Field: "contactIDs",
@@ -144,7 +145,7 @@ func (v *WithMultiSpaceContacts[T]) ParentContactBrief() (i int, id dbmodels.Spa
 	return -1, "", brief
 }
 
-// GetContactBriefByID returns contactBrief brief by ID
+// GetContactBriefByID returns contactBrief brief by ContactID
 func (v *WithMultiSpaceContacts[T]) GetContactBriefByID(teamID, contactID string) (i int, brief T) {
 	id := dbmodels.NewSpaceItemID(teamID, contactID)
 	if brief, ok := v.Contacts[string(id)]; !ok {
@@ -153,7 +154,7 @@ func (v *WithMultiSpaceContacts[T]) GetContactBriefByID(teamID, contactID string
 	return slice.Index(v.ContactIDs, string(id)), brief
 }
 
-// GetContactBriefByUserID returns contactBrief brief by user ID
+// GetContactBriefByUserID returns contactBrief brief by user ContactID
 func (v *WithMultiSpaceContacts[T]) GetContactBriefByUserID(userID string) (id dbmodels.SpaceItemID, t T) {
 	for cID, c := range v.Contacts {
 		if c.GetUserID() == userID {
@@ -165,7 +166,7 @@ func (v *WithMultiSpaceContacts[T]) GetContactBriefByUserID(userID string) (id d
 
 func (v *WithMultiSpaceContacts[T]) AddContact(teamID, contactID string, c T) (updates []dal.Update) {
 	id := dbmodels.NewSpaceItemID(teamID, contactID)
-	if !slice.Contains(v.ContactIDs, string(id)) {
+	if !slices.Contains(v.ContactIDs, string(id)) {
 		if len(v.ContactIDs) == 0 {
 			v.ContactIDs = make([]string, 1, 2)
 			v.ContactIDs[0] = "*"

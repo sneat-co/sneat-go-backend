@@ -127,7 +127,7 @@ func (v *OrderDbo) Validate() error {
 	for _, cp := range v.Counterparties {
 		_, contact := v.GetContactByID(cp.ContactID)
 		if contact == nil {
-			return validation.NewErrBadRecordFieldValue("contactID", "not found in `contacts` by ID="+cp.ContactID)
+			return validation.NewErrBadRecordFieldValue("contactID", "not found in `contacts` by ContactID="+cp.ContactID)
 		}
 		if cp.Title != contact.Title {
 			return validation.NewErrBadRecordFieldValue("title", fmt.Sprintf(`"%s" does not match contact title "%s"`, cp.Title, contact.Title))
@@ -253,7 +253,7 @@ func getContactIdFromOrderKey(key string) string {
 	return match[1]
 }
 
-// NewOrderShippingPointID generates a new ID for a shipping point
+// NewOrderShippingPointID generates a new ContactID for a shipping point
 func (v *WithShippingPoints) NewOrderShippingPointID() string {
 	var i int
 	for {
@@ -298,7 +298,7 @@ func (v *OrderDbo) validateDtoContacts() error {
 	for i, contact := range v.Contacts {
 		_, counterparty := v.GetCounterpartyByContactID(contact.ID)
 		if counterparty == nil {
-			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("contacts[%d].id", i), fmt.Sprintf("no entry in `counterparties` for orphaned contact{ID=%s, Title=%s}", contact.ID, contact.Title))
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("contacts[%d].id", i), fmt.Sprintf("no entry in `counterparties` for orphaned contact{ContactID=%s, Title=%s}", contact.ID, contact.Title))
 		}
 		key := getContactKey(contact.ID)
 		if slice.Index(v.Keys, key) < 0 {
@@ -325,7 +325,7 @@ func (v *OrderDbo) validateDtoShippingPoints() error {
 			if role != "" && sp.Location != nil {
 				if _, counterparty := v.GetCounterpartyByRoleAndContactID(role, sp.Location.ContactID); counterparty == nil {
 					return validation.NewErrBadRecordFieldValue(fmt.Sprintf("shippingPoints[%d]", i),
-						fmt.Sprintf("no entry in `counterparties` with role=%s and contactID=%s for shipping point with ID=%s",
+						fmt.Sprintf("no entry in `counterparties` with role=%s and contactID=%s for shipping point with ContactID=%s",
 							role, sp.Location.ContactID, sp.ID))
 				}
 			}

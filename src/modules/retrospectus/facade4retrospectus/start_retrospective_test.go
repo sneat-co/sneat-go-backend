@@ -16,7 +16,7 @@ func TestStartRetrospective(t *testing.T) {
 	//	return &firestore.DocumentRef{InviteID: id, Path: "api4meetingus"}
 	//}
 
-	userContext := facade.NewUser("user1")
+	userContext := facade.NewUserContext("user1")
 	ctx := context.Background()
 
 	type expects struct {

@@ -11,13 +11,13 @@ import (
 )
 
 // ReorderListItem reorders list items
-func ReorderListItem(ctx context.Context, userContext facade.User, request ReorderListItemsRequest) (err error) {
+func ReorderListItem(ctx context.Context, userCtx facade.UserContext, request ReorderListItemsRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
-	uid := userContext.GetID()
+	uid := userCtx.GetUserID()
 	if uid == "" {
-		return validation.NewErrRequestIsMissingRequiredField("userContext.ContactID()")
+		return validation.NewErrRequestIsMissingRequiredField("userCtx.ContactID()")
 	}
 	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		listID := request.ListID

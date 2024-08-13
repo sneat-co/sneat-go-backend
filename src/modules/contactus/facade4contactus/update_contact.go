@@ -17,10 +17,10 @@ import (
 // UpdateContact sets contact fields
 func UpdateContact(
 	ctx context.Context,
-	user facade.User,
+	userCtx facade.UserContext,
 	request dto4contactus.UpdateContactRequest,
 ) (err error) {
-	return dal4contactus.RunContactWorker(ctx, user, request.ContactRequest,
+	return dal4contactus.RunContactWorker(ctx, userCtx, request.ContactRequest,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactWorkerParams) (err error) {
 			return UpdateContactTx(ctx, tx, request, params)
 		})

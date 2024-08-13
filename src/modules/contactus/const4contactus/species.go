@@ -1,6 +1,8 @@
 package const4contactus
 
-import "github.com/strongo/slice"
+import (
+	"slices"
+)
 
 type PetKind = string
 
@@ -45,5 +47,5 @@ var KnownPetKinds = []PetKind{
 }
 
 func IsKnownPetPetKind(v PetKind) bool {
-	return slice.Contains(KnownPetKinds, v)
+	return slices.Contains(KnownPetKinds, v)
 }

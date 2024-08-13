@@ -7,7 +7,7 @@ package facade4userus
 //	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 //	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dto4userus"
 //	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
-//	"github.com/sneat-co/sneat-go-core/facade2debtus"
+//	"github.com/sneat-co/sneat-go-core/facade4debtus"
 //	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 //	"strings"
 //	"time"
@@ -18,7 +18,7 @@ package facade4userus
 //	if request.Creator != "" { // TODO: document why we do this
 //		request.RemoteClient.HostOrApp = request.Creator
 //	}
-//	db := facade2debtus.GetDatabase(ctx)
+//	db := facade4debtus.GetDatabase(ctx)
 //
 //	err := db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 //		return createUserTx(ctx, tx, userID, request)

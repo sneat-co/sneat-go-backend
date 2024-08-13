@@ -9,8 +9,7 @@ import (
 )
 
 // SpaceContactsCollection defines collection name for team contacts.
-// We have `Space` prefix as it can belong only to a single team
-// and Space is also in record key as prefix.
+// We have `Space` prefix as it can belong only to a single space, and Space is also in record key as prefix.
 const SpaceContactsCollection = "contacts"
 
 // ContactDbo belongs only to a single team

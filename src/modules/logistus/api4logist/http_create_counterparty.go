@@ -14,7 +14,7 @@ var createCounterparty = facade4logist.CreateCounterparty
 func httpCreateCounterparty(w http.ResponseWriter, r *http.Request) {
 	var request dto4logist.CreateCounterpartyRequest
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, defaultJsonWithAuthRequired, http.StatusCreated,
-		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
+		func(ctx context.Context, userCtx facade.UserContext) (interface{}, error) {
 			return createCounterparty(ctx, userCtx, request)
 		})
 }

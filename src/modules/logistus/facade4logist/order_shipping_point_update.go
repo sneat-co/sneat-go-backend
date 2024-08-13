@@ -9,8 +9,8 @@ import (
 )
 
 // UpdateShippingPoint updates shipping point in an order
-func UpdateShippingPoint(ctx context.Context, user facade.User, request dto4logist.UpdateShippingPointRequest) error {
-	return RunOrderWorker(ctx, user, request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) error {
+func UpdateShippingPoint(ctx context.Context, userCtx facade.UserContext, request dto4logist.UpdateShippingPointRequest) error {
+	return RunOrderWorker(ctx, userCtx, request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) error {
 		return txUpdateShippingPoint(ctx, tx, params, request)
 	})
 }

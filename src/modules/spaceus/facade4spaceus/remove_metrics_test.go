@@ -7,7 +7,7 @@ import (
 func TestRemoveMetrics(t *testing.T) {
 	t.Skip()
 	//_ = tests.NewMockDB(t, tests.WithProfile1())
-	//userContext := facade2debtus.NewUser("u1")
+	//userContext := facade4debtus.NewUser("u1")
 	//test := func(t *testing.T, request dto4spaceus.TeamMetricsRequest, expected int) {
 	//	ctx := context.Background()
 	//

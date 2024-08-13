@@ -30,7 +30,7 @@ func TestMoveRetroItem(t *testing.T) {
 
 			ctx := context.Background()
 
-			if err := MoveRetroItem(ctx, facade.NewUser("user1"), request); err == nil {
+			if err := MoveRetroItem(ctx, facade.NewUserContext("user1"), request); err == nil {
 				t.Fatal("Should fail")
 			} else {
 				t.Logf("Failed as expects: %v", err)
@@ -54,7 +54,7 @@ func TestMoveRetroItem(t *testing.T) {
 			request.From = dbo4retrospectus.TreePosition{Parent: "goods", Index: 0}
 			request.To = dbo4retrospectus.TreePosition{Parent: "goods", Index: 1}
 
-			if err := MoveRetroItem(context.Background(), facade.NewUser("user1"), request); err != nil {
+			if err := MoveRetroItem(context.Background(), facade.NewUserContext("user1"), request); err != nil {
 				t.Fatalf("failed to move retro item: %v", err)
 			}
 		})

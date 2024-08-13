@@ -14,7 +14,7 @@ var deleteOrderCounterparty = facade4logist.DeleteOrderCounterparty
 func httpDeleteOrderCounterparty(w http.ResponseWriter, r *http.Request) {
 	var request dto4logist.DeleteOrderCounterpartyRequest
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, defaultJsonWithAuthRequired, http.StatusNoContent,
-		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
+		func(ctx context.Context, userCtx facade.UserContext) (interface{}, error) {
 			return nil, deleteOrderCounterparty(ctx, userCtx, request)
 		})
 }

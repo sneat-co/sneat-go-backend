@@ -17,19 +17,19 @@ func fastSliceRemove(s []string, i int) []string {
 }
 
 // ThumbUp adds thumb up
-func ThumbUp(ctx context.Context, userContext facade.User, request ThumbUpRequest) (err error) {
+func ThumbUp(ctx context.Context, userCtx facade.UserContext, request ThumbUpRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 
-	//err = facade4contactus.RunContactusTeamWorker(ctx, userContext, request.SpaceRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *facade4contactus.ContactusSpaceWorkerParams) (err error) {
+	//err = facade4contactus.RunContactusTeamWorker(ctx, userCtx, request.SpaceRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *facade4contactus.ContactusSpaceWorkerParams) (err error) {
 	//	tx.Get
 	//	return nil
 	//})
 
-	uid := userContext.GetID()
+	uid := userCtx.GetUserID()
 
-	return runTaskWorker(ctx, userContext, request.TaskRequest,
+	return runTaskWorker(ctx, userCtx, request.TaskRequest,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params taskWorkerParams) (err error) {
 			if err = tx.Get(ctx, params.SpaceModuleEntry.Record); err != nil {
 				return err

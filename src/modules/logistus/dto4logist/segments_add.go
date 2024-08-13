@@ -105,7 +105,7 @@ func (v AddSegmentsRequest) Validate() error {
 				continue
 			}
 			if c2.ID == container.ID {
-				return validation.NewErrBadRequestFieldValue(fmt.Sprintf("containers[%v]", i), "duplicate container ID")
+				return validation.NewErrBadRequestFieldValue(fmt.Sprintf("containers[%v]", i), "duplicate container ContactID")
 			}
 		}
 	}

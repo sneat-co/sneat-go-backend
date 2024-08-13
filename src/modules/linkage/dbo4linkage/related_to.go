@@ -3,8 +3,8 @@ package dbo4linkage
 import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-core/validate"
-	"github.com/strongo/slice"
 	"github.com/strongo/validation"
+	"slices"
 	"strings"
 )
 
@@ -42,7 +42,7 @@ func NewSpaceModuleItemRef(space, module, collection, itemID string) SpaceModule
 func NewSpaceModuleItemRefFromString(id string) (itemRef SpaceModuleItemRef, err error) {
 	ids := strings.Split(id, "&")
 	if len(ids) != 4 {
-		panic(fmt.Sprintf("invalid ID: '%s'", id))
+		panic(fmt.Sprintf("invalid ContactID: '%s'", id))
 	}
 	for i, s := range ids {
 		switch s[0] {
@@ -55,7 +55,7 @@ func NewSpaceModuleItemRefFromString(id string) (itemRef SpaceModuleItemRef, err
 		case 'i':
 			itemRef.ItemID = s[2:]
 		default:
-			err = fmt.Errorf("unexpected character at position %d in ID: '%s'", i, id)
+			err = fmt.Errorf("unexpected character at position %d in ContactID: '%s'", i, id)
 			return
 		}
 	}
@@ -124,7 +124,7 @@ func (v *RolesCommand) Validate() error {
 				return validation.NewErrBadRecordFieldValue(fmt.Sprintf("%s[%d]", field, i),
 					"must not have leading or trailing spaces")
 			}
-			if slice.Contains(relations[:i], s) {
+			if slices.Contains(relations[:i], s) {
 				return validation.NewErrBadRecordFieldValue(fmt.Sprintf("%s[%d]", field, i),
 					"duplicate relationship role value: "+s)
 			}

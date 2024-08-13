@@ -45,7 +45,7 @@ func validateBrands(ctx context.Context, brands []string, db dal.DB) error {
 }
 
 // CreateWanted creates wanted records
-func CreateWanted(ctx context.Context, userContext facade.User, request CreateWantedRequest) (id string, err error) {
+func CreateWanted(ctx context.Context, userCtx facade.UserContext, request CreateWantedRequest) (id string, err error) {
 	var db dal.DB
 	if db, err = facade.GetDatabase(ctx); err != nil {
 		return "", err
@@ -55,7 +55,7 @@ func CreateWanted(ctx context.Context, userContext facade.User, request CreateWa
 	}
 	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		record := dal.NewRecordWithIncompleteKey(dbo4sportus.QuiverWantedCollection, reflect.String, &request.Wanted)
-		request.Wanted.UserID = userContext.GetID()
+		request.Wanted.UserID = userCtx.GetUserID()
 		if err := tx.Insert(ctx, record); err != nil {
 			return fmt.Errorf("failed to create wanted record: %w", err)
 		}
@@ -79,7 +79,7 @@ func (v *DeleteWantedRequest) Validate() error {
 }
 
 // DeleteWanted deletes wanted records
-func DeleteWanted(ctx context.Context, userContext facade.User, request DeleteWantedRequest) error {
+func DeleteWanted(ctx context.Context, userCtx facade.UserContext, request DeleteWantedRequest) error {
 	db, err := facade.GetDatabase(ctx)
 	if err != nil {
 		return err
@@ -91,9 +91,9 @@ func DeleteWanted(ctx context.Context, userContext facade.User, request DeleteWa
 		if err := tx.Get(ctx, record); err != nil {
 			return err
 		}
-		uid := userContext.GetID()
+		uid := userCtx.GetUserID()
 		if wanted.UserID != uid {
-			return fmt.Errorf("wanted.UserID != userContext.ContactID(): %s != %s", wanted.UserID, uid)
+			return fmt.Errorf("wanted.UserID != userCtx.ContactID(): %s != %s", wanted.UserID, uid)
 		}
 		if err := tx.Delete(ctx, key); err != nil {
 			return fmt.Errorf("failed to delete wanted record: %v", err)

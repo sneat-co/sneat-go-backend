@@ -88,6 +88,6 @@ func TestCreateMassInvite(t *testing.T) {
 		t.Fatal(err, responseBody)
 	}
 	if response.ID == "" {
-		t.Fatal("Response is missing ID of created invite")
+		t.Fatal("Response is missing ContactID of created invite")
 	}
 }

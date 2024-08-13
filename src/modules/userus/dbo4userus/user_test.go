@@ -7,10 +7,10 @@ import (
 func TestNewUser(t *testing.T) {
 	user := NewUser("user1")
 	if user.ID == "" {
-		t.Error("user.ID is empty")
+		t.Error("user.ContactID is empty")
 	}
 	if user.ID != "user1" {
-		t.Errorf("user.ID is %s, expected %s", user.ID, "user1")
+		t.Errorf("user.ContactID is %s, expected %s", user.ID, "user1")
 	}
 	if user.Key == nil {
 		t.Error("user.Key is nil")

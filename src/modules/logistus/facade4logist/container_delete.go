@@ -10,8 +10,8 @@ import (
 )
 
 // DeleteContainer deletes container from an order
-func DeleteContainer(ctx context.Context, user facade.User, request dto4logist.ContainerRequest) error {
-	err := RunOrderWorker(ctx, user, request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) error {
+func DeleteContainer(ctx context.Context, userCtx facade.UserContext, request dto4logist.ContainerRequest) error {
+	err := RunOrderWorker(ctx, userCtx, request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) error {
 		return deleteContainerTx(request, params)
 	})
 	if err != nil {

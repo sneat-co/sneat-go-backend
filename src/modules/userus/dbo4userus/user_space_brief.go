@@ -12,7 +12,7 @@ import (
 type UserSpaceBrief struct {
 	dbo4spaceus.SpaceBrief
 
-	// UserContactID is a contact ID of a user in the team
+	// UserContactID is a contact ContactID of a user in the team
 	UserContactID string `json:"userContactID" firestore:"userContactID"`
 
 	// User roles in the team
@@ -82,10 +82,10 @@ func (v UserSpaceBrief) Validate() error {
 	//				return newItemErr(err.Error())
 	//			}
 	//			for _, itemID := range itemIDs {
-	//				if itemID == item.ID {
-	//					return newItemErr("duplicate item ID")
+	//				if itemID == item.ContactID {
+	//					return newItemErr("duplicate item ContactID")
 	//				}
-	//				itemIDs = append(itemIDs, item.ID)
+	//				itemIDs = append(itemIDs, item.ContactID)
 	//			}
 	//		}
 	//	}

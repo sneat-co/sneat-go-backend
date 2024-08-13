@@ -15,10 +15,10 @@ type GetSpaceRequest struct {
 func (v *GetSpaceRequest) Validate() error {
 	id := strings.TrimSpace(v.ID)
 	if id == "" {
-		return validation.NewErrRecordIsMissingRequiredField("ID")
+		return validation.NewErrRecordIsMissingRequiredField("ContactID")
 	}
 	if id != v.ID {
-		return validation.NewErrBadRequestFieldValue("ID", "has spaces")
+		return validation.NewErrBadRequestFieldValue("ContactID", "has spaces")
 	}
 	return nil
 }

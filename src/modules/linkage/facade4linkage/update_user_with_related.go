@@ -5,7 +5,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
-	"github.com/strongo/slice"
+	"slices"
 )
 
 func updateUserWithRelatedTx(
@@ -31,7 +31,7 @@ func updateUserWithRelatedTx(
 		users[userID] = user
 	}
 
-	if slice.Contains(user.Data.SpaceIDs, itemRef.Space) {
+	if slices.Contains(user.Data.SpaceIDs, itemRef.Space) {
 		return nil
 	}
 

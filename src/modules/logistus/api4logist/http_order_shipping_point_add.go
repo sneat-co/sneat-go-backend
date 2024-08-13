@@ -14,7 +14,7 @@ var addOrderShippingPoint = facade4logist.AddOrderShippingPoint
 func httpAddOrderShippingPoint(w http.ResponseWriter, r *http.Request) {
 	var request dto4logist.AddOrderShippingPointRequest
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, defaultJsonWithAuthRequired, http.StatusOK,
-		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
+		func(ctx context.Context, userCtx facade.UserContext) (interface{}, error) {
 			return addOrderShippingPoint(ctx, userCtx, request)
 		})
 }

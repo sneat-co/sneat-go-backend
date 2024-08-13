@@ -38,6 +38,6 @@ package api4userus
 //	//		}
 //	//	}
 //	//}
-//	err = createUser(ctx, userContext.ID(), requestWithLogInfo)
+//	err = createUser(ctx, userContext.ContactID(), requestWithLogInfo)
 //	apicore.IfNoErrorReturnCreatedOK(ctx, w, err)
 //}

@@ -9,12 +9,12 @@ import (
 )
 
 // DeleteTask deletes task
-func DeleteTask(ctx context.Context, userContext facade.User, request DeleteTaskRequest) (err error) {
+func DeleteTask(ctx context.Context, userCtx facade.UserContext, request DeleteTaskRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 
-	return runTaskWorker(ctx, userContext, request,
+	return runTaskWorker(ctx, userCtx, request,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params taskWorkerParams) (err error) {
 			if params.task == nil {
 				//err = errors.New("task not found by ContactID: " + request.Task)

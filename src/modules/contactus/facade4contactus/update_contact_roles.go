@@ -7,6 +7,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dto4contactus"
 	"github.com/strongo/slice"
+	"slices"
 )
 
 func updateContactRoles(params *dal4contactus.ContactWorkerParams, roles dto4contactus.SetRolesRequest) (updatedContactFields []string, err error) {
@@ -18,7 +19,7 @@ func updateContactRoles(params *dal4contactus.ContactWorkerParams, roles dto4con
 	}
 
 	for _, role := range roles.Add {
-		if !slice.Contains(params.Contact.Data.Roles, role) {
+		if !slices.Contains(params.Contact.Data.Roles, role) {
 			rolesUpdated = true
 			params.Contact.Data.Roles = append(params.Contact.Data.Roles, role)
 		}

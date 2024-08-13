@@ -1,0 +1,94 @@
+<%!
+import (
+"github.com/sneat-co/debtstracker-go/gae_app/debtstracker/models"
+)
+%>
+
+
+<%: func heroContactCard(now time.Time, contact contactWithBalances, buffer *bytes.Buffer) %>
+<div class="card mr-2 mb-2">
+    <div class=card-body>
+        <h4 class=card-title>
+            <!--a href="contact?id=<%=i contact.ContactID %>"><%= contact.FullName() %></a-->
+            <span><%= contact.FullName() %></span>
+        </h4>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Status</th>
+                <th scope="col">Telegram #</th>
+                <th scope="col" class=center>Linked</th>
+                <th scope="col" class="d">Transfers</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><%= contact.Status %></td>
+
+                <% if contact.TelegramUserID == 0 { %>
+                <td>no</td>
+                <% } else { %>
+                <td>yes</td>
+                <% } %>
+
+                <% if contact.CounterpartyCounterpartyID == 0 { %>
+                <td class=center>no</td>
+                <% } else { %>
+                <td class=center><a href=contact?id=<%=i contact.CounterpartyCounterpartyID %>yes</a></td>
+                <% } %>
+                <td class="d"><%=i contact.transfersCount %></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <%
+            renderContactBalance(contact.ID, "Balance (no interest)", contact.balances.withoutInterest, false, buffer)
+            renderContactBalance(contact.ID, "Balance with interest", contact.balances.withInterest, false, buffer)
+            %>
+        </div>
+    </div>
+    <%
+    transfersInfo := contact.GetTransfersInfo()
+    if len(transfersInfo.OutstandingWithInterest) > 0 {
+    %>
+    <div class="card-body">
+        <h3>Outstanding transfers: <%=i len(transfersInfo.OutstandingWithInterest) %></h3>
+        <table class="table">
+            <thead>
+            <tr>
+                <td class="d">#</td>
+                <td>ID</td>
+                <td>Dir</td>
+                <td>Currency</td>
+                <td class="d">Amount</td>
+                <td class="d">%</td>
+                <td class="d">Period</td>
+            </tr>
+            </thead>
+            <tbody>
+            <% for i, transfer := range transfersInfo.OutstandingWithInterest { %>
+            <tr>
+                <td class="d"><%=i i+1 %></td>
+                <td><%=i transfer.TransferID %></td>
+                <td><%=s string(transfer.Direction) %></td>
+                <td><%=s string(transfer.Currency) %></td>
+                <td class="d"><%=v transfer.Amount %></td>
+                <td class="d"><%=v transfer.InterestPercent %></td>
+                <td class="d"><%=i transfer.InterestPeriod %></td>
+            </tr>
+            <% for _, returned := range transfer.Returns { %>
+            <tr>
+                <td>🔙</td>
+                <td><%=i returned.TransferID %></td>
+                <td colspan="2"><%=v returned.Time %></td>
+                <td class="d"><%=v returned.Amount %></td>
+            </tr>
+            <% } %>
+            <% } %>
+            </tbody>
+        </table>
+    </div>
+    <% } %>
+</div>

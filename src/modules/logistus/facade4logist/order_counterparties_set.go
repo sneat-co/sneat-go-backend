@@ -14,17 +14,17 @@ import (
 	"strings"
 )
 
-// SetOrderCounterparties sets order Counterparties
+// SetOrderCounterparties sets order Contacts
 func SetOrderCounterparties(
 	ctx context.Context,
-	user facade.User,
+	userCtx facade.UserContext,
 	request dto4logist.SetOrderCounterpartiesRequest,
 ) (orderCounterparties []*dbo4logist.OrderCounterparty, err error) {
-	//for i := range request.Counterparties {
-	//	request.Counterparties[i].Instructions = strings.TrimSpace(request.Counterparties[i].Instructions)
+	//for i := range request.Contacts {
+	//	request.Contacts[i].Instructions = strings.TrimSpace(request.Contacts[i].Instructions)
 	//}
-	err = RunOrderWorker(ctx, user, request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) (err error) {
-		orderCounterparties, err = setOrderCounterpartyTxWorker(ctx, user.GetID(), tx, params, request)
+	err = RunOrderWorker(ctx, userCtx, request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) (err error) {
+		orderCounterparties, err = setOrderCounterpartyTxWorker(ctx, userCtx.GetUserID(), tx, params, request)
 		return
 	})
 	return orderCounterparties, err
@@ -44,7 +44,7 @@ func setOrderCounterpartyTxWorker(
 	contacts := make([]dal4contactus.ContactEntry, 0)
 	recordsToGet := []dal.Record{
 		order.Record, // we need to get an order record for updating
-		// And we need to get all Contacts that are going to be added as Counterparties
+		// And we need to get all Contacts that are going to be added as Contacts
 	}
 
 counterparties:
@@ -86,7 +86,7 @@ counterparties:
 			continue
 		}
 		if contact.ID == "" {
-			return nil, fmt.Errorf("`%v` contact not found by ID: %s", counterparty.Role, counterparty.ContactID)
+			return nil, fmt.Errorf("`%v` contact not found by ContactID: %s", counterparty.Role, counterparty.ContactID)
 		}
 
 		_, orderContact := order.Dto.GetContactByID(counterparty.ContactID)
@@ -103,7 +103,7 @@ counterparties:
 				if counterparty.Role == dbo4logist.CounterpartyRoleShip {
 					orderContact.CountryID = with.UnknownCountryID
 				} else {
-					return nil, validation.NewErrBadRecordFieldValue("contact.Data.CountryID", "only contacts with type=ship can have empty country ID")
+					return nil, validation.NewErrBadRecordFieldValue("contact.Data.CountryID", "only contacts with type=ship can have empty country ContactID")
 				}
 			}
 			//if contact.Data.Address != nil {

@@ -113,12 +113,12 @@ var addTaskInTransaction = func(
 }
 
 // AddTask adds task
-func AddTask(ctx context.Context, userContext facade.User, request AddTaskRequest) (response *AddTaskResponse, err error) {
+func AddTask(ctx context.Context, userCtx facade.UserContext, request AddTaskRequest) (response *AddTaskResponse, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 
-	err = runScrumWorker(ctx, userContext, request.Request,
+	err = runScrumWorker(ctx, userCtx, request.Request,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params facade4meetingus.WorkerParams) (err error) {
 			if err := tx.GetMulti(ctx, []dal.Record{params.SpaceModuleEntry.Record, params.Meeting.Record}); err != nil {
 				return err

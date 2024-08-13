@@ -9,12 +9,12 @@ import (
 )
 
 // ArchiveContact archives team contact - e.g., hides it from the list of contacts
-func ArchiveContact(ctx context.Context, userContext facade.User, request dto4contactus.ContactRequest) (err error) {
+func ArchiveContact(ctx context.Context, userCtx facade.UserContext, request dto4contactus.ContactRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 
-	return dal4contactus.RunContactWorker(ctx, userContext, request,
+	return dal4contactus.RunContactWorker(ctx, userCtx, request,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactWorkerParams) (err error) {
 			return archiveContactTxWorker(ctx, tx, params)
 		},

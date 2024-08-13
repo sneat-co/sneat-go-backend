@@ -11,11 +11,16 @@ type userBotsFwAdapter struct {
 	*UserDbo
 }
 
+func (v *userBotsFwAdapter) SetPreferredLocale(locale string) (err error) {
+	_, err = v.WithPreferredLocale.SetPreferredLocale(locale)
+	return err
+}
+
 func (v *UserDbo) BotsFwAdapter() botsfwmodels.AppUserAdapter {
 	return &userBotsFwAdapter{UserDbo: v}
 }
 
-func (u userBotsFwAdapter) SetNames(firstName, lastName, fullName string) error {
+func (u *userBotsFwAdapter) SetNames(firstName, lastName, fullName string) error {
 	if firstName == "" && lastName == "" && fullName == "" {
 		return nil
 	}

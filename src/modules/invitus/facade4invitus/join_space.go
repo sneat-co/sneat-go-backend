@@ -7,7 +7,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/dbo4invitus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
@@ -40,15 +39,15 @@ func (v *JoinSpaceRequest) Validate() error {
 }
 
 // JoinSpace joins space
-func JoinSpace(ctx context.Context, userContext facade.User, request JoinSpaceRequest) (team *dbo4spaceus.SpaceDbo, err error) {
+func JoinSpace(ctx context.Context, userCtx facade.UserContext, request JoinSpaceRequest) (team *dbo4spaceus.SpaceDbo, err error) {
 	if err = request.Validate(); err != nil {
 		err = fmt.Errorf("invalid request: %w", err)
 		return
 	}
-	uid := userContext.GetID()
+	uid := userCtx.GetUserID()
 
 	// We intentionally do not use team worker to query both team & user records in parallel
-	err = dal4contactus.RunContactusSpaceWorker(ctx, userContext, request.SpaceRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) error {
+	err = dal4contactus.RunContactusSpaceWorker(ctx, userCtx, request.SpaceRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) error {
 
 		userKey := dbo4userus.NewUserKey(uid)
 		userDto := new(dbo4userus.UserDbo)
@@ -59,7 +58,7 @@ func JoinSpace(ctx context.Context, userContext facade.User, request JoinSpaceRe
 		inviteRecord := dal.NewRecordWithData(inviteKey, inviteDto)
 
 		if err = params.GetRecords(ctx, tx, userRecord, inviteRecord); err != nil {
-			return fmt.Errorf("failed to get some records from DB by ID: %w", err)
+			return fmt.Errorf("failed to get some records from DB by ContactID: %w", err)
 		}
 
 		if inviteDto.From.UserID == uid {
@@ -123,7 +122,7 @@ func JoinSpace(ctx context.Context, userContext facade.User, request JoinSpaceRe
 }
 
 //func joinAddUserToLastScrum(ctx context.Context, tx dal.ReadwriteTransaction, teamKey *dal.Key, team dbo4spaceus.SpaceDbo, uID string) (err error) {
-//	scrumKey := dal.NewKeyWithID("scrums", team.Last.Scrum.ID, dal.WithParentKey(teamKey))
+//	scrumKey := dal.NewKeyWithID("scrums", team.Last.Scrum.ContactID, dal.WithParentKey(teamKey))
 //	scrum := new(dbscrum.Scrum)
 //	scrumRecord := dal.NewRecordWithData(scrumKey, scrum)
 //	if err = tx.Get(ctx, scrumRecord); err != nil {
@@ -207,7 +206,7 @@ func onJoinAddSpaceToUser(
 	}
 	updates = []dal.Update{
 		{
-			Field: dal4spaceus.SpacesFiled,
+			Field: dbo4spaceus.SpacesFiled,
 			Value: userDto.Spaces,
 		},
 		{
@@ -249,7 +248,7 @@ func onJoinUpdateMemberBriefInSpaceOrAddIfMissing(
 		return validation.NewErrBadRecordFieldValue("userID", "joining member should have populated field 'userID'")
 	}
 	if member.Data.UserID != uid {
-		return validation.NewErrBadRecordFieldValue("userID", fmt.Sprintf("joining member should have same user ID as current user, got: {uid=%s, member.Data.UserID=%s}", uid, member.Data.UserID))
+		return validation.NewErrBadRecordFieldValue("userID", fmt.Sprintf("joining member should have same user ContactID as current user, got: {uid=%s, member.Data.UserID=%s}", uid, member.Data.UserID))
 	}
 	//updates = make([]dal.Update, 0, 2)
 	for _, userID := range params.SpaceModuleEntry.Data.UserIDs {

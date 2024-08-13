@@ -12,13 +12,13 @@ import (
 )
 
 // DeleteList deletes list
-func DeleteList(ctx context.Context, user facade.User, request ListRequest) (err error) {
+func DeleteList(ctx context.Context, userCtx facade.UserContext, request ListRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
-	uid := user.GetID()
+	uid := userCtx.GetUserID()
 	if uid == "" {
-		return validation.NewErrRecordIsMissingRequiredField("user.ContactID()")
+		return validation.NewErrRecordIsMissingRequiredField("userCtx.ContactID()")
 	}
 	listType := request.ListType()
 	id := dbo4listus.GetFullListID(listType, request.ListID)
@@ -37,7 +37,7 @@ func DeleteList(ctx context.Context, user facade.User, request ListRequest) (err
 	}
 	err = dal4spaceus.DeleteSpaceItem(
 		ctx,
-		user,
+		userCtx,
 		spaceItemRequest,
 		const4listus.ModuleID,
 		new(dbo4listus.ListusSpaceDbo),

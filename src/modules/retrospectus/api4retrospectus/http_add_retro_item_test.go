@@ -15,7 +15,7 @@ import (
 
 func TestAddRetroItem(t *testing.T) {
 	called := 0
-	addRetroItem = func(_ context.Context, _ facade.User, request facade4retrospectus.AddRetroItemRequest) (response facade4retrospectus.AddRetroItemResponse, err error) {
+	addRetroItem = func(_ context.Context, _ facade.UserContext, request facade4retrospectus.AddRetroItemRequest) (response facade4retrospectus.AddRetroItemResponse, err error) {
 		called++
 		return response, err
 	}
@@ -33,7 +33,7 @@ func TestAddRetroItem(t *testing.T) {
 	})
 	w := httptest.NewRecorder()
 
-	verifyRequest = func(w http.ResponseWriter, r *http.Request, options verify.RequestOptions) (ctx context.Context, userContext facade.User, err error) {
+	verifyRequest = func(w http.ResponseWriter, r *http.Request, options verify.RequestOptions) (ctx context.Context, userCtx facade.UserContext, err error) {
 		return r.Context(), nil, nil
 	}
 

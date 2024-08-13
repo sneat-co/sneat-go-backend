@@ -10,19 +10,19 @@ import (
 	"github.com/strongo/random"
 )
 
-func SetHappeningPrices(ctx context.Context, user facade.User, request dto4calendarium.HappeningPricesRequest) (err error) {
+func SetHappeningPrices(ctx context.Context, userCtx facade.UserContext, request dto4calendarium.HappeningPricesRequest) (err error) {
 	var setHappeningPricesWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
-		return setHappeningPricesTx(ctx, tx, user, params, request)
+		return setHappeningPricesTx(ctx, tx, userCtx, params, request)
 	}
-	return dal4calendarium.RunHappeningSpaceWorker(ctx, user, request.HappeningRequest, setHappeningPricesWorker)
+	return dal4calendarium.RunHappeningSpaceWorker(ctx, userCtx, request.HappeningRequest, setHappeningPricesWorker)
 }
 
-func setHappeningPricesTx(ctx context.Context, tx dal.ReadwriteTransaction, _ facade.User, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.HappeningPricesRequest) (err error) {
+func setHappeningPricesTx(ctx context.Context, tx dal.ReadwriteTransaction, _ facade.UserContext, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.HappeningPricesRequest) (err error) {
 	if err = params.GetRecords(ctx, tx); err != nil {
 		return err
 	}
 	if !params.Happening.Record.Exists() {
-		return fmt.Errorf("happening not found by ID=%s: %v", params.Happening.Key.String(), params.Happening.Record.Error())
+		return fmt.Errorf("happening not found by ContactID=%s: %v", params.Happening.Key.String(), params.Happening.Record.Error())
 	}
 	happeningDbo := params.Happening.Data
 
@@ -45,11 +45,11 @@ requestPrices:
 		}
 
 		termID := requestPrice.Term.ID()
-		requestPrice.ID = termID // Ignore ID passed in request from client
+		requestPrice.ID = termID // Ignore ContactID passed in request from client
 		const maxAttempts = 10
 		for k := 0; k < maxAttempts+1; k++ {
 			if k == maxAttempts {
-				return fmt.Errorf("too many attempts to generate unique requestPrice ID for term %v", termID)
+				return fmt.Errorf("too many attempts to generate unique requestPrice ContactID for term %v", termID)
 			}
 			if requestPrice.ID != "" && happeningDbo.GetPriceByID(requestPrice.ID) == nil {
 				happeningDbo.Prices = append(happeningDbo.Prices, requestPrice)

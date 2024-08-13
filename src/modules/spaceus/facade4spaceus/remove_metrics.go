@@ -10,11 +10,11 @@ import (
 )
 
 // RemoveMetrics removes a metric
-func RemoveMetrics(ctx context.Context, user facade.User, request dto4spaceus.SpaceMetricsRequest) (err error) {
+func RemoveMetrics(ctx context.Context, userCtx facade.UserContext, request dto4spaceus.SpaceMetricsRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4spaceus.RunSpaceWorker(ctx, user, request.SpaceID,
+	err = dal4spaceus.RunSpaceWorker(ctx, userCtx, request.SpaceID,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.SpaceWorkerParams) (err error) {
 			changed := false
 			team := params.Space

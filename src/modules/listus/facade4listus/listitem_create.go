@@ -14,11 +14,11 @@ import (
 )
 
 // CreateListItems creates list items
-func CreateListItems(ctx context.Context, userContext facade.User, request CreateListItemsRequest) (response CreateListItemResponse, err error) {
+func CreateListItems(ctx context.Context, userCtx facade.UserContext, request CreateListItemsRequest) (response CreateListItemResponse, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4spaceus.RunModuleSpaceWorker(ctx, userContext, request.SpaceRequest, const4listus.ModuleID, new(dbo4listus.ListusSpaceDbo),
+	err = dal4spaceus.RunModuleSpaceWorker(ctx, userCtx, request.SpaceID, const4listus.ModuleID, new(dbo4listus.ListusSpaceDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) error {
 			return createListItemTxWorker(ctx, request, tx, params)
 		})
@@ -50,7 +50,7 @@ func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest,
 				request.ListID == dbo4listus.GetFullListID(dbo4listus.ListTypeToWatch, "movies")
 
 		if !isOkToAutoCreateList {
-			err = fmt.Errorf("list not found by ID=%s: %w", listID, err)
+			err = fmt.Errorf("list not found by ContactID=%s: %w", listID, err)
 			return err
 		}
 

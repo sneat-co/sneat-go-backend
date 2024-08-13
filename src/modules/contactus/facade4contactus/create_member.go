@@ -14,7 +14,7 @@ import (
 // CreateMember adds members to a team
 func CreateMember(
 	ctx context.Context,
-	user facade.User,
+	userCtx facade.UserContext,
 	request dal4contactus.CreateMemberRequest,
 ) (
 	response dto4contactus.CreateContactResponse,
@@ -33,7 +33,7 @@ func CreateMember(
 	if !checks4contactus.IsSpaceMember(request.Roles) {
 		createContactRequest.Roles = append(createContactRequest.Roles, const4contactus.SpaceMemberRoleMember)
 	}
-	if response, err = CreateContact(ctx, user, false, createContactRequest); err != nil {
+	if response, err = CreateContact(ctx, userCtx, false, createContactRequest); err != nil {
 		return response, err
 	}
 	if response.Data == nil {

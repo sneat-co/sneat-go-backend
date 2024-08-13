@@ -10,13 +10,13 @@ import (
 )
 
 // DeleteListItems deletes list items
-func DeleteListItems(ctx context.Context, userContext facade.User, request ListItemIDsRequest) (err error) {
+func DeleteListItems(ctx context.Context, userCtx facade.UserContext, request ListItemIDsRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
-	uid := userContext.GetID()
+	uid := userCtx.GetUserID()
 	if uid == "" {
-		return validation.NewErrRequestIsMissingRequiredField("userContext.ContactID()")
+		return validation.NewErrRequestIsMissingRequiredField("userCtx.ContactID()")
 	}
 	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		listID := request.ListID

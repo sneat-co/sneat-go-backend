@@ -46,7 +46,7 @@ func (v AddOrderShippingPointRequest) Validate() error {
 		}
 		for j, container2 := range v.Containers {
 			if j != i && container2.ID == container.ID {
-				return validation.NewErrBadRequestFieldValue("containers", fmt.Sprintf(`duplicate container IDs at indexes %d & %d: ID="%v"`, j, i, container.ID))
+				return validation.NewErrBadRequestFieldValue("containers", fmt.Sprintf(`duplicate container IDs at indexes %d & %d: ContactID="%v"`, j, i, container.ID))
 			}
 		}
 	}

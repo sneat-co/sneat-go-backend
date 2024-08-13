@@ -18,7 +18,7 @@ import (
 
 // CreateHappening creates a recurring happening
 func CreateHappening(
-	ctx context.Context, user facade.User, request dto4calendarium.CreateHappeningRequest,
+	ctx context.Context, userCtx facade.UserContext, request dto4calendarium.CreateHappeningRequest,
 ) (
 	response dto4calendarium.CreateHappeningResponse, err error,
 ) {
@@ -34,7 +34,7 @@ func CreateHappening(
 		HappeningBrief: *request.Happening,
 		CreatedFields: with.CreatedFields{
 			CreatedByField: with.CreatedByField{
-				CreatedBy: user.GetID(),
+				CreatedBy: userCtx.GetUserID(),
 			},
 		},
 		//WithTeamDates: dbmodels.WithSpaceDates{
@@ -53,7 +53,7 @@ func CreateHappening(
 			}
 		}
 	}
-	err = dal4spaceus.CreateSpaceItem(ctx, user, request.SpaceRequest,
+	err = dal4spaceus.CreateSpaceItem(ctx, userCtx, request.SpaceRequest,
 		const4calendarium.ModuleID,
 		new(dbo4calendarium.CalendariumSpaceDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo]) (err error) {
@@ -74,7 +74,7 @@ func createHappeningTx(
 	response dto4calendarium.CreateHappeningResponse, err error,
 ) {
 	happeningDto.CreatedAt = params.Started
-	contactusSpace := dal4contactus.NewContactusSpaceModuleEntry(params.Space.ID)
+	contactusSpace := dal4contactus.NewContactusSpaceEntry(params.Space.ID)
 	if err = params.GetRecords(ctx, tx, contactusSpace.Record); err != nil {
 		return response, err
 	}
@@ -105,12 +105,12 @@ func createHappeningTx(
 	//for participantID := range happeningDto.Participants {
 	//	participantKey := dbmodels.SpaceItemID(participantID)
 	//	spaceID := participantKey.Space()
-	//	if spaceID == params.Space.ID {
+	//	if spaceID == params.Space.ContactID {
 	//		contactBrief := contactusSpace.Data.Contacts[participantKey.ItemID()]
 	//		if contactBrief == nil {
 	//			spaceContacts := contactsBySpaceID[teamID]
 	//			if spaceContacts == nil {
-	//				spaceContacts = make([]dal4contactus.ContactEntry, 0, 1)
+	//				spaceContacts = make([]dal4contactus.DebtusSpaceContactEntry, 0, 1)
 	//			}
 	//			contactsBySpaceID[teamID] = append(teamContacts, dal4contactus.NewContactEntry(teamID, participantKey.ItemID()))
 	//		} else {
@@ -133,7 +133,7 @@ func createHappeningTx(
 		}
 		//for teamID, teamContacts := range contactsBySpaceID {
 		//	for _, contact := range teamContacts {
-		//		happeningDto.AddContact(teamID, contact.ID, &contact.Data.ContactBrief)
+		//		happeningDto.AddContact(teamID, contact.ContactID, &contact.Data.ContactBrief)
 		//	}
 		//}
 	}

@@ -6,7 +6,7 @@ import (
 
 type spaceRecord struct {
 	ID  string               `json:"id"`
-	Dto dbo4spaceus.SpaceDbo `json:"dto"`
+	Dto dbo4spaceus.SpaceDbo `json:"dto4debtus"`
 }
 
 // SpaceResponse response

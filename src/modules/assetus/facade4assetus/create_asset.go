@@ -22,11 +22,11 @@ type CreateAssetResponse struct {
 }
 
 // CreateAsset creates an asset
-func CreateAsset(ctx context.Context, user facade.User, request dto4assetus.CreateAssetRequest) (response CreateAssetResponse, err error) {
+func CreateAsset(ctx context.Context, userCtx facade.UserContext, request dto4assetus.CreateAssetRequest) (response CreateAssetResponse, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4spaceus.CreateSpaceItem(ctx, user,
+	err = dal4spaceus.CreateSpaceItem(ctx, userCtx,
 		request.SpaceRequest, const4assetus.ModuleID, new(dbo4assetus.AssetusSpaceDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4assetus.AssetusSpaceDbo]) (err error) {
 			if err = params.GetRecords(ctx, tx); err != nil {
@@ -47,7 +47,7 @@ func createAssetTx(
 ) (
 	response CreateAssetResponse, err error,
 ) {
-	asset := dal4assetus.NewAssetEntry(request.SpaceRequest.SpaceID, random.ID(8)) // TODO: use DALgo random ID generator
+	asset := dal4assetus.NewAssetEntry(request.SpaceRequest.SpaceID, random.ID(8)) // TODO: use DALgo random ContactID generator
 	asset.Data.AssetBaseDbo = request.Asset
 	asset.Data.UserIDs = []string{params.UserID}
 	asset.Data.SpaceIDs = []string{request.SpaceRequest.SpaceID}
@@ -60,7 +60,7 @@ func createAssetTx(
 		return response, fmt.Errorf("assert record data is not valid before insert: %w", err)
 	}
 
-	if err = tx.Set(ctx, asset.Record); err != nil { // TODO: change to .Insert() with random ID generator
+	if err = tx.Set(ctx, asset.Record); err != nil { // TODO: change to .Insert() with random ContactID generator
 		return response, fmt.Errorf("failed to insert asset record: %w", err)
 	}
 

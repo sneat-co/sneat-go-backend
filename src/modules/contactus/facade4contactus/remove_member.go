@@ -7,18 +7,19 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dto4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/slice"
+	"slices"
 )
 
 // RemoveSpaceMember removes members from a team
-func RemoveSpaceMember(ctx context.Context, user facade.User, request dto4contactus.ContactRequest) (err error) {
+func RemoveSpaceMember(ctx context.Context, userCtx facade.UserContext, request dto4contactus.ContactRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return err
 	}
-	return dal4contactus.RunContactWorker(ctx, user, request,
+	return dal4contactus.RunContactWorker(ctx, userCtx, request,
 		func(ctx context.Context, tx dal.ReadwriteTransaction,
 			params *dal4contactus.ContactWorkerParams,
 		) (err error) {
@@ -58,7 +59,7 @@ func removeSpaceMemberTx(
 			userRef *dal.Key
 		)
 		memberUser := dbo4userus.NewUserEntry(memberUserID)
-		if err = facade4userus.TxGetUserByID(ctx, tx, memberUser.Record); err != nil {
+		if err = dal4userus.GetUser(ctx, tx, memberUser); err != nil {
 			return
 		}
 
@@ -86,7 +87,7 @@ func removeMemberFromSpaceRecord(
 	contactUserID string,
 	membersCount int,
 ) {
-	if contactUserID != "" && slice.Contains(params.Space.Data.UserIDs, contactUserID) {
+	if contactUserID != "" && slices.Contains(params.Space.Data.UserIDs, contactUserID) {
 		params.Space.Data.UserIDs = slice.RemoveInPlace(contactUserID, params.Space.Data.UserIDs)
 		params.SpaceUpdates = append(params.SpaceUpdates, dal.Update{Field: "userIDs", Value: params.Space.Data.UserIDs})
 	}

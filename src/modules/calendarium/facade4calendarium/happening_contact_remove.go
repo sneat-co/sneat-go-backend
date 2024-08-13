@@ -14,7 +14,7 @@ import (
 	"github.com/strongo/validation"
 )
 
-func RemoveParticipantFromHappening(ctx context.Context, user facade.User, request dto4calendarium.HappeningContactRequest) (err error) {
+func RemoveParticipantFromHappening(ctx context.Context, userCtx facade.UserContext, request dto4calendarium.HappeningContactRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
@@ -23,7 +23,7 @@ func RemoveParticipantFromHappening(ctx context.Context, user facade.User, reque
 		return removeParticipantFromHappeningTxWorker(ctx, tx, params, request)
 	}
 
-	if err = dal4calendarium.RunHappeningSpaceWorker(ctx, user, request.HappeningRequest, worker); err != nil {
+	if err = dal4calendarium.RunHappeningSpaceWorker(ctx, userCtx, request.HappeningRequest, worker); err != nil {
 		return err
 	}
 	return nil

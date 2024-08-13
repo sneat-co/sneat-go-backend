@@ -14,14 +14,14 @@ import (
 )
 
 // RevokeHappeningCancellation marks happening as canceled
-func RevokeHappeningCancellation(ctx context.Context, user facade.User, request dto4calendarium.CancelHappeningRequest) (err error) {
+func RevokeHappeningCancellation(ctx context.Context, userCtx facade.UserContext, request dto4calendarium.CancelHappeningRequest) (err error) {
 	logus.Debugf(ctx, "RevokeHappeningCancellation() %+v", request)
 	if err = request.Validate(); err != nil {
 		return err
 	}
 
 	happening := dbo4calendarium.NewHappeningEntry(request.SpaceID, request.HappeningID)
-	err = dal4spaceus.RunModuleSpaceWorker(ctx, user, request.SpaceRequest,
+	err = dal4spaceus.RunModuleSpaceWorker(ctx, userCtx, request.SpaceID,
 		const4calendarium.ModuleID,
 		new(dbo4calendarium.CalendariumSpaceDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo]) (err error) {
@@ -94,7 +94,7 @@ func removeCancellationFromHappeningBrief(params *dal4spaceus.ModuleSpaceWorkerP
 
 func removeCancellationFromHappeningRecord(ctx context.Context, tx dal.ReadwriteTransaction, happening dbo4calendarium.HappeningEntry) error {
 	if happening.Data.Status != dbo4calendarium.HappeningStatusCanceled {
-		return fmt.Errorf("not allowed to revoke cancelation for happening in status=" + happening.Data.Status)
+		return fmt.Errorf("not allowed to revoke cancelation for happening in status=%s", happening.Data.Status)
 	}
 	happening.Data.Status = dbo4calendarium.HappeningStatusCanceled
 	happening.Data.Cancellation = nil

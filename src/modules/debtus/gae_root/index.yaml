@@ -1,0 +1,137 @@
+indexes:
+
+- kind: Bill
+  properties:
+  - name: UserGroupID
+  - name: Currency
+  - name: DebtorIDs
+  - name: SponsorIDs
+  - name: DtCreated
+
+- kind: User
+  properties:
+  - name: EmailAddress
+  - name: EmailConfirmed
+
+- kind: Audit
+  properties:
+  - name: Action
+  - name: Created
+    direction: desc
+
+- kind: Counterparty
+  ancestor: no
+  properties:
+  - name: UserID
+  - name: Status
+  - name: LastTransferAt
+    direction: desc
+
+# For contacts linking data integrity check & fixing. (probably can be deleted and zig-zag used)
+#- kind: Counterparty
+#  properties:
+#  - name: UserID
+#  - name: CounterpartyUserID
+
+## For cron to schedule reminders
+- kind: Reminder
+  properties:
+  - name: Status
+  - name: DtNext
+
+## For discarding active reminders
+- kind: Reminder
+  properties:
+  - name: TransferID
+  - name: DtNext
+
+## For discarding active reminders
+- kind: Reminder
+  properties:
+  - name: TransferID
+  - name: Status
+
+# To check if user has outstanding due api4transfers
+- kind: Transfer
+  ancestor: no
+  properties:
+  - name: BothUserIDs
+  - name: IsOutstanding
+  - name: DtDueOn
+
+# To show latest api4transfers by creator for all counterparties
+- kind: Transfer
+  ancestor: no
+  properties:
+  - name: BothUserIDs
+  - name: Currency
+  - name: IsOutstanding
+  - name: DtCreated
+    direction: asc
+
+# To validate data integrity - see /support/validate-user
+- kind: Transfer
+  properties:
+  - name: BothUserIDs
+  - name: DtCreated
+
+# To show latest api4transfers by creator for all counterparties
+- kind: Transfer
+  ancestor: no
+  properties:
+  - name: BothUserIDs
+  - name: DtCreated
+    direction: desc
+
+# To show latest api4transfers for counterparty
+- kind: Transfer
+  ancestor: no
+  properties:
+  - name: BothCounterpartyIDs
+  - name: DtCreated
+    direction: desc
+
+# For troubleshooting & fixes
+- kind: Transfer
+  ancestor: no
+  properties:
+  - name: BothCounterpartyIDs
+  - name: Currency
+  - name: DtCreated
+
+
+# This is needed to update old api4transfers with CounterpartyUserID & CounterpartyCounterpartyID
+# when linking 2 users and also to show api4transfers between them
+#- kind: Transfer
+#  ancestor: no
+#  properties:
+#  - name: CreatorCounterpartyID
+#  - name: CounterpartyCounterpartyID
+#  - name: DtCreated
+#    direction: desc
+
+- kind: TgChat
+  properties:
+  - name: AppUserIntID
+  - name: DtUpdated
+    direction: desc
+
+- kind: TwilioSms
+  properties:
+  - name: UserID
+  - name: DtCreated
+    direction: desc
+
+- kind: TwilioSms
+  properties:
+  - name: UserID
+  - name: To
+  - name: DtCreated
+    direction: desc
+
+- kind: Referer
+  properties:
+  - name: p
+  - name: to
+  - name: t
+    direction: desc

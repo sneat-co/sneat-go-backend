@@ -6,6 +6,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/strongoapp/with"
 	"github.com/strongo/validation"
@@ -25,13 +26,13 @@ func (v SetUserCountryRequest) Validate() error {
 	return nil
 }
 
-func SetUserCountry(ctx context.Context, userContext facade.User, request SetUserCountryRequest) (err error) {
-	return RunUserWorker(ctx, userContext, func(ctx context.Context, tx dal.ReadwriteTransaction, params *UserWorkerParams) error {
-		return txSetUserCountry(ctx, userContext, request, tx, params)
+func SetUserCountry(ctx context.Context, userCtx facade.UserContext, request SetUserCountryRequest) (err error) {
+	return dal4userus.RunUserWorker(ctx, userCtx, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
+		return txSetUserCountry(ctx, userCtx, request, tx, params)
 	})
 }
 
-func txSetUserCountry(ctx context.Context, userContext facade.User, request SetUserCountryRequest, tx dal.ReadwriteTransaction, params *UserWorkerParams) (err error) {
+func txSetUserCountry(ctx context.Context, userCtx facade.UserContext, request SetUserCountryRequest, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) (err error) {
 	if params.User.Data.CountryID != request.CountryID {
 		params.User.Data.CountryID = request.CountryID
 		params.UserUpdates = append(params.UserUpdates,
@@ -43,7 +44,7 @@ func txSetUserCountry(ctx context.Context, userContext facade.User, request SetU
 			params.UserUpdates = append(params.UserUpdates, dal.Update{Field: fmt.Sprintf("spaces.%s.countryID", teamID), Value: request.CountryID})
 		}
 		teamRequest := dto4spaceus.SpaceRequest{SpaceID: teamID}
-		err = dal4contactus.RunContactusSpaceWorkerTx(ctx, tx, userContext, teamRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) error {
+		err = dal4contactus.RunContactusSpaceWorkerTx(ctx, tx, userCtx, teamRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) error {
 			if err = params.GetRecords(ctx, tx); err != nil {
 				return err
 			}
@@ -51,7 +52,7 @@ func txSetUserCountry(ctx context.Context, userContext facade.User, request SetU
 				params.Space.Data.CountryID = request.CountryID
 				params.SpaceUpdates = append(params.SpaceUpdates, dal.Update{Field: "countryID", Value: request.CountryID})
 			}
-			userContactID, userContactBrief := params.SpaceModuleEntry.Data.GetContactBriefByUserID(userContext.GetID())
+			userContactID, userContactBrief := params.SpaceModuleEntry.Data.GetContactBriefByUserID(userCtx.GetUserID())
 			if userContactBrief != nil && IsUnknownCountryID(userContactBrief.CountryID) {
 				userContactBrief.CountryID = request.CountryID
 				params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, dal.Update{Field: "contacts." + userContactID + ".countryID", Value: request.CountryID})

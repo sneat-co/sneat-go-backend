@@ -5,20 +5,21 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
-	"github.com/strongo/slice"
+	"slices"
 	"strings"
 	"time"
 )
 
-type spaceWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *SpaceWorkerParams) (err error)
+type spaceWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *SpaceWorkerParams) (err error)
 
 func NewSpaceWorkerParams(userID, spaceID string) *SpaceWorkerParams {
 	return &SpaceWorkerParams{
 		UserID:  userID,
-		Space:   NewSpaceEntry(spaceID),
+		Space:   dbo4spaceus.NewSpaceEntry(spaceID),
 		Started: time.Now(),
 	}
 }
@@ -28,7 +29,7 @@ type SpaceWorkerParams struct {
 	UserID  string
 	Started time.Time
 	//
-	Space         SpaceEntry
+	Space         dbo4spaceus.SpaceEntry
 	SpaceUpdates  []dal.Update
 	RecordUpdates []RecordUpdates
 }
@@ -41,8 +42,8 @@ func (v SpaceWorkerParams) GetRecords(ctx context.Context, tx dal.ReadSession, r
 		return err
 	}
 	if v.UserID != "" && v.Space.Record.Exists() {
-		if !slice.Contains(v.Space.Data.UserIDs, v.UserID) {
-			return fmt.Errorf("%w: team record has no current user ID in UserIDs field: %s", facade.ErrUnauthorized, v.UserID)
+		if !slices.Contains(v.Space.Data.UserIDs, v.UserID) {
+			return fmt.Errorf("%w: team record has no current user ContactID in UserIDs field: %s", facade.ErrUnauthorized, v.UserID)
 		}
 	}
 	return nil
@@ -75,7 +76,7 @@ type SpaceModuleDbo = ModuleDbo
 func RunModuleSpaceWorkerTx[D SpaceModuleDbo](
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	user facade.User,
+	userCtx facade.UserContext,
 	request dto4spaceus.SpaceRequest,
 	moduleID string,
 	data D,
@@ -84,7 +85,7 @@ func RunModuleSpaceWorkerTx[D SpaceModuleDbo](
 	if worker == nil {
 		panic("worker is nil")
 	}
-	spaceWorkerParams := NewSpaceWorkerParams(user.GetID(), request.SpaceID)
+	spaceWorkerParams := NewSpaceWorkerParams(userCtx.GetUserID(), request.SpaceID)
 	params := NewSpaceModuleWorkerParams(moduleID, spaceWorkerParams, data)
 	return runModuleSpaceWorkerReadwriteTx(ctx, tx, params, worker)
 }
@@ -97,7 +98,7 @@ func NewSpaceModuleWorkerParams[D SpaceModuleDbo](
 	return &ModuleSpaceWorkerParams[D]{
 		SpaceWorkerParams: spaceWorkerParams,
 		SpaceModuleEntry: record.NewDataWithID(moduleID,
-			dal.NewKeyWithParentAndID(spaceWorkerParams.Space.Key, SpaceModulesCollection, moduleID),
+			dal.NewKeyWithParentAndID(spaceWorkerParams.Space.Key, dbo4spaceus.SpaceModulesCollection, moduleID),
 			data,
 		),
 	}
@@ -135,13 +136,13 @@ func runModuleSpaceWorkerReadwriteTx[D SpaceModuleDbo](
 
 func RunReadonlyModuleSpaceWorker[D SpaceModuleDbo](
 	ctx context.Context,
-	user facade.User,
+	userCtx facade.UserContext,
 	request dto4spaceus.SpaceRequest,
 	moduleID string,
 	data D,
 	worker func(ctx context.Context, tx dal.ReadTransaction, teamWorkerParams *ModuleSpaceWorkerParams[D]) (err error),
 ) (err error) {
-	spaceWorkerParams := NewSpaceWorkerParams(user.GetID(), request.SpaceID)
+	spaceWorkerParams := NewSpaceWorkerParams(userCtx.GetUserID(), request.SpaceID)
 	params := NewSpaceModuleWorkerParams(moduleID, spaceWorkerParams, data)
 
 	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
@@ -151,13 +152,13 @@ func RunReadonlyModuleSpaceWorker[D SpaceModuleDbo](
 
 func RunModuleSpaceWorker[D SpaceModuleDbo](
 	ctx context.Context,
-	user facade.User,
-	request dto4spaceus.SpaceRequest,
+	userCtx facade.UserContext,
+	spaceID string,
 	moduleID string,
 	data D,
 	worker func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *ModuleSpaceWorkerParams[D]) (err error),
 ) (err error) {
-	teamWorkerParams := NewSpaceWorkerParams(user.GetID(), request.SpaceID)
+	teamWorkerParams := NewSpaceWorkerParams(userCtx.GetUserID(), spaceID)
 	params := NewSpaceModuleWorkerParams(moduleID, teamWorkerParams, data)
 	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		return runModuleSpaceWorkerReadwriteTx(ctx, tx, params, worker)
@@ -165,14 +166,14 @@ func RunModuleSpaceWorker[D SpaceModuleDbo](
 }
 
 // RunSpaceWorker executes a team worker
-var RunSpaceWorker = func(ctx context.Context, user facade.User, spaceID string, worker spaceWorker) (err error) {
-	if user == nil {
-		panic("user is nil")
+var RunSpaceWorker = func(ctx context.Context, userCtx facade.UserContext, spaceID string, worker spaceWorker) (err error) {
+	if userCtx == nil {
+		panic("userCtx is nil")
 	}
 	if strings.TrimSpace(spaceID) == "" {
 		return fmt.Errorf("spaceID is empty")
 	}
-	userID := user.GetID()
+	userID := userCtx.GetUserID()
 	if userID == "" {
 		err = facade.ErrUnauthorized
 		return
@@ -183,7 +184,7 @@ var RunSpaceWorker = func(ctx context.Context, user facade.User, spaceID string,
 			return fmt.Errorf("failed to load team record: %w", err)
 		}
 		if err = params.Space.Data.Validate(); err != nil {
-			logus.Warningf(ctx, "Space record loaded from DB is not valid: %v: dto=%+v", err, params.Space.Data)
+			logus.Warningf(ctx, "Space record loaded from DB is not valid: %v: dto4debtus=%+v", err, params.Space.Data)
 		}
 		if err = worker(ctx, tx, params); err != nil {
 			return fmt.Errorf("failed to execute team worker: %w", err)
@@ -256,8 +257,8 @@ func applySpaceModuleUpdates[D SpaceModuleDbo](
 // CreateSpaceItem creates a team item
 func CreateSpaceItem[D SpaceModuleDbo](
 	ctx context.Context,
-	user facade.User,
-	teamRequest dto4spaceus.SpaceRequest,
+	userCtx facade.UserContext,
+	spaceRequest dto4spaceus.SpaceRequest,
 	moduleID string,
 	data D,
 	worker func(
@@ -269,10 +270,10 @@ func CreateSpaceItem[D SpaceModuleDbo](
 	if worker == nil {
 		panic("worker is nil")
 	}
-	if err := teamRequest.Validate(); err != nil {
+	if err := spaceRequest.Validate(); err != nil {
 		return err
 	}
-	err = RunModuleSpaceWorker(ctx, user, teamRequest, moduleID, data,
+	err = RunModuleSpaceWorker(ctx, userCtx, spaceRequest.SpaceID, moduleID, data,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *ModuleSpaceWorkerParams[D]) (err error) {
 			if err := worker(ctx, tx, params); err != nil {
 				return fmt.Errorf("failed to execute team worker passed to CreateSpaceItem: %w", err)

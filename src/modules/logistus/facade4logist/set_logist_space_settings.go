@@ -22,24 +22,24 @@ import (
 // SetLogistSpaceSettings sets team settings for logistus module
 func SetLogistSpaceSettings(
 	ctx context.Context,
-	userContext facade.User,
+	userCtx facade.UserContext,
 	request dto4logist.SetLogistSpaceSettingsRequest,
 ) error {
 	if err := request.Validate(); err != nil {
 		return err
 	}
-	return dal4spaceus.RunModuleSpaceWorker(ctx, userContext, request.SpaceRequest,
+	return dal4spaceus.RunModuleSpaceWorker(ctx, userCtx, request.SpaceID,
 		const4logistus.ModuleID,
 		new(dbo4logist.LogistSpaceDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4spaceus.ModuleSpaceWorkerParams[*dbo4logist.LogistSpaceDbo]) (err error) {
-			return setLogistSpaceSettingsTx(ctx /*userContext,*/, request, tx, teamWorkerParams)
+			return setLogistSpaceSettingsTx(ctx /*userCtx,*/, request, tx, teamWorkerParams)
 		},
 	)
 }
 
 func setLogistSpaceSettingsTx(
 	ctx context.Context,
-	//userContext facade2debtus.User,
+	//userContext facade4debtus.User,
 	request dto4logist.SetLogistSpaceSettingsRequest,
 	tx dal.ReadwriteTransaction,
 	workerParams *dal4spaceus.ModuleSpaceWorkerParams[*dbo4logist.LogistSpaceDbo],
@@ -61,7 +61,7 @@ func setLogistSpaceSettingsTx(
 		return fmt.Errorf("loaded logistus team recod is not valid: %w", err)
 	}
 	var teamContact dal4contactus.ContactEntry
-	if teamContact, err = facade4contactus.GetContactByID(ctx, tx, logistSpace.ID, request.SpaceID); err != nil {
+	if teamContact, err = dal4contactus.GetContactByID(ctx, tx, logistSpace.ID, request.SpaceID); err != nil {
 		if !dal.IsNotFound(err) {
 			return fmt.Errorf("failed to get contact record: %w", err)
 		}
@@ -84,7 +84,7 @@ func setLogistSpaceSettingsTx(
 
 		contactusWorkerParams := &dal4spaceus.ModuleSpaceWorkerParams[*models4contactus.ContactusSpaceDbo]{
 			SpaceWorkerParams: workerParams.SpaceWorkerParams,
-			SpaceModuleEntry:  dal4contactus.NewContactusSpaceModuleEntry(request.SpaceID),
+			SpaceModuleEntry:  dal4contactus.NewContactusSpaceEntry(request.SpaceID),
 		}
 
 		if teamContact, err = facade4contactus.CreateContactTx(ctx, tx, false, createContactRequest, contactusWorkerParams); err != nil {

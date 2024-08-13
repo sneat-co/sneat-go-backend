@@ -3,9 +3,9 @@ package dbo4linkage
 import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/strongo/slice"
 	"github.com/strongo/strongoapp/with"
 	"github.com/strongo/validation"
+	"slices"
 	"strings"
 )
 
@@ -19,18 +19,18 @@ type WithRelatedAndIDs struct {
 
 	//	Example of related field as a JSON and relevant relatedIDs field:
 	/*
-	   ContactEntry(id="child1") {
+	   DebtusSpaceContactEntry(id="child1") {
 	   	relatedIDs: ["space1:parent1:contactus:contacts:parent"],
 	   	related: {
-	   		"space1": { // Space ID
-	   			"contactus": { // Module ID
+	   		"space1": { // Space ContactID
+	   			"contactus": { // Module ContactID
 	   				"contacts": { // Collection
-	   					"parent1": { // Item ID
+	   					"parent1": { // Item ContactID
 	   						relatedAs: {
-	   							"parent": {} // RelationshipRole ID
+	   							"parent": {} // RelationshipRole ContactID
 	   						}
 	   						relatesAs: {
-	   							"child": {} // RelationshipRole ID
+	   							"child": {} // RelationshipRole ContactID
 	   						},
 	   					},
 	   				}
@@ -50,7 +50,7 @@ func (v *WithRelatedIDs) Validate() error {
 	for i, relatedID := range v.RelatedIDs {
 		s := strings.TrimSpace(relatedID)
 		if s == "" {
-			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), "empty contact ID")
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), "empty contact ContactID")
 		}
 		if s != relatedID {
 			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), "has leading or trailing spaces")
@@ -61,7 +61,7 @@ func (v *WithRelatedIDs) Validate() error {
 
 func ValidateRelatedAndRelatedIDs(withRelated WithRelated, relatedIDs []string) error {
 	if err := withRelated.ValidateRelated(func(relatedID string) error {
-		if !slice.Contains(relatedIDs, relatedID) {
+		if !slices.Contains(relatedIDs, relatedID) {
 			return validation.NewErrBadRecordFieldValue("relatedIDs",
 				fmt.Sprintf(`does not have relevant value in 'relatedIDs' field: relatedID="%s"`, relatedID))
 		}
@@ -80,7 +80,7 @@ func ValidateRelatedAndRelatedIDs(withRelated WithRelated, relatedIDs []string) 
 	}
 	for i, relatedID := range relatedIDs[1:] { // The first item is always either "*" or "-"
 		if strings.TrimSpace(relatedID) == "" {
-			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), "empty contact ID")
+			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), "empty contact ContactID")
 		}
 		if strings.HasSuffix(relatedID, "."+AnyRelatedID) {
 			// TODO: Validate search index values
@@ -111,15 +111,15 @@ func ValidateRelatedAndRelatedIDs(withRelated WithRelated, relatedIDs []string) 
 
 			relatedByCollectionID := withRelated.Related[relatedRef.Module]
 			if relatedByCollectionID == nil {
-				return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), fmt.Sprintf("field 'related[%s]' does not have value for module ID=%s", relatedRef.Space, relatedRef.Module))
+				return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), fmt.Sprintf("field 'related[%s]' does not have value for module ContactID=%s", relatedRef.Space, relatedRef.Module))
 			}
 			relatedItems := relatedByCollectionID[relatedRef.Collection]
 			if relatedItems == nil {
-				return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), fmt.Sprintf("field 'related[%s][%s]' does not have value for collection ID=%s", relatedRef.Space, relatedRef.Module, relatedRef.Collection))
+				return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), fmt.Sprintf("field 'related[%s][%s]' does not have value for collection ContactID=%s", relatedRef.Space, relatedRef.Module, relatedRef.Collection))
 			}
 
 			if !HasRelatedItem(relatedItems, RelatedItemKey{SpaceID: relatedRef.Space, ItemID: relatedRef.ItemID}) {
-				return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), fmt.Sprintf("field 'related[%s][%s][%s]' does not have value for item ID=%s", relatedRef.Space, relatedRef.Module, relatedRef.Collection, relatedRef.ItemID))
+				return validation.NewErrBadRecordFieldValue(fmt.Sprintf("relatedIDs[%d]", i), fmt.Sprintf("field 'related[%s][%s][%s]' does not have value for item ContactID=%s", relatedRef.Space, relatedRef.Module, relatedRef.Collection, relatedRef.ItemID))
 			}
 		}
 	}
@@ -170,10 +170,10 @@ func UpdateRelatedIDs(withRelated *WithRelated, withRelatedIDs *WithRelatedIDs) 
 			spaceIDs := make([]string, 0, len(relatedItems))
 			for _, relatedItem := range relatedItems {
 				for _, k := range relatedItem.Keys {
-					if !slice.Contains(spaceIDs, k.SpaceID) {
+					if !slices.Contains(spaceIDs, k.SpaceID) {
 						spaceIDs = append(spaceIDs, k.SpaceID)
 						searchIndex = append(searchIndex, fmt.Sprintf("s=%s&m=%s&c=%s", k.SpaceID, moduleID, collectionID))
-						if spaceKey := fmt.Sprintf("s=%s", k.SpaceID); !slice.Contains(searchIndex, spaceKey) {
+						if spaceKey := fmt.Sprintf("s=%s", k.SpaceID); !slices.Contains(searchIndex, spaceKey) {
 							searchIndex = append(searchIndex, spaceKey)
 						}
 					}
@@ -245,10 +245,10 @@ var reciprocalRoles = []string{
 }
 
 func IsReciprocalRole(role RelationshipRoleID) bool {
-	return slice.Contains(reciprocalRoles, role)
+	return slices.Contains(reciprocalRoles, role)
 }
 
-// GetOppositeRole returns relationship ID for the opposite direction
+// GetOppositeRole returns relationship ContactID for the opposite direction
 func GetOppositeRole(relationshipRoleID RelationshipRoleID) RelationshipRoleID {
 	if relationshipRoleID == "" {
 		return ""

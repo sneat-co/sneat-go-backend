@@ -28,11 +28,11 @@ func (v *VoteItemRequest) Validate() error {
 }
 
 // VoteItem votes an item
-func VoteItem(ctx context.Context, userContext facade.User, request VoteItemRequest) error {
+func VoteItem(ctx context.Context, userCtx facade.UserContext, request VoteItemRequest) error {
 	if err := request.Validate(); err != nil {
 		return err
 	}
-	uid := userContext.GetID()
+	uid := userCtx.GetUserID()
 	err := runRetroWorker(ctx, uid, request.Request,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params facade4meetingus.WorkerParams) error {
 			retrospective := params.Meeting.Record.Data().(*dbo4retrospectus.Retrospective)

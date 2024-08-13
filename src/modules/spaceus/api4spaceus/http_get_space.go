@@ -1,7 +1,7 @@
 package api4spaceus
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/facade4spaceus"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/apicore/verify"
@@ -18,7 +18,7 @@ func httpGetSpace(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	var space dal4spaceus.SpaceEntry
+	var space dbo4spaceus.SpaceEntry
 	var response any
 	if space, err = facade4spaceus.GetSpace(ctx, userContext, id); err == nil {
 		response = space.Data

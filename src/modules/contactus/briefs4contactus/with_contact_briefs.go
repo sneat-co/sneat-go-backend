@@ -8,7 +8,7 @@ import (
 )
 
 // WithContactBriefs is a base struct for DTOs that have contacts
-// TODO: Document how it is different from WithContactsBase or merge them
+// Unlike the WithContactsBase it does not keep UserIDs []string.
 type WithContactBriefs[
 	T interface {
 		core.Validatable
@@ -75,4 +75,16 @@ func (v WithContactsBase[T]) GetContactBriefsByRoles(roles ...string) map[string
 		}
 	}
 	return result
+}
+
+func (v WithContactsBase[T]) GetContactsCount(roles ...string) (count int) {
+	for _, c := range v.Contacts {
+		for _, role := range roles {
+			if c.HasRole(role) {
+				count++
+				break
+			}
+		}
+	}
+	return count
 }

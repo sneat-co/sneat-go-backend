@@ -78,7 +78,7 @@ type SpaceItemWorkerParams[ModuleDbo SpaceModuleDbo, ItemDbo SpaceItemDbo] struc
 
 func RunSpaceItemWorker[ModuleDbo SpaceModuleDbo, ItemDbo SpaceItemDbo](
 	ctx context.Context,
-	user facade.User,
+	userCtx facade.UserContext,
 	request SpaceItemRequest,
 	moduleID string,
 	spaceModuleData ModuleDbo,
@@ -86,7 +86,7 @@ func RunSpaceItemWorker[ModuleDbo SpaceModuleDbo, ItemDbo SpaceItemDbo](
 	spaceItemDbo ItemDbo,
 	worker func(ctx context.Context, tx dal.ReadwriteTransaction, params *SpaceItemWorkerParams[ModuleDbo, ItemDbo]) (err error),
 ) (err error) {
-	return RunModuleSpaceWorker(ctx, user, request.SpaceRequest, moduleID, spaceModuleData,
+	return RunModuleSpaceWorker(ctx, userCtx, request.SpaceID, moduleID, spaceModuleData,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, moduleSpaceWorkerParams *ModuleSpaceWorkerParams[ModuleDbo]) (err error) {
 			teamItemKey := dal.NewKeyWithParentAndID(moduleSpaceWorkerParams.SpaceModuleEntry.Key, spaceItemCollection, request.ID)
 			params := SpaceItemWorkerParams[ModuleDbo, ItemDbo]{
@@ -109,7 +109,7 @@ func RunSpaceItemWorker[ModuleDbo SpaceModuleDbo, ItemDbo SpaceItemDbo](
 // DeleteSpaceItem deletes team item
 func DeleteSpaceItem[ModuleDbo SpaceModuleDbo, ItemDbo SpaceItemDbo](
 	ctx context.Context,
-	user facade.User,
+	userCtx facade.UserContext,
 	request SpaceItemRequest,
 	moduleID string,
 	moduleData ModuleDbo,
@@ -118,7 +118,7 @@ func DeleteSpaceItem[ModuleDbo SpaceModuleDbo, ItemDbo SpaceItemDbo](
 	briefsAdapter BriefsAdapter[ModuleDbo],
 	worker func(ctx context.Context, tx dal.ReadwriteTransaction, params *SpaceItemWorkerParams[ModuleDbo, ItemDbo]) (err error),
 ) (err error) {
-	return RunSpaceItemWorker(ctx, user, request, moduleID, moduleData, teamItemCollection, teamItemDbo,
+	return RunSpaceItemWorker(ctx, userCtx, request, moduleID, moduleData, teamItemCollection, teamItemDbo,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, teamItemWorkerParams *SpaceItemWorkerParams[ModuleDbo, ItemDbo]) (err error) {
 			return deleteSpaceItemTxWorker[ModuleDbo](ctx, tx, teamItemWorkerParams, briefsAdapter, worker)
 		},

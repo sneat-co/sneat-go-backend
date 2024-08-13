@@ -14,13 +14,13 @@ import (
 )
 
 // SetMetric sets metric
-func SetMetric(ctx context.Context, userContext facade.User, request SetMetricRequest) (response *SetMetricRequest, err error) {
+func SetMetric(ctx context.Context, userCtx facade.UserContext, request SetMetricRequest) (response *SetMetricRequest, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 
-	uid := userContext.GetID()
-	err = runScrumWorker(ctx, userContext, request.Request,
+	uid := userCtx.GetUserID()
+	err = runScrumWorker(ctx, userCtx, request.Request,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params facade4meetingus.WorkerParams) (err error) {
 			var teamMetric *dbo4spaceus.SpaceMetric
 			for _, m := range params.Space.Data.Metrics {

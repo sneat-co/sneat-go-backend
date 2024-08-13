@@ -24,7 +24,7 @@ func (v *RefuseToJoinSpaceRequest) Validate() error {
 }
 
 // RefuseToJoinSpace refuses to join team
-func RefuseToJoinSpace(_ context.Context, userContext facade.User, request RefuseToJoinSpaceRequest) (err error) {
+func RefuseToJoinSpace(_ context.Context, userCtx facade.UserContext, request RefuseToJoinSpaceRequest) (err error) {
 	err = request.Validate()
 	return
 }

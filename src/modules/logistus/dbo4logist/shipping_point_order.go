@@ -110,7 +110,7 @@ func (v OrderShippingPoint) Validate() error {
 
 // WithShippingPoints holds a list of OrderShippingPoint's
 // We do need the `ShippingPoints` field as it can not be fully deducted
-// from `Counterparties`, `Containers` & `Segments`.
+// from `Contacts`, `Containers` & `Segments`.
 type WithShippingPoints struct {
 	ShippingPoints []*OrderShippingPoint `json:"shippingPoints,omitempty" firestore:"shippingPoints,omitempty"`
 }
@@ -147,7 +147,7 @@ func (v *WithShippingPoints) validateShippingPoint(i int, shippingPoint *OrderSh
 	if shippingPoint.Location != nil && shippingPoint.Location.Address != nil {
 		_, contact := orderDto.GetContactByID(shippingPoint.Location.ContactID)
 		if contact == nil {
-			return validation.NewErrBadRecordFieldValue(field()+"location.contactID", "not found in order contacts by ID="+shippingPoint.Location.ContactID)
+			return validation.NewErrBadRecordFieldValue(field()+"location.contactID", "not found in order contacts by ContactID="+shippingPoint.Location.ContactID)
 		}
 		//if shippingPoint.Location.Address != nil && shippingPoint.Location.Address.CountryID != contact.CountryID {
 		//	return validation.NewErrBadRecordFieldValue(
@@ -224,7 +224,7 @@ func (v *WithShippingPoints) Validate() error {
 	return nil
 }
 
-// GetShippingPointByID returns an *OrderShippingPoint & index by ID.
+// GetShippingPointByID returns an *OrderShippingPoint & index by ContactID.
 func (v *WithShippingPoints) GetShippingPointByID(id string) (i int, shippingPoint *OrderShippingPoint) {
 	for i, shippingPoint = range v.ShippingPoints {
 		if shippingPoint.ID == id {
@@ -234,7 +234,7 @@ func (v *WithShippingPoints) GetShippingPointByID(id string) (i int, shippingPoi
 	return -1, nil
 }
 
-//// GetShippingPointByID returns an *OrderShippingPoint & index by ID.
+//// GetShippingPointByID returns an *OrderShippingPoint & index by ContactID.
 //func (v *WithShippingPoints) GetShippingPointstByCounterID(containerID string) (i int, shippingPoints []*OrderShippingPoint) {
 //	for i, shippingPoint := range v.ShippingPoints {
 //		if shippingPoint. == id {

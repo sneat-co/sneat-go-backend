@@ -2,12 +2,12 @@ package api4scrumus
 
 import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/api4meetingus"
-	"github.com/sneat-co/sneat-go-core/modules"
+	"github.com/sneat-co/sneat-go-core/module"
 	"net/http"
 )
 
 // RegisterHttpRoutes registers scrum routes
-func RegisterHttpRoutes(handle modules.HTTPHandleFunc) {
+func RegisterHttpRoutes(handle module.HTTPHandleFunc) {
 	handle(http.MethodGet, "/v0/scrum", httpGetScrum)
 	handle(http.MethodPost, "/v0/scrum/add_task", httpPostAddTask)
 	handle(http.MethodPost, "/v0/scrum/set_metric", httpPostSetMetric)

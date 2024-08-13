@@ -5,6 +5,7 @@ import (
 )
 
 type ContactusSpaceDbo struct {
+	TotalContactsCountByStatus map[string]int `json:"totalContactsCountByStatus,omitempty" firestore:"totalContactsCountByStatus,omitempty"`
 	briefs4contactus.WithSingleSpaceContactsWithoutContactIDs[*briefs4contactus.ContactBrief]
 }
 

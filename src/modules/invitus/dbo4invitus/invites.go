@@ -100,7 +100,7 @@ func (v InviteTo) Validate() error {
 	return nil
 }
 
-// InviteToMember an invitation to a member, member ID is validated
+// InviteToMember an invitation to a member, member ContactID is validated
 type InviteToMember struct {
 	InviteTo
 }
@@ -230,7 +230,7 @@ type InviteDbo struct {
 	Status    string               `json:"status" firestore:"status" `
 	Pin       string               `json:"pin,omitempty" firestore:"pin,omitempty"`
 	SpaceID   string               `json:"spaceID" firestore:"spaceID"`
-	MessageID string               `json:"messageId" firestore:"messageId"` // e.g. email message ID from AWS SES
+	MessageID string               `json:"messageId" firestore:"messageId"` // e.g. email message ContactID from AWS SES
 	CreatedAt time.Time            `json:"createdAt" firestore:"createdAt"`
 	Created   dbmodels.CreatedInfo `json:"created" firestore:"created"`
 	Claimed   *time.Time           `json:"claimed,omitempty" firestore:"claimed,omitempty"`

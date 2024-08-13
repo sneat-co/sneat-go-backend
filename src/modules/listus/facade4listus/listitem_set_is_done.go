@@ -11,13 +11,13 @@ import (
 )
 
 // SetListItemsIsDone marks list item as completed
-func SetListItemsIsDone(ctx context.Context, userContext facade.User, request ListItemsSetIsDoneRequest) (err error) {
+func SetListItemsIsDone(ctx context.Context, userCtx facade.UserContext, request ListItemsSetIsDoneRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
-	uid := userContext.GetID()
+	uid := userCtx.GetUserID()
 	if uid == "" {
-		return validation.NewErrRequestIsMissingRequiredField("userContext.ContactID()")
+		return validation.NewErrRequestIsMissingRequiredField("userCtx.ContactID()")
 	}
 	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		listID := request.ListID

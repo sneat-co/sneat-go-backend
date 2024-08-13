@@ -20,30 +20,30 @@ func NewAssetusSpaceWorkerParams(userID, spaceID string) *AssetusSpaceWorkerPara
 
 func RunReadonlyAssetusSpaceWorker(
 	ctx context.Context,
-	user facade.User,
+	userCtx facade.UserContext,
 	request dto4spaceus.SpaceRequest,
 	worker func(ctx context.Context, tx dal.ReadTransaction, params *AssetusSpaceWorkerParams) (err error),
 ) error {
-	return dal4spaceus.RunReadonlyModuleSpaceWorker(ctx, user, request, const4assetus.ModuleID, new(dbo4assetus.AssetusSpaceDbo), worker)
+	return dal4spaceus.RunReadonlyModuleSpaceWorker(ctx, userCtx, request, const4assetus.ModuleID, new(dbo4assetus.AssetusSpaceDbo), worker)
 }
 
 type AssetusModuleWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *AssetusSpaceWorkerParams) (err error)
 
 func RunAssetusSpaceWorker(
 	ctx context.Context,
-	user facade.User,
+	userCtx facade.UserContext,
 	request dto4spaceus.SpaceRequest,
 	worker AssetusModuleWorker,
 ) error {
-	return dal4spaceus.RunModuleSpaceWorker(ctx, user, request, const4contactus.ModuleID, new(dbo4assetus.AssetusSpaceDbo), worker)
+	return dal4spaceus.RunModuleSpaceWorker(ctx, userCtx, request.SpaceID, const4contactus.ModuleID, new(dbo4assetus.AssetusSpaceDbo), worker)
 }
 
 func RunAssetusSpaceWorkerTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	user facade.User,
+	userCtx facade.UserContext,
 	request dto4spaceus.SpaceRequest,
 	worker AssetusModuleWorker,
 ) error {
-	return dal4spaceus.RunModuleSpaceWorkerTx(ctx, tx, user, request, const4contactus.ModuleID, new(dbo4assetus.AssetusSpaceDbo), worker)
+	return dal4spaceus.RunModuleSpaceWorkerTx(ctx, tx, userCtx, request, const4contactus.ModuleID, new(dbo4assetus.AssetusSpaceDbo), worker)
 }
