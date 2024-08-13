@@ -22,7 +22,7 @@ toolchain go1.22.6
 
 require (
 	github.com/bots-go-framework/bots-api-telegram v0.4.4
-	github.com/bots-go-framework/bots-fw v0.26.1
+	github.com/bots-go-framework/bots-fw v0.26.2
 	github.com/bots-go-framework/bots-fw-store v0.4.0
 	github.com/bots-go-framework/bots-fw-telegram v0.8.10
 	github.com/bots-go-framework/bots-fw-telegram-models v0.1.6
@@ -44,8 +44,8 @@ require (
 	github.com/sendgrid/sendgrid-go v3.15.0+incompatible
 	github.com/shiyanhui/hero v0.0.2
 	github.com/sneat-co/debtstracker-translations v0.0.21
-	github.com/sneat-co/sneat-go-core v0.28.0
-	github.com/sneat-co/sneat-go-firebase v0.4.58
+	github.com/sneat-co/sneat-go-core v0.28.1
+	github.com/sneat-co/sneat-go-firebase v0.4.59
 	github.com/stretchr/testify v1.9.0
 	github.com/strongo/app-host-gae v0.1.28
 	github.com/strongo/decimal v0.1.1
@@ -113,9 +113,9 @@ require (
 	golang.org/x/text v0.17.0 // indirect
 	golang.org/x/time v0.6.0 // indirect
 	google.golang.org/api v0.191.0 // indirect
-	google.golang.org/genproto v0.0.0-20240808171019-573a1156607a // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20240808171019-573a1156607a // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240808171019-573a1156607a // indirect
+	google.golang.org/genproto v0.0.0-20240812133136-8ffd90a71988 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20240812133136-8ffd90a71988 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240812133136-8ffd90a71988 // indirect
 	google.golang.org/grpc v1.65.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
