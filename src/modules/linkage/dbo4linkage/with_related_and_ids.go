@@ -69,7 +69,10 @@ func ValidateRelatedAndRelatedIDs(withRelated WithRelated, relatedIDs []string) 
 	}); err != nil {
 		return err
 	}
-	if len(relatedIDs) == 0 {
+	if len(withRelated.Related) == 0 && len(relatedIDs) == 0 {
+		return nil
+	}
+	if len(withRelated.Related) > 0 && len(relatedIDs) == 0 {
 		return validation.NewErrRecordIsMissingRequiredField("relatedIDs")
 	}
 	if relatedIDs[0] != AnyRelatedID && relatedIDs[0] != NoRelatedID {
