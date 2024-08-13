@@ -21,10 +21,10 @@ toolchain go1.22.6
 //replace github.com/strongo/strongoapp => ../../strongo/strongoapp
 
 require (
-	github.com/bots-go-framework/bots-api-telegram v0.4.4
-	github.com/bots-go-framework/bots-fw v0.26.2
+	github.com/bots-go-framework/bots-api-telegram v0.4.5
+	github.com/bots-go-framework/bots-fw v0.26.3
 	github.com/bots-go-framework/bots-fw-store v0.4.0
-	github.com/bots-go-framework/bots-fw-telegram v0.8.10
+	github.com/bots-go-framework/bots-fw-telegram v0.8.12
 	github.com/bots-go-framework/bots-fw-telegram-models v0.1.6
 	github.com/bots-go-framework/bots-go-core v0.0.2
 	github.com/bots-go-framework/bots-host-gae v0.5.9

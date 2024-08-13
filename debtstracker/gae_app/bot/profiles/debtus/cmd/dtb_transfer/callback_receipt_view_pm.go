@@ -118,7 +118,7 @@ func ShowReceipt(whc botsfw.WebhookContext, receiptID string) (m botsfw.MessageF
 	}
 
 	logus.Debugf(c, "mt: %v", mt)
-	switch whc.InputType() {
+	switch inputType := whc.InputType(); inputType {
 	case botsfw.WebhookInputCallbackQuery:
 		if m, err = whc.NewEditMessage(mt, botsfw.MessageFormatHTML); err != nil {
 			return
@@ -133,11 +133,7 @@ func ShowReceipt(whc botsfw.WebhookContext, receiptID string) (m botsfw.MessageF
 			m.Keyboard = inlineKeyboard
 		}
 	default:
-		if inputType, ok := botsfw.WebhookInputTypeNames[whc.InputType()]; ok {
-			logus.Errorf(c, "Unknown input type: %d=%v", whc.InputType(), inputType)
-		} else {
-			logus.Errorf(c, "Unknown input type: %d", whc.InputType())
-		}
+		logus.Errorf(c, "Unknown input type: %s", botsfw.GetWebhookInputTypeIdNameString(inputType))
 	}
 
 	if _, err = whc.Responder().SendMessage(c, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
