@@ -1,5 +1,7 @@
-name: 'Serve sneat-go-backend'
-description: 'Starts a backend server for sneat.app'
+name: 'Serve sneat-go-backend' # Frontend uses this GitHub action for end-to-end testing
+
+description: 'Starts a backend server for end-to-end testing of sneat.app in CI-build pipeline'
+
 runs:
   using: "composite"
   steps:
@@ -12,17 +14,9 @@ runs:
         go-version: 1.21.4
         cache: true
         cache-dependency-path: "**/*.sum"
-#        cache-dependency-path: |
-#          /home/runner/work/_actions/sneat-co/sneat-go-backend/main/go.sum
 
 
     - name: Serve sneat-go-backend
       shell: bash
       working-directory: "${{ github.action_path }}"
       run: ./scripts/serve_gae.sh & sleep 30
-#      run: |
-#        go version
-#        pwd
-#        ls
-#        sh ./scripts/serve_gae.sh &
-#        sleep 30
