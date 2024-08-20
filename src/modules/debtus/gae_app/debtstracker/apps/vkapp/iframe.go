@@ -27,7 +27,7 @@ func IFrameHandler(w http.ResponseWriter, r *http.Request) {
 	//}
 	//query := r.URL.Query()
 	//apiID := query.Get("api_id")
-	//_, ok := vkbots.BotsBy.ByCode[apiID]
+	//_, ok := debtusvkbots.BotsBy.ByCode[apiID]
 	//if !ok {
 	//	w.WriteHeader(http.StatusBadRequest)
 	//	_, _ = w.Write([]byte("Unknown app id"))

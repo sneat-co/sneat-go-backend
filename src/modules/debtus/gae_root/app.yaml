@@ -1,5 +1,5 @@
 runtime: go120
-# application: debtus
+# application: debtusbot
 # api_version: go111
 
 #automatic_scaling:
@@ -48,8 +48,8 @@ handlers:
   expiration: "1h"
 
 - url: /img/logo.png
-  static_files: static/img/debtus-32x32.png
-  upload: static/img/debtus-32x32.png
+  static_files: static/img/debtusbot-32x32.png
+  upload: static/img/debtusbot-32x32.png
   expiration: "1d"
 
 - url: /img

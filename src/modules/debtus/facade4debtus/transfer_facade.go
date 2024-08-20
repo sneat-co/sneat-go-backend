@@ -123,7 +123,7 @@ func (transferFacade TransfersFacade) CreateTransfer(c context.Context, input Cr
 
 	creatorDebtusSpace := models4debtus.NewDebtusSpaceEntry(spaceID)
 	if err = db.Get(c, creatorDebtusSpace.Record); err != nil && !dal.IsNotFound(err) {
-		err = fmt.Errorf("faield to get debtus space entry: %w", err)
+		err = fmt.Errorf("faield to get debtusbot space entry: %w", err)
 		return
 	}
 

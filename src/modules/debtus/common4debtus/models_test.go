@@ -12,7 +12,7 @@ func TestGetCounterpartyUrl(t *testing.T) {
 	)
 	counterpartyUrl := GetCounterpartyUrl("123", "", i18n.LocaleRuRu, utm)
 
-	re := regexp.MustCompile(`^https://debtus\.io/counterparty\?id=\d+&lang=\w{2}$`)
+	re := regexp.MustCompile(`^https://debtusbot\.io/counterparty\?id=\d+&lang=\w{2}$`)
 	if !re.MatchString(counterpartyUrl) {
 		t.Errorf("Unexpected counterpart URL:\n%v", counterpartyUrl)
 	}

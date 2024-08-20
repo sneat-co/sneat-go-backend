@@ -5,8 +5,8 @@ import (
 	"crypto/md5"
 	"fmt"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot/platforms/tgbots"
+	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/debtusbotconst"
+	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/platforms/debtustgbots"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/strongo/i18n"
 	"github.com/strongo/logus"
@@ -40,7 +40,7 @@ func pageContext(r *http.Request, locale i18n.Locale) (translator i18n.SingleLoc
 	if env == strongoapp.UnknownEnv {
 		panic("Unknown host: " + r.Host)
 	}
-	botSettings, err := tgbots.GetBotSettingsByLang(env, bot.ProfileDebtus, locale.Code5)
+	botSettings, err := debtustgbots.GetBotSettingsByLang(env, debtusbotconst.DebtusBotProfileID, locale.Code5)
 	if err != nil {
 		panic(err)
 	}

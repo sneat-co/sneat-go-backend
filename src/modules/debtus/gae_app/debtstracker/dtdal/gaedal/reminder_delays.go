@@ -10,8 +10,8 @@ import (
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/core/queues"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
+	tgbots2 "github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/platforms/debtustgbots"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot/platforms/tgbots"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
@@ -215,7 +215,7 @@ func discardReminder(c context.Context, tx dal.ReadwriteTransaction, reminderID,
 			return nil
 		}
 		logus.Infof(c, "Will try to update a reminder message as it was already sent to user, reminder.MessageIntID: %v", reminder.Data.MessageIntID)
-		tgBotApi := tgbots.GetTelegramBotApiByBotCode(c, reminder.Data.BotID)
+		tgBotApi := tgbots2.GetTelegramBotApiByBotCode(c, reminder.Data.BotID)
 		if tgBotApi == nil {
 			return fmt.Errorf("not able to create API client as there no settings for telegram bot with id '%v'", reminder.Data.BotID)
 		}
@@ -228,7 +228,7 @@ func discardReminder(c context.Context, tx dal.ReadwriteTransaction, reminderID,
 			}
 			if user.Data.PreferredLocale != "" {
 				reminder.Data.Locale = user.Data.PreferredLocale
-			} else if s, ok := tgbots.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil)).ByCode[reminder.Data.BotID]; ok {
+			} else if s, ok := tgbots2.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil)).ByCode[reminder.Data.BotID]; ok {
 				reminder.Data.Locale = s.Locale.Code5
 			}
 		}

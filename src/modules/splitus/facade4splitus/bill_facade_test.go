@@ -1,8 +1,8 @@
 package facade4splitus
 
 import (
-	// "github.com/sneat-co/sneat-go-backend/debtus/gae_app/debtus/dtdal"
-	// "github.com/sneat-co/sneat-go-backend/debtus/gae_app/debtus/dtdal/dalmocks"
+	// "github.com/sneat-co/sneat-go-backend/debtusbot/gae_app/debtusbot/dtdal"
+	// "github.com/sneat-co/sneat-go-backend/debtusbot/gae_app/debtusbot/dtdal/dalmocks"
 	"fmt"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtmocks"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/briefs4splitus"

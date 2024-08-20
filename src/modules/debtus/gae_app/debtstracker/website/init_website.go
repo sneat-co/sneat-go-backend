@@ -16,7 +16,7 @@ import (
 	"net/http"
 	"strconv"
 
-	//"github.com/sneat-co/sneat-go-backend/debtus/gae_app/debtus/api4debtus"
+	//"github.com/sneat-co/sneat-go-backend/debtusbot/gae_app/debtusbot/api4debtus"
 	"github.com/julienschmidt/httprouter"
 )
 

@@ -5,13 +5,13 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	shared_all2 "github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot/profiles/shared_all"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot/profiles/shared_space"
+	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/shared_all"
+	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/shared_space"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/strongo/i18n"
 )
 
-var botParams = shared_all2.BotParams{
+var botParams = shared_all.BotParams{
 	StartInGroupAction: startInGroupAction,
 	StartInBotAction:   startInBotAction,
 	//GetGroupBillCardInlineKeyboard:   getGroupBillCardInlineKeyboard,
@@ -21,7 +21,7 @@ var botParams = shared_all2.BotParams{
 	//ShowGroupMembers:                 showGroupMembers,
 	InBotWelcomeMessage: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		var user dbo4userus.UserEntry
-		if user, err = shared_all2.GetUser(whc); err != nil {
+		if user, err = shared_all.GetUser(whc); err != nil {
 			return
 		}
 		m.Text = whc.Translate(
@@ -113,7 +113,7 @@ var Router = botsfw.NewWebhookRouter(
 )
 
 func init() {
-	shared_all2.AddSharedRoutes(Router, botParams)
+	shared_all.AddSharedRoutes(Router, botParams)
 }
 
 func getWhoPaidInlineKeyboard(translator i18n.SingleLocaleTranslator, billID string) *tgbotapi.InlineKeyboardMarkup {

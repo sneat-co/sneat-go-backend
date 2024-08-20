@@ -1,8 +1,8 @@
 package maintainance
 
 //import (
-//	"github.com/sneat-co/sneat-go-backend/debtus/gae_app/debtus/facade4debtus"
-//	"github.com/sneat-co/sneat-go-backend/debtus/gae_app/debtus/models"
+//	"github.com/sneat-co/sneat-go-backend/debtusbot/gae_app/debtusbot/facade4debtus"
+//	"github.com/sneat-co/sneat-go-backend/debtusbot/gae_app/debtusbot/models"
 //	"context"
 //	"github.com/captaincodeman/datastore-mapper"
 //	"github.com/dal-go/dalgo/dal"

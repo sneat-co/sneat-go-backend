@@ -70,11 +70,11 @@ func GetChooseCurrencyUrlForUser(userID string, locale i18n.Locale, createdOnPla
 func GetWebsiteHost(createdOnID string) string {
 	createdOnID = strings.ToLower(createdOnID)
 	if strings.Contains(createdOnID, "dev") {
-		return "debtus-dev1.appspot.com"
+		return "debtusbot-dev1.appspot.com"
 	} else if strings.Contains(createdOnID, ".local") {
-		return "debtus.local"
+		return "debtusbot.local"
 	} else {
-		return "debtus.io"
+		return "debtusbot.io"
 	}
 }
 

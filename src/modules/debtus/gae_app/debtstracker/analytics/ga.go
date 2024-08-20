@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	BASE_HOST = ".debtus.io"
+	BASE_HOST = ".debtusbot.io"
 )
 
 const (
@@ -58,7 +58,7 @@ func getGaCommon(r *http.Request, userID string, userLanguage, platform string) 
 		UserLanguage:  userLanguage,
 		UserAgent:     userAgent,
 		DataSource:    "backend",
-		ApplicationID: "io.debtus.gae",
+		ApplicationID: "io.debtusbot.gae",
 	}
 }
 

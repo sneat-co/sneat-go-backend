@@ -9,8 +9,8 @@ import (
 	"github.com/crediterra/money"
 	"github.com/sneat-co/sneat-go-backend/src/auth"
 	"github.com/sneat-co/sneat-go-backend/src/auth/facade4auth"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot/platforms/tgbots"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot/profiles/debtus/cmd/dtb_transfer"
+	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/platforms/debtustgbots"
+	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_transfer"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
@@ -110,7 +110,7 @@ func HandleTgHelperCurrencySelected(c context.Context, w http.ResponseWriter, r 
 
 // TODO: This is some serious architecture sheet. Too sleepy to make it right, just make it working.
 func sendToTelegram(c context.Context, user dbo4userus.UserEntry, botID string, tgChatID int64, tgChat botsfwtgmodels.TgChatData, userTask *sync.WaitGroup, r *http.Request) (err error) {
-	telegramBots := tgbots.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil))
+	telegramBots := debtustgbots.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil))
 	baseChatData := tgChat.BaseTgChatData()
 	botSettings, ok := telegramBots.ByCode[botID]
 	if !ok {

@@ -8,10 +8,10 @@ while true; do
     read -p "Where do you want to deploy? (dev|prod): " app
     case $app in
         dev )
-        	sed -i '' 's/^application: *[[:alpha:]]*-[[:alnum:]]*/application: debtus-dev1/' app.yaml
+        	sed -i '' 's/^application: *[[:alpha:]]*-[[:alnum:]]*/application: debtusbot-dev1/' app.yaml
         	break;;
         prod )
-        	sed -i '' 's/^application: *[[:alpha:]]*-[[:alnum:]]*/application: debtus-io/' app.yaml
+        	sed -i '' 's/^application: *[[:alpha:]]*-[[:alnum:]]*/application: debtusbot-io/' app.yaml
         	break;;
         * ) echo "Please answer 'dev' or 'prod'.";;
     esac
@@ -24,10 +24,10 @@ echo "Starting tests..."
 goapp test ../...
 if [ $? -ne 0 ]; then
     echo "Tests failed"
-	sed -i '' 's/^application: *[[:alpha:]]*-[[:alnum:]]*/application: debtus-local/' app.yaml
+	sed -i '' 's/^application: *[[:alpha:]]*-[[:alnum:]]*/application: debtusbot-local/' app.yaml
 	exit 1
 fi
 
 goapp deploy
-sed -i '' 's/^application: *[[:alpha:]]*-[[:alnum:]]*/application: debtus-local/' app.yaml
+sed -i '' 's/^application: *[[:alpha:]]*-[[:alnum:]]*/application: debtusbot-local/' app.yaml
 

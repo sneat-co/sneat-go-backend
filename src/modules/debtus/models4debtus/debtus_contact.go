@@ -86,7 +86,7 @@ func (v *WithCounterpartyFields) Validate() error {
 	return nil
 }
 
-// DebtusSpaceContactDbo is stored in a collection at path "/teams/{teamID}/modules/debtus/contacts/{contactID}".
+// DebtusSpaceContactDbo is stored in a collection at path "/teams/{teamID}/modules/debtusbot/contacts/{contactID}".
 type DebtusSpaceContactDbo struct {
 	with.CreatedFields
 	money.Balanced

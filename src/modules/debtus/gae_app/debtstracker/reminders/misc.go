@@ -42,7 +42,7 @@ func InviteFriend(w http.ResponseWriter, r *http.Request) {
 		appengine.NewContext(r),
 		fromName,
 		"Check this app",
-		"<p>See this phone app - <a href=https://debtus.io/#utm_medium=email&utm_campaign=invite-from-app>https://debtus.io/</a> - runs on iOS, Android & Windows Phone.</p>"+
+		"<p>See this phone app - <a href=https://debtusbot.io/#utm_medium=email&utm_campaign=invite-from-app>https://debtusbot.io/</a> - runs on iOS, Android & Windows Phone.</p>"+
 			"<p>--<br>Sent by "+fromName+" from DebtsTracker.IO app</p>"); err != nil {
 		fmt.Fprint(w, err)
 	} else {
@@ -57,7 +57,7 @@ func SendEmail(c context.Context, fromName, subject, html string) (err error) {
 	sgClient := sendgrid.NewSendClient("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")
 	// set http.Client to use the appengine client
 	sendgrid.DefaultClient.HTTPClient = dtdal.HttpClient(c) //Just perform this swap, and you are good to go.
-	from := mail.NewEmail(fromName, "hello@debtus.io")
+	from := mail.NewEmail(fromName, "hello@debtusbot.io")
 	to := mail.NewEmail("Example User", "test@example.com")
 	message := mail.NewSingleEmail(from, subject, to, "", html)
 	logus.Infof(c, "Sending from %v email message: %v", fromName, html)
@@ -83,7 +83,7 @@ func SendReceipt(c context.Context, w http.ResponseWriter, r *http.Request) {
 	amount := r.Form.Get("value")
 	currency := r.Form.Get("currency")
 	subject := "Receipt for friend's loan money transfer"
-	message := "<p>You've got " + amount + currency + " from " + fromName + "</p><p>--<br>Sent via <a href='https://debtus.io/#utm_source=app&utm_medium=email&utm_campaign=receipt&utm_content=footer'><b>DebtsTracker.IO</b></a> - available at <a href=https://itunes.apple.com/en/app/debttracker-pro/id303497125>Apple AppStore</a> & <a href=https://play.google.com/store/apps/details?id=com.stellar.debtsfree&hl=en>Google Play</a></p>"
+	message := "<p>You've got " + amount + currency + " from " + fromName + "</p><p>--<br>Sent via <a href='https://debtusbot.io/#utm_source=app&utm_medium=email&utm_campaign=receipt&utm_content=footer'><b>DebtsTracker.IO</b></a> - available at <a href=https://itunes.apple.com/en/app/debttracker-pro/id303497125>Apple AppStore</a> & <a href=https://play.google.com/store/apps/details?id=com.stellar.debtsfree&hl=en>Google Play</a></p>"
 	allowOrigin(w)
 	if err := SendEmail(c, fromName, subject, message); err != nil {
 		logus.Infof(c, "Failed to send email: %v", err)

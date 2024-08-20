@@ -9,9 +9,9 @@ import (
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/core/queues"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/platforms/debtustgbots"
+	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/dtb_common"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot/platforms/tgbots"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot/profiles/debtus/dtb_common"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/analytics"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
@@ -47,7 +47,7 @@ func sendReminderByTelegram(c context.Context, transfer models4debtus.TransferEn
 
 	env := dtdal.HttpAppHost.GetEnvironment(c, nil)
 
-	if botSettings, ok := tgbots.Bots(env).ByCode[tgBot]; !ok {
+	if botSettings, ok := debtustgbots.Bots(env).ByCode[tgBot]; !ok {
 		err = fmt.Errorf("bot settings not found (env=%v, tgBotID=%v)", env, tgBot)
 		return
 	} else {

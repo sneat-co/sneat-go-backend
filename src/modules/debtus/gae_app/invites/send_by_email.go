@@ -109,7 +109,7 @@ func SendReceiptByEmail(c context.Context, translator i18n.SingleLocaleTranslato
 	}
 
 	emailMessage := emails.Email{
-		From:    "receipt@debtus.app",
+		From:    "receipt@debtusbot.app",
 		To:      []string{toEmail},
 		Subject: subject,
 		Text:    bodyText,

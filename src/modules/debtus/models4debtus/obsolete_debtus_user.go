@@ -215,7 +215,7 @@ func (v *DebutsAppUserDataOBSOLETE) SetContacts(contacts []DebtusContactBrief) {
 //			if v, ok := p.Value.(string); ok && v != "" {
 //				entity.AddAccount(user.Account{
 //					Provider: "google",
-//					App:      "debtus",
+//					App:      "debtusbot",
 //					ContactID:       v,
 //				})
 //			}

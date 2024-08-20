@@ -12,7 +12,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-const TEMPLATES_PATH = "templates/" //"github.com/sneat-co/sneat-go-backend/debtus/gae_app/debtus/pages/templates/"
+const TEMPLATES_PATH = "templates/" //"github.com/sneat-co/sneat-go-backend/debtusbot/gae_app/debtusbot/pages/templates/"
 const BASE_TEMPLATE = TEMPLATES_PATH + "_base.html"
 
 var countryToLocale = map[string]string{

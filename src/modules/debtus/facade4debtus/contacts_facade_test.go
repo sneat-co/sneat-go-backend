@@ -1,7 +1,7 @@
 package facade4debtus
 
-//"github.com/sneat-co/sneat-go-backend/debtus/gae_app/debtus/dtdal"
-//"github.com/sneat-co/sneat-go-backend/debtus/gae_app/debtus/models"
+//"github.com/sneat-co/sneat-go-backend/debtusbot/gae_app/debtusbot/dtdal"
+//"github.com/sneat-co/sneat-go-backend/debtusbot/gae_app/debtusbot/models"
 //"context"
 //"testing"
 //"time"

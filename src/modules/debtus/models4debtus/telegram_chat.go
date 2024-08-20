@@ -11,7 +11,7 @@ type DebtusTelegramChat = record.DataWithID[string, *DebtusTelegramChatData]
 
 var _ botsfwtgmodels.TgChatData = (*DebtusTelegramChatData)(nil)
 
-// DebtusTelegramChatData is a data structure for storing debtus data related to specific telegram chat
+// DebtusTelegramChatData is a data structure for storing debtusbot data related to specific telegram chat
 type DebtusTelegramChatData struct {
 	botsfwtgmodels.TgChatBaseData
 	DebtusChatData

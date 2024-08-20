@@ -10,6 +10,8 @@ import (
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/bots/listusbot"
 	"github.com/sneat-co/sneat-go-backend/src/bots/sneatbot"
+	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/debtusbotconst"
+	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/platforms/debtustgbots"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/i18n"
 	"os"
@@ -66,6 +68,8 @@ func telegramBots(environment string) botsfw.SettingsBy {
 			switch profileID {
 			case sneatbot.ProfileID:
 				profile = sneatbot.GetProfile(errFooterText)
+			case debtusbotconst.DebtusBotProfileID:
+				profile = debtustgbots.GetDebtusBotProfile(errFooterText)
 			case listusbot.ProfileID:
 				profile = listusbot.GetProfile(errFooterText)
 			default:

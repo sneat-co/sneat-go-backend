@@ -10,7 +10,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot/platforms/tgbots"
+	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/platforms/debtustgbots"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/strongo/i18n"
 	"net/http"
@@ -75,16 +75,16 @@ func InitBots(httpRouter *httprouter.Router, botHost botsfw.BotHost, appContext 
 			},
 		),
 		//viber.NewViberWebhookHandler(
-		//	viberbots.Bots,
+		//	debtusviberbots.Bots,
 		//	newTranslator,
 		//),
 		//fbm.NewFbmWebhookHandler(
-		//	fbmbots.Bots,
+		//	debtusfbmbots.Bots,
 		//	newTranslator,
 		//),
 	)
 }
 
 func telegramBotsWithRouter(c context.Context) botsfw.SettingsBy {
-	return tgbots.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil))
+	return debtustgbots.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil))
 }

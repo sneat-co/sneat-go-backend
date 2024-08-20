@@ -8,10 +8,10 @@ import (
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/debtusbotconst"
+	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/platforms/debtustgbots"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus/dto4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot/platforms/tgbots"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/analytics"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
@@ -100,7 +100,7 @@ func HandleGetReceipt(c context.Context, w http.ResponseWriter, r *http.Request)
 			w.WriteHeader(http.StatusBadRequest)
 			logus.Warningf(c, "Unknown host")
 		}
-		botSettings, err := tgbots.GetBotSettingsByLang(env, bot.ProfileDebtus, lang)
+		botSettings, err := debtustgbots.GetBotSettingsByLang(env, debtusbotconst.DebtusBotProfileID, lang)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			logus.Errorf(c, fmt.Errorf("failed to get bot settings by lang: %w", err).Error())

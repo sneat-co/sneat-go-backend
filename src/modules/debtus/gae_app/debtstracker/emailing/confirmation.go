@@ -10,7 +10,7 @@ import (
 
 func CreateConfirmationEmailAndQueueForSending(c context.Context, user dbo4userus.UserEntry, userEmail models4auth.UserEmailEntry) error {
 	emailEntity := &models4auth.EmailData{
-		From:    "Alex @ DebtsTracker.io <alex@debtus.io>",
+		From:    "Alex @ DebtsTracker.io <alex@debtusbot.io>",
 		To:      userEmail.ID,
 		Subject: "Please confirm your account at DebtsTracker.io",
 		BodyText: fmt.Sprintf(`%v, we are thrilled to have you on board!
@@ -19,7 +19,7 @@ To keep your account secure please confirm your email by clicking this link:
 
   >> https://debtstracker.io/confirm?email=%v&pin=%v
 
-If you have any questions or issue please drop me an email to alex@debtus.io
+If you have any questions or issue please drop me an email to alex@debtusbot.io
 --
 Alex
 Creator of https://DebtsTracker.io

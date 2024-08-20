@@ -40,11 +40,11 @@ func NewLinkerFromWhc(whc botsfw.WebhookContext) Linker {
 func host(environment string) string {
 	switch environment {
 	case "prod":
-		return "debtus.io"
+		return "debtusbot.io"
 	case strongoapp.LocalHostEnv:
-		return "debtus.local"
+		return "debtusbot.local"
 	case "dev":
-		return "debtus-dev1.appspot.com"
+		return "debtusbot-dev1.appspot.com"
 	}
 	panic(fmt.Sprintf("Unknown environment: %v", environment))
 }

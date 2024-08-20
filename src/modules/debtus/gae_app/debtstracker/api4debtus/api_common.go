@@ -14,11 +14,11 @@ import (
 
 func GetEnvironment(r *http.Request) string {
 	switch r.Host {
-	case "debtus.io":
+	case "debtusbot.io":
 		return "prod"
-	case "debtus-dev1.appspot.com":
+	case "debtusbot-dev1.appspot.com":
 		return "dev"
-	case "debtus.local":
+	case "debtusbot.local":
 		return strongoapp.LocalHostEnv
 	case "localhost":
 		return strongoapp.LocalHostEnv

@@ -4,7 +4,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot"
+	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/debtussender"
 	"github.com/strongo/logus"
 	"net/url"
 )
@@ -29,7 +29,7 @@ var groupsCommand = botsfw.Command{
 		if isRefresh {
 			c := whc.Context()
 			logus.Debugf(c, "do == 'refresh'")
-			if m, err = bot.SendRefreshOrNothingChanged(whc, m); err != nil {
+			if m, err = debtussender.SendRefreshOrNothingChanged(whc, m); err != nil {
 				return
 			}
 		}

@@ -1,7 +1,7 @@
 package const4debtus
 
 const (
-	QueueDebtus    = "debtus"
+	QueueDebtus    = "debtusbot"
 	QueueTransfers = "transfers"
 	QueueReceipts  = "receipts"
 )

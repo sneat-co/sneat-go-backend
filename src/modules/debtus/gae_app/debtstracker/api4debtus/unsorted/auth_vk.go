@@ -5,17 +5,17 @@ import (
 	"net/http"
 
 	"context"
-	//"github.com/sneat-co/sneat-go-backend/debtus/gae_app/debtus/dtdal/gaedal"
+	//"github.com/sneat-co/sneat-go-backend/debtusbot/gae_app/debtusbot/dtdal/gaedal"
 	//"google.golang.org/appengine/v2/datastore"
 	//"errors"
-	//"github.com/sneat-co/sneat-go-backend/debtus/gae_app/debtus/auth"
+	//"github.com/sneat-co/sneat-go-backend/debtusbot/gae_app/debtusbot/auth"
 	//"strconv"
-	//"github.com/sneat-co/sneat-go-backend/debtus/gae_app/debtus/dtdal"
+	//"github.com/sneat-co/sneat-go-backend/debtusbot/gae_app/debtusbot/dtdal"
 	//"github.com/strongo/nds"
 	//"github.com/strongo/vk"
 	//"strings"
 	//"fmt"
-	//"github.com/sneat-co/sneat-go-backend/debtus/gae_app/debtus/models"
+	//"github.com/sneat-co/sneat-go-backend/debtusbot/gae_app/debtusbot/models"
 )
 
 //const VK_USER_ALEXT = 7631716

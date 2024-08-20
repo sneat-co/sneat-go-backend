@@ -59,7 +59,7 @@ func delayedUpdateBillTgChartCard(c context.Context, billID string, tgChatMessag
 			return err
 		}
 		err = fmt.Errorf("not implemented yet")
-		//telegramBots := tgbots.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil), nil)
+		//telegramBots := debtustgbots.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil), nil)
 		//botSettings, ok := telegramBots.ByCode[botCode]
 		//if !ok {
 		//	logus.Errorf(c, "No bot settings for bot: "+botCode)

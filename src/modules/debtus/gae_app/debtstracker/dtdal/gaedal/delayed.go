@@ -14,8 +14,8 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/auth/facade4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/const4debtus"
+	tgbots2 "github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/platforms/debtustgbots"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot/platforms/tgbots"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/general"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
@@ -285,7 +285,7 @@ func getTranslator(c context.Context, localeCode string) (translator i18n.Single
 
 func editTgMessageText(c context.Context, tgBotID string, tgChatID int64, tgMsgID int, text string) (err error) {
 	msg := tgbotapi.NewEditMessageText(tgChatID, tgMsgID, "", text)
-	telegramBots := tgbots.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil))
+	telegramBots := tgbots2.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil))
 	botSettings, ok := telegramBots.ByCode[tgBotID]
 	if !ok {
 		return fmt.Errorf("Bot settings not found by tgChat.BotID=%v, out of %v items", tgBotID, len(telegramBots.ByCode))
@@ -488,7 +488,7 @@ func sendReceiptToTelegramChat(c context.Context, receipt models4debtus.ReceiptE
 		Text:                  messageText,
 	}
 
-	tgBotApi := tgbots.GetTelegramBotApiByBotCode(c, tgChat.Key.Parent().ID.(string))
+	tgBotApi := tgbots2.GetTelegramBotApiByBotCode(c, tgChat.Key.Parent().ID.(string))
 
 	if _, err = tgBotApi.Send(tgMessage); err != nil {
 		return
