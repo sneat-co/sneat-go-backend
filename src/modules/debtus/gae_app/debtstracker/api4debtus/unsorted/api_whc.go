@@ -27,7 +27,7 @@ func (ApiWebhookContext) IsInGroup() bool {
 
 func NewApiWebhookContext(r *http.Request, appUser *dbo4userus.UserDbo, userID string, botChatID int64, chatData botsfwmodels.BotChatData) ApiWebhookContext {
 	var botSettings botsfw.BotSettings
-	botContext := botsfw.NewBotContext(dtdal.BotHost, botSettings)
+	botContext := botsfw.NewBotContext(dtdal.BotHost, &botSettings)
 	args := botsfw.NewCreateWebhookContextArgs(
 		r,
 		nil, /*shared.TheAppContext*/

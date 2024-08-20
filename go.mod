@@ -20,10 +20,10 @@ go 1.23.0
 //replace github.com/strongo/strongoapp => ../../strongo/strongoapp
 
 require (
-	github.com/bots-go-framework/bots-api-telegram v0.4.5
-	github.com/bots-go-framework/bots-fw v0.27.0
+	github.com/bots-go-framework/bots-api-telegram v0.4.6
+	github.com/bots-go-framework/bots-fw v0.28.0
 	github.com/bots-go-framework/bots-fw-store v0.4.0
-	github.com/bots-go-framework/bots-fw-telegram v0.8.14
+	github.com/bots-go-framework/bots-fw-telegram v0.8.16
 	github.com/bots-go-framework/bots-fw-telegram-models v0.1.8
 	github.com/bots-go-framework/bots-host-gae v0.5.9
 	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85

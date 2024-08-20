@@ -104,7 +104,7 @@ func InlineSendReceipt(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err 
 	//logus.Debugf(c, "Calling botApi.Send(inlineConfig=%v)", inlineConfig)
 	//
 	//botApi := &tgbotapi.BotAPI{
-	//	Token:  whc.GetBotToken(),
+	//	Token:  whc.GetBotSettings().Token,
 	//	Debug:  true,
 	//	Client: whc.GetHTTPClient(),
 	//}
