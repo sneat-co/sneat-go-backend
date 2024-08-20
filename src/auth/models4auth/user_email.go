@@ -16,9 +16,9 @@ type UserEmailDbo struct {
 	appuser.AccountDataBase
 	appuser.OwnedByUserWithID
 	person.NameFields
-	IsConfirmed        bool
-	PasswordBcryptHash []byte   `datastore:",noindex"`
-	Providers          []string `datastore:",noindex"` // E.g. facebook, vk, user
+	IsConfirmed        bool     `firestore:"isConfirmed"`
+	PasswordBcryptHash []byte   `firestore:"passwordBcryptHash"`
+	Providers          []string `firestore:"providers,omitempty"` // E.g. facebook, vk, user
 }
 
 type UserEmailEntry struct {

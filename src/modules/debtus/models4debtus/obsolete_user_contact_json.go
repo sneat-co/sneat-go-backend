@@ -13,8 +13,8 @@ import (
 )
 
 type LastTransfer struct {
-	ID string    `datastore:"LastTransferID,noindex"`
-	At time.Time `datastore:"LastTransferAt,noindex"`
+	ID string    `firestore:"LastTransferID,omitempty" json:"LastTransferID,omitempty"`
+	At time.Time `firestore:"LastTransferAt,omitempty" json:"LastTransferAt,omitempty"`
 }
 
 type TransferWithInterestJson struct {

@@ -174,7 +174,7 @@ type TransferData struct {
 	BillIDs []string
 
 	coremodels.SmsStats
-	// DirectionObsoleteProp string `datastore:"Direction,noindex,omitempty"`
+	// DirectionObsoleteProp string `firestore:"direction,omitempty"`
 
 	// We need it as it is not always possible to identify original transfer (think multiple & partial api4transfers)
 	IsReturn bool `datastore:",noindex,omitempty"`
@@ -212,8 +212,8 @@ type TransferData struct {
 	// CounterpartyAutoRemindersDisabled bool   `datastore:",noindex"`
 	// CounterpartyTgReceiptInlineMessageID string    `datastore:",noindex"` - not useful as we can edit message just once on callback
 
-	FromJson string `datastore:"C_From,noindex"`
-	ToJson   string `datastore:"C_To,noindex"`
+	FromJson string `firestore:"C_From,omitempty"`
+	ToJson   string `firestore:"C_To,omitempty"`
 
 	// ** New properties to replace Creator/DebtusSpaceContactEntry set of props **
 	// FromUserID           int64  `datastore:",noindex"`

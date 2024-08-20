@@ -58,21 +58,21 @@ type ReceiptDbo struct {
 	CounterpartySpaceID  string     `json:"counterpartySpaceID,omitempty" firestore:"counterpartySpaceID,omitempty"`
 	TransferID           string     `json:"transferID" firestore:"transferID"`
 	CreatorUserID        string     `json:"creatorUserID" firestore:"creatorUserID"` // IMPORTANT: Can be different from transfer.CreatorUserID (usually same). Think of 3d party bills
-	For                  ReceiptFor `json:"for" firestore:"for,noindex"`             // TODO: always fill. If receipt.CreatorUserID != transfer.CreatorUserID then receipt.For must be set to either "from" or "to"
-	ViewedByUserIDs      []string   `json:"viewedByUserIDs" firestore:"viewedByUserIDs"`
-	CounterpartyUserID   string     `json:"counterpartyUserID" firestore:"counterpartyUserID"`     // TODO: Is it always equal to AcknowledgedByUserID?
-	AcknowledgedByUserID string     `json:"acknowledgedByUserID" firestore:"acknowledgedByUserID"` // TODO: Is it always equal to CounterpartyUserID?
+	For                  ReceiptFor `json:"for" firestore:"for"`                     // TODO: always fill. If receipt.CreatorUserID != transfer.CreatorUserID then receipt.For must be set to either "from" or "to"
+	ViewedByUserIDs      []string   `json:"viewedByUserIDs,omitempty" firestore:"viewedByUserIDs,omitempty"`
+	CounterpartyUserID   string     `json:"counterpartyUserID" firestore:"counterpartyUserID"`                         // TODO: Is it always equal to AcknowledgedByUserID?
+	AcknowledgedByUserID string     `json:"acknowledgedByUserID,omitempty" firestore:"acknowledgedByUserID,omitempty"` // TODO: Is it always equal to CounterpartyUserID?
 	general.CreatedOn
-	TgInlineMsgID  string `datastore:",noindex"`
-	DtCreated      time.Time
-	DtSent         time.Time
-	DtFailed       time.Time
-	DtViewed       time.Time
-	DtAcknowledged time.Time
-	SentVia        string
-	SentTo         string
-	Lang           string `datastore:",noindex"`
-	Error          string `datastore:",noindex"` //TODO: Need a comment on when it is used
+	TgInlineMsgID  string    `firestore:"tgInlineMsgID,omitempty"`
+	DtCreated      time.Time `json:"dtCreated" firestore:"dtCreated"`
+	DtSent         time.Time `json:"dtSent,omitempty" firestore:"dtSent,omitempty"`
+	DtFailed       time.Time `json:"dtFailed,omitempty" firestore:"dtFailed,omitempty"`
+	DtViewed       time.Time `json:"dtViewed,omitempty" firestore:"dtViewed,omitempty"`
+	DtAcknowledged time.Time `json:"dtAcknowledged,omitempty" firestore:"dtAcknowledged,omitempty"`
+	SentVia        string    `json:"sentVia,omitempty" firestore:"sentVia,omitempty"`
+	SentTo         string    `json:"sentTo,omitempty" firestore:"sentTo,omitempty"`
+	Lang           string    `json:"lang" firestore:"lang"`
+	Error          string    `json:"error" firestore:"error,omitempty"` //TODO: Need a comment on when it is used
 }
 
 func NewReceiptIncompleteKey() *dal.Key {

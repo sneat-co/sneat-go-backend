@@ -74,7 +74,7 @@ type DebutsAppUserDataOBSOLETE struct { // TODO: Remove obsolete struct
 	appuser.BaseUserFields
 	UserRewardBalance
 
-	SavedCounter int `datastore:"A" firestore:"A"` // Indexing to find most active users
+	SavedCounter int `firestore:"A"` // Indexing to find most active users
 
 	IsAnonymous        bool   `datastore:",noindex"`
 	PasswordBcryptHash []byte `datastore:",noindex"` // TODO: Obsolete
@@ -98,7 +98,7 @@ type DebutsAppUserDataOBSOLETE struct { // TODO: Remove obsolete struct
 	//FbmUserID          string `datastore:",noindex,omitempty"` // TODO: Obsolete So we would want to keep both IDs?
 	// TODO: How do we support multiple FBM bots? They will have different PSID (PageScopeID)
 
-	OBSOLETE_CounterpartyIDs []int64 `datastore:"CounterpartyIDs,noindex,omitempty"` // TODO: Remove obsolete
+	OBSOLETE_CounterpartyIDs []int64 `firestore:"counterpartyIDs,omitempty"` // TODO: Remove obsolete
 
 	ContactsCount int    `datastore:",noindex,omitempty"` // TODO: Obsolete
 	ContactsJson  string `datastore:",noindex,omitempty"` // TODO: Obsolete

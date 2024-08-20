@@ -95,7 +95,7 @@ type DebtusSpaceContactDbo struct {
 	//
 	Status DebtusContactStatus
 	dto4contactus.ContactDetails
-	Transfers *UserContactTransfersInfo `firestore:"transfers,noindex"`
+	Transfers *UserContactTransfersInfo `firestore:"transfers,omitempty"`
 	coremodels.SmsStats
 	//
 	//TelegramChatID int
@@ -103,9 +103,9 @@ type DebtusSpaceContactDbo struct {
 	// Decided against as we do not need it really and would require either 2 Put() instead of 1 PutMulti()
 	//LastTransferID int  `datastore:",noindex"`
 
-	SearchName          []string `datastore:",noindex"` // Deprecated
-	NoTransferUpdatesBy []string `datastore:",noindex"`
-	SpaceIDs            []string `firestore:"spaceIDs,noindex"`
+	SearchName          []string `firestore:"searchName,omitempty"` // Deprecated
+	NoTransferUpdatesBy []string `firestore:"noTransferUpdatesBy,omitempty"`
+	SpaceIDs            []string `firestore:"spaceIDs,omitempty"`
 }
 
 func (dbo *DebtusSpaceContactDbo) String() string {

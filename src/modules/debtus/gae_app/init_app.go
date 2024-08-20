@@ -81,9 +81,9 @@ func InitTaskQueueHandlers(router *httprouter.Router) {
 }
 
 type TestTransferCounterparty struct {
-	UserID   int64  `datastore:",noindex"`
-	UserName string `datastore:",noindex"`
-	Comment  string `datastore:",noindex"`
+	UserID   int64  `firestore:"userID"`
+	UserName string `firestore:"userName"`
+	Comment  string `firestore:"comment"`
 }
 
 type TestTransfer struct {

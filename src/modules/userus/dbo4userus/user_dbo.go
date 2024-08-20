@@ -48,9 +48,9 @@ type UserDbo struct {
 
 	dbo4linkage.WithRelatedAndIDs
 
-	InvitedByUserID string `datastore:",omitempty"` // TODO: Prevent circular references! see users 6032980589936640 & 5998019824582656
+	InvitedByUserID string `firestore:"invitedByUserID,omitempty" ` // TODO: Prevent circular references! see users 6032980589936640 & 5998019824582656
 
-	IsAnonymous bool `json:"isAnonymous" firestore:"isAnonymous"`
+	IsAnonymous bool `json:"isAnonymous" firestore:"isAnonymous"` // Intentionally do not omitempty
 	//Title string `json:"title,omitempty" firestore:"title,omitempty"`
 
 	Timezone *dbmodels.Timezone `json:"timezone,omitempty" firestore:"timezone,omitempty"`

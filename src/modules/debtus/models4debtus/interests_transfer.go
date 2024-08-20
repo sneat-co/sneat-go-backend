@@ -11,11 +11,11 @@ import (
 )
 
 type TransferInterest struct {
-	InterestType          interest.Formula          `json:"interestType" firestore:"interestType,noindex,omitempty"`
-	InterestPeriod        interest.RatePeriodInDays `json:"interestPeriod" firestore:"interestPeriod,noindex,omitempty"`
-	InterestPercent       decimal.Decimal64p2       `json:"interestPercent" firestore:"interestPercent,noindex,omitempty"`
-	InterestGracePeriod   int                       `json:"interestGracePeriod,omitempty" firestore:"interestGracePeriod,noindex,omitempty"`     // How many days are without any interest
-	InterestMinimumPeriod int                       `json:"interestMinimumPeriod,omitempty" firestore:"interestMinimumPeriod,noindex,omitempty"` // Minimum days for interest (e.g. penalty for earlier return).
+	InterestType          interest.Formula          `json:"interestType" firestore:"interestType,omitempty"`
+	InterestPeriod        interest.RatePeriodInDays `json:"interestPeriod" firestore:"interestPeriod,omitempty"`
+	InterestPercent       decimal.Decimal64p2       `json:"interestPercent" firestore:"interestPercent,omitempty"`
+	InterestGracePeriod   int                       `json:"interestGracePeriod,omitempty" firestore:"interestGracePeriod,omitempty"`     // How many days are without any interest
+	InterestMinimumPeriod int                       `json:"interestMinimumPeriod,omitempty" firestore:"interestMinimumPeriod,omitempty"` // Minimum days for interest (e.g. penalty for earlier return).
 	// InterestAmountInCents decimal.Decimal64p2 `datastore:",noindex" json:",omitempty"`
 }
 

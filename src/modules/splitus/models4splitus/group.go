@@ -46,12 +46,14 @@ func NewGroupKey(id string) *dal.Key {
 type GroupDbo struct {
 	CreatorUserID string
 	//IsUser2User         bool   `datastore:",noindex"`
-	Name                string             `datastore:",noindex"`
-	Note                string             `datastore:",noindex,omitempty"`
-	DefaultCurrency     money.CurrencyCode `datastore:",noindex,omitempty"`
+	Name            string             `firestore:"name"`
+	Note            string             `firestore:"note,omitempty"`
+	DefaultCurrency money.CurrencyCode `firestore:"defaultCurrency,omitempty"`
+	//
 	telegramGroups      []briefs4splitus.GroupTgChatJson
-	TelegramGroupsCount int    `datastore:"TgGroupsCount,noindex,omitempty"`
-	TelegramGroupsJson  string `datastore:"TgGroupsJson,noindex,omitempty"`
+	TelegramGroupsCount int    `firestore:"TgGroupsCount,omitempty"`
+	TelegramGroupsJson  string `firestore:"TgGroupsJson,omitempty"`
+	//
 	BillsHolder
 }
 

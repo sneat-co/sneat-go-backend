@@ -5,8 +5,8 @@ import (
 )
 
 type SmsStats struct {
-	SmsCount int64   `firestore:"smsCount,omitempty" datastore:"smsCount,noindex,omitempty"`
-	SmsCost  float64 `firestore:"smsCost,omitempty" datastore:"smsCost,noindex,omitempty"`
+	SmsCount int64   `firestore:"smsCount,omitempty" json:"smsCount,omitempty"`
+	SmsCost  float64 `firestore:"smsCost,omitempty" json:"smsCost,omitempty"`
 }
 
 func (v *SmsStats) Validate() error {

@@ -46,9 +46,9 @@ type BillsHistoryDbo struct {
 	TotalAmountAfter     decimal.Decimal64p2 `datastore:",noindex"`
 	GroupIDs             []string
 	BillIDs              []string
-	BillsSettlementCount int                               `firestore:",noindex"`
-	BillsSettlementJson  string                            `firestore:",noindex"`
-	SplitMembersBefore   []briefs4splitus.SpaceSplitMember `firestore:",noindex"`
+	BillsSettlementCount int                               `firestore:"billsSettlementCount,omitempty"`
+	BillsSettlementJson  string                            `firestore:"billsSettlementJson,omitempty"`
+	SplitMembersBefore   []briefs4splitus.SpaceSplitMember `firestore:"splitMembersBefore,omitempty"`
 	SplitMembersAfter    []briefs4splitus.SpaceSplitMember `firestore:"members,omitempty"`
 }
 

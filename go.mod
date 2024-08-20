@@ -42,7 +42,7 @@ require (
 	github.com/sendgrid/sendgrid-go v3.15.0+incompatible
 	github.com/shiyanhui/hero v0.0.2
 	github.com/sneat-co/debtstracker-translations v0.0.22
-	github.com/sneat-co/sneat-go-core v0.31.1
+	github.com/sneat-co/sneat-go-core v0.31.2
 	github.com/sneat-co/sneat-go-firebase v0.5.1
 	github.com/stretchr/testify v1.9.0
 	github.com/strongo/app-host-gae v0.1.30

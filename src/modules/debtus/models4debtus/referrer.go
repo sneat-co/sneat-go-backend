@@ -10,8 +10,8 @@ const RefererKind = "Referer"
 type Referer = record.DataWithID[string, *RefererDbo]
 
 type RefererDbo struct {
-	Platform   string    `datastore:"p"`
-	ReferredTo string    `datastore:"to"`
-	ReferredBy string    `datastore:"by"`
-	DtCreated  time.Time `datastore:"t"`
+	Platform   string    `firestore:"p"`
+	ReferredTo string    `firestore:"to"`
+	ReferredBy string    `firestore:"by"`
+	DtCreated  time.Time `firestore:"t"`
 }

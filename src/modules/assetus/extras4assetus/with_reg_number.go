@@ -6,7 +6,7 @@ import (
 )
 
 type WithOptionalRegNumberField struct {
-	RegNumber string `json:"regNumber,omitempty" firestore:"regNumber,omitempty" datastore:"regNumber,omitempty" dalgo:"regNumber,omitempty"`
+	RegNumber string `json:"regNumber,omitempty" firestore:"regNumber,omitempty" dalgo:"regNumber,omitempty"`
 }
 
 // Validate validates WitRegNumberField
