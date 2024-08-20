@@ -11,7 +11,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/auth/models4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot/platforms/tgbots"
+	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot/platforms/tgbots/tgsharedcommands"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -42,7 +42,7 @@ func createStartCommand(botParams BotParams) botsfw.Command {
 			text := whc.Input().(botsfw.WebhookTextMessage).Text()
 			logus.Debugf(c, "createStartCommand.Action() => text: "+text)
 
-			startParam, startParams := tgbots.ParseStartCommand(whc)
+			startParam, startParams := tgsharedcommands.ParseStartCommand(whc)
 
 			if whc.IsInGroup() {
 				return botParams.StartInGroupAction(whc)

@@ -47,7 +47,7 @@ func sendReminderByTelegram(c context.Context, transfer models4debtus.TransferEn
 
 	env := dtdal.HttpAppHost.GetEnvironment(c, nil)
 
-	if botSettings, ok := tgbots.Bots(env, nil).ByCode[tgBot]; !ok {
+	if botSettings, ok := tgbots.Bots(env).ByCode[tgBot]; !ok {
 		err = fmt.Errorf("bot settings not found (env=%v, tgBotID=%v)", env, tgBot)
 		return
 	} else {

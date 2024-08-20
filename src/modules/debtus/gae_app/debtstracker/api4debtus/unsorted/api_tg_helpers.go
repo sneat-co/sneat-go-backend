@@ -109,7 +109,7 @@ func HandleTgHelperCurrencySelected(c context.Context, w http.ResponseWriter, r 
 
 // TODO: This is some serious architecture sheet. Too sleepy to make it right, just make it working.
 func sendToTelegram(c context.Context, user dbo4userus.UserEntry, tgChatID int64, tgChat botsfwtgmodels.TgChatData, userTask *sync.WaitGroup, r *http.Request) (err error) {
-	telegramBots := tgbots.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil), nil)
+	telegramBots := tgbots.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil))
 	baseChatData := tgChat.BaseTgChatData()
 	botID := baseChatData.BotID
 	botSettings, ok := telegramBots.ByCode[botID]

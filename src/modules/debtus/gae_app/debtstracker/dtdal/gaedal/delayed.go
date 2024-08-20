@@ -285,7 +285,7 @@ func getTranslator(c context.Context, localeCode string) (translator i18n.Single
 
 func editTgMessageText(c context.Context, tgBotID string, tgChatID int64, tgMsgID int, text string) (err error) {
 	msg := tgbotapi.NewEditMessageText(tgChatID, tgMsgID, "", text)
-	telegramBots := tgbots.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil), nil)
+	telegramBots := tgbots.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil))
 	botSettings, ok := telegramBots.ByCode[tgBotID]
 	if !ok {
 		return fmt.Errorf("Bot settings not found by tgChat.BotID=%v, out of %v items", tgBotID, len(telegramBots.ByCode))

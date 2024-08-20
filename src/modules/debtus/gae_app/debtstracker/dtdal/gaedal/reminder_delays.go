@@ -228,7 +228,7 @@ func discardReminder(c context.Context, tx dal.ReadwriteTransaction, reminderID,
 			}
 			if user.Data.PreferredLocale != "" {
 				reminder.Data.Locale = user.Data.PreferredLocale
-			} else if s, ok := tgbots.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil), nil).ByCode[reminder.Data.BotID]; ok {
+			} else if s, ok := tgbots.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil)).ByCode[reminder.Data.BotID]; ok {
 				reminder.Data.Locale = s.Locale.Code5
 			}
 		}

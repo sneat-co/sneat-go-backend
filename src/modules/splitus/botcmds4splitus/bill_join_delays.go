@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot/platforms/tgbots"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/const4splitus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/facade4splitus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/models4splitus"
@@ -43,9 +41,10 @@ func delayedUpdateBillCards(c context.Context, billID string, footer string) err
 	return nil
 }
 
-func delayedUpdateBillTgChartCard(c context.Context, billID string, tgChatMessageID, footer string) error {
+func delayedUpdateBillTgChartCard(c context.Context, billID string, tgChatMessageID, footer string) (err error) {
 	logus.Debugf(c, "delayedUpdateBillTgChartCard(billID=%s, tgChatMessageID=%v)", billID, tgChatMessageID)
-	if bill, err := facade4splitus.GetBillByID(c, nil, billID); err != nil {
+	var bill models4splitus.BillEntry
+	if bill, err = facade4splitus.GetBillByID(c, nil, billID); err != nil {
 		return err
 	} else {
 		ids := strings.Split(tgChatMessageID, "@")
@@ -56,24 +55,24 @@ func delayedUpdateBillTgChartCard(c context.Context, billID string, tgChatMessag
 		editMessage.ParseMode = "HTML"
 		editMessage.DisableWebPagePreview = true
 
-		if err := updateInlineBillCardMessage(c, translator, true, editMessage, bill, botCode, footer); err != nil {
+		if err = updateInlineBillCardMessage(c, translator, true, editMessage, bill, botCode, footer); err != nil {
 			return err
-		} else {
-			telegramBots := tgbots.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil), nil)
-			botSettings, ok := telegramBots.ByCode[botCode]
-			if !ok {
-				logus.Errorf(c, "No bot settings for bot: "+botCode)
-				return nil
-			}
-
-			tgApi := tgbotapi.NewBotAPIWithClient(botSettings.Token, dtdal.HttpClient(c))
-			if _, err := tgApi.Send(editMessage); err != nil {
-				logus.Errorf(c, "Failed to sent message to Telegram: %v", err)
-				return err
-			}
 		}
+		err = fmt.Errorf("not implemented yet")
+		//telegramBots := tgbots.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil), nil)
+		//botSettings, ok := telegramBots.ByCode[botCode]
+		//if !ok {
+		//	logus.Errorf(c, "No bot settings for bot: "+botCode)
+		//	return nil
+		//}
+		//
+		//tgApi := tgbotapi.NewBotAPIWithClient(botSettings.Token, dtdal.HttpClient(c))
+		//if _, err := tgApi.Send(editMessage); err != nil {
+		//	logus.Errorf(c, "Failed to sent message to Telegram: %v", err)
+		//	return err
+		//}
+		return err
 	}
-	return nil
 }
 
 func updateInlineBillCardMessage(c context.Context, translator i18n.SingleLocaleTranslator, isGroupChat bool, editedMessage *tgbotapi.EditMessageTextConfig, bill models4splitus.BillEntry, botCode string, footer string) (err error) {

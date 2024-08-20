@@ -9,15 +9,19 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot/profiles/collectus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot/profiles/debtus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/botcmds4splitus"
 	"github.com/strongo/i18n"
 	"github.com/strongo/strongoapp"
+	"slices"
 )
 
 var _bots botsfw.SettingsBy
 
 const DefaultLocale = i18n.LocaleCodeEnUS
 
-var DebtusBotToken = ""
+//var DebtusBotToken = ""
 
 func newTelegramBot(
 	mode string,
@@ -28,7 +32,7 @@ func newTelegramBot(
 	return telegram.NewTelegramBot(mode, botProfile, code, "", "", "", gaToken, i18n.LocaleEnUS, nil, nil)
 }
 
-func Bots(environment string, router func(profile string) botsfw.WebhooksRouter) botsfw.SettingsBy { //TODO: Consider to do pre-deployment replace
+func Bots(environment string) botsfw.SettingsBy { //TODO: Consider to do pre-deployment replace
 	newBotChatData := func() botsfwmodels.BotChatData {
 		return nil
 	}
@@ -52,9 +56,9 @@ func Bots(environment string, router func(profile string) botsfw.WebhooksRouter)
 		return appUser, nil
 	}
 
-	debtusBotProfile := botsfw.NewBotProfile("debtus", nil, newBotChatData, newBotUserData, newAppUserData, getAppUserByID, i18n.LocaleEnUS, nil)
-	splitusBotProfile := botsfw.NewBotProfile("splitus", nil, newBotChatData, newBotUserData, newAppUserData, getAppUserByID, i18n.LocaleEnUS, nil)
-	collectusBotProfile := botsfw.NewBotProfile("collectus", nil, newBotChatData, newBotUserData, newAppUserData, getAppUserByID, i18n.LocaleEnUS, nil)
+	debtusBotProfile := botsfw.NewBotProfile("debtus", &debtus.Router, newBotChatData, newBotUserData, newAppUserData, getAppUserByID, i18n.LocaleEnUS, nil)
+	splitusBotProfile := botsfw.NewBotProfile("splitus", &botcmds4splitus.Router, newBotChatData, newBotUserData, newAppUserData, getAppUserByID, i18n.LocaleEnUS, nil)
+	collectusBotProfile := botsfw.NewBotProfile("collectus", &collectus.Router, newBotChatData, newBotUserData, newAppUserData, getAppUserByID, i18n.LocaleEnUS, nil)
 
 	const prod = "prod"
 
@@ -63,17 +67,18 @@ func Bots(environment string, router func(profile string) botsfw.WebhooksRouter)
 		switch environment {
 		case prod:
 			_bots = botsfw.NewBotSettingsBy( // Production bots
-				newTelegramBot(prod, debtusBotProfile, "DebtsTrackerBot", common4debtus.GA_TRACKING_ID, i18n.LocaleEnUS),
+				newTelegramBot(prod, debtusBotProfile, "DebtusBot", common4debtus.GA_TRACKING_ID, i18n.LocaleEnUS),
 				newTelegramBot(prod, splitusBotProfile, "SplitusBot", common4debtus.GA_TRACKING_ID, i18n.LocaleEnUS),
 				newTelegramBot(prod, collectusBotProfile, "CollectusBot", common4debtus.GA_TRACKING_ID, i18n.LocaleEnUS),
-				newTelegramBot(prod, debtusBotProfile, "DebtsTrackerRuBot", common4debtus.GA_TRACKING_ID, i18n.LocaleRuRu),
-				newTelegramBot(prod, debtusBotProfile, "DebtsTrackerFaBot", common4debtus.GA_TRACKING_ID, i18n.LocalesByCode5[i18n.LocaleCodeFaIR]),
-				newTelegramBot(prod, debtusBotProfile, "DebtsTrackerItBot", common4debtus.GA_TRACKING_ID, i18n.LocaleItIt),
-				newTelegramBot(prod, debtusBotProfile, "DebtsTrackerFrBot", common4debtus.GA_TRACKING_ID, i18n.LocaleFrFr),
-				newTelegramBot(prod, debtusBotProfile, "DebtsTrackerDeBot", common4debtus.GA_TRACKING_ID, i18n.LocaleDeDe),
-				newTelegramBot(prod, debtusBotProfile, "DebtsTrackerPLbot", common4debtus.GA_TRACKING_ID, i18n.LocalePlPl),
-				newTelegramBot(prod, debtusBotProfile, "DebtsTrackerPtBot", common4debtus.GA_TRACKING_ID, i18n.LocalePtBr),
-				newTelegramBot(prod, debtusBotProfile, "DebtsTrackerEsBot", common4debtus.GA_TRACKING_ID, i18n.LocalePtBr),
+				//newTelegramBot(prod, debtusBotProfile, "DebtsTrackerBot", common4debtus.GA_TRACKING_ID, i18n.LocaleEnUS),
+				//newTelegramBot(prod, debtusBotProfile, "DebtsTrackerRuBot", common4debtus.GA_TRACKING_ID, i18n.LocaleRuRu),
+				//newTelegramBot(prod, debtusBotProfile, "DebtsTrackerFaBot", common4debtus.GA_TRACKING_ID, i18n.LocalesByCode5[i18n.LocaleCodeFaIR]),
+				//newTelegramBot(prod, debtusBotProfile, "DebtsTrackerItBot", common4debtus.GA_TRACKING_ID, i18n.LocaleItIt),
+				//newTelegramBot(prod, debtusBotProfile, "DebtsTrackerFrBot", common4debtus.GA_TRACKING_ID, i18n.LocaleFrFr),
+				//newTelegramBot(prod, debtusBotProfile, "DebtsTrackerDeBot", common4debtus.GA_TRACKING_ID, i18n.LocaleDeDe),
+				//newTelegramBot(prod, debtusBotProfile, "DebtsTrackerPLbot", common4debtus.GA_TRACKING_ID, i18n.LocalePlPl),
+				//newTelegramBot(prod, debtusBotProfile, "DebtsTrackerPtBot", common4debtus.GA_TRACKING_ID, i18n.LocalePtBr),
+				//newTelegramBot(prod, debtusBotProfile, "DebtsTrackerEsBot", common4debtus.GA_TRACKING_ID, i18n.LocalePtBr),
 			)
 		case "dev":
 			_bots = botsfw.NewBotSettingsBy( // Development bots
@@ -100,17 +105,30 @@ func Bots(environment string, router func(profile string) botsfw.WebhooksRouter)
 	return _bots
 }
 
-func GetBotSettingsByLang(environment string, profile, lang string) (botsfw.BotSettings, error) {
-	botSettingsBy := Bots(environment, nil)
-	for _, bs := range botSettingsBy.ByCode {
-		if bs.Profile.ID() == profile && bs.Locale.Code5 == lang {
-			return *bs, nil
+func GetBotSettingsByLang(environment string, profile, lang string) (botSettings *botsfw.BotSettings, err error) {
+	botSettingsBy := Bots(environment)
+	if profileBots, ok := botSettingsBy.ByProfile[profile]; !ok {
+		err = fmt.Errorf("no bot settings for profileID=%s", profile)
+		return
+	} else {
+		locales := make([]string, 0, len(profileBots))
+		getBotSettingsByLocale := func(locale string) *botsfw.BotSettings {
+			for _, bs := range profileBots {
+				if bs.Locale.Code5 == lang {
+					return bs
+				}
+				if slices.Contains(locales, bs.Locale.Code5) {
+					locales = append(locales, bs.Locale.Code5)
+				}
+			}
+			return nil
 		}
-	}
-	for _, bs := range botSettingsBy.ByCode {
-		if bs.Profile.ID() == profile && bs.Locale.Code5 == DefaultLocale {
-			return *bs, nil
+		if bs := getBotSettingsByLocale(lang); bs != nil {
+			return bs, nil
 		}
+		if bs := getBotSettingsByLocale(DefaultLocale); bs != nil {
+			return bs, nil
+		}
+		return nil, fmt.Errorf("no bot setting for both %s & %s locales", lang, DefaultLocale)
 	}
-	return botsfw.BotSettings{}, fmt.Errorf("no bot setting for both %s & %s locales", lang, DefaultLocale)
 }

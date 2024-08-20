@@ -10,7 +10,6 @@ import (
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot/platforms/tgbots"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot/profiles/debtus/admin"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/general"
@@ -364,7 +363,7 @@ var FeedbackTextCommand = botsfw.Command{
 			m = whc.NewMessageByCode(trans.MESSAGE_TEXT_THANKS)
 			m.Text += fmt.Sprintf(` Feedback #<a href="https://debtus.io/app/#/feedback/%d">%d</a>`, feedback.ID, feedback.ID)
 			SetMainMenuKeyboard(whc, &m)
-			if err2 := admin.SendFeedbackToAdmins(c, tgbots.DebtusBotToken, feedback); err2 != nil {
+			if err2 := admin.SendFeedbackToAdmins(c, "DebtusBotToken", feedback); err2 != nil {
 				logus.Errorf(c, "failed to notify admins: %v", err)
 			}
 		default:

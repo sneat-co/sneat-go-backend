@@ -10,12 +10,8 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot/platforms/tgbots"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot/profiles/collectus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/bot/profiles/debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/botcmds4splitus"
 	"github.com/strongo/i18n"
 	"net/http"
 )
@@ -90,16 +86,5 @@ func InitBots(httpRouter *httprouter.Router, botHost botsfw.BotHost, appContext 
 }
 
 func telegramBotsWithRouter(c context.Context) botsfw.SettingsBy {
-	return tgbots.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil), func(profile string) botsfw.WebhooksRouter {
-		switch profile {
-		case bot.ProfileDebtus:
-			return debtus.Router
-		case bot.ProfileSplitus:
-			return botcmds4splitus.Router
-		case bot.ProfileCollectus:
-			return collectus.Router
-		default:
-			panic("Unknown bot profile: " + profile)
-		}
-	})
+	return tgbots.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil))
 }
