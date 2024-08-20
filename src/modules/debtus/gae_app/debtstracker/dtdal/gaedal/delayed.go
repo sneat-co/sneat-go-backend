@@ -471,7 +471,7 @@ func sendReceiptToTelegramChat(c context.Context, receipt models4debtus.ReceiptE
 	btnViewReceiptData := fmt.Sprintf("view-receipt?id=%s", receipt.ID) // TODO: Pass simple digits!
 
 	var telegramUserID int64
-	if telegramUserID, err = strconv.ParseInt(tgChat.Data.BotUserID, 10, 64); err != nil {
+	if telegramUserID, err = strconv.ParseInt(tgChat.Data.BotUserIDs[0], 10, 64); err != nil {
 		return err
 	}
 	tgMessage := tgbotapi.MessageConfig{
@@ -558,7 +558,7 @@ func delayedCreateAndSendReceiptToCounterpartyByTelegram(c context.Context, env 
 		locale := translator.Locale()
 
 		var receiptID string
-		receipt := models4debtus.NewReceipt("", models4debtus.NewReceiptEntity(transfer.Data.CreatorUserID, transferID, transfer.Data.Counterparty().UserID, locale.Code5, telegram.PlatformID, tgChat.BaseTgChatData().BotUserID, general.CreatedOn{
+		receipt := models4debtus.NewReceipt("", models4debtus.NewReceiptEntity(transfer.Data.CreatorUserID, transferID, transfer.Data.Counterparty().UserID, locale.Code5, telegram.PlatformID, tgChat.BaseTgChatData().BotUserIDs[0], general.CreatedOn{
 			CreatedOnID:       transfer.Data.Creator().TgBotID, // TODO: Replace with method call.
 			CreatedOnPlatform: transfer.Data.CreatedOnPlatform,
 		}))
@@ -571,7 +571,7 @@ func delayedCreateAndSendReceiptToCounterpartyByTelegram(c context.Context, env 
 			return fmt.Errorf("failed to create receipt entity: %w", err)
 		}
 		var tgChatID int64
-		if tgChatID, err = strconv.ParseInt(tgChat.BaseTgChatData().BotUserID, 10, 64); err != nil {
+		if tgChatID, err = strconv.ParseInt(tgChat.BaseTgChatData().BotUserIDs[0], 10, 64); err != nil {
 			return err
 		}
 		if err = DelaySendReceiptToCounterpartyByTelegram(c, receiptID, tgChatID, localeCode); err != nil { // TODO: ideally should be called inside transaction

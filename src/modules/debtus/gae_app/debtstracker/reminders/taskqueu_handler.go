@@ -158,8 +158,8 @@ func sendReminderToUser(c context.Context, reminderID string, transfer models4de
 					return
 				}
 			} else {
-				if tgChatID, err = strconv.ParseInt(tgChat.BaseTgChatData().BotUserID, 10, 64); err != nil {
-					err = fmt.Errorf("failed to parse tgChat.BaseTgChatData().BotUserID=%v: %w", tgChat.BaseTgChatData().BotUserID, err)
+				if tgChatID, err = strconv.ParseInt(tgChat.BaseTgChatData().BotUserIDs[0], 10, 64); err != nil {
+					err = fmt.Errorf("failed to parse tgChat.BaseTgChatData().BotUserID=%v: %w", tgChat.BaseTgChatData().BotUserIDs[0], err)
 					return
 				}
 				tgBotID = "TODO:setup_bot_id_for_reminder"
