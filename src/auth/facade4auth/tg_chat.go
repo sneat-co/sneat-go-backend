@@ -9,9 +9,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
-	"github.com/strongo/logus"
 	"strconv"
-	"strings"
 	"sync"
 
 	"context"
@@ -59,16 +57,16 @@ func (TgChatDalGae) /* TODO: rename properly! */ DoSomething(c context.Context,
 		if err = tx.Get(tc, debtusTgChat.Record); err != nil {
 			return err
 		}
-		if debtusTgChat.Data.BotID == "" {
-			logus.Errorf(c, "Data inconsistency issue - TgChat(%v).BotID is empty string", tgChatID)
-			if strings.Contains(authInfo.Issuer, ":") {
-				issuer := strings.Split(authInfo.Issuer, ":")
-				if strings.ToLower(issuer[0]) == "telegram" {
-					debtusTgChat.Data.BotID = issuer[1]
-					logus.Infof(c, "Data inconsistency fixed, set to: %v", debtusTgChat.Data.BotID)
-				}
-			}
-		}
+		//if debtusTgChat.Data.BotID == "" {
+		//	logus.Errorf(c, "Data inconsistency issue - TgChat(%v).BotID is empty string", tgChatID)
+		//	if strings.Contains(authInfo.Issuer, ":") {
+		//		issuer := strings.Split(authInfo.Issuer, ":")
+		//		if strings.ToLower(issuer[0]) == "telegram" {
+		//			debtusTgChat.Data.BotID = issuer[1]
+		//			logus.Infof(c, "Data inconsistency fixed, set to: %v", debtusTgChat.Data.BotID)
+		//		}
+		//	}
+		//}
 		debtusTgChat.Data.AddWizardParam("currency", string(currency))
 
 		if !isSentToTelegram {

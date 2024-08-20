@@ -90,7 +90,8 @@ func HandleTgHelperCurrencySelected(c context.Context, w http.ResponseWriter, r 
 		errs <- facade4auth.TgChat.DoSomething(c, &userTask, currency, tgChatID, authInfo, user,
 			func(tgChat botsfwtgmodels.TgChatData) error {
 				// TODO: This is some serious architecture sheet. Too sleepy to make it right, just make it working.
-				return sendToTelegram(c, user, tgChatID, tgChat, &userTask, r)
+				botID := "TODO:setup_bot_id"
+				return sendToTelegram(c, user, botID, tgChatID, tgChat, &userTask, r)
 			},
 		)
 	}(selectedCurrency)
@@ -108,10 +109,9 @@ func HandleTgHelperCurrencySelected(c context.Context, w http.ResponseWriter, r 
 }
 
 // TODO: This is some serious architecture sheet. Too sleepy to make it right, just make it working.
-func sendToTelegram(c context.Context, user dbo4userus.UserEntry, tgChatID int64, tgChat botsfwtgmodels.TgChatData, userTask *sync.WaitGroup, r *http.Request) (err error) {
+func sendToTelegram(c context.Context, user dbo4userus.UserEntry, botID string, tgChatID int64, tgChat botsfwtgmodels.TgChatData, userTask *sync.WaitGroup, r *http.Request) (err error) {
 	telegramBots := tgbots.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil))
 	baseChatData := tgChat.BaseTgChatData()
-	botID := baseChatData.BotID
 	botSettings, ok := telegramBots.ByCode[botID]
 	if !ok {
 		return fmt.Errorf("ReferredTo settings not found by tgChat.BotID=%v, out of %v items", botID, len(telegramBots.ByCode))

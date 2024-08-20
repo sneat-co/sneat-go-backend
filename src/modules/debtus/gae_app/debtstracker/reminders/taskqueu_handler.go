@@ -16,6 +16,7 @@ import (
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -157,8 +158,11 @@ func sendReminderToUser(c context.Context, reminderID string, transfer models4de
 					return
 				}
 			} else {
-				tgChatID = tgChat.BaseTgChatData().TelegramUserID
-				tgBotID = tgChat.BaseTgChatData().BotID
+				if tgChatID, err = strconv.ParseInt(tgChat.BaseTgChatData().BotUserID, 10, 64); err != nil {
+					err = fmt.Errorf("failed to parse tgChat.BaseTgChatData().BotUserID=%v: %w", tgChat.BaseTgChatData().BotUserID, err)
+					return
+				}
+				tgBotID = "TODO:setup_bot_id_for_reminder"
 			}
 		}
 		if tgChatID != 0 {

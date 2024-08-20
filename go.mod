@@ -21,14 +21,14 @@ go 1.23.0
 
 require (
 	github.com/bots-go-framework/bots-api-telegram v0.4.6
-	github.com/bots-go-framework/bots-fw v0.28.1
-	github.com/bots-go-framework/bots-fw-store v0.4.0
-	github.com/bots-go-framework/bots-fw-telegram v0.8.16
-	github.com/bots-go-framework/bots-fw-telegram-models v0.1.8
+	github.com/bots-go-framework/bots-fw v0.28.2
+	github.com/bots-go-framework/bots-fw-store v0.5.0
+	github.com/bots-go-framework/bots-fw-telegram v0.8.17
+	github.com/bots-go-framework/bots-fw-telegram-models v0.2.0
 	github.com/bots-go-framework/bots-host-gae v0.5.9
 	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85
 	github.com/crediterra/money v0.3.0
-	github.com/dal-go/dalgo v0.12.1
+	github.com/dal-go/dalgo v0.12.2
 	github.com/dal-go/mocks4dalgo v0.1.19
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/golang/mock v1.6.0

@@ -398,7 +398,7 @@ func delayedSendReceiptToCounterpartyByTelegram(c context.Context, receiptID str
 					}
 					return
 				}
-				if err = DelayOnReceiptSentSuccess(c, time.Now(), receipt.ID, transfer.ID, creatorTgChatID, creatorTgMsgID, tgChat.Data.BotID, localeCode); err != nil {
+				if err = DelayOnReceiptSentSuccess(c, time.Now(), receipt.ID, transfer.ID, creatorTgChatID, creatorTgMsgID, tgChat.Key.Parent().ID.(string), localeCode); err != nil {
 					logus.Errorf(c, fmt.Errorf("failed to call DelayOnReceiptSentSuccess(): %w", err).Error())
 				}
 				return
@@ -469,9 +469,14 @@ func sendReceiptToTelegramChat(c context.Context, receipt models4debtus.ReceiptE
 
 	btnViewReceiptText := emoji.CLIPBOARD_ICON + " " + translator.Translate(trans.BUTTON_TEXT_SEE_RECEIPT_DETAILS)
 	btnViewReceiptData := fmt.Sprintf("view-receipt?id=%s", receipt.ID) // TODO: Pass simple digits!
+
+	var telegramUserID int64
+	if telegramUserID, err = strconv.ParseInt(tgChat.Data.BotUserID, 10, 64); err != nil {
+		return err
+	}
 	tgMessage := tgbotapi.MessageConfig{
 		BaseChat: tgbotapi.BaseChat{
-			ChatID: tgChat.Data.TelegramUserID,
+			ChatID: telegramUserID,
 			ReplyMarkup: tgbotapi.InlineKeyboardMarkup{
 				InlineKeyboard: [][]tgbotapi.InlineKeyboardButton{
 					tgbotapi.NewInlineKeyboardRow(tgbotapi.NewInlineKeyboardButtonData(btnViewReceiptText, btnViewReceiptData)),
@@ -483,12 +488,12 @@ func sendReceiptToTelegramChat(c context.Context, receipt models4debtus.ReceiptE
 		Text:                  messageText,
 	}
 
-	tgBotApi := tgbots.GetTelegramBotApiByBotCode(c, tgChat.Data.BotID)
+	tgBotApi := tgbots.GetTelegramBotApiByBotCode(c, tgChat.Key.Parent().ID.(string))
 
 	if _, err = tgBotApi.Send(tgMessage); err != nil {
 		return
 	} else {
-		logus.Infof(c, "ReceiptEntry %v sent to user by Telegram bot @%v", receipt.ID, tgChat.Data.BotID)
+		logus.Infof(c, "ReceiptEntry %v sent to user by Telegram bot @%v", receipt.ID, tgChat.Key.Parent().ID.(string))
 	}
 
 	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
@@ -529,7 +534,8 @@ func delayedCreateAndSendReceiptToCounterpartyByTelegram(c context.Context, env 
 	localeCode := tgChat.BaseTgChatData().PreferredLanguage
 
 	if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-		transfer, err := facade4debtus.Transfers.GetTransferByID(c, tx, transferID)
+		var transfer models4debtus.TransferEntry
+		transfer, err = facade4debtus.Transfers.GetTransferByID(c, tx, transferID)
 		if err != nil {
 			if dal.IsNotFound(err) {
 				logus.Errorf(c, err.Error())
@@ -552,7 +558,7 @@ func delayedCreateAndSendReceiptToCounterpartyByTelegram(c context.Context, env 
 		locale := translator.Locale()
 
 		var receiptID string
-		receipt := models4debtus.NewReceipt("", models4debtus.NewReceiptEntity(transfer.Data.CreatorUserID, transferID, transfer.Data.Counterparty().UserID, locale.Code5, telegram.PlatformID, strconv.FormatInt(tgChat.BaseTgChatData().TelegramUserID, 10), general.CreatedOn{
+		receipt := models4debtus.NewReceipt("", models4debtus.NewReceiptEntity(transfer.Data.CreatorUserID, transferID, transfer.Data.Counterparty().UserID, locale.Code5, telegram.PlatformID, tgChat.BaseTgChatData().BotUserID, general.CreatedOn{
 			CreatedOnID:       transfer.Data.Creator().TgBotID, // TODO: Replace with method call.
 			CreatedOnPlatform: transfer.Data.CreatedOnPlatform,
 		}))
@@ -564,7 +570,10 @@ func delayedCreateAndSendReceiptToCounterpartyByTelegram(c context.Context, env 
 		if err != nil {
 			return fmt.Errorf("failed to create receipt entity: %w", err)
 		}
-		tgChatID := tgChat.BaseTgChatData().TelegramUserID
+		var tgChatID int64
+		if tgChatID, err = strconv.ParseInt(tgChat.BaseTgChatData().BotUserID, 10, 64); err != nil {
+			return err
+		}
 		if err = DelaySendReceiptToCounterpartyByTelegram(c, receiptID, tgChatID, localeCode); err != nil { // TODO: ideally should be called inside transaction
 			logus.Errorf(c, "failed to queue receipt sending: %v", err)
 			return nil
