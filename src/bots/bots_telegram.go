@@ -12,6 +12,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/bots/sneatbot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/debtusbotconst"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/platforms/debtustgbots"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/i18n"
 	"os"
@@ -28,6 +29,14 @@ func telegramBots(environment string) botsfw.SettingsBy {
 	}
 
 	getAppUser := func(ctx context.Context, tx dal.ReadSession, botID string, appUserID string) (appUser record.DataWithID[string, botsfwmodels.AppUserData], err error) {
+		user := dbo4userus.NewUserEntry(appUserID)
+		if err = tx.Get(ctx, user.Record); err != nil {
+			return
+		}
+		appUser.ID = user.ID
+		appUser.Key = user.Key
+		appUser.Data = user.Data
+		appUser.Record = user.Record
 		return
 	}
 

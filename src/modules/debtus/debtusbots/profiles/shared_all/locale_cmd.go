@@ -124,7 +124,8 @@ func setPreferredLanguageAction(whc botsfw.WebhookContext, code5, mode string, b
 		return m, fmt.Errorf("%w: failed to load userEntity", err)
 	}
 
-	preferredLocale := appUserData.BotsFwAdapter().GetPreferredLocale()
+	appUserAdapter := appUserData.BotsFwAdapter()
+	preferredLocale := appUserAdapter.GetPreferredLocale()
 
 	var (
 		localeChanged  bool
