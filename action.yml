@@ -19,4 +19,4 @@ runs:
     - name: Serve sneat-go-backend
       shell: bash
       working-directory: "${{ github.action_path }}"
-      run: ./scripts/serve_gae.sh & sleep 30
+      run: ./scripts/serve_gae.sh & sleep 10
