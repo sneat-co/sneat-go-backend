@@ -248,6 +248,8 @@ github.com/sneat-co/sneat-go-core v0.31.5 h1:PYaxtHBq5EH4rN0aLvyRPTo/R/tXAw4laM5
 github.com/sneat-co/sneat-go-core v0.31.5/go.mod h1:xm5VjTfIJ7jqzlclcn1Boaz3tcxRaVfiMpnhky1fReE=
 github.com/sneat-co/sneat-go-firebase v0.5.1 h1:hr9KxG6QICEZ6z/b3A1OYYMze0rupzczxc5d+IX6HYM=
 github.com/sneat-co/sneat-go-firebase v0.5.1/go.mod h1:Aa/wWLUfQqQNskP+OAkIZjNXX6/ar2kg+D0uu2+CnNE=
+github.com/sneat-co/sneat-go-firebase v0.5.2 h1:DZ8ojsgyHD+Q/K4OQ6SR71/N4iDGqQECm7blCXXEcQ0=
+github.com/sneat-co/sneat-go-firebase v0.5.2/go.mod h1:xWUYevslmdV7FIcJPaO4LPzNSGMt8rJSGMq2I8M5Zgc=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
 github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=
