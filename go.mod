@@ -21,7 +21,7 @@ go 1.23.0
 
 require (
 	github.com/bots-go-framework/bots-api-telegram v0.4.6
-	github.com/bots-go-framework/bots-fw v0.31.6
+	github.com/bots-go-framework/bots-fw v0.31.8
 	github.com/bots-go-framework/bots-fw-store v0.7.0
 	github.com/bots-go-framework/bots-fw-telegram v0.9.1
 	github.com/bots-go-framework/bots-fw-telegram-models v0.3.0
@@ -29,7 +29,7 @@ require (
 	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85
 	github.com/crediterra/money v0.3.0
 	github.com/dal-go/dalgo v0.12.2
-	github.com/dal-go/mocks4dalgo v0.1.19
+	github.com/dal-go/mocks4dalgo v0.1.20
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/golang/mock v1.6.0
 	github.com/gorilla/sessions v1.4.0
@@ -55,7 +55,7 @@ require (
 	github.com/strongo/logus v0.2.0
 	github.com/strongo/random v0.0.1
 	github.com/strongo/slice v0.2.0
-	github.com/strongo/strongoapp v0.20.0
+	github.com/strongo/strongoapp v0.20.1
 	github.com/strongo/validation v0.0.6
 	github.com/yaa110/go-persian-calendar v1.2.1
 	golang.org/x/crypto v0.26.0

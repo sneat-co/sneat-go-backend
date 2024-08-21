@@ -64,6 +64,8 @@ github.com/bots-go-framework/bots-fw v0.31.5 h1:JRwJIxgW3z8s8jLK2SnpqsHxj7EQCY0Y
 github.com/bots-go-framework/bots-fw v0.31.5/go.mod h1:lJel6JvLj/6am7voTFjg8UQLjNWowqEqRajYfPJSrP8=
 github.com/bots-go-framework/bots-fw v0.31.6 h1:pJVtaIdyIbhWLyhyq2/oD4fQEWuzuRr5sVry7cEujYs=
 github.com/bots-go-framework/bots-fw v0.31.6/go.mod h1:lJel6JvLj/6am7voTFjg8UQLjNWowqEqRajYfPJSrP8=
+github.com/bots-go-framework/bots-fw v0.31.8 h1:s1TrUihbNSYeD/DuQctFz0KpVkT1dXrcbyl4LHKwvC0=
+github.com/bots-go-framework/bots-fw v0.31.8/go.mod h1:/MEXrYysqi1r3ifKlxsaWacTLDYNOqSGxCjcrxfGYpc=
 github.com/bots-go-framework/bots-fw-store v0.4.0 h1:5gQNsMNJ2rni3uGvXt7TeG+V7LFJ6lNIDkAC9g9J/us=
 github.com/bots-go-framework/bots-fw-store v0.4.0/go.mod h1:T2yX1QodQ9A1nep/aIAL/czt9adqMyIBVTGOAdNVPAI=
 github.com/bots-go-framework/bots-fw-store v0.5.0 h1:RY/EdRB3dq7fgzMDw9H8Qr0K6dKgX33Les26NOiBTDU=
@@ -125,6 +127,8 @@ github.com/dal-go/dalgo2firestore v0.1.72 h1:2lIcjGoXEGm2LhMdLAlOkVGt6MeM1rs7SKg
 github.com/dal-go/dalgo2firestore v0.1.72/go.mod h1:W3SljF/rUaih0xuooZ8OFRsK7HsEORoeRsrJR5I2EjY=
 github.com/dal-go/mocks4dalgo v0.1.19 h1:ylcFHCSwJwwNpUKsiUB42BP0RKFGRu44VySQI0qgbRU=
 github.com/dal-go/mocks4dalgo v0.1.19/go.mod h1:b6auVWLTgMZcmHtT3c1G4qpASZrlroEiTV8sr3UaGdA=
+github.com/dal-go/mocks4dalgo v0.1.20 h1:JsNW3d6PNx4BMsHu9KuzrJr2ikTHxyDLWNdJAj3tGrE=
+github.com/dal-go/mocks4dalgo v0.1.20/go.mod h1:PL5zmlmOSZPZLrCCPnZp6WAnCBqvpn2v5se9Hy/gVSM=
 github.com/davecgh/go-spew v0.0.0-20161028175848-04cdfd42973b/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
@@ -286,6 +290,8 @@ github.com/strongo/slice v0.2.0 h1:HpoBqFuE/kqQLgQf6S4r8rvO8hmeplk1WD9u7Z30V68=
 github.com/strongo/slice v0.2.0/go.mod h1:5OL1zbsT5e93IihjLNag5epqjti5d24bGyOqWMgtX/o=
 github.com/strongo/strongoapp v0.20.0 h1:ZsFhNIiILtqRq+8yyBmIrHIKIXEzqhfXLoRfDHwzIUI=
 github.com/strongo/strongoapp v0.20.0/go.mod h1:MsSKFcoGftA9NC/Gv0Y/+RqcVVo1cL0txBpTtBgml1I=
+github.com/strongo/strongoapp v0.20.1 h1:rD2/jgKnJWKcEsVwLSnYfYxB9cBNOWZ8V1mPzQNzZtQ=
+github.com/strongo/strongoapp v0.20.1/go.mod h1:jAnidGqYzHqhfZ6RRA6tdI+FSAnEK+xJldIfwSFG9EA=
 github.com/strongo/validation v0.0.6 h1:RskXD45ILagVW3jmuKUiq7WshE4kmoQEiUbgfigqHzw=
 github.com/strongo/validation v0.0.6/go.mod h1:V4Nu8b8CPsLNwYLKmMHN2ghkoabOpiOW8NNcUczuCWE=
 github.com/technoweenie/multipartstreamer v1.0.1 h1:XRztA5MXiR1TIRHxH2uNxXxaIkKQDeX7m2XsSOlQEnM=
