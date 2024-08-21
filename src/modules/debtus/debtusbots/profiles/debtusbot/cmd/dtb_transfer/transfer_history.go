@@ -40,8 +40,11 @@ func showHistoryCard(whc botsfw.WebhookContext, limit int) (m botsfw.MessageFrom
 
 	var transfers []models4debtus.TransferEntry
 	var hasMore bool
-	if transfers, hasMore, err = dtdal.Transfer.LoadTransfersByUserID(c, whc.AppUserID(), 0, limit); err != nil {
-		return m, err
+
+	if appUserID := whc.AppUserID(); appUserID != "" {
+		if transfers, hasMore, err = dtdal.Transfer.LoadTransfersByUserID(c, appUserID, 0, limit); err != nil {
+			return m, err
+		}
 	}
 
 	if len(transfers) == 0 {
@@ -69,7 +72,6 @@ func showHistoryCard(whc botsfw.WebhookContext, limit int) (m botsfw.MessageFrom
 			}
 		}
 	}
-
 	m.Format = botsfw.MessageFormatHTML
 	m.DisableWebPagePreview = true
 	return m, nil

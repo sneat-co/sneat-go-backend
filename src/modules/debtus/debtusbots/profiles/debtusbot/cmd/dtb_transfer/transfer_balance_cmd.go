@@ -41,79 +41,104 @@ func balanceAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err erro
 
 	logus.Debugf(ctx, "BalanceCommand.Action()")
 
-	user := dbo4userus.NewUserEntry(whc.AppUserID())
-
-	if err = dal4userus.GetUser(ctx, nil, user); err != nil {
-		return
-	}
-
-	spaceID := user.Data.GetFamilySpaceID()
-
-	debtusSpace := models4debtus.NewDebtusSpaceEntry(spaceID)
-	if err = models4debtus.GetDebtusSpace(ctx, nil, debtusSpace); err != nil {
-		return
-	}
-
-	contactusSpace := dal4contactus.NewContactusSpaceEntry(spaceID)
-	if err = dal4contactus.GetContactusSpace(ctx, nil, contactusSpace); err != nil {
-		return
-	}
-
 	var buffer bytes.Buffer
-	if len(debtusSpace.Data.Balance) == 0 {
+
+	appUserID := whc.AppUserID()
+
+	if appUserID == "" {
 		if _, err = buffer.WriteString(whc.Translate(trans.MESSAGE_TEXT_BALANCE_IS_ZERO)); err != nil {
 			return
 		}
 	} else {
-		balanceMessageBuilder := NewBalanceMessageBuilder(whc)
-		if len(debtusSpace.Data.Contacts) == 0 {
-			return m, fmt.Errorf("integrity issue: User{ContactID=%s} has non zero balance and no contacts", whc.AppUserID())
-		}
-		buffer.WriteString(fmt.Sprintf("<b>%v</b>", whc.Translate(trans.MESSAGE_TEXT_BALANCE_HEADER)) + common4debtus.HORIZONTAL_LINE)
-		linker := common4debtus.NewLinkerFromWhc(whc)
-		buffer.WriteString(balanceMessageBuilder.ByContact(ctx, linker, contactusSpace.Data.Contacts, debtusSpace.Data.Contacts))
+		user := dbo4userus.NewUserEntry(appUserID)
 
-		var thereAreFewDebtsForSingleCurrency = func() bool {
-			//TODO: Duplicate call to Balance() - consider move inside BalanceMessageBuilder
-			//logus.Debugf(ctx, "thereAreFewDebtsForSingleCurrency()")
-			var currencies []money.CurrencyCode
-			for _, counterparty := range debtusSpace.Data.Contacts {
-				//logus.Debugf(ctx, "counterparty: %v", counterparty)
-				for currency := range counterparty.Balance {
-					//logus.Debugf(ctx, "currency: %v", currency)
-					for _, curr := range currencies {
-						//logus.Debugf(ctx, "curr: %v; curr == currency: %v", curr, curr == currency)
-						if curr == currency {
-							return true
+		if err = dal4userus.GetUser(ctx, nil, user); err != nil {
+			return
+		}
+
+		spaceID := user.Data.GetFamilySpaceID()
+
+		debtusSpace := models4debtus.NewDebtusSpaceEntry(spaceID)
+		if err = models4debtus.GetDebtusSpace(ctx, nil, debtusSpace); err != nil {
+			return
+		}
+
+		contactusSpace := dal4contactus.NewContactusSpaceEntry(spaceID)
+		if err = dal4contactus.GetContactusSpace(ctx, nil, contactusSpace); err != nil {
+			return
+		}
+
+		if len(debtusSpace.Data.Balance) == 0 {
+			if _, err = buffer.WriteString(whc.Translate(trans.MESSAGE_TEXT_BALANCE_IS_ZERO)); err != nil {
+				return
+			}
+		} else {
+			balanceMessageBuilder := NewBalanceMessageBuilder(whc)
+			if len(debtusSpace.Data.Contacts) == 0 {
+				return m, fmt.Errorf("integrity issue: User{ContactID=%s} has non zero balance and no contacts", whc.AppUserID())
+			}
+			buffer.WriteString(fmt.Sprintf("<b>%v</b>", whc.Translate(trans.MESSAGE_TEXT_BALANCE_HEADER)) + common4debtus.HORIZONTAL_LINE)
+			linker := common4debtus.NewLinkerFromWhc(whc)
+			buffer.WriteString(balanceMessageBuilder.ByContact(ctx, linker, contactusSpace.Data.Contacts, debtusSpace.Data.Contacts))
+
+			var thereAreFewDebtsForSingleCurrency = func() bool {
+				//TODO: Duplicate call to Balance() - consider move inside BalanceMessageBuilder
+				//logus.Debugf(ctx, "thereAreFewDebtsForSingleCurrency()")
+				var currencies []money.CurrencyCode
+				for _, counterparty := range debtusSpace.Data.Contacts {
+					//logus.Debugf(ctx, "counterparty: %v", counterparty)
+					for currency := range counterparty.Balance {
+						//logus.Debugf(ctx, "currency: %v", currency)
+						for _, curr := range currencies {
+							//logus.Debugf(ctx, "curr: %v; curr == currency: %v", curr, curr == currency)
+							if curr == currency {
+								return true
+							}
 						}
+						currencies = append(currencies, currency)
 					}
-					currencies = append(currencies, currency)
+				}
+				//logus.Debugf(ctx, "thereAreFewDebtsForSingleCurrency: %v", currencies)
+				return false
+			}
+
+			if len(debtusSpace.Data.Contacts) > 1 && thereAreFewDebtsForSingleCurrency() {
+				userBalanceWithInterest, err := debtusSpace.Data.BalanceWithInterest(ctx, time.Now())
+				if err != nil {
+					m := fmt.Sprintf("Failed to get balance with interest for user %v: %v", user.ID, err)
+					logus.Errorf(ctx, m)
+					buffer.WriteString(m)
+				} else {
+					buffer.WriteString("\n" + strings.Repeat("─", 16) + "\n" + balanceMessageBuilder.ByCurrency(true, userBalanceWithInterest))
 				}
 			}
-			//logus.Debugf(ctx, "thereAreFewDebtsForSingleCurrency: %v", currencies)
-			return false
-		}
 
-		if len(debtusSpace.Data.Contacts) > 1 && thereAreFewDebtsForSingleCurrency() {
-			userBalanceWithInterest, err := debtusSpace.Data.BalanceWithInterest(ctx, time.Now())
-			if err != nil {
-				m := fmt.Sprintf("Failed to get balance with interest for user %v: %v", user.ID, err)
-				logus.Errorf(ctx, m)
-				buffer.WriteString(m)
-			} else {
-				buffer.WriteString("\n" + strings.Repeat("─", 16) + "\n" + balanceMessageBuilder.ByCurrency(true, userBalanceWithInterest))
+			//if len(contacts) > 0 {
+			//	//for i, counterparty := range contacts {
+			//	//	telegramKeyboard = append(telegramKeyboard, []tgbotapi.InlineKeyboardButton{tgbotapi.NewInlineKeyboardButtonData(counterparty.GetFullName(), fmt.Sprintf("transfer-history?counterparty=%v", counterpartyKeys[i].IntID()))})
+			//	//}
+			//	telegramKeyboard = append(telegramKeyboard, []tgbotapi.InlineKeyboardButton{
+			//		tgbotapi.NewInlineKeyboardButtonData("<", fmt.Sprintf("balance?counterparty=%v", counterpartyKeys[len(counterpartyKeys)-1].IntID())),
+			//		tgbotapi.NewInlineKeyboardButtonData(">", fmt.Sprintf("balance?counterparty=%v", counterpartyKeys[0].IntID())),
+			//	})
+			//}	}
+			if debtusSpace.Data.HasDueTransfers {
+				m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
+					[]tgbotapi.InlineKeyboardButton{
+						{
+							Text:         whc.Translate(trans.COMMAND_TEXT_DUE_RETURNS),
+							CallbackData: DUE_RETURNS_COMMAND,
+						},
+					},
+					[]tgbotapi.InlineKeyboardButton{
+						{
+							Text:         whc.Translate(trans.COMMAND_TEXT_INVITE_FIREND),
+							CallbackData: "invite",
+						},
+					},
+				)
 			}
 		}
-
-		//if len(contacts) > 0 {
-		//	//for i, counterparty := range contacts {
-		//	//	telegramKeyboard = append(telegramKeyboard, []tgbotapi.InlineKeyboardButton{tgbotapi.NewInlineKeyboardButtonData(counterparty.GetFullName(), fmt.Sprintf("transfer-history?counterparty=%v", counterpartyKeys[i].IntID()))})
-		//	//}
-		//	telegramKeyboard = append(telegramKeyboard, []tgbotapi.InlineKeyboardButton{
-		//		tgbotapi.NewInlineKeyboardButtonData("<", fmt.Sprintf("balance?counterparty=%v", counterpartyKeys[len(counterpartyKeys)-1].IntID())),
-		//		tgbotapi.NewInlineKeyboardButtonData(">", fmt.Sprintf("balance?counterparty=%v", counterpartyKeys[0].IntID())),
-		//	})
-		//}
 	}
 	buffer.WriteString(common4debtus.HORIZONTAL_LINE)
 	//buffer.WriteString(dtb_general.AdSlot(whc, "balance"))
@@ -129,23 +154,6 @@ func balanceAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err erro
 	}
 
 	m.DisableWebPagePreview = true
-
-	if debtusSpace.Data.HasDueTransfers {
-		m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
-			[]tgbotapi.InlineKeyboardButton{
-				{
-					Text:         whc.Translate(trans.COMMAND_TEXT_DUE_RETURNS),
-					CallbackData: DUE_RETURNS_COMMAND,
-				},
-			},
-			[]tgbotapi.InlineKeyboardButton{
-				{
-					Text:         whc.Translate(trans.COMMAND_TEXT_INVITE_FIREND),
-					CallbackData: "invite",
-				},
-			},
-		)
-	}
 
 	//err = whc.Responder().SendMessage(ctx, m, botsfw.BotAPISendMessageOverHTTPS)
 	return m, err
