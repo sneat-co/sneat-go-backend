@@ -6,7 +6,7 @@ go 1.23.0
 
 //replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
 //replace github.com/sneat-co/sneat-go-modules => ../sneat-go-modules
-replace github.com/bots-go-framework/bots-fw => ../../bots-go-framework/bots-fw
+//replace github.com/bots-go-framework/bots-fw => ../../bots-go-framework/bots-fw
 
 //replace github.com/bots-go-framework/bots-fw-store => ../../bots-go-framework/bots-fw-store
 //replace github.com/bots-go-framework/bots-fw-telegram => ../../bots-go-framework/bots-fw-telegram
