@@ -129,23 +129,28 @@ func onStartCallbackCommand(params BotParams) botsfw.Command {
 		func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 			lang := callbackUrl.Query().Get("lang")
 			c := whc.Context()
-			logus.Debugf(c, "Locale: "+lang)
+			if lang != "" {
+				logus.Debugf(c, "Locale: "+lang)
 
-			whc.ChatData().SetPreferredLanguage(lang)
+				whc.ChatData().SetPreferredLanguage(lang)
 
-			userCtx := facade.NewUserContext(whc.AppUserID())
-			if err = dal4userus.RunUserWorker(c, userCtx,
-				func(c context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
-					if params.UserUpdates, err = params.User.Data.SetPreferredLocale(lang); err != nil {
-						return err
+				appUserID := whc.AppUserID()
+				if err = whc.SetLocale(lang); err != nil {
+					return
+				}
+				if appUserID != "" {
+					userCtx := facade.NewUserContext(whc.AppUserID())
+					if err = dal4userus.RunUserWorker(c, userCtx,
+						func(c context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
+							if params.UserUpdates, err = params.User.Data.SetPreferredLocale(lang); err != nil {
+								return err
+							}
+							return nil
+						}); err != nil {
+						return
 					}
-					return nil
-				}); err != nil {
-				return
-			}
-
-			if err = whc.SetLocale(lang); err != nil {
-				return
+				}
+				m.Text = fmt.Sprintf("Language set to %s", lang)
 			}
 
 			//if whc.IsInGroup() {

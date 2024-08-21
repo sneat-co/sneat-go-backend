@@ -6,7 +6,7 @@ go 1.23.0
 
 //replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
 //replace github.com/sneat-co/sneat-go-modules => ../sneat-go-modules
-//replace github.com/bots-go-framework/bots-fw => ../../bots-go-framework/bots-fw
+replace github.com/bots-go-framework/bots-fw => ../../bots-go-framework/bots-fw
 
 //replace github.com/bots-go-framework/bots-fw-store => ../../bots-go-framework/bots-fw-store
 //replace github.com/bots-go-framework/bots-fw-telegram => ../../bots-go-framework/bots-fw-telegram
@@ -21,7 +21,7 @@ go 1.23.0
 
 require (
 	github.com/bots-go-framework/bots-api-telegram v0.4.6
-	github.com/bots-go-framework/bots-fw v0.31.5
+	github.com/bots-go-framework/bots-fw v0.31.6
 	github.com/bots-go-framework/bots-fw-store v0.7.0
 	github.com/bots-go-framework/bots-fw-telegram v0.9.1
 	github.com/bots-go-framework/bots-fw-telegram-models v0.3.0
