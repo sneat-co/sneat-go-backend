@@ -16,7 +16,7 @@ func NewTgUserDalGae() TgUserDalGae {
 	return TgUserDalGae{}
 }
 
-func (TgUserDalGae) FindByUserName(c context.Context, tx dal.ReadSession, userName string) (tgUsers []botsfwtgmodels.TgBotUser, err error) {
+func (TgUserDalGae) FindByUserName(c context.Context, tx dal.ReadSession, userName string) (tgUsers []botsfwtgmodels.TgPlatformUser, err error) {
 	if tx == nil {
 		tx, err = facade.GetDatabase(c)
 		if err != nil {
@@ -27,14 +27,14 @@ func (TgUserDalGae) FindByUserName(c context.Context, tx dal.ReadSession, userNa
 		WhereField("UserName", dal.Equal, userName)
 
 	query := q.SelectInto(func() dal.Record {
-		return dal.NewRecordWithIncompleteKey(botsfwtgmodels.BotUserCollection, reflect.Int, new(botsfwtgmodels.TgBotUser))
+		return dal.NewRecordWithIncompleteKey(botsfwtgmodels.BotUserCollection, reflect.Int, new(botsfwtgmodels.TgPlatformUser))
 	})
 	var records []dal.Record
 
 	if records, err = tx.QueryAllRecords(c, query); err != nil {
 		return
 	}
-	tgUsers = make([]botsfwtgmodels.TgBotUser, len(records))
+	tgUsers = make([]botsfwtgmodels.TgPlatformUser, len(records))
 	//for i, r := range records {
 	//	tgUsers[i] = botsfwtgmodels.TgBotUserBaseData{
 	//		WithID: record.NewWithID(r.Key().ContactID.(int64), r.Key(), r.Data),

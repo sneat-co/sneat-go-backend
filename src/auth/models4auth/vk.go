@@ -15,7 +15,7 @@ type UserVkEntity struct {
 	LastName   string
 	ScreenName string
 	Nickname   string
-	//FriendIDs []int64 `datastore:",noindex"`
+	//FriendIDs []int64 `firestore:",omitempty"`
 }
 
 type UserVk struct {

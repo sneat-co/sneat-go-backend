@@ -19,13 +19,13 @@ type BillCommon struct {
 	Currency           money.CurrencyCode
 	UserIDs            []string
 	ContactIDs         []string                          // Holds contact IDs, so we can update names in MembersJson on contact changed
-	TgInlineMessageIDs []string                          `datastore:",noindex" firestore:",noindex"`
-	CreatorUserID      string                            `datastore:",noindex" firestore:",noindex"`
-	Name               string                            `datastore:",noindex" firestore:",noindex"`
-	SplitMode          SplitMode                         `datastore:",noindex" firestore:",noindex"`
-	Members            []*briefs4splitus.BillMemberBrief `datastore:",noindex" firestore:",noindex"`
-	LastMemberID       int                               `datastore:",noindex" firestore:",noindex"`
-	Shares             int                               `datastore:",noindex" firestore:",noindex"`
+	TgInlineMessageIDs []string                          `firestore:"tgInlineMessageIDs,omitempty"`
+	CreatorUserID      string                            `firestore:"creatorUserID,omitempty"`
+	Name               string                            `firestore:"name,omitempty"`
+	SplitMode          SplitMode                         `firestore:"splitMode,omitempty"`
+	Members            []*briefs4splitus.BillMemberBrief `firestore:"members,omitempty"`
+	LastMemberID       int                               `firestore:"lastMemberID,omitempty"`
+	Shares             int                               `firestore:"shares,omitempty"`
 }
 
 // GetUserGroupID returns user group ContactID

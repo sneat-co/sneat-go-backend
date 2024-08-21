@@ -2,9 +2,11 @@ package sneatbot
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
 	"github.com/bots-go-framework/bots-fw/botsfw"
+	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/strongo/i18n"
 	"github.com/strongo/strongoapp/appuser"
@@ -21,6 +23,11 @@ func NewSneatAppBotContext() botsfw.BotAppContext {
 
 type sneatAppBotContext struct { // TODO: Duplication?!
 	i18n.LocalesProvider
+}
+
+func (s sneatAppBotContext) GetAppUserByBotUserID(ctx context.Context, platform, botID, botUserID string) (appUser record.DataWithID[string, botsfwmodels.AppUserData], err error) {
+	err = errors.New("GetAppUserByBotUserID() is not implemented in sneatAppBotContext")
+	return
 }
 
 func (s sneatAppBotContext) AppUserCollectionName() string {

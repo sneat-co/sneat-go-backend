@@ -15,7 +15,7 @@ const AuditKind = "Audit"
 type AuditData struct {
 	Action  string
 	Created time.Time
-	Message string `datastore:",noindex"`
+	Message string `firestore:",omitempty"`
 	Related []string
 }
 

@@ -104,7 +104,7 @@ type TgChatDal interface {
 }
 
 type TgUserDal interface {
-	FindByUserName(c context.Context, tx dal.ReadSession, userName string) (tgUsers []botsfwtgmodels.TgBotUser, err error)
+	FindByUserName(c context.Context, tx dal.ReadSession, userName string) (tgUsers []botsfwtgmodels.TgPlatformUser, err error)
 }
 
 var User UserDal

@@ -16,10 +16,10 @@ type BillsHolder struct { // TODO: Move out of auth package
 	OutstandingBills map[string]briefs4splitus.BillBrief `json:"outstandingBills,omitempty" firestore:"outstandingBills,omitempty"`
 
 	// Deprecated: use OutstandingBills instead
-	OutstandingBillsCount int `datastore:",noindex,omitempty"`
+	OutstandingBillsCount int `firestore:",omitempty"`
 
 	// Deprecated: use OutstandingBills instead
-	OutstandingBillsJson string `datastore:",noindex,omitempty"`
+	OutstandingBillsJson string `firestore:",omitempty"`
 }
 
 func (v *BillsHolder) GetOutstandingBills() (outstandingBills map[string]briefs4splitus.BillBrief) {

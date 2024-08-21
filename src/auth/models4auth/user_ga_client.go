@@ -9,8 +9,8 @@ const GaClientKind = "UserGaClient"
 
 type GaClientEntity struct {
 	Created   time.Time
-	UserAgent string `datastore:",noindex"`
-	IpAddress string `datastore:",noindex"`
+	UserAgent string `firestore:",omitempty"`
+	IpAddress string `firestore:",omitempty"`
 }
 
 type GaClient struct {

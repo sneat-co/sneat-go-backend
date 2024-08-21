@@ -91,7 +91,7 @@ type DebtusSpaceContactDbo struct {
 	with.CreatedFields
 	money.Balanced
 	WithCounterpartyFields
-	LinkedBy string `datastore:",noindex"`
+	LinkedBy string `firestore:",omitempty"`
 	//
 	Status DebtusContactStatus
 	dto4contactus.ContactDetails
@@ -101,7 +101,7 @@ type DebtusSpaceContactDbo struct {
 	//TelegramChatID int
 
 	// Decided against as we do not need it really and would require either 2 Put() instead of 1 PutMulti()
-	//LastTransferID int  `datastore:",noindex"`
+	//LastTransferID int  `firestore:",omitempty"`
 
 	SearchName          []string `firestore:"searchName,omitempty"` // Deprecated
 	NoTransferUpdatesBy []string `firestore:"noTransferUpdatesBy,omitempty"`

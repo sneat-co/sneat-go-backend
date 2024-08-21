@@ -20,7 +20,7 @@ type Sms struct {
 	To         string
 	From       string
 	Status     string
-	Price      float32 `datastore:",noindex"`
+	Price      float32 `firestore:",omitempty"`
 }
 
 const TwilioSmsKind = "TwilioSms"
@@ -90,21 +90,21 @@ type TwilioSmsData struct {
 	DtUpdated   time.Time
 	DtDelivered time.Time
 	DtSent      time.Time
-	AccountSid  string `datastore:",noindex"`
+	AccountSid  string `firestore:",omitempty"`
 	To          string
-	From        string `datastore:",noindex"`
-	MediaUrl    string `datastore:",noindex"`
-	Body        string `datastore:",noindex"`
+	From        string `firestore:",omitempty"`
+	MediaUrl    string `firestore:",omitempty"`
+	Body        string `firestore:",omitempty"`
 	Status      string
 	Direction   string
-	//ApiVersion  string   `datastore:",noindex"`
-	Price    float32             `datastore:",noindex"` // TODO: Remove obsolete
-	PriceUSD decimal.Decimal64p2 `datastore:",noindex"`
-	//URL         string   `datastore:",noindex"`
+	//ApiVersion  string   `firestore:",omitempty"`
+	Price    float32             `firestore:",omitempty"` // TODO: Remove obsolete
+	PriceUSD decimal.Decimal64p2 `firestore:",omitempty"`
+	//URL         string   `firestore:",omitempty"`
 
 	//
 	CreatorTgChatID             int64
-	CreatorTgSmsStatusMessageID int `datastore:",noindex"`
+	CreatorTgSmsStatusMessageID int `firestore:",omitempty"`
 }
 
 func NewTwilioSmsFromSmsResponse(userID string, response *gotwilio.SmsResponse) TwilioSmsData {

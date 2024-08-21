@@ -40,15 +40,15 @@ const (
 type RewardDbo struct {
 	UserID       int64
 	DtCreated    time.Time
-	Reason       RewardReason `datastore:",noindex"`
-	JoinedUserID int64        `datastore:",noindex"`
-	Points       int          `datastore:",noindex"`
+	Reason       RewardReason `firestore:",omitempty"`
+	JoinedUserID int64        `firestore:",omitempty"`
+	Points       int          `firestore:",omitempty"`
 }
 
 type UserRewardBalance struct {
 	RewardPoints   int
 	RewardOptedOut time.Time
-	RewardIDs      []int64 `datastore:",noindex"`
+	RewardIDs      []int64 `firestore:",omitempty"`
 }
 
 //func (UserRewardBalance) cleanProperties(properties []datastore.Property) ([]datastore.Property, error) {

@@ -93,8 +93,8 @@ func (u *UserFacebook) SetStrID(id string) {
 type UserFacebookData struct {
 	appuser.AccountDataBase
 	appuser.OwnedByUserWithID
-	Email            string `datastore:",noindex"`
-	EmailIsConfirmed bool   `datastore:",noindex"`
+	Email            string `firestore:",omitempty"`
+	EmailIsConfirmed bool   `firestore:",omitempty"`
 }
 
 var _ appuser.AccountData = (*UserFacebookData)(nil)

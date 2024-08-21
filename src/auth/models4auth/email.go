@@ -36,14 +36,14 @@ func NewEmail(id int64, data *EmailData) Email {
 
 type EmailData struct { // TODO: move into dedicated package
 	Status          string
-	Error           string `datastore:",noindex"`
+	Error           string `firestore:",omitempty"`
 	DtCreated       time.Time
 	DtSent          time.Time
-	Subject         string `datastore:",noindex"`
-	From            string `datastore:",noindex"`
+	Subject         string `firestore:",omitempty"`
+	From            string `firestore:",omitempty"`
 	To              string
-	BodyText        string `datastore:",noindex"`
-	BodyHtml        string `datastore:",noindex"`
+	BodyText        string `firestore:",omitempty"`
+	BodyHtml        string `firestore:",omitempty"`
 	AwsSesMessageID string
 }
 

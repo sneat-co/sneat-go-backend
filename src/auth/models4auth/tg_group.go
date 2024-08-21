@@ -17,7 +17,7 @@ func NewTgGroup(id int64, data *TgGroupData) TgGroup {
 //var _ db.EntityHolder = (*TgGroup)(nil)
 
 type TgGroupData struct {
-	UserGroupID string `datastore:",noindex" firestore:",noindex"`
+	UserGroupID string `firestore:"userGroupID,omitempty"`
 }
 
 //func (TgGroup) Kind() string {

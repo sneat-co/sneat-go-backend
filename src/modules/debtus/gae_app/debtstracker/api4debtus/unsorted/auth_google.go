@@ -17,14 +17,14 @@ import (
 )
 
 type GoogleAuthData struct {
-	UserId         string `json:"userId" datastore:",noindex"`
-	DisplayName    string `json:"displayName" datastore:",noindex"`
-	RefreshToken   string `json:"refreshToken" datastore:",noindex"`
-	Email          string `json:"email" datastore:",noindex"`
-	ServerAuthCode string `json:"serverAuthCode" datastore:",noindex"`
-	AccessToken    string `json:"accessToken" datastore:",noindex"`
-	ImageUrl       string `json:"imageUrl" datastore:",noindex"`
-	IdToken        string `json:"idToken" datastore:",noindex"`
+	UserId         string `json:"userId" firestore:"userId"`
+	DisplayName    string `json:"displayName" firestore:"displayName"`
+	RefreshToken   string `json:"refreshToken" firestore:"refreshToken"`
+	Email          string `json:"email" firestore:"email"`
+	ServerAuthCode string `json:"serverAuthCode" firestore:"serverAuthCode"`
+	AccessToken    string `json:"accessToken" firestore:"accessToken"`
+	ImageUrl       string `json:"imageUrl" firestore:"imageUrl"`
+	IdToken        string `json:"idToken" firestore:"idToken"`
 }
 
 func HandleSignedInWithGooglePlus(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {

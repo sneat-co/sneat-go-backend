@@ -12,7 +12,7 @@ const UserBrowserKind = "UserBrowser"
 type UserBrowserData struct {
 	UserID      string
 	UserAgent   string
-	LastUpdated time.Time `datastore:",noindex"`
+	LastUpdated time.Time `firestore:",omitempty"`
 }
 
 type UserBrowser struct {

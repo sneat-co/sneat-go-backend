@@ -12,15 +12,15 @@ import (
 
 type BillDbo struct {
 	BillCommon
-	DtDueToPay       time.Time `datastore:",noindex"` // TODO: Document diff between DtDueToPay & DtDueToCollect
-	DtDueToCollect   time.Time `datastore:",noindex"`
-	LocaleByMessage  []string  `datastore:",noindex"`
-	TgChatMessageIDs []string  `datastore:",noindex"`
+	DtDueToPay       time.Time `firestore:",omitempty"` // TODO: Document diff between DtDueToPay & DtDueToCollect
+	DtDueToCollect   time.Time `firestore:",omitempty"`
+	LocaleByMessage  []string  `firestore:",omitempty"`
+	TgChatMessageIDs []string  `firestore:",omitempty"`
 	DebtorIDs        []string
 	SponsorIDs       []string
 	SettlementIDs    []string
-	//BalanceJson      string    `datastore:",noindex"`
-	//BalanceVersion   int       `datastore:",noindex"`
+	//BalanceJson      string    `firestore:",omitempty"`
+	//BalanceVersion   int       `firestore:",omitempty"`
 	//balanceVersion   int       `datastore:"-"`
 }
 

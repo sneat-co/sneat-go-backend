@@ -16,8 +16,8 @@ func NewProfile(id string, router *botsfw.WebhooksRouter) botsfw.BotProfile {
 		func() botsfwmodels.BotChatData {
 			return new(botsfwtgmodels.TgChatBaseData)
 		},
-		func() botsfwmodels.BotUserData {
-			return new(botsfwtgmodels.TgBotUserBaseData)
+		func() botsfwmodels.PlatformUserData {
+			return new(botsfwtgmodels.TgPlatformUserBaseDbo)
 		},
 		func() botsfwmodels.AppUserData {
 			return new(dbo4userus.UserDbo)

@@ -12,7 +12,7 @@ type PhoneContact struct {
 	// DebtusSpaceContactEntry details
 	PhoneNumber            int64 `datastore:",omitempty"`
 	PhoneNumberConfirmed   bool
-	PhoneNumberIsConfirmed bool `datastore:",noindex"` // Deprecated
+	PhoneNumberIsConfirmed bool `firestore:",omitempty"` // Deprecated
 	//+9223372036854775807
 	//+353857403948
 	//+79169743259
@@ -24,8 +24,8 @@ func (p PhoneContact) PhoneNumberAsString() string {
 
 type EmailContact struct {
 	EmailAddress         string `datastore:",omitempty"`
-	EmailAddressOriginal string `datastore:",noindex,omitempty"`
-	EmailConfirmed       bool   `datastore:",noindex,omitempty"`
+	EmailAddressOriginal string `firestore:",omitempty"`
+	EmailConfirmed       bool   `firestore:",omitempty"`
 }
 
 func (ec *EmailContact) SetEmail(email string, confirmed bool) EmailContact {
@@ -44,11 +44,11 @@ type ContactDetails struct {
 	PhoneContact
 	EmailContact
 	person.NameFields
-	//FirstName      string `datastore:",noindex,omitempty"`
-	//LastName       string `datastore:",noindex,omitempty"`
-	//ScreenName     string `datastore:",noindex,omitempty"`
-	//Nickname       string `datastore:",noindex,omitempty"`
-	//Username       string `datastore:",noindex,omitempty"` //TODO: Should it be "Name"?
+	//FirstName      string `firestore:",omitempty"`
+	//LastName       string `firestore:",omitempty"`
+	//ScreenName     string `firestore:",omitempty"`
+	//Nickname       string `firestore:",omitempty"`
+	//Username       string `firestore:",omitempty"` //TODO: Should it be "Name"?
 	TelegramUserID int64 // When user ads Telegram contact we store Telegram user_id so we can link users later.
 }
 

@@ -96,7 +96,7 @@ func CreateGroup(c context.Context,
 
 type NewUser struct {
 	Name string
-	botsfwmodels.BotUserData
+	botsfwmodels.PlatformUserData
 	ChatMember botsfw.WebhookActor
 }
 

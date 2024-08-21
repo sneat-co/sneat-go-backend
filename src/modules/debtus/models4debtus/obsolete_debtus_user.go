@@ -76,12 +76,12 @@ type DebutsAppUserDataOBSOLETE struct { // TODO: Remove obsolete struct
 
 	SavedCounter int `firestore:"A"` // Indexing to find most active users
 
-	IsAnonymous        bool   `datastore:",noindex"`
-	PasswordBcryptHash []byte `datastore:",noindex"` // TODO: Obsolete
+	IsAnonymous        bool   `firestore:",omitempty"`
+	PasswordBcryptHash []byte `firestore:",omitempty"` // TODO: Obsolete
 
 	//dto4contactus.ContactDetails
 
-	DtAccessGranted time.Time `datastore:",noindex,omitempty"`
+	DtAccessGranted time.Time `firestore:",omitempty"`
 
 	coremodels.SmsStats
 	DtCreated time.Time
@@ -90,35 +90,35 @@ type DebutsAppUserDataOBSOLETE struct { // TODO: Remove obsolete struct
 	InvitedByUserID string `datastore:",omitempty"` // TODO: Prevent circular references! see users 6032980589936640 & 5998019824582656
 
 	TelegramUserIDs    []int64 // TODO: Obsolete
-	ViberBotID         string  `datastore:",noindex,omitempty"` // TODO: Obsolete
-	ViberUserID        string  `datastore:",noindex,omitempty"` // TODO: Obsolete
-	VkUserID           int64   `datastore:",noindex,omitempty"` // TODO: Obsolete
-	GoogleUniqueUserID string  `datastore:",noindex,omitempty"` // TODO: Obsolete
-	//FbUserID           string `datastore:",noindex,omitempty"` // TODO: Obsolete Facebook assigns different IDs to same FB user for FB app & Messenger app.
-	//FbmUserID          string `datastore:",noindex,omitempty"` // TODO: Obsolete So we would want to keep both IDs?
+	ViberBotID         string  `firestore:",omitempty"` // TODO: Obsolete
+	ViberUserID        string  `firestore:",omitempty"` // TODO: Obsolete
+	VkUserID           int64   `firestore:",omitempty"` // TODO: Obsolete
+	GoogleUniqueUserID string  `firestore:",omitempty"` // TODO: Obsolete
+	//FbUserID           string `firestore:",omitempty"` // TODO: Obsolete Facebook assigns different IDs to same FB user for FB app & Messenger app.
+	//FbmUserID          string `firestore:",omitempty"` // TODO: Obsolete So we would want to keep both IDs?
 	// TODO: How do we support multiple FBM bots? They will have different PSID (PageScopeID)
 
 	OBSOLETE_CounterpartyIDs []int64 `firestore:"counterpartyIDs,omitempty"` // TODO: Remove obsolete
 
-	ContactsCount int    `datastore:",noindex,omitempty"` // TODO: Obsolete
-	ContactsJson  string `datastore:",noindex,omitempty"` // TODO: Obsolete
+	ContactsCount int    `firestore:",omitempty"` // TODO: Obsolete
+	ContactsJson  string `firestore:",omitempty"` // TODO: Obsolete
 
 	WithGroups
 	//
 
 	//
-	//DebtCounterpartyIDs    []int64 `datastore:",noindex"`
-	//DebtCounterpartyCount  int     `datastore:",noindex"`
+	//DebtCounterpartyIDs    []int64 `firestore:",omitempty"`
+	//DebtCounterpartyCount  int     `firestore:",omitempty"`
 	//
 
 	dbmodels.WithLastCurrencies
 
 	// Counts
-	CountOfInvitesCreated  int `datastore:",noindex,omitempty"`
-	CountOfInvitesAccepted int `datastore:",noindex,omitempty"`
+	CountOfInvitesCreated  int `firestore:",omitempty"`
+	CountOfInvitesAccepted int `firestore:",omitempty"`
 
-	LastUserAgent     string `datastore:",noindex,omitempty"`
-	LastUserIpAddress string `datastore:",noindex,omitempty"`
+	LastUserAgent     string `firestore:",omitempty"`
+	LastUserIpAddress string `firestore:",omitempty"`
 }
 
 //func (v *DebutsAppUserDataOBSOLETE) GetFullName() string {

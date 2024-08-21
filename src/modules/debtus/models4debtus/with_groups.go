@@ -18,11 +18,11 @@ type UserGroupJson struct {
 
 // Deprecated: use SplitusSpaceDbo
 type WithGroups struct {
-	GroupsCountActive   int `datastore:",noindex,omitempty"`
-	GroupsCountArchived int `datastore:",noindex,omitempty"`
+	GroupsCountActive   int `firestore:",omitempty"`
+	GroupsCountArchived int `firestore:",omitempty"`
 
-	GroupsJsonActive   string `datastore:",noindex,omitempty"`
-	GroupsJsonArchived string `datastore:",noindex,omitempty"`
+	GroupsJsonActive   string `firestore:",omitempty"`
+	GroupsJsonArchived string `firestore:",omitempty"`
 }
 
 func (entity *WithGroups) ActiveGroups() (groups []UserGroupJson) {

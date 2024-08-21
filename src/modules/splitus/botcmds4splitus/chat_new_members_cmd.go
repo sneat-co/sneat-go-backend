@@ -46,12 +46,12 @@ var newChatMembersCommand = botsfw.Command{
 		{ // Get or create related user records
 			for _, chatMember := range newMembers {
 				tgChatMember := chatMember.(tgbotapi.ChatMember)
-				var botUser record.DataWithID[string, botsfwmodels.BotUserData]
+				var botUser record.DataWithID[string, botsfwmodels.PlatformUserData]
 				if botUser, err = whc.BotUser(); err != nil && !dal.IsNotFound(err) {
 					return
 				}
 				if !botUser.Record.Exists() {
-					botUser.Data = &botsfwmodels.BotUserBaseData{
+					botUser.Data = &botsfwmodels.PlatformUserBaseDbo{
 						BotBaseData: botsfwmodels.BotBaseData{
 							DtCreated: time.Now(),
 						},
@@ -61,9 +61,9 @@ var newChatMembersCommand = botsfw.Command{
 					}
 				}
 				newUsers = append(newUsers, facade4splitus.NewUser{
-					Name:        tgChatMember.GetFullName(),
-					BotUserData: botUser.Data,
-					ChatMember:  chatMember,
+					Name:             tgChatMember.GetFullName(),
+					PlatformUserData: botUser.Data,
+					ChatMember:       chatMember,
 				})
 			}
 		}

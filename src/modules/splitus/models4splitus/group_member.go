@@ -60,5 +60,5 @@ type GroupMemberData struct {
 	GroupID    int64
 	UserID     int64
 	ContactIDs []int64
-	Name       string `datastore:",noindex"`
+	Name       string `firestore:",omitempty"`
 }

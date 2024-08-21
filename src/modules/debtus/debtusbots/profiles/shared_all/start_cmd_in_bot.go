@@ -2,13 +2,16 @@ package shared_all
 
 import (
 	"bytes"
+	"errors"
+	"fmt"
+	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
 	"github.com/bots-go-framework/bots-fw/botsfw"
+	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/strongo/logus"
 	"strings"
-
-	"errors"
 )
 
 var ErrUnknownStartParam = errors.New("unknown start parameter")
@@ -16,9 +19,12 @@ var ErrUnknownStartParam = errors.New("unknown start parameter")
 func startInBotAction(whc botsfw.WebhookContext, startParams []string, botParams BotParams) (m botsfw.MessageFromBot, err error) {
 	logus.Debugf(whc.Context(), "startInBotAction() => startParams: %v", startParams)
 	if m, err = botParams.StartInBotAction(whc, startParams); err != nil {
-		if err == ErrUnknownStartParam {
+		if errors.Is(err, ErrUnknownStartParam) {
 			if whc.ChatData().GetPreferredLanguage() == "" {
-				return onboardingAskLocaleAction(whc, whc.Translate(trans.MESSAGE_TEXT_HI)+"\n\n", botParams)
+				if m, err = onboardingAskLocaleAction(whc, whc.Translate(trans.MESSAGE_TEXT_HI)+"\n\n", botParams); err != nil {
+					err = fmt.Errorf("failed in onboardingAskLocaleAction(): %w", err)
+					return
+				}
 			}
 		}
 		return
@@ -29,18 +35,48 @@ func startInBotAction(whc botsfw.WebhookContext, startParams []string, botParams
 			return howToCommand.Action(whc)
 		}
 	}
-	return startInBotWelcomeAction(whc, botParams)
+	if m, err = startInBotWelcomeAction(whc, botParams); err != nil {
+		err = errors.New("failed in startInBotWelcomeAction(): " + err.Error())
+	}
+	return
 }
 
 func startInBotWelcomeAction(whc botsfw.WebhookContext, botParams BotParams) (m botsfw.MessageFromBot, err error) {
+
+	var userName string
+
 	var user dbo4userus.UserEntry
 	if user, err = GetUser(whc); err != nil {
-		return
+		if !dal.IsNotFound(err) {
+			return
+		}
+		var botUser record.DataWithID[string, botsfwmodels.PlatformUserData]
+		if botUser, err = whc.BotUser(); err != nil && !dal.IsNotFound(err) {
+			return m, fmt.Errorf("failed to get bot user data: %w", err)
+		}
+		if dal.IsNotFound(err) {
+			userName = "stranger"
+			err = nil
+		} else {
+			botUserBaseData := botUser.Data.BaseData()
+			userName = botUserBaseData.FirstName
+			if userName == "" {
+				userName = botUserBaseData.LastName
+				if userName == "" {
+					userName = botUserBaseData.UserName
+				}
+				if userName == "" {
+					userName = "stranger"
+				}
+			}
+		}
+	} else {
+		userName = user.Data.Names.FirstName
 	}
 
 	buf := new(bytes.Buffer)
 
-	buf.WriteString(whc.Translate(trans.MESSAGE_TEXT_HI_USERNAME, user.Data.Names.FirstName))
+	buf.WriteString(whc.Translate(trans.MESSAGE_TEXT_HI_USERNAME, userName))
 	buf.WriteString(" ")
 
 	buf.WriteString(whc.Translate(trans.SPLITUS_TEXT_HI))

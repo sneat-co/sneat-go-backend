@@ -45,7 +45,7 @@ func NewGroupKey(id string) *dal.Key {
 
 type GroupDbo struct {
 	CreatorUserID string
-	//IsUser2User         bool   `datastore:",noindex"`
+	//IsUser2User         bool   `firestore:",omitempty"`
 	Name            string             `firestore:"name"`
 	Note            string             `firestore:"note,omitempty"`
 	DefaultCurrency money.CurrencyCode `firestore:"defaultCurrency,omitempty"`

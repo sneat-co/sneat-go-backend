@@ -177,60 +177,60 @@ type TransferData struct {
 	// DirectionObsoleteProp string `firestore:"direction,omitempty"`
 
 	// We need it as it is not always possible to identify original transfer (think multiple & partial api4transfers)
-	IsReturn bool `datastore:",noindex,omitempty"`
+	IsReturn bool `firestore:",omitempty"`
 
 	// List of transfer to which this debt is a return. Should be populated only if IsReturn=True
-	ReturnToTransferIDs []string `datastore:",noindex"` // TODO: to make it obsolete - move to ReturnsJson
+	ReturnToTransferIDs []string `firestore:",omitempty"` // TODO: to make it obsolete - move to ReturnsJson
 	//
 	returns      TransferReturns // Deserialized cache
-	ReturnsJson  string          `datastore:",noindex,omitempty"`
-	ReturnsCount int             `datastore:",noindex,omitempty"`
-	// ReturntransferIDs []int `datastore:",noindex"` // Obsolete - replaced with ReturnsJson List of api4transfers that return money to this debts
+	ReturnsJson  string          `firestore:",omitempty"`
+	ReturnsCount int             `firestore:",omitempty"`
+	// ReturntransferIDs []int `firestore:",omitempty"` // Obsolete - replaced with ReturnsJson List of api4transfers that return money to this debts
 	//
-	CreatorUserID           string `datastore:",noindex"`           // Do not delete, is NOT obsolete!
-	CreatorCounterpartyID   int    `datastore:",noindex,omitempty"` // TODO: Replace with <From|To>ContactID
-	CreatorCounterpartyName string `datastore:",noindex,omitempty"` // TODO: Replace with <From|To>ContactName
-	CreatorNote             string `datastore:",noindex,omitempty"` // TODO: Replace with <From|To>Note
-	CreatorComment          string `datastore:",noindex,omitempty"` // TODO: Replace with <From|To>Comment
+	CreatorUserID           string `firestore:",omitempty"` // Do not delete, is NOT obsolete!
+	CreatorCounterpartyID   int    `firestore:",omitempty"` // TODO: Replace with <From|To>ContactID
+	CreatorCounterpartyName string `firestore:",omitempty"` // TODO: Replace with <From|To>ContactName
+	CreatorNote             string `firestore:",omitempty"` // TODO: Replace with <From|To>Note
+	CreatorComment          string `firestore:",omitempty"` // TODO: Replace with <From|To>Comment
 
-	CreatorTgReceiptByTgMsgID int64 `datastore:",noindex,omitempty"` // TODO: Move to ReceiptEntry ?
+	CreatorTgReceiptByTgMsgID int64 `firestore:",omitempty"` // TODO: Move to ReceiptEntry ?
 	//
-	// CreatorTgBotID       string `datastore:",noindex"` // TODO: Migrated to TransferCounterpartyInfo
-	// CreatorTgChatID      int64  `datastore:",noindex"` // TODO: Migrated to TransferCounterpartyInfo
-	// CounterpartyTgBotID  string `datastore:",noindex"` // TODO: Migrated to TransferCounterpartyInfo
-	// CounterpartyTgChatID int64  `datastore:",noindex"` // TODO: Migrated to TransferCounterpartyInfo
+	// CreatorTgBotID       string `firestore:",omitempty"` // TODO: Migrated to TransferCounterpartyInfo
+	// CreatorTgChatID      int64  `firestore:",omitempty"` // TODO: Migrated to TransferCounterpartyInfo
+	// CounterpartyTgBotID  string `firestore:",omitempty"` // TODO: Migrated to TransferCounterpartyInfo
+	// CounterpartyTgChatID int64  `firestore:",omitempty"` // TODO: Migrated to TransferCounterpartyInfo
 	//
-	// CreatorAutoRemindersDisabled bool   `datastore:",noindex"`
-	// CreatorReminderID      int64 `datastore:",noindex"` // obsolete
-	// CounterpartyReminderID int64 `datastore:",noindex"` // obsolete
+	// CreatorAutoRemindersDisabled bool   `firestore:",omitempty"`
+	// CreatorReminderID      int64 `firestore:",omitempty"` // obsolete
+	// CounterpartyReminderID int64 `firestore:",omitempty"` // obsolete
 	//
-	//CounterpartyUserID           int64  `datastore:",noindex,omitempty"` // Replaced with <From|To>UserID
-	//CounterpartyContactID   int64  `datastore:",noindex,omitempty"` // Replaced with <From|To>ContactID
-	//CounterpartyCounterpartyName string `datastore:",noindex,omitempty"` // Replaced with <From|To>ContactName
-	//CounterpartyNote             string `datastore:",noindex,omitempty"` // Replaced with <From|To>Note
-	//CounterpartyComment          string `datastore:",noindex,omitempty"` // Replaced with <From|To>Comment
-	// CounterpartyAutoRemindersDisabled bool   `datastore:",noindex"`
-	// CounterpartyTgReceiptInlineMessageID string    `datastore:",noindex"` - not useful as we can edit message just once on callback
+	//CounterpartyUserID           int64  `firestore:",omitempty"` // Replaced with <From|To>UserID
+	//CounterpartyContactID   int64  `firestore:",omitempty"` // Replaced with <From|To>ContactID
+	//CounterpartyCounterpartyName string `firestore:",omitempty"` // Replaced with <From|To>ContactName
+	//CounterpartyNote             string `firestore:",omitempty"` // Replaced with <From|To>Note
+	//CounterpartyComment          string `firestore:",omitempty"` // Replaced with <From|To>Comment
+	// CounterpartyAutoRemindersDisabled bool   `firestore:",omitempty"`
+	// CounterpartyTgReceiptInlineMessageID string    `firestore:",omitempty"` - not useful as we can edit message just once on callback
 
 	FromJson string `firestore:"C_From,omitempty"`
 	ToJson   string `firestore:"C_To,omitempty"`
 
 	// ** New properties to replace Creator/DebtusSpaceContactEntry set of props **
-	// FromUserID           int64  `datastore:",noindex"`
-	// FromUserName         string `datastore:",noindex"`
-	// FromCounterpartyID   int64  `datastore:",noindex"`
-	// FromCounterpartyName string `datastore:",noindex"`
-	// FromComment          string `datastore:",noindex"`
-	// FromNote             string `datastore:",noindex"`
-	// ToUserID             int64  `datastore:",noindex"`
-	// ToUserName           string `datastore:",noindex"`
-	// ToCounterpartyID     int64  `datastore:",noindex"`
-	// ToCounterpartyName   string `datastore:",noindex"`
-	// ToComment            string `datastore:",noindex"`
-	// ToNote               string `datastore:",noindex"`
+	// FromUserID           int64  `firestore:",omitempty"`
+	// FromUserName         string `firestore:",omitempty"`
+	// FromCounterpartyID   int64  `firestore:",omitempty"`
+	// FromCounterpartyName string `firestore:",omitempty"`
+	// FromComment          string `firestore:",omitempty"`
+	// FromNote             string `firestore:",omitempty"`
+	// ToUserID             int64  `firestore:",omitempty"`
+	// ToUserName           string `firestore:",omitempty"`
+	// ToCounterpartyID     int64  `firestore:",omitempty"`
+	// ToCounterpartyName   string `firestore:",omitempty"`
+	// ToComment            string `firestore:",omitempty"`
+	// ToNote               string `firestore:",omitempty"`
 
-	AcknowledgeStatus string    `datastore:",noindex,omitempty"`
-	AcknowledgeTime   time.Time `datastore:",noindex,omitempty"`
+	AcknowledgeStatus string    `firestore:",omitempty"`
+	AcknowledgeTime   time.Time `firestore:",omitempty"`
 
 	// This 2 fields are used in conjunction with .Order("-DtCreated")
 	BothUserIDs         []string // This is needed to show transactions by user regardless who created
@@ -240,17 +240,17 @@ type TransferData struct {
 	DtDueOn   time.Time `datastore:",omitempty"`
 
 	AmountInCents         decimal.Decimal64p2
-	AmountInCentsReturned decimal.Decimal64p2 `datastore:",noindex,omitempty"`
-	AmountInCentsInterest decimal.Decimal64p2 `datastore:",noindex,omitempty"`
-	// AmountInCentsOutstanding decimal.Decimal64p2 `datastore:",noindex,omitempty"` // Removed
+	AmountInCentsReturned decimal.Decimal64p2 `firestore:",omitempty"`
+	AmountInCentsInterest decimal.Decimal64p2 `firestore:",omitempty"`
+	// AmountInCentsOutstanding decimal.Decimal64p2 `firestore:",omitempty"` // Removed
 
 	TransferInterest
 
 	IsOutstanding bool
 	Currency      money.CurrencyCode // Should be indexed for loading outstanding api4transfers
 	//
-	ReceiptsSentCount int      `datastore:",noindex,omitempty"`
-	ReceiptIDs        []string `datastore:",noindex"`
+	ReceiptsSentCount int      `firestore:",omitempty"`
+	ReceiptIDs        []string `firestore:",omitempty"`
 }
 
 // AmountReturned returns amount returned to counterparty

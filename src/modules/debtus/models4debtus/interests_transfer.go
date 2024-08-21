@@ -16,7 +16,7 @@ type TransferInterest struct {
 	InterestPercent       decimal.Decimal64p2       `json:"interestPercent" firestore:"interestPercent,omitempty"`
 	InterestGracePeriod   int                       `json:"interestGracePeriod,omitempty" firestore:"interestGracePeriod,omitempty"`     // How many days are without any interest
 	InterestMinimumPeriod int                       `json:"interestMinimumPeriod,omitempty" firestore:"interestMinimumPeriod,omitempty"` // Minimum days for interest (e.g. penalty for earlier return).
-	// InterestAmountInCents decimal.Decimal64p2 `datastore:",noindex" json:",omitempty"`
+	// InterestAmountInCents decimal.Decimal64p2 `json:",omitempty"`
 }
 
 func (ti TransferInterest) Validate() error {

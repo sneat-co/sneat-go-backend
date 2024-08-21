@@ -14,7 +14,7 @@ type Split struct {
 
 type SplitEntity struct {
 	appuser.OwnedByUserWithID
-	BillIDs []string `datastore:",noindex"`
+	BillIDs []string `firestore:",omitempty"`
 }
 
 func (Split) Kind() string {

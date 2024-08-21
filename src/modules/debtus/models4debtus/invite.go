@@ -41,14 +41,14 @@ func NewInvite(id string, data *InviteData) Invite {
 }
 
 type InviteData struct {
-	Channel      string `datastore:",noindex"`
+	Channel      string `firestore:",omitempty"`
 	DtCreated    time.Time
 	DtActiveFrom time.Time
 	DtActiveTill time.Time
 	//
-	MaxClaimsCount int32 `datastore:",noindex"`
+	MaxClaimsCount int32 `firestore:",omitempty"`
 	ClaimedCount   int32
-	LastClaimIDs   []int64 `datastore:",noindex"`
+	LastClaimIDs   []int64 `firestore:",omitempty"`
 	LastClaimed    time.Time
 	//DtClaimed       time.Time
 	CreatedByUserID string
@@ -58,9 +58,9 @@ type InviteData struct {
 
 	Type string
 
-	ToName          string `datastore:",noindex"`
+	ToName          string `firestore:",omitempty"`
 	ToEmail         string
-	ToEmailOriginal string `datastore:",noindex"`
+	ToEmailOriginal string `firestore:",omitempty"`
 	ToPhoneNumber   int64
 	ToUrl           string
 }

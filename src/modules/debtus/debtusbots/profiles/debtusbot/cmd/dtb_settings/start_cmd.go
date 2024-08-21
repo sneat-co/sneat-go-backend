@@ -23,12 +23,16 @@ Examples:
 var reInviteOrReceiptCodeFromStart = regexp.MustCompile(`^(invite|receipt)-(\w+)(-(view|accept|decline))?(_(\w{2}(-\w{2})?))(_(.+))?$`)
 
 func StartInBotAction(whc botsfw.WebhookContext, startParams []string) (m botsfw.MessageFromBot, err error) {
-	if len(startParams) == 1 {
+	switch len(startParams) {
+	case 0:
+
+	case 1:
 		if matched := reInviteOrReceiptCodeFromStart.FindStringSubmatch(startParams[0]); matched != nil {
 			return startByLinkCode(whc, matched)
 		}
+	default:
+		err = shared_all.ErrUnknownStartParam
 	}
-	err = shared_all.ErrUnknownStartParam
 	return
 }
 

@@ -48,14 +48,14 @@ type BillScheduleEntity struct {
 	// * monthly:first-monday
 	// * yearly:1-jan ???
 	*/
-	BillsCount        int    `datastore:",noindex"`
-	CreatedFromBillID string `datastore:",noindex"`
-	RepeatPeriod      Period `datastore:",noindex"`
-	RepeatOn          string `datastore:",noindex"`
-	IsAutoTransfer    bool   `datastore:",noindex"`
+	BillsCount        int    `firestore:",omitempty"`
+	CreatedFromBillID string `firestore:",omitempty"`
+	RepeatPeriod      Period `firestore:",omitempty"`
+	RepeatOn          string `firestore:",omitempty"`
+	IsAutoTransfer    bool   `firestore:",omitempty"`
 
-	LastBillID string    `datastore:",noindex"`
-	DtLast     time.Time `datastore:",noindex"`
+	LastBillID string    `firestore:",omitempty"`
+	DtLast     time.Time `firestore:",omitempty"`
 	DtNext     time.Time
 }
 

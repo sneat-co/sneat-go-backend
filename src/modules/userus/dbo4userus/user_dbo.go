@@ -72,8 +72,8 @@ type UserDbo struct {
 	//models.DatatugUser
 
 	ReferredBy       string    `datastore:",omitempty"`
-	LastFeedbackAt   time.Time `datastore:",noindex,omitempty"`
-	LastFeedbackRate string    `datastore:",noindex,omitempty"`
+	LastFeedbackAt   time.Time `firestore:",omitempty"`
+	LastFeedbackRate string    `firestore:",omitempty"`
 
 	appuser.LastLogin
 }

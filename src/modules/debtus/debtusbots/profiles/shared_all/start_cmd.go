@@ -37,39 +37,42 @@ func createStartCommand(botParams BotParams) botsfw.Command {
 		Commands:   []string{"/start"},
 		InputTypes: []botsfw.WebhookInputType{botsfw.WebhookInputInlineQuery},
 		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-			whc.LogRequest()
-			c := whc.Context()
-			text := whc.Input().(botsfw.WebhookTextMessage).Text()
-			logus.Debugf(c, "createStartCommand.Action() => text: "+text)
-
-			startParam, startParams := tgsharedcommands.ParseStartCommand(whc)
-
-			if whc.IsInGroup() {
-				return botParams.StartInGroupAction(whc)
-			} else {
-				chatEntity := whc.ChatData()
-				chatEntity.SetAwaitingReplyTo("")
-
-				switch {
-				case startParam == "help_inline":
-					return startInlineHelp(whc)
-				case strings.HasPrefix(startParam, "login-"):
-					loginID, err := common4debtus.DecodeIntID(startParam[len("login-"):])
-					if err != nil {
-						return m, err
-					}
-					return startLoginGac(whc, loginID)
-					//case strings.HasPrefix(textToMatchNoStart, JOIN_BILL_COMMAND):
-					//	return JoinBillCommand.Action(whc)
-				case strings.HasPrefix(startParam, "refbytguser-") && startParam != "refbytguser-YOUR_CHANNEL":
-					facade4debtus.Referer.AddTelegramReferrer(c, whc.AppUserID(), strings.TrimPrefix(startParam, "refbytguser-"), whc.GetBotCode())
-				}
-				return startInBotAction(whc, startParams, botParams)
-			}
+			return startCommandAction(whc, botParams)
 		},
 	}
 }
 
+func startCommandAction(whc botsfw.WebhookContext, botParams BotParams) (m botsfw.MessageFromBot, err error) {
+	whc.LogRequest()
+	c := whc.Context()
+	text := whc.Input().(botsfw.WebhookTextMessage).Text()
+	logus.Debugf(c, "createStartCommand.Action() => text: "+text)
+
+	startParam, startParams := tgsharedcommands.ParseStartCommand(whc)
+
+	if whc.IsInGroup() {
+		return botParams.StartInGroupAction(whc)
+	} else {
+		chatEntity := whc.ChatData()
+		chatEntity.SetAwaitingReplyTo("")
+
+		switch {
+		case startParam == "help_inline":
+			return startInlineHelp(whc)
+		case strings.HasPrefix(startParam, "login-"):
+			loginID, err := common4debtus.DecodeIntID(startParam[len("login-"):])
+			if err != nil {
+				return m, err
+			}
+			return startLoginGac(whc, loginID)
+			//case strings.HasPrefix(textToMatchNoStart, JOIN_BILL_COMMAND):
+			//	return JoinBillCommand.Action(whc)
+		case strings.HasPrefix(startParam, "refbytguser-") && startParam != "refbytguser-YOUR_CHANNEL":
+			facade4debtus.Referer.AddTelegramReferrer(c, whc.AppUserID(), strings.TrimPrefix(startParam, "refbytguser-"), whc.GetBotCode())
+		}
+		return startInBotAction(whc, startParams, botParams)
+	}
+}
 func startLoginGac(whc botsfw.WebhookContext, loginID int) (m botsfw.MessageFromBot, err error) {
 	c := whc.Context()
 	var loginPin models4auth.LoginPin
@@ -94,13 +97,13 @@ func startInlineHelp(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err er
 }
 
 func GetUser(whc botsfw.WebhookContext) (user dbo4userus.UserEntry, err error) { // TODO: Make library and use across app
-	panic("not implemented: obsolete")
-	//var botAppUser botsfwmodels.AppUserData
-	//if botAppUser, err = whc.AppUserData(); err != nil {
-	//	return
-	//}
-	//user = botAppUser.(*models.DebutsAppUserDataOBSOLETE)
-	//return
+	appUserID := whc.AppUserID()
+	if appUserID == "" {
+		return user, fmt.Errorf("%w: app user ID is empty", dal.ErrRecordNotFound)
+	}
+	user = dbo4userus.NewUserEntry(appUserID)
+	ctx := whc.Context()
+	return user, dal4userus.GetUser(ctx, nil, user)
 }
 
 var LangKeyboard = tgbotapi.NewInlineKeyboardMarkup(

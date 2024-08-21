@@ -44,29 +44,29 @@ func NewReminder(id string, entity *ReminderDbo) Reminder {
 }
 
 type ReminderDbo struct {
-	ParentReminderID    int  `datastore:",omitempty"`
-	IsAutomatic         bool `datastore:",noindex,omitempty"`
-	IsRescheduled       bool `datastore:",noindex,omitempty"`
+	ParentReminderID    int  `firestore:"parentReminderID,omitempty"`
+	IsAutomatic         bool `firestore:",omitempty"`
+	IsRescheduled       bool `firestore:",omitempty"`
 	TransferID          string
 	DtNext              time.Time
-	DtScheduled         time.Time `datastore:",noindex,omitempty"` // DtNext moves here once sent, can be used for stats & troubleshooting
-	Locale              string    `datastore:",noindex"`
-	ClosedByTransferIDs []string  `datastore:",noindex"` // TODO: Why do we need list of IDs here?
+	DtScheduled         time.Time `firestore:",omitempty"` // DtNext moves here once sent, can be used for stats & troubleshooting
+	Locale              string    `firestore:",omitempty"`
+	ClosedByTransferIDs []string  `firestore:",omitempty"` // TODO: Why do we need list of IDs here?
 	SentVia             string    `datastore:",omitempty"`
 	Status              string
 	UserID              string
 	CounterpartyID      string // If this field != 0 then r is to a counterparty
 	DtCreated           time.Time
-	DtUpdated           time.Time `datastore:",noindex,omitempty"`
+	DtUpdated           time.Time `firestore:",omitempty"`
 	DtSent              time.Time `datastore:",omitempty"`
-	DtUsed              time.Time `datastore:",noindex,omitempty"` // When user clicks "Yes/no returned"
-	DtViewed            time.Time `datastore:",noindex,omitempty"`
-	DtDiscarded         time.Time `datastore:",noindex,omitempty"`
-	BotID               string    `datastore:",noindex,omitempty"`
-	ChatIntID           int64     `datastore:",noindex,omitempty"`
-	MessageIntID        int64     `datastore:",noindex,omitempty"`
-	MessageStrID        string    `datastore:",noindex,omitempty"`
-	ErrDetails          string    `datastore:",noindex,omitempty"`
+	DtUsed              time.Time `firestore:",omitempty"` // When user clicks "Yes/no returned"
+	DtViewed            time.Time `firestore:",omitempty"`
+	DtDiscarded         time.Time `firestore:",omitempty"`
+	BotID               string    `firestore:",omitempty"`
+	ChatIntID           int64     `firestore:",omitempty"`
+	MessageIntID        int64     `firestore:",omitempty"`
+	MessageStrID        string    `firestore:",omitempty"`
+	ErrDetails          string    `firestore:",omitempty"`
 }
 
 //func (r *ReminderDbo) Save() (properties []datastore.Property, err error) {

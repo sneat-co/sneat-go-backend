@@ -15,11 +15,11 @@ type SplitusSpaceDbo struct {
 	BillsHolder
 	Members []briefs4splitus.SpaceSplitMember `firestore:"members,omitempty"`
 
-	BillsCountActive int    `datastore:",noindex,omitempty"`
-	BillsJsonActive  string `datastore:",noindex,omitempty"`
+	BillsCountActive int    `firestore:",omitempty"`
+	BillsJsonActive  string `firestore:",omitempty"`
 	//
-	BillSchedulesCountActive int    `datastore:",noindex,omitempty"`
-	BillSchedulesJsonActive  string `datastore:",noindex,omitempty"`
+	BillSchedulesCountActive int    `firestore:",omitempty"`
+	BillSchedulesJsonActive  string `firestore:",omitempty"`
 }
 
 type SplitusSpaceEntry = record.DataWithID[string, *SplitusSpaceDbo]

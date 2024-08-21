@@ -41,13 +41,13 @@ type LoginPin struct {
 // LoginPinData is a data structure for LoginPin entity.
 // TODO check and describe how it is different from LoginCodeData
 type LoginPinData struct {
-	Channel    string `datastore:",noindex"`
-	GaClientID string `datastore:",noindex"`
+	Channel    string `firestore:",omitempty"`
+	GaClientID string `firestore:",omitempty"`
 	Created    time.Time
-	Pinned     time.Time `datastore:",noindex"`
-	SignedIn   time.Time `datastore:",noindex"`
-	UserID     string    `datastore:",noindex"`
-	Code       int32     `datastore:",noindex"`
+	Pinned     time.Time `firestore:",omitempty"`
+	SignedIn   time.Time `firestore:",omitempty"`
+	UserID     string    `firestore:",omitempty"`
+	Code       int32     `firestore:",omitempty"`
 }
 
 func (entity *LoginPinData) IsActive(channel string) bool {

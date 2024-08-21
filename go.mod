@@ -21,10 +21,10 @@ go 1.23.0
 
 require (
 	github.com/bots-go-framework/bots-api-telegram v0.4.6
-	github.com/bots-go-framework/bots-fw v0.29.0
-	github.com/bots-go-framework/bots-fw-store v0.6.1
-	github.com/bots-go-framework/bots-fw-telegram v0.8.18
-	github.com/bots-go-framework/bots-fw-telegram-models v0.2.1
+	github.com/bots-go-framework/bots-fw v0.30.0
+	github.com/bots-go-framework/bots-fw-store v0.7.0
+	github.com/bots-go-framework/bots-fw-telegram v0.9.0
+	github.com/bots-go-framework/bots-fw-telegram-models v0.3.0
 	github.com/bots-go-framework/bots-host-gae v0.5.10
 	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85
 	github.com/crediterra/money v0.3.0
@@ -41,7 +41,7 @@ require (
 	github.com/sanity-io/litter v1.5.5
 	github.com/sendgrid/sendgrid-go v3.15.0+incompatible
 	github.com/shiyanhui/hero v0.0.2
-	github.com/sneat-co/debtstracker-translations v0.0.22
+	github.com/sneat-co/debtstracker-translations v0.0.23
 	github.com/sneat-co/sneat-go-core v0.31.5
 	github.com/sneat-co/sneat-go-firebase v0.5.1
 	github.com/stretchr/testify v1.9.0
@@ -70,7 +70,7 @@ require (
 	cloud.google.com/go/compute/metadata v0.5.0 // indirect
 	cloud.google.com/go/firestore v1.16.0 // indirect
 	cloud.google.com/go/iam v1.2.0 // indirect
-	cloud.google.com/go/longrunning v0.5.12 // indirect
+	cloud.google.com/go/longrunning v0.6.0 // indirect
 	cloud.google.com/go/storage v1.43.0 // indirect
 	firebase.google.com/go/v4 v4.14.1 // indirect
 	github.com/AlekSi/pointer v1.2.0 // indirect
@@ -111,9 +111,9 @@ require (
 	golang.org/x/text v0.17.0 // indirect
 	golang.org/x/time v0.6.0 // indirect
 	google.golang.org/api v0.193.0 // indirect
-	google.golang.org/genproto v0.0.0-20240814211410-ddb44dafa142 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20240814211410-ddb44dafa142 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240814211410-ddb44dafa142 // indirect
+	google.golang.org/genproto v0.0.0-20240820151423-278611b39280 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20240820151423-278611b39280 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240820151423-278611b39280 // indirect
 	google.golang.org/grpc v1.65.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

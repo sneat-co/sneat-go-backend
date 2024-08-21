@@ -9,18 +9,18 @@ const UserGooglePlusKind = "UserGooglePlus"
 
 type UserGooglePlusEntity struct {
 	appuser.OwnedByUserWithID
-	Email          string `datastore:",noindex"`
-	DisplayName    string `datastore:",noindex"`
-	RefreshToken   string `datastore:",noindex"`
-	ServerAuthCode string `datastore:",noindex"`
-	AccessToken    string `datastore:",noindex"`
-	ImageUrl       string `datastore:",noindex"`
-	IdToken        string `datastore:",noindex"`
+	Email          string `firestore:",omitempty"`
+	DisplayName    string `firestore:",omitempty"`
+	RefreshToken   string `firestore:",omitempty"`
+	ServerAuthCode string `firestore:",omitempty"`
+	AccessToken    string `firestore:",omitempty"`
+	ImageUrl       string `firestore:",omitempty"`
+	IdToken        string `firestore:",omitempty"`
 
-	Locale        string `datastore:",noindex"`
-	NameFirst     string `datastore:",noindex"`
-	NameLast      string `datastore:",noindex"`
-	EmailVerified bool   `datastore:",noindex"`
+	Locale        string `firestore:",omitempty"`
+	NameFirst     string `firestore:",omitempty"`
+	NameLast      string `firestore:",omitempty"`
+	EmailVerified bool   `firestore:",omitempty"`
 }
 
 type UserGooglePlus = record.DataWithID[string, *UserGooglePlusEntity]

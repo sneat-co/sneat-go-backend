@@ -13,8 +13,8 @@ func newBotChatData() botsfwmodels.BotChatData {
 	return new(botsfwtgmodels.TgChatBaseData)
 }
 
-func newBotUserData() botsfwmodels.BotUserData {
-	return new(botsfwtgmodels.TgBotUserBaseData)
+func newBotUserData() botsfwmodels.PlatformUserData {
+	return new(botsfwtgmodels.TgPlatformUserBaseDbo)
 }
 
 func newAppUserData() botsfwmodels.AppUserData {

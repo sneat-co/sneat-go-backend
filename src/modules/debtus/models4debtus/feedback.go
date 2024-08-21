@@ -16,7 +16,7 @@ type FeedbackData struct {
 	UserStrID string
 	Created   time.Time
 	Rate      string
-	Text      string `datastore:",noindex"`
+	Text      string `firestore:",omitempty"`
 }
 
 //var _ db.EntityHolder = (*Feedback)(nil)

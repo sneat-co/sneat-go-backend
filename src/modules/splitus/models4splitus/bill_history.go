@@ -37,13 +37,13 @@ type BillsHistory = record.DataWithID[string, *BillsHistoryDbo]
 type BillsHistoryDbo struct {
 	DtCreated            time.Time
 	UserID               string
-	StatusOld            string              `datastore:",noindex"`
-	StatusNew            string              `datastore:",noindex"`
-	Action               BillHistoryAction   `datastore:",noindex"`
-	Currency             money.CurrencyCode  `datastore:",noindex"`
-	TotalAmountDiff      decimal.Decimal64p2 `datastore:",noindex"`
-	TotalAmountBefore    decimal.Decimal64p2 `datastore:",noindex"`
-	TotalAmountAfter     decimal.Decimal64p2 `datastore:",noindex"`
+	StatusOld            string              `firestore:",omitempty"`
+	StatusNew            string              `firestore:",omitempty"`
+	Action               BillHistoryAction   `firestore:",omitempty"`
+	Currency             money.CurrencyCode  `firestore:",omitempty"`
+	TotalAmountDiff      decimal.Decimal64p2 `firestore:",omitempty"`
+	TotalAmountBefore    decimal.Decimal64p2 `firestore:",omitempty"`
+	TotalAmountAfter     decimal.Decimal64p2 `firestore:",omitempty"`
 	GroupIDs             []string
 	BillIDs              []string
 	BillsSettlementCount int                               `firestore:"billsSettlementCount,omitempty"`
