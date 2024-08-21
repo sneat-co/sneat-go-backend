@@ -35,13 +35,13 @@ func startInBotAction(whc botsfw.WebhookContext, startParams []string, botParams
 			return howToCommand.Action(whc)
 		}
 	}
-	if m, err = startInBotWelcomeAction(whc, botParams); err != nil {
+	if m, err = startInBotWelcomeAction(whc); err != nil {
 		err = errors.New("failed in startInBotWelcomeAction(): " + err.Error())
 	}
 	return
 }
 
-func startInBotWelcomeAction(whc botsfw.WebhookContext, botParams BotParams) (m botsfw.MessageFromBot, err error) {
+func startInBotWelcomeAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 
 	var userName string
 
