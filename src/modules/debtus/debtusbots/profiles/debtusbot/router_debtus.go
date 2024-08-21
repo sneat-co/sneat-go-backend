@@ -57,6 +57,8 @@ var textAndContactCommands = []botsfw.Command{ // TODO: Check for Action || Call
 	//OnboardingAskInviteCodeCommand,
 	//OnboardingCheckInviteCommand,
 	//
+	dtb_general.DebtusHomeCommand,
+	//
 	dtb_general.FeedbackCommand,
 	dtb_general.FeedbackTextCommand,
 	dtb_general.DeleteAllCommand,

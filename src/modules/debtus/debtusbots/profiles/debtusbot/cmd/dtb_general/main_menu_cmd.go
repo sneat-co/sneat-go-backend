@@ -37,6 +37,7 @@ func MainMenuAction(whc botsfw.WebhookContext, messageText string, showHint bool
 	logus.Infof(whc.Context(), "MainMenuCommand.Action()")
 	whc.ChatData().SetAwaitingReplyTo("")
 	m = whc.NewMessage(messageText)
+	m.Format = botsfw.MessageFormatHTML
 	SetMainMenuKeyboard(whc, &m)
 	return m, nil
 }
