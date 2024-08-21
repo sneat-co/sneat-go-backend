@@ -11,7 +11,10 @@ const NEW_CHAT_MEMBERS_COMMAND = "new-chat-members"
 var newChatMembersCommand = botsfw.Command{
 	Code: NEW_CHAT_MEMBERS_COMMAND,
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-		if whc.IsInGroup() {
+		var isInGroup bool
+		if isInGroup, err = whc.IsInGroup(); err != nil {
+			return
+		} else if isInGroup {
 			logus.Warningf(whc.Context(), "Leaving chat as @DebtsTrackerBot does not support group chats")
 			m.BotMessage = telegram.LeaveChat{}
 		}

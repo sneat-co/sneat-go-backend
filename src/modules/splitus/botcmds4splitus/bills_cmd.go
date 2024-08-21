@@ -30,7 +30,10 @@ var billsCommand = botsfw.Command{
 
 func billsAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 	c := whc.Context()
-	if !whc.IsInGroup() {
+	var isInGroup bool
+	if isInGroup, err = whc.IsInGroup(); err != nil {
+		return
+	} else if !isInGroup {
 		userID := whc.AppUserID()
 		userDebtus := models4debtus.NewDebtusUserEntry(userID)
 
@@ -56,14 +59,12 @@ func billsAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error)
 		m.Text = buf.String()
 		m.Format = botsfw.MessageFormatHTML
 		keyboard := tgbotapi.NewInlineKeyboardMarkup()
-		if !whc.IsInGroup() {
-			keyboard.InlineKeyboard = append(keyboard.InlineKeyboard,
-				[]tgbotapi.InlineKeyboardButton{{
-					Text:         whc.CommandText(trans.COMMAND_TEXT_SETTLE_BILLS, emoji.GREEN_CHECKBOX),
-					CallbackData: settleBillsCommandCode,
-				}},
-			)
-		}
+		keyboard.InlineKeyboard = append(keyboard.InlineKeyboard,
+			[]tgbotapi.InlineKeyboardButton{{
+				Text:         whc.CommandText(trans.COMMAND_TEXT_SETTLE_BILLS, emoji.GREEN_CHECKBOX),
+				CallbackData: settleBillsCommandCode,
+			}},
+		)
 		keyboard.InlineKeyboard = append(keyboard.InlineKeyboard,
 			[]tgbotapi.InlineKeyboardButton{
 				tgbotapi.NewInlineKeyboardButtonSwitchInlineQuery(

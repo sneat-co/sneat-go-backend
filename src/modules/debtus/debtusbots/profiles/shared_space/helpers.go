@@ -39,7 +39,10 @@ func GetSpaceEntryByCallbackUrl(whc botsfw.WebhookContext, callbackUrl *url.URL)
 		}
 	}
 
-	if !whc.IsInGroup() {
+	var isInGroup bool
+	if isInGroup, err = whc.IsInGroup(); err != nil {
+		return
+	} else if isInGroup {
 		if callbackUrl != nil {
 			err = errors.New("an attempt to get space ContactID outside of space chat without callback parameter 'space'")
 		}

@@ -54,7 +54,10 @@ func billCallbackAction(f billCallbackActionHandler) func(whc botsfw.WebhookCont
 				return
 			}
 			if bill.Data.GetUserGroupID() == "" {
-				if whc.IsInGroup() {
+				var isInGroup bool
+				if isInGroup, err = whc.IsInGroup(); err != nil {
+					return
+				} else if isInGroup {
 					var splitusSpace models4splitus.SplitusSpaceEntry
 					if splitusSpace.ID, err = shared_space.GetUserGroupID(whc); err != nil {
 						return

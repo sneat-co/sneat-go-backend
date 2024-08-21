@@ -260,8 +260,15 @@ var EditedBillCardHookCommand = botsfw.Command{ // TODO: seems to be not used an
 		return
 	},
 	Matcher: func(command botsfw.Command, whc botsfw.WebhookContext) (result bool) {
-		result = whc.IsInGroup() && getBillIDFromUrlInEditedMessage(whc) != ""
-		logus.Debugf(whc.Context(), "editedBillCardHookCommand.Matcher(): %v", result)
+		ctx := whc.Context()
+		var isInGroup bool
+		var err error
+		if isInGroup, err = whc.IsInGroup(); err != nil {
+			logus.Errorf(ctx, "whc.IsInGroup() returned error: %v", err)
+			return false
+		}
+		result = isInGroup && getBillIDFromUrlInEditedMessage(whc) != ""
+		logus.Debugf(ctx, "editedBillCardHookCommand.Matcher(): %v", result)
 		return
 	},
 }

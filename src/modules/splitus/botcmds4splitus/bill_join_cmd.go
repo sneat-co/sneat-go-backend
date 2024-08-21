@@ -147,7 +147,10 @@ func joinBillAction(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, bill
 			}
 		}
 
-		if whc.IsInGroup() {
+		var isInGroup bool
+		if isInGroup, err = whc.IsInGroup(); err != nil {
+			return
+		} else if isInGroup {
 			var space dbo4spaceus.SpaceEntry
 			if space, err = shared_space.GetSpaceEntryByCallbackUrl(whc, nil); err != nil {
 				return

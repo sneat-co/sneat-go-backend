@@ -21,7 +21,7 @@ type ApiWebhookContext struct {
 
 var _ botsfw.WebhookContext = (*ApiWebhookContext)(nil)
 
-func (ApiWebhookContext) IsInGroup() bool {
+func (ApiWebhookContext) IsInGroup() (bool, error) {
 	panic("not supported")
 }
 
@@ -40,7 +40,7 @@ func NewApiWebhookContext(r *http.Request, appUser *dbo4userus.UserDbo, userID s
 		args,
 		telegram.Platform, // webhookInput
 		nil,               // records fields setter
-		func() bool { return false },
+		func() (bool, error) { return false, nil },
 		nil, // GaMeasurement
 	)
 	if err != nil {

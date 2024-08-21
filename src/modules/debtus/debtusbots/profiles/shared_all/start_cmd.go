@@ -50,7 +50,10 @@ func startCommandAction(whc botsfw.WebhookContext, botParams BotParams) (m botsf
 
 	startParam, startParams := tgsharedcommands.ParseStartCommand(whc)
 
-	if whc.IsInGroup() {
+	var isInGroup bool
+	if isInGroup, err = whc.IsInGroup(); err != nil {
+		return
+	} else if isInGroup {
 		return botParams.StartInGroupAction(whc)
 	} else {
 		chatEntity := whc.ChatData()

@@ -83,7 +83,10 @@ var settingsCommand = func() (settingsCommand botsfw.Command) {
 }()
 
 func settingsAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-	if whc.IsInGroup() {
+	var isInGroup bool
+	if isInGroup, err = whc.IsInGroup(); err != nil {
+		return
+	} else if isInGroup {
 		groupAction := shared_space.NewSpaceAction(func(whc botsfw.WebhookContext, space dbo4spaceus.SpaceEntry) (m botsfw.MessageFromBot, err error) {
 			return SpaceSettingsAction(whc, space, false)
 		})
