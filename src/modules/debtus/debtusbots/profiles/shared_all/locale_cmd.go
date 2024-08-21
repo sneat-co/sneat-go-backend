@@ -68,6 +68,7 @@ func onboardingAskLocaleAction(whc botsfw.WebhookContext, messagePrefix string, 
 		m.Text = messagePrefix + m.Text
 		chatEntity.SetAwaitingReplyTo(onboardingAskLocaleCommandCode)
 		m = whc.NewMessageByCode(trans.MESSAGE_TEXT_ONBOARDING_ASK_TO_CHOOSE_LANGUAGE, whc.GetSender().GetFirstName())
+		m.Format = botsfw.MessageFormatHTML
 		//localesReplyKeyboard.OneTimeKeyboard = true
 		m.Keyboard = localesReplyKeyboard
 	}

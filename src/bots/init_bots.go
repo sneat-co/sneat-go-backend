@@ -8,6 +8,8 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/bots-go-framework/bots-fw/botswebhook"
 	"github.com/julienschmidt/httprouter"
+	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/sneat-co/sneat-go-backend/src/bots/sneatbot"
 	"github.com/strongo/i18n"
 	"net/http"
 )
@@ -33,9 +35,9 @@ func InitializeBots(botHost botsfw.BotHost, httpRouter *httprouter.Router) {
 
 	driver := botswebhook.NewBotDriver( // Orchestrate requests to appropriate handlers
 		botswebhook.AnalyticsSettings{GaTrackingID: ""}, // TODO: Refactor to list of analytics providers
-		sneatAppBotContext{},                            // Holds User entity kind name, translator, etc.
+		sneatbot.NewSneatAppBotContext(),                // Holds User entity kind name, translator, etc.
 		botHost,                                         // Defines how to create context.Context, HttpClient, DB, etc...
-		"Please report any issues to @trakhimenok",      // Is it wrong place? Router has similar.
+		"Please report any issues to @trakhimenok",      // TODO: Is it a wrong place? Router has similar.
 	)
 
 	makeAppUserDto := func(botID string) (appUser botsfwmodels.AppUserData, err error) {
@@ -65,7 +67,7 @@ func InitializeBots(botHost botsfw.BotHost, httpRouter *httprouter.Router) {
 }
 
 func newTranslator(c context.Context) i18n.Translator {
-	return i18n.NewMapTranslator(c, nil)
+	return i18n.NewMapTranslator(c, trans.TRANS)
 }
 
 func telegramBotsWithRouter(context.Context) botsfw.SettingsBy {

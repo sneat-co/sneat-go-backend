@@ -1,10 +1,11 @@
-package bots
+package sneatbot
 
 import (
 	"context"
 	"fmt"
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
 	"github.com/bots-go-framework/bots-fw/botsfw"
+	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/strongo/i18n"
 	"github.com/strongo/strongoapp/appuser"
 	"reflect"
@@ -12,7 +13,14 @@ import (
 
 var _ botsfw.BotAppContext = (*sneatAppBotContext)(nil)
 
-type sneatAppBotContext struct {
+func NewSneatAppBotContext() botsfw.BotAppContext {
+	return sneatAppBotContext{
+		LocalesProvider: i18n.NewSupportedLocales([]string{i18n.LocaleCodeEnUS, i18n.LocalCodeRuRu}),
+	}
+}
+
+type sneatAppBotContext struct { // TODO: Duplication?!
+	i18n.LocalesProvider
 }
 
 func (s sneatAppBotContext) AppUserCollectionName() string {
@@ -29,25 +37,21 @@ func (s sneatAppBotContext) AppUserEntityKind() string {
 
 func (s sneatAppBotContext) AppUserEntityType() reflect.Type {
 	//TODO implement me
-	panic("implement me")
+	panic("implement AppUserEntityType()")
 }
 
 func (s sneatAppBotContext) NewAppUserData() appuser.BaseUserData {
 	//TODO implement me
-	panic("implement me")
+	panic("implement NewAppUserData()")
 }
 
 func (s sneatAppBotContext) GetTranslator(c context.Context) i18n.Translator {
-	return i18n.NewMapTranslator(c, nil)
-}
-
-func (s sneatAppBotContext) SupportedLocales() i18n.LocalesProvider {
-	return nil
+	return i18n.NewMapTranslator(c, trans.TRANS)
 }
 
 func (s sneatAppBotContext) NewBotAppUserEntity() botsfwmodels.AppUserData {
 	//TODO implement me
-	panic("implement me")
+	panic("implement NewBotAppUserEntity()")
 }
 
 func (s sneatAppBotContext) GetBotChatEntityFactory(platform string) func() botsfwmodels.BotChatData {

@@ -21,18 +21,18 @@ go 1.23.0
 
 require (
 	github.com/bots-go-framework/bots-api-telegram v0.4.6
-	github.com/bots-go-framework/bots-fw v0.28.3
-	github.com/bots-go-framework/bots-fw-store v0.6.0
+	github.com/bots-go-framework/bots-fw v0.28.7
+	github.com/bots-go-framework/bots-fw-store v0.6.1
 	github.com/bots-go-framework/bots-fw-telegram v0.8.18
 	github.com/bots-go-framework/bots-fw-telegram-models v0.2.1
-	github.com/bots-go-framework/bots-host-gae v0.5.9
+	github.com/bots-go-framework/bots-host-gae v0.5.10
 	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85
 	github.com/crediterra/money v0.3.0
 	github.com/dal-go/dalgo v0.12.2
 	github.com/dal-go/mocks4dalgo v0.1.19
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/golang/mock v1.6.0
-	github.com/gorilla/sessions v1.3.0
+	github.com/gorilla/sessions v1.4.0
 	github.com/gosimple/slug v1.14.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/olebedev/when v1.0.0
@@ -51,7 +51,7 @@ require (
 	github.com/strongo/facebook v1.8.1
 	github.com/strongo/gamp v0.0.1
 	github.com/strongo/gotwilio v0.0.0-20160123000810-f024bbefe80f
-	github.com/strongo/i18n v0.0.4
+	github.com/strongo/i18n v0.2.1
 	github.com/strongo/logus v0.2.0
 	github.com/strongo/random v0.0.1
 	github.com/strongo/slice v0.2.0
@@ -64,12 +64,12 @@ require (
 )
 
 require (
-	cloud.google.com/go v0.115.0 // indirect
-	cloud.google.com/go/auth v0.8.0 // indirect
+	cloud.google.com/go v0.115.1 // indirect
+	cloud.google.com/go/auth v0.9.0 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.4 // indirect
 	cloud.google.com/go/compute/metadata v0.5.0 // indirect
 	cloud.google.com/go/firestore v1.16.0 // indirect
-	cloud.google.com/go/iam v1.1.13 // indirect
+	cloud.google.com/go/iam v1.2.0 // indirect
 	cloud.google.com/go/longrunning v0.5.12 // indirect
 	cloud.google.com/go/storage v1.43.0 // indirect
 	firebase.google.com/go/v4 v4.14.1 // indirect
@@ -110,10 +110,10 @@ require (
 	golang.org/x/sys v0.24.0 // indirect
 	golang.org/x/text v0.17.0 // indirect
 	golang.org/x/time v0.6.0 // indirect
-	google.golang.org/api v0.191.0 // indirect
-	google.golang.org/genproto v0.0.0-20240812133136-8ffd90a71988 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20240812133136-8ffd90a71988 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240812133136-8ffd90a71988 // indirect
+	google.golang.org/api v0.193.0 // indirect
+	google.golang.org/genproto v0.0.0-20240814211410-ddb44dafa142 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20240814211410-ddb44dafa142 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240814211410-ddb44dafa142 // indirect
 	google.golang.org/grpc v1.65.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

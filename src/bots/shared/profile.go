@@ -26,6 +26,6 @@ func NewProfile(id string, router *botsfw.WebhooksRouter) botsfw.BotProfile {
 			return
 		},
 		i18n.LocaleEnUS,
-		[]i18n.Locale{},
+		[]i18n.Locale{i18n.LocaleEnUS, i18n.LocaleRuRu},
 	)
 }
