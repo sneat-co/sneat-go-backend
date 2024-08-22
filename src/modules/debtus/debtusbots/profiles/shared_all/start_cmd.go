@@ -2,7 +2,6 @@ package shared_all
 
 import (
 	"bytes"
-	"context"
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botsfw"
@@ -14,7 +13,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
-	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/i18n"
 	"github.com/strongo/logus"
 	"net/url"
@@ -128,30 +126,32 @@ func onStartCallbackCommand(params BotParams) botsfw.Command {
 	return botsfw.NewCallbackCommand(onStartCallbackCommandCode,
 		func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 			lang := callbackUrl.Query().Get("lang")
-			c := whc.Context()
-			if lang != "" {
-				logus.Debugf(c, "Locale: "+lang)
-
-				whc.ChatData().SetPreferredLanguage(lang)
-
-				appUserID := whc.AppUserID()
-				if err = whc.SetLocale(lang); err != nil {
-					return
-				}
-				if appUserID != "" {
-					userCtx := facade.NewUserContext(whc.AppUserID())
-					if err = dal4userus.RunUserWorker(c, userCtx,
-						func(c context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
-							if params.UserUpdates, err = params.User.Data.SetPreferredLocale(lang); err != nil {
-								return err
-							}
-							return nil
-						}); err != nil {
-						return
-					}
-				}
-				m.Text = fmt.Sprintf("Language set to %s", lang)
-			}
+			mode := "onboarding" // TODO: should we set mode?
+			return setPreferredLanguageAction(whc, lang, mode, params)
+			//c := whc.Context()
+			//if lang != "" {
+			//	logus.Debugf(c, "Locale: "+lang)
+			//
+			//	whc.ChatData().SetPreferredLanguage(lang)
+			//
+			//	appUserID := whc.AppUserID()
+			//	if err = whc.SetLocale(lang); err != nil {
+			//		return
+			//	}
+			//	if appUserID != "" {
+			//		userCtx := facade.NewUserContext(whc.AppUserID())
+			//		if err = dal4userus.RunUserWorker(c, userCtx,
+			//			func(c context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
+			//				if params.UserUpdates, err = params.User.Data.SetPreferredLocale(lang); err != nil {
+			//					return err
+			//				}
+			//				return nil
+			//			}); err != nil {
+			//			return
+			//		}
+			//	}
+			//	m.Text = fmt.Sprintf("Language set to %s", lang)
+			//}
 
 			//if whc.IsInGroup() {
 			//	var group models.GroupEntry
@@ -162,7 +162,7 @@ func onStartCallbackCommand(params BotParams) botsfw.Command {
 			//} else {
 			//	return onStartCallbackInBot(whc, params)
 			//}
-			return
+			//return
 		},
 	)
 }
