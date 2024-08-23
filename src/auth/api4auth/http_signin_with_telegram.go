@@ -60,22 +60,63 @@ func httpSignInFromTelegramMiniapp(w http.ResponseWriter, r *http.Request) {
 
 	var isNewUser bool
 	var tgBotUser record.DataWithID[string, botsfwmodels.PlatformUserData]
-	if tgBotUser, err = botsdal.GetPlatformUser(ctx, db, telegram.PlatformID, botUserID, new(models4bots.TelegramUserDbo)); err != nil {
-		if !dal.IsNotFound(err) {
-			apicore.ReturnError(ctx, w, r, err)
+	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+		if tgBotUser, err = botsdal.GetPlatformUser(ctx, db, telegram.PlatformID, botUserID, new(models4bots.TelegramUserDbo)); err != nil {
+			if !dal.IsNotFound(err) {
+				apicore.ReturnError(ctx, w, r, err)
+			}
+			if tgBotUser, err = createTelegramUserAndAppUserRecords(ctx, tx, initData); err != nil {
+				return
+			}
+			isNewUser = true
 		}
-		if tgBotUser, err = createTelegramUserAndAppUserRecords(ctx, db, initData); err != nil {
-			return
+
+		if appUserID := tgBotUser.Data.GetAppUserID(); appUserID == "" {
+			if err = createAppUserRecordAndUpdateTelegramUserRecord(ctx, tx, tgBotUser, initData); err != nil {
+				err = fmt.Errorf("failed in createAppUserRecordAndUpdateTelegramUserRecord(): %w", err)
+				return
+			}
 		}
-		isNewUser = true
+		return
+	})
+	if err != nil {
+		apicore.ReturnError(ctx, w, r, err)
+		return
 	}
 
-	appUserID := tgBotUser.Data.GetAppUserID()
-
-	api4debtus.ReturnToken(ctx, w, appUserID, isNewUser, false)
+	api4debtus.ReturnToken(ctx, w, tgBotUser.Data.GetAppUserID(), isNewUser, false)
 }
 
-func createTelegramUserAndAppUserRecords(ctx context.Context, db dal.DB, initData twainitdata.InitData) (tgBotUser record.DataWithID[string, botsfwmodels.PlatformUserData], err error) {
+func createAppUserRecordAndUpdateTelegramUserRecord(ctx context.Context, tx dal.ReadwriteTransaction, tgBotUser record.DataWithID[string, botsfwmodels.PlatformUserData], initData twainitdata.InitData) (err error) {
+	var user dbo4userus.UserEntry
+	if user, err = createUserRecordWithRandomID(ctx, tx); err != nil {
+		return
+	}
+	tgBotUser.Data.SetAppUserID(user.ID)
+	tgUserDbo := tgBotUser.Data.(*models4bots.TelegramUserDbo)
+	tgUserDbo.FirstName = initData.User.FirstName
+	tgUserDbo.LastName = initData.User.LastName
+	tgUserDbo.UserName = initData.User.Username
+
+	if err = tx.Set(ctx, tgBotUser.Record); err != nil { // TODO: Implement update
+		err = fmt.Errorf("failed to update telegram user record: %w", err)
+		return
+	}
+	return
+}
+
+func createUserRecordWithRandomID(ctx context.Context, tx dal.ReadwriteTransaction) (user dbo4userus.UserEntry, err error) {
+	if user.ID, err = facade4auth.GenerateRandomUserID(ctx, tx); err != nil {
+		return
+	}
+	user = dbo4userus.NewUserEntry(user.ID)
+	if err = tx.Insert(ctx, user.Record); err != nil {
+		err = fmt.Errorf("failed to insert user record: %w", err)
+	}
+	return
+}
+
+func createTelegramUserAndAppUserRecords(ctx context.Context, tx dal.ReadwriteTransaction, initData twainitdata.InitData) (tgBotUser record.DataWithID[string, botsfwmodels.PlatformUserData], err error) {
 	telegramUserData := new(models4bots.TelegramUserDbo)
 	telegramUserData.FirstName = initData.User.FirstName
 	telegramUserData.LastName = initData.User.LastName
@@ -85,22 +126,13 @@ func createTelegramUserAndAppUserRecords(ctx context.Context, db dal.DB, initDat
 	key := botsdal.NewPlatformUserKey(telegram.PlatformID, tgBotUser.ID)
 	tgBotUser.Record = dal.NewRecordWithData(key, telegramUserData)
 
-	if err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
-		var userID string
-		if userID, err = facade4auth.GenerateRandomUserID(ctx, tx); err != nil {
-			return fmt.Errorf("failed to generate random user ID: %w", err)
-		}
-		user := dbo4userus.NewUser(userID)
-		if err = tx.Insert(ctx, user.Record); err != nil {
-			err = fmt.Errorf("failed to insert user record: %w", err)
-		}
-		telegramUserData.SetAppUserID(userID)
-		if err = tx.Insert(ctx, tgBotUser.Record); err != nil {
-			err = fmt.Errorf("failed to insert telegram user record: %w", err)
-			return err
-		}
-		return nil
-	}); err != nil {
+	var user dbo4userus.UserEntry
+	if user, err = createUserRecordWithRandomID(ctx, tx); err != nil {
+		return
+	}
+	telegramUserData.SetAppUserID(user.ID)
+	if err = tx.Insert(ctx, tgBotUser.Record); err != nil {
+		err = fmt.Errorf("failed to insert telegram user record: %w", err)
 		return
 	}
 	return

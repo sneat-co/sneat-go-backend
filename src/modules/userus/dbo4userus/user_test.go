@@ -5,7 +5,7 @@ import (
 )
 
 func TestNewUser(t *testing.T) {
-	user := NewUser("user1")
+	user := NewUserEntry("user1")
 	if user.ID == "" {
 		t.Error("user.ContactID is empty")
 	}

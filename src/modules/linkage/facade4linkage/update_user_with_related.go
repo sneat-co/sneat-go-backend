@@ -12,7 +12,7 @@ func updateUserWithRelatedTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	userID string,
-	users map[string]dbo4userus.User,
+	users map[string]dbo4userus.UserEntry,
 	itemRef dbo4linkage.SpaceModuleItemRef,
 	relatedItem dbo4linkage.RelatedItem,
 ) (err error) {
@@ -20,11 +20,11 @@ func updateUserWithRelatedTx(
 		panic("users == nil")
 	}
 
-	var user dbo4userus.User
+	var user dbo4userus.UserEntry
 	var ok bool
 
 	if user, ok = users[userID]; !ok {
-		user := dbo4userus.NewUser(userID)
+		user := dbo4userus.NewUserEntry(userID)
 		if err = tx.Get(ctx, user.Record); err != nil {
 			return err
 		}

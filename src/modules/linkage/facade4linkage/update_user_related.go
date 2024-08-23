@@ -16,7 +16,7 @@ func updateUserRelated(
 	objectRef dbo4linkage.SpaceModuleItemRef,
 	item record.DataWithID[string, *dbo4linkage.WithRelated],
 ) (userUpdates dal4spaceus.RecordUpdates, err error) {
-	user := dbo4userus.NewUser(userID)
+	user := dbo4userus.NewUserEntry(userID)
 	if err = tx.Get(ctx, user.Record); err != nil {
 		return
 	}

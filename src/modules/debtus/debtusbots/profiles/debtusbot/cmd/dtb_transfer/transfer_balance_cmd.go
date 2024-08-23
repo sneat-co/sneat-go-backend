@@ -75,7 +75,7 @@ func balanceAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err erro
 		} else {
 			balanceMessageBuilder := NewBalanceMessageBuilder(whc)
 			if len(debtusSpace.Data.Contacts) == 0 {
-				return m, fmt.Errorf("integrity issue: User{ContactID=%s} has non zero balance and no contacts", whc.AppUserID())
+				return m, fmt.Errorf("integrity issue: UserEntry{ContactID=%s} has non zero balance and no contacts", whc.AppUserID())
 			}
 			buffer.WriteString(fmt.Sprintf("<b>%v</b>", whc.Translate(trans.MESSAGE_TEXT_BALANCE_HEADER)) + common4debtus.HORIZONTAL_LINE)
 			linker := common4debtus.NewLinkerFromWhc(whc)

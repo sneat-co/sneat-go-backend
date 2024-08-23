@@ -15,7 +15,7 @@ type UserSpaceBrief struct {
 	// UserContactID is a contact ContactID of a user in the team
 	UserContactID string `json:"userContactID" firestore:"userContactID"`
 
-	// User roles in the team
+	// UserEntry roles in the team
 	Roles []string `json:"roles" firestore:"roles"`
 
 	//MemberType    string   `json:"memberType" firestore:"memberType"` // TODO: document what it is

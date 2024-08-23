@@ -372,7 +372,7 @@ func delayedSendReceiptToCounterpartyByTelegram(c context.Context, receiptID str
 		}
 		for _, telegramAccount := range tgAccounts {
 			if telegramAccount.App == "" {
-				logus.Warningf(c, "User %v has account with missing bot id => %v", counterpartyUser.ID, telegramAccount.String())
+				logus.Warningf(c, "UserEntry %v has account with missing bot id => %v", counterpartyUser.ID, telegramAccount.String())
 				continue
 			}
 			var tgChatID int64

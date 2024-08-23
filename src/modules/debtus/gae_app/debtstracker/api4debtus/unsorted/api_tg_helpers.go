@@ -71,7 +71,7 @@ func HandleTgHelperCurrencySelected(c context.Context, w http.ResponseWriter, r 
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
-				logus.Errorf(c, "panic in HandleTgHelperCurrencySelected() => dtdal.User.SetLastCurrency(): %v", r)
+				logus.Errorf(c, "panic in HandleTgHelperCurrencySelected() => dtdal.UserEntry.SetLastCurrency(): %v", r)
 			}
 		}()
 		if err := facade4userus.SetLastCurrency(c, facade.NewUserContext(authInfo.UserID), money.CurrencyCode(selectedCurrency)); err != nil {

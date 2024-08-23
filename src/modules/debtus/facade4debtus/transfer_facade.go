@@ -664,7 +664,7 @@ func (transferFacade TransfersFacade) createTransferWithinTransaction(
 		logus.Debugf(c, "closedTransferIDs: %v", closedTransferIDs)
 
 		if output.From.User.ID == output.To.User.ID {
-			panic(fmt.Sprintf("output.From.User.ContactID == output.To.User.ContactID: %v", output.From.User.ID))
+			panic(fmt.Sprintf("output.From.UserEntry.ContactID == output.To.UserEntry.ContactID: %v", output.From.User.ID))
 		}
 		if output.From.Contact.ID == output.To.Contact.ID {
 			panic(fmt.Sprintf("output.From.DebtusSpaceContactEntry.ContactID == output.To.DebtusSpaceContactEntry.ContactID: %v", output.From.Contact.ID))

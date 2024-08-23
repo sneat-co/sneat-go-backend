@@ -63,7 +63,7 @@ func updateItemWithLatestRelationshipsFromRelatedItem(
 			relatedItem.RolesOfItem[roleID] = role
 		}
 		if item.Data.UserID != "" {
-			users := make(map[string]dbo4userus.User)
+			users := make(map[string]dbo4userus.UserEntry)
 			if err = updateUserWithRelatedTx(ctx, tx, item.Data.UserID, users, itemRef, *relatedItem); err != nil {
 				return err
 			}

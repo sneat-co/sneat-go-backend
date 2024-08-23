@@ -436,7 +436,7 @@ func listCounterpartiesAsButtons(
 			} else {
 				return newCounterpartyCommand.Action(whc)
 			}
-		default: // User have active debts (balance is not 0).
+		default: // UserEntry have active debts (balance is not 0).
 
 			contactsToShow := make(map[string]*briefs4contactus.ContactBrief)
 			if len(contactsToShow) <= counterpartyButtonsLimit {

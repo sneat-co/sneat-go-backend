@@ -142,7 +142,7 @@ func onStartCallbackCommand(params BotParams) botsfw.Command {
 			//		userCtx := facade.NewUserContext(whc.AppUserID())
 			//		if err = dal4userus.RunUserWorker(c, userCtx,
 			//			func(c context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
-			//				if params.UserUpdates, err = params.User.Data.SetPreferredLocale(lang); err != nil {
+			//				if params.UserUpdates, err = params.UserEntry.Data.SetPreferredLocale(lang); err != nil {
 			//					return err
 			//				}
 			//				return nil

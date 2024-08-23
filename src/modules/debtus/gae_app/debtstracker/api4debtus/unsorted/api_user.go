@@ -30,7 +30,7 @@ import (
 //	if user, err = dal4userus.GetUserByID(c, nil, user.ContactID); api4debtus.HasError(c, w, err, models4debtus.AppUserKind, user.ContactID, 0) {
 //		return
 //	} else if user.Data == nil {
-//		_, _ = w.Write([]byte(fmt.Sprintf("User not found by ContactID=%v", user.ContactID)))
+//		_, _ = w.Write([]byte(fmt.Sprintf("UserEntry not found by ContactID=%v", user.ContactID)))
 //		http.NotFound(w, r) // TODO: Check response output
 //		return
 //	}
@@ -111,7 +111,7 @@ func SetUserName(c context.Context, w http.ResponseWriter, r *http.Request, auth
 	}
 
 	if len(body) == 0 {
-		api4debtus.ErrorAsJson(c, w, http.StatusBadRequest, fmt.Errorf("%w: User name is required", api4auth.ErrBadRequest))
+		api4debtus.ErrorAsJson(c, w, http.StatusBadRequest, fmt.Errorf("%w: UserEntry name is required", api4auth.ErrBadRequest))
 		return
 	}
 

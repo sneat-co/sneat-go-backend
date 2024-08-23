@@ -44,7 +44,7 @@ func renderUserPage(
 
 <div class="row">
     <div class="col">
-        <h1>User # `)
+        <h1>UserEntry # `)
 	hero.EscapeHTML(user.ID, _buffer)
 	_buffer.WriteString(`</h1>
 

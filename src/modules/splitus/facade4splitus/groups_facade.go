@@ -80,7 +80,7 @@ func CreateGroup(c context.Context,
 		//	}
 		//}
 		//
-		//if err = facade4debtus.User.SaveUserOBSOLETE(c, tx, user); err != nil {
+		//if err = facade4debtus.UserEntry.SaveUserOBSOLETE(c, tx, user); err != nil {
 		//	return err
 		//}
 		//if err = groupFacade.DelayUpdateGroupUsers(c, group.ContactID); err != nil {
@@ -190,10 +190,10 @@ func delayedUpdateUserWithGroups(c context.Context, userID string, groupIDs2add,
 		}
 		return errors.New("not implemented")
 		//var user models4debtus.AppUserOBSOLETE
-		//if user, err = facade4auth.User.GetUserByStrID(c, userID); err != nil {
+		//if user, err = facade4auth.UserEntry.GetUserByStrID(c, userID); err != nil {
 		//	return
 		//}
-		//return User.UpdateUserWithGroups(c, tx, user, groups2add, groupIDs2remove)
+		//return UserEntry.UpdateUserWithGroups(c, tx, user, groups2add, groupIDs2remove)
 	}); err != nil {
 		return err
 	}
@@ -218,11 +218,11 @@ func UpdateUserWithGroups(c context.Context, _ dal.ReadwriteTransaction, user db
 	//	}
 	//}
 	//if !updated {
-	//	logus.Debugf(c, "User is not update with groups")
+	//	logus.Debugf(c, "UserEntry is not update with groups")
 	//	return
 	//}
 	//user.Data.SetActiveGroups(groups)
-	//if err = User.SaveUserOBSOLETE(c, tx, user); err != nil {
+	//if err = UserEntry.SaveUserOBSOLETE(c, tx, user); err != nil {
 	//	return
 	//}
 	//return
@@ -274,7 +274,7 @@ func UpdateContactWithGroups(c context.Context, contactID string, addGroupIDs, r
 //		//if splitusSpace, err = dtdal.GroupEntry.GetGroupByID(c, groupID); err != nil {
 //		//	return
 //		//}
-//		//if user, err = dtdal.User.GetUserByStrID(c, userID); err != nil {
+//		//if user, err = dtdal.UserEntry.GetUserByStrID(c, userID); err != nil {
 //		//	return
 //		//}
 //
@@ -306,7 +306,7 @@ func UpdateContactWithGroups(c context.Context, contactID string, addGroupIDs, r
 //		}
 //		if userChanged {
 //			user.Data.SetActiveGroups(groups)
-//			//if err = facade4debtus.User.SaveUserOBSOLETE(c, tx, user); err != nil {
+//			//if err = facade4debtus.UserEntry.SaveUserOBSOLETE(c, tx, user); err != nil {
 //			//	return
 //			//}
 //			return errors.New("not implemented")

@@ -23,7 +23,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 	spaceID := r.URL.Query().Get("spaceID")
 	userID := r.URL.Query().Get("id")
 	if userID == "" {
-		logus.Errorf(c, "User ContactID is empty")
+		logus.Errorf(c, "UserEntry ContactID is empty")
 		return
 	}
 	user := dbo4userus.NewUserEntry(userID)
@@ -35,7 +35,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	if err = db.Get(c, user.Record); err != nil {
 		if dal.IsNotFound(err) {
-			logus.Errorf(c, "User not found by key: %v", err)
+			logus.Errorf(c, "UserEntry not found by key: %v", err)
 		} else {
 			logus.Errorf(c, "Failed to get user by key=%v: %v", user.Key, err)
 			w.WriteHeader(http.StatusInternalServerError)
@@ -149,7 +149,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 	//		}
 	//	}
 	//}
-	//logus.Infof(c, "OK - User ContactsJson is OK")
+	//logus.Infof(c, "OK - UserEntry ContactsJson is OK")
 
 	// We need counterparties by ContactID to check balance against api4transfers
 	counterpartiesByID := make(map[int64]*models4debtus.DebtusSpaceContactDbo, len(counterpartyIDs))
@@ -250,10 +250,10 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	for currency, userVal := range debtusUser.Data.Balance {
 		if transfersVal, ok := transfersTotalBalance[currency]; !ok {
-			logus.Warningf(c, "User has %v=%v balance but no corresponding api4transfers' balance.", currency, userVal)
+			logus.Warningf(c, "UserEntry has %v=%v balance but no corresponding api4transfers' balance.", currency, userVal)
 			userBalanceIsOK = false
 		} else if transfersVal != userVal {
-			logus.Warningf(c, "Currency(%v) User balance %v not equal to api4transfers' balance %v", currency, userVal, transfersVal)
+			logus.Warningf(c, "Currency(%v) UserEntry balance %v not equal to api4transfers' balance %v", currency, userVal, transfersVal)
 			userBalanceIsOK = false
 		}
 	}
@@ -266,7 +266,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if userBalanceIsOK {
-		logus.Infof(c, "OK - User.Balance() is matching to %v api4transfers' balance.", len(transferRecords))
+		logus.Infof(c, "OK - UserEntry.Balance() is matching to %v api4transfers' balance.", len(transferRecords))
 	} else {
 		logus.Warningf(c, "Calculated balance for %v user api4transfers does not match user's total balance.", len(transferRecords))
 		if !doFixes {

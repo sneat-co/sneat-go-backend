@@ -35,7 +35,7 @@ func Test_InitUserRecord(t *testing.T) {
 					AuthProvider: "password",
 					Names: &person.NameFields{
 						FirstName: "First",
-						LastName:  "User",
+						LastName:  "UserEntry",
 					},
 					IanaTimezone: "Europe/Paris",
 					Email:        "u1@example.com",

@@ -115,7 +115,7 @@ func sendReminderToUser(c context.Context, reminderID string, transfer models4de
 			return errReminderAlreadySentOrIsBeingSent
 		}
 		reminder.Data.Status = models4debtus.ReminderStatusSending
-		if err = dtdal.Reminder.SaveReminder(tc, tx, reminder); err != nil { // TODO: User dtdal.Reminder.SaveReminder()
+		if err = dtdal.Reminder.SaveReminder(tc, tx, reminder); err != nil { // TODO: UserEntry dtdal.Reminder.SaveReminder()
 			return fmt.Errorf("failed to save reminder with new status to db: %w", err)
 		}
 		return

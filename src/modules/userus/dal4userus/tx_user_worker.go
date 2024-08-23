@@ -13,7 +13,7 @@ import (
 // UserWorkerParams passes data to a team worker
 type UserWorkerParams struct {
 	Started     time.Time
-	User        dbo4userus.User
+	User        dbo4userus.UserEntry
 	UserUpdates []dal.Update
 }
 
@@ -24,7 +24,7 @@ var RunUserWorker = func(ctx context.Context, userCtx facade.UserContext, worker
 		panic("userCtx == nil")
 	}
 	params := UserWorkerParams{
-		User:    dbo4userus.NewUser(userCtx.GetUserID()),
+		User:    dbo4userus.NewUserEntry(userCtx.GetUserID()),
 		Started: time.Now(),
 	}
 	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
@@ -32,7 +32,7 @@ var RunUserWorker = func(ctx context.Context, userCtx facade.UserContext, worker
 			return fmt.Errorf("failed to load userCtx record: %w", err)
 		}
 		if err = params.User.Data.Validate(); err != nil {
-			logus.Warningf(ctx, "User record loaded from DB is not valid: %v: data=%+v", err, params.User.Data)
+			logus.Warningf(ctx, "UserEntry record loaded from DB is not valid: %v: data=%+v", err, params.User.Data)
 		}
 		if err = worker(ctx, tx, &params); err != nil {
 			return fmt.Errorf("failed to execute teamWorker: %w", err)

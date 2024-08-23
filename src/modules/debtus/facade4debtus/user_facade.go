@@ -74,7 +74,7 @@ func (uf userFacade) CreateUserByEmail(
 
 		err = errors.New("not implemented")
 		return
-		//if user, err = facade4auth.User.CreateUser(c, userData); err != nil {
+		//if user, err = facade4auth.UserEntry.CreateUser(c, userData); err != nil {
 		//	return
 		//}
 
@@ -108,7 +108,7 @@ func (uf userFacade) GetOrCreateEmailUser(
 
 	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 		if userEmail, err = facade4auth.UserEmail.GetUserEmailByID(c, tx, email); err == nil {
-			return // User found
+			return // UserEntry found
 		} else if !dal.IsNotFound(err) { //
 			return // Internal error
 		}
@@ -138,7 +138,7 @@ func (uf userFacade) GetOrCreateEmailUser(
 }
 
 //func (uf userFacade) GetOrCreateUserGoogleOnSignIn(
-//	c context.Context, googleUser *gae_user.User, appUserID string, clientInfo models.ClientInfo,
+//	c context.Context, googleUser *gae_user.UserEntry, appUserID string, clientInfo models.ClientInfo,
 //) (
 //	userGoogle models.UserAccountEntry, appUser models.AppUserOBSOLETE, err error,
 //) {
@@ -200,7 +200,7 @@ func (uf userFacade) GetOrCreateEmailUser(
 //			}
 //		}
 //
-//		userAccountRecord := dal.NewRecordWithData(dal.NewKeyWithID("User"+userAccount.Key().Provider, userAccount.Key().ContactID), userAccount.Data())
+//		userAccountRecord := dal.NewRecordWithData(dal.NewKeyWithID("UserEntry"+userAccount.Key().Provider, userAccount.Key().ContactID), userAccount.Data())
 //
 //		now := time.Now()
 //
@@ -226,7 +226,7 @@ func (uf userFacade) GetOrCreateEmailUser(
 //			}
 //		}
 //
-//		if err == nil { // User account record found
+//		if err == nil { // UserEntry account record found
 //			uaRecordUserID := accountData.GetAppUserID()
 //			if !isNewUser && uaRecordUserID != userID {
 //				panic(fmt.Sprintf("Relinking of appUser accounts us not implemented yet => userAccount.GetAppUserIntID():%s != userID:%s", uaRecordUserID, userID))
@@ -241,7 +241,7 @@ func (uf userFacade) GetOrCreateEmailUser(
 //			updateUser()
 //
 //			if err = tx.SetMulti(c, []dal.Record{userAccountRecord, appUser.Record}); err != nil {
-//				return fmt.Errorf("failed to update User & UserFacebook with DtLastLogin: %w", err)
+//				return fmt.Errorf("failed to update UserEntry & UserFacebook with DtLastLogin: %w", err)
 //			}
 //			return
 //		}
@@ -282,9 +282,9 @@ func (uf userFacade) GetOrCreateEmailUser(
 //			userEmail := models.NewUserEmail(email, models.NewUserEmailData(0, true, provider))
 //			userEmail.Data.CreatedAt = now
 //
-//			// We need to create new User entity
+//			// We need to create new UserEntry entity
 //			if isNewUser {
-//				appUser = models.NewUser(clientInfo)
+//				appUser = models.NewUserEntry(clientInfo)
 //				appUser.Data.DtCreated = now
 //			}
 //			appUser.Data.AddAccount(userAccount.Key())       // No need to check for changed as new appUser
@@ -292,10 +292,10 @@ func (uf userFacade) GetOrCreateEmailUser(
 //			updateUser()
 //
 //			if isNewUser {
-//				if appUser, err = dtdal.User.CreateUser(c, appUser.Data); err != nil {
+//				if appUser, err = dtdal.UserEntry.CreateUser(c, appUser.Data); err != nil {
 //					return
 //				}
-//			} else if err = User.SaveUserOBSOLETE(c, tx, appUser); err != nil {
+//			} else if err = UserEntry.SaveUserOBSOLETE(c, tx, appUser); err != nil {
 //				return
 //			}
 //
@@ -315,7 +315,7 @@ func (uf userFacade) GetOrCreateEmailUser(
 //			if isNewUser {
 //				if appUser, err = facade4userus.GetUserByID(c, tx, userEmail.Data.AppUserID); err != nil {
 //					if dal.IsNotFound(err) {
-//						err = fmt.Errorf("record UserEmailEntry is referencing non existing User: %w", err)
+//						err = fmt.Errorf("record UserEmailEntry is referencing non existing UserEntry: %w", err)
 //					}
 //					return
 //				}
@@ -330,7 +330,7 @@ func (uf userFacade) GetOrCreateEmailUser(
 //			appUser.Data.AddAccount(userAccount.Key())
 //			updateUser()
 //			if err = tx.SetMulti(c, []dal.Record{userAccountRecord, appUser.Record}); err != nil {
-//				return fmt.Errorf("failed to create UserFacebook & update User: %w", err)
+//				return fmt.Errorf("failed to create UserFacebook & update UserEntry: %w", err)
 //			}
 //			return
 //		}
