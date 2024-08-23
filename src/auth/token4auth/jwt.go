@@ -11,9 +11,11 @@ import (
 	"time"
 )
 
-var secret = []byte("very-secret-abc")
+func getTokenSecret() []byte { // TODO: implement getting token that is good for Firebase auth
+	return []byte("very-secret-abc")
+}
 
-const SECRET_PREFIX = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
+const SecretPrefix = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." // TODO: Document purpose / intended usage
 
 func IssueToken(userID string, issuer string) string {
 	switch userID {
@@ -31,6 +33,7 @@ func IssueToken(userID string, issuer string) string {
 	})
 
 	// Sign and get the complete encoded token as a string using the secret
+	secret := getTokenSecret()
 	tokenString, err := token.SignedString(secret)
 	if err != nil {
 		panic(fmt.Sprintf("faield to sign: %v", err))
@@ -58,7 +61,7 @@ func IssueToken(userID string, issuer string) string {
 	//if err != nil {
 	//	panic(err.Error())
 	//}
-	return tokenString[len(SECRET_PREFIX):]
+	return tokenString[len(SecretPrefix):]
 	//return string(signature[len(SECRET_PREFIX):])
 }
 
@@ -93,7 +96,7 @@ func Authenticate(w http.ResponseWriter, r *http.Request, required bool) (authIn
 	}
 
 	if strings.Count(s, ".") == 1 {
-		s = SECRET_PREFIX + s
+		s = SecretPrefix + s
 	}
 
 	logus.Debugf(appengine.NewContext(r), "JWT token: [%v]", s)

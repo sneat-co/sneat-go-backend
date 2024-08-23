@@ -9,8 +9,10 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw/botsdal"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
+	"github.com/sneat-co/sneat-go-backend/src/auth/facade4auth"
 	"github.com/sneat-co/sneat-go-backend/src/bots/models4bots"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
@@ -84,6 +86,15 @@ func createTelegramUserAndAppUserRecords(ctx context.Context, db dal.DB, initDat
 	tgBotUser.Record = dal.NewRecordWithData(key, telegramUserData)
 
 	if err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+		var userID string
+		if userID, err = facade4auth.GenerateRandomUserID(ctx, tx); err != nil {
+			return fmt.Errorf("failed to generate random user ID: %w", err)
+		}
+		user := dbo4userus.NewUser(userID)
+		if err = tx.Insert(ctx, user.Record); err != nil {
+			err = fmt.Errorf("failed to insert user record: %w", err)
+		}
+		telegramUserData.SetAppUserID(userID)
 		if err = tx.Insert(ctx, tgBotUser.Record); err != nil {
 			err = fmt.Errorf("failed to insert telegram user record: %w", err)
 			return err

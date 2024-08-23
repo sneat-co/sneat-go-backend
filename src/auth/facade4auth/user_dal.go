@@ -2,10 +2,13 @@ package facade4auth
 
 import (
 	"context"
+	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
+	"github.com/strongo/random"
+	"strings"
 	"time"
 )
 
@@ -86,4 +89,26 @@ func (userDal UserDalGae) CreateUser(c context.Context, userData *dbo4userus.Use
 		return nil
 	})
 	return
+}
+
+func GenerateRandomUserID(ctx context.Context, tx dal.ReadwriteTransaction) (userID string, err error) {
+
+	const maxAttempts = 5
+
+	randomIDs := make([]string, 0, maxAttempts)
+
+	for i := 1; i <= maxAttempts; i++ {
+		userID = random.ID(12)
+		userKey := dbo4userus.NewUserKey(userID)
+		userData := make(map[string]any)
+		userRecord := dal.NewRecordWithData(userKey, userData)
+		if err = tx.Get(ctx, userRecord); err != nil {
+			if dal.IsNotFound(err) {
+				err = nil
+				return
+			}
+			return "", fmt.Errorf("failed to check user record exists for a random userID: %w", err)
+		}
+	}
+	return "", fmt.Errorf("too many attempts (%d) to generate a random userID, tried next IDs: %s", maxAttempts, strings.Join(randomIDs, ", "))
 }
