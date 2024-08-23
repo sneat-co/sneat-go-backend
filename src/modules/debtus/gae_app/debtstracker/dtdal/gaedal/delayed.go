@@ -274,12 +274,12 @@ func getTranslator(c context.Context, localeCode string) (translator i18n.Single
 	logus.Debugf(c, "getTranslator(localeCode=%v)", localeCode)
 	return nil, errors.New("not implemented")
 	//var locale i18n.Locale
-	//if locale, err = shared.TheAppContext.SupportedLocales().GetLocaleByCode5(localeCode); errors.Is(err, trans.ErrUnsupportedLocale) {
-	//	if locale, err = shared.TheAppContext.SupportedLocales().GetLocaleByCode5(i18n.LocaleCodeEnUS); err != nil {
+	//if locale, err = anybot.TheAppContext.SupportedLocales().GetLocaleByCode5(localeCode); errors.Is(err, trans.ErrUnsupportedLocale) {
+	//	if locale, err = anybot.TheAppContext.SupportedLocales().GetLocaleByCode5(i18n.LocaleCodeEnUS); err != nil {
 	//		return
 	//	}
 	//}
-	//translator = i18n.NewSingleMapTranslator(locale, shared.TheAppContext.GetTranslator(c))
+	//translator = i18n.NewSingleMapTranslator(locale, anybot.TheAppContext.GetTranslator(c))
 	//return
 }
 

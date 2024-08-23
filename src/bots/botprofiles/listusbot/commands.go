@@ -14,7 +14,7 @@ func addListusBotCommands(commandsByType map[botsfw.WebhookInputType][]botsfw.Co
 	AddListusCommands(commandsByType)
 }
 
-// AddListusCommands adds shared listus commands to a Sneat bot
+// AddListusCommands adds anybot listus commands to a Sneat bot
 func AddListusCommands(commandsByType map[botsfw.WebhookInputType][]botsfw.Command) {
 	commandsByType[botsfw.WebhookInputText] = append(commandsByType[botsfw.WebhookInputText],
 		listCommand,

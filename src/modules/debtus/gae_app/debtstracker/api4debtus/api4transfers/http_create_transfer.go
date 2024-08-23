@@ -2,7 +2,7 @@ package api4transfers
 
 import (
 	"context"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus/dto4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
@@ -14,7 +14,7 @@ import (
 	"net/http"
 )
 
-func HandleCreateTransfer(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func HandleCreateTransfer(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	var request facade4debtus.CreateTransferRequest
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.DefaultJsonWithAuthRequired, http.StatusCreated,
 		func(ctx context.Context, userCtx facade.UserContext) (interface{}, error) {

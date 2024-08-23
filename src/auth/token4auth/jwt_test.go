@@ -1,4 +1,4 @@
-package auth
+package token4auth
 
 import (
 	"strings"
@@ -6,7 +6,7 @@ import (
 )
 
 func TestIssueToken(t *testing.T) {
-	token := IssueToken("123", "unit-test", false)
+	token := IssueToken("123", "unit-test")
 	if token == "" {
 		t.Error("Token is empty")
 	}

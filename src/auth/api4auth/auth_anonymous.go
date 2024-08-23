@@ -1,4 +1,4 @@
-package unsorted
+package api4auth
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/auth/facade4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/facade4userus"
 	"net/http"
 )
 
@@ -14,7 +15,7 @@ func HandleSignUpAnonymously(c context.Context, w http.ResponseWriter, r *http.R
 	if user, err := facade4auth.User.CreateAnonymousUser(c); err != nil {
 		api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
 	} else {
-		if err = SaveUserAgent(c, user.ID, r.UserAgent()); err != nil {
+		if _, err = facade4userus.SaveUserBrowser(c, user.ID, r.UserAgent()); err != nil {
 			api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
 			return
 		}
@@ -41,7 +42,7 @@ func HandleSignInAnonymous(c context.Context, w http.ResponseWriter, r *http.Req
 	}
 
 	if userEntity.Data.IsAnonymous {
-		if err = SaveUserAgent(c, userID, r.UserAgent()); err != nil {
+		if _, err = facade4userus.SaveUserBrowser(c, userID, r.UserAgent()); err != nil {
 			api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
 			return
 		}

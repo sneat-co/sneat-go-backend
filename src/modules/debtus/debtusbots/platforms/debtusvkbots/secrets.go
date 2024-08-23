@@ -31,6 +31,6 @@ package debtusvkbots
 //	"iframe",
 //	"5764562",
 //	"MMtMQJvwfRhvSc0SoLbC",
-//	shared.GA_TRACKING_ID,
+//	anybot.GA_TRACKING_ID,
 //	trans.SupportedLocalesByCode5[i18n.LocalCodeRuRu],
 //),

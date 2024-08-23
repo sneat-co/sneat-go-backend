@@ -3,7 +3,7 @@ package common4debtus
 import (
 	"bytes"
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/strongo/i18n"
 	"io"
 )
@@ -22,7 +22,7 @@ func WriteCounterpartyUrl(writer io.Writer, counterpartyID string, currentUserID
 		_, _ = writer.Write([]byte(fmt.Sprintf("&%v", utmParams.ShortString())))
 	}
 	if currentUserID != "" && currentUserID != "0" {
-		token := auth.IssueToken(currentUserID, formatIssuer(utmParams.Medium, utmParams.Source), false)
+		token := token4auth.IssueBotToken(currentUserID, utmParams.Medium, utmParams.Source)
 		_, _ = writer.Write([]byte(fmt.Sprintf("&secret=%v", token)))
 	}
 }

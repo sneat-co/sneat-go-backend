@@ -2,7 +2,7 @@ package unsorted
 
 import (
 	"context"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"net/http"
 )
 
@@ -10,7 +10,7 @@ import (
 //	panic("Unknown status: " + status)
 //}
 
-func HandleGetUserData(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func HandleGetUserData(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	panic("not implemented")
 	//logus.Debugf(c, "HandleGetUserData(authInfo.UserID: %s)", authInfo.UserID)
 	//user, err := getApiUser(c, w, r, authInfo)

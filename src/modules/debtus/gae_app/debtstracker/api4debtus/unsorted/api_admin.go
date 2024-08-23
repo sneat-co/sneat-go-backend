@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
 	"github.com/sneat-co/sneat-go-backend/src/auth/facade4auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/core/queues"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
@@ -23,7 +23,7 @@ import (
 	"reflect"
 )
 
-func HandleAdminFindUser(c context.Context, w http.ResponseWriter, r *http.Request, _ auth.AuthInfo) {
+func HandleAdminFindUser(c context.Context, w http.ResponseWriter, r *http.Request, _ token4auth.AuthInfo) {
 
 	if userID := r.URL.Query().Get("userID"); userID != "" {
 		appUser := dbo4userus.NewUserEntry(userID)
@@ -61,7 +61,7 @@ func HandleAdminFindUser(c context.Context, w http.ResponseWriter, r *http.Reque
 	}
 }
 
-func HandleAdminMergeUserContacts(c context.Context, w http.ResponseWriter, r *http.Request, _ auth.AuthInfo) {
+func HandleAdminMergeUserContacts(c context.Context, w http.ResponseWriter, r *http.Request, _ token4auth.AuthInfo) {
 	keepID := api4debtus.GetStrID(c, w, r, "keepID")
 	if keepID == "" {
 		return

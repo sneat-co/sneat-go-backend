@@ -1,4 +1,4 @@
-package auth
+package token4auth
 
 import (
 	"errors"
@@ -15,7 +15,7 @@ var secret = []byte("very-secret-abc")
 
 const SECRET_PREFIX = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
 
-func IssueToken(userID string, issuer string, isAdmin bool) string {
+func IssueToken(userID string, issuer string) string {
 	switch userID {
 	case "":
 		panic("IssueToken(userID - empty)")

@@ -10,5 +10,5 @@ func TestInitBot(t *testing.T) {
 			t.Errorf("Should fail")
 		}
 	}()
-	InitBots(nil, nil, nil /*shared.DebtusAppContext{}*/)
+	InitBots(nil, nil, nil /*anybot.DebtusAppContext{}*/)
 }

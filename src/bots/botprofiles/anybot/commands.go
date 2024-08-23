@@ -1,4 +1,4 @@
-package shared
+package anybot
 
 import "github.com/bots-go-framework/bots-fw/botsfw"
 

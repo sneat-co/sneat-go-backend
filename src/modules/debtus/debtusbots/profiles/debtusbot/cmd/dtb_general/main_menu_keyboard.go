@@ -150,14 +150,14 @@ func SetMainMenuKeyboard(whc botsfw.WebhookContext, m *botsfw.MessageFromBot) {
 //				BgColor:    debtusviberbots.ButtonBgColor,
 //				Text:       lendingText,
 //				ActionType: viberinterface.ActionTypeOpenUrl,
-//				ActionBody: shared.GetNewDebtPageUrl(whc, models.TransferDirectionUser2Counterparty, UTM_CAMPAIGN_BOT_MAIN_MENU),
+//				ActionBody: anybot.GetNewDebtPageUrl(whc, models.TransferDirectionUser2Counterparty, UTM_CAMPAIGN_BOT_MAIN_MENU),
 //			},
 //			{
 //				Columns:    in3columns,
 //				BgColor:    debtusviberbots.ButtonBgColor,
 //				Text:       borrowText,
 //				ActionType: viberinterface.ActionTypeOpenUrl,
-//				ActionBody: shared.GetNewDebtPageUrl(whc, models.TransferDirectionCounterparty2User, UTM_CAMPAIGN_BOT_MAIN_MENU),
+//				ActionBody: anybot.GetNewDebtPageUrl(whc, models.TransferDirectionCounterparty2User, UTM_CAMPAIGN_BOT_MAIN_MENU),
 //			},
 //			{Columns: in3columns, ActionBody: returnText, Text: returnText, BgColor: debtusviberbots.ButtonBgColor},
 //		}
@@ -170,8 +170,8 @@ func SetMainMenuKeyboard(whc botsfw.WebhookContext, m *botsfw.MessageFromBot) {
 //	if params.showBalanceAndHistory {
 //		userID := whc.AppUserID()
 //		locale := whc.Locale()
-//		balanceUrl := shared.GetBalanceUrlForUser(userID, locale, whc.BotPlatform().ContactID(), whc.GetBotCode())
-//		historyUrl := shared.GetHistoryUrlForUser(userID, locale, whc.BotPlatform().ContactID(), whc.GetBotCode())
+//		balanceUrl := anybot.GetBalanceUrlForUser(userID, locale, whc.BotPlatform().ContactID(), whc.GetBotCode())
+//		historyUrl := anybot.GetHistoryUrlForUser(userID, locale, whc.BotPlatform().ContactID(), whc.GetBotCode())
 //		buttons = append(buttons, []viberinterface.Button{
 //			{Columns: in2columns, ActionType: "open-url", ActionBody: balanceUrl, Text: whc.CommandText(trans.COMMAND_TEXT_BALANCE, emoji.BALANCE_ICON), BgColor: debtusviberbots.ButtonBgColor},
 //			{Columns: in2columns, ActionType: "open-url", ActionBody: historyUrl, Text: whc.CommandText(trans.COMMAND_TEXT_HISTORY, emoji.HISTORY_ICON), BgColor: debtusviberbots.ButtonBgColor},

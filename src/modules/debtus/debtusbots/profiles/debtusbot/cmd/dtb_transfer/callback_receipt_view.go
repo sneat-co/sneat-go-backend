@@ -44,7 +44,7 @@ var ViewReceiptInTelegramCallbackCommand = botsfw.NewCallbackCommand(
 
 		callbackAnswer := tgbotapi.NewCallbackWithURL(
 			GetUrlForReceiptInTelegram(whc.GetBotCode(), receiptID, localeCode5),
-			//shared.GetReceiptUrlForUser(
+			//anybot.GetReceiptUrlForUser(
 			//	receiptID,
 			//	whc.AppUserID(),
 			//	whc.BotPlatform().ContactID(),

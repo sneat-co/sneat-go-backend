@@ -100,7 +100,7 @@ func (r receiptTextBuilder) receiptCommonFooter(buffer *bytes.Buffer) {
 
 	//if r.counterpartyID > 0 {
 	//	if transfer.CreatorNote != "" || transfer.CreatorComment != "" {
-	//		buffer.WriteString(shared.HORIZONTAL_LINE)
+	//		buffer.WriteString(anybot.HORIZONTAL_LINE)
 	//	} else {
 	//		buffer.WriteString("\n\n")
 	//	}
@@ -123,8 +123,8 @@ func (r receiptTextBuilder) receiptCommonFooter(buffer *bytes.Buffer) {
 	//}
 
 	//if r.showAds {
-	//	if !strings.HasSuffix(buffer.String(), shared.HORIZONTAL_LINE) {
-	//		buffer.WriteString(shared.HORIZONTAL_LINE)
+	//	if !strings.HasSuffix(buffer.String(), anybot.HORIZONTAL_LINE) {
+	//		buffer.WriteString(anybot.HORIZONTAL_LINE)
 	//	}
 	//	buffer.WriteString(dtb_general.AdSlot(r.whc, UTM_CAMPAIGN_RECEIPT))
 	//}

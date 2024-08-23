@@ -2,21 +2,24 @@ package api4debtus
 
 import (
 	"context"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
+	"errors"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
+	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/strongo/logus"
 	"github.com/strongo/strongoapp"
+	"github.com/strongo/validation"
 	"net/http"
 )
 
-type AuthHandler func(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo)
+type AuthHandler func(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo)
 
-type AuthHandlerWithUser func(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo, user dbo4userus.UserEntry)
+type AuthHandlerWithUser func(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo, user dbo4userus.UserEntry)
 
 func AuthOnly(handler AuthHandler) strongoapp.HttpHandlerWithContext {
 	return func(c context.Context, w http.ResponseWriter, r *http.Request) {
-		if authInfo, _, err := auth.Authenticate(w, r, true); err == nil {
+		if authInfo, _, err := token4auth.Authenticate(w, r, true); err == nil {
 			handler(c, w, r, authInfo)
 		} else {
 			logus.Warningf(c, "Failed to authenticate: %v", err)
@@ -25,7 +28,7 @@ func AuthOnly(handler AuthHandler) strongoapp.HttpHandlerWithContext {
 }
 
 func AuthOnlyWithUser(handler AuthHandlerWithUser) strongoapp.HttpHandlerWithContext {
-	return AuthOnly(func(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+	return AuthOnly(func(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 		var userID string
 
 		if userID = GetUserID(c, w, r, authInfo); userID == "" {
@@ -46,7 +49,7 @@ func AuthOnlyWithUser(handler AuthHandlerWithUser) strongoapp.HttpHandlerWithCon
 
 func OptionalAuth(handler AuthHandler) strongoapp.HttpHandlerWithContext {
 	return func(c context.Context, w http.ResponseWriter, r *http.Request) {
-		authInfo, _, _ := auth.Authenticate(w, r, false)
+		authInfo, _, _ := token4auth.Authenticate(w, r, false)
 		if authInfo.UserID == "" {
 			logus.Debugf(c, "OptionalAuth(), anonymous")
 		} else {
@@ -58,7 +61,7 @@ func OptionalAuth(handler AuthHandler) strongoapp.HttpHandlerWithContext {
 
 func AdminOnly(handler AuthHandler) strongoapp.HttpHandlerWithContext {
 	return func(c context.Context, w http.ResponseWriter, r *http.Request) {
-		if authInfo, _, err := auth.Authenticate(w, r, true); err == nil {
+		if authInfo, _, err := token4auth.Authenticate(w, r, true); err == nil {
 			if !authInfo.IsAdmin {
 				logus.Debugf(c, "Not admin!")
 				//hashedWriter.WriteHeader(http.StatusForbidden)
@@ -75,8 +78,12 @@ func IsAdmin(email string) bool {
 	return email == "alexander.trakhimenok@gmail.com"
 }
 
-func ReturnToken(_ context.Context, w http.ResponseWriter, userID string, isNewUser, isAdmin bool) {
-	token := auth.IssueToken(userID, "api4debtus", isAdmin)
+func ReturnToken(ctx context.Context, w http.ResponseWriter, userID string, isNewUser, isAdmin bool) {
+	if isAdmin {
+		apicore.ReturnError(ctx, w, nil, validation.NewBadRequestError(errors.New("issuing admin token is not implemented yet")))
+		return
+	}
+	token := token4auth.IssueToken(userID, "api4debtus")
 	header := w.Header()
 	header.Add("Access-Control-Allow-Origin", "*")
 	header.Add("Content-Type", "application/json")

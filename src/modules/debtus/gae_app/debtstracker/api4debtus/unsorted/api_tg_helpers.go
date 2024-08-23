@@ -7,8 +7,8 @@ import (
 	"github.com/bots-go-framework/bots-fw-telegram-models/botsfwtgmodels"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/crediterra/money"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
 	"github.com/sneat-co/sneat-go-backend/src/auth/facade4auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/platforms/debtustgbots"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_transfer"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
@@ -24,7 +24,7 @@ import (
 	"sync"
 )
 
-func HandleTgHelperCurrencySelected(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func HandleTgHelperCurrencySelected(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	if err := r.ParseForm(); err != nil {
 		httpserver.HandleError(c, err, "", w, r)
 		return

@@ -22,14 +22,14 @@ func Bots(c context.Context) botsfw.SettingsBy { //TODO: Consider to do pre-depl
 	//		//} else if strings.HasPrefix(host, "debtusbot-io.") {
 	//		//_bots = botsfw.NewBotSettingsBy(nil,
 	//		//	// Production bot
-	//		//	viber.NewViberBot(strongoapp.EnvProduction, bot.ProfileDebtus, "DebtsTracker", "xxxx-xxx-xxxx", shared.GA_TRACKING_ID, i18n.LocalesByCode5[i18n.LocaleCodeEnUS]),
+	//		//	viber.NewViberBot(strongoapp.EnvProduction, bot.ProfileDebtus, "DebtsTracker", "xxxx-xxx-xxxx", anybot.GA_TRACKING_ID, i18n.LocalesByCode5[i18n.LocaleCodeEnUS]),
 	//		//)
 	//	}
 	//}
 	return _bots
 }
 
-// TODO: Decouple to shared lib
+// TODO: Decouple to anybot lib
 //func GetBotSettingsByLang(c context.Context, lang string) (botsfw.BotSettings, error) {
 //	botSettingsBy := Bots(c)
 //	langLen := len(lang)

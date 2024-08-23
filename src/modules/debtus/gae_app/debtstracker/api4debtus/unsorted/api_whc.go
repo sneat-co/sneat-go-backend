@@ -30,7 +30,7 @@ func NewApiWebhookContext(r *http.Request, appUser *dbo4userus.UserDbo, userID s
 	botContext := botsfw.NewBotContext(dtdal.BotHost, &botSettings)
 	args := botsfw.NewCreateWebhookContextArgs(
 		r,
-		nil, /*shared.TheAppContext*/
+		nil, /*anybot.TheAppContext*/
 		*botContext,
 		nil,
 		nil,

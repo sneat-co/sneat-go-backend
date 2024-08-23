@@ -67,7 +67,7 @@ func SendEmail(c context.Context, email emails.Email) (messageID string, err err
 	return sent.MessageID(), err
 	//
 	//var awsSession *session.Session
-	//if awsSession, err = shared.NewAwsSession(); err != nil {
+	//if awsSession, err = anybot.NewAwsSession(); err != nil {
 	//	return
 	//}
 	//svc := ses.New(awsSession)

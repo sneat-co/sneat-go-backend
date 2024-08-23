@@ -3,7 +3,7 @@ package website
 import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/website/admin"
 	pages2 "github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/website/pages"
@@ -46,12 +46,12 @@ func InitWebsite(router router) {
 	inspector.InitInspector(router)
 }
 
-func CreateInvitePage(w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func CreateInvitePage(w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	c := appengine.NewContext(r)
 	logus.Infof(c, "CreateInvitePage()")
 	//panic("Not implemented")
 	userID := authInfo.UserID
-	//session, _ := shared.GetSession(r)
+	//session, _ := anybot.GetSession(r)
 	//userID := session.GetUserID()
 	//if userID == 0 {
 	//	w.WriteHeader(http.StatusUnauthorized)

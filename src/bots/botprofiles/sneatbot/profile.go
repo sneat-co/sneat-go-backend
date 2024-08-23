@@ -2,8 +2,8 @@ package sneatbot
 
 import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/sneat-go-backend/src/bots/listusbot"
-	"github.com/sneat-co/sneat-go-backend/src/bots/shared"
+	shared2 "github.com/sneat-co/sneat-go-backend/src/bots/botprofiles/anybot"
+	"github.com/sneat-co/sneat-go-backend/src/bots/botprofiles/listusbot"
 )
 
 const ProfileID = "sneat_bot"
@@ -21,8 +21,8 @@ func createSneatBotProfile(errFooterText func() string) botsfw.BotProfile {
 	commandsByType := map[botsfw.WebhookInputType][]botsfw.Command{
 		botsfw.WebhookInputText: {startCommand},
 	}
-	shared.AddSharedCommands(commandsByType)
+	shared2.AddSharedCommands(commandsByType)
 	listusbot.AddListusCommands(commandsByType)
 	router := botsfw.NewWebhookRouter(commandsByType, errFooterText)
-	return shared.NewProfile(ProfileID, &router)
+	return shared2.NewProfile(ProfileID, &router)
 }

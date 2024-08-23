@@ -869,7 +869,7 @@ func GetTransferSource(whc botsfw.WebhookContext) dtdal.TransferSource {
 //	CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 //		q := callbackUrl.Query()
 //		transferEncodedID := q.Get(WIZARD_PARAM_TRANSFER)
-//		transferID, err := shared.DecodeID(transferEncodedID)
+//		transferID, err := anybot.DecodeID(transferEncodedID)
 //		if err != nil {
 //			return m, err
 //		}

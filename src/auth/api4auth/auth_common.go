@@ -1,11 +1,11 @@
-package unsorted
+package api4auth
 
 import (
 	"context"
 	"errors"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
 	"github.com/sneat-co/sneat-go-backend/src/auth/facade4auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/const4userus"
@@ -16,7 +16,7 @@ import (
 	"net/http"
 )
 
-func HandleDisconnect(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func HandleDisconnect(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	provider := r.URL.Query().Get("provider")
 
 	userCtx := facade.NewUserContext(authInfo.UserID)

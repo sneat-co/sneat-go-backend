@@ -4,7 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/api4auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal/gaedal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
@@ -41,21 +42,12 @@ func HandleUserInfo(c context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write(([]byte)(err.Error()))
 	} else {
-		if err := SaveUserAgent(c, strconv.FormatInt(userID, 10), r.UserAgent()); err != nil {
+		if _, err = facade4userus.SaveUserBrowser(c, strconv.FormatInt(userID, 10), r.UserAgent()); err != nil {
 			logus.Errorf(c, err.Error())
 			w.WriteHeader(http.StatusInternalServerError)
 			_, _ = w.Write(([]byte)(err.Error()))
 		}
 	}
-}
-
-func SaveUserAgent(c context.Context, userID string, userAgent string) error {
-	userAgent = strings.TrimSpace(userAgent)
-	if userAgent == "" {
-		return nil
-	}
-	_, err := facade4userus.SaveUserBrowser(c, userID, userAgent)
-	return err
 }
 
 func HandleSaveVisitorData(c context.Context, w http.ResponseWriter, r *http.Request) {
@@ -79,7 +71,7 @@ func HandleSaveVisitorData(c context.Context, w http.ResponseWriter, r *http.Req
 	}
 }
 
-func HandleMe(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo, user dbo4userus.UserEntry) {
+func HandleMe(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo, user dbo4userus.UserEntry) {
 	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, errors.New("not implemented"))
 	//meDto := dto4debtus.UserMeDto{
 	//	UserID:   authInfo.UserID,
@@ -109,7 +101,7 @@ func HandleMe(c context.Context, w http.ResponseWriter, r *http.Request, authInf
 	//api4debtus.JsonToResponse(c, w, meDto)
 }
 
-func SetUserName(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func SetUserName(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 
 	body, err := io.ReadAll(r.Body)
 
@@ -119,7 +111,7 @@ func SetUserName(c context.Context, w http.ResponseWriter, r *http.Request, auth
 	}
 
 	if len(body) == 0 {
-		api4debtus.ErrorAsJson(c, w, http.StatusBadRequest, fmt.Errorf("%w: User name is required", ErrBadRequest))
+		api4debtus.ErrorAsJson(c, w, http.StatusBadRequest, fmt.Errorf("%w: User name is required", api4auth.ErrBadRequest))
 		return
 	}
 

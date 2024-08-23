@@ -1,7 +1,7 @@
-package unsorted
+package api4auth
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"net/http"
 
 	"context"
@@ -20,7 +20,7 @@ import (
 
 //const VK_USER_ALEXT = 7631716
 
-func HandleSignedWithVK(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func HandleSignedWithVK(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	panic("disabled")
 	//err := r.ParseForm()
 	//if err != nil {

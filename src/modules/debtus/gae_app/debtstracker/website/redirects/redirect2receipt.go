@@ -61,7 +61,7 @@ func ReceiptRedirect(w http.ResponseWriter, r *http.Request, _ httprouter.Params
 			"host":      r.Host,
 			"ogUrl":     r.URL.String(),
 			"ReceiptID": receiptID,
-			//"ReceiptCode": shared.EncodeID(receiptID),
+			//"ReceiptCode": anybot.EncodeID(receiptID),
 			"Title":       fmt.Sprintf("Receipt @ DebtsTracker.io #%v", receiptID),
 			"Description": "Receipt description goes here",
 		}, 9)

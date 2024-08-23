@@ -1,8 +1,8 @@
-package unsorted
+package api4auth
 
 import (
 	"context"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"net/http"
 	//"strings"
 	//"encoding/json"
@@ -27,7 +27,7 @@ type GoogleAuthData struct {
 	IdToken        string `json:"idToken" firestore:"idToken"`
 }
 
-func HandleSignedInWithGooglePlus(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func HandleSignedInWithGooglePlus(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	panic("Not implemented")
 	//decoder := ffjson.NewDecoder()
 	//googleAuthData := GoogleAuthData{}

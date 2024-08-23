@@ -3,12 +3,12 @@ package unsorted
 import (
 	"context"
 	"errors"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
 	"net/http"
 )
 
-func HandleAdminLatestUsers(c context.Context, w http.ResponseWriter, _ *http.Request, _ auth.AuthInfo) {
+func HandleAdminLatestUsers(c context.Context, w http.ResponseWriter, _ *http.Request, _ token4auth.AuthInfo) {
 	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, errors.New("not implemented yet"))
 	//users, err := dtdal.Admin.LatestUsers(c)
 	//if err != nil {

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dto4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/const4debtus"
@@ -27,7 +27,7 @@ type UserCounterpartiesResponse struct {
 	Counterparties []dto4debtus.ContactListDto
 }
 
-func HandleCreateCounterparty(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func HandleCreateCounterparty(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	if err := r.ParseForm(); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte(err.Error()))
@@ -78,7 +78,7 @@ func getContactID(w http.ResponseWriter, query url.Values) string {
 	return counterpartyID
 }
 
-func HandleGetContact(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func HandleGetContact(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	query := r.URL.Query()
 	contactID := getContactID(w, query)
 	spaceID := query.Get("spaceID")
@@ -108,7 +108,7 @@ func HandleGetContact(c context.Context, w http.ResponseWriter, r *http.Request,
 func contactToResponse(
 	ctx context.Context,
 	w http.ResponseWriter,
-	authInfo auth.AuthInfo,
+	authInfo token4auth.AuthInfo,
 	contact dal4contactus.ContactEntry,
 	debtusContact models4debtus.DebtusSpaceContactEntry,
 ) {
@@ -187,7 +187,7 @@ func contactToResponse(
 //
 //}
 
-func HandleDeleteContact(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func HandleDeleteContact(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	logus.Debugf(c, "HandleDeleteContact()")
 	//err := r.ParseForm()
 	//if err != nil {
@@ -208,7 +208,7 @@ func HandleDeleteContact(c context.Context, w http.ResponseWriter, r *http.Reque
 	logus.Infof(c, "DebtusSpaceContactEntry deleted: %v", contactID)
 }
 
-func HandleArchiveCounterparty(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func HandleArchiveCounterparty(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	//err := r.ParseForm()
 	//if err != nil {
 	//	BadRequestError(c, hashedWriter, err)
@@ -228,7 +228,7 @@ func HandleArchiveCounterparty(c context.Context, w http.ResponseWriter, r *http
 	}
 }
 
-func HandleActivateCounterparty(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func HandleActivateCounterparty(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	//err := r.ParseForm()
 	//if err != nil {
 	//	BadRequestError(c, hashedWriter, err)
@@ -249,7 +249,7 @@ func HandleActivateCounterparty(c context.Context, w http.ResponseWriter, r *htt
 	}
 }
 
-func HandleUpdateCounterparty(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func HandleUpdateCounterparty(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	counterpartyID := getContactID(w, r.URL.Query())
 	if counterpartyID == "" {
 		return

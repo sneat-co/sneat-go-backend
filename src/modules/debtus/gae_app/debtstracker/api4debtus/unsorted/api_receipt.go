@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/debtusbotconst"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/platforms/debtustgbots"
@@ -137,7 +137,7 @@ func HandleReceiptDecline(c context.Context, w http.ResponseWriter, _ *http.Requ
 
 const RECEIPT_CHANNEL_DRAFT = "draft"
 
-func HandleSendReceipt(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo, user dbo4userus.UserEntry) {
+func HandleSendReceipt(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo, user dbo4userus.UserEntry) {
 	w.Header().Add("Access-Control-Allow-Origin", "*")
 
 	if err := r.ParseForm(); err != nil {
@@ -202,7 +202,7 @@ func HandleSendReceipt(c context.Context, w http.ResponseWriter, r *http.Request
 	}
 
 	locale := i18n.GetLocaleByCode5(user.Data.GetPreferredLocale()) // TODO: Get language from request
-	translator := i18n.NewSingleMapTranslator(locale, nil /*shared.TheAppContext.GetTranslator(c)*/)
+	translator := i18n.NewSingleMapTranslator(locale, nil /*anybot.TheAppContext.GetTranslator(c)*/)
 
 	if _, err = invites.SendReceiptByEmail(c, translator, receipt, user.Data.GetFullName(), transfer.Data.Counterparty().ContactName, toAddress); err != nil {
 		logus.Errorf(c, err.Error())
@@ -329,7 +329,7 @@ func getReceiptChannel(r *http.Request) (channel string, err error) {
 	return
 }
 
-func HandleCreateReceipt(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func HandleCreateReceipt(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	if err := r.ParseForm(); err != nil {
 		logus.Debugf(c, "HandleCreateReceipt() => Invalid form data: "+err.Error())
 		w.WriteHeader(http.StatusBadRequest)
@@ -431,7 +431,7 @@ func HandleCreateReceipt(c context.Context, w http.ResponseWriter, r *http.Reque
 		messageToSend = fmt.Sprintf("https://telegram.me/%s?start=send-receipt_%s", tgBotID, receipt.ID) // TODO:
 	} else {
 		locale := i18n.GetLocaleByCode5(user.Data.GetPreferredLocale())
-		translator := i18n.NewSingleMapTranslator(locale, nil /*shared.TheAppContext.GetTranslator(c)*/)
+		translator := i18n.NewSingleMapTranslator(locale, nil /*anybot.TheAppContext.GetTranslator(c)*/)
 		//ec := strongoapp.NewExecutionContext(c, translator)
 
 		logus.Debugf(c, "r.Host: %s", r.Host)
@@ -457,7 +457,7 @@ func HandleCreateReceipt(c context.Context, w http.ResponseWriter, r *http.Reque
 	}{
 		receipt.ID,
 		// TODO: It seems wrong to use request host!
-		//shared.GetReceiptUrlForUser(receipt, receiptData.CreatorUserID, receiptData.CreatedOnPlatform, receiptData.CreatedOnID)
+		//anybot.GetReceiptUrlForUser(receipt, receiptData.CreatorUserID, receiptData.CreatedOnPlatform, receiptData.CreatedOnID)
 		fmt.Sprintf("https://%s/receipt?id=%s&t=%s", r.Host, receipt.ID, time.Now().Format("20060102-150405")),
 		messageToSend,
 	})

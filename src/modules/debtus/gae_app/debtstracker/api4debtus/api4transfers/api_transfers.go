@@ -1,7 +1,7 @@
 package api4transfers
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus/dto4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
@@ -12,7 +12,7 @@ import (
 	"context"
 )
 
-func HandleAdminLatestTransfers(c context.Context, w http.ResponseWriter, r *http.Request, _ auth.AuthInfo) {
+func HandleAdminLatestTransfers(c context.Context, w http.ResponseWriter, r *http.Request, _ token4auth.AuthInfo) {
 	transfers, err := dtdal.Transfer.LoadLatestTransfers(c, 0, 20)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -21,7 +21,7 @@ func HandleAdminLatestTransfers(c context.Context, w http.ResponseWriter, r *htt
 	transfersToResponse(c, w, "", transfers, true)
 }
 
-func HandleUserTransfers(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo, user dbo4userus.UserEntry) {
+func HandleUserTransfers(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo, user dbo4userus.UserEntry) {
 	transfers, hasMore, err := dtdal.Transfer.LoadTransfersByUserID(c, user.ID, 0, 100)
 	if api4debtus.HasError(c, w, err, "", "", http.StatusInternalServerError) {
 		return

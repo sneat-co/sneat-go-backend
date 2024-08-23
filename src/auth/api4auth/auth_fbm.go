@@ -1,7 +1,7 @@
-package unsorted
+package api4auth
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
 	"github.com/strongo/logus"
 	"net/http"
@@ -9,7 +9,7 @@ import (
 	"context"
 )
 
-func HandleSignInWithFbm(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func HandleSignInWithFbm(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	logus.Debugf(c, "api4debtus.HandleSignInWithFbm()")
 
 	threadID := r.PostFormValue("tid")

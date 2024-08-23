@@ -6,14 +6,14 @@ go 1.23.0
 
 //replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
 //replace github.com/sneat-co/sneat-go-modules => ../sneat-go-modules
-//replace github.com/bots-go-framework/bots-fw => ../../bots-go-framework/bots-fw
 
+//replace github.com/bots-go-framework/bots-fw => ../../bots-go-framework/bots-fw
 //replace github.com/bots-go-framework/bots-fw-store => ../../bots-go-framework/bots-fw-store
 //replace github.com/bots-go-framework/bots-fw-telegram => ../../bots-go-framework/bots-fw-telegram
-
 //replace github.com/bots-go-framework/bots-fw-telegram-models => ../../bots-go-framework/bots-fw-telegram-models
 //replace github.com/bots-go-framework/bots-host-gae => ../../bots-go-framework/bots-host-gae
 //replace github.com/bots-go-framework/dalgo4botsfw => ../../bots-go-framework/dalgo4botsfw
+
 //replace github.com/dal-go/dalgo => ../../dal-go/dalgo
 //replace github.com/strongo/app => ../../strongo/app
 //replace github.com/strongo/i18n => ../../strongo/i18n
@@ -21,10 +21,11 @@ go 1.23.0
 
 require (
 	github.com/bots-go-framework/bots-api-telegram v0.4.6
-	github.com/bots-go-framework/bots-fw v0.31.8
+	github.com/bots-go-framework/bots-fw v0.32.0
 	github.com/bots-go-framework/bots-fw-store v0.7.0
 	github.com/bots-go-framework/bots-fw-telegram v0.9.1
 	github.com/bots-go-framework/bots-fw-telegram-models v0.3.0
+	github.com/bots-go-framework/bots-fw-telegram-webapp v0.0.1
 	github.com/bots-go-framework/bots-host-gae v0.5.10
 	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85
 	github.com/crediterra/money v0.3.0

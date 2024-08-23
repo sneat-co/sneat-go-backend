@@ -356,10 +356,10 @@ var OnboardingOnUserContactReceivedCommand = botsfw.Command{
 //		return m, err
 //	}
 //
-//	utmParams := shared.UtmParams{
-//		Source:   shared.UtmSourceFromContext(whc),
+//	utmParams := anybot.UtmParams{
+//		Source:   anybot.UtmSourceFromContext(whc),
 //		Medium:   "sms",
-//		Campaign: shared.UTM_CAMPAIGN_ONBOARDING_INVITE,
+//		Campaign: anybot.UTM_CAMPAIGN_ONBOARDING_INVITE,
 //	}
 //	templateParams := invites.InviteTemplateParams{
 //		ToName:     contact.FirstName(),
@@ -369,7 +369,7 @@ var OnboardingOnUserContactReceivedCommand = botsfw.Command{
 //		Utm:        utmParams.String(),
 //	}
 //
-//	smsText, err := shared.TextTemplates.RenderTemplate(c, whc, trans.SMS_INVITE_TEXT, templateParams)
+//	smsText, err := anybot.TextTemplates.RenderTemplate(c, whc, trans.SMS_INVITE_TEXT, templateParams)
 //	if err != nil {
 //		return m, err
 //	}
@@ -424,7 +424,7 @@ const INVITE_IS_RELATED_TO_ONBOARDING = "onboarding=yes"
 //		if err != nil {
 //			return m, err
 //		}
-//		_, err = invites.SendInviteByEmail(whc.ExecutionContext(), "DebtsTracker", email, whc.GetSender().GetFirstName(), invite.ContactID, whc.GetBotCode(), shared.UtmSourceFromContext(whc))
+//		_, err = invites.SendInviteByEmail(whc.ExecutionContext(), "DebtsTracker", email, whc.GetSender().GetFirstName(), invite.ContactID, whc.GetBotCode(), anybot.UtmSourceFromContext(whc))
 //		if err != nil {
 //			return m, err
 //		}

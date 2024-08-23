@@ -1,6 +1,7 @@
 package modules
 
 import (
+	"github.com/sneat-co/sneat-go-backend/src/auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus"
@@ -19,6 +20,7 @@ import (
 
 func Modules() []module.Module {
 	return []module.Module{
+		auth.Module(),
 		userus.Module(),
 		spaceus.Module(),
 		linkage.Module(),

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/strongo/i18n"
 	"io"
@@ -23,7 +23,7 @@ func GetHistoryUrlForUser(userID int64, locale i18n.Locale, createdOnPlatform, c
 }
 
 func getUrlForUser(userID int64, locale i18n.Locale, page, createdOnPlatform, createdOnID string) string {
-	token := auth.IssueToken(strconv.FormatInt(userID, 10), createdOnPlatform+":"+createdOnID, false)
+	token := token4auth.IssueBotToken(strconv.FormatInt(userID, 10), createdOnPlatform, createdOnID)
 	host := GetWebsiteHost(createdOnID)
 	url := fmt.Sprintf("https://%v/app/#", host)
 	switch page {
@@ -53,13 +53,13 @@ func WriteTransferUrlForUser(writer io.Writer, transferID string, userID string,
 		_, _ = writer.Write([]byte(fmt.Sprintf("&%v", utmParams.ShortString())))
 	}
 	if userID != "" {
-		token := auth.IssueToken(userID, formatIssuer(utmParams.Medium, utmParams.Source), false)
+		token := token4auth.IssueBotToken(userID, utmParams.Medium, utmParams.Source)
 		_, _ = writer.Write([]byte(fmt.Sprintf("&secret=%v", token)))
 	}
 }
 
 func GetChooseCurrencyUrlForUser(userID string, locale i18n.Locale, createdOnPlatform, createdOnID, contextData string) string {
-	token := auth.IssueToken(userID, createdOnPlatform+":"+createdOnID, false)
+	token := token4auth.IssueBotToken(userID, createdOnPlatform, createdOnID)
 	host := GetWebsiteHost(createdOnID)
 	return fmt.Sprintf(
 		"https://%v/app/#/choose-currency?lang=%v&%v&secret=%v",
@@ -85,7 +85,7 @@ func GetPathAndQueryForInvite(inviteCode string, utmParams UtmParams) string {
 func GetNewDebtPageUrl(whc botsfw.WebhookContext, direction models4debtus.TransferDirection, utmCampaign string) string {
 	botID := whc.GetBotCode()
 	botPlatform := whc.BotPlatform().ID()
-	token := auth.IssueToken(whc.AppUserID(), formatIssuer(botPlatform, botID), false)
+	token := token4auth.IssueToken(whc.AppUserID(), token4auth.GetBotIssuer(botPlatform, botID))
 	host := GetWebsiteHost(botID)
 	// utmParams := NewUtmParams(whc, utmCampaign)
 	return fmt.Sprintf(

@@ -6,7 +6,7 @@ import (
 	"github.com/strongo/validation"
 )
 
-// CompanyBase holds info shared by CompanyDbo and CompanyBrief structs.
+// CompanyBase holds info anybot by CompanyDbo and CompanyBrief structs.
 type CompanyBase struct {
 	Kind  string `json:"kind" firestore:"kind"` // either "private" or "work"
 	Type  string `json:"type" firestore:"type"` // e.g. personal, family, work

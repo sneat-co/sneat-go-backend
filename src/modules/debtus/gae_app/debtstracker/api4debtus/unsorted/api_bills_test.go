@@ -2,7 +2,7 @@ package unsorted
 
 import (
 	"encoding/json"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dto4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus/dto4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
@@ -66,7 +66,7 @@ func TestBillApiCreateBill(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	HandleCreateBill(c, responseRecorder, request, auth.AuthInfo{UserID: mockBillID})
+	HandleCreateBill(c, responseRecorder, request, token4auth.AuthInfo{UserID: mockBillID})
 
 	if responseRecorder.Code != http.StatusBadRequest {
 		t.Error("Expected to return http.StatusBadRequest on empty request body")
@@ -88,7 +88,7 @@ func TestBillApiCreateBill(t *testing.T) {
 	//body = strings.NewReader("name=Test+bill&currency=EUR&amount=1.23")
 	responseRecorder = httptest.NewRecorder()
 	request = &http.Request{Method: "POST", URL: &url.URL{Path: "/api/bill-create"}, PostForm: form}
-	HandleCreateBill(c, responseRecorder, request, auth.AuthInfo{UserID: creatorUserID})
+	HandleCreateBill(c, responseRecorder, request, token4auth.AuthInfo{UserID: creatorUserID})
 
 	if responseRecorder.Code != http.StatusOK {
 		t.Errorf(`Expected to get http.StatusOK==200, got responseRecorder.Code=%v

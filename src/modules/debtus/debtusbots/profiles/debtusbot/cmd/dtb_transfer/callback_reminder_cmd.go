@@ -116,12 +116,12 @@ func rescheduleReminder(whc botsfw.WebhookContext, reminderID string, remindInDu
 //const ASK_FOR_FEEDBACK_TASK = "ask-for-feedback"
 //
 //func delayAskForFeedback(c context.Context, botCode string, chatID int64, userID int64) error {
-//	task, err := apphostgae.EnqueueWork(c, shared.QUEUE_CHATS, ASK_FOR_FEEDBACK_TASK, 0, delayedAskForFeedback, botCode, chatID, userID)
+//	task, err := apphostgae.EnqueueWork(c, anybot.QUEUE_CHATS, ASK_FOR_FEEDBACK_TASK, 0, delayedAskForFeedback, botCode, chatID, userID)
 //	if err != nil {
 //		return err
 //	}
 //	task.Delay = time.Second / 2
-//	task, err = apphostgae.AddTaskToQueue(c, task, shared.QUEUE_CHATS)
+//	task, err = apphostgae.AddTaskToQueue(c, task, anybot.QUEUE_CHATS)
 //	return err
 //}
 //

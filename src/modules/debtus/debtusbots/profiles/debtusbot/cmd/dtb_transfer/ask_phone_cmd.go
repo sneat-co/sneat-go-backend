@@ -175,7 +175,7 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, sp
 		//}
 		//inviteCode = inviteKey.StringID()
 	} else {
-		panic("Not implemented, need to call shared.GetReceiptUrlForUser(...)")
+		panic("Not implemented, need to call anybot.GetReceiptUrlForUser(...)")
 	}
 
 	// You've got $10 from Jack
@@ -264,7 +264,7 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, sp
 	if err != nil {
 		return m, fmt.Errorf("failed to send SMS: %w", err)
 	}
-	//sms := shared.Sms{
+	//sms := anybot.Sms{
 	//	DtCreated: smsResponse.DateCreated,
 	//	DtUpdate: smsResponse.DateUpdate,
 	//	DtSent: smsResponse.DateSent,

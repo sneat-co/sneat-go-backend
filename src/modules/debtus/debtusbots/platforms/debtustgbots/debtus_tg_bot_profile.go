@@ -2,7 +2,7 @@ package debtustgbots
 
 import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/sneat-go-backend/src/bots/shared"
+	"github.com/sneat-co/sneat-go-backend/src/bots/botprofiles/anybot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/debtusbotconst"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot"
 )
@@ -10,5 +10,5 @@ import (
 func GetDebtusBotProfile(errFooterText func() string) botsfw.BotProfile {
 	_ = errFooterText
 	//return botsfw.NewBotProfile(debtusbotconst.DebtusBotProfileID, &debtusbot.Router, newBotChatData, newBotUserData, newAppUserData, getAppUserByID, i18n.LocaleEnUS, nil)
-	return shared.NewProfile(debtusbotconst.DebtusBotProfileID, &debtusbot.Router)
+	return anybot.NewProfile(debtusbotconst.DebtusBotProfileID, &debtusbot.Router)
 }

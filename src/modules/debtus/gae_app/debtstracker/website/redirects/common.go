@@ -3,7 +3,7 @@ package redirects
 import (
 	"bytes"
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/strongo/logus"
@@ -19,7 +19,7 @@ func redirectToWebApp(w http.ResponseWriter, r *http.Request, authRequired bool,
 	c := appengine.NewContext(r)
 	query := r.URL.Query()
 
-	authInfo, _, err := auth.Authenticate(w, r, authRequired)
+	authInfo, _, err := token4auth.Authenticate(w, r, authRequired)
 	if err != nil {
 		return
 	}

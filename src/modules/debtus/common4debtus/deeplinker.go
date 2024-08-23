@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/strongo/strongoapp"
 )
 
@@ -34,7 +34,10 @@ func NewLinker(environment string, userID string, locale, issuer string) Linker 
 }
 
 func NewLinkerFromWhc(whc botsfw.WebhookContext) Linker {
-	return NewLinker(whc.Environment(), whc.AppUserID(), whc.Locale().SiteCode(), formatIssuer(whc.BotPlatform().ID(), whc.GetBotCode()))
+	botCode := whc.GetBotCode()
+	botPlatformID := whc.BotPlatform().ID()
+	userID := whc.AppUserID()
+	return NewLinker(whc.Environment(), userID, whc.Locale().SiteCode(), token4auth.GetBotIssuer(botPlatformID, botCode))
 }
 
 func host(environment string) string {
@@ -53,10 +56,6 @@ func (l Linker) UrlToContact(contactID string) string {
 	return l.url("/contact", fmt.Sprintf("?id=%s", contactID), "")
 }
 
-func formatIssuer(botPlatform, botID string) string {
-	return fmt.Sprintf("%s:%s", botPlatform, botID)
-}
-
 func (l Linker) url(path, query, hash string) string {
 	var buffer bytes.Buffer
 	buffer.WriteString("https://" + l.host + path + query)
@@ -66,8 +65,8 @@ func (l Linker) url(path, query, hash string) string {
 	if query != "" || hash != "" {
 		buffer.WriteString("&")
 	}
-	isAdmin := false // TODO: How to get isAdmin?
-	token := auth.IssueToken(l.userID, l.issuer, isAdmin)
+	//isAdmin := false // TODO: How to get isAdmin?
+	token := token4auth.IssueToken(l.userID, l.issuer)
 	buffer.WriteString("lang=" + l.locale)
 	buffer.WriteString("&secret=" + token)
 	return buffer.String()

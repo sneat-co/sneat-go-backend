@@ -61,7 +61,7 @@ func Bots(environment string) botsfw.SettingsBy { //TODO: Consider to do pre-dep
 			_bots = botsfw.NewBotSettingsBy( // Development bots
 				newTelegramBot("dev", debtusBotProfile, "DebtsTrackerDev1Bot", common4debtus.GA_TRACKING_ID, i18n.LocaleEnUS),
 				newTelegramBot("dev", debtusBotProfile, "DebtsTrackerDev1RuBot", common4debtus.GA_TRACKING_ID, i18n.LocaleRuRu),
-				//telegram.NewTelegramBot(strongoapp.EnvDevTest, bot.ProfileDebtus, "DebtsTrackerDev2RuBot", "360514041:AAFXuT0STHBD9cOn1SFmKzTYDmalP0Rz-7M", "", "", shared.GA_TRACKING_ID, i18n.LocalesByCode5[i18n.LocalCodeRuRu]),
+				//telegram.NewTelegramBot(strongoapp.EnvDevTest, bot.ProfileDebtus, "DebtsTrackerDev2RuBot", "360514041:AAFXuT0STHBD9cOn1SFmKzTYDmalP0Rz-7M", "", "", anybot.GA_TRACKING_ID, i18n.LocalesByCode5[i18n.LocalCodeRuRu]),
 			)
 		case "staging":
 			_bots = botsfw.NewBotSettingsBy( // Staging bots

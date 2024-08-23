@@ -9,7 +9,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botswebhook"
 	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/bots/sneatbot"
+	"github.com/sneat-co/sneat-go-backend/src/bots/botprofiles/sneatbot"
 	"github.com/strongo/i18n"
 	"net/http"
 )

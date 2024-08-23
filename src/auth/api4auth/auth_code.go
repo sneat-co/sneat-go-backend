@@ -1,11 +1,11 @@
-package unsorted
+package api4auth
 
 import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
 	"github.com/sneat-co/sneat-go-backend/src/auth/models4auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
@@ -16,7 +16,7 @@ import (
 )
 
 // TODO: Obsolete - migrate to HandleSignInWithPin
-func HandleSignInWithCode(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func HandleSignInWithCode(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	code := r.PostFormValue("code")
 	if code == "" {
 		api4debtus.BadRequestMessage(c, w, "Missing required attribute: code")
@@ -49,7 +49,7 @@ func HandleSignInWithCode(c context.Context, w http.ResponseWriter, r *http.Requ
 	}
 }
 
-func HandleSignInWithPin(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func HandleSignInWithPin(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	loginID, err := common4debtus.DecodeIntID(r.PostFormValue("loginID"))
 	if err != nil {
 		api4debtus.BadRequestError(c, w, fmt.Errorf("parameter 'loginID' is not an integer: %w", err))

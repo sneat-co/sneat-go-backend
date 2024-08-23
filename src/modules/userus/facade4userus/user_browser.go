@@ -21,8 +21,9 @@ func insertUserBrowser(c context.Context, data *models4auth.UserBrowserData) (us
 
 func SaveUserBrowser(c context.Context, userID string, userAgent string) (userBrowser models4auth.UserBrowser, err error) {
 	userAgent = strings.TrimSpace(userAgent)
+	userAgent = strings.TrimSpace(userAgent)
 	if userAgent == "" {
-		panic("Missign required parameter userAgent")
+		return
 	}
 	const limit = 1
 	q := dal.From(models4auth.UserBrowserKind).

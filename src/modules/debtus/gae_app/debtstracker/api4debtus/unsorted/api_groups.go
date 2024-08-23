@@ -3,7 +3,7 @@ package unsorted
 import (
 	"context"
 	"errors"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/facade4splitus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/models4splitus"
@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-func HandlerCreateGroup(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo, user dbo4userus.UserEntry) {
+func HandlerCreateGroup(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo, user dbo4userus.UserEntry) {
 	if err := r.ParseForm(); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte(err.Error()))
@@ -42,7 +42,7 @@ func HandlerCreateGroup(c context.Context, w http.ResponseWriter, r *http.Reques
 	}
 }
 
-func HandlerGetGroup(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo, user dbo4userus.UserEntry) {
+func HandlerGetGroup(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo, user dbo4userus.UserEntry) {
 	groupID := r.URL.Query().Get("id")
 	if groupID == "" {
 		api4debtus.BadRequestError(c, w, errors.New("missing id parameter: id"))
@@ -129,7 +129,7 @@ func groupsToJson(_ []models4splitus.GroupEntry, _ dbo4userus.UserEntry) (result
 	//return
 }
 
-func HandleJoinGroups(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func HandleJoinGroups(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, errors.New("not implemented yet"))
 	//defer r.Body.Close()
 	//
@@ -213,11 +213,11 @@ func HandleJoinGroups(c context.Context, w http.ResponseWriter, r *http.Request,
 	//_, _ = w.Write(([]byte)("]"))
 }
 
-func HandlerDeleteGroup(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func HandlerDeleteGroup(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 
 }
 
-func HandlerUpdateGroup(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func HandlerUpdateGroup(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	logus.Debugf(c, "HandlerUpdateGroup()")
 	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, errors.New("not implemented yet"))
 	//var (
@@ -285,7 +285,7 @@ func HandlerUpdateGroup(c context.Context, w http.ResponseWriter, r *http.Reques
 	//}
 }
 
-func HandlerSetContactsToGroup(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo, user dbo4userus.UserEntry) {
+func HandlerSetContactsToGroup(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo, user dbo4userus.UserEntry) {
 	logus.Debugf(c, "HandlerSetContactsToGroup()")
 	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, errors.New("HandlerSetContactsToGroup() not implemented yet"))
 	//var (

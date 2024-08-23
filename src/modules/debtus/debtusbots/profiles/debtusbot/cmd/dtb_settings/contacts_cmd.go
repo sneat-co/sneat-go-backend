@@ -29,7 +29,7 @@ func contactsAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err err
 	//}
 	//var buffer bytes.Buffer
 	//buffer.WriteString(fmt.Sprintf("<b>%v</b>\n", whc.Translate(trans.COMMAND_TEXT_CONTACTS)))
-	//linker := shared.NewLinkerFromWhc(whc)
+	//linker := anybot.NewLinkerFromWhc(whc)
 	//contacts := user.Contacts()
 	//numFormat := "%0" + strconv.Itoa(len(strconv.Itoa(len(contacts)))) + "d. "
 	//if len(contacts) == 0 {

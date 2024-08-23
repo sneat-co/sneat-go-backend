@@ -5,7 +5,7 @@ import (
 	"github.com/bots-go-framework/bots-fw-telegram-models/botsfwtgmodels"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -41,7 +41,7 @@ func (TgChatDalGae) GetTgChatByID(c context.Context, tgBotID string, tgChatID in
 }
 
 func (TgChatDalGae) /* TODO: rename properly! */ DoSomething(c context.Context,
-	userTask *sync.WaitGroup, currency string, tgChatID int64, authInfo auth.AuthInfo, user dbo4userus.UserEntry,
+	userTask *sync.WaitGroup, currency string, tgChatID int64, authInfo token4auth.AuthInfo, user dbo4userus.UserEntry,
 	sendToTelegram func(tgChat botsfwtgmodels.TgChatData) error,
 ) (err error) {
 	var isSentToTelegram bool // Needed in case of failed to save to DB and is auto-retry

@@ -7,7 +7,7 @@ import (
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/pquerna/ffjson/ffjson"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus/dto4debtus"
@@ -23,7 +23,7 @@ import (
 	"net/http"
 )
 
-func HandleGetBill(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func HandleGetBill(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	billID := r.URL.Query().Get("id")
 	if billID == "" {
 		api4debtus.BadRequestError(c, w, errors.New("Missing id parameter"))
@@ -37,7 +37,7 @@ func HandleGetBill(c context.Context, w http.ResponseWriter, r *http.Request, au
 	billToResponse(c, w, authInfo.UserID, bill)
 }
 
-func HandleCreateBill(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) {
+func HandleCreateBill(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	splitMode := models4splitus.SplitMode(r.PostFormValue("split"))
 	if !models4splitus.IsValidBillSplit(splitMode) {
 		api4debtus.BadRequestMessage(ctx, w, fmt.Sprintf("Split parameter has unkown value: %v", splitMode))

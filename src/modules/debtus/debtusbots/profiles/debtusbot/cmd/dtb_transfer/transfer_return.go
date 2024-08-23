@@ -155,7 +155,7 @@ var AskIfReturnedInFullCommand = botsfw.Command{
 			switch whc.Input().(botsfw.WebhookTextMessage).Text() {
 			case whc.Translate(trans.BUTTON_TEXT_DEBT_RETURNED_FULLY):
 				m, err = processReturnCommand(whc, 0)
-				//shared.CreateTransfer(whc.Context(), whc.AppUserID(), )
+				//anybot.CreateTransfer(whc.Context(), whc.AppUserID(), )
 			case whc.Translate(trans.BUTTON_TEXT_DEBT_RETURNED_PARTIALLY):
 				m, err = AskHowMuchHaveBeenReturnedCommand.Action(whc)
 			default:

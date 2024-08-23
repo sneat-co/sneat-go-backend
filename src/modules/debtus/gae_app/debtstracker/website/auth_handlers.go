@@ -102,7 +102,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	}
 
 	panic("Not implemented")
-	//session, _ := shared.GetSession(r)
+	//session, _ := anybot.GetSession(r)
 	//session.SetUserID(userID, w)
 	//if err = session.Save(r, w); err != nil {
 	//	w.WriteHeader(http.StatusInternalServerError)

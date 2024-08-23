@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/bots-go-framework/bots-fw-telegram-models/botsfwtgmodels"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
 	"github.com/sneat-co/sneat-go-backend/src/auth/models4auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"sync"
@@ -97,7 +97,7 @@ type TgChatDal interface {
 		userTask *sync.WaitGroup,
 		currency string,
 		tgChatID int64,
-		authInfo auth.AuthInfo,
+		authInfo token4auth.AuthInfo,
 		user dbo4userus.UserEntry,
 		sendToTelegram func(tgChat botsfwtgmodels.TgChatData) error,
 	) (err error)

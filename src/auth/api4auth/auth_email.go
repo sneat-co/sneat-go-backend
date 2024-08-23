@@ -1,4 +1,4 @@
-package unsorted
+package api4auth
 
 import (
 	"context"
@@ -71,7 +71,7 @@ func HandleSignUpWithEmail(c context.Context, w http.ResponseWriter, r *http.Req
 			api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
 			return
 		}
-		api4debtus.ReturnToken(c, w, user.ID, true, user.Data.Email == "alexander.trakhimenok@gmail.com")
+		api4debtus.ReturnToken(c, w, user.ID, true, false /*user.Data.Email == "alexander.trakhimenok@gmail.com"*/)
 	}
 }
 

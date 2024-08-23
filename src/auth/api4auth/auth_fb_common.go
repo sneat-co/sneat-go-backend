@@ -1,11 +1,11 @@
-package unsorted
+package api4auth
 
 import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/auth"
 	"github.com/sneat-co/sneat-go-backend/src/auth/models4auth"
+	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	fb "github.com/strongo/facebook"
@@ -16,7 +16,7 @@ import (
 var ErrUnauthorized = errors.New("unauthorized")
 var ErrBadRequest = errors.New("bad request")
 
-func signInFbUser(c context.Context, fbAppID, fbUserID string, r *http.Request, authInfo auth.AuthInfo) (
+func signInFbUser(c context.Context, fbAppID, fbUserID string, r *http.Request, authInfo token4auth.AuthInfo) (
 	user dbo4userus.UserEntry, isNewUser bool, userFacebook models4auth.UserFacebook, fbApp *fb.App, fbSession *fb.Session, err error,
 ) {
 	logus.Debugf(c, "api4debtus.signInFbUser()")
