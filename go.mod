@@ -24,9 +24,9 @@ require (
 	github.com/bots-go-framework/bots-fw v0.32.0
 	github.com/bots-go-framework/bots-fw-store v0.7.0
 	github.com/bots-go-framework/bots-fw-telegram v0.9.2
-	github.com/bots-go-framework/bots-fw-telegram-models v0.3.0
+	github.com/bots-go-framework/bots-fw-telegram-models v0.3.1
 	github.com/bots-go-framework/bots-fw-telegram-webapp v0.0.1
-	github.com/bots-go-framework/bots-host-gae v0.5.11
+	github.com/bots-go-framework/bots-host-gae v0.5.12
 	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85
 	github.com/crediterra/money v0.3.0
 	github.com/dal-go/dalgo v0.12.2
@@ -42,9 +42,9 @@ require (
 	github.com/sanity-io/litter v1.5.5
 	github.com/sendgrid/sendgrid-go v3.15.0+incompatible
 	github.com/shiyanhui/hero v0.0.2
-	github.com/sneat-co/debtstracker-translations v0.0.24
+	github.com/sneat-co/debtstracker-translations v0.0.25
 	github.com/sneat-co/sneat-go-core v0.31.6
-	github.com/sneat-co/sneat-go-firebase v0.5.2
+	github.com/sneat-co/sneat-go-firebase v0.5.3
 	github.com/stretchr/testify v1.9.0
 	github.com/strongo/app-host-gae v0.1.31
 	github.com/strongo/decimal v0.1.1
@@ -78,7 +78,7 @@ require (
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
 	github.com/alexsergivan/transliterator v1.0.1 // indirect
 	github.com/bots-go-framework/bots-go-core v0.0.2 // indirect
-	github.com/dal-go/dalgo2firestore v0.1.72 // indirect
+	github.com/dal-go/dalgo2firestore v0.1.73 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/fgprof v0.9.4 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
@@ -101,20 +101,20 @@ require (
 	github.com/sendgrid/rest v2.6.9+incompatible // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 	go.opencensus.io v0.24.0 // indirect
-	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.53.0 // indirect
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.53.0 // indirect
-	go.opentelemetry.io/otel v1.28.0 // indirect
-	go.opentelemetry.io/otel/metric v1.28.0 // indirect
-	go.opentelemetry.io/otel/trace v1.28.0 // indirect
+	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.54.0 // indirect
+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.54.0 // indirect
+	go.opentelemetry.io/otel v1.29.0 // indirect
+	go.opentelemetry.io/otel/metric v1.29.0 // indirect
+	go.opentelemetry.io/otel/trace v1.29.0 // indirect
 	golang.org/x/oauth2 v0.22.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
 	golang.org/x/sys v0.24.0 // indirect
 	golang.org/x/text v0.17.0 // indirect
 	golang.org/x/time v0.6.0 // indirect
 	google.golang.org/api v0.194.0 // indirect
-	google.golang.org/genproto v0.0.0-20240822170219-fc7c04adadcd // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20240822170219-fc7c04adadcd // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240822170219-fc7c04adadcd // indirect
+	google.golang.org/genproto v0.0.0-20240823204242-4ba0660f739c // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20240823204242-4ba0660f739c // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240823204242-4ba0660f739c // indirect
 	google.golang.org/grpc v1.65.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
