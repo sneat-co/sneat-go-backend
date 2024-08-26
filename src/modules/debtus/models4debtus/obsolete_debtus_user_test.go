@@ -1,6 +1,7 @@
 package models4debtus
 
 import (
+	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/auth/models4auth"
 	"github.com/strongo/strongoapp/appuser"
 	"testing"
@@ -10,29 +11,29 @@ import (
 func TestLastLogin_SetLastLogin(t *testing.T) {
 	user := NewUser(ClientInfo{})
 	now := time.Now()
-	user.Data.SetLastLogin(now)
-	if user.Data.DtLastLogin != now {
+	user.Data.SetLastLoginAt(now)
+	if user.Data.LastLoginAt != now {
 		t.Errorf("user.DtLastLogin != now")
 	}
 
 	userGoogle := models4auth.UserAccountEntry{
 		Data: &appuser.AccountDataBase{},
 	}
-	userGoogle.Data.SetLastLogin(now)
-	if userGoogle.Data.DtLastLogin != now {
+	userGoogle.Data.SetLastLoginAt(now)
+	if userGoogle.Data.LastLoginAt != now {
 		t.Errorf("userGoogle.DtLastLogin != now")
 	}
 
 	type LastLoginSetter interface {
-		SetLastLogin(v time.Time)
+		SetLastLoginAt(v time.Time) dal.Update
 	}
 
 	userGoogle = models4auth.UserAccountEntry{
 		Data: &appuser.AccountDataBase{},
 	}
 	var lastLoginSetter LastLoginSetter = userGoogle.Data
-	lastLoginSetter.SetLastLogin(now)
-	if userGoogle.Data.DtLastLogin != now {
+	lastLoginSetter.SetLastLoginAt(now)
+	if userGoogle.Data.LastLoginAt != now {
 		t.Errorf("lastLoginSetter.DtLastLogin != now")
 	}
 }

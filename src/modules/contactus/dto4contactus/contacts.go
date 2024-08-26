@@ -10,9 +10,8 @@ import (
 type PhoneContact struct {
 	// Part of ContactDetails => Part of User|DebtusSpaceContactEntry
 	// DebtusSpaceContactEntry details
-	PhoneNumber            int64 `datastore:",omitempty"`
-	PhoneNumberConfirmed   bool
-	PhoneNumberIsConfirmed bool `firestore:",omitempty"` // Deprecated
+	PhoneNumber          int64 `firestore:"phoneNumber,omitempty"`
+	PhoneNumberConfirmed bool  `firestore:"phoneNumberConfirmed,omitempty"`
 	//+9223372036854775807
 	//+353857403948
 	//+79169743259
@@ -23,9 +22,9 @@ func (p PhoneContact) PhoneNumberAsString() string {
 }
 
 type EmailContact struct {
-	EmailAddress         string `datastore:",omitempty"`
-	EmailAddressOriginal string `firestore:",omitempty"`
-	EmailConfirmed       bool   `firestore:",omitempty"`
+	EmailAddress         string `firestore:"emailAddress,omitempty"`
+	EmailAddressOriginal string `firestore:"emailAddressOriginal,omitempty"`
+	EmailConfirmed       bool   `firestore:"emailConfirmed,omitempty"`
 }
 
 func (ec *EmailContact) SetEmail(email string, confirmed bool) EmailContact {

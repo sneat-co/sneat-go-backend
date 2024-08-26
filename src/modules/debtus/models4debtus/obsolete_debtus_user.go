@@ -85,23 +85,23 @@ type DebutsAppUserDataOBSOLETE struct { // TODO: Remove obsolete struct
 
 	coremodels.SmsStats
 	DtCreated time.Time
-	appuser.LastLogin
+	appuser.WithLastLogin
 
-	InvitedByUserID string `datastore:",omitempty"` // TODO: Prevent circular references! see users 6032980589936640 & 5998019824582656
+	InvitedByUserID string `firestore:"invitedByUserID,omitempty"` // TODO: Prevent circular references! see users 6032980589936640 & 5998019824582656
 
-	TelegramUserIDs    []int64 // TODO: Obsolete
-	ViberBotID         string  `firestore:",omitempty"` // TODO: Obsolete
-	ViberUserID        string  `firestore:",omitempty"` // TODO: Obsolete
-	VkUserID           int64   `firestore:",omitempty"` // TODO: Obsolete
-	GoogleUniqueUserID string  `firestore:",omitempty"` // TODO: Obsolete
+	TelegramUserIDs    []int64 `firestore:"telegramUserIDs,omitempty"`    // TODO: Obsolete
+	ViberBotID         string  `firestore:"viberBotID,omitempty"`         // TODO: Obsolete
+	ViberUserID        string  `firestore:"viberUserID,omitempty"`        // TODO: Obsolete
+	VkUserID           int64   `firestore:"vkUserID,omitempty"`           // TODO: Obsolete
+	GoogleUniqueUserID string  `firestore:"googleUniqueUserID,omitempty"` // TODO: Obsolete
 	//FbUserID           string `firestore:",omitempty"` // TODO: Obsolete Facebook assigns different IDs to same FB user for FB app & Messenger app.
 	//FbmUserID          string `firestore:",omitempty"` // TODO: Obsolete So we would want to keep both IDs?
 	// TODO: How do we support multiple FBM bots? They will have different PSID (PageScopeID)
 
 	OBSOLETE_CounterpartyIDs []int64 `firestore:"counterpartyIDs,omitempty"` // TODO: Remove obsolete
 
-	ContactsCount int    `firestore:",omitempty"` // TODO: Obsolete
-	ContactsJson  string `firestore:",omitempty"` // TODO: Obsolete
+	ContactsCount int    `firestore:"contactsCount,omitempty"` // TODO: Obsolete
+	ContactsJson  string `firestore:"contactsJson,omitempty"`  // TODO: Obsolete
 
 	WithGroups
 	//

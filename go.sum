@@ -324,6 +324,10 @@ github.com/strongo/strongoapp v0.20.0 h1:ZsFhNIiILtqRq+8yyBmIrHIKIXEzqhfXLoRfDHw
 github.com/strongo/strongoapp v0.20.0/go.mod h1:MsSKFcoGftA9NC/Gv0Y/+RqcVVo1cL0txBpTtBgml1I=
 github.com/strongo/strongoapp v0.20.1 h1:rD2/jgKnJWKcEsVwLSnYfYxB9cBNOWZ8V1mPzQNzZtQ=
 github.com/strongo/strongoapp v0.20.1/go.mod h1:jAnidGqYzHqhfZ6RRA6tdI+FSAnEK+xJldIfwSFG9EA=
+github.com/strongo/strongoapp v0.21.0 h1:kIt922/DKGTHKusMFeqduIrw6hMKAH6oS8VDNcixTQg=
+github.com/strongo/strongoapp v0.21.0/go.mod h1:jAnidGqYzHqhfZ6RRA6tdI+FSAnEK+xJldIfwSFG9EA=
+github.com/strongo/strongoapp v0.21.1 h1:7fR/lOTGuMrf8z/NHYtJwVWQkFTnrstHyo2VuLA6d44=
+github.com/strongo/strongoapp v0.21.1/go.mod h1:jAnidGqYzHqhfZ6RRA6tdI+FSAnEK+xJldIfwSFG9EA=
 github.com/strongo/validation v0.0.6 h1:RskXD45ILagVW3jmuKUiq7WshE4kmoQEiUbgfigqHzw=
 github.com/strongo/validation v0.0.6/go.mod h1:V4Nu8b8CPsLNwYLKmMHN2ghkoabOpiOW8NNcUczuCWE=
 github.com/technoweenie/multipartstreamer v1.0.1 h1:XRztA5MXiR1TIRHxH2uNxXxaIkKQDeX7m2XsSOlQEnM=

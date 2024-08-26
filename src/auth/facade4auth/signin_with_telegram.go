@@ -2,7 +2,6 @@ package facade4auth
 
 import (
 	"context"
-	"firebase.google.com/go/v4/auth"
 	"fmt"
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
 	telegram "github.com/bots-go-framework/bots-fw-telegram"
@@ -12,13 +11,16 @@ import (
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/bots/models4bots"
 	"github.com/sneat-co/sneat-go-core/facade"
+	"github.com/sneat-co/sneat-go-core/models/dbmodels"
+	"github.com/strongo/strongoapp/appuser"
+	"github.com/strongo/strongoapp/person"
 	"strconv"
 )
 
 type TelegramPlatformUserEntry = record.DataWithID[string, botsfwmodels.PlatformUserData]
 
 func SignInWithTelegram(
-	ctx context.Context, initData twainitdata.InitData,
+	ctx context.Context, initData twainitdata.InitData, remoteClientInfo dbmodels.RemoteClientInfo,
 ) (
 	tgPlatformUser TelegramPlatformUserEntry,
 	isNewUser bool, // TODO: Document why needed or remove
@@ -36,7 +38,7 @@ func SignInWithTelegram(
 			if !dal.IsNotFound(err) {
 				return
 			}
-			if tgPlatformUser, err = createTelegramUserAndAppUserRecords(ctx, tx, initData); err != nil {
+			if tgPlatformUser, err = createTelegramUserAndAppUserRecords(ctx, tx, initData, remoteClientInfo); err != nil {
 				return
 			}
 			isNewUser = true
@@ -45,7 +47,7 @@ func SignInWithTelegram(
 
 		if appUserID := tgPlatformUser.Data.GetAppUserID(); appUserID == "" {
 
-			if err = createAppUserRecordAndUpdateTelegramUserRecord(ctx, tx, initData, tgPlatformUser); err != nil {
+			if err = createAppUserRecordAndUpdateTelegramUserRecord(ctx, tx, initData, remoteClientInfo, tgPlatformUser); err != nil {
 				err = fmt.Errorf("failed in createAppUserRecordAndUpdateTelegramUserRecord(): %w", err)
 				return
 			}
@@ -58,6 +60,7 @@ func SignInWithTelegram(
 func createTelegramUserAndAppUserRecords(
 	ctx context.Context, tx dal.ReadwriteTransaction,
 	initData twainitdata.InitData,
+	remoteClientInfo dbmodels.RemoteClientInfo,
 ) (
 	tgPlatformUser TelegramPlatformUserEntry, err error,
 ) {
@@ -75,7 +78,7 @@ func createTelegramUserAndAppUserRecords(
 	tgPlatformUser.Record = dal.NewRecordWithData(key, telegramUserData)
 
 	var uid string
-	if uid, err = createUserFromTelegramUser(ctx, tx, initData); err != nil {
+	if uid, err = createUserFromTelegramUser(ctx, tx, initData, remoteClientInfo); err != nil {
 		return
 	}
 	telegramUserData.SetAppUserID(uid)
@@ -90,10 +93,11 @@ func createAppUserRecordAndUpdateTelegramUserRecord(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	initData twainitdata.InitData,
+	remoteClientInfo dbmodels.RemoteClientInfo,
 	tgBotUser record.DataWithID[string, botsfwmodels.PlatformUserData],
 ) (err error) {
 	var uid string
-	if uid, err = createUserFromTelegramUser(ctx, tx, initData); err != nil {
+	if uid, err = createUserFromTelegramUser(ctx, tx, initData, remoteClientInfo); err != nil {
 		return
 	}
 	tgBotUser.Data.SetAppUserID(uid)
@@ -121,21 +125,19 @@ func createAppUserRecordAndUpdateTelegramUserRecord(
 	return
 }
 
-func createUserFromTelegramUser(ctx context.Context, tx dal.ReadwriteTransaction, initData twainitdata.InitData) (uid string, err error) {
-	displayName := initData.User.FirstName
-	if initData.User.LastName != "" {
-		if displayName != "" {
-			displayName += " "
-		}
-		displayName += initData.User.LastName
+func createUserFromTelegramUser(ctx context.Context, tx dal.ReadwriteTransaction, initData twainitdata.InitData, remoteClientInfo dbmodels.RemoteClientInfo) (uid string, err error) {
+	userToCreate := &UserToCreate{
+		Names: person.NameFields{
+			FirstName: initData.User.FirstName,
+			LastName:  initData.User.LastName,
+		},
+		PhotoURL:     initData.User.PhotoURL,
+		LanguageCode: initData.User.LanguageCode,
+		Account: appuser.AccountKey{
+			Provider: telegram.PlatformID,
+			ID:       strconv.FormatInt(initData.User.ID, 10),
+		},
+		RemoteClientInfo: remoteClientInfo,
 	}
-	if displayName == "" {
-		displayName = initData.User.Username
-	}
-	userToCreate := (&auth.UserToCreate{}).
-		DisplayName(displayName)
-	if initData.User.PhotoURL != "" {
-		userToCreate = userToCreate.PhotoURL(initData.User.PhotoURL)
-	}
-	return createUser(ctx, tx, userToCreate, map[string]interface{}{"provider": "telegram"})
+	return createUser(ctx, tx, userToCreate)
 }

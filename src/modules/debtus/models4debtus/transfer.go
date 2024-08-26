@@ -233,24 +233,24 @@ type TransferData struct {
 	AcknowledgeTime   time.Time `firestore:",omitempty"`
 
 	// This 2 fields are used in conjunction with .Order("-DtCreated")
-	BothUserIDs         []string // This is needed to show transactions by user regardless who created
-	BothCounterpartyIDs []string // This is needed to show transactions by counterparty regardless who created
+	BothUserIDs         []string // This is necessary to show transactions by user regardless who created
+	BothCounterpartyIDs []string // This is necessary to show transactions by counterparty regardless who created
 	//
 	DtCreated time.Time
-	DtDueOn   time.Time `datastore:",omitempty"`
+	DtDueOn   time.Time `firestore:"dtDueOn,omitempty"`
 
-	AmountInCents         decimal.Decimal64p2
-	AmountInCentsReturned decimal.Decimal64p2 `firestore:",omitempty"`
-	AmountInCentsInterest decimal.Decimal64p2 `firestore:",omitempty"`
+	AmountInCents         decimal.Decimal64p2 `firestore:"amountInCents"`
+	AmountInCentsReturned decimal.Decimal64p2 `firestore:"amountInCentsReturned,omitempty"`
+	AmountInCentsInterest decimal.Decimal64p2 `firestore:"amountInCentsInterest,omitempty"`
 	// AmountInCentsOutstanding decimal.Decimal64p2 `firestore:",omitempty"` // Removed
 
 	TransferInterest
 
-	IsOutstanding bool
-	Currency      money.CurrencyCode // Should be indexed for loading outstanding api4transfers
+	IsOutstanding bool               `firestore:"isOutstanding,omitempty"`
+	Currency      money.CurrencyCode `firestore:"currency"` // Should be indexed for loading outstanding api4transfers
 	//
-	ReceiptsSentCount int      `firestore:",omitempty"`
-	ReceiptIDs        []string `firestore:",omitempty"`
+	ReceiptsSentCount int      `firestore:"receiptsSentCount,omitempty"`
+	ReceiptIDs        []string `firestore:"receiptIDs,omitempty"`
 }
 
 // AmountReturned returns amount returned to counterparty

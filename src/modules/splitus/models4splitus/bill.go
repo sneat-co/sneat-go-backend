@@ -21,7 +21,7 @@ type BillDbo struct {
 	SettlementIDs    []string
 	//BalanceJson      string    `firestore:",omitempty"`
 	//BalanceVersion   int       `firestore:",omitempty"`
-	//balanceVersion   int       `datastore:"-"`
+	//balanceVersion   int       `firestore:"-"`
 }
 
 func NewBillEntity(data BillCommon) *BillDbo {

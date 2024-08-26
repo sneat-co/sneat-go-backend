@@ -57,7 +57,7 @@ require (
 	github.com/strongo/logus v0.2.0
 	github.com/strongo/random v0.0.1
 	github.com/strongo/slice v0.2.0
-	github.com/strongo/strongoapp v0.20.1
+	github.com/strongo/strongoapp v0.21.1
 	github.com/strongo/validation v0.0.6
 	github.com/yaa110/go-persian-calendar v1.2.1
 	golang.org/x/crypto v0.26.0

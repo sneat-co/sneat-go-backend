@@ -7,6 +7,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/auth/facade4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
 	"github.com/sneat-co/sneat-go-core/apicore"
+	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
 	"io"
 	"log"
@@ -52,7 +53,11 @@ func httpSignInFromTelegramMiniapp(w http.ResponseWriter, r *http.Request) {
 		tgBotUser facade4auth.TelegramPlatformUserEntry
 		isNewUser bool
 	)
-	if tgBotUser, isNewUser, err = facade4auth.SignInWithTelegram(ctx, initData); err != nil {
+	remoteClientInfo := dbmodels.RemoteClientInfo{
+		HostOrApp:  r.Host,
+		RemoteAddr: r.RemoteAddr,
+	}
+	if tgBotUser, isNewUser, err = facade4auth.SignInWithTelegram(ctx, initData, remoteClientInfo); err != nil {
 		apicore.ReturnError(ctx, w, r, err)
 		return
 	}

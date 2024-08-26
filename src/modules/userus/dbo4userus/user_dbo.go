@@ -45,6 +45,7 @@ type UserDbo struct {
 	coremodels.SmsStats
 
 	appuser.AccountsOfUser
+	appuser.WithLastLogin
 
 	dbo4linkage.WithRelatedAndIDs
 
@@ -71,11 +72,10 @@ type UserDbo struct {
 	// TODO: Should this be moved to company members?
 	//models.DatatugUser
 
-	ReferredBy       string    `datastore:",omitempty"`
-	LastFeedbackAt   time.Time `firestore:",omitempty"`
-	LastFeedbackRate string    `firestore:",omitempty"`
+	ReferredBy string `firestore:"referredBy,omitempty"`
 
-	appuser.LastLogin
+	LastFeedbackAt   time.Time `firestore:"lastFeedbackAt,omitempty"`
+	LastFeedbackRate string    `firestore:"lastFeedbackRate,omitempty"`
 }
 
 func (v *UserDbo) GetFullName() string {

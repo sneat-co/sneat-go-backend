@@ -44,29 +44,29 @@ func NewReminder(id string, entity *ReminderDbo) Reminder {
 }
 
 type ReminderDbo struct {
-	ParentReminderID    int  `firestore:"parentReminderID,omitempty"`
-	IsAutomatic         bool `firestore:",omitempty"`
-	IsRescheduled       bool `firestore:",omitempty"`
-	TransferID          string
-	DtNext              time.Time
-	DtScheduled         time.Time `firestore:",omitempty"` // DtNext moves here once sent, can be used for stats & troubleshooting
-	Locale              string    `firestore:",omitempty"`
-	ClosedByTransferIDs []string  `firestore:",omitempty"` // TODO: Why do we need list of IDs here?
-	SentVia             string    `datastore:",omitempty"`
-	Status              string
-	UserID              string
-	CounterpartyID      string // If this field != 0 then r is to a counterparty
-	DtCreated           time.Time
-	DtUpdated           time.Time `firestore:",omitempty"`
-	DtSent              time.Time `datastore:",omitempty"`
-	DtUsed              time.Time `firestore:",omitempty"` // When user clicks "Yes/no returned"
-	DtViewed            time.Time `firestore:",omitempty"`
-	DtDiscarded         time.Time `firestore:",omitempty"`
-	BotID               string    `firestore:",omitempty"`
-	ChatIntID           int64     `firestore:",omitempty"`
-	MessageIntID        int64     `firestore:",omitempty"`
-	MessageStrID        string    `firestore:",omitempty"`
-	ErrDetails          string    `firestore:",omitempty"`
+	ParentReminderID    int       `firestore:"parentReminderID,omitempty"`
+	IsAutomatic         bool      `firestore:"isAutomatic,omitempty"`
+	IsRescheduled       bool      `firestore:"isRescheduled,omitempty"`
+	TransferID          string    `firestore:"transferID"`
+	DtNext              time.Time `firestore:"dtNext"`
+	DtScheduled         time.Time `firestore:"dtScheduled,omitempty"` // DtNext moves here once sent
+	Locale              string    `firestore:"locale,omitempty"`
+	ClosedByTransferIDs []string  `firestore:"closedByTransferIDs,omitempty"` // TODO: Why do we need list of IDs here?
+	SentVia             string    `firestore:"sentVia,omitempty"`
+	Status              string    `firestore:"status"`
+	UserID              string    `firestore:"userID"`
+	CounterpartyID      string    // If this field != 0 then r is to a counterparty
+	DtCreated           time.Time `firestore:"dtCreated,omitempty"`
+	DtUpdated           time.Time `firestore:"dtUpdated,omitempty"`
+	DtSent              time.Time `firestore:"dtSent,omitempty"`
+	DtUsed              time.Time `firestore:"dtUsed,omitempty"` // When a user clicks "Yes/no returned"
+	DtViewed            time.Time `firestore:"dtViewed,omitempty"`
+	DtDiscarded         time.Time `firestore:"dtDiscarded,omitempty"`
+	BotID               string    `firestore:"botID,omitempty"`
+	ChatIntID           int64     `firestore:"chatIntID,omitempty"`
+	MessageIntID        int64     `firestore:"messageIntID,omitempty"`
+	MessageStrID        string    `firestore:"messageStrID,omitempty"`
+	ErrDetails          string    `firestore:"errDetails,omitempty"`
 }
 
 //func (r *ReminderDbo) Save() (properties []datastore.Property, err error) {

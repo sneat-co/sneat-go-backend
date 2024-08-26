@@ -186,8 +186,8 @@ func HandleChangePasswordAndSignIn(c context.Context, w http.ResponseWriter, r *
 		if changed := userEmail.Data.AddProvider("password-reset"); changed {
 			userEmail.Data.UpdatedAt = now
 		}
-		userEmail.Data.SetLastLogin(now)
-		appUser.Data.SetLastLogin(now)
+		userEmail.Data.SetLastLoginAt(now)
+		appUser.Data.SetLastLoginAt(now)
 
 		if err = tx.SetMulti(c, records); err != nil {
 			return err
@@ -242,8 +242,8 @@ func HandleConfirmEmailAndSignIn(c context.Context, w http.ResponseWriter, r *ht
 			return fmt.Errorf("failed to set update time stamp: %w", err)
 		}
 		userEmail.Data.PasswordBcryptHash = []byte{}
-		userEmail.Data.SetLastLogin(now)
-		appUser.Data.SetLastLogin(now)
+		userEmail.Data.SetLastLoginAt(now)
+		appUser.Data.SetLastLoginAt(now)
 
 		entities := []dal.Record{appUser.Record, userEmail.Record}
 		if err = tx.SetMulti(c, entities); err != nil {
