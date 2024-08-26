@@ -20,10 +20,11 @@ go 1.23.0
 //replace github.com/strongo/strongoapp => ../../strongo/strongoapp
 
 require (
+	firebase.google.com/go/v4 v4.14.1
 	github.com/bots-go-framework/bots-api-telegram v0.4.6
 	github.com/bots-go-framework/bots-fw v0.32.0
 	github.com/bots-go-framework/bots-fw-store v0.7.0
-	github.com/bots-go-framework/bots-fw-telegram v0.9.2
+	github.com/bots-go-framework/bots-fw-telegram v0.9.4
 	github.com/bots-go-framework/bots-fw-telegram-models v0.3.1
 	github.com/bots-go-framework/bots-fw-telegram-webapp v0.0.1
 	github.com/bots-go-framework/bots-host-gae v0.5.12
@@ -40,10 +41,10 @@ require (
 	github.com/pkg/profile v1.7.0
 	github.com/pquerna/ffjson v0.0.0-20190930134022-aa0246cd15f7
 	github.com/sanity-io/litter v1.5.5
-	github.com/sendgrid/sendgrid-go v3.15.0+incompatible
+	github.com/sendgrid/sendgrid-go v3.16.0+incompatible
 	github.com/shiyanhui/hero v0.0.2
 	github.com/sneat-co/debtstracker-translations v0.0.25
-	github.com/sneat-co/sneat-go-core v0.31.6
+	github.com/sneat-co/sneat-go-core v0.31.7
 	github.com/sneat-co/sneat-go-firebase v0.5.3
 	github.com/stretchr/testify v1.9.0
 	github.com/strongo/app-host-gae v0.1.31
@@ -73,7 +74,6 @@ require (
 	cloud.google.com/go/iam v1.2.0 // indirect
 	cloud.google.com/go/longrunning v0.6.0 // indirect
 	cloud.google.com/go/storage v1.43.0 // indirect
-	firebase.google.com/go/v4 v4.14.1 // indirect
 	github.com/AlekSi/pointer v1.2.0 // indirect
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
 	github.com/alexsergivan/transliterator v1.0.1 // indirect

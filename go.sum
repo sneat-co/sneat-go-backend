@@ -94,6 +94,8 @@ github.com/bots-go-framework/bots-fw-telegram v0.9.1 h1:L/e/G53Fc6BqPtGtrRpBOCNo
 github.com/bots-go-framework/bots-fw-telegram v0.9.1/go.mod h1:q/gmfXDT8vZ1P5btBrQaXo4wnzbI6ubZ4HaNnvQl+rk=
 github.com/bots-go-framework/bots-fw-telegram v0.9.2 h1:tEup/jgGJEsMAE8FlTF3DHF04Q1ysXOV8vEMmfFCf7Y=
 github.com/bots-go-framework/bots-fw-telegram v0.9.2/go.mod h1:IVv/kbIOKRAqY/zsobKUVlKUoiulSb4IMKhCGHCQ9lE=
+github.com/bots-go-framework/bots-fw-telegram v0.9.4 h1:hCkbpK67uk0BUwmu00BM86GsZF8XbGRUrhW2wYh78L8=
+github.com/bots-go-framework/bots-fw-telegram v0.9.4/go.mod h1:JKRVuO29CpRk2NolFAjXh4gBUAXPO/2Vfl7l+f9L9E4=
 github.com/bots-go-framework/bots-fw-telegram-models v0.1.8 h1:ALVPPDNbz3dJJ+UD1/j22kzjUsZXLr/yYCKwe5TOwSI=
 github.com/bots-go-framework/bots-fw-telegram-models v0.1.8/go.mod h1:XuaHwBQ7sGQNfU+t3HIkZyZf2c+VNUDJmKinI7NmpgM=
 github.com/bots-go-framework/bots-fw-telegram-models v0.2.0 h1:SM3ol5Mn7M02xtKnShObDTonjCexjx+UO41V2TDjYHM=
@@ -258,6 +260,8 @@ github.com/sendgrid/rest v2.6.9+incompatible h1:1EyIcsNdn9KIisLW50MKwmSRSK+ekuei
 github.com/sendgrid/rest v2.6.9+incompatible/go.mod h1:kXX7q3jZtJXK5c5qK83bSGMdV6tsOE70KbHoqJls4lE=
 github.com/sendgrid/sendgrid-go v3.15.0+incompatible h1:oB6ujJD2aFcQRjmZLmmXiiUF9CBYKzsvYdPAS/71cSU=
 github.com/sendgrid/sendgrid-go v3.15.0+incompatible/go.mod h1:QRQt+LX/NmgVEvmdRw0VT/QgUn499+iza2FnDca9fg8=
+github.com/sendgrid/sendgrid-go v3.16.0+incompatible h1:i8eE6IMkiCy7vusSdacHHSBUpXyTcTXy/Rl9N9aZ/Qw=
+github.com/sendgrid/sendgrid-go v3.16.0+incompatible/go.mod h1:QRQt+LX/NmgVEvmdRw0VT/QgUn499+iza2FnDca9fg8=
 github.com/shiyanhui/hero v0.0.2 h1:RF8fwiIeWbVsdki8LCS905pxLjCQbOz/NcKE0g1ZOJc=
 github.com/shiyanhui/hero v0.0.2/go.mod h1:aBlyf5bmklQfvOmVQm5i04lIGFY7t2QYIJdqEMNGJZM=
 github.com/sneat-co/debtstracker-translations v0.0.22 h1:q/xJ2K3Uuz0Cqk6QAl4z037aQGOL27AwHD1NbcgRJuw=
@@ -272,6 +276,8 @@ github.com/sneat-co/sneat-go-core v0.31.5 h1:PYaxtHBq5EH4rN0aLvyRPTo/R/tXAw4laM5
 github.com/sneat-co/sneat-go-core v0.31.5/go.mod h1:xm5VjTfIJ7jqzlclcn1Boaz3tcxRaVfiMpnhky1fReE=
 github.com/sneat-co/sneat-go-core v0.31.6 h1:1yr3FpAgxZM3X/L//CQCp9mNqd6fhIVQxYvIOcFgwpg=
 github.com/sneat-co/sneat-go-core v0.31.6/go.mod h1:gJrCnfgjMPRuA/dpSet001ALMkFjIZDOSY4Q6RZlhy8=
+github.com/sneat-co/sneat-go-core v0.31.7 h1:KoXPhNiNTJDCobD1erTSYi+k6Nb2yIsSW2GYyIjdWRc=
+github.com/sneat-co/sneat-go-core v0.31.7/go.mod h1:gJrCnfgjMPRuA/dpSet001ALMkFjIZDOSY4Q6RZlhy8=
 github.com/sneat-co/sneat-go-firebase v0.5.1 h1:hr9KxG6QICEZ6z/b3A1OYYMze0rupzczxc5d+IX6HYM=
 github.com/sneat-co/sneat-go-firebase v0.5.1/go.mod h1:Aa/wWLUfQqQNskP+OAkIZjNXX6/ar2kg+D0uu2+CnNE=
 github.com/sneat-co/sneat-go-firebase v0.5.2 h1:DZ8ojsgyHD+Q/K4OQ6SR71/N4iDGqQECm7blCXXEcQ0=
