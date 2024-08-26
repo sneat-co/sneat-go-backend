@@ -26,7 +26,5 @@ func HandleSignedWithFacebook(c context.Context, w http.ResponseWriter, r *http.
 		authWriteResponseForAuthFailed(c, w, err)
 		return
 	}
-	var userID string
-	token4auth.IssueToken(userID, "telegram")
-	authWriteResponseForUser(c, w, user, isNewUser)
+	authWriteResponseForUser(c, w, user, "facebook", isNewUser)
 }

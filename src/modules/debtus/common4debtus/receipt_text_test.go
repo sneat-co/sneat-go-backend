@@ -52,7 +52,7 @@ func TestWriteReceiptText(t *testing.T) {
 		Campaign: "unit-test-campaign",
 	}
 
-	receiptTextBuilder.WriteReceiptText(&buffer, utmParams)
+	_ = receiptTextBuilder.WriteReceiptText(context.Background(), &buffer, utmParams)
 
 	re := regexp.MustCompile(`Anna Blacks borrowed from you <b>987.65 EUR</b>.`)
 	if matched := re.MatchString(buffer.String()); !matched {

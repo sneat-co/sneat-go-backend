@@ -10,6 +10,6 @@ import (
 
 func AdSlot(whc botsfw.WebhookContext, place string) string {
 	utmParams := common4debtus.FillUtmParams(whc, common4debtus.UtmParams{Campaign: place})
-	link := fmt.Sprintf(`href="https://debtusbot.io/%v/ads#%v"`, whc.Locale().SiteCode(), utmParams)
+	link := fmt.Sprintf(`href="https://debtus.app/%v/ads#%v"`, whc.Locale().SiteCode(), utmParams)
 	return strings.Replace(whc.Translate(trans.MESSAGE_TEXT_YOUR_AD_COULD_BE_HERE), "href", link, 1)
 }

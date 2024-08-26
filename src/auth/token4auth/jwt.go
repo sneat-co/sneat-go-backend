@@ -17,12 +17,12 @@ func getTokenSecret() []byte { // TODO: implement getting token that is good for
 
 const SecretPrefix = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." // TODO: Document purpose / intended usage
 
-func IssueToken(userID string, issuer string) string {
+func IssueTokenLegacy(userID string, issuer string) string {
 	switch userID {
 	case "":
-		panic("IssueToken(userID - empty)")
+		panic("IssueFirebaseAuthToken(userID - empty)")
 	case "0":
-		panic("IssueToken(userID == 0)")
+		panic("IssueFirebaseAuthToken(userID == 0)")
 	}
 
 	// Create a new token object, specifying signing method and the claims
@@ -47,9 +47,9 @@ func IssueToken(userID string, issuer string) string {
 	if issuer != "" {
 		if len(issuer) > 100 {
 			if len(issuer) <= 1000 {
-				panic("IssueToken() => len(issuer) > 20, issuer: " + issuer)
+				panic("IssueFirebaseAuthToken() => len(issuer) > 20, issuer: " + issuer)
 			} else {
-				panic("IssueToken() => len(issuer) > 20, issuer[:1000]: " + issuer[:1000])
+				panic("IssueFirebaseAuthToken() => len(issuer) > 20, issuer[:1000]: " + issuer[:1000])
 			}
 
 		}

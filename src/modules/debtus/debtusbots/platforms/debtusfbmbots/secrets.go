@@ -82,7 +82,7 @@ func Bots(_ context.Context) botsfw.SettingsBy {
 	//		fbm.NewFbmBot(
 	//			strongoapp.EnvLocal,
 	//			bot.ProfileDebtus,
-	//			"debtusbot.local",
+	//			"local.debtus.app",
 	//			"300392587037950",
 	//			fbmLocalPageAccessToken,
 	//			"4afb645e-b592-48e6-882c-89f0ec126fbb",
@@ -104,13 +104,13 @@ var ErrUnknownHost = errors.New("Unknown host")
 //		return fbProd.App(), "debtusbot.io", nil
 //	case "debtusbot-dev1.appspot.com":
 //		return fbDev.App(), r.Host, nil
-//	case "debtusbot.local":
+//	case "local.debtus.app":
 //		return fbLocal.App(), r.Host, nil
 //	case "localhost":
-//		return fbLocal.App(), "debtusbot.local", nil
+//		return fbLocal.App(), "local.debtus.app", nil
 //	default:
 //		if strings.HasSuffix(r.Host, ".ngrok.io") {
-//			return fbLocal.App(), "debtusbot.local", nil
+//			return fbLocal.App(), "local.debtus.app", nil
 //		}
 //	}
 //

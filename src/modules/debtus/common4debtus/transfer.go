@@ -2,6 +2,7 @@ package common4debtus
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
@@ -14,16 +15,16 @@ import (
 	"html/template"
 )
 
-func GetBalanceUrlForUser(userID int64, locale i18n.Locale, createdOnPlatform, createdOnID string) string {
-	return getUrlForUser(userID, locale, "debts", createdOnPlatform, createdOnID)
+func GetBalanceUrlForUser(ctx context.Context, userID int64, locale i18n.Locale, createdOnPlatform, createdOnID string) string {
+	return getUrlForUser(ctx, userID, locale, "debts", createdOnPlatform, createdOnID)
 }
 
-func GetHistoryUrlForUser(userID int64, locale i18n.Locale, createdOnPlatform, createdOnID string) string {
-	return getUrlForUser(userID, locale, "history", createdOnPlatform, createdOnID)
+func GetHistoryUrlForUser(ctx context.Context, userID int64, locale i18n.Locale, createdOnPlatform, createdOnID string) string {
+	return getUrlForUser(ctx, userID, locale, "history", createdOnPlatform, createdOnID)
 }
 
-func getUrlForUser(userID int64, locale i18n.Locale, page, createdOnPlatform, createdOnID string) string {
-	token := token4auth.IssueBotToken(strconv.FormatInt(userID, 10), createdOnPlatform, createdOnID)
+func getUrlForUser(ctx context.Context, userID int64, locale i18n.Locale, page, createdOnPlatform, createdOnID string) string {
+	token, _ := token4auth.IssueBotToken(ctx, strconv.FormatInt(userID, 10), createdOnPlatform, createdOnID)
 	host := GetWebsiteHost(createdOnID)
 	url := fmt.Sprintf("https://%v/app/#", host)
 	switch page {
@@ -37,13 +38,13 @@ func getUrlForUser(userID int64, locale i18n.Locale, page, createdOnPlatform, cr
 	return url + fmt.Sprintf("&lang=%v&secret=%v", locale.SiteCode(), token)
 }
 
-func GetTransferUrlForUser(transferID string, userID string, locale i18n.Locale, utmParams UtmParams) string {
+func GetTransferUrlForUser(ctx context.Context, transferID string, userID string, locale i18n.Locale, utmParams UtmParams) string {
 	var buffer bytes.Buffer
-	WriteTransferUrlForUser(&buffer, transferID, userID, locale, utmParams)
+	WriteTransferUrlForUser(ctx, &buffer, transferID, userID, locale, utmParams)
 	return buffer.String()
 }
 
-func WriteTransferUrlForUser(writer io.Writer, transferID string, userID string, locale i18n.Locale, utmParams UtmParams) {
+func WriteTransferUrlForUser(ctx context.Context, writer io.Writer, transferID string, userID string, locale i18n.Locale, utmParams UtmParams) {
 	host := GetWebsiteHost(utmParams.Source)
 	_, _ = writer.Write([]byte(fmt.Sprintf(
 		"https://%v/transfer?id=%v&lang=%v",
@@ -53,13 +54,16 @@ func WriteTransferUrlForUser(writer io.Writer, transferID string, userID string,
 		_, _ = writer.Write([]byte(fmt.Sprintf("&%v", utmParams.ShortString())))
 	}
 	if userID != "" {
-		token := token4auth.IssueBotToken(userID, utmParams.Medium, utmParams.Source)
+		token, err := token4auth.IssueBotToken(ctx, userID, utmParams.Medium, utmParams.Source)
+		if err != nil {
+			_, _ = writer.Write([]byte(fmt.Sprintf("&secret=ERROR:%v", err.Error())))
+		}
 		_, _ = writer.Write([]byte(fmt.Sprintf("&secret=%v", token)))
 	}
 }
 
-func GetChooseCurrencyUrlForUser(userID string, locale i18n.Locale, createdOnPlatform, createdOnID, contextData string) string {
-	token := token4auth.IssueBotToken(userID, createdOnPlatform, createdOnID)
+func GetChooseCurrencyUrlForUser(ctx context.Context, userID string, locale i18n.Locale, createdOnPlatform, createdOnID, contextData string) string {
+	token, _ := token4auth.IssueBotToken(ctx, userID, createdOnPlatform, createdOnID)
 	host := GetWebsiteHost(createdOnID)
 	return fmt.Sprintf(
 		"https://%v/app/#/choose-currency?lang=%v&%v&secret=%v",
@@ -72,7 +76,7 @@ func GetWebsiteHost(createdOnID string) string {
 	if strings.Contains(createdOnID, "dev") {
 		return "debtusbot-dev1.appspot.com"
 	} else if strings.Contains(createdOnID, ".local") {
-		return "debtusbot.local"
+		return "local.debtus.app"
 	} else {
 		return "debtusbot.io"
 	}
@@ -85,7 +89,10 @@ func GetPathAndQueryForInvite(inviteCode string, utmParams UtmParams) string {
 func GetNewDebtPageUrl(whc botsfw.WebhookContext, direction models4debtus.TransferDirection, utmCampaign string) string {
 	botID := whc.GetBotCode()
 	botPlatform := whc.BotPlatform().ID()
-	token := token4auth.IssueToken(whc.AppUserID(), token4auth.GetBotIssuer(botPlatform, botID))
+	ctx := whc.Context()
+	appUserID := whc.AppUserID()
+	botIssuer := token4auth.GetBotIssuer(botPlatform, botID)
+	token, _ := token4auth.IssueFirebaseAuthToken(ctx, appUserID, botIssuer)
 	host := GetWebsiteHost(botID)
 	// utmParams := NewUtmParams(whc, utmCampaign)
 	return fmt.Sprintf(

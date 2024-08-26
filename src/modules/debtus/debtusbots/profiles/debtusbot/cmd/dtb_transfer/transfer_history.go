@@ -83,6 +83,7 @@ const (
 
 func transferHistoryRows(whc botsfw.WebhookContext, transfers []models4debtus.TransferEntry) string {
 	var s bytes.Buffer
+	ctx := whc.Context()
 	for _, transfer := range transfers {
 		isCreator := whc.AppUserID() == transfer.Data.CreatorUserID
 		var counterpartyName string
@@ -93,6 +94,7 @@ func transferHistoryRows(whc botsfw.WebhookContext, transfers []models4debtus.Tr
 		}
 		amount := fmt.Sprintf(`<a href="%v">%s</a>`,
 			common4debtus.GetTransferUrlForUser(
+				ctx,
 				transfer.ID,
 				whc.AppUserID(),
 				whc.Locale(),

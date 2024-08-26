@@ -15,10 +15,10 @@ import (
 )
 
 func AcknowledgeReceipt(whc botsfw.WebhookContext, receiptID, operation string) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
+	ctx := whc.Context()
 
 	userCtx := facade.NewUserContext(whc.AppUserID())
-	_, transfer, isCounterpartiesJustConnected, err := facade4debtus.AcknowledgeReceipt(c, userCtx, receiptID, operation)
+	_, transfer, isCounterpartiesJustConnected, err := facade4debtus.AcknowledgeReceipt(ctx, userCtx, receiptID, operation)
 	if err != nil {
 		if errors.Is(err, facade4debtus.ErrSelfAcknowledgement) {
 			m = whc.NewMessage(whc.Translate(trans.MESSAGE_TEXT_SELF_ACKNOWLEDGEMENT, html.EscapeString(transfer.Data.Counterparty().ContactName)))
@@ -35,7 +35,7 @@ func AcknowledgeReceipt(whc botsfw.WebhookContext, receiptID, operation string) 
 				"receipt-acknowledged",
 				operation,
 			)); err != nil {
-				logus.Errorf(c, "Failed to report receipt-acknowledged to Google Analytics: %v", err)
+				logus.Errorf(ctx, "Failed to report receipt-acknowledged to Google Analytics: %v", err)
 			}
 
 			if isCounterpartiesJustConnected {
@@ -43,7 +43,7 @@ func AcknowledgeReceipt(whc botsfw.WebhookContext, receiptID, operation string) 
 					"counterparties",
 					"counterparties-connected",
 				)); err != nil {
-					logus.Errorf(c, "Failed to report counterparties-connected to Google Analytics: %v", err)
+					logus.Errorf(ctx, "Failed to report counterparties-connected to Google Analytics: %v", err)
 				}
 			}
 		}
@@ -61,11 +61,11 @@ func AcknowledgeReceipt(whc botsfw.WebhookContext, receiptID, operation string) 
 
 		utm := common4debtus.NewUtmParams(whc, common4debtus.UTM_CAMPAIGN_RECEIPT)
 		if whc.InputType() == botsfw.WebhookInputCallbackQuery {
-			if m, err = whc.NewEditMessage(common4debtus.TextReceiptForTransfer(c, whc, transfer, "", common4debtus.ShowReceiptToCounterparty, utm)+"\n\n"+operationMessage, botsfw.MessageFormatHTML); err != nil {
+			if m, err = whc.NewEditMessage(common4debtus.TextReceiptForTransfer(ctx, whc, transfer, "", common4debtus.ShowReceiptToCounterparty, utm)+"\n\n"+operationMessage, botsfw.MessageFormatHTML); err != nil {
 				return
 			}
 		} else {
-			m = whc.NewMessage(operationMessage + "\n\n" + common4debtus.TextReceiptForTransfer(c, whc, transfer, "", common4debtus.ShowReceiptToCounterparty, utm))
+			m = whc.NewMessage(operationMessage + "\n\n" + common4debtus.TextReceiptForTransfer(ctx, whc, transfer, "", common4debtus.ShowReceiptToCounterparty, utm))
 			m.Keyboard = dtb_general.MainMenuKeyboardOnReceiptAck(whc)
 			m.Format = botsfw.MessageFormatHTML
 		}
@@ -83,13 +83,13 @@ func AcknowledgeReceipt(whc botsfw.WebhookContext, receiptID, operation string) 
 			default:
 				err = errors.New("Expected accept or decline as operation, got: " + operation)
 			}
-			askMsgToCreator.Text = operationMsg + "\n\n" + common4debtus.TextReceiptForTransfer(c, whc, transfer, transfer.Data.CreatorUserID, common4debtus.ShowReceiptToAutodetect, utm)
+			askMsgToCreator.Text = operationMsg + "\n\n" + common4debtus.TextReceiptForTransfer(ctx, whc, transfer, transfer.Data.CreatorUserID, common4debtus.ShowReceiptToAutodetect, utm)
 
 			if transfer.Data.Creator().TgBotID != whc.GetBotCode() {
-				logus.Warningf(c, "TODO: transferEntity.Creator().TgBotID != whc.GetBotCode(): "+askMsgToCreator.Text)
+				logus.Warningf(ctx, "TODO: transferEntity.Creator().TgBotID != whc.GetBotCode(): "+askMsgToCreator.Text)
 			} else {
-				if _, err = whc.Responder().SendMessage(c, askMsgToCreator, botsfw.BotAPISendMessageOverHTTPS); err != nil {
-					logus.Errorf(c, "Failed to send acknowledge to creator: %v", err)
+				if _, err = whc.Responder().SendMessage(ctx, askMsgToCreator, botsfw.BotAPISendMessageOverHTTPS); err != nil {
+					logus.Errorf(ctx, "Failed to send acknowledge to creator: %v", err)
 					err = nil // This is not that critical to report the error to user
 				}
 			}
@@ -100,15 +100,15 @@ func AcknowledgeReceipt(whc botsfw.WebhookContext, receiptID, operation string) 
 		//	editMessage := tgbotapi.NewEditMessageTextByInlineMessageID(transferEntity.CounterpartyTgReceiptInlineMessageID, mt + fmt.Sprintf("\n\n Acknowledged by %v", transferEntity.DebtusSpaceContactEntry().ContactName))
 		//
 		//	if values, err := editMessage.Values(); err != nil {
-		//		logus.Errorf(c, "Failed to get values for editMessage: %v", err)
+		//		logus.Errorf(ctx, "Failed to get values for editMessage: %v", err)
 		//	} else {
-		//		logus.Debugf(c, "editMessage.Values(): %v", values)
+		//		logus.Debugf(ctx, "editMessage.Values(): %v", values)
 		//	}
 		//	updateMessage := whc.NewMessage("")
 		//	updateMessage.TelegramEditMessageText = &editMessage
-		//	_, err := whc.Responder().SendMessage(c, updateMessage, botsfw.BotAPISendMessageOverHTTPS)
+		//	_, err := whc.Responder().SendMessage(ctx, updateMessage, botsfw.BotAPISendMessageOverHTTPS)
 		//	if err != nil {
-		//		logus.Errorf(c, "Failed to update counterparty receipt message: %v", err)
+		//		logus.Errorf(ctx, "Failed to update counterparty receipt message: %v", err)
 		//	}
 		//}
 		return m, err

@@ -32,8 +32,8 @@ func CreateStartTransferWizardCommand(code, messageText string, commands []strin
 			return false
 		},
 		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-			c := whc.Context()
-			logus.Debugf(c, "CreateStartTransferWizardCommand(code=%v).Action()", code)
+			ctx := whc.Context()
+			logus.Debugf(ctx, "CreateStartTransferWizardCommand(code=%v).Action()", code)
 			mt := strings.TrimSpace(whc.Input().(botsfw.WebhookTextMessage).Text())
 			chatEntity := whc.ChatData()
 			switch {
@@ -62,6 +62,7 @@ func CreateStartTransferWizardCommand(code, messageText string, commands []strin
 					m.Text += "\n\n" + strings.Replace(whc.Translate(trans.MESSAGE_TEXT_CHOOSE_CURRENCY), "<a>", fmt.Sprintf(
 						`<a href="%v">`,
 						common4debtus.GetChooseCurrencyUrlForUser(
+							ctx,
 							whc.AppUserID(), whc.Locale(), whc.BotPlatform().ID(), whc.GetBotCode(),
 							"tg-chat="+botsfwmodels.NewChatID(whc.GetBotCode(), whc.MustBotChatID()),
 						),

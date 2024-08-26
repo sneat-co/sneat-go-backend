@@ -1,10 +1,13 @@
 package token4auth
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
-func IssueBotToken(userID, botPlatformID, botID string) string {
+var IssueBotToken = func(ctx context.Context, userID, botPlatformID, botID string) (string, error) {
 	issuer := GetBotIssuer(botPlatformID, botID)
-	return IssueToken(userID, issuer)
+	return IssueFirebaseAuthToken(ctx, userID, issuer)
 }
 
 func GetBotIssuer(botPlatformID, botID string) string {

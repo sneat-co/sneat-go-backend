@@ -50,11 +50,11 @@ var RemindAgainCallbackCommand = botsfw.NewCallbackCommand(dtb_common.CALLBACK_R
 )
 
 func rescheduleReminder(whc botsfw.WebhookContext, reminderID string, remindInDuration time.Duration) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
+	ctx := whc.Context()
 
 	var oldReminder, newReminder models4debtus.Reminder
 
-	if oldReminder, newReminder, err = dtdal.Reminder.RescheduleReminder(c, reminderID, remindInDuration); err != nil {
+	if oldReminder, newReminder, err = dtdal.Reminder.RescheduleReminder(ctx, reminderID, remindInDuration); err != nil {
 		if errors.Is(err, dtdal.ErrReminderAlreadyRescheduled) {
 			m = whc.NewMessageByCode(trans.MESSAGE_TEXT_REMINDER_ALREADY_RESCHEDULED)
 			return m, nil
@@ -68,7 +68,7 @@ func rescheduleReminder(whc botsfw.WebhookContext, reminderID string, remindInDu
 		return m, err
 	}
 	var transfer models4debtus.TransferEntry
-	if transfer, err = facade4debtus.Transfers.GetTransferByID(c, nil, oldReminder.Data.TransferID); err != nil {
+	if transfer, err = facade4debtus.Transfers.GetTransferByID(ctx, nil, oldReminder.Data.TransferID); err != nil {
 		return m, fmt.Errorf("failed to get transferEntity by id: %w", err)
 	}
 	var messageText string
@@ -102,11 +102,11 @@ func rescheduleReminder(whc botsfw.WebhookContext, reminderID string, remindInDu
 	//	chatID := whc.MustBotChatID()
 	//	intChatID, err := strconv.ParseInt(chatID, 10, 64)
 	//	if err != nil {
-	//		logus.Errorf(c, "Failed to parse BotChatID to int: %v\nwhc.BotChatID(): %v", err, chatID)
+	//		logus.Errorf(ctx, "Failed to parse BotChatID to int: %v\nwhc.BotChatID(): %v", err, chatID)
 	//		return
 	//	}
-	//	if err = delayAskForFeedback(c, whc.GetBotCode(), intChatID, whc.AppUserID()); err != nil {
-	//		logus.Errorf(c, "Failed to create task for asking feedback: %v", err)
+	//	if err = delayAskForFeedback(ctx, whc.GetBotCode(), intChatID, whc.AppUserID()); err != nil {
+	//		logus.Errorf(ctx, "Failed to create task for asking feedback: %v", err)
 	//	}
 	//}()
 

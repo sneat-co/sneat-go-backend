@@ -43,11 +43,11 @@ func NewLinkerFromWhc(whc botsfw.WebhookContext) Linker {
 func host(environment string) string {
 	switch environment {
 	case "prod":
-		return "debtusbot.io"
+		return "debtus.app"
 	case strongoapp.LocalHostEnv:
-		return "debtusbot.local"
+		return "local.debtus.app"
 	case "dev":
-		return "debtusbot-dev1.appspot.com"
+		return "dev1.debtus.app"
 	}
 	panic(fmt.Sprintf("Unknown environment: %v", environment))
 }
@@ -66,9 +66,9 @@ func (l Linker) url(path, query, hash string) string {
 		buffer.WriteString("&")
 	}
 	//isAdmin := false // TODO: How to get isAdmin?
-	token := token4auth.IssueToken(l.userID, l.issuer)
+	//token, _ := token4auth.IssueFirebaseAuthToken(ctx, l.userID, l.issuer)
 	buffer.WriteString("lang=" + l.locale)
-	buffer.WriteString("&secret=" + token)
+	buffer.WriteString("&secret=TODO")
 	return buffer.String()
 }
 

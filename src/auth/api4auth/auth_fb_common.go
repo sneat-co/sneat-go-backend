@@ -179,6 +179,6 @@ func authWriteResponseForAuthFailed(c context.Context, w http.ResponseWriter, er
 	_, _ = w.Write([]byte(err.Error()))
 }
 
-func authWriteResponseForUser(c context.Context, w http.ResponseWriter, user dbo4userus.UserEntry, isNewUser bool) {
-	api4debtus.ReturnToken(c, w, user.ID, isNewUser, user.Data.EmailVerified && api4debtus.IsAdmin(user.Data.Email))
+func authWriteResponseForUser(c context.Context, w http.ResponseWriter, user dbo4userus.UserEntry, issuer string, isNewUser bool) {
+	api4debtus.ReturnToken(c, w, user.ID, issuer, isNewUser, user.Data.EmailVerified && api4debtus.IsAdmin(user.Data.Email))
 }

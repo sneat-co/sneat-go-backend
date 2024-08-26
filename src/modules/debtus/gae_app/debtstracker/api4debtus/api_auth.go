@@ -78,12 +78,16 @@ func IsAdmin(email string) bool {
 	return email == "alexander.trakhimenok@gmail.com"
 }
 
-func ReturnToken(ctx context.Context, w http.ResponseWriter, userID string, isNewUser, isAdmin bool) {
+func ReturnToken(ctx context.Context, w http.ResponseWriter, userID, issuer string, isNewUser, isAdmin bool) {
 	if isAdmin {
 		apicore.ReturnError(ctx, w, nil, validation.NewBadRequestError(errors.New("issuing admin token is not implemented yet")))
 		return
 	}
-	token := token4auth.IssueToken(userID, "api4debtus")
+	token, err := token4auth.IssueFirebaseAuthToken(ctx, userID, issuer)
+	if err != nil {
+		apicore.ReturnError(ctx, w, nil, err)
+		return
+	}
 	header := w.Header()
 	header.Add("Access-Control-Allow-Origin", "*")
 	header.Add("Content-Type", "application/json")

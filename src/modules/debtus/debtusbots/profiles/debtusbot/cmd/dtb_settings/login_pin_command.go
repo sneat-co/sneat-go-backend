@@ -50,9 +50,9 @@ var LoginPinCommand = botsfw.Command{
 				//	gacID = p[len("gac-"):]
 			}
 		}
-		c := whc.Context()
+		ctx := whc.Context()
 		//goland:noinspection GoDeprecation
-		if pinCode, err := facade4debtus.AuthFacade.AssignPinCode(c, loginID, whc.AppUserID()); err != nil {
+		if pinCode, err := facade4debtus.AuthFacade.AssignPinCode(ctx, loginID, whc.AppUserID()); err != nil {
 			return m, err
 		} else {
 			return whc.NewMessage(fmt.Sprintf("Login PIN code: %v", pinCode)), nil

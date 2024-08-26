@@ -17,9 +17,9 @@ const ASK_EMAIL_FOR_RECEIPT_COMMAND = "ask-email-for-receipt"
 var AskEmailForReceiptCommand = botsfw.Command{
 	Code: ASK_EMAIL_FOR_RECEIPT_COMMAND,
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-		c := whc.Context()
+		ctx := whc.Context()
 
-		logus.Debugf(c, "AskEmailForReceiptCommand.Action()")
+		logus.Debugf(ctx, "AskEmailForReceiptCommand.Action()")
 		email := whc.Input().(botsfw.WebhookTextMessage).Text()
 		if !strings.Contains(email, "@") {
 			return whc.NewMessage(whc.Translate(trans.MESSAGE_TEXT_INVALID_EMAIL)), nil
@@ -27,7 +27,7 @@ var AskEmailForReceiptCommand = botsfw.Command{
 
 		chatEntity := whc.ChatData()
 		transferID := chatEntity.GetWizardParam(WizardParamTransfer)
-		transfer, err := facade4debtus.Transfers.GetTransferByID(c, nil, transferID)
+		transfer, err := facade4debtus.Transfers.GetTransferByID(ctx, nil, transferID)
 		if err != nil {
 			return m, err
 		}

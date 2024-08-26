@@ -123,7 +123,7 @@ func InlineSendReceipt(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err 
 func getInlineReceiptMessageText(t i18n.SingleLocaleTranslator, botCode, localeCode5, creator string, receiptID string) string {
 	data := map[string]interface{}{
 		"Creator":  creator,
-		"SiteLink": template.HTML(`<a href="https://debtusbot.io/#utm_source=telegram&utm_medium=bot&utm_campaign=receipt-inline">DebtsTracker.IO</a>`),
+		"SiteLink": template.HTML(`<a href="https://debtus.app/#utm_source=telegram&utm_medium=bot&utm_campaign=receipt-inline">DebtsTracker.IO</a>`),
 	}
 	if receiptID != "" {
 		data["ReceiptUrl"] = GetUrlForReceiptInTelegram(botCode, receiptID, localeCode5)

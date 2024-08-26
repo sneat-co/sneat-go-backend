@@ -54,8 +54,8 @@ func TestBalanceMessageSingleCounterparty(t *testing.T) {
 	}
 
 	c := context.TODO()
-	expectedEn := `<a href="https://debtusbot.local/contact?id=john1&lang=en-US&secret=SECRET">John Doe</a>`
-	expectedRu := `<a href="https://debtusbot.local/contact?id=john1&lang=ru-RU&secret=SECRET">John Doe</a>`
+	expectedEn := `<a href="https://local.debtus.app/contact?id=john1&lang=en-US&secret=SECRET">John Doe</a>`
+	expectedRu := `<a href="https://local.debtus.app/contact?id=john1&lang=ru-RU&secret=SECRET">John Doe</a>`
 
 	var actual string
 
@@ -108,8 +108,8 @@ func TestBalanceMessageTwoCounterparties(t *testing.T) {
 
 	c := context.TODO()
 
-	johnLink := fmt.Sprintf(`<a href="https://debtusbot.local/contact?id=john1&lang=en-US&secret=SECRET">%v</a>`, johnContact.Names.GetFullName())
-	jackLink := fmt.Sprintf(`<a href="https://debtusbot.local/contact?id=jack2&lang=en-US&secret=SECRET">%v</a>`, jackContact.Names.GetFullName())
+	johnLink := fmt.Sprintf(`<a href="https://local.debtus.app/contact?id=john1&lang=en-US&secret=SECRET">%v</a>`, johnContact.Names.GetFullName())
+	jackLink := fmt.Sprintf(`<a href="https://local.debtus.app/contact?id=jack2&lang=en-US&secret=SECRET">%v</a>`, jackContact.Names.GetFullName())
 
 	johnDebtusContactBrief.Balance = money.Balance{"USD": 1000}
 	jackDebtusContactBrief.Balance = money.Balance{"USD": 1500}

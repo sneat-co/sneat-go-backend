@@ -179,8 +179,8 @@ func delayedDiscardReminder(c context.Context, reminderID, transferID, returnTra
 	})
 }
 
-func discardReminder(c context.Context, tx dal.ReadwriteTransaction, reminderID, transferID, returnTransferID string) (err error) {
-	logus.Debugf(c, "discardReminder(reminderID=%v, transferID=%v, returnTransferID=%v)", reminderID, transferID, returnTransferID)
+func discardReminder(ctx context.Context, tx dal.ReadwriteTransaction, reminderID, transferID, returnTransferID string) (err error) {
+	logus.Debugf(ctx, "discardReminder(reminderID=%v, transferID=%v, returnTransferID=%v)", reminderID, transferID, returnTransferID)
 
 	var (
 		transfer = models4debtus.NewTransfer(transferID, nil)
@@ -191,49 +191,49 @@ func discardReminder(c context.Context, tx dal.ReadwriteTransaction, reminderID,
 		//returnTransferKey := models.NewTransferKey(returnTransferID)
 		returnTransfer := models4debtus.NewTransfer(returnTransferID, nil)
 		//keys := []*datastore.Key{reminderKey, transferKey, returnTransferKey}
-		if err = tx.GetMulti(c, []dal.Record{reminder.Record, transfer.Record, returnTransfer.Record}); err != nil {
+		if err = tx.GetMulti(ctx, []dal.Record{reminder.Record, transfer.Record, returnTransfer.Record}); err != nil {
 			return err
 		}
 	} else {
-		if err = tx.GetMulti(c, []dal.Record{reminder.Record, transfer.Record}); err != nil {
+		if err = tx.GetMulti(ctx, []dal.Record{reminder.Record, transfer.Record}); err != nil {
 			return err
 		}
 	}
 
-	if reminder, err = dtdal.Reminder.SetReminderStatus(c, reminderID, returnTransferID, models4debtus.ReminderStatusDiscarded, time.Now()); err != nil {
+	if reminder, err = dtdal.Reminder.SetReminderStatus(ctx, reminderID, returnTransferID, models4debtus.ReminderStatusDiscarded, time.Now()); err != nil {
 		return err // DO NOT WRAP as there is check in delayedDiscardReminder() errors.Wrapf(err, "Failed to set reminder status to '%v'", models.ReminderStatusDiscarded)
 	}
 
 	switch reminder.Data.SentVia {
 	case telegram.PlatformID: // We need to update a reminder message if it was already sent out
 		if reminder.Data.BotID == "" {
-			logus.Errorf(c, "reminder.BotID == ''")
+			logus.Errorf(ctx, "reminder.BotID == ''")
 			return nil
 		}
 		if reminder.Data.MessageIntID == 0 {
-			//logus.Infof(c, "No need to update reminder message in Telegram as a reminder is not sent yet")
+			//logus.Infof(ctx, "No need to update reminder message in Telegram as a reminder is not sent yet")
 			return nil
 		}
-		logus.Infof(c, "Will try to update a reminder message as it was already sent to user, reminder.MessageIntID: %v", reminder.Data.MessageIntID)
-		tgBotApi := tgbots2.GetTelegramBotApiByBotCode(c, reminder.Data.BotID)
+		logus.Infof(ctx, "Will try to update a reminder message as it was already sent to user, reminder.MessageIntID: %v", reminder.Data.MessageIntID)
+		tgBotApi := tgbots2.GetTelegramBotApiByBotCode(ctx, reminder.Data.BotID)
 		if tgBotApi == nil {
 			return fmt.Errorf("not able to create API client as there no settings for telegram bot with id '%v'", reminder.Data.BotID)
 		}
 
 		if reminder.Data.Locale == "" {
-			logus.Errorf(c, "reminder.Locale == ''")
+			logus.Errorf(ctx, "reminder.Locale == ''")
 			user := dbo4userus.NewUserEntry(reminder.Data.UserID)
-			if err = dal4userus.GetUser(c, nil, user); err != nil { // Intentionally do not use transaction
+			if err = dal4userus.GetUser(ctx, nil, user); err != nil { // Intentionally do not use transaction
 				return err
 			}
 			if user.Data.PreferredLocale != "" {
 				reminder.Data.Locale = user.Data.PreferredLocale
-			} else if s, ok := tgbots2.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil)).ByCode[reminder.Data.BotID]; ok {
+			} else if s, ok := tgbots2.Bots(dtdal.HttpAppHost.GetEnvironment(ctx, nil)).ByCode[reminder.Data.BotID]; ok {
 				reminder.Data.Locale = s.Locale.Code5
 			}
 		}
 
-		translator := GetTranslatorForReminder(c, reminder.Data)
+		translator := GetTranslatorForReminder(ctx, reminder.Data)
 
 		utmParams := common4debtus.UtmParams{
 			Source:   "TODO", // TODO: Get bot ContactID
@@ -242,7 +242,7 @@ func discardReminder(c context.Context, tx dal.ReadwriteTransaction, reminderID,
 		}
 
 		receiptMessageText := common4debtus.TextReceiptForTransfer(
-			c,
+			ctx,
 			translator,
 			transfer,
 			reminder.Data.UserID,
@@ -252,7 +252,7 @@ func discardReminder(c context.Context, tx dal.ReadwriteTransaction, reminderID,
 
 		locale := i18n.GetLocaleByCode5(reminder.Data.Locale) // TODO: Check for supported locales
 
-		transferUrlForUser := common4debtus.GetTransferUrlForUser(transferID, reminder.Data.UserID, locale, utmParams)
+		transferUrlForUser := common4debtus.GetTransferUrlForUser(ctx, transferID, reminder.Data.UserID, locale, utmParams)
 
 		receiptMessageText += "\n\n" + strings.Join([]string{
 			translator.Translate(trans.MESSAGE_TEXT_DEBT_IS_RETURNED),

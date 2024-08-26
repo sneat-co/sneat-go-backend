@@ -332,8 +332,8 @@ var FeedbackTextCommand = botsfw.Command{
 			feedbackParam := whc.ChatData().GetWizardParam("feedback")
 
 			var feedback models4debtus.Feedback
-			c := whc.Context()
-			if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+			ctx := whc.Context()
+			if err = facade.RunReadwriteTransaction(ctx, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
 				if feedbackParam == "" {
 					feedback.FeedbackData = &models4debtus.FeedbackData{
 						Rate:      "none",
@@ -361,10 +361,10 @@ var FeedbackTextCommand = botsfw.Command{
 				return
 			}
 			m = whc.NewMessageByCode(trans.MESSAGE_TEXT_THANKS)
-			m.Text += fmt.Sprintf(` Feedback #<a href="https://debtusbot.io/app/#/feedback/%d">%d</a>`, feedback.ID, feedback.ID)
+			m.Text += fmt.Sprintf(` Feedback #<a href="https://debtus.app/pwa/#/feedback/%d">%d</a>`, feedback.ID, feedback.ID)
 			SetMainMenuKeyboard(whc, &m)
-			if err2 := admin.SendFeedbackToAdmins(c, "DebtusBotToken", feedback); err2 != nil {
-				logus.Errorf(c, "failed to notify admins: %v", err)
+			if err2 := admin.SendFeedbackToAdmins(ctx, "DebtusBotToken", feedback); err2 != nil {
+				logus.Errorf(ctx, "failed to notify admins: %v", err)
 			}
 		default:
 			m = whc.NewMessageByCode(trans.MESSAGE_TEXT_PLEASE_SEND_TEXT)

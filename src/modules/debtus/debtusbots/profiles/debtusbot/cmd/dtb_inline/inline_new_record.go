@@ -18,8 +18,8 @@ import (
 var ReInlineQueryAmount = regexp.MustCompile(`^\s*(\d+(?:\.\d*)?)\s*((?:\b|\B).+?)?\s*$`)
 
 func InlineNewRecord(whc botsfw.WebhookContext, amountMatches []string) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
-	logus.Debugf(c, "InlineNewRecord()")
+	ctx := whc.Context()
+	logus.Debugf(ctx, "InlineNewRecord()")
 
 	inlineQuery := whc.Input().(botsfw.WebhookInlineQuery)
 	var (
@@ -30,7 +30,7 @@ func InlineNewRecord(whc botsfw.WebhookContext, amountMatches []string) (m botsf
 		return
 	}
 	currencyCode := strings.TrimRight(amountMatches[2], ".,;()[]{} ")
-	logus.Debugf(c, "currencyCode: %v", currencyCode)
+	logus.Debugf(ctx, "currencyCode: %v", currencyCode)
 	if currencyCode != "" {
 		if len(currencyCode) > 20 {
 			currencyCode = currencyCode[:20]
@@ -53,7 +53,7 @@ func InlineNewRecord(whc botsfw.WebhookContext, amountMatches []string) (m botsf
 
 	amountText := html.EscapeString(money.NewAmount(amountCurrency, amountValue).String())
 
-	newBillCallbackData := fmt.Sprintf("new-bill?v=%v&c=%v", amountMatches[1], url.QueryEscape(string(amountCurrency)))
+	newBillCallbackData := fmt.Sprintf("new-bill?v=%v&ctx=%v", amountMatches[1], url.QueryEscape(string(amountCurrency)))
 	m.BotMessage = telegram.InlineBotMessage(tgbotapi.InlineConfig{
 		InlineQueryID: inlineQuery.GetInlineQueryID(),
 		Results: []interface{}{

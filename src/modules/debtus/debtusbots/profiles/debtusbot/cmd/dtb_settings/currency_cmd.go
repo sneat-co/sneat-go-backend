@@ -43,13 +43,13 @@ const SET_PRIMARY_CURRENCY_COMMAND = "set-primary-currency"
 var SetPrimaryCurrency = botsfw.Command{
 	Code: SET_PRIMARY_CURRENCY_COMMAND,
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-		c := whc.Context()
-		logus.Debugf(c, "SetPrimaryCurrency.Action()")
+		ctx := whc.Context()
+		logus.Debugf(ctx, "SetPrimaryCurrency.Action()")
 		whc.ChatData().SetAwaitingReplyTo("")
 		primaryCurrency := whc.Input().(botsfw.WebhookTextMessage).Text()
 		userID := whc.AppUserID()
 		userContext := facade.NewUserContext(userID)
-		err = dal4userus.RunUserWorker(c, userContext, func(c context.Context, tx dal.ReadwriteTransaction, userWorkerParams *dal4userus.UserWorkerParams) error {
+		err = dal4userus.RunUserWorker(ctx, userContext, func(c context.Context, tx dal.ReadwriteTransaction, userWorkerParams *dal4userus.UserWorkerParams) error {
 			userWorkerParams.UserUpdates, err = userWorkerParams.User.Data.SetPrimaryCurrency(money.CurrencyCode(primaryCurrency))
 			return err
 		})

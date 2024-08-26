@@ -130,8 +130,8 @@ func (r receiptTextBuilder) receiptCommonFooter(buffer *bytes.Buffer) {
 	//}
 }
 
-func TextReceiptForTransfer(c context.Context, translator i18n.SingleLocaleTranslator, transfer models4debtus.TransferEntry, showToUserID string, showReceiptTo ShowReceiptTo, utmParams UtmParams) string {
-	logus.Debugf(c, "TextReceiptForTransfer(transferID=%v, showToUserID=%v, showReceiptTo=%v)", transfer.ID, showToUserID, showReceiptTo)
+func TextReceiptForTransfer(ctx context.Context, translator i18n.SingleLocaleTranslator, transfer models4debtus.TransferEntry, showToUserID string, showReceiptTo ShowReceiptTo, utmParams UtmParams) string {
+	logus.Debugf(ctx, "TextReceiptForTransfer(transferID=%v, showToUserID=%v, showReceiptTo=%v)", transfer.ID, showToUserID, showReceiptTo)
 
 	if transfer.ID == "" {
 		panic("transferID == 0")
@@ -169,7 +169,9 @@ func TextReceiptForTransfer(c context.Context, translator i18n.SingleLocaleTrans
 	r := newReceiptTextBuilder(translator, transfer, showReceiptTo)
 
 	var buffer bytes.Buffer
-	r.WriteReceiptText(&buffer, utmParams)
+	if err := r.WriteReceiptText(ctx, &buffer, utmParams); err != nil {
+		panic(err)
+	}
 	r.receiptCommonFooter(&buffer)
 	return buffer.String()
 }
@@ -190,7 +192,7 @@ func (r receiptTextBuilder) getReceiptCounterparty() *models4debtus.TransferCoun
 //	return r.translateAndFormatMessage(messageTextToTranslate, r.transfer.Data.GetAmount(), utmParams)
 //}
 
-func (r receiptTextBuilder) WriteReceiptText(buffer *bytes.Buffer, utmParams UtmParams) {
+func (r receiptTextBuilder) WriteReceiptText(ctx context.Context, buffer *bytes.Buffer, utmParams UtmParams) error {
 	var messageTextToTranslate string
 	if r.transfer.Data.IsReturn {
 		switch r.partyAction {
@@ -212,7 +214,11 @@ func (r receiptTextBuilder) WriteReceiptText(buffer *bytes.Buffer, utmParams Utm
 		}
 	}
 
-	buffer.WriteString(r.translateAndFormatMessage(messageTextToTranslate, r.transfer.Data.GetAmount(), utmParams))
+	if s, err := r.translateAndFormatMessage(ctx, messageTextToTranslate, r.transfer.Data.GetAmount(), utmParams); err != nil {
+		panic(err)
+	} else {
+		buffer.WriteString(s)
+	}
 
 	if r.transfer.Data.HasInterest() {
 		buffer.WriteString("\n")
@@ -224,12 +230,21 @@ func (r receiptTextBuilder) WriteReceiptText(buffer *bytes.Buffer, utmParams Utm
 	}
 
 	if amountReturned := r.transfer.Data.AmountReturned(); amountReturned > 0 && amountReturned != r.transfer.Data.AmountInCents {
-		buffer.WriteString("\n" + r.translateAndFormatMessage(trans.MESSAGE_TEXT_RECEIPT_ALREADY_RETURNED_AMOUNT, r.transfer.Data.GetReturnedAmount(), utmParams))
+		if s, err := r.translateAndFormatMessage(ctx, trans.MESSAGE_TEXT_RECEIPT_ALREADY_RETURNED_AMOUNT, r.transfer.Data.GetReturnedAmount(), utmParams); err != nil {
+			return err
+		} else {
+			buffer.WriteString("\n" + s)
+		}
 	}
 
 	if outstandingAmount := r.transfer.Data.GetOutstandingAmount(time.Now()); outstandingAmount.Value > 0 && outstandingAmount.Value != r.transfer.Data.AmountInCents {
-		buffer.WriteString("\n" + r.translateAndFormatMessage(trans.MESSAGE_TEXT_RECEIPT_OUTSTANDING_AMOUNT, outstandingAmount, utmParams))
+		if s, err := r.translateAndFormatMessage(ctx, trans.MESSAGE_TEXT_RECEIPT_OUTSTANDING_AMOUNT, outstandingAmount, utmParams); err != nil {
+			return err
+		} else {
+			buffer.WriteString("\n" + s)
+		}
 	}
+	return nil
 }
 
 func WriteTransferInterest(buffer *bytes.Buffer, transfer models4debtus.TransferEntry, translator i18n.SingleLocaleTranslator) {
@@ -251,7 +266,7 @@ func days(t i18n.SingleLocaleTranslator, d int) string {
 	return t.Translate(messageTextToTranslate, d)
 }
 
-func (r receiptTextBuilder) translateAndFormatMessage(messageTextToTranslate string, amount money.Amount, utmParams UtmParams) string {
+func (r receiptTextBuilder) translateAndFormatMessage(ctx context.Context, messageTextToTranslate string, amount money.Amount, utmParams UtmParams) (string, error) {
 	userID := r.viewerUserID
 
 	counterpartyInfo := r.getReceiptCounterparty()
@@ -262,7 +277,10 @@ func (r receiptTextBuilder) translateAndFormatMessage(messageTextToTranslate str
 		if userID == "" || utmParams.Medium == UTM_MEDIUM_SMS || utmParams.Medium == telegram.PlatformID {
 			counterpartyText = counterpartyInfo.Name()
 		} else {
-			counterpartyUrl := GetCounterpartyUrl(counterpartyInfo.ContactID, userID, r.translator.Locale(), utmParams)
+			counterpartyUrl, err := GetCounterpartyUrl(ctx, counterpartyInfo.ContactID, userID, r.translator.Locale(), utmParams)
+			if err != nil {
+				return "", err
+			}
 			counterpartyText = fmt.Sprintf(`<a href="%v"><b>%v</b></a>`, counterpartyUrl, html.EscapeString(counterpartyInfo.Name()))
 		}
 		// TODO: Add a @counterparty Telegram nickname if sending receipt to Telegram channel
@@ -282,7 +300,7 @@ func (r receiptTextBuilder) translateAndFormatMessage(messageTextToTranslate str
 	return r.translator.Translate(messageTextToTranslate, map[string]interface{}{
 		"Counterparty": template.HTML(counterpartyText),
 		"Amount":       template.HTML(amountText),
-	})
+	}), nil
 }
 
 //func (r receiptBuilder) addBalance(buffer *bytes.Buffer, counterpartyBalance Balance, utmParams UtmParams) string {

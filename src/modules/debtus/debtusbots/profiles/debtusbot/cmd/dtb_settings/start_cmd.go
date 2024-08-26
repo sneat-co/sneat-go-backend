@@ -37,8 +37,8 @@ func StartInBotAction(whc botsfw.WebhookContext, startParams []string) (m botsfw
 }
 
 func startByLinkCode(whc botsfw.WebhookContext, matches []string) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
-	logus.Debugf(c, "startByLinkCode() => matches: %v", matches)
+	ctx := whc.Context()
+	logus.Debugf(ctx, "startByLinkCode() => matches: %v", matches)
 	chatEntity := whc.ChatData()
 	entityType := matches[1]
 	entityCode := matches[2]
@@ -53,7 +53,7 @@ func startByLinkCode(whc botsfw.WebhookContext, matches []string) (m botsfw.Mess
 			return
 		}
 		chatEntity.SetPreferredLanguage(localeCode5)
-		if err = delays4userus.DelaySetUserPreferredLocale(c, time.Second, whc.AppUserID(), localeCode5); err != nil {
+		if err = delays4userus.DelaySetUserPreferredLocale(ctx, time.Second, whc.AppUserID(), localeCode5); err != nil {
 			return
 		}
 	}
@@ -69,15 +69,15 @@ func startByLinkCode(whc botsfw.WebhookContext, matches []string) (m botsfw.Mess
 }
 
 func startInvite(whc botsfw.WebhookContext, inviteCode, operation, localeCode5 string) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
+	ctx := whc.Context()
 	var invite models4debtus.Invite
-	if invite, err = dtdal.Invite.GetInvite(c, nil, inviteCode); err != nil {
+	if invite, err = dtdal.Invite.GetInvite(ctx, nil, inviteCode); err != nil {
 		if dal.IsNotFound(err) {
 			return whc.NewMessage(fmt.Sprintf("Unknown invite code: %v", inviteCode)), nil
 		}
 		return
 	}
-	logus.Debugf(c, "Invite(%v): ClaimedCount=%v, MaxClaimsCount=%v", inviteCode, invite.Data.ClaimedCount, invite.Data.MaxClaimsCount)
+	logus.Debugf(ctx, "Invite(%v): ClaimedCount=%v, MaxClaimsCount=%v", inviteCode, invite.Data.ClaimedCount, invite.Data.MaxClaimsCount)
 	if invite.Data.MaxClaimsCount == 0 || invite.Data.ClaimedCount < invite.Data.MaxClaimsCount {
 		return handleInviteOnStart(whc, inviteCode, invite)
 	} else {
@@ -87,10 +87,10 @@ func startInvite(whc botsfw.WebhookContext, inviteCode, operation, localeCode5 s
 }
 
 func startReceipt(whc botsfw.WebhookContext, receiptID, operation, localeCode5 string) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
+	ctx := whc.Context()
 	if receiptID == "" {
 		return m, fmt.Errorf("receiptID is empty")
-	} else if _, err = dtdal.Receipt.GetReceiptByID(c, nil, receiptID); err != nil {
+	} else if _, err = dtdal.Receipt.GetReceiptByID(ctx, nil, receiptID); err != nil {
 		return
 	}
 	switch operation {

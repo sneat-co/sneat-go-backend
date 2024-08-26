@@ -42,7 +42,7 @@ func InviteFriend(w http.ResponseWriter, r *http.Request) {
 		appengine.NewContext(r),
 		fromName,
 		"Check this app",
-		"<p>See this phone app - <a href=https://debtusbot.io/#utm_medium=email&utm_campaign=invite-from-app>https://debtusbot.io/</a> - runs on iOS, Android & Windows Phone.</p>"+
+		"<p>See this phone app - <a href=https://debtus.app/#utm_medium=email&utm_campaign=invite-from-app>https://debtus.app/</a> - runs on iOS, Android & Windows Phone.</p>"+
 			"<p>--<br>Sent by "+fromName+" from DebtsTracker.IO app</p>"); err != nil {
 		fmt.Fprint(w, err)
 	} else {
@@ -83,12 +83,12 @@ func SendReceipt(c context.Context, w http.ResponseWriter, r *http.Request) {
 	amount := r.Form.Get("value")
 	currency := r.Form.Get("currency")
 	subject := "Receipt for friend's loan money transfer"
-	message := "<p>You've got " + amount + currency + " from " + fromName + "</p><p>--<br>Sent via <a href='https://debtusbot.io/#utm_source=app&utm_medium=email&utm_campaign=receipt&utm_content=footer'><b>DebtsTracker.IO</b></a> - available at <a href=https://itunes.apple.com/en/app/debttracker-pro/id303497125>Apple AppStore</a> & <a href=https://play.google.com/store/apps/details?id=com.stellar.debtsfree&hl=en>Google Play</a></p>"
+	message := "<p>You've got " + amount + currency + " from " + fromName + "</p><p>--<br>Sent via <a href='https://debtus.app/#utm_source=app&utm_medium=email&utm_campaign=receipt&utm_content=footer'><b>DebtsTracker.IO</b></a> - available at <a href=https://itunes.apple.com/en/app/debttracker-pro/id303497125>Apple AppStore</a> & <a href=https://play.google.com/store/apps/details?id=com.stellar.debtsfree&hl=en>Google Play</a></p>"
 	allowOrigin(w)
 	if err := SendEmail(c, fromName, subject, message); err != nil {
 		logus.Infof(c, "Failed to send email: %v", err)
-		fmt.Fprint(w, err)
+		_, _ = fmt.Fprint(w, err)
 	} else {
-		fmt.Fprint(w, "Email sent")
+		_, _ = fmt.Fprint(w, "Email sent")
 	}
 }

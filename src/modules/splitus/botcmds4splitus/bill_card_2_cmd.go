@@ -26,8 +26,8 @@ const billCardCommandCode = "bill-card"
 var billCardCommand = botsfw.Command{
 	Code: billCardCommandCode,
 	CallbackAction: billCallbackAction(func(whc botsfw.WebhookContext, _ dal.ReadwriteTransaction, callbackUrl *url.URL, bill models4splitus.BillEntry) (m botsfw.MessageFromBot, err error) {
-		c := whc.Context()
-		if m.Text, err = getBillCardMessageText(c, whc.GetBotCode(), whc, bill, false, ""); err != nil {
+		ctx := whc.Context()
+		if m.Text, err = getBillCardMessageText(ctx, whc.GetBotCode(), whc, bill, false, ""); err != nil {
 			return
 		}
 		m.Format = botsfw.MessageFormatHTML

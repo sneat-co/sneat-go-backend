@@ -764,9 +764,9 @@ func sendReceiptByTelegramButton(transferID string, translator i18n.SingleLocale
 }
 
 func createSendReceiptOptionsMessage(whc botsfw.WebhookContext, transfer models4debtus.TransferEntry) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
+	ctx := whc.Context()
 
-	logus.Debugf(c, "createSendReceiptOptionsMessage(transferID=%v)", transfer.ID)
+	logus.Debugf(ctx, "createSendReceiptOptionsMessage(transferID=%v)", transfer.ID)
 	mt := whc.Translate(trans.MESSAGE_TEXT_YOU_CAN_SEND_RECEIPT, html.EscapeString(transfer.Data.Counterparty().ContactName))
 	var utmCampaign string
 	if transfer.Data.IsReturn {
@@ -775,9 +775,13 @@ func createSendReceiptOptionsMessage(whc botsfw.WebhookContext, transfer models4
 		utmCampaign = common4debtus.UTM_CAMPAIGN_DEBT_CREATED
 	}
 	utmParams := common4debtus.NewUtmParams(whc, utmCampaign)
-	transferUrlForUser := common4debtus.GetTransferUrlForUser(transfer.ID, whc.AppUserID(), whc.Locale(), utmParams)
+	transferUrlForUser := common4debtus.GetTransferUrlForUser(ctx, transfer.ID, whc.AppUserID(), whc.Locale(), utmParams)
 	mt = strings.Replace(mt, "<a receipt>", fmt.Sprintf(`<a href="%v">`, transferUrlForUser), 1)
-	mt = strings.Replace(mt, "<a counterparty>", fmt.Sprintf(`<a href="%v">`, common4debtus.GetCounterpartyUrl(transfer.Data.Counterparty().ContactID, whc.AppUserID(), whc.Locale(), utmParams)), 1)
+	if s, err := common4debtus.GetCounterpartyUrl(ctx, transfer.Data.Counterparty().ContactID, whc.AppUserID(), whc.Locale(), utmParams); err != nil {
+		return m, err
+	} else {
+		mt = strings.Replace(mt, "<a counterparty>", fmt.Sprintf(`<a href="%v">`, s), 1)
+	}
 
 	if whc.InputType() == botsfw.WebhookInputCallbackQuery {
 		if m, err = whc.NewEditMessage(mt, botsfw.MessageFormatHTML); err != nil {
@@ -792,15 +796,15 @@ func createSendReceiptOptionsMessage(whc botsfw.WebhookContext, transfer models4
 	var telegramKeyboard tgbotapi.InlineKeyboardMarkup
 	var isCounterpartyUserHasTelegram bool
 	if transfer.Data.Creator().ContactID != "" {
-		if user, err := dal4userus.GetUserByID(c, nil, transfer.Data.Counterparty().UserID); err != nil {
+		if user, err := dal4userus.GetUserByID(ctx, nil, transfer.Data.Counterparty().UserID); err != nil {
 			err = fmt.Errorf("failed to get counterparty user by ContactID=%v: %w", transfer.Data.Counterparty().UserID, err)
 			return m, err
 		} else {
 			isCounterpartyUserHasTelegram = user.Data.HasAccount(telegram.PlatformID, "")
-			logus.Debugf(c, "isCounterpartyUserHasTelegram: %v, transfer.Creator().ContactID: %v, user.GetTelegramUserIDs(): %v", isCounterpartyUserHasTelegram, transfer.Data.Creator().ContactID, user.Data.GetTelegramUserIDs())
+			logus.Debugf(ctx, "isCounterpartyUserHasTelegram: %v, transfer.Creator().ContactID: %v, user.GetTelegramUserIDs(): %v", isCounterpartyUserHasTelegram, transfer.Data.Creator().ContactID, user.Data.GetTelegramUserIDs())
 		}
 	} else {
-		logus.Debugf(c, "isCounterpartyUserHasTelegram: %v, transfer.Creator().ContactID: %v", isCounterpartyUserHasTelegram, transfer.Data.Creator().ContactID)
+		logus.Debugf(ctx, "isCounterpartyUserHasTelegram: %v, transfer.Creator().ContactID: %v", isCounterpartyUserHasTelegram, transfer.Data.Creator().ContactID)
 	}
 
 	if isCounterpartyUserHasTelegram {
@@ -814,7 +818,7 @@ func createSendReceiptOptionsMessage(whc botsfw.WebhookContext, transfer models4
 			Medium:   common4debtus.UTM_MEDIUM_BOT,
 			Campaign: common4debtus.UTM_CAMPAIGN_TRANSFER_SEND_RECEIPT,
 		}
-		transferUrl := common4debtus.GetTransferUrlForUser(transfer.ID, whc.AppUserID(), whc.Locale(), utmParams)
+		transferUrl := common4debtus.GetTransferUrlForUser(ctx, transfer.ID, whc.AppUserID(), whc.Locale(), utmParams)
 
 		transferUrl += "&send=menu"
 
