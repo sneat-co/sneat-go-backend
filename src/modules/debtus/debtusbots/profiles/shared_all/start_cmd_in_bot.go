@@ -93,8 +93,8 @@ func startInBotWelcomeAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot
 }
 
 //func onStartCallbackInBot(whc botsfw.WebhookContext, params BotParams) (m botsfw.MessageFromBot, err error) {
-//	c := whc.Context()
-//	logus.Debugf(c, "onStartCallbackInBot()")
+//	ctx := whc.Context()
+//	logus.Debugf(ctx, "onStartCallbackInBot()")
 //
 //	if m, err = params.InBotWelcomeMessage(whc); err != nil {
 //		return

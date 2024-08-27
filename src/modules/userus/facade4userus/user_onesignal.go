@@ -7,13 +7,13 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/auth/models4auth"
 )
 
-func SaveUserOneSignal(c context.Context, userID string, oneSignalUserID string) (userOneSignal models4auth.UserOneSignal, err error) {
+func SaveUserOneSignal(_ context.Context, userID string, oneSignalUserID string) (userOneSignal models4auth.UserOneSignal, err error) {
 	//key := userOneSignalDalGae.NewUserOneSignalKey(c, oneSignalUserID)
 	//var entity models.UserOneSignalEntity
 	//// Save if no entity or AppUserIntID changed
-	//if err = gaedb.Get(c, key, &entity); err == datastore.ErrNoSuchEntity || entity.UserID != userID {
+	//if err = gaedb.Get(ctx, key, &entity); err == datastore.ErrNoSuchEntity || entity.UserID != userID {
 	//	entity = models.UserOneSignalEntity{UserID: userID, Created: time.Now()}
-	//	if _, err = gaedb.Put(c, key, &entity); err != nil {
+	//	if _, err = gaedb.Put(ctx, key, &entity); err != nil {
 	//		return
 	//	}
 	//} else if err != nil {

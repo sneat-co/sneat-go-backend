@@ -9,8 +9,8 @@ import (
 
 func startInGroupAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 	panic("implement me")
-	//c := whc.Context()
-	//logus.Debugf(c, "splitus.startInGroupAction()")
+	//ctx := whc.Context()
+	//logus.Debugf(ctx, "splitus.startInGroupAction()")
 	//var group models.Group
 	//if group, err = shared_space.GetGroup(whc, nil); err != nil {
 	//	return

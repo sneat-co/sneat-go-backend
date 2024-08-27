@@ -21,19 +21,19 @@ import (
 var ViewReceiptInTelegramCallbackCommand = botsfw.NewCallbackCommand(
 	VIEW_RECEIPT_IN_TELEGRAM_COMMAND,
 	func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-		c := whc.Context()
-		logus.Debugf(c, "ViewReceiptInTelegramCallbackCommand.CallbackAction()")
+		ctx := whc.Context()
+		logus.Debugf(ctx, "ViewReceiptInTelegramCallbackCommand.CallbackAction()")
 		query := callbackUrl.Query()
 
 		receiptID := query.Get("id")
-		receipt, err := dtdal.Receipt.GetReceiptByID(c, nil, receiptID)
+		receipt, err := dtdal.Receipt.GetReceiptByID(ctx, nil, receiptID)
 		if err != nil {
 			return m, err
 		}
 		currentUserID := whc.AppUserID()
 		if receipt.Data.CreatorUserID != currentUserID {
-			if err = linkUsersByReceiptNowOrDelay(c, receipt, currentUserID); err != nil {
-				logus.Errorf(c, err.Error())
+			if err = linkUsersByReceiptNowOrDelay(ctx, receipt, currentUserID); err != nil {
+				logus.Errorf(ctx, err.Error())
 				err = nil // We still can create link to receipt, so log error and continue
 			}
 		}
@@ -59,29 +59,29 @@ var ViewReceiptInTelegramCallbackCommand = botsfw.NewCallbackCommand(
 
 const delayLinkUserByReceiptKeyName = "delayLinkUserByReceipt"
 
-func DelayLinkUsersByReceipt(c context.Context, receiptID, invitedUserID string) (err error) {
-	return delayLinkUserByReceipt.EnqueueWork(c, delaying.With(const4debtus.QueueReceipts, delayLinkUserByReceiptKeyName, 0), receiptID, invitedUserID)
+func DelayLinkUsersByReceipt(ctx context.Context, receiptID, invitedUserID string) (err error) {
+	return delayLinkUserByReceipt.EnqueueWork(ctx, delaying.With(const4debtus.QueueReceipts, delayLinkUserByReceiptKeyName, 0), receiptID, invitedUserID)
 }
 
-func delayedLinkUsersByReceipt(c context.Context, receiptID, invitedUserID string) error {
-	logus.Debugf(c, "delayedLinkUsersByReceipt(receiptID=%v, invitedUserID=%v)", receiptID, invitedUserID)
-	receipt, err := dtdal.Receipt.GetReceiptByID(c, nil, receiptID)
+func delayedLinkUsersByReceipt(ctx context.Context, receiptID, invitedUserID string) error {
+	logus.Debugf(ctx, "delayedLinkUsersByReceipt(receiptID=%v, invitedUserID=%v)", receiptID, invitedUserID)
+	receipt, err := dtdal.Receipt.GetReceiptByID(ctx, nil, receiptID)
 	if err != nil {
 		if dal.IsNotFound(err) {
-			logus.Errorf(c, err.Error())
+			logus.Errorf(ctx, err.Error())
 			err = nil
 		}
 		return err
 	}
-	return linkUsersByReceipt(c, receipt, invitedUserID)
+	return linkUsersByReceipt(ctx, receipt, invitedUserID)
 }
 
-func linkUsersByReceiptNowOrDelay(c context.Context, receipt models4debtus.ReceiptEntry, invitedUserID string) (err error) {
-	if err = linkUsersByReceipt(c, receipt, invitedUserID); err != nil {
+func linkUsersByReceiptNowOrDelay(ctx context.Context, receipt models4debtus.ReceiptEntry, invitedUserID string) (err error) {
+	if err = linkUsersByReceipt(ctx, receipt, invitedUserID); err != nil {
 		err = fmt.Errorf("failed to link users by receipt: %w", err)
 		if strings.Contains(err.Error(), "concurrent transaction") {
-			logus.Warningf(c, err.Error())
-			if err = DelayLinkUsersByReceipt(c, receipt.ID, invitedUserID); err != nil {
+			logus.Warningf(ctx, err.Error())
+			if err = DelayLinkUsersByReceipt(ctx, receipt.ID, invitedUserID); err != nil {
 				err = fmt.Errorf("failed to delay linking users by receipt: %w", err)
 			}
 		}
@@ -89,15 +89,15 @@ func linkUsersByReceiptNowOrDelay(c context.Context, receipt models4debtus.Recei
 	return
 }
 
-func linkUsersByReceipt(c context.Context, receipt models4debtus.ReceiptEntry, invitedUserID string) (err error) {
+func linkUsersByReceipt(ctx context.Context, receipt models4debtus.ReceiptEntry, invitedUserID string) (err error) {
 	if receipt.Data.CounterpartyUserID == "" {
 		linker := facade4debtus.NewReceiptUsersLinker(nil) // TODO: Link users
-		if _, err = linker.LinkReceiptUsers(c, receipt.ID, invitedUserID); err != nil {
+		if _, err = linker.LinkReceiptUsers(ctx, receipt.ID, invitedUserID); err != nil {
 			return err
 		}
 	} else if receipt.Data.CounterpartyUserID != invitedUserID {
 		// TODO: Should we allow to see receipt but block from changing it?
-		logus.Warningf(c, `Security issue: receipt.CreatorUserID != currentUserID && receipt.CounterpartyUserID != currentUserID
+		logus.Warningf(ctx, `Security issue: receipt.CreatorUserID != currentUserID && receipt.CounterpartyUserID != currentUserID
 	currentUserID: %s
 	receipt.CreatorUserID: %s
 	receipt.CounterpartyUserID: %s

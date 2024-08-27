@@ -34,22 +34,22 @@ func NewReminderDalGae() ReminderDalGae {
 
 var _ dtdal.ReminderDal = (*ReminderDalGae)(nil)
 
-func (reminderDalGae ReminderDalGae) GetReminderByID(c context.Context, tx dal.ReadSession, id string) (reminder models4debtus.Reminder, err error) {
+func (reminderDalGae ReminderDalGae) GetReminderByID(ctx context.Context, tx dal.ReadSession, id string) (reminder models4debtus.Reminder, err error) {
 	reminder = models4debtus.NewReminder(id, nil)
-	return reminder, tx.Get(c, reminder.Record)
+	return reminder, tx.Get(ctx, reminder.Record)
 }
 
-func (reminderDalGae ReminderDalGae) SaveReminder(c context.Context, tx dal.ReadwriteTransaction, reminder models4debtus.Reminder) (err error) {
-	return tx.Set(c, reminder.Record)
+func (reminderDalGae ReminderDalGae) SaveReminder(ctx context.Context, tx dal.ReadwriteTransaction, reminder models4debtus.Reminder) (err error) {
+	return tx.Set(ctx, reminder.Record)
 }
 
-func (reminderDalGae ReminderDalGae) GetSentReminderIDsByTransferID(c context.Context, tx dal.ReadSession, transferID int) ([]int, error) {
+func (reminderDalGae ReminderDalGae) GetSentReminderIDsByTransferID(ctx context.Context, tx dal.ReadSession, transferID int) ([]int, error) {
 	q := dal.From(models4debtus.ReminderKind).Where(
 		dal.WhereField("TransferID", dal.Equal, transferID),
 		dal.WhereField("Status", dal.Equal, models4debtus.ReminderStatusSent),
 	).SelectKeysOnly(reflect.Int)
 
-	records, err := tx.QueryAllRecords(c, q)
+	records, err := tx.QueryAllRecords(ctx, q)
 	if err != nil {
 		return nil, err
 	}
@@ -60,12 +60,12 @@ func (reminderDalGae ReminderDalGae) GetSentReminderIDsByTransferID(c context.Co
 	return reminderIDs, nil
 }
 
-func (reminderDalGae ReminderDalGae) GetActiveReminderIDsByTransferID(c context.Context, tx dal.ReadSession, transferID int) ([]int, error) {
+func (reminderDalGae ReminderDalGae) GetActiveReminderIDsByTransferID(ctx context.Context, tx dal.ReadSession, transferID int) ([]int, error) {
 	q := dal.From(models4debtus.ReminderKind).Where(
 		dal.WhereField("TransferID", dal.Equal, transferID),
 		dal.WhereField("DtNext", dal.GreaterThen, time.Time{}),
 	).SelectKeysOnly(reflect.Int)
-	records, err := tx.QueryAllRecords(c, q)
+	records, err := tx.QueryAllRecords(ctx, q)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get active reminders by transfer id=%v: %w", transferID, err)
 	}
@@ -76,20 +76,20 @@ func (reminderDalGae ReminderDalGae) GetActiveReminderIDsByTransferID(c context.
 	return reminderIDs, nil
 }
 
-func (reminderDalGae ReminderDalGae) SetReminderIsSent(c context.Context, reminderID string, sentAt time.Time, messageIntID int64, messageStrID, locale, errDetails string) (err error) {
-	//gaehost.GaeLogger.Debugf(c, "delayedSetReminderIsSent(reminderID=%v, sentAt=%v, messageIntID=%v, messageStrID=%v)", reminderID, sentAt, messageIntID, messageStrID)
+func (reminderDalGae ReminderDalGae) SetReminderIsSent(ctx context.Context, reminderID string, sentAt time.Time, messageIntID int64, messageStrID, locale, errDetails string) (err error) {
+	//gaehost.GaeLogger.Debugf(ctx, "delayedSetReminderIsSent(reminderID=%v, sentAt=%v, messageIntID=%v, messageStrID=%v)", reminderID, sentAt, messageIntID, messageStrID)
 	if err := _validateSetReminderIsSentMessageIDs(messageIntID, messageStrID, sentAt); err != nil {
 		return err
 	}
 	reminder := models4debtus.NewReminder(reminderID, nil)
-	return facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-		return reminderDalGae.SetReminderIsSentInTransaction(c, tx, reminder, sentAt, messageIntID, messageStrID, locale, errDetails)
+	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+		return reminderDalGae.SetReminderIsSentInTransaction(ctx, tx, reminder, sentAt, messageIntID, messageStrID, locale, errDetails)
 	})
 }
 
-func (reminderDalGae ReminderDalGae) SetReminderIsSentInTransaction(c context.Context, tx dal.ReadwriteTransaction, reminder models4debtus.Reminder, sentAt time.Time, messageIntID int64, messageStrID, locale, errDetails string) (err error) {
+func (reminderDalGae ReminderDalGae) SetReminderIsSentInTransaction(ctx context.Context, tx dal.ReadwriteTransaction, reminder models4debtus.Reminder, sentAt time.Time, messageIntID int64, messageStrID, locale, errDetails string) (err error) {
 	if reminder.Data == nil {
-		reminder, err = reminderDalGae.GetReminderByID(c, tx, reminder.ID)
+		reminder, err = reminderDalGae.GetReminderByID(ctx, tx, reminder.ID)
 		if err != nil {
 			if dal.IsNotFound(err) {
 				return nil
@@ -98,7 +98,7 @@ func (reminderDalGae ReminderDalGae) SetReminderIsSentInTransaction(c context.Co
 		}
 	}
 	if reminder.Data.Status != models4debtus.ReminderStatusSending {
-		logus.Errorf(c, "reminder.Status:%v != models.ReminderStatusSending:%v", reminder.Data.Status, models4debtus.ReminderStatusSending)
+		logus.Errorf(ctx, "reminder.Status:%v != models.ReminderStatusSending:%v", reminder.Data.Status, models4debtus.ReminderStatusSending)
 		return nil
 	} else {
 		reminder.Data.Status = models4debtus.ReminderStatusSent
@@ -113,21 +113,21 @@ func (reminderDalGae ReminderDalGae) SetReminderIsSentInTransaction(c context.Co
 		if messageStrID != "" {
 			reminder.Data.MessageStrID = messageStrID
 		}
-		if err = tx.Set(c, reminder.Record); err != nil {
+		if err = tx.Set(ctx, reminder.Record); err != nil {
 			err = fmt.Errorf("failed to save reminder to datastore: %w", err)
 		}
 		return err
 	}
 }
 
-func (reminderDalGae ReminderDalGae) RescheduleReminder(_ context.Context, reminderID string, remindInDuration time.Duration) (oldReminder, newReminder models4debtus.Reminder, err error) {
+func (reminderDalGae ReminderDalGae) RescheduleReminder(ctx context.Context, reminderID string, remindInDuration time.Duration) (oldReminder, newReminder models4debtus.Reminder, err error) {
 	return models4debtus.Reminder{}, models4debtus.Reminder{}, errors.New("not implemented - needs to be refactored")
 	//var (
 	//	newReminderKey    *datastore.Key
 	//	newReminderEntity *models.ReminderDbo
 	//)
-	//err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
-	//	oldReminder, err = reminderDalGae.GetReminderByID(c, reminderID)
+	//err = facade.RunReadwriteTransaction(ctx, func(tctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+	//	oldReminder, err = reminderDalGae.GetReminderByID(tctx, reminderID)
 	//	if err != nil {
 	//		return fmt.Errorf("failed to get oldReminder by id: %w", err)
 	//	}

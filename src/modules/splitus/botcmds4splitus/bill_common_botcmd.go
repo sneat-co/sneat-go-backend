@@ -25,11 +25,11 @@ func GetBillID(callbackUrl *url.URL) (billID string, err error) {
 	return
 }
 
-func getBill(c context.Context, tx dal.ReadSession, callbackUrl *url.URL) (bill models4splitus.BillEntry, err error) {
+func getBill(ctx context.Context, tx dal.ReadSession, callbackUrl *url.URL) (bill models4splitus.BillEntry, err error) {
 	if bill.ID, err = GetBillID(callbackUrl); err != nil {
 		return
 	}
-	if bill, err = facade4splitus.GetBillByID(c, tx, bill.ID); err != nil {
+	if bill, err = facade4splitus.GetBillByID(ctx, tx, bill.ID); err != nil {
 		return
 	}
 	return
@@ -47,10 +47,10 @@ func billCallbackCommand(code string, f billCallbackActionHandler) (command bots
 
 func billCallbackAction(f billCallbackActionHandler) func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 	return func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-		c := whc.Context()
-		if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+		ctx := whc.Context()
+		if err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 			var bill models4splitus.BillEntry
-			if bill, err = getBill(c, tx, callbackUrl); err != nil {
+			if bill, err = getBill(ctx, tx, callbackUrl); err != nil {
 				return
 			}
 			if bill.Data.GetUserGroupID() == "" {
@@ -62,11 +62,11 @@ func billCallbackAction(f billCallbackActionHandler) func(whc botsfw.WebhookCont
 					if splitusSpace.ID, err = shared_space.GetUserGroupID(whc); err != nil {
 						return
 					}
-					if bill, splitusSpace, err = facade4splitus.AssignBillToGroup(c, tx, bill, splitusSpace.ID, whc.AppUserID()); err != nil {
+					if bill, splitusSpace, err = facade4splitus.AssignBillToGroup(ctx, tx, bill, splitusSpace.ID, whc.AppUserID()); err != nil {
 						return
 					}
 				} else {
-					logus.Debugf(c, "Not in group")
+					logus.Debugf(ctx, "Not in group")
 				}
 			}
 			m, err = f(whc, tx, callbackUrl, bill)

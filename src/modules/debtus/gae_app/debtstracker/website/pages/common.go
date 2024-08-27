@@ -56,7 +56,7 @@ func pageContext(r *http.Request, locale i18n.Locale) (translator i18n.SingleLoc
 	return translator, data
 }
 
-func getLocale(c context.Context, w http.ResponseWriter, r *http.Request) (locale i18n.Locale, err error) {
+func getLocale(ctx context.Context, w http.ResponseWriter, r *http.Request) (locale i18n.Locale, err error) {
 	getLocaleBySiteCode := func(localeCode string) {
 		for _, supportedLocale := range i18n.LocalesByCode5 {
 			if supportedLocale.SiteCode() == localeCode {
@@ -68,7 +68,7 @@ func getLocale(c context.Context, w http.ResponseWriter, r *http.Request) (local
 
 	path := r.URL.Path
 	if path == "/" {
-		if localeCode, ok := c.Value("locale").(string); !ok {
+		if localeCode, ok := ctx.Value("locale").(string); !ok {
 			locale = i18n.LocaleEnUS
 		} else {
 			getLocaleBySiteCode(localeCode)
@@ -101,7 +101,7 @@ func getLocale(c context.Context, w http.ResponseWriter, r *http.Request) (local
 					w.WriteHeader(http.StatusNotFound)
 					w.Header().Set("Content-Type", "text/plain")
 					if _, err := w.Write(([]byte)(fmt.Sprintf("Unsupported locale: %v", localeCode))); err != nil {
-						logus.Errorf(c, err.Error())
+						logus.Errorf(ctx, err.Error())
 					}
 					return
 				}

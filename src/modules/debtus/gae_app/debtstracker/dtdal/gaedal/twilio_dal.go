@@ -24,7 +24,7 @@ func NewTwilioDalGae() TwilioDalGae {
 	return TwilioDalGae{}
 }
 
-func (TwilioDalGae) GetLastTwilioSmsesForUser(c context.Context, tx dal.ReadSession, userID string, to string, limit int) (result []models4debtus.TwilioSms, err error) {
+func (TwilioDalGae) GetLastTwilioSmsesForUser(ctx context.Context, tx dal.ReadSession, userID string, to string, limit int) (result []models4debtus.TwilioSms, err error) {
 	q := dal.From(models4debtus.TwilioSmsKind).
 		WhereField("UserID", dal.Equal, userID).
 		OrderBy(dal.DescendingField("DtCreated"))
@@ -34,7 +34,7 @@ func (TwilioDalGae) GetLastTwilioSmsesForUser(c context.Context, tx dal.ReadSess
 	}
 	query := q.Limit(limit).SelectInto(models4debtus.NewTwilioSmsRecord)
 	var records []dal.Record
-	if records, err = tx.QueryAllRecords(c, query); err != nil {
+	if records, err = tx.QueryAllRecords(ctx, query); err != nil {
 		return
 	}
 	result = models4debtus.NewTwilioSmsFromRecords(records)
@@ -42,7 +42,7 @@ func (TwilioDalGae) GetLastTwilioSmsesForUser(c context.Context, tx dal.ReadSess
 }
 
 func (TwilioDalGae) SaveTwilioSms(
-	c context.Context,
+	ctx context.Context,
 	smsResponse *gotwilio.SmsResponse,
 	transfer models4debtus.TransferEntry,
 	phoneContact dto4contactus.PhoneContact,
@@ -51,13 +51,13 @@ func (TwilioDalGae) SaveTwilioSms(
 	smsStatusMessageID int,
 ) (twilioSms models4debtus.TwilioSms, err error) {
 	var twilioSmsEntity models4debtus.TwilioSmsData
-	if err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
+	if err = facade.RunReadwriteTransaction(ctx, func(tctx context.Context, tx dal.ReadwriteTransaction) error {
 		user := dbo4userus.NewUserEntry(userID)
 		twilioSms = models4debtus.NewTwilioSms(smsResponse.Sid, nil)
 		counterparty := transfer.Data.Counterparty()
 		//counterpartyDebtusContact := models4debtus.NewDebtusSpaceContactEntry(counterparty.SpaceID, counterparty.ContactID, nil)
 		counterpartyContact := dal4contactus.NewContactEntry(counterparty.SpaceID, counterparty.ContactID)
-		if err := tx.GetMulti(tc, []dal.Record{user.Record, twilioSms.Record, transfer.Record, counterpartyContact.Record}); err != nil {
+		if err := tx.GetMulti(tctx, []dal.Record{user.Record, twilioSms.Record, transfer.Record, counterpartyContact.Record}); err != nil {
 			var multiError appengine.MultiError
 			if errors.As(err, &multiError) {
 				if errors.Is(multiError[1], dal.ErrNoMoreRecords) {
@@ -89,17 +89,17 @@ func (TwilioDalGae) SaveTwilioSms(
 						})
 						recordsToPut = append(recordsToPut, counterpartyContact.Record)
 					}
-					if err = tx.SetMulti(tc, recordsToPut); err != nil {
-						logus.Errorf(c, "Failed to save Twilio SMS")
+					if err = tx.SetMulti(tctx, recordsToPut); err != nil {
+						logus.Errorf(ctx, "Failed to save Twilio SMS")
 						return err
 					}
 					return err
 				} else if multiError[1] == nil {
-					logus.Warningf(c, "Twillio SMS already saved to DB (1)")
+					logus.Warningf(ctx, "Twillio SMS already saved to DB (1)")
 				}
 			}
 		} else {
-			logus.Warningf(c, "Twillio SMS already saved to DB (2)")
+			logus.Warningf(ctx, "Twillio SMS already saved to DB (2)")
 		}
 		return nil
 	}); err != nil {

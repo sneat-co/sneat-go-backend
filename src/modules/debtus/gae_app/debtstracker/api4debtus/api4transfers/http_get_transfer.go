@@ -11,17 +11,17 @@ import (
 	"net/http"
 )
 
-func HandleGetTransfer(c context.Context, w http.ResponseWriter, r *http.Request) {
-	if transferID := api4debtus.GetStrID(c, w, r, "id"); transferID == "" {
+func HandleGetTransfer(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	if transferID := api4debtus.GetStrID(ctx, w, r, "id"); transferID == "" {
 		return
 	} else {
-		transfer, err := facade4debtus.Transfers.GetTransferByID(c, nil, transferID)
-		if api4debtus.HasError(c, w, err, models4debtus.TransfersCollection, transferID, http.StatusBadRequest) {
+		transfer, err := facade4debtus.Transfers.GetTransferByID(ctx, nil, transferID)
+		if api4debtus.HasError(ctx, w, err, models4debtus.TransfersCollection, transferID, http.StatusBadRequest) {
 			return
 		}
 
-		err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-			if err = facade4debtus.CheckTransferCreatorNameAndFixIfNeeded(c, tx, transfer); err != nil {
+		err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+			if err = facade4debtus.CheckTransferCreatorNameAndFixIfNeeded(ctx, tx, transfer); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				_, _ = w.Write([]byte(err.Error()))
 				return
@@ -34,9 +34,9 @@ func HandleGetTransfer(c context.Context, w http.ResponseWriter, r *http.Request
 			return
 		}
 
-		record := unsorted.NewReceiptTransferDto(c, transfer)
+		record := unsorted.NewReceiptTransferDto(ctx, transfer)
 
-		api4debtus.JsonToResponse(c, w, &record)
+		api4debtus.JsonToResponse(ctx, w, &record)
 	}
 }
 

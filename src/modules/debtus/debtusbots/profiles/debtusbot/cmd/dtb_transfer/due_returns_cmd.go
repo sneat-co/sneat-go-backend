@@ -25,7 +25,7 @@ const DUE_RETURNS_COMMAND = "due-returns"
 var DueReturnsCallbackCommand = botsfw.NewCallbackCommand(DUE_RETURNS_COMMAND, dueReturnsCallbackAction)
 
 func dueReturnsCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
+	ctx := whc.Context()
 
 	userID := whc.AppUserID()
 	var (
@@ -35,27 +35,27 @@ func dueReturnsCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.M
 	er := make(chan error, 2)
 	go func(er chan<- error) {
 		var db dal.DB
-		if db, err = facade.GetDatabase(c); err != nil {
+		if db, err = facade.GetDatabase(ctx); err != nil {
 			er <- err
 			return
 		}
-		if overdueTransfers, err = dtdal.Transfer.LoadOverdueTransfers(c, db, userID, 5); err != nil {
+		if overdueTransfers, err = dtdal.Transfer.LoadOverdueTransfers(ctx, db, userID, 5); err != nil {
 			er <- fmt.Errorf("failed to get overdue api4transfers: %w", err)
 		} else {
-			logus.Debugf(c, "Loaded %v overdue transfer", len(overdueTransfers))
+			logus.Debugf(ctx, "Loaded %v overdue transfer", len(overdueTransfers))
 			er <- nil
 		}
 	}(er)
 	go func(er chan<- error) {
 		var db dal.DB
-		if db, err = facade.GetDatabase(c); err != nil {
+		if db, err = facade.GetDatabase(ctx); err != nil {
 			er <- err
 			return
 		}
-		if dueTransfers, err = dtdal.Transfer.LoadDueTransfers(c, db, userID, 5); err != nil {
+		if dueTransfers, err = dtdal.Transfer.LoadDueTransfers(ctx, db, userID, 5); err != nil {
 			er <- fmt.Errorf("failed to get due api4transfers: %w", err)
 		} else {
-			logus.Debugf(c, "Loaded %v due transfer", len(dueTransfers))
+			logus.Debugf(ctx, "Loaded %v due transfer", len(dueTransfers))
 			er <- nil
 		}
 	}(er)

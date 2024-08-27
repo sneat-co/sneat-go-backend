@@ -11,15 +11,15 @@ import (
 	"context"
 )
 
-func insertUserBrowser(c context.Context, data *models4auth.UserBrowserData) (userBrowser models4auth.UserBrowser, err error) {
+func insertUserBrowser(ctx context.Context, data *models4auth.UserBrowserData) (userBrowser models4auth.UserBrowser, err error) {
 
 	userBrowser = models4auth.NewUserBrowserWithIncompleteKey(data)
-	return userBrowser, facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-		return tx.Insert(c, userBrowser.Record)
+	return userBrowser, facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+		return tx.Insert(ctx, userBrowser.Record)
 	})
 }
 
-func SaveUserBrowser(c context.Context, userID string, userAgent string) (userBrowser models4auth.UserBrowser, err error) {
+func SaveUserBrowser(ctx context.Context, userID string, userAgent string) (userBrowser models4auth.UserBrowser, err error) {
 	userAgent = strings.TrimSpace(userAgent)
 	userAgent = strings.TrimSpace(userAgent)
 	if userAgent == "" {
@@ -32,12 +32,12 @@ func SaveUserBrowser(c context.Context, userID string, userAgent string) (userBr
 	query := q.Limit(limit).SelectInto(models4auth.NewUserBrowserRecord)
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(ctx); err != nil {
 		return
 	}
 
 	var records []dal.Record
-	if records, err = db.QueryAllRecords(c, query); err != nil {
+	if records, err = db.QueryAllRecords(ctx, query); err != nil {
 		return
 	}
 
@@ -48,24 +48,24 @@ func SaveUserBrowser(c context.Context, userID string, userAgent string) (userBr
 			UserAgent:   userAgent,
 			LastUpdated: time.Now(),
 		}
-		userBrowser, err = insertUserBrowser(c, &ub)
+		userBrowser, err = insertUserBrowser(ctx, &ub)
 		return
 	case 1:
 		userBrowser := records[0].Data().(*models4auth.UserBrowserData)
 		if userBrowser.LastUpdated.Before(time.Now().Add(-24 * time.Hour)) {
-			err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-				if err := tx.Get(c, records[0]); err != nil {
+			err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+				if err := tx.Get(ctx, records[0]); err != nil {
 					return err
 				}
 				if userBrowser.LastUpdated.Before(time.Now().Add(-time.Hour)) {
 					userBrowser.LastUpdated = time.Now()
-					err = tx.Set(c, records[0])
+					err = tx.Set(ctx, records[0])
 				}
 				return err
 			})
 		}
 	default:
-		logus.Errorf(c, "Loaded too many records: %v", len(records))
+		logus.Errorf(ctx, "Loaded too many records: %v", len(records))
 	}
 	return
 }

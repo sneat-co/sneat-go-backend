@@ -18,7 +18,7 @@ func NewBillScheduleDalGae() BillScheduleDalGae {
 	return BillScheduleDalGae{}
 }
 
-func (BillScheduleDalGae) GetBillScheduleByID(c context.Context, id int64) (models4splitus.BillSchedule, error) {
+func (BillScheduleDalGae) GetBillScheduleByID(ctx context.Context, id int64) (models4splitus.BillSchedule, error) {
 	key := models4splitus.NewBillScheduleKey(id)
 	data := new(models4splitus.BillScheduleEntity)
 	billSchedule := models4splitus.BillSchedule{
@@ -29,29 +29,29 @@ func (BillScheduleDalGae) GetBillScheduleByID(c context.Context, id int64) (mode
 		},
 		Data: data,
 	}
-	db, err := facade.GetDatabase(c)
+	db, err := facade.GetDatabase(ctx)
 	if err != nil {
 		return billSchedule, err
 	}
-	if err = db.Get(c, billSchedule.Record); err != nil {
+	if err = db.Get(ctx, billSchedule.Record); err != nil {
 		return billSchedule, err
 	}
 	return billSchedule, err
 }
 
-func (BillScheduleDalGae) InsertBillSchedule(c context.Context, billScheduleEntity *models4splitus.BillScheduleEntity) (billSchedule models4splitus.BillSchedule, err error) {
+func (BillScheduleDalGae) InsertBillSchedule(_ context.Context, billScheduleEntity *models4splitus.BillScheduleEntity) (billSchedule models4splitus.BillSchedule, err error) {
 	_ = models4splitus.NewBillScheduleIncompleteKey()
 	panic("TODO: implement me")
 	//key := NewBillScheduleIncompleteKey()
-	//if key, err = gaedb.Put(c, key, billScheduleEntity); err != nil {
+	//if key, err = gaedb.Put(ctx, key, billScheduleEntity); err != nil {
 	//	return
 	//}
 	//billSchedule.ContactID = key.ContactID.(int)
 	//return
 }
 
-func (BillScheduleDalGae) UpdateBillSchedule(c context.Context, billSchedule models4splitus.BillSchedule) error {
-	return facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-		return tx.Set(c, billSchedule.Record)
+func (BillScheduleDalGae) UpdateBillSchedule(ctx context.Context, billSchedule models4splitus.BillSchedule) error {
+	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+		return tx.Set(ctx, billSchedule.Record)
 	})
 }

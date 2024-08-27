@@ -24,40 +24,40 @@ import (
 	"time"
 )
 
-func (ReminderDalGae) DelayCreateReminderForTransferUser(c context.Context, transferID string, userID string) (err error) {
+func (ReminderDalGae) DelayCreateReminderForTransferUser(ctx context.Context, transferID string, userID string) (err error) {
 	if transferID == "" {
 		panic("transferID == 0")
 	}
 	if userID == "" {
 		panic("userID == 0")
 	}
-	//if !dtdal.DB.IsInTransaction(c) {
+	//if !dtdal.DB.IsInTransaction(ctx) {
 	//	panic("This function should be called within transaction")
 	//}
-	if err = delayerCreateReminderForTransferUser.EnqueueWork(c, delaying.With(queues.QueueReminders, "create-reminder-4-transfer-user", 0), transferID, userID); err != nil {
+	if err = delayerCreateReminderForTransferUser.EnqueueWork(ctx, delaying.With(queues.QueueReminders, "create-reminder-4-transfer-user", 0), transferID, userID); err != nil {
 		return fmt.Errorf("failed to create a task for reminder creation. transferID=%v, userID=%v: %w", transferID, userID, err)
 	}
-	logus.Debugf(c, "Added task to create reminder for transfer id=%s", transferID)
+	logus.Debugf(ctx, "Added task to create reminder for transfer id=%s", transferID)
 	return
 }
 
-func delayedCreateReminderForTransferUser(c context.Context, transferID string, userID string) (err error) {
-	logus.Debugf(c, "delayedCreateReminderForTransferUser(transferID=%s, userID=%s)", transferID, userID)
+func delayedCreateReminderForTransferUser(ctx context.Context, transferID string, userID string) (err error) {
+	logus.Debugf(ctx, "delayedCreateReminderForTransferUser(transferID=%s, userID=%s)", transferID, userID)
 	if transferID == "" {
-		logus.Errorf(c, "transferID == 0")
+		logus.Errorf(ctx, "transferID == 0")
 		return nil
 	}
 	if userID == "" {
-		logus.Errorf(c, "userID == 0")
+		logus.Errorf(ctx, "userID == 0")
 		return nil
 	}
 
-	return facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		var transfer models4debtus.TransferEntry
-		transfer, err = facade4debtus.Transfers.GetTransferByID(c, tx, transferID)
+		transfer, err = facade4debtus.Transfers.GetTransferByID(ctx, tx, transferID)
 		if err != nil {
 			if dal.IsNotFound(err) {
-				logus.Errorf(c, fmt.Errorf("not able to create reminder for specified transfer: %w", err).Error())
+				logus.Errorf(ctx, fmt.Errorf("not able to create reminder for specified transfer: %w", err).Error())
 				return
 			}
 			return fmt.Errorf("failed to get transfer by id: %w", err)
@@ -68,16 +68,16 @@ func delayedCreateReminderForTransferUser(c context.Context, transferID string, 
 		}
 
 		if transferUserInfo.ReminderID != "" {
-			logus.Warningf(c, "TransferEntry user already has reminder # %v", transferUserInfo.ReminderID)
+			logus.Warningf(ctx, "TransferEntry user already has reminder # %v", transferUserInfo.ReminderID)
 			return
 		}
 
 		if transferUserInfo.TgChatID == 0 { // TODO: Try to get TgChat from user record or check other channels?
-			logus.Warningf(c, "TransferEntry user has no associated TgChatID: %+v", transferUserInfo)
+			logus.Warningf(ctx, "TransferEntry user has no associated TgChatID: %+v", transferUserInfo)
 			return
 		}
 
-		//reminderKey := NewReminderIncompleteKey(c)
+		//reminderKey := NewReminderIncompleteKey(ctx)
 		next := transfer.Data.DtDueOn
 		isAutomatic := next.IsZero()
 		if isAutomatic {
@@ -88,17 +88,17 @@ func delayedCreateReminderForTransferUser(c context.Context, transferID string, 
 			}
 		}
 		reminder := models4debtus.NewReminder("", models4debtus.NewReminderViaTelegram(transferUserInfo.TgBotID, transferUserInfo.TgChatID, userID, transferID, isAutomatic, next))
-		if err = tx.Insert(c, reminder.Record); err != nil {
+		if err = tx.Insert(ctx, reminder.Record); err != nil {
 			return fmt.Errorf("failed to save reminder to db: %w", err)
 		}
 		reminderID := reminder.Key.ID.(string)
-		logus.Infof(c, "Created reminder id=%v", reminderID)
-		if err = QueueSendReminder(c, reminderID, time.Until(next)); err != nil {
+		logus.Infof(ctx, "Created reminder id=%v", reminderID)
+		if err = QueueSendReminder(ctx, reminderID, time.Until(next)); err != nil {
 			return fmt.Errorf("failed to queue reminder for sending: %w", err)
 		}
 		transferUserInfo.ReminderID = reminderID
 
-		if err = facade4debtus.Transfers.SaveTransfer(c, tx, transfer); err != nil {
+		if err = facade4debtus.Transfers.SaveTransfer(ctx, tx, transfer); err != nil {
 			return fmt.Errorf("failed to save transfer to db: %w", err)
 		}
 
@@ -106,17 +106,17 @@ func delayedCreateReminderForTransferUser(c context.Context, transferID string, 
 	})
 }
 
-func (ReminderDalGae) DelayDiscardReminders(c context.Context, transferIDs []string, returnTransferID string) error {
+func (ReminderDalGae) DelayDiscardReminders(ctx context.Context, transferIDs []string, returnTransferID string) error {
 	if len(transferIDs) > 0 {
-		return delayerDiscardReminders.EnqueueWork(c, delaying.With(queues.QueueReminders, "discard-reminders", 0), transferIDs, returnTransferID)
+		return delayerDiscardReminders.EnqueueWork(ctx, delaying.With(queues.QueueReminders, "discard-reminders", 0), transferIDs, returnTransferID)
 	} else {
-		logus.Warningf(c, "DelayDiscardReminders(): len(transferIDs)==0")
+		logus.Warningf(ctx, "DelayDiscardReminders(): len(transferIDs)==0")
 		return nil
 	}
 }
 
-func delayedDiscardReminders(c context.Context, transferIDs []int, returnTransferID int) error {
-	logus.Debugf(c, "delayedDiscardReminders(transferIDs=%+v, returnTransferID=%d)", transferIDs, returnTransferID)
+func delayedDiscardReminders(ctx context.Context, transferIDs []int, returnTransferID int) error {
+	logus.Debugf(ctx, "delayedDiscardReminders(transferIDs=%+v, returnTransferID=%d)", transferIDs, returnTransferID)
 	if len(transferIDs) == 0 {
 		return errors.New("len(transferIDs) == 0")
 	}
@@ -125,13 +125,13 @@ func delayedDiscardReminders(c context.Context, transferIDs []int, returnTransfe
 	for i, transferID := range transferIDs {
 		args[i] = []interface{}{transferID, returnTransferID}
 	}
-	return delayerDiscardRemindersForTransfer.EnqueueWorkMulti(c, delaying.With(queueName, "discard-reminders-for-transfer", 0), args...)
+	return delayerDiscardRemindersForTransfer.EnqueueWorkMulti(ctx, delaying.With(queueName, "discard-reminders-for-transfer", 0), args...)
 }
 
-func delayedDiscardRemindersForTransfer(c context.Context, transferID, returnTransferID int) error {
-	logus.Debugf(c, "delayedDiscardReminders(transferID=%v, returnTransferID=%v)", transferID, returnTransferID)
+func delayedDiscardRemindersForTransfer(ctx context.Context, transferID, returnTransferID int) error {
+	logus.Debugf(ctx, "delayedDiscardReminders(transferID=%v, returnTransferID=%v)", transferID, returnTransferID)
 	if transferID == 0 {
-		logus.Errorf(c, "transferID == 0")
+		logus.Errorf(ctx, "transferID == 0")
 		return nil
 	}
 	delayDuration := time.Millisecond * 10
@@ -139,18 +139,18 @@ func delayedDiscardRemindersForTransfer(c context.Context, transferID, returnTra
 		getIDs func(context.Context, dal.ReadSession, int) ([]int, error),
 		loadedFormat, notLoadedFormat string,
 	) error {
-		if reminderIDs, err := getIDs(c, nil, transferID); err != nil {
+		if reminderIDs, err := getIDs(ctx, nil, transferID); err != nil {
 			return err
 		} else if len(reminderIDs) > 0 {
-			logus.Debugf(c, loadedFormat, len(reminderIDs), transferID)
+			logus.Debugf(ctx, loadedFormat, len(reminderIDs), transferID)
 			for _, reminderID := range reminderIDs {
-				if err := delayerDiscardReminder.EnqueueWork(c, delaying.With(queues.QueueReminders, "discard-reminder", delayDuration), reminderID, transferID, returnTransferID); err != nil {
+				if err := delayerDiscardReminder.EnqueueWork(ctx, delaying.With(queues.QueueReminders, "discard-reminder", delayDuration), reminderID, transferID, returnTransferID); err != nil {
 					return fmt.Errorf("failed to create a task for reminder ContactID=%v: %w", reminderID, err)
 				}
 				delayDuration += time.Millisecond * 10
 			}
 		} else {
-			logus.Infof(c, notLoadedFormat, transferID)
+			logus.Infof(ctx, notLoadedFormat, transferID)
 		}
 		return nil
 	}
@@ -163,16 +163,16 @@ func delayedDiscardRemindersForTransfer(c context.Context, transferID, returnTra
 	return nil
 }
 
-func DiscardReminder(c context.Context, reminderID, transferID, returnTransferID string) (err error) {
-	return facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-		return discardReminder(c, tx, reminderID, transferID, returnTransferID)
+func DiscardReminder(ctx context.Context, reminderID, transferID, returnTransferID string) (err error) {
+	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+		return discardReminder(ctx, tx, reminderID, transferID, returnTransferID)
 	})
 }
 
-func delayedDiscardReminder(c context.Context, reminderID, transferID, returnTransferID string) (err error) {
-	return facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-		if err = discardReminder(c, tx, reminderID, transferID, returnTransferID); err == ErrDuplicateAttemptToDiscardReminder {
-			logus.Errorf(c, err.Error())
+func delayedDiscardReminder(ctx context.Context, reminderID, transferID, returnTransferID string) (err error) {
+	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+		if err = discardReminder(ctx, tx, reminderID, transferID, returnTransferID); err == ErrDuplicateAttemptToDiscardReminder {
+			logus.Errorf(ctx, err.Error())
 			return nil
 		}
 		return err
@@ -272,19 +272,19 @@ func discardReminder(ctx context.Context, tx dal.ReadwriteTransaction, reminderI
 	return err
 }
 
-func GetTranslatorForReminder(c context.Context, reminder *models4debtus.ReminderDbo) i18n.SingleLocaleTranslator {
-	return i18n.NewSingleMapTranslator(i18n.GetLocaleByCode5(reminder.Locale), i18n.NewMapTranslator(c, trans.TRANS))
+func GetTranslatorForReminder(ctx context.Context, reminder *models4debtus.ReminderDbo) i18n.SingleLocaleTranslator {
+	return i18n.NewSingleMapTranslator(i18n.GetLocaleByCode5(reminder.Locale), i18n.NewMapTranslator(ctx, trans.TRANS))
 }
 
-var ErrDuplicateAttemptToDiscardReminder = errors.New("Duplicate attempt to close reminder by same return transfer")
+var ErrDuplicateAttemptToDiscardReminder = errors.New("duplicate attempt to close reminder by same return transfer")
 
-func (ReminderDalGae) SetReminderStatus(c context.Context, reminderID, returnTransferID string, status string, when time.Time) (reminder models4debtus.Reminder, err error) {
+func (ReminderDalGae) SetReminderStatus(ctx context.Context, reminderID, returnTransferID string, status string, when time.Time) (reminder models4debtus.Reminder, err error) {
 	var (
 		changed        bool
 		previousStatus string
 	)
-	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-		if reminder, err = dtdal.Reminder.GetReminderByID(c, tx, reminderID); err != nil {
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+		if reminder, err = dtdal.Reminder.GetReminderByID(ctx, tx, reminderID); err != nil {
 			return
 		} else {
 			switch status {
@@ -306,7 +306,7 @@ func (ReminderDalGae) SetReminderStatus(c context.Context, reminderID, returnTra
 			if returnTransferID != "" && status == string(models4debtus.ReminderStatusDiscarded) {
 				for _, id := range reminder.Data.ClosedByTransferIDs { // TODO: WTF are we doing here?
 					if id == returnTransferID {
-						logus.Infof(c, "new status: '%v', Reminder{Status: '%v', ClosedByTransferIDs: %v}", status, reminder.Data.Status, reminder.Data.ClosedByTransferIDs)
+						logus.Infof(ctx, "new status: '%v', Reminder{Status: '%v', ClosedByTransferIDs: %v}", status, reminder.Data.Status, reminder.Data.ClosedByTransferIDs)
 						return ErrDuplicateAttemptToDiscardReminder
 					}
 				}
@@ -315,7 +315,7 @@ func (ReminderDalGae) SetReminderStatus(c context.Context, reminderID, returnTra
 			}
 			if changed {
 				reminder.Data.Status = status
-				if err = tx.Set(c, reminder.Record); err != nil {
+				if err = tx.Set(ctx, reminder.Record); err != nil {
 					err = fmt.Errorf("failed to save reminder to db (id=%v): %w", reminderID, err)
 				}
 			}
@@ -324,9 +324,9 @@ func (ReminderDalGae) SetReminderStatus(c context.Context, reminderID, returnTra
 	}, nil)
 	if err == nil {
 		if changed {
-			logus.Debugf(c, "Reminder(id=%v) status changed from '%v' to '%v'", reminderID, previousStatus, status)
+			logus.Debugf(ctx, "Reminder(id=%v) status changed from '%v' to '%v'", reminderID, previousStatus, status)
 		} else {
-			logus.Debugf(c, "Reminder(id=%v) status not changed as already '%v'", reminderID, status)
+			logus.Debugf(ctx, "Reminder(id=%v) status not changed as already '%v'", reminderID, status)
 		}
 	}
 	return

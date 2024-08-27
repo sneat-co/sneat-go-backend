@@ -17,7 +17,7 @@ func delayedUpdateSpaceHasDueTransfers(ctx context.Context, userID, spaceID stri
 	logus.Infof(ctx, "delayedUpdateSpaceHasDueTransfers(userID=%v)", userID)
 	userCtx := facade.NewUserContext(userID)
 	err = dal4spaceus.RunModuleSpaceWorker(ctx, userCtx, spaceID, const4debtus.ModuleID, new(models4debtus.DebtusSpaceDbo),
-		func(c context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*models4debtus.DebtusSpaceDbo]) error {
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*models4debtus.DebtusSpaceDbo]) error {
 			if !params.SpaceModuleEntry.Data.HasDueTransfers {
 				params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, params.SpaceModuleEntry.Data.SetHasDueTransfers(true))
 				params.SpaceModuleEntry.Record.MarkAsChanged()
@@ -81,7 +81,7 @@ func delayedUpdateUserHasDueTransfers(ctx context.Context, userID, spaceID strin
 	}
 
 	err = dal4userus.RunUserModuleWorker[models4debtus.DebtusUserDbo](ctx, userID, const4debtus.ModuleID, new(models4debtus.DebtusUserDbo),
-		func(tc context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserModuleWorkerParams[models4debtus.DebtusUserDbo]) error {
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserModuleWorkerParams[models4debtus.DebtusUserDbo]) error {
 			if !params.UserModule.Data.HasDueTransfers {
 				params.UserModuleUpdates = append(params.UserModuleUpdates, params.UserModule.Data.SetHasDueTransfers(true))
 				logus.Infof(ctx, "User updated & saved to datastore")

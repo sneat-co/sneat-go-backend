@@ -105,7 +105,7 @@ func (h transfersPage) transfersPageHandler(w http.ResponseWriter, r *http.Reque
 	renderTransfersPage(debtusContact, currency, balancesWithoutInterest, balancesWithInterest, transfers, w)
 }
 
-func (h transfersPage) processTransfers(c context.Context, tx dal.ReadSession, contactID string, currency money.CurrencyCode) (
+func (h transfersPage) processTransfers(ctx context.Context, tx dal.ReadSession, contactID string, currency money.CurrencyCode) (
 	transfers []models4debtus.TransferEntry,
 	balanceWithoutInterest decimal.Decimal64p2,
 	err error,
@@ -119,7 +119,7 @@ func (h transfersPage) processTransfers(c context.Context, tx dal.ReadSession, c
 		SelectInto(models4debtus.NewTransferRecord)
 
 	var reader dal.Reader
-	if reader, err = tx.QueryReader(c, query); err != nil {
+	if reader, err = tx.QueryReader(ctx, query); err != nil {
 		return
 	}
 	for {

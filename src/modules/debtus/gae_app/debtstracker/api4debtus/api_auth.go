@@ -13,63 +13,63 @@ import (
 	"net/http"
 )
 
-type AuthHandler func(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo)
+type AuthHandler func(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo)
 
-type AuthHandlerWithUser func(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo, user dbo4userus.UserEntry)
+type AuthHandlerWithUser func(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo, user dbo4userus.UserEntry)
 
 func AuthOnly(handler AuthHandler) strongoapp.HttpHandlerWithContext {
-	return func(c context.Context, w http.ResponseWriter, r *http.Request) {
+	return func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		if authInfo, _, err := token4auth.Authenticate(w, r, true); err == nil {
-			handler(c, w, r, authInfo)
+			handler(ctx, w, r, authInfo)
 		} else {
-			logus.Warningf(c, "Failed to authenticate: %v", err)
+			logus.Warningf(ctx, "Failed to authenticate: %v", err)
 		}
 	}
 }
 
 func AuthOnlyWithUser(handler AuthHandlerWithUser) strongoapp.HttpHandlerWithContext {
-	return AuthOnly(func(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
+	return AuthOnly(func(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 		var userID string
 
-		if userID = GetUserID(c, w, r, authInfo); userID == "" {
-			logus.Warningf(c, "userID is empty")
+		if userID = GetUserID(ctx, w, r, authInfo); userID == "" {
+			logus.Warningf(ctx, "userID is empty")
 			return
 		}
 
-		//user, err := dal4userus.GetUserByID(c, nil, userID)
+		//user, err := dal4userus.GetUserByID(ctx, nil, userID)
 		var user dbo4userus.UserEntry
 		var err error
 
-		if HasError(c, w, err, models4debtus.AppUserKind, userID, http.StatusInternalServerError) {
+		if HasError(ctx, w, err, models4debtus.AppUserKind, userID, http.StatusInternalServerError) {
 			return
 		}
-		handler(c, w, r, authInfo, user)
+		handler(ctx, w, r, authInfo, user)
 	})
 }
 
 func OptionalAuth(handler AuthHandler) strongoapp.HttpHandlerWithContext {
-	return func(c context.Context, w http.ResponseWriter, r *http.Request) {
+	return func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		authInfo, _, _ := token4auth.Authenticate(w, r, false)
 		if authInfo.UserID == "" {
-			logus.Debugf(c, "OptionalAuth(), anonymous")
+			logus.Debugf(ctx, "OptionalAuth(), anonymous")
 		} else {
-			logus.Debugf(c, "OptionalAuth(), userID=%s", authInfo.UserID)
+			logus.Debugf(ctx, "OptionalAuth(), userID=%s", authInfo.UserID)
 		}
-		handler(c, w, r, authInfo)
+		handler(ctx, w, r, authInfo)
 	}
 }
 
 func AdminOnly(handler AuthHandler) strongoapp.HttpHandlerWithContext {
-	return func(c context.Context, w http.ResponseWriter, r *http.Request) {
+	return func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		if authInfo, _, err := token4auth.Authenticate(w, r, true); err == nil {
 			if !authInfo.IsAdmin {
-				logus.Debugf(c, "Not admin!")
+				logus.Debugf(ctx, "Not admin!")
 				//hashedWriter.WriteHeader(http.StatusForbidden)
 				//return
 			}
-			handler(c, w, r, authInfo)
+			handler(ctx, w, r, authInfo)
 		} else {
-			logus.Errorf(c, "Failed to authenticate: %v", err)
+			logus.Errorf(ctx, "Failed to authenticate: %v", err)
 		}
 	}
 }

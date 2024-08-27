@@ -28,43 +28,43 @@ func NewInviteDalGae() InviteDalGae {
 	return InviteDalGae{}
 }
 
-func (InviteDalGae) GetInvite(c context.Context, tx dal.ReadSession, inviteCode string) (invite models4debtus.Invite, err error) {
+func (InviteDalGae) GetInvite(ctx context.Context, tx dal.ReadSession, inviteCode string) (invite models4debtus.Invite, err error) {
 	if tx == nil {
-		if tx, err = facade.GetDatabase(c); err != nil {
+		if tx, err = facade.GetDatabase(ctx); err != nil {
 			return
 		}
 	}
 	invite = models4debtus.NewInvite(inviteCode, nil)
-	return invite, tx.Get(c, invite.Record)
+	return invite, tx.Get(ctx, invite.Record)
 }
 
 // ClaimInvite claims invite by user - TODO compare with ClaimInvite2 and get rid of one of them
-func (InviteDalGae) ClaimInvite(c context.Context, userID string, inviteCode, claimedOn, claimedVia string) (err error) {
-	err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
+func (InviteDalGae) ClaimInvite(ctx context.Context, userID string, inviteCode, claimedOn, claimedVia string) (err error) {
+	err = facade.RunReadwriteTransaction(ctx, func(tctx context.Context, tx dal.ReadwriteTransaction) error {
 		invite := models4debtus.NewInvite(inviteCode, nil)
 
-		if err = tx.Get(tc, invite.Record); err != nil {
+		if err = tx.Get(tctx, invite.Record); err != nil {
 			return err
 		}
-		logus.Debugf(c, "Invite found")
+		logus.Debugf(ctx, "Invite found")
 		// TODO: Check invite.For
 		//invite.ClaimedCount += 1
 		inviteClaim := models4debtus.NewInviteClaimWithoutID(models4debtus.NewInviteClaimData(inviteCode, userID, claimedOn, claimedVia))
 		user := dbo4userus.NewUserEntry(userID)
-		if err = tx.Get(tc, user.Record); err != nil {
+		if err = tx.Get(tctx, user.Record); err != nil {
 			return err
 		}
 		user.Data.InvitedByUserID = invite.Data.CreatedByUserID
 
-		if err = tx.Insert(c, inviteClaim.Record); err != nil {
+		if err = tx.Insert(ctx, inviteClaim.Record); err != nil {
 			return fmt.Errorf("failed to insert invite claim: %w", err)
 		}
-		if err := tx.Set(tc, user.Record); err != nil {
+		if err := tx.Set(tctx, user.Record); err != nil {
 			return fmt.Errorf("failed to save user: %w", err)
 		}
 		inviteClaimID := inviteClaim.Key.ID.(int64)
-		logus.Debugf(c, "inviteClaimKey.IntegerID(): %v", inviteClaimID)
-		return DelayUpdateInviteClaimedCount(tc, inviteClaimID)
+		logus.Debugf(ctx, "inviteClaimKey.IntegerID(): %v", inviteClaimID)
+		return DelayUpdateInviteClaimedCount(tctx, inviteClaimID)
 	})
 	return
 }
@@ -92,7 +92,7 @@ func createInvite(ec strongoapp.ExecutionContext, inviteType models4debtus.Invit
 	if related != "" && len(strings.Split(related, "=")) != 2 {
 		panic(fmt.Sprintf("Invalid format for related: %v", related))
 	}
-	c := ec.Context()
+	ctx := ec.Context()
 
 	dtCreated := time.Now()
 	invite = models4debtus.NewInvite(inviteCode, &models4debtus.InviteData{
@@ -129,7 +129,7 @@ func createInvite(ec strongoapp.ExecutionContext, inviteType models4debtus.Invit
 		}
 		invite.Data.ToPhoneNumber = phoneNumber
 	}
-	err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		if inviteCode != AUTO_GENERATE_INVITE_CODE {
 			//inviteKey = models.NewInviteKey(inviteCode)
 		} else {
@@ -140,34 +140,34 @@ func createInvite(ec strongoapp.ExecutionContext, inviteType models4debtus.Invit
 				inviteCode = dtdal.RandomCode(inviteCodeLen)
 				existingInvite := models4debtus.NewInvite(inviteCode, nil)
 
-				if err := tx.Get(c, existingInvite.Record); dal.IsNotFound(err) {
-					//logus.Debugf(c, "New invite code: %v", inviteCode)
+				if err := tx.Get(ctx, existingInvite.Record); dal.IsNotFound(err) {
+					//logus.Debugf(ctx, "New invite code: %v", inviteCode)
 					break
 				} else {
-					logus.Warningf(c, "Already existing invite code: %v", inviteCode)
+					logus.Warningf(ctx, "Already existing invite code: %v", inviteCode)
 				}
 			}
 		}
-		return tx.Set(c, invite.Record)
+		return tx.Set(ctx, invite.Record)
 	}, nil)
 	if err == nil {
-		logus.Infof(c, "Invite created with code: %v", inviteCode)
+		logus.Infof(ctx, "Invite created with code: %v", inviteCode)
 	} else {
-		logus.Errorf(c, "Failed to create invite with code: %v", err)
+		logus.Errorf(ctx, "Failed to create invite with code: %v", err)
 	}
 	return
 }
 
 // ClaimInvite2 claims invite by user - TODO compare with ClaimInvite and get rid of one of them
-func (InviteDalGae) ClaimInvite2(c context.Context, inviteCode string, invite models4debtus.Invite, claimedByUserID string, claimedOn, claimedVia string) (err error) {
+func (InviteDalGae) ClaimInvite2(ctx context.Context, inviteCode string, invite models4debtus.Invite, claimedByUserID string, claimedOn, claimedVia string) (err error) {
 	var db dal.DB // Needed for query records outside of transaction
-	if db, err = facade.GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(ctx); err != nil {
 		return
 	}
-	err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(ctx, func(tctx context.Context, tx dal.ReadwriteTransaction) error {
 		//userKey := models.NewAppUserKeyOBSOLETE(claimedByUserID)
 		user := dbo4userus.NewUserEntry(claimedByUserID)
-		if err = tx.GetMulti(tc, []dal.Record{invite.Record, user.Record}); err != nil {
+		if err = tx.GetMulti(tctx, []dal.Record{invite.Record, user.Record}); err != nil {
 			return err
 		}
 
@@ -177,7 +177,7 @@ func (InviteDalGae) ClaimInvite2(c context.Context, inviteCode string, invite mo
 		}
 		inviteClaimData := models4debtus.NewInviteClaimData(inviteCode, claimedByUserID, claimedOn, claimedVia)
 		inviteClaim := models4debtus.NewInviteClaim(0, inviteClaimData)
-		if err = tx.Insert(c, inviteClaim.Record); err != nil {
+		if err = tx.Insert(ctx, inviteClaim.Record); err != nil {
 			return err
 		}
 		recordsToUpdate := []dal.Record{invite.Record}
@@ -198,15 +198,15 @@ func (InviteDalGae) ClaimInvite2(c context.Context, inviteCode string, invite mo
 				SelectInto(models4debtus.NewDebtusContactRecord)
 
 			var counterpartyRecords []dal.Record
-			counterpartyRecords, err = db.QueryAllRecords(c, counterpartyQuery)
+			counterpartyRecords, err = db.QueryAllRecords(ctx, counterpartyQuery)
 
 			if err != nil {
 				return fmt.Errorf("failed to load counterparty by CounterpartyUserID: %w", err)
 			}
 			if len(counterpartyRecords) == 0 {
-				//counterpartyKey := NewContactIncompleteKey(tc)
+				//counterpartyKey := NewContactIncompleteKey(tctx)
 				inviterUser := dbo4userus.NewUserEntry(invite.Data.CreatedByUserID)
-				if err = dal4userus.GetUser(c, tx, inviterUser); err != nil {
+				if err = dal4userus.GetUser(ctx, tx, inviterUser); err != nil {
 					return fmt.Errorf("ailed to get invite creator user: %w", err)
 				}
 
@@ -218,7 +218,7 @@ func (InviteDalGae) ClaimInvite2(c context.Context, inviteCode string, invite mo
 					},
 				})
 
-				if err = tx.Insert(c, counterparty.Record); err != nil {
+				if err = tx.Insert(ctx, counterparty.Record); err != nil {
 					return fmt.Errorf("failed to insert counterparty: %w", err)
 				}
 			}
@@ -228,7 +228,7 @@ func (InviteDalGae) ClaimInvite2(c context.Context, inviteCode string, invite mo
 			recordsToUpdate = append(recordsToUpdate, user.Record)
 		}
 
-		err = tx.SetMulti(tc, recordsToUpdate)
+		err = tx.SetMulti(tctx, recordsToUpdate)
 		if err != nil {
 			return err
 		}

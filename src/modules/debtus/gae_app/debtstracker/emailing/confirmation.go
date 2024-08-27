@@ -8,7 +8,7 @@ import (
 	"context"
 )
 
-func CreateConfirmationEmailAndQueueForSending(c context.Context, user dbo4userus.UserEntry, userEmail models4auth.UserEmailEntry) error {
+func CreateConfirmationEmailAndQueueForSending(ctx context.Context, user dbo4userus.UserEntry, userEmail models4auth.UserEmailEntry) error {
 	emailEntity := &models4auth.EmailData{
 		From:    "Alex @ DebtsTracker.io <alex@debtusbot.io>",
 		To:      userEmail.ID,
@@ -29,6 +29,6 @@ We are social:
   Twitter - https://twitter.com/debtstracker
 `, user.Data.GetFullName(), userEmail.ID, userEmail.Data.ConfirmationPin()),
 	}
-	_, err := CreateEmailRecordAndQueueForSending(c, emailEntity)
+	_, err := CreateEmailRecordAndQueueForSending(ctx, emailEntity)
 	return err
 }

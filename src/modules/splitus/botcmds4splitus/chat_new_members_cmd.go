@@ -20,7 +20,7 @@ const NewChatMembersCommandCode = "new-chat-members"
 var newChatMembersCommand = botsfw.Command{
 	Code: NewChatMembersCommandCode,
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-		c := whc.Context()
+		ctx := whc.Context()
 
 		newMembersMessage := whc.Input().(botsfw.WebhookNewChatMembersMessage)
 
@@ -56,7 +56,7 @@ var newChatMembersCommand = botsfw.Command{
 							DtCreated: time.Now(),
 						},
 					}
-					if err = whc.Tx().Set(c, botUser.Record); err != nil {
+					if err = whc.Tx().Set(ctx, botUser.Record); err != nil {
 						return
 					}
 				}
@@ -97,9 +97,9 @@ var newChatMembersCommand = botsfw.Command{
 
 		if len(newUsers) > 1 {
 			responder := whc.Responder()
-			c := whc.Context()
+			ctx := whc.Context()
 			for _, newUser := range newUsers {
-				if _, err = responder.SendMessage(c, createWelcomeMsg(newUser.ChatMember), botsfw.BotAPISendMessageOverHTTPS); err != nil {
+				if _, err = responder.SendMessage(ctx, createWelcomeMsg(newUser.ChatMember), botsfw.BotAPISendMessageOverHTTPS); err != nil {
 					return
 				}
 			}

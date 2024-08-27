@@ -23,28 +23,28 @@ import (
 	"reflect"
 )
 
-func HandleAdminFindUser(c context.Context, w http.ResponseWriter, r *http.Request, _ token4auth.AuthInfo) {
+func HandleAdminFindUser(ctx context.Context, w http.ResponseWriter, r *http.Request, _ token4auth.AuthInfo) {
 
 	if userID := r.URL.Query().Get("userID"); userID != "" {
 		appUser := dbo4userus.NewUserEntry(userID)
-		if err := dal4userus.GetUser(c, nil, appUser); err != nil {
-			logus.Errorf(c, fmt.Errorf("failed to get user by ContactID=%v: %w", userID, err).Error())
+		if err := dal4userus.GetUser(ctx, nil, appUser); err != nil {
+			logus.Errorf(ctx, fmt.Errorf("failed to get user by ContactID=%v: %w", userID, err).Error())
 		} else {
-			api4debtus.JsonToResponse(c, w, []dto4debtus.ApiUserDto{{ID: userID, Name: appUser.Data.GetFullName()}})
+			api4debtus.JsonToResponse(ctx, w, []dto4debtus.ApiUserDto{{ID: userID, Name: appUser.Data.GetFullName()}})
 		}
 		return
 	} else {
 		tgUserText := r.URL.Query().Get("tgUser")
 
 		if tgUserText == "" {
-			api4debtus.BadRequestMessage(c, w, "tgUser is empty string")
+			api4debtus.BadRequestMessage(ctx, w, "tgUser is empty string")
 			return
 		}
 
-		tgUsers, err := facade4auth.TgUser.FindByUserName(c, nil, tgUserText)
+		tgUsers, err := facade4auth.TgUser.FindByUserName(ctx, nil, tgUserText)
 
 		if err != nil {
-			api4debtus.InternalError(c, w, err)
+			api4debtus.InternalError(ctx, w, err)
 			return
 		}
 
@@ -57,30 +57,30 @@ func HandleAdminFindUser(c context.Context, w http.ResponseWriter, r *http.Reque
 			}
 		}
 
-		api4debtus.JsonToResponse(c, w, users)
+		api4debtus.JsonToResponse(ctx, w, users)
 	}
 }
 
-func HandleAdminMergeUserContacts(c context.Context, w http.ResponseWriter, r *http.Request, _ token4auth.AuthInfo) {
-	keepID := api4debtus.GetStrID(c, w, r, "keepID")
+func HandleAdminMergeUserContacts(ctx context.Context, w http.ResponseWriter, r *http.Request, _ token4auth.AuthInfo) {
+	keepID := api4debtus.GetStrID(ctx, w, r, "keepID")
 	if keepID == "" {
 		return
 	}
-	deleteID := api4debtus.GetStrID(c, w, r, "deleteID")
+	deleteID := api4debtus.GetStrID(ctx, w, r, "deleteID")
 	if deleteID == "" {
 		return
 	}
-	spaceID := api4debtus.GetStrID(c, w, r, "spaceID")
+	spaceID := api4debtus.GetStrID(ctx, w, r, "spaceID")
 	if spaceID == "" {
-		api4debtus.BadRequestError(c, w, validation.NewErrRequestIsMissingRequiredField("spaceID"))
+		api4debtus.BadRequestError(ctx, w, validation.NewErrRequestIsMissingRequiredField("spaceID"))
 		return
 	}
 
-	logus.Infof(c, "keepID: %s, deleteID: %s", keepID, deleteID)
+	logus.Infof(ctx, "keepID: %s, deleteID: %s", keepID, deleteID)
 
-	if err := facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+	if err := facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 
-		contacts, err := dal4contactus.GetContactsByIDs(c, tx, spaceID, []string{keepID, deleteID})
+		contacts, err := dal4contactus.GetContactsByIDs(ctx, tx, spaceID, []string{keepID, deleteID})
 		if err != nil {
 			return err
 		}
@@ -97,33 +97,33 @@ func HandleAdminMergeUserContacts(c context.Context, w http.ResponseWriter, r *h
 		}
 		contactusSpace := dal4contactus.NewContactusSpaceEntry(spaceID)
 
-		if err = dal4contactus.GetContactusSpace(c, tx, contactusSpace); err != nil {
+		if err = dal4contactus.GetContactusSpace(ctx, tx, contactusSpace); err != nil {
 			return err
 		}
 
 		if contactusSpace.Data.HasContact(deleteID) {
 			update := contactusSpace.Data.RemoveContact(deleteID)
-			if err = tx.Update(c, contactusSpace.Key, []dal.Update{update}); err != nil {
+			if err = tx.Update(ctx, contactusSpace.Key, []dal.Update{update}); err != nil {
 				return err
 			}
 		}
-		if err := delayChangeTransfersCounterparty.EnqueueWork(c, delaying.With(queues.QueueSupport, "changeTransfersCounterparty", 0), deleteID, keepID, ""); err != nil {
+		if err := delayChangeTransfersCounterparty.EnqueueWork(ctx, delaying.With(queues.QueueSupport, "changeTransfersCounterparty", 0), deleteID, keepID, ""); err != nil {
 			return err
 		}
-		if err := tx.Delete(c, models4debtus.NewDebtusContactKey(spaceID, deleteID)); err != nil {
+		if err := tx.Delete(ctx, models4debtus.NewDebtusContactKey(spaceID, deleteID)); err != nil {
 			return err
 		} else {
-			logus.Warningf(c, "DebtusSpaceContactEntry %s has been deleted from DB (non revocable)", deleteID)
+			logus.Warningf(ctx, "DebtusSpaceContactEntry %s has been deleted from DB (non revocable)", deleteID)
 		}
 		return nil
 	}); err != nil {
-		api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
+		api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 		return
 	}
 }
 
-func DelayedChangeTransfersCounterparty(c context.Context, oldID, newID int64, cursor string) (err error) {
-	logus.Debugf(c, "delayedChangeTransfersCounterparty(oldID=%d, newID=%d)", oldID, newID)
+func DelayedChangeTransfersCounterparty(ctx context.Context, oldID, newID int64, cursor string) (err error) {
+	logus.Debugf(ctx, "delayedChangeTransfersCounterparty(oldID=%d, newID=%d)", oldID, newID)
 
 	var q = dal.From(models4debtus.TransfersCollection).
 		WhereField("BothCounterpartyIDs", dal.Equal, oldID).
@@ -132,12 +132,12 @@ func DelayedChangeTransfersCounterparty(c context.Context, oldID, newID int64, c
 
 	var db dal.DB
 
-	if db, err = facade.GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(ctx); err != nil {
 		return err
 	}
 
 	var reader dal.Reader
-	if reader, err = db.QueryReader(c, q); err != nil {
+	if reader, err = db.QueryReader(ctx, q); err != nil {
 		return err
 	}
 	transferIDs, err := dal.SelectAllIDs[int](reader, dal.WithLimit(q.Limit()))
@@ -145,21 +145,21 @@ func DelayedChangeTransfersCounterparty(c context.Context, oldID, newID int64, c
 		return err
 	}
 
-	logus.Infof(c, "Loaded %d transferIDs", len(transferIDs))
+	logus.Infof(ctx, "Loaded %d transferIDs", len(transferIDs))
 	args := make([][]interface{}, len(transferIDs))
 	for i, id := range transferIDs {
 		args[i] = []interface{}{id, oldID, newID, ""}
 	}
-	return delayChangeTransferCounterparty.EnqueueWorkMulti(c, delaying.With(queues.QueueSupport, "changeTransferCounterparty", 0), args...)
+	return delayChangeTransferCounterparty.EnqueueWorkMulti(ctx, delaying.With(queues.QueueSupport, "changeTransferCounterparty", 0), args...)
 }
 
-func DelayedChangeTransferCounterparty(c context.Context, spaceID, transferID, oldID, newID string, cursor string) (err error) {
-	logus.Debugf(c, "delayedChangeTransferCounterparty(spaceID=%s, oldID=%s, newID=%s, cursor=%s)", spaceID, oldID, newID, cursor)
-	if _, err = facade4debtus.GetDebtusSpaceContactByID(c, nil, spaceID, newID); err != nil {
+func DelayedChangeTransferCounterparty(ctx context.Context, spaceID, transferID, oldID, newID string, cursor string) (err error) {
+	logus.Debugf(ctx, "delayedChangeTransferCounterparty(spaceID=%s, oldID=%s, newID=%s, cursor=%s)", spaceID, oldID, newID, cursor)
+	if _, err = facade4debtus.GetDebtusSpaceContactByID(ctx, nil, spaceID, newID); err != nil {
 		return err
 	}
-	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-		transfer, err := facade4debtus.Transfers.GetTransferByID(c, tx, transferID)
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+		transfer, err := facade4debtus.Transfers.GetTransferByID(ctx, tx, transferID)
 		if err != nil {
 			return err
 		}
@@ -177,7 +177,7 @@ func DelayedChangeTransferCounterparty(c context.Context, spaceID, transferID, o
 			} else if to := transfer.Data.To(); to.ContactID == oldID {
 				to.ContactID = newID
 			}
-			err = facade4debtus.Transfers.SaveTransfer(c, tx, transfer)
+			err = facade4debtus.Transfers.SaveTransfer(ctx, tx, transfer)
 		}
 		return err
 	})

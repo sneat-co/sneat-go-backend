@@ -9,22 +9,22 @@ import (
 	"context"
 )
 
-func HandleSignedWithFacebook(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
-	logus.Debugf(c, "api4debtus.HandleSignedWithFacebook()")
+func HandleSignedWithFacebook(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
+	logus.Debugf(ctx, "api4debtus.HandleSignedWithFacebook()")
 	fbUserID := r.PostFormValue("fbUserID")
 	fbAppID := r.PostFormValue("fbAppID")
 	if fbUserID == "" {
-		api4debtus.BadRequestMessage(c, w, "fbUserID is missed")
+		api4debtus.BadRequestMessage(ctx, w, "fbUserID is missed")
 		return
 	}
 	if fbAppID == "" {
-		api4debtus.BadRequestMessage(c, w, "fbAppID is missed")
+		api4debtus.BadRequestMessage(ctx, w, "fbAppID is missed")
 		return
 	}
-	user, isNewUser, _, _, _, err := signInFbUser(c, fbAppID, fbUserID, r, authInfo)
+	user, isNewUser, _, _, _, err := signInFbUser(ctx, fbAppID, fbUserID, r, authInfo)
 	if err != nil {
-		authWriteResponseForAuthFailed(c, w, err)
+		authWriteResponseForAuthFailed(ctx, w, err)
 		return
 	}
-	authWriteResponseForUser(c, w, user, "facebook", isNewUser)
+	authWriteResponseForUser(ctx, w, user, "facebook", isNewUser)
 }

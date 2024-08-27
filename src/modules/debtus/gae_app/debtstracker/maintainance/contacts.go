@@ -31,16 +31,16 @@ import (
 //	return
 //}
 
-type ContactWorker func(c context.Context, counters any /* *asyncCounters*/, contact models4debtus.DebtusSpaceContactEntry) error
+type ContactWorker func(ctx context.Context, counters any /* *asyncCounters*/, contact models4debtus.DebtusSpaceContactEntry) error
 
-//func (m *contactsAsyncJob) startContactWorker(c context.Context, counters mapper.Counters, key *datastore.Key, contactWorker ContactWorker) error {
-//	//logus.Debugf(c, "*contactsAsyncJob.startContactWorker()")
+//func (m *contactsAsyncJob) startContactWorker(ctx context.Context, counters mapper.Counters, key *datastore.Key, contactWorker ContactWorker) error {
+//	//logus.Debugf(ctx, "*contactsAsyncJob.startContactWorker()")
 //	contact := m.DebtusSpaceContactEntry(key)
 //	createContactWorker := func() Worker {
 //		//logus.Debugf(c, "createContactWorker()")
 //		return func(counters *asyncCounters) error {
 //			//logus.Debugf(c, "asyncContactWorker() => contact.ContactID: %v", contact.ContactID)
-//			return contactWorker(c, counters, contact)
+//			return contactWorker(ctx, counters, contact)
 //		}
 //	}
 //	return m.startWorker(c, counters, createContactWorker)

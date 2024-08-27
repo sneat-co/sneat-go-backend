@@ -135,7 +135,7 @@ var FeedbackCommand = botsfw.Command{
 			}
 			m.DisableWebPagePreview = true
 
-			c := whc.Context()
+			ctx := whc.Context()
 			whc.GetAppUser()
 			if _, _, err = facade4debtus.SaveFeedback(c, &feedbackEntity); err != nil {
 				return m, errors.Wrap(err, "Failed to save Feedback to DB")
@@ -202,8 +202,8 @@ var FeedbackCommand = botsfw.Command{
 			return
 		}
 		var feedback models4debtus.Feedback
-		if err = facade.RunReadwriteTransaction(whc.Context(), func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-			if feedback, _, err = facade4debtus.SaveFeedback(c, tx, 0, &feedbackEntity); err != nil {
+		if err = facade.RunReadwriteTransaction(whc.Context(), func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+			if feedback, _, err = facade4debtus.SaveFeedback(ctx, tx, 0, &feedbackEntity); err != nil {
 				return
 			}
 			return nil
@@ -333,7 +333,7 @@ var FeedbackTextCommand = botsfw.Command{
 
 			var feedback models4debtus.Feedback
 			ctx := whc.Context()
-			if err = facade.RunReadwriteTransaction(ctx, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+			if err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 				if feedbackParam == "" {
 					feedback.FeedbackData = &models4debtus.FeedbackData{
 						Rate:      "none",
@@ -348,12 +348,12 @@ var FeedbackTextCommand = botsfw.Command{
 					if feedback.ID, err = strconv.ParseInt(feedbackParam, 10, 64); err != nil {
 						return
 					}
-					if feedback, err = dtdal.Feedback.GetFeedbackByID(c, tx, feedback.ID); err != nil {
+					if feedback, err = dtdal.Feedback.GetFeedbackByID(ctx, tx, feedback.ID); err != nil {
 						return
 					}
 					feedback.Text = mt
 				}
-				if feedback, _, err = facade4debtus.SaveFeedback(c, tx, 0, feedback.FeedbackData); err != nil {
+				if feedback, _, err = facade4debtus.SaveFeedback(ctx, tx, 0, feedback.FeedbackData); err != nil {
 					return
 				}
 				return nil

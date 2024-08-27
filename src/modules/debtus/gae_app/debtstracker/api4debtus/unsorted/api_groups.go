@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-func HandlerCreateGroup(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo, user dbo4userus.UserEntry) {
+func HandlerCreateGroup(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo, user dbo4userus.UserEntry) {
 	if err := r.ParseForm(); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte(err.Error()))
@@ -30,38 +30,38 @@ func HandlerCreateGroup(c context.Context, w http.ResponseWriter, r *http.Reques
 		groupEntity.Note = note
 	}
 
-	group, _, err := facade4splitus.CreateGroup(c, &groupEntity, "", nil, nil)
+	group, _, err := facade4splitus.CreateGroup(ctx, &groupEntity, "", nil, nil)
 	if err != nil {
-		api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
+		api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 		return
 	}
-	logus.Infof(c, "GroupEntry created, ContactID: %v", group.ID)
-	if err = groupToResponse(c, w, group, user); err != nil {
-		api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
+	logus.Infof(ctx, "GroupEntry created, ContactID: %v", group.ID)
+	if err = groupToResponse(ctx, w, group, user); err != nil {
+		api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 		return
 	}
 }
 
-func HandlerGetGroup(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo, user dbo4userus.UserEntry) {
+func HandlerGetGroup(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo, user dbo4userus.UserEntry) {
 	groupID := r.URL.Query().Get("id")
 	if groupID == "" {
-		api4debtus.BadRequestError(c, w, errors.New("missing id parameter: id"))
+		api4debtus.BadRequestError(ctx, w, errors.New("missing id parameter: id"))
 		return
 	}
-	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, errors.New("not implemented yet"))
+	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, errors.New("not implemented yet"))
 
-	//db, err := facade.GetDatabase(c)
+	//db, err := facade.GetDatabase(ctx)
 	//if err != nil {
-	//	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
+	//	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 	//	return
 	//}
-	//group, err := dtdal.Group.GetGroupByID(c, db, groupID)
+	//group, err := dtdal.Group.GetGroupByID(ctx, db, groupID)
 	//if err != nil {
-	//	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
+	//	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 	//	return
 	//}
-	//if err = groupToResponse(c, w, group, user); err != nil {
-	//	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
+	//if err = groupToResponse(ctx, w, group, user); err != nil {
+	//	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 	//	return
 	//}
 }
@@ -129,24 +129,24 @@ func groupsToJson(_ []models4splitus.GroupEntry, _ dbo4userus.UserEntry) (result
 	//return
 }
 
-func HandleJoinGroups(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
-	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, errors.New("not implemented yet"))
+func HandleJoinGroups(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
+	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, errors.New("not implemented yet"))
 	//defer r.Body.Close()
 	//
 	//var groupIDs []string
 	//if body, err := io.ReadAll(r.Body); err != nil {
-	//	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
+	//	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 	//} else if groupIDs = strings.Split(string(body), ","); len(groupIDs) == 0 {
-	//	api4debtus.BadRequestError(c, w, errors.New("Missing body"))
+	//	api4debtus.BadRequestError(ctx, w, errors.New("Missing body"))
 	//	return
 	//}
 	//
 	//groups := make([]models4splitus.GroupEntry, len(groupIDs))
 	//user := dbo4userus.NewUserEntry(authInfo.UserID)
 	//
-	//err := facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	//err := facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 	//
-	//	if err = facade4userus.GetUserByIdOBSOLETE(c, tx, user.Record); err != nil {
+	//	if err = facade4userus.GetUserByIdOBSOLETE(ctx, tx, user.Record); err != nil {
 	//		return
 	//	}
 	//	var waitGroup sync.WaitGroup
@@ -156,7 +156,7 @@ func HandleJoinGroups(c context.Context, w http.ResponseWriter, r *http.Request,
 	//	for i, groupID := range groupIDs {
 	//		go func(i int, groupID string) {
 	//			var group models4splitus.GroupEntry
-	//			if group, errs[i] = dtdal.Group.GetGroupByID(c, tx, groupID); errs[i] != nil {
+	//			if group, errs[i] = dtdal.Group.GetGroupByID(ctx, tx, groupID); errs[i] != nil {
 	//				waitGroup.Done()
 	//				return
 	//			}
@@ -167,12 +167,12 @@ func HandleJoinGroups(c context.Context, w http.ResponseWriter, r *http.Request,
 	//			}
 	//			if _, changed, _, _, members := group.Data.AddOrGetMember(authInfo.UserID, "", userName); changed {
 	//				group.Data.SetGroupMembers(members)
-	//				if errs[i] = dtdal.Group.SaveGroup(c, tx, group); errs[i] != nil {
+	//				if errs[i] = dtdal.Group.SaveGroup(ctx, tx, group); errs[i] != nil {
 	//					waitGroup.Done()
 	//					return
 	//				}
 	//			}
-	//			if errs[i] = facade4splitus.Group.DelayUpdateGroupUsers(c, groupID); errs[i] != nil {
+	//			if errs[i] = facade4splitus.Group.DelayUpdateGroupUsers(ctx, groupID); errs[i] != nil {
 	//				waitGroup.Done()
 	//				return
 	//			}
@@ -186,7 +186,7 @@ func HandleJoinGroups(c context.Context, w http.ResponseWriter, r *http.Request,
 	//		}
 	//	}
 	//
-	//	if err = facade4splitus.UpdateUserWithGroups(c, tx, user, groups, []string{}); err != nil {
+	//	if err = facade4splitus.UpdateUserWithGroups(ctx, tx, user, groups, []string{}); err != nil {
 	//		return
 	//	}
 	//
@@ -194,13 +194,13 @@ func HandleJoinGroups(c context.Context, w http.ResponseWriter, r *http.Request,
 	//}, dal.TxWithCrossGroup())
 	//
 	//if err != nil {
-	//	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
+	//	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 	//	return
 	//}
 	//
 	//jsons, err := groupsToJson(groups, user)
 	//if err != nil {
-	//	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
+	//	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 	//}
 	//_, _ = w.Write(([]byte)("["))
 	//lastJsonIndex := len(jsons) - 1
@@ -213,13 +213,13 @@ func HandleJoinGroups(c context.Context, w http.ResponseWriter, r *http.Request,
 	//_, _ = w.Write(([]byte)("]"))
 }
 
-func HandlerDeleteGroup(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
+func HandlerDeleteGroup(_ context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 
 }
 
-func HandlerUpdateGroup(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
-	logus.Debugf(c, "HandlerUpdateGroup()")
-	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, errors.New("not implemented yet"))
+func HandlerUpdateGroup(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
+	logus.Debugf(ctx, "HandlerUpdateGroup()")
+	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, errors.New("not implemented yet"))
 	//var (
 	//	group models4splitus.GroupEntry
 	//	err   error
@@ -228,15 +228,15 @@ func HandlerUpdateGroup(c context.Context, w http.ResponseWriter, r *http.Reques
 	//user := dbo4userus.NewUserEntry(authInfo.UserID)
 	//
 	//if group.ContactID = r.URL.Query().Get("id"); group.ContactID == "" {
-	//	api4debtus.BadRequestError(c, w, errors.New("Missing id parameter"))
+	//	api4debtus.BadRequestError(ctx, w, errors.New("Missing id parameter"))
 	//	return
 	//}
 	//
 	//groupName := strings.TrimSpace(r.FormValue("name"))
 	//groupNote := strings.TrimSpace(r.FormValue("note"))
 	//
-	//err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-	//	if group, err = dtdal.Group.GetGroupByID(c, tx, group.ContactID); err != nil {
+	//err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+	//	if group, err = dtdal.Group.GetGroupByID(ctx, tx, group.ContactID); err != nil {
 	//		return
 	//	}
 	//
@@ -255,19 +255,19 @@ func HandlerUpdateGroup(c context.Context, w http.ResponseWriter, r *http.Reques
 	//		changed = true
 	//	}
 	//	if changed {
-	//		if err = dtdal.Group.SaveGroup(c, tx, group); err != nil {
+	//		if err = dtdal.Group.SaveGroup(ctx, tx, group); err != nil {
 	//			return
 	//		}
 	//	}
-	//	if err = facade4userus.GetUserByIdOBSOLETE(c, tx, user.Record); err != nil {
+	//	if err = facade4userus.GetUserByIdOBSOLETE(ctx, tx, user.Record); err != nil {
 	//		return
 	//	}
 	//
-	//	if err = facade4splitus.UpdateUserWithGroups(c, tx, user, []models4splitus.GroupEntry{group}, nil); err != nil {
+	//	if err = facade4splitus.UpdateUserWithGroups(ctx, tx, user, []models4splitus.GroupEntry{group}, nil); err != nil {
 	//		return
 	//	}
 	//
-	//	if err = facade4splitus.Group.DelayUpdateGroupUsers(c, group.ContactID); err != nil {
+	//	if err = facade4splitus.Group.DelayUpdateGroupUsers(ctx, group.ContactID); err != nil {
 	//		return
 	//	}
 	//
@@ -275,19 +275,19 @@ func HandlerUpdateGroup(c context.Context, w http.ResponseWriter, r *http.Reques
 	//})
 	//
 	//if err != nil {
-	//	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
+	//	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 	//	return
 	//}
 	//
-	//if err = groupToResponse(c, w, group, user); err != nil {
-	//	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
+	//if err = groupToResponse(ctx, w, group, user); err != nil {
+	//	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 	//	return
 	//}
 }
 
-func HandlerSetContactsToGroup(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo, user dbo4userus.UserEntry) {
-	logus.Debugf(c, "HandlerSetContactsToGroup()")
-	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, errors.New("HandlerSetContactsToGroup() not implemented yet"))
+func HandlerSetContactsToGroup(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo, user dbo4userus.UserEntry) {
+	logus.Debugf(ctx, "HandlerSetContactsToGroup()")
+	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, errors.New("HandlerSetContactsToGroup() not implemented yet"))
 	//var (
 	//	groupID string
 	//	group   models4splitus.GroupEntry
@@ -295,7 +295,7 @@ func HandlerSetContactsToGroup(c context.Context, w http.ResponseWriter, r *http
 	//)
 	//
 	//if groupID = r.URL.Query().Get("id"); groupID == "" {
-	//	api4debtus.BadRequestError(c, w, errors.New("Missing id parameter"))
+	//	api4debtus.BadRequestError(ctx, w, errors.New("Missing id parameter"))
 	//	return
 	//}
 	//
@@ -306,9 +306,9 @@ func HandlerSetContactsToGroup(c context.Context, w http.ResponseWriter, r *http
 	////addContactIDs := strings.Split(r.FormValue("addContactIDs"), ",")
 	//removeMemberIDs = strings.Split(r.FormValue("removeMemberIDs"), ",")
 	//
-	//if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+	//if err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 	//	var contacts2add []models4debtus.DebtusSpaceContactEntry
-	//	if contacts2add, err = facade4debtus.GetContactsByIDs(c, tx, addContactIDs); err != nil {
+	//	if contacts2add, err = facade4debtus.GetContactsByIDs(ctx, tx, addContactIDs); err != nil {
 	//		return err
 	//	}
 	//
@@ -318,7 +318,7 @@ func HandlerSetContactsToGroup(c context.Context, w http.ResponseWriter, r *http
 	//		}
 	//	}
 	//
-	//	if group, err = dtdal.Group.GetGroupByID(c, tx, groupID); err != nil {
+	//	if group, err = dtdal.Group.GetGroupByID(ctx, tx, groupID); err != nil {
 	//		return err
 	//	}
 	//	members := group.Data.GetGroupMembers()
@@ -373,16 +373,16 @@ func HandlerSetContactsToGroup(c context.Context, w http.ResponseWriter, r *http
 	//	}
 	//	if changed || len(changedContactIDs) > 0 { // Check for len(changedContactIDs) is excessive but just in case.
 	//		group.Data.SetGroupMembers(members)
-	//		if err = dtdal.Group.SaveGroup(c, tx, group); err != nil {
+	//		if err = dtdal.Group.SaveGroup(ctx, tx, group); err != nil {
 	//			return err
 	//		}
 	//	}
 	//
 	//	{ // Executing this block outside of IF just in case for self-healing.
-	//		if user, err = dal4userus.GetUserByID(c, tx, user.ContactID); err != nil {
+	//		if user, err = dal4userus.GetUserByID(ctx, tx, user.ContactID); err != nil {
 	//			return err
 	//		}
-	//		if err = facade4splitus.UpdateUserWithGroups(c, tx, user, []models4splitus.GroupEntry{group}, []string{}); err != nil {
+	//		if err = facade4splitus.UpdateUserWithGroups(ctx, tx, user, []models4splitus.GroupEntry{group}, []string{}); err != nil {
 	//			return err
 	//		}
 	//
@@ -391,16 +391,16 @@ func HandlerSetContactsToGroup(c context.Context, w http.ResponseWriter, r *http
 	//		}
 	//
 	//		if len(groupUserIDs) > 0 {
-	//			if err = facade4splitus.Group.DelayUpdateGroupUsers(c, groupID); err != nil {
+	//			if err = facade4splitus.Group.DelayUpdateGroupUsers(ctx, groupID); err != nil {
 	//				return err
 	//			}
 	//		}
 	//
 	//		if len(changedContactIDs) == 1 {
-	//			err = facade4splitus.UpdateContactWithGroups(c, changedContactIDs[0], []string{groupID}, []string{})
+	//			err = facade4splitus.UpdateContactWithGroups(ctx, changedContactIDs[0], []string{groupID}, []string{})
 	//		} else {
 	//			for _, contactID := range changedContactIDs {
-	//				if err = facade4splitus.DelayUpdateContactWithGroups(c, contactID, []string{groupID}, []string{}); err != nil {
+	//				if err = facade4splitus.DelayUpdateContactWithGroups(ctx, contactID, []string{groupID}, []string{}); err != nil {
 	//					return err
 	//				}
 	//			}
@@ -409,14 +409,14 @@ func HandlerSetContactsToGroup(c context.Context, w http.ResponseWriter, r *http
 	//	return err
 	//}); err != nil {
 	//	if validation.IsBadRecordError(err) {
-	//		api4debtus.BadRequestError(c, w, err)
+	//		api4debtus.BadRequestError(ctx, w, err)
 	//		return
 	//	}
-	//	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
+	//	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 	//	return
 	//}
-	//if err = groupToResponse(c, w, group, user); err != nil {
-	//	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
+	//if err = groupToResponse(ctx, w, group, user); err != nil {
+	//	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 	//	return
 	//}
 }

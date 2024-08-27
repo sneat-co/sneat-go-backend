@@ -52,8 +52,8 @@ func (s sneatAppBotContext) NewAppUserData() appuser.BaseUserData {
 	panic("implement NewAppUserData()")
 }
 
-func (s sneatAppBotContext) GetTranslator(c context.Context) i18n.Translator {
-	return i18n.NewMapTranslator(c, trans.TRANS)
+func (s sneatAppBotContext) GetTranslator(ctx context.Context) i18n.Translator {
+	return i18n.NewMapTranslator(ctx, trans.TRANS)
 }
 
 func (s sneatAppBotContext) NewBotAppUserEntity() botsfwmodels.AppUserData {

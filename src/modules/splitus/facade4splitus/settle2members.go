@@ -14,8 +14,8 @@ import (
 	"reflect"
 )
 
-func Settle2members(c context.Context, spaceID, debtorID, sponsorID string, currency money.CurrencyCode, amount decimal.Decimal64p2) (err error) {
-	logus.Debugf(c, "Settle2members(spaceID=%v, debtorID=%v, sponsorID=%v, currency=%v, amount=%v)", spaceID, debtorID, sponsorID, currency, amount)
+func Settle2members(ctx context.Context, spaceID, debtorID, sponsorID string, currency money.CurrencyCode, amount decimal.Decimal64p2) (err error) {
+	logus.Debugf(ctx, "Settle2members(spaceID=%v, debtorID=%v, sponsorID=%v, currency=%v, amount=%v)", spaceID, debtorID, sponsorID, currency, amount)
 	query := dal.From(models4splitus.BillKind).
 		WhereField("GetUserGroupID", dal.Equal, spaceID).
 		WhereField("Currency", dal.Equal, string(currency)).
@@ -26,12 +26,12 @@ func Settle2members(c context.Context, spaceID, debtorID, sponsorID string, curr
 		SelectKeysOnly(reflect.String)
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(ctx); err != nil {
 		return
 	}
 	var reader dal.Reader
 
-	if reader, err = db.QueryReader(c, query); err != nil {
+	if reader, err = db.QueryReader(ctx, query); err != nil {
 		return err
 	}
 	var ids []string
@@ -40,17 +40,17 @@ func Settle2members(c context.Context, spaceID, debtorID, sponsorID string, curr
 	}
 
 	if len(ids) == 0 {
-		logus.Errorf(c, "No bills found to settle")
+		logus.Errorf(ctx, "No bills found to settle")
 		return
 	} else {
-		logus.Debugf(c, "ids: %+v", ids)
+		logus.Debugf(ctx, "ids: %+v", ids)
 	}
 
-	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		splitusSpace := models4splitus.NewSplitusSpaceEntry(spaceID)
 		var groupDebtor, groupSponsor briefs4splitus.SpaceSplitMember
 
-		if err = tx.Get(c, splitusSpace.Record); err != nil {
+		if err = tx.Get(ctx, splitusSpace.Record); err != nil {
 			return
 		}
 
@@ -72,13 +72,13 @@ func Settle2members(c context.Context, spaceID, debtorID, sponsorID string, curr
 		if v, ok := groupDebtor.Balance[currency]; !ok {
 			return fmt.Errorf("splitusSpace debtor has no balance in currency=%v", currency)
 		} else if -v < amount {
-			logus.Warningf(c, "Debtor balance is less then settling amount")
+			logus.Warningf(ctx, "Debtor balance is less then settling amount")
 			amount = -v
 		}
 		if v, ok := groupSponsor.Balance[currency]; !ok {
 			return fmt.Errorf("splitusSpace sponsor has no balance in currency=%v", currency)
 		} else if v < amount {
-			logus.Warningf(c, "sponsor balance is less then settling amount")
+			logus.Warningf(ctx, "sponsor balance is less then settling amount")
 			amount = v
 		}
 
@@ -93,7 +93,7 @@ func Settle2members(c context.Context, spaceID, debtorID, sponsorID string, curr
 				panic(fmt.Sprintf("amount < 0: %v", amount))
 			}
 			var bill models4splitus.BillEntry
-			if bill, err = GetBillByID(c, tx, id); err != nil {
+			if bill, err = GetBillByID(ctx, tx, id); err != nil {
 				return
 			}
 			billMembers := bill.Data.GetBillMembers()
@@ -103,7 +103,7 @@ func Settle2members(c context.Context, spaceID, debtorID, sponsorID string, curr
 				switch billMembers[i].ID {
 				case debtorID:
 					if debtor = billMembers[i]; debtor.Balance() >= 0 {
-						logus.Warningf(c, "Got debtor %v with positive balance = %v", debtor.ID, debtor.Balance())
+						logus.Warningf(ctx, "Got debtor %v with positive balance = %v", debtor.ID, debtor.Balance())
 						goto nextBill
 					}
 					if sponsor != nil {
@@ -111,7 +111,7 @@ func Settle2members(c context.Context, spaceID, debtorID, sponsorID string, curr
 					}
 				case sponsorID:
 					if sponsor = billMembers[i]; sponsor.Balance() <= 0 {
-						logus.Warningf(c, "Got sponsor %v with negative balance = %v", sponsor.ID, sponsor.Balance())
+						logus.Warningf(ctx, "Got sponsor %v with negative balance = %v", sponsor.ID, sponsor.Balance())
 						goto nextBill
 					}
 					if debtor != nil {
@@ -120,11 +120,11 @@ func Settle2members(c context.Context, spaceID, debtorID, sponsorID string, curr
 				}
 			}
 			if debtor == nil {
-				logus.Warningf(c, "Debtor not found by ContactID="+debtorID)
+				logus.Warningf(ctx, "Debtor not found by ContactID="+debtorID)
 				goto nextBill
 			}
 			if sponsor == nil {
-				logus.Warningf(c, "Sponsor not found by ContactID="+sponsorID)
+				logus.Warningf(ctx, "Sponsor not found by ContactID="+sponsorID)
 				goto nextBill
 			}
 			debtorInvertedBalance = -1 * debtor.Balance()
@@ -138,7 +138,7 @@ func Settle2members(c context.Context, spaceID, debtorID, sponsorID string, curr
 				diff = amount
 			}
 
-			logus.Debugf(c, "diff: %v", diff)
+			logus.Debugf(ctx, "diff: %v", diff)
 			amount -= diff
 			billsSettlement.Data.TotalAmountDiff += diff
 
@@ -158,8 +158,8 @@ func Settle2members(c context.Context, spaceID, debtorID, sponsorID string, curr
 				return
 			}
 
-			logus.Debugf(c, "groupDebtor.Balance: %v", groupDebtor.Balance)
-			logus.Debugf(c, "groupSponsor.Balance: %v", groupSponsor.Balance)
+			logus.Debugf(ctx, "groupDebtor.Balance: %v", groupDebtor.Balance)
+			logus.Debugf(ctx, "groupSponsor.Balance: %v", groupSponsor.Balance)
 
 			billsToSave = append(billsToSave, bill)
 			settlementBills = append(settlementBills, briefs4splitus.BillSettlementJson{
@@ -175,7 +175,7 @@ func Settle2members(c context.Context, spaceID, debtorID, sponsorID string, curr
 
 		if len(billsToSave) > 0 {
 			billsSettlement.Data.SetBillSettlements(spaceID, settlementBills)
-			if err = dtdal.InsertWithRandomStringID(c, tx, billsSettlement.Record); err != nil {
+			if err = dtdal.InsertWithRandomStringID(ctx, tx, billsSettlement.Record); err != nil {
 				return
 			}
 			toSave := make([]dal.Record, len(billsToSave)+1)
@@ -197,15 +197,15 @@ func Settle2members(c context.Context, spaceID, debtorID, sponsorID string, curr
 			if updates := splitusSpace.Data.SetGroupMembers(groupMembers); len(updates) == 0 {
 				panic("GroupEntry members not changed - something wrong")
 			}
-			if err = tx.SetMulti(c, toSave); err != nil {
+			if err = tx.SetMulti(ctx, toSave); err != nil {
 				return
 			}
 			billsSettlement.Data.SplitMembersAfter = splitusSpace.Data.Members
-			if err = tx.Set(c, billsSettlement.Record); err != nil {
+			if err = tx.Set(ctx, billsSettlement.Record); err != nil {
 				return
 			}
 		} else {
-			logus.Errorf(c, "No bills found to settle")
+			logus.Errorf(ctx, "No bills found to settle")
 		}
 
 		return

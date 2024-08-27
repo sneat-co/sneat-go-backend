@@ -42,93 +42,93 @@ type TransferReturnUpdate struct {
 }
 
 type RewardDal interface {
-	//GetRewardByID(c context.Context, rewardID int64) (reward models.Reward, err error)
-	InsertReward(c context.Context, tx dal.ReadwriteTransaction, rewardEntity *models4debtus.RewardDbo) (reward models4debtus.Reward, err error)
+	//GetRewardByID(ctx context.Context, rewardID int64) (reward models.Reward, err error)
+	InsertReward(ctx context.Context, tx dal.ReadwriteTransaction, rewardEntity *models4debtus.RewardDbo) (reward models4debtus.Reward, err error)
 }
 
 type TransferDal interface {
-	GetTransfersByID(c context.Context, tx dal.ReadSession, transferIDs []string) ([]models4debtus.TransferEntry, error)
-	LoadTransfersByUserID(c context.Context, userID string, offset, limit int) (transfers []models4debtus.TransferEntry, hasMore bool, err error)
-	LoadTransfersByContactID(c context.Context, contactID string, offset, limit int) (transfers []models4debtus.TransferEntry, hasMore bool, err error)
-	LoadTransferIDsByContactID(c context.Context, contactID string, limit int, startCursor string) (transferIDs []string, endCursor string, err error)
-	LoadOverdueTransfers(c context.Context, tx dal.ReadSession, userID string, limit int) (transfers []models4debtus.TransferEntry, err error)
-	LoadOutstandingTransfers(c context.Context, tx dal.ReadSession, periodEnds time.Time, userID, contactID string, currency money.CurrencyCode, direction models4debtus.TransferDirection) (transfers []models4debtus.TransferEntry, err error)
-	LoadDueTransfers(c context.Context, tx dal.ReadSession, userID string, limit int) (transfers []models4debtus.TransferEntry, err error)
-	LoadLatestTransfers(c context.Context, offset, limit int) ([]models4debtus.TransferEntry, error)
-	DelayUpdateTransferWithCreatorReceiptTgMessageID(c context.Context, botCode string, transferID string, creatorTgChatID, creatorTgReceiptMessageID int64) error
-	DelayUpdateTransfersWithCounterparty(c context.Context, creatorCounterpartyID, counterpartyCounterpartyID string) error
-	DelayUpdateTransfersOnReturn(c context.Context, returnTransferID string, transferReturnUpdates []TransferReturnUpdate) (err error)
+	GetTransfersByID(ctx context.Context, tx dal.ReadSession, transferIDs []string) ([]models4debtus.TransferEntry, error)
+	LoadTransfersByUserID(ctx context.Context, userID string, offset, limit int) (transfers []models4debtus.TransferEntry, hasMore bool, err error)
+	LoadTransfersByContactID(ctx context.Context, contactID string, offset, limit int) (transfers []models4debtus.TransferEntry, hasMore bool, err error)
+	LoadTransferIDsByContactID(ctx context.Context, contactID string, limit int, startCursor string) (transferIDs []string, endCursor string, err error)
+	LoadOverdueTransfers(ctx context.Context, tx dal.ReadSession, userID string, limit int) (transfers []models4debtus.TransferEntry, err error)
+	LoadOutstandingTransfers(ctx context.Context, tx dal.ReadSession, periodEnds time.Time, userID, contactID string, currency money.CurrencyCode, direction models4debtus.TransferDirection) (transfers []models4debtus.TransferEntry, err error)
+	LoadDueTransfers(ctx context.Context, tx dal.ReadSession, userID string, limit int) (transfers []models4debtus.TransferEntry, err error)
+	LoadLatestTransfers(ctx context.Context, offset, limit int) ([]models4debtus.TransferEntry, error)
+	DelayUpdateTransferWithCreatorReceiptTgMessageID(ctx context.Context, botCode string, transferID string, creatorTgChatID, creatorTgReceiptMessageID int64) error
+	DelayUpdateTransfersWithCounterparty(ctx context.Context, creatorCounterpartyID, counterpartyCounterpartyID string) error
+	DelayUpdateTransfersOnReturn(ctx context.Context, returnTransferID string, transferReturnUpdates []TransferReturnUpdate) (err error)
 }
 
 type ReceiptDal interface {
-	UpdateReceipt(c context.Context, tx dal.ReadwriteTransaction, receipt models4debtus.ReceiptEntry) error
-	GetReceiptByID(c context.Context, tx dal.ReadSession, id string) (models4debtus.ReceiptEntry, error)
-	MarkReceiptAsSent(c context.Context, receiptID, transferID string, sentTime time.Time) error
-	CreateReceipt(c context.Context, data *models4debtus.ReceiptDbo) (receipt models4debtus.ReceiptEntry, err error)
-	DelayedMarkReceiptAsSent(c context.Context, receiptID, transferID string, sentTime time.Time) error
-	DelayCreateAndSendReceiptToCounterpartyByTelegram(c context.Context, env string, transferID string, userID string) error
+	UpdateReceipt(ctx context.Context, tx dal.ReadwriteTransaction, receipt models4debtus.ReceiptEntry) error
+	GetReceiptByID(ctx context.Context, tx dal.ReadSession, id string) (models4debtus.ReceiptEntry, error)
+	MarkReceiptAsSent(ctx context.Context, receiptID, transferID string, sentTime time.Time) error
+	CreateReceipt(ctx context.Context, data *models4debtus.ReceiptDbo) (receipt models4debtus.ReceiptEntry, err error)
+	DelayedMarkReceiptAsSent(ctx context.Context, receiptID, transferID string, sentTime time.Time) error
+	DelayCreateAndSendReceiptToCounterpartyByTelegram(ctx context.Context, env string, transferID string, userID string) error
 }
 
 var ErrReminderAlreadyRescheduled = errors.New("reminder already rescheduled")
 
 type ReminderDal interface {
-	DelayDiscardReminders(c context.Context, transferIDs []string, returnTransferID string) error
-	DelayCreateReminderForTransferUser(c context.Context, transferID string, userID string) error
-	SaveReminder(c context.Context, tx dal.ReadwriteTransaction, reminder models4debtus.Reminder) (err error)
-	GetReminderByID(c context.Context, tx dal.ReadSession, id string) (models4debtus.Reminder, error)
-	RescheduleReminder(c context.Context, reminderID string, remindInDuration time.Duration) (oldReminder, newReminder models4debtus.Reminder, err error)
-	SetReminderStatus(c context.Context, reminderID string, returnTransferID string, status string, when time.Time) (reminder models4debtus.Reminder, err error)
-	DelaySetReminderIsSent(c context.Context, reminderID string, sentAt time.Time, messageIntID int64, messageStrID, locale, errDetails string) error
-	SetReminderIsSent(c context.Context, reminderID string, sentAt time.Time, messageIntID int64, messageStrID, locale, errDetails string) error
-	SetReminderIsSentInTransaction(c context.Context, tx dal.ReadwriteTransaction, reminder models4debtus.Reminder, sentAt time.Time, messageIntID int64, messageStrID, locale, errDetails string) (err error)
-	GetActiveReminderIDsByTransferID(c context.Context, tx dal.ReadSession, transferID int) ([]int, error)
-	GetSentReminderIDsByTransferID(c context.Context, tx dal.ReadSession, transferID int) ([]int, error)
+	DelayDiscardReminders(ctx context.Context, transferIDs []string, returnTransferID string) error
+	DelayCreateReminderForTransferUser(ctx context.Context, transferID string, userID string) error
+	SaveReminder(ctx context.Context, tx dal.ReadwriteTransaction, reminder models4debtus.Reminder) (err error)
+	GetReminderByID(ctx context.Context, tx dal.ReadSession, id string) (models4debtus.Reminder, error)
+	RescheduleReminder(ctx context.Context, reminderID string, remindInDuration time.Duration) (oldReminder, newReminder models4debtus.Reminder, err error)
+	SetReminderStatus(ctx context.Context, reminderID string, returnTransferID string, status string, when time.Time) (reminder models4debtus.Reminder, err error)
+	DelaySetReminderIsSent(ctx context.Context, reminderID string, sentAt time.Time, messageIntID int64, messageStrID, locale, errDetails string) error
+	SetReminderIsSent(ctx context.Context, reminderID string, sentAt time.Time, messageIntID int64, messageStrID, locale, errDetails string) error
+	SetReminderIsSentInTransaction(ctx context.Context, tx dal.ReadwriteTransaction, reminder models4debtus.Reminder, sentAt time.Time, messageIntID int64, messageStrID, locale, errDetails string) (err error)
+	GetActiveReminderIDsByTransferID(ctx context.Context, tx dal.ReadSession, transferID int) ([]int, error)
+	GetSentReminderIDsByTransferID(ctx context.Context, tx dal.ReadSession, transferID int) ([]int, error)
 }
 
 type EmailDal interface {
-	InsertEmail(c context.Context, tx dal.ReadwriteTransaction, entity *models4auth.EmailData) (models4auth.Email, error)
-	UpdateEmail(c context.Context, tx dal.ReadwriteTransaction, email models4auth.Email) error
-	GetEmailByID(c context.Context, tx dal.ReadSession, id int64) (models4auth.Email, error)
+	InsertEmail(ctx context.Context, tx dal.ReadwriteTransaction, entity *models4auth.EmailData) (models4auth.Email, error)
+	UpdateEmail(ctx context.Context, tx dal.ReadwriteTransaction, email models4auth.Email) error
+	GetEmailByID(ctx context.Context, tx dal.ReadSession, id int64) (models4auth.Email, error)
 }
 
 type FeedbackDal interface {
-	GetFeedbackByID(c context.Context, tx dal.ReadSession, feedbackID int64) (feedback models4debtus.Feedback, err error)
+	GetFeedbackByID(ctx context.Context, tx dal.ReadSession, feedbackID int64) (feedback models4debtus.Feedback, err error)
 }
 
 type ContactDal interface {
 	GetLatestContacts(whc botsfw.WebhookContext, tx dal.ReadSession, spaceID string, limit, totalCount int) (contacts []models4debtus.DebtusSpaceContactEntry, err error)
-	InsertContact(c context.Context, tx dal.ReadwriteTransaction, contactEntity *models4debtus.DebtusSpaceContactDbo) (contact models4debtus.DebtusSpaceContactEntry, err error)
-	GetContactIDsByTitle(c context.Context, tx dal.ReadSession, spaceID, userID string, title string, caseSensitive bool) (contactIDs []string, err error)
-	GetContactsWithDebts(c context.Context, tx dal.ReadSession, spaceID, userID string) (contacts []models4debtus.DebtusSpaceContactEntry, err error)
+	InsertContact(ctx context.Context, tx dal.ReadwriteTransaction, contactEntity *models4debtus.DebtusSpaceContactDbo) (contact models4debtus.DebtusSpaceContactEntry, err error)
+	GetContactIDsByTitle(ctx context.Context, tx dal.ReadSession, spaceID, userID string, title string, caseSensitive bool) (contactIDs []string, err error)
+	GetContactsWithDebts(ctx context.Context, tx dal.ReadSession, spaceID, userID string) (contacts []models4debtus.DebtusSpaceContactEntry, err error)
 }
 
-type BillsHolderGetter func(c context.Context) (billsHolder dal.Record, err error)
+type BillsHolderGetter func(ctx context.Context) (billsHolder dal.Record, err error)
 
 type SplitDal interface {
-	GetSplitByID(c context.Context, splitID int) (split models4splitus.Split, err error)
-	InsertSplit(c context.Context, splitEntity models4splitus.SplitEntity) (split models4splitus.Split, err error)
+	GetSplitByID(ctx context.Context, splitID int) (split models4splitus.Split, err error)
+	InsertSplit(ctx context.Context, splitEntity models4splitus.SplitEntity) (split models4splitus.Split, err error)
 }
 
 type TgGroupDal interface {
-	GetTgGroupByID(c context.Context, tx dal.ReadSession, id int64) (tgGroup models4auth.TgGroup, err error)
-	SaveTgGroup(c context.Context, tx dal.ReadwriteTransaction, tgGroup models4auth.TgGroup) (err error)
+	GetTgGroupByID(ctx context.Context, tx dal.ReadSession, id int64) (tgGroup models4auth.TgGroup, err error)
+	SaveTgGroup(ctx context.Context, tx dal.ReadwriteTransaction, tgGroup models4auth.TgGroup) (err error)
 }
 
 type BillScheduleDal interface {
-	GetBillScheduleByID(c context.Context, id int64) (billSchedule models4splitus.BillSchedule, err error)
-	InsertBillSchedule(c context.Context, billScheduleEntity *models4splitus.BillScheduleEntity) (billSchedule models4splitus.BillSchedule, err error)
-	UpdateBillSchedule(c context.Context, billSchedule models4splitus.BillSchedule) (err error)
+	GetBillScheduleByID(ctx context.Context, id int64) (billSchedule models4splitus.BillSchedule, err error)
+	InsertBillSchedule(ctx context.Context, billScheduleEntity *models4splitus.BillScheduleEntity) (billSchedule models4splitus.BillSchedule, err error)
+	UpdateBillSchedule(ctx context.Context, billSchedule models4splitus.BillSchedule) (err error)
 }
 
 //type GroupMemberDal interface {
-//	GetGroupMemberByID(c context.Context, groupMemberID int64) (groupMember models.GroupMember, err error)
-//	CreateGroupMember(c context.Context, groupMemberEntity *models.GroupMemberData) (groupMember models.GroupMember, err error)
+//	GetGroupMemberByID(ctx context.Context, groupMemberID int64) (groupMember models.GroupMember, err error)
+//	CreateGroupMember(ctx context.Context, groupMemberEntity *models.GroupMemberData) (groupMember models.GroupMember, err error)
 //}
 
 type TwilioDal interface {
-	GetLastTwilioSmsesForUser(c context.Context, tx dal.ReadSession, userID string, to string, limit int) (result []models4debtus.TwilioSms, err error)
+	GetLastTwilioSmsesForUser(ctx context.Context, tx dal.ReadSession, userID string, to string, limit int) (result []models4debtus.TwilioSms, err error)
 	SaveTwilioSms(
-		c context.Context,
+		ctx context.Context,
 		smsResponse *gotwilio.SmsResponse,
 		transfer models4debtus.TransferEntry,
 		phoneContact dto4contactus.PhoneContact,
@@ -153,20 +153,20 @@ func RandomCode(n uint8) string {
 }
 
 type InviteDal interface {
-	GetInvite(c context.Context, tx dal.ReadSession, inviteCode string) (models4debtus.Invite, error)
-	ClaimInvite(c context.Context, userID string, inviteCode, claimedOn, claimedVia string) (err error)
-	ClaimInvite2(c context.Context, inviteCode string, invite models4debtus.Invite, claimedByUserID string, claimedOn, claimedVia string) (err error)
+	GetInvite(ctx context.Context, tx dal.ReadSession, inviteCode string) (models4debtus.Invite, error)
+	ClaimInvite(ctx context.Context, userID string, inviteCode, claimedOn, claimedVia string) (err error)
+	ClaimInvite2(ctx context.Context, inviteCode string, invite models4debtus.Invite, claimedByUserID string, claimedOn, claimedVia string) (err error)
 	CreatePersonalInvite(ec strongoapp.ExecutionContext, userID string, inviteBy models4debtus.InviteBy, inviteToAddress, createdOnPlatform, createdOnID, related string) (models4debtus.Invite, error)
 	CreateMassInvite(ec strongoapp.ExecutionContext, userID string, inviteCode string, maxClaimsCount int32, createdOnPlatform string) (invite models4debtus.Invite, err error)
 }
 
 type AdminDal interface {
-	DeleteAll(c context.Context, botCode, botChatID string) error
-	LatestUsers(c context.Context) (users []dbo4userus.UserEntry, err error)
+	DeleteAll(ctx context.Context, botCode, botChatID string) error
+	LatestUsers(ctx context.Context) (users []dbo4userus.UserEntry, err error)
 }
 
 //type TaskQueueDal interface {
-//	CallDelayFunc(c context.Context, queueName, subPath, key string, f interface{}, args ...interface{}) error
+//	CallDelayFunc(ctx context.Context, queueName, subPath, key string, f interface{}, args ...interface{}) error
 //}
 
 var (
@@ -187,7 +187,7 @@ var (
 	Invite    InviteDal
 	Admin     AdminDal
 
-	HttpClient  func(c context.Context) *http.Client
+	HttpClient  func(ctx context.Context) *http.Client
 	BotHost     botsfw.BotHost
 	HttpAppHost strongoapp.HttpAppHost
 
@@ -199,7 +199,7 @@ var (
 
 )
 
-func InsertWithRandomStringID(c context.Context, tx dal.ReadwriteTransaction, record dal.Record) error {
-	_, _, _ = c, tx, record
+func InsertWithRandomStringID(_ context.Context, tx dal.ReadwriteTransaction, record dal.Record) error {
+	_, _ = tx, record
 	return errors.New("TODO: use dalgo")
 }

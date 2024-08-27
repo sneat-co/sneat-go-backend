@@ -8,8 +8,8 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 )
 
-func SendFeedbackToAdmins(c context.Context, botToken string, feedback models4debtus.Feedback) (err error) {
-	bot := tgbotapi.NewBotAPIWithClient(botToken, dtdal.HttpClient(c))
+func SendFeedbackToAdmins(ctx context.Context, botToken string, feedback models4debtus.Feedback) (err error) {
+	bot := tgbotapi.NewBotAPIWithClient(botToken, dtdal.HttpClient(ctx))
 	text := fmt.Sprintf("%v user #%s @%v (rate=%v):\n%v", feedback.CreatedOnPlatform, feedback.UserStrID, feedback.CreatedOnID, feedback.Rate, feedback.Text)
 	message := tgbotapi.NewMessageToChannel("-1001128307094", text)
 	message.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(

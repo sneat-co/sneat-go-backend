@@ -39,8 +39,8 @@ var chosenInlineResultCommand = botsfw.Command{
 var reDecimal = regexp.MustCompile(`\d+(\.\d+)?`)
 
 func createBillFromInlineChosenResult(whc botsfw.WebhookContext, chosenResult botsfw.WebhookChosenInlineResult) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
-	logus.Debugf(c, "createBillFromInlineChosenResult()")
+	ctx := whc.Context()
+	logus.Debugf(ctx, "createBillFromInlineChosenResult()")
 
 	resultID := chosenResult.GetResultID()
 
@@ -127,8 +127,8 @@ func createBillFromInlineChosenResult(whc botsfw.WebhookContext, chosenResult bo
 		user := dbo4userus.NewUserEntry(userID)
 		spaceID := user.Data.GetFamilySpaceID()
 
-		err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-			if bill, err = facade4splitus.CreateBill(c, tx, spaceID, bill.Data); err != nil {
+		err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+			if bill, err = facade4splitus.CreateBill(ctx, tx, spaceID, bill.Data); err != nil {
 				return
 			}
 			return
@@ -137,44 +137,44 @@ func createBillFromInlineChosenResult(whc botsfw.WebhookContext, chosenResult bo
 			err = fmt.Errorf("failed to call facade4debtus.BillEntry.CreateBill(): %w", err)
 			return
 		}
-		logus.Infof(c, "createBillFromInlineChosenResult() => BillEntry created")
+		logus.Infof(ctx, "createBillFromInlineChosenResult() => BillEntry created")
 
 		botCode := whc.GetBotCode()
 
-		logus.Infof(c, "createBillFromInlineChosenResult() => suxx 0")
+		logus.Infof(ctx, "createBillFromInlineChosenResult() => suxx 0")
 
 		footer := strings.Repeat("―", 15) + "\n" + whc.Translate(trans.MESSAGE_TEXT_ASK_BILL_PAYER)
 
-		if m.Text, err = getBillCardMessageText(c, botCode, whc, bill, false, footer); err != nil {
-			logus.Errorf(c, "Failed to create bill card")
+		if m.Text, err = getBillCardMessageText(ctx, botCode, whc, bill, false, footer); err != nil {
+			logus.Errorf(ctx, "Failed to create bill card")
 			return
 		} else if strings.TrimSpace(m.Text) == "" {
 			err = errors.New("getBillCardMessageText() returned empty string")
-			logus.Errorf(c, err.Error())
+			logus.Errorf(ctx, err.Error())
 			return
 		}
 
-		logus.Infof(c, "createBillFromInlineChosenResult() => suxx 1")
+		logus.Infof(ctx, "createBillFromInlineChosenResult() => suxx 1")
 
 		if m, err = whc.NewEditMessage(m.Text, botsfw.MessageFormatHTML); err != nil { // TODO: Unnecessary hack?
-			logus.Infof(c, "createBillFromInlineChosenResult() => suxx 1.2")
-			logus.Errorf(c, err.Error())
+			logus.Infof(ctx, "createBillFromInlineChosenResult() => suxx 1.2")
+			logus.Errorf(ctx, err.Error())
 			return
 		}
 
-		logus.Infof(c, "createBillFromInlineChosenResult() => suxx 2")
+		logus.Infof(ctx, "createBillFromInlineChosenResult() => suxx 2")
 
 		m.Keyboard = getWhoPaidInlineKeyboard(whc, bill.ID)
 
 		var response botsfw.OnMessageSentResponse
-		logus.Debugf(c, "createBillFromInlineChosenResult() => Sending bill card: %v", m)
+		logus.Debugf(ctx, "createBillFromInlineChosenResult() => Sending bill card: %v", m)
 
-		if response, err = whc.Responder().SendMessage(c, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
-			logus.Errorf(c, "createBillFromInlineChosenResult() => %v", err)
+		if response, err = whc.Responder().SendMessage(ctx, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
+			logus.Errorf(ctx, "createBillFromInlineChosenResult() => %v", err)
 			return
 		}
 
-		logus.Debugf(c, "response: %v", response)
+		logus.Debugf(ctx, "response: %v", response)
 		m.Text = botsfw.NoMessageToSend
 	}
 
@@ -213,9 +213,9 @@ var EditedBillCardHookCommand = botsfw.Command{ // TODO: seems to be not used an
 	Code: "edited-bill-card",
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		whc.LogRequest()
-		c := whc.Context()
+		ctx := whc.Context()
 		billID := getBillIDFromUrlInEditedMessage(whc)
-		logus.Debugf(c, "editedBillCardHookCommand.Action() => billID: %s", billID)
+		logus.Debugf(ctx, "editedBillCardHookCommand.Action() => billID: %s", billID)
 		if billID == "" {
 			panic("billID is empty string")
 		}
@@ -226,27 +226,27 @@ var EditedBillCardHookCommand = botsfw.Command{ // TODO: seems to be not used an
 		if groupID, err = shared_space.GetUserGroupID(whc); err != nil {
 			return
 		} else if groupID == "" {
-			logus.Warningf(c, "group.ContactID is empty string")
+			logus.Warningf(ctx, "group.ContactID is empty string")
 			return
 		}
 
 		changed := false
 
-		err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
+		err = facade.RunReadwriteTransaction(ctx, func(tctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 			var bill models4splitus.BillEntry
-			if bill, err = facade4splitus.GetBillByID(c, tx, billID); err != nil {
+			if bill, err = facade4splitus.GetBillByID(ctx, tx, billID); err != nil {
 				return err
 			}
 
 			if groupID != "" && bill.Data.GetUserGroupID() != groupID { // TODO: Should we check for empty bill.GetUserGroupID() or better fail?
-				if bill, _, err = facade4splitus.AssignBillToGroup(c, tx, bill, groupID, whc.AppUserID()); err != nil {
+				if bill, _, err = facade4splitus.AssignBillToGroup(ctx, tx, bill, groupID, whc.AppUserID()); err != nil {
 					return err
 				}
 				changed = true
 			}
 
 			if changed {
-				return facade4splitus.SaveBill(c, tx, bill)
+				return facade4splitus.SaveBill(ctx, tx, bill)
 			}
 
 			return err
@@ -255,7 +255,7 @@ var EditedBillCardHookCommand = botsfw.Command{ // TODO: seems to be not used an
 			return
 		}
 		if changed {
-			logus.Debugf(c, "BillEntry updated with group ContactID")
+			logus.Debugf(ctx, "BillEntry updated with group ContactID")
 		}
 		return
 	},

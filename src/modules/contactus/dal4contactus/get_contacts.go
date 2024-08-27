@@ -26,13 +26,13 @@ func ContactRecords(contacts []ContactEntry) (records []dal.Record) {
 	return
 }
 
-func GetContactsByIDs(c context.Context, tx dal.ReadSession, spaceID string, contactsIDs []string) (contacts []ContactEntry, err error) {
+func GetContactsByIDs(ctx context.Context, tx dal.ReadSession, spaceID string, contactsIDs []string) (contacts []ContactEntry, err error) {
 	if tx == nil {
-		if tx, err = facade.GetDatabase(c); err != nil {
+		if tx, err = facade.GetDatabase(ctx); err != nil {
 			return
 		}
 	}
 	contacts = NewContacts(spaceID, contactsIDs...)
 	records := ContactRecords(contacts)
-	return contacts, tx.GetMulti(c, records)
+	return contacts, tx.GetMulti(ctx, records)
 }

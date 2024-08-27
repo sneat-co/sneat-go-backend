@@ -63,8 +63,8 @@ package common4debtus
 //	return appCtx.NewBotAppUserEntity()
 //}
 //
-//func (appCtx DebtusAppContext) GetTranslator(c context.Context) i18n.Translator {
-//	return i18n.NewMapTranslator(c, trans.TRANS)
+//func (appCtx DebtusAppContext) GetTranslator(ctx context.Context) i18n.Translator {
+//	return i18n.NewMapTranslator(ctx, trans.TRANS)
 //}
 //
 //func (appCtx DebtusAppContext) SupportedLocales() i18n.LocalesProvider {

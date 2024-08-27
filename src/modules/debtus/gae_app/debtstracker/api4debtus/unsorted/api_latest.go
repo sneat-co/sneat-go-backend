@@ -8,11 +8,11 @@ import (
 	"net/http"
 )
 
-func HandleAdminLatestUsers(c context.Context, w http.ResponseWriter, _ *http.Request, _ token4auth.AuthInfo) {
-	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, errors.New("not implemented yet"))
-	//users, err := dtdal.Admin.LatestUsers(c)
+func HandleAdminLatestUsers(ctx context.Context, w http.ResponseWriter, _ *http.Request, _ token4auth.AuthInfo) {
+	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, errors.New("not implemented yet"))
+	//users, err := dtdal.Admin.LatestUsers(ctx)
 	//if err != nil {
-	//	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
+	//	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 	//	return
 	//}
 	//var buffer bytes.Buffer
@@ -34,9 +34,9 @@ func HandleAdminLatestUsers(c context.Context, w http.ResponseWriter, _ *http.Re
 	//	if len(userCounterpartiesIDs) > 0 {
 	//		wg.Add(1)
 	//		go func(i int, userCounterpartiesIDs []string) {
-	//			counterparties, err := facade4debtus.GetDebtusSpaceContactsByIDs(c, nil, userCounterpartiesIDs)
+	//			counterparties, err := facade4debtus.GetDebtusSpaceContactsByIDs(ctx, nil, userCounterpartiesIDs)
 	//			if err != nil {
-	//				logus.Errorf(c, fmt.Errorf("failed to get counterparties by ids=%+v: %w", userCounterpartiesIDs, err).Error())
+	//				logus.Errorf(ctx, fmt.Errorf("failed to get counterparties by ids=%+v: %w", userCounterpartiesIDs, err).Error())
 	//				wg.Done()
 	//				return
 	//			}
@@ -53,16 +53,16 @@ func HandleAdminLatestUsers(c context.Context, w http.ResponseWriter, _ *http.Re
 	//				}
 	//				record.Counterparties = append(record.Counterparties, counterpartyDto)
 	//			}
-	//			logus.Debugf(c, "Contacts goroutine completed.")
+	//			logus.Debugf(ctx, "Contacts goroutine completed.")
 	//			wg.Done()
 	//		}(i, userCounterpartiesIDs)
 	//	}
 	//	if user.Data.InvitedByUserID != "" {
 	//		wg.Add(1)
 	//		go func(i int, userID string) {
-	//			inviter, err := dal4userus.GetUserByID(c, nil, userID)
+	//			inviter, err := dal4userus.GetUserByID(ctx, nil, userID)
 	//			if err != nil {
-	//				logus.Errorf(c, fmt.Errorf("failed to get user by id=%v: %w", userID, err).Error())
+	//				logus.Errorf(ctx, fmt.Errorf("failed to get user by id=%v: %w", userID, err).Error())
 	//				return
 	//			}
 	//			records[i].InvitedByUser = &struct {
@@ -72,7 +72,7 @@ func HandleAdminLatestUsers(c context.Context, w http.ResponseWriter, _ *http.Re
 	//				userID,
 	//				inviter.Data.FullName(),
 	//			}
-	//			logus.Debugf(c, "User goroutine completed.")
+	//			logus.Debugf(ctx, "User goroutine completed.")
 	//			wg.Done()
 	//		}(i, user.Data.InvitedByUserID)
 	//	}
@@ -82,7 +82,7 @@ func HandleAdminLatestUsers(c context.Context, w http.ResponseWriter, _ *http.Re
 	//
 	//for i, record := range records {
 	//	if userBytes, err := json.Marshal(record); err != nil {
-	//		logus.Errorf(c, err.Error())
+	//		logus.Errorf(ctx, err.Error())
 	//		w.WriteHeader(http.StatusInternalServerError)
 	//		_, _ = w.Write([]byte(err.Error()))
 	//		return
@@ -99,7 +99,7 @@ func HandleAdminLatestUsers(c context.Context, w http.ResponseWriter, _ *http.Re
 	//header.Add("Content-Type", "application/json")
 	//header.Add("Access-Control-Allow-Origin", "*")
 	//if _, err = w.Write(buffer.Bytes()); err != nil {
-	//	logus.Errorf(c, err.Error())
+	//	logus.Errorf(ctx, err.Error())
 	//	w.WriteHeader(http.StatusInternalServerError)
 	//	_, _ = w.Write([]byte(err.Error()))
 	//}

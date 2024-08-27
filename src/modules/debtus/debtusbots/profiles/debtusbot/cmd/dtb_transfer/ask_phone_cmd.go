@@ -44,10 +44,10 @@ func cleanPhoneNumber(phoneNumebr string) string {
 var AskPhoneNumberForReceiptCommand = botsfw.Command{
 	Code: ASK_PHONE_NUMBER_FOR_RECEIPT_COMMAND,
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-		c := whc.Context()
+		ctx := whc.Context()
 		userCtx := facade.NewUserContext(whc.AppUserID())
-		return m, dal4userus.RunUserWorker(c, userCtx, func(c context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) (err error) {
-			logus.Debugf(c, "AskPhoneNumberForReceiptCommand.Action()")
+		return m, dal4userus.RunUserWorker(ctx, userCtx, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) (err error) {
+			logus.Debugf(ctx, "AskPhoneNumberForReceiptCommand.Action()")
 
 			input := whc.Input()
 
@@ -67,7 +67,7 @@ var AskPhoneNumberForReceiptCommand = botsfw.Command{
 				if params.User.Data.Names.FirstName == contact.FirstName() && params.User.Data.Names.LastName == contact.LastName() {
 					phoneNumberStr = cleanPhoneNumber(contact.PhoneNumber())
 					if phoneNumber, err = strconv.ParseInt(phoneNumberStr, 10, 64); err != nil {
-						logus.Warningf(c, "Failed to parse contact's phone number: [%v]", phoneNumberStr)
+						logus.Warningf(ctx, "Failed to parse contact's phone number: [%v]", phoneNumberStr)
 						return err
 					} else if len(params.User.Data.Phones) == 0 {
 						params.User.Data.Phones = append(params.User.Data.Phones, dbmodels.PersonPhone{
@@ -88,7 +88,7 @@ var AskPhoneNumberForReceiptCommand = botsfw.Command{
 			}
 
 			if twilioTestNumber, ok := common4debtus.TwilioTestNumbers[mt]; ok {
-				logus.Debugf(c, "Using predefined test number [%v]: %v", mt, twilioTestNumber)
+				logus.Debugf(ctx, "Using predefined test number [%v]: %v", mt, twilioTestNumber)
 				phoneNumberStr = twilioTestNumber
 			} else {
 				phoneNumberStr = cleanPhoneNumber(mt)
@@ -110,12 +110,12 @@ var AskPhoneNumberForReceiptCommand = botsfw.Command{
 			if transferID == "" {
 				return fmt.Errorf("empty transferID")
 			}
-			transfer, err := facade4debtus.Transfers.GetTransferByID(c, tx, transferID)
+			transfer, err := facade4debtus.Transfers.GetTransferByID(ctx, tx, transferID)
 			if err != nil {
 				return fmt.Errorf("failed to get transfer by ContactID: %w", err)
 			}
 			spaceID := params.User.Data.GetFamilySpaceID()
-			counterparty, err := facade4debtus.GetDebtusSpaceContactByID(c, tx, spaceID, transfer.Data.Counterparty().ContactID)
+			counterparty, err := facade4debtus.GetDebtusSpaceContactByID(ctx, tx, spaceID, transfer.Data.Counterparty().ContactID)
 			if err != nil {
 				return err
 			}
@@ -132,10 +132,10 @@ const SMS_STATUS_MESSAGE_ID_PARAM_NAME = "SmsStatusMessageId"
 const SMS_STATUS_MESSAGE_UPDATES_COUNT_PARAM_NAME = "SmsStatusUpdatesCount"
 
 func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, spaceID string, phoneContact dto4contactus.PhoneContact, transfer models4debtus.TransferEntry, counterparty models4debtus.DebtusSpaceContactEntry) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
+	ctx := whc.Context()
 
 	if transfer.Data == nil {
-		if transfer, err = facade4debtus.Transfers.GetTransferByID(c, tx, transfer.ID); err != nil {
+		if transfer, err = facade4debtus.Transfers.GetTransferByID(ctx, tx, transfer.ID); err != nil {
 			return m, err
 		}
 	}
@@ -160,7 +160,7 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, sp
 		CreatedOnID:       whc.GetBotCode(),
 	})
 	var receipt models4debtus.ReceiptEntry
-	if receipt, err = dtdal.Receipt.CreateReceipt(c, receiptData); err != nil {
+	if receipt, err = dtdal.Receipt.CreateReceipt(ctx, receiptData); err != nil {
 		return m, err
 	}
 
@@ -170,7 +170,7 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, sp
 		//related := fmt.Sprintf("%v=%v", models.TransfersCollection, transferID)
 		//inviteKey, invite, err := invites.CreatePersonalInvite(whc, whc.AppUserID(), invites.InviteBySms, strconv.FormatInt(phoneContact.PhoneNumber, 10), whc.BotPlatform().ContactID(), whc.GetBotCode(), related)
 		//if err != nil {
-		//	logus.Errorf(c, "Failed to create invite: %v", err)
+		//	logus.Errorf(ctx, "Failed to create invite: %v", err)
 		//	return m, err
 		//}
 		//inviteCode = inviteKey.StringID()
@@ -201,16 +201,16 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, sp
 	var createSmsStatusMessage = func() error {
 		var msgSmsStatus botsfw.MessageFromBot
 		mt := whc.Translate(trans.MESSAGE_TEXT_SMS_QUEUING_FOR_SENDING, phoneContact.PhoneNumberAsString())
-		//logus.Debugf(c, "whc.InputTypes(): %v, botsfw.WebhookInputCallbackQuery: %v, MessageID: %v", whc.InputTypes(), botsfw.WebhookInputCallbackQuery, whc.InputCallbackQuery().GetMessage().IntID())
+		//logus.Debugf(ctx, "whc.InputTypes(): %v, botsfw.WebhookInputCallbackQuery: %v, MessageID: %v", whc.InputTypes(), botsfw.WebhookInputCallbackQuery, whc.InputCallbackQuery().GetMessage().IntID())
 		if whc.InputType() == botsfw.WebhookInputCallbackQuery {
-			//logus.Debugf(c, "editMessage.MessageID: %v", editMessage.MessageID)
+			//logus.Debugf(ctx, "editMessage.MessageID: %v", editMessage.MessageID)
 			if msgSmsStatus, err = whc.NewEditMessage(mt, botsfw.MessageFormatHTML); err != nil {
 				return err
 			}
 		} else {
 			msgSmsStatus = whc.NewMessage(mt)
 		}
-		smsStatusMsg, err := whc.Responder().SendMessage(c, msgSmsStatus, botsfw.BotAPISendMessageOverHTTPS)
+		smsStatusMsg, err := whc.Responder().SendMessage(ctx, msgSmsStatus, botsfw.BotAPISendMessageOverHTTPS)
 		if err != nil {
 			return err
 		}
@@ -246,7 +246,7 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, sp
 		return m, fmt.Errorf("failed to parse whc.BotChatID() to int: %w", err)
 	}
 
-	if lastTwilioSmsese, err := dtdal.Twilio.GetLastTwilioSmsesForUser(c, tx, whc.AppUserID(), phoneContact.PhoneNumberAsString(), 1); err != nil {
+	if lastTwilioSmsese, err := dtdal.Twilio.GetLastTwilioSmsesForUser(ctx, tx, whc.AppUserID(), phoneContact.PhoneNumberAsString(), 1); err != nil {
 		err = fmt.Errorf("failed to check latest SMS records: %w", err)
 		return m, err
 	} else if len(lastTwilioSmsese) > 0 {
@@ -254,7 +254,7 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, sp
 		if smsRecord.Data.To == phoneContact.PhoneNumberAsString() && (smsRecord.Data.Status == "delivered" || smsRecord.Data.Status == "queued") {
 			// TODO: Do smarter check for limit
 			m.Text = emoji.ERROR_ICON + " " + fmt.Sprintf("Exceeded limit for sending SMS to same number: %v", phoneContact.PhoneNumberAsString())
-			logus.Warningf(c, m.Text)
+			logus.Warningf(ctx, m.Text)
 			return m, err
 		}
 	}
@@ -279,10 +279,10 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, sp
 
 	if twilioException != nil {
 		twilioExceptionStr, _ := json.Marshal(twilioException)
-		logus.Errorf(c, "Failed to send SMS via Twilio: %v", string(twilioExceptionStr))
+		logus.Errorf(ctx, "Failed to send SMS via Twilio: %v", string(twilioExceptionStr))
 		mt, tryAnotherNumber := sms.TwilioExceptionToMessage(whc, whc, twilioException)
 		if tryAnotherNumber {
-			logus.Infof(c, "Twilio identified invalid phone number, need to try another one.")
+			logus.Infof(ctx, "Twilio identified invalid phone number, need to try another one.")
 			if m, err = whc.NewEditMessage(mt, botsfw.MessageFormatText); err != nil {
 				return
 			}
@@ -291,13 +291,13 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, sp
 		}
 		if counterparty.Data.PhoneNumber == phoneContact.PhoneNumber {
 			var counterparty models4debtus.DebtusSpaceContactEntry
-			counterparty, err = facade4debtus.GetDebtusSpaceContactByID(c, tx, spaceID, transfer.Data.Counterparty().ContactID)
+			counterparty, err = facade4debtus.GetDebtusSpaceContactByID(ctx, tx, spaceID, transfer.Data.Counterparty().ContactID)
 			if err != nil {
 				return
 			}
 			if counterparty.Data.PhoneNumber != phoneContact.PhoneNumber {
 				counterparty.Data.PhoneNumber = phoneContact.PhoneNumber
-				err = facade4debtus.SaveContact(c, counterparty)
+				err = facade4debtus.SaveContact(ctx, counterparty)
 			}
 		}
 		if m, err = whc.NewEditMessage(fmt.Sprintf("<b>Exception</b>\n%v\n\n<b>SMS text</b>\n%v", twilioException, smsText), botsfw.MessageFormatHTML); err != nil {
@@ -310,10 +310,10 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, sp
 	}
 
 	smsResponseStr, _ := json.Marshal(smsResponse)
-	logus.Debugf(c, "Twilio response: %v", string(smsResponseStr))
+	logus.Debugf(ctx, "Twilio response: %v", string(smsResponseStr))
 
 	if err = analytics.ReceiptSentFromBot(whc, "sms"); err != nil {
-		logus.Errorf(c, "Failed to send to analytics receipt sent event: %v", err)
+		logus.Errorf(ctx, "Failed to send to analytics receipt sent event: %v", err)
 	}
 
 	if _, err = dtdal.Twilio.SaveTwilioSms(
@@ -340,7 +340,7 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, sp
 	m.EditMessageUID = telegram.NewChatMessageUID(tgChatID, smsStatusMessageID)
 	m.DisableWebPagePreview = true
 
-	if _, err := whc.Responder().SendMessage(c, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
+	if _, err := whc.Responder().SendMessage(ctx, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
 		err = fmt.Errorf("failed to send bot response message over HTTPS: %w", err)
 		return m, err
 	}

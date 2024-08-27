@@ -18,41 +18,41 @@ import (
 
 const SEND_EMAIL_TASK = "send-email"
 
-func DelaySendEmail(c context.Context, id int64) error {
-	return delayEmail.EnqueueWork(c, delaying.With(queues.QueueEmails, SEND_EMAIL_TASK, 0), id)
+func DelaySendEmail(ctx context.Context, id int64) error {
+	return delayEmail.EnqueueWork(ctx, delaying.With(queues.QueueEmails, SEND_EMAIL_TASK, 0), id)
 }
 
 var ErrEmailIsInWrongStatus = errors.New("email is already sending or sent")
 
-func delayedSendEmail(c context.Context, id int64) (err error) {
-	logus.Debugf(c, "delayedSendEmail(%v)", id)
+func delayedSendEmail(ctx context.Context, id int64) (err error) {
+	logus.Debugf(ctx, "delayedSendEmail(%v)", id)
 
 	var email models4auth.Email
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(ctx); err != nil {
 		return err
 	}
 
-	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-		if email, err = facade4debtus.Email.GetEmailByID(c, tx, id); err != nil {
+	if err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+		if email, err = facade4debtus.Email.GetEmailByID(ctx, tx, id); err != nil {
 			return err
 		}
 		if email.Data.Status != "queued" {
 			return fmt.Errorf("%w: expected 'queued' got email.Status=%s", ErrEmailIsInWrongStatus, email.Data.Status)
 		}
 		email.Data.Status = "sending"
-		return facade4debtus.Email.UpdateEmail(c, tx, email)
+		return facade4debtus.Email.UpdateEmail(ctx, tx, email)
 	}, nil); err != nil {
 		err = fmt.Errorf("failed to update email status to 'queued': %w", err)
 		if dal.IsNotFound(err) {
-			logus.Warningf(c, err.Error())
+			logus.Warningf(ctx, err.Error())
 			return nil // Do not retry
 		} else if errors.Is(err, ErrEmailIsInWrongStatus) {
-			logus.Warningf(c, err.Error())
+			logus.Warningf(ctx, err.Error())
 			return nil // Do not retry
 		}
-		logus.Errorf(c, err.Error())
+		logus.Errorf(ctx, err.Error())
 		return err // Retry
 	}
 
@@ -64,11 +64,11 @@ func delayedSendEmail(c context.Context, id int64) (err error) {
 		Text:    email.Data.BodyText,
 		HTML:    email.Data.BodyHtml,
 	}
-	if sentMessageID, err = SendEmail(c, emailMessage); err != nil {
-		logus.Errorf(c, "Failed to send email: %v", err)
+	if sentMessageID, err = SendEmail(ctx, emailMessage); err != nil {
+		logus.Errorf(ctx, "Failed to send email: %v", err)
 
-		if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-			if email, err = facade4debtus.Email.GetEmailByID(c, tx, id); err != nil {
+		if err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+			if email, err = facade4debtus.Email.GetEmailByID(ctx, tx, id); err != nil {
 				return err
 			}
 			if email.Data.Status != "sending" {
@@ -76,17 +76,17 @@ func delayedSendEmail(c context.Context, id int64) (err error) {
 			}
 			email.Data.Status = "error"
 			email.Data.Error = err.Error()
-			return facade4debtus.Email.UpdateEmail(c, tx, email)
+			return facade4debtus.Email.UpdateEmail(ctx, tx, email)
 		}); err != nil {
-			logus.Errorf(c, err.Error())
+			logus.Errorf(ctx, err.Error())
 		}
 		return nil // Do not retry
 	}
 
-	logus.Infof(c, "Sent email, message ContactID: %v", sentMessageID)
+	logus.Infof(ctx, "Sent email, message ContactID: %v", sentMessageID)
 
-	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-		if email, err = facade4debtus.Email.GetEmailByID(c, tx, id); err != nil {
+	if err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+		if email, err = facade4debtus.Email.GetEmailByID(ctx, tx, id); err != nil {
 			return err
 		}
 		if email.Data.Status != "sending" {
@@ -95,9 +95,9 @@ func delayedSendEmail(c context.Context, id int64) (err error) {
 		email.Data.Status = "sent"
 		email.Data.DtSent = time.Now()
 		email.Data.AwsSesMessageID = sentMessageID
-		return facade4debtus.Email.UpdateEmail(c, tx, email)
+		return facade4debtus.Email.UpdateEmail(ctx, tx, email)
 	}); err != nil {
-		logus.Errorf(c, err.Error())
+		logus.Errorf(ctx, err.Error())
 		err = nil // Do not retry!
 	}
 	return nil // Do not retry!

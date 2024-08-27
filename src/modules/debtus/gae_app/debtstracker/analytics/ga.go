@@ -27,11 +27,11 @@ const (
 	EventActionDebtDueDateSet = "debt-due-date-set"
 )
 
-func SendSingleMessage(c context.Context, m gamp.Message) (err error) {
-	if c == nil {
-		return errors.New("Parameter 'c context.Context' is nil")
+func SendSingleMessage(ctx context.Context, m gamp.Message) (err error) {
+	if ctx == nil {
+		return errors.New("parameter 'ctx context.Context' is nil")
 	}
-	gaMeasurement := gamp.NewBufferedClient("", dtdal.HttpClient(c), nil)
+	gaMeasurement := gamp.NewBufferedClient("", dtdal.HttpClient(ctx), nil)
 	if err = gaMeasurement.Queue(m); err != nil {
 		return err
 	}
@@ -40,7 +40,7 @@ func SendSingleMessage(c context.Context, m gamp.Message) (err error) {
 	}
 	var buffer bytes.Buffer
 	_, _ = m.Write(&buffer)
-	logus.Debugf(c, "Sent single message to GA: "+buffer.String())
+	logus.Debugf(ctx, "Sent single message to GA: "+buffer.String())
 	return nil
 }
 
@@ -62,10 +62,10 @@ func getGaCommon(r *http.Request, userID string, userLanguage, platform string) 
 	}
 }
 
-func ReminderSent(c context.Context, userID string, userLanguage, platform string) {
+func ReminderSent(ctx context.Context, userID string, userLanguage, platform string) {
 	gaCommon := getGaCommon(nil, userID, userLanguage, platform)
-	if err := SendSingleMessage(c, gamp.NewEvent(EventCategoryReminders, EventActionReminderSent, gaCommon)); err != nil {
-		logus.Errorf(c, fmt.Errorf("failed to send even to GA: %w", err).Error())
+	if err := SendSingleMessage(ctx, gamp.NewEvent(EventCategoryReminders, EventActionReminderSent, gaCommon)); err != nil {
+		logus.Errorf(ctx, fmt.Errorf("failed to send even to GA: %w", err).Error())
 	}
 }
 
@@ -74,9 +74,9 @@ func ReceiptSentFromBot(whc botsfw.WebhookContext, channel string) error {
 	return ga.Queue(ga.GaEventWithLabel("receipts", "receipt-sent", channel))
 }
 
-func ReceiptSentFromApi(c context.Context, r *http.Request, userID string, userLanguage, platform, channel string) {
+func ReceiptSentFromApi(ctx context.Context, r *http.Request, userID string, userLanguage, platform, channel string) {
 	gaCommon := getGaCommon(r, userID, userLanguage, platform)
-	_ = SendSingleMessage(c, gamp.NewEventWithLabel(
+	_ = SendSingleMessage(ctx, gamp.NewEventWithLabel(
 		"receipts",
 		"receipt-sent",
 		channel,

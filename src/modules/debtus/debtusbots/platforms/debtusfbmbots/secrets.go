@@ -117,7 +117,7 @@ var ErrUnknownHost = errors.New("Unknown host")
 //	return nil, "", fmt.Errorf(ErrUnknownHost, r.Host)
 //}
 
-//func getFbAppAndSession(c context.Context, r *http.Request, getSession func(fbApp *fb.App) (*fb.Session, error)) (
+//func getFbAppAndSession(ctx context.Context, r *http.Request, getSession func(fbApp *fb.App) (*fb.Session, error)) (
 //	fbApp *fb.App, fbSession *fb.Session, err error,
 //) {
 //	logus.Debugf(c, "getFbAppAndSession()")
@@ -133,17 +133,17 @@ var ErrUnknownHost = errors.New("Unknown host")
 //	return fbApp, fbSession, err
 //}
 
-//func FbAppAndSessionFromAccessToken(c context.Context, r *http.Request, accessToken string) (*fb.App, *fb.Session, error) {
-//	return getFbAppAndSession(c, r, func(fbApp *fb.App) (fbSession *fb.Session, err error) {
+//func FbAppAndSessionFromAccessToken(ctx context.Context, r *http.Request, accessToken string) (*fb.App, *fb.Session, error) {
+//	return getFbAppAndSession(ctx, r, func(fbApp *fb.App) (fbSession *fb.Session, err error) {
 //		fbSession = fbApp.Session(accessToken)
-//		fbSession.HttpClient = dtdal.HttpClient(c)
+//		fbSession.HttpClient = dtdal.HttpClient(ctx)
 //		return
 //	})
 //}
 //
-//func FbAppAndSessionFromSignedRequest(c context.Context, r *http.Request, signedRequest string) (*fb.App, *fb.Session, error) {
+//func FbAppAndSessionFromSignedRequest(ctx context.Context, r *http.Request, signedRequest string) (*fb.App, *fb.Session, error) {
 //	logus.Debugf(c, "FbAppAndSessionFromSignedRequest()")
-//	return getFbAppAndSession(c, r, func(fbApp *fb.App) (fbSession *fb.Session, err error) {
+//	return getFbAppAndSession(ctx, r, func(fbApp *fb.App) (fbSession *fb.Session, err error) {
 //		logus.Debugf(c, "FbAppAndSessionFromSignedRequest() => getSession()")
 //		//fbSession, err = fbApp.SessionFromSignedRequest(c, signedRequest, dtdal.HttpClient(c))
 //		//if err != nil {

@@ -29,7 +29,7 @@ func getMainMenuParams(_ botsfw.WebhookContext, onReceiptAck bool) (params mainM
 	//	user *models.DebutsAppUserDataOBSOLETE
 	//	isAppUser bool
 	//)
-	//c := whc.Context()
+	//ctx := whc.Context()
 	//if userEntity, err := whc.AppUserData(); err != nil {
 	//	logus.Errorf(c, "Failed to get user: %v", err)
 	//} else if user, isAppUser = userEntity.(*models.DebutsAppUserDataOBSOLETE); !isAppUser {

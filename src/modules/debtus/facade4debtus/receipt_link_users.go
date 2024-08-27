@@ -31,44 +31,44 @@ func NewReceiptUsersLinker(changes *receiptDbChanges) *ReceiptUsersLinker {
 	}
 }
 
-func (linker *ReceiptUsersLinker) LinkReceiptUsers(c context.Context, receiptID, invitedUserID string) (isJustLinked bool, err error) {
-	logus.Debugf(c, "ReceiptUsersLinker.LinkReceiptUsers(receiptID=%v, invitedUserID=%v)", receiptID, invitedUserID)
+func (linker *ReceiptUsersLinker) LinkReceiptUsers(ctx context.Context, receiptID, invitedUserID string) (isJustLinked bool, err error) {
+	logus.Debugf(ctx, "ReceiptUsersLinker.LinkReceiptUsers(receiptID=%v, invitedUserID=%v)", receiptID, invitedUserID)
 	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(ctx); err != nil {
 		return false, err
 	}
 	invitedUser := dbo4userus.NewUserEntry(invitedUserID)
 
 	spaceID := invitedUser.Data.GetFamilySpaceID()
 
-	if err = dal4userus.GetUser(c, db, invitedUser); err != nil {
+	if err = dal4userus.GetUser(ctx, db, invitedUser); err != nil {
 		// TODO: Instead pass user as a parameter? Even better if the user entity was created within following transaction.
 		return isJustLinked, err
 	} else if invitedUser.Data.CreatedAt.After(time.Now().Add(-time.Second / 2)) {
-		logus.Debugf(c, "A new user, will wait for half a seconds to cleanup previous transaction")
+		logus.Debugf(ctx, "A new user, will wait for half a seconds to cleanup previous transaction")
 		time.Sleep(time.Second / 2)
 	}
 	var invitedContact dal4contactus.ContactEntry
 	var invitedDebtusContact models4debtus.DebtusSpaceContactEntry
 	attempt := 0
-	err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
+	err = db.RunReadwriteTransaction(ctx, func(tctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		if attempt += 1; attempt > 1 {
 			sleepPeriod := time.Duration(attempt) * time.Second
-			logus.Warningf(c, "Transaction retry will sleep for %v, invitedContact.ContactID: %v", attempt, invitedContact.ID)
+			logus.Warningf(ctx, "Transaction retry will sleep for %v, invitedContact.ContactID: %v", attempt, invitedContact.ID)
 			time.Sleep(sleepPeriod)
 		}
 		changes := linker.changes
 		if changes.receipt, changes.transfer, changes.inviter.user, _, changes.invited.user, _, err =
-			getReceiptTransferAndUsers(tc, tx, receiptID, invitedUserID); err != nil {
+			getReceiptTransferAndUsers(tctx, tx, receiptID, invitedUserID); err != nil {
 			return
 		}
 		if invitedContact.ID != "" { // This means we are attempting to retry failed transaction
-			if err = workaroundReinsertContact(tc, changes.receipt, invitedDebtusContact, changes); err != nil {
+			if err = workaroundReinsertContact(tctx, changes.receipt, invitedDebtusContact, changes); err != nil {
 				return
 			}
 		}
 
-		if isJustLinked, err = linker.linkUsersByReceiptWithinTransaction(c, tc, tx); err != nil {
+		if isJustLinked, err = linker.linkUsersByReceiptWithinTransaction(ctx, tctx, tx); err != nil {
 			return
 		} else {
 			invitedContact = changes.invited.contact
@@ -80,28 +80,28 @@ func (linker *ReceiptUsersLinker) LinkReceiptUsers(c context.Context, receiptID,
 		}
 
 		if entitiesToSave := changes.Changes.Records(); len(entitiesToSave) > 0 {
-			if err = tx.SetMulti(c, entitiesToSave); err != nil {
+			if err = tx.SetMulti(ctx, entitiesToSave); err != nil {
 				return
 			}
 		} else {
-			logus.Debugf(c, "ReceiptEntry and transfer has not changed")
+			logus.Debugf(ctx, "ReceiptEntry and transfer has not changed")
 		}
 		return
 	}, dal.TxWithCrossGroup())
 	if err != nil {
 		return
 	}
-	logus.Debugf(c, "ReceiptUsersLinker.LinkReceiptUsers() => invitedContact: %+v", invitedContact)
-	if invitedDebtusContact, err = GetDebtusSpaceContactByID(c, nil, spaceID, invitedContact.ID); err != nil {
+	logus.Debugf(ctx, "ReceiptUsersLinker.LinkReceiptUsers() => invitedContact: %+v", invitedContact)
+	if invitedDebtusContact, err = GetDebtusSpaceContactByID(ctx, nil, spaceID, invitedContact.ID); err != nil {
 		return
 	}
-	logus.Debugf(c, "ReceiptUsersLinker.LinkReceiptUsers() => invitedContact from DB: %+v", invitedContact)
+	logus.Debugf(ctx, "ReceiptUsersLinker.LinkReceiptUsers() => invitedContact from DB: %+v", invitedContact)
 	return
 }
 
 func (linker *ReceiptUsersLinker) linkUsersByReceiptWithinTransaction(
-	c context.Context, // non-transactional context
-	tc context.Context, // transactional context,
+	ctx context.Context, // non-transactional context
+	tctx context.Context, // transactional context,
 	tx dal.ReadwriteTransaction,
 ) (
 	isCounterpartiesJustConnected bool,
@@ -120,7 +120,7 @@ func (linker *ReceiptUsersLinker) linkUsersByReceiptWithinTransaction(
 	//	invitedDebtusContact = *changes.invitedDebtusContact
 	//}
 
-	logus.Debugf(c,
+	logus.Debugf(ctx,
 		"ReceiptUsersLinker.linkUsersByReceiptWithinTransaction(receipt.ContactID=%s, transfer.ContactID=%s, inviterUser.ContactID=%s, invitedUser.ContactID=%s, inviterContact.ContactID=%s, invitedContact.ContactID=%s)",
 		receipt.ID, transfer.ID, inviterUser.ID, invitedUser.ID, inviterContact.ID, invitedContact.ID)
 
@@ -142,14 +142,14 @@ func (linker *ReceiptUsersLinker) linkUsersByReceiptWithinTransaction(
 
 	fromOriginal := *transfer.Data.From()
 	toOriginal := *transfer.Data.To()
-	//logus.Debugf(c, "transferEntity: %v", transfer.Data)
-	//logus.Debugf(c, "transfer.From(): %v", fromOriginal)
-	//logus.Debugf(c, "transfer.To(): %v",toOriginal)
+	//logus.Debugf(ctx, "transferEntity: %v", transfer.Data)
+	//logus.Debugf(ctx, "transfer.From(): %v", fromOriginal)
+	//logus.Debugf(ctx, "transfer.To(): %v",toOriginal)
 
 	transferCreatorCounterparty := transfer.Data.Counterparty()
 
 	spaceID := invitedUser.Data.GetFamilySpaceID()
-	if _, err = GetDebtusSpaceContactByID(tc, tx, spaceID, transferCreatorCounterparty.ContactID); err != nil {
+	if _, err = GetDebtusSpaceContactByID(tctx, tx, spaceID, transferCreatorCounterparty.ContactID); err != nil {
 		return
 	} else if inviterContact.Data.UserID != inviterUser.ID {
 		panic(fmt.Errorf("inviterContact.UserID !=  inviterUser.ContactID: %v != %v", inviterContact.Data.UserID, inviterUser.ID))
@@ -157,7 +157,7 @@ func (linker *ReceiptUsersLinker) linkUsersByReceiptWithinTransaction(
 		changes.inviter.contact = inviterContact
 	}
 
-	if err = newUsersLinker(changes.usersLinkingDbChanges).linkUsersWithinTransaction(tc, tx, receipt.Record.Key().String()); err != nil {
+	if err = newUsersLinker(changes.usersLinkingDbChanges).linkUsersWithinTransaction(tctx, tx, receipt.Record.Key().String()); err != nil {
 		err = fmt.Errorf("failed to link users: %w", err)
 		return
 	} else {
@@ -170,7 +170,7 @@ func (linker *ReceiptUsersLinker) linkUsersByReceiptWithinTransaction(
 		}
 	}
 
-	logus.Debugf(c, "linkUsersWithinTransaction() => invitedContact.ContactID: %v, inviterContact.ContactID: %v", invitedContact.ID, inviterContact.ID)
+	logus.Debugf(ctx, "linkUsersWithinTransaction() => invitedContact.ContactID: %v, inviterContact.ContactID: %v", invitedContact.ID, inviterContact.ID)
 
 	// Update entities
 	{
@@ -179,7 +179,7 @@ func (linker *ReceiptUsersLinker) linkUsersByReceiptWithinTransaction(
 		} else if err = linker.updateTransfer(); err != nil {
 			return
 		} else if linker.changes.IsChanged(linker.changes.transfer.Record) {
-			logus.Debugf(c, "transfer changed:\n\tFrom(): %v\n\tTo(): %v", transfer.Data.From(), transfer.Data.To())
+			logus.Debugf(ctx, "transfer changed:\n\tFrom(): %v\n\tTo(): %v", transfer.Data.From(), transfer.Data.To())
 			// Just double check we did not screw up
 			{
 				if fromOriginal.UserID != "" && fromOriginal.UserID != transfer.Data.From().UserID {
@@ -203,15 +203,15 @@ func (linker *ReceiptUsersLinker) linkUsersByReceiptWithinTransaction(
 	}
 
 	if transfer.Data.DtDueOn.After(time.Now()) {
-		if err = dtdal.Reminder.DelayCreateReminderForTransferUser(tc, receipt.Data.TransferID, transfer.Data.Counterparty().UserID); err != nil {
+		if err = dtdal.Reminder.DelayCreateReminderForTransferUser(tctx, receipt.Data.TransferID, transfer.Data.Counterparty().UserID); err != nil {
 			err = fmt.Errorf("failed to delay creation of reminder for transfer coutnerparty: %w", err)
 			return
 		}
 	} else {
 		if transfer.Data.DtDueOn.IsZero() {
-			logus.Debugf(tc, "No need to create reminder for counterparty as no due date")
+			logus.Debugf(tctx, "No need to create reminder for counterparty as no due date")
 		} else {
-			logus.Debugf(tc, "No need to create reminder for counterparty as due date in past")
+			logus.Debugf(tctx, "No need to create reminder for counterparty as due date in past")
 		}
 	}
 	return

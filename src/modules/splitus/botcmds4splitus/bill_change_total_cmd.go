@@ -13,8 +13,8 @@ const CHANGE_BILL_TOTAL_COMMAND = "bill_total"
 
 var changeBillTotalCommand = billCallbackCommand(CHANGE_BILL_TOTAL_COMMAND,
 	func(whc botsfw.WebhookContext, _ dal.ReadwriteTransaction, callbackUrl *url.URL, bill models4splitus.BillEntry) (m botsfw.MessageFromBot, err error) {
-		c := whc.Context()
-		logus.Debugf(c, "changeBillTotalCommand.CallbackAction()")
+		ctx := whc.Context()
+		logus.Debugf(ctx, "changeBillTotalCommand.CallbackAction()")
 		//var editedMessage *tgbotapi.EditMessageTextConfig
 		//if editedMessage, err = dtb_common.NewTelegramEditMessage(whc, "Enter new total for the bill:"); err != nil {
 		//	return

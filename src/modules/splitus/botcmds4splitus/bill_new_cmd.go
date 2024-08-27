@@ -32,8 +32,8 @@ const newBillCommandCode = "new-bill"
 var newBillCommand = botsfw.Command{
 	Code: newBillCommandCode,
 	CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-		c := whc.Context()
-		logus.Debugf(c, "newBillCommand.CallbackAction(callbackUrl=%v)", callbackUrl)
+		ctx := whc.Context()
+		logus.Debugf(ctx, "newBillCommand.CallbackAction(callbackUrl=%v)", callbackUrl)
 		query := callbackUrl.Query()
 		paramI := query.Get(NEW_BILL_PARAM_I)
 		if paramI != NEW_BILL_PARAM_I_OWE && paramI != NEW_BILL_PARAM_I_PAID {
@@ -56,7 +56,7 @@ var newBillCommand = botsfw.Command{
 				SplitMode:     models4splitus.SplitModeEqually,
 				CreatorUserID: strUserID,
 				AmountTotal:   amountValue,
-				Currency:      money.CurrencyCode(query.Get("c")),
+				Currency:      money.CurrencyCode(query.Get("ctx")),
 				UserIDs:       []string{strUserID},
 			},
 		)
@@ -88,9 +88,9 @@ var newBillCommand = botsfw.Command{
 			return
 		}
 
-		return m, facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
+		return m, facade.RunReadwriteTransaction(ctx, func(tctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 			var bill models4splitus.BillEntry
-			if bill, err = facade4splitus.CreateBill(c, tx, spaceID, billEntity); err != nil {
+			if bill, err = facade4splitus.CreateBill(ctx, tx, spaceID, billEntity); err != nil {
 				return
 			}
 			m, err = ShowBillCard(whc, true, bill, "")

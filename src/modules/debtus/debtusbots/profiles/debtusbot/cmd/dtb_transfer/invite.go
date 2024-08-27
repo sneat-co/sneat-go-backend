@@ -23,10 +23,10 @@ package dtb_transfer
 //
 //	transfer = new(models.Transfer)
 //	userID := whc.AppUserID()
-//	err = dtdal.DB.RunInTransaction(c, func(tc context.Context) (err error) {
+//	err = dtdal.DB.RunInTransaction(c, func(tctx context.Context) (err error) {
 //		inviteKey := datastore.NewKey(tc, invites.InviteKind, inviteCode, 0, nil)
 //		invite := new(invites.Invite)
-//		err = nds.Get(tc, inviteKey, invite)
+//		err = nds.Get(tctx, inviteKey, invite)
 //		if err != nil {
 //			return errors.Wrapf(err, "Failed to get invite by StringID='%v'", inviteKey.StringID())
 //		}

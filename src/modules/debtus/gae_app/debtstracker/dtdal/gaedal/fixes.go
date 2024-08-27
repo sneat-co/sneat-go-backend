@@ -28,9 +28,9 @@ func (f *TransferFixer) needFixCounterpartyCounterpartyName() bool {
 	return f.transfer.Creator().ContactName == ""
 }
 
-//func (f *TransferFixer) fixCounterpartyCounterpartyName(c context.Context) error {
+//func (f *TransferFixer) fixCounterpartyCounterpartyName(ctx context.Context) error {
 //	if f.needFixCounterpartyCounterpartyName() {
-//		logus.Debugf(c, "%v: needFixCounterpartyCounterpartyName=true", f.transferKey.IntegerID())
+//		logus.Debugf(ctx, "%v: needFixCounterpartyCounterpartyName=true", f.transferKey.IntegerID())
 //		if f.transfer.Creator().CounterpartyID != 0 {
 //			var counterpartyCounterparty models.DebtusSpaceContactDbo
 //			err := gaedb.Get(c, NewCounterpartyKey(c, f.transfer.Creator().CounterpartyID), &counterpartyCounterparty)
@@ -60,7 +60,7 @@ func (f *TransferFixer) needFixCounterpartyCounterpartyName() bool {
 //		f.changed = true
 //		f.Fixes = append(f.Fixes, "CounterpartyCounterpartyName")
 //		//} else {
-//		//	logus.Debugf(c, "%v: %v", f.transferKey.IntegerID(), f.transfer.Creator().ContactName)
+//		//	logus.Debugf(ctx, "%v: %v", f.transferKey.IntegerID(), f.transfer.Creator().ContactName)
 //	}
 //	return nil
 //}
@@ -71,23 +71,23 @@ func (f *TransferFixer) needFixes(_ context.Context) bool {
 	//return result
 }
 
-func (f *TransferFixer) FixAllIfNeeded(c context.Context) (err error) {
-	if f.needFixes(c) {
-		err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
-			transfer, err := facade4debtus.Transfers.GetTransferByID(tc, tx, f.transferKey.ID.(string))
+func (f *TransferFixer) FixAllIfNeeded(ctx context.Context) (err error) {
+	if f.needFixes(ctx) {
+		err = facade.RunReadwriteTransaction(ctx, func(tctx context.Context, tx dal.ReadwriteTransaction) error {
+			transfer, err := facade4debtus.Transfers.GetTransferByID(tctx, tx, f.transferKey.ID.(string))
 			if err != nil {
 				return err
 			}
 			f.transfer = transfer.Data
-			//if err = f.fixCounterpartyCounterpartyName(c); err != nil {
+			//if err = f.fixCounterpartyCounterpartyName(ctx); err != nil {
 			//	return err
 			//}
 			if f.changed {
-				//logus.Debugf(c, "%v: changed", f.transferKey.IntegerID())
-				err = tx.Set(tc, transfer.Record)
+				//logus.Debugf(ctx, "%v: changed", f.transferKey.IntegerID())
+				err = tx.Set(tctx, transfer.Record)
 				return err
 				//} else {
-				//	logus.Debugf(c, "%v: not changed", f.transferKey.IntegerID())
+				//	logus.Debugf(ctx, "%v: not changed", f.transferKey.IntegerID())
 			}
 			return nil
 		}, nil)
@@ -95,17 +95,17 @@ func (f *TransferFixer) FixAllIfNeeded(c context.Context) (err error) {
 	return
 }
 
-func FixTransfers(c context.Context) (loadedCount int, fixedCount int, failedCount int, err error) {
+func FixTransfers(ctx context.Context) (loadedCount int, fixedCount int, failedCount int, err error) {
 	query := dal.From(models4debtus.TransfersCollection).SelectInto(func() dal.Record {
 		return models4debtus.NewTransferWithIncompleteKey(nil).Record
 	})
 	//query.Limit = 50
 	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(ctx); err != nil {
 		return
 	}
 	var reader dal.Reader
-	reader, err = db.QueryReader(c, query)
+	reader, err = db.QueryReader(ctx, query)
 	if err != nil {
 		return
 	}
@@ -118,7 +118,7 @@ func FixTransfers(c context.Context) (loadedCount int, fixedCount int, failedCou
 				err = nil
 				return
 			}
-			logus.Errorf(c, "Failed to get next transfer: %v", err.Error())
+			logus.Errorf(ctx, "Failed to get next transfer: %v", err.Error())
 			return
 		}
 		loadedCount += 1
@@ -127,9 +127,9 @@ func FixTransfers(c context.Context) (loadedCount int, fixedCount int, failedCou
 			defer wg.Done()
 			key := transferRecord.Key()
 			fixer := NewTransferFixer(key, transferRecord.Data().(*models4debtus.TransferData))
-			err2 := fixer.FixAllIfNeeded(c)
+			err2 := fixer.FixAllIfNeeded(ctx)
 			if err2 != nil {
-				logus.Errorf(c, "Failed to fix transfer=%v: %v", key.ID.(int), err2.Error())
+				logus.Errorf(ctx, "Failed to fix transfer=%v: %v", key.ID.(int), err2.Error())
 				mutex.Lock()
 				failedCount += 1
 				err = err2
@@ -139,9 +139,9 @@ func FixTransfers(c context.Context) (loadedCount int, fixedCount int, failedCou
 					mutex.Lock()
 					fixedCount += 1
 					mutex.Unlock()
-					logus.Infof(c, "Fixed transfer %v: %v", key.ID.(int), fixer.Fixes)
+					logus.Infof(ctx, "Fixed transfer %v: %v", key.ID.(int), fixer.Fixes)
 					//} else {
-					//	logus.Debugf(c, "TransferEntry %v is OK: CounterpartyCounterpartyName: %v", transferKey.IntegerID(), fixer.transfer.Creator().ContactName)
+					//	logus.Debugf(ctx, "TransferEntry %v is OK: CounterpartyCounterpartyName: %v", transferKey.IntegerID(), fixer.transfer.Creator().ContactName)
 				}
 			}
 		}(record)

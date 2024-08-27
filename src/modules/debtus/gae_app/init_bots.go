@@ -16,8 +16,8 @@ import (
 	"net/http"
 )
 
-func newTranslator(c context.Context) i18n.Translator {
-	return i18n.NewMapTranslator(c, trans.TRANS)
+func newTranslator(ctx context.Context) i18n.Translator {
+	return i18n.NewMapTranslator(ctx, trans.TRANS)
 }
 
 type botsHttpRouter struct {
@@ -49,9 +49,9 @@ func InitBots(httpRouter *httprouter.Router, botHost botsfw.BotHost, appContext 
 		telegram.BaseTgChatDtoMaker,
 	)
 
-	//var getDb dalgo4botsfw.DbProvider = func(c context.Context, botID string) (dal.DB, error) {
+	//var getDb dalgo4botsfw.DbProvider = func(ctx context.Context, botID string) (dal.DB, error) {
 	//	return nil, errors.New("not implemented")
-	//	//fsClient, err := firestore.NewClient(c, "demo-local-sneat-app")
+	//	//fsClient, err := firestore.NewClient(ctx, "demo-local-sneat-app")
 	//	//if err != nil {
 	//	//	return nil, err
 	//	//}
@@ -85,6 +85,6 @@ func InitBots(httpRouter *httprouter.Router, botHost botsfw.BotHost, appContext 
 	)
 }
 
-func telegramBotsWithRouter(c context.Context) botsfw.SettingsBy {
-	return debtustgbots.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil))
+func telegramBotsWithRouter(ctx context.Context) botsfw.SettingsBy {
+	return debtustgbots.Bots(dtdal.HttpAppHost.GetEnvironment(ctx, nil))
 }

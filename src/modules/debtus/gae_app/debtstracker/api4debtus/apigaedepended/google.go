@@ -15,7 +15,7 @@ func InitApiGaeDepended() {
 
 const REDIRECT_DESTINATION_PARAM_NAME = "redirect-to"
 
-func handleSigninWithGoogle(c context.Context, w http.ResponseWriter, r *http.Request) {
+func handleSigninWithGoogle(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	panic("disabled: switch to Firestore authentication")
 	//query := r.URL.Query()
 	//
@@ -31,7 +31,7 @@ func handleSigninWithGoogle(c context.Context, w http.ResponseWriter, r *http.Re
 	//	callbackUrl += "&secret=" + secret
 	//}
 
-	//loginUrl, err := gaeuser.LoginURL(c, callbackUrl)
+	//loginUrl, err := gaeuser.LoginURL(ctx, callbackUrl)
 
 	//if err != nil {
 	//	w.WriteHeader(http.StatusInternalServerError)

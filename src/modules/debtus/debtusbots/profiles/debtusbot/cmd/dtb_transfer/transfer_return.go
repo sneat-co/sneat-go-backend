@@ -86,11 +86,11 @@ var AskReturnCounterpartyCommand = CreateAskTransferCounterpartyCommand(
 	},
 	botsfw.Command{}, //newContactCommand - We do not allow to create a new contact on return
 	func(whc botsfw.WebhookContext, counterparty models4debtus.DebtusSpaceContactEntry) (m botsfw.MessageFromBot, err error) {
-		c := whc.Context()
+		ctx := whc.Context()
 
-		logus.Debugf(c, "StartReturnWizardCommand.onCounterpartySelectedAction(counterparty.ContactID=%v)", counterparty.ID)
+		logus.Debugf(ctx, "StartReturnWizardCommand.onCounterpartySelectedAction(counterparty.ContactID=%v)", counterparty.ID)
 		var balanceWithInterest money.Balance
-		balanceWithInterest, err = counterparty.Data.BalanceWithInterest(c, time.Now())
+		balanceWithInterest, err = counterparty.Data.BalanceWithInterest(ctx, time.Now())
 		if err != nil {
 			err = fmt.Errorf("failed to get counterparty balance with interest: %w", err)
 			return
@@ -103,7 +103,7 @@ var AskReturnCounterpartyCommand = CreateAskTransferCounterpartyCommand(
 			}
 		case 0:
 			errorMessage := whc.Translate(trans.MESSAGE_TEXT_COUNTERPARTY_HAS_EMPTY_BALANCE, counterparty.Data.FullName())
-			logus.Debugf(c, "Balance is empty: "+errorMessage)
+			logus.Debugf(ctx, "Balance is empty: "+errorMessage)
 			m = whc.NewMessage(errorMessage)
 		default:
 			buttons := make([][]string, len(balanceWithInterest)+1)
@@ -174,7 +174,7 @@ func processReturnCommand(whc botsfw.WebhookContext, returnValue decimal.Decimal
 	if returnValue < 0 {
 		panic(fmt.Sprintf("returnValue < 0: %v", returnValue))
 	}
-	c := whc.Context()
+	ctx := whc.Context()
 	chatEntity := whc.ChatData()
 	var (
 		spaceID        string
@@ -188,7 +188,7 @@ func processReturnCommand(whc botsfw.WebhookContext, returnValue decimal.Decimal
 	if err != nil {
 		return m, err
 	}
-	counterpartyBalanceWithInterest, err := counterparty.Data.BalanceWithInterest(c, time.Now())
+	counterpartyBalanceWithInterest, err := counterparty.Data.BalanceWithInterest(ctx, time.Now())
 	if err != nil {
 		err = fmt.Errorf("failed to get balance with interest for contact %v: %v", counterparty.ID, err)
 		return
@@ -232,8 +232,8 @@ const ASK_HOW_MUCH_HAVE_BEEN_RETURNED = "ask-how-much-have-been-returned"
 var AskHowMuchHaveBeenReturnedCommand = botsfw.Command{
 	Code: ASK_HOW_MUCH_HAVE_BEEN_RETURNED,
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-		c := whc.Context()
-		logus.Debugf(c, "AskHowMuchHaveBeenReturnedCommand.Action()")
+		ctx := whc.Context()
+		logus.Debugf(ctx, "AskHowMuchHaveBeenReturnedCommand.Action()")
 		chatEntity := whc.ChatData()
 		if chatEntity.IsAwaitingReplyTo(ASK_HOW_MUCH_HAVE_BEEN_RETURNED) {
 			return TryToProcessHowMuchHasBeenReturned(whc)
@@ -268,7 +268,7 @@ var AskToChooseDebtToReturnCommand = botsfw.Command{
 		AskIfReturnedInFullCommand,
 	},
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-		c := whc.Context()
+		ctx := whc.Context()
 		spaceID, contactID, _, _ := getReturnWizardParams(whc)
 		var (
 			theCounterparty models4debtus.DebtusSpaceContactEntry
@@ -296,7 +296,7 @@ var AskToChooseDebtToReturnCommand = botsfw.Command{
 			for _, counterpartyItem := range counterparties {
 				counterpartyItemTitle := counterpartyItem.Data.FullName()
 				if counterpartyItemTitle == counterpartyTitle {
-					if balance, err = counterpartyItem.Data.BalanceWithInterest(c, now); err != nil {
+					if balance, err = counterpartyItem.Data.BalanceWithInterest(ctx, now); err != nil {
 						err = fmt.Errorf("failed to get balance with interest for contact %v: %w", counterpartyItem.ID, err)
 						return
 					}
@@ -315,7 +315,7 @@ var AskToChooseDebtToReturnCommand = botsfw.Command{
 			if counterparty, err = getDebtusSpaceContact(whc, spaceID, contactID); err != nil {
 				return m, err
 			}
-			if balance, err = counterparty.Data.BalanceWithInterest(c, time.Now()); err != nil {
+			if balance, err = counterparty.Data.BalanceWithInterest(ctx, time.Now()); err != nil {
 				err = fmt.Errorf("failed to get balance with interest for contact %v: %w", counterparty.ID, err)
 				return
 			}
@@ -336,11 +336,11 @@ var AskToChooseDebtToReturnCommand = botsfw.Command{
 }
 
 func CreateReturnAndShowReceipt(whc botsfw.WebhookContext, returnToTransferID string, counterpartyID string, direction models4debtus.TransferDirection, returnAmount money.Amount) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
-	logus.Debugf(c, "CreateReturnAndShowReceipt(returnToTransferID=%s, counterpartyID=%s)", returnToTransferID, counterpartyID)
+	ctx := whc.Context()
+	logus.Debugf(ctx, "CreateReturnAndShowReceipt(returnToTransferID=%s, counterpartyID=%s)", returnToTransferID, counterpartyID)
 
 	if returnAmount.Value < 0 {
-		logus.Warningf(c, "returnAmount.Value < 0: %v", returnAmount.Value)
+		logus.Warningf(ctx, "returnAmount.Value < 0: %v", returnAmount.Value)
 		returnAmount.Value = returnAmount.Value.Abs()
 	}
 
@@ -352,7 +352,7 @@ func CreateReturnAndShowReceipt(whc botsfw.WebhookContext, returnToTransferID st
 	if m, err = CreateTransferFromBot(whc, true, returnToTransferID, direction, creatorInfo, returnAmount, time.Time{}, models4debtus.NoInterest()); err != nil {
 		return m, err
 	}
-	logus.Debugf(c, "createReturnAndShowReceipt(): %v", m)
+	logus.Debugf(ctx, "createReturnAndShowReceipt(): %v", m)
 	return m, err
 }
 

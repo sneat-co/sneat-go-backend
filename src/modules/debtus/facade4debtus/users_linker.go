@@ -25,7 +25,7 @@ func newUsersLinker(changes *usersLinkingDbChanges) *usersLinker {
 }
 
 func (linker *usersLinker) linkUsersWithinTransaction(
-	tc context.Context, // 'tc' is transactional context, 'c' is not
+	tctx context.Context, // 'tc' is transactional context, 'c' is not
 	tx dal.ReadwriteTransaction,
 	linkedBy string,
 ) (
@@ -43,7 +43,7 @@ func (linker *usersLinker) linkUsersWithinTransaction(
 	//	//invitedContact = new(models4debtus.DebtusSpaceContactEntry)
 	//}
 
-	logus.Debugf(tc, "usersLinker.linkUsersWithinTransaction(inviterUser.ContactID=%s, invitedUser.ContactID=%s, inviterContact=%s, inviterContact.UserID=%s)",
+	logus.Debugf(tctx, "usersLinker.linkUsersWithinTransaction(inviterUser.ContactID=%s, invitedUser.ContactID=%s, inviterContact=%s, inviterContact.UserID=%s)",
 		inviter.user.ID, invited.user.ID, inviter.contact.ID, inviter.contact.Data.UserID)
 
 	// First lets validate input
@@ -58,7 +58,7 @@ func (linker *usersLinker) linkUsersWithinTransaction(
 
 	// Update entities
 	{
-		if err = linker.getOrCreateInvitedContactByInviterUserAndInviterContact(tc, tx, changes); err != nil {
+		if err = linker.getOrCreateInvitedContactByInviterUserAndInviterContact(tctx, tx, changes); err != nil {
 			return
 		}
 
@@ -72,13 +72,13 @@ func (linker *usersLinker) linkUsersWithinTransaction(
 			return fmt.Errorf("invitedContact.UserID != invitedUser.ContactID: %v != %v", invited.contact.Data.UserID, invited.user.ID)
 		}
 
-		logus.Debugf(tc, "getOrCreateInvitedContactByInviterUserAndInviterContact() => invitedContact.ContactID: %v", invited.contact.ID)
+		logus.Debugf(tctx, "getOrCreateInvitedContactByInviterUserAndInviterContact() => invitedContact.ContactID: %v", invited.contact.ID)
 
-		if err = linker.updateInvitedUser(tc, invited.user, invited.debtusSpace, inviter.user.ID, inviter.debtusContact); err != nil {
+		if err = linker.updateInvitedUser(tctx, invited.user, invited.debtusSpace, inviter.user.ID, inviter.debtusContact); err != nil {
 			return
 		}
 
-		if _, err = linker.updateInviterContact(tc, inviter, invited, linkedBy); err != nil {
+		if _, err = linker.updateInviterContact(tctx, inviter, invited, linkedBy); err != nil {
 			return
 		}
 	}
@@ -130,12 +130,12 @@ func (linker *usersLinker) validateInput(
 
 // Purpose of the function is an attempt to link existing counterparties
 func (linker *usersLinker) getOrCreateInvitedContactByInviterUserAndInviterContact(
-	tc context.Context,
+	tctx context.Context,
 	tx dal.ReadwriteTransaction,
 	changes *usersLinkingDbChanges,
 ) (err error) {
 	inviter, invited := changes.inviter, changes.invited
-	logus.Debugf(tc, "getOrCreateInvitedContactByInviterUserAndInviterContact()\n\tinviterContact.ContactID: %v", inviter.contact.ID)
+	logus.Debugf(tctx, "getOrCreateInvitedContactByInviterUserAndInviterContact()\n\tinviterContact.ContactID: %v", inviter.contact.ID)
 	if inviter.user.ID == invited.user.ID {
 		panic(fmt.Sprintf("inviterUser.ContactID == invitedUser.ContactID: %v", inviter.user.ID))
 	}
@@ -143,7 +143,7 @@ func (linker *usersLinker) getOrCreateInvitedContactByInviterUserAndInviterConta
 	if len(invited.contactusSpace.Data.Contacts) > 0 {
 		var invitedUserContacts []models4debtus.DebtusSpaceContactEntry
 		// Use non transaction context
-		invitedUserContacts, err = GetDebtusSpaceContactsByIDs(tc, tx, invited.spaceID, invited.contactusSpace.Data.ContactIDs())
+		invitedUserContacts, err = GetDebtusSpaceContactsByIDs(tctx, tx, invited.spaceID, invited.contactusSpace.Data.ContactIDs())
 		if err != nil {
 			err = fmt.Errorf("failed to call facade4debtus.GetDebtusSpaceContactsByIDs(): %w", err)
 			return
@@ -152,7 +152,7 @@ func (linker *usersLinker) getOrCreateInvitedContactByInviterUserAndInviterConta
 			if invitedUserContact.Data.CounterpartyUserID == inviter.user.ID {
 				// We re-get the entity of the found invitedContact using transactional context
 				// and store it to output var
-				if invited.debtusContact, err = GetDebtusSpaceContactByID(tc, tx, invited.spaceID, invitedUserContact.ID); err != nil {
+				if invited.debtusContact, err = GetDebtusSpaceContactByID(tctx, tx, invited.spaceID, invitedUserContact.ID); err != nil {
 					err = fmt.Errorf("failed to call GetDebtusSpaceContactByID(%s): %w", invitedUserContact.ID, err)
 					return
 				}
@@ -168,7 +168,7 @@ func (linker *usersLinker) getOrCreateInvitedContactByInviterUserAndInviterConta
 	}
 
 	if invited.debtusContact.ID == "" {
-		logus.Debugf(tc, "getOrCreateInvitedContactByInviterUserAndInviterContact(): creating new Contact for invited user")
+		logus.Debugf(tctx, "getOrCreateInvitedContactByInviterUserAndInviterContact(): creating new Contact for invited user")
 		invitedContactDetails := dto4contactus.ContactDetails{
 			NameFields: *inviter.user.Data.Names,
 		}
@@ -181,7 +181,7 @@ func (linker *usersLinker) getOrCreateInvitedContactByInviterUserAndInviterConta
 				DebtusContact: changes.inviter.debtusContact,
 			},
 		}
-		if err = createContactWithinTransaction(tc, tx, createContactDbChanges, inviter.spaceID, inviter.user.ID, invitedContactDetails); err != nil {
+		if err = createContactWithinTransaction(tctx, tx, createContactDbChanges, inviter.spaceID, inviter.user.ID, invitedContactDetails); err != nil {
 			return
 		}
 		//if changes.inviter.contact.ID == "" {
@@ -193,7 +193,7 @@ func (linker *usersLinker) getOrCreateInvitedContactByInviterUserAndInviterConta
 			linker.changes.FlagAsChanged(invited.debtusSpace.Record)
 		}
 	} else {
-		logus.Debugf(tc, "getOrCreateInvitedContactByInviterUserAndInviterContact(): linking existing Contact: %v", invited.contact)
+		logus.Debugf(tctx, "getOrCreateInvitedContactByInviterUserAndInviterContact(): linking existing Contact: %v", invited.contact)
 		// TODO: How do we merge existing contacts?
 		invited.debtusContact.Data.CountOfTransfers = inviter.debtusContact.Data.CountOfTransfers
 		invited.debtusContact.Data.LastTransferID = inviter.debtusContact.Data.LastTransferID
@@ -205,13 +205,13 @@ func (linker *usersLinker) getOrCreateInvitedContactByInviterUserAndInviterConta
 	return
 }
 
-func (linker *usersLinker) updateInvitedUser(c context.Context,
+func (linker *usersLinker) updateInvitedUser(ctx context.Context,
 	invitedUser dbo4userus.UserEntry,
 	invitedDebtusSpace models4debtus.DebtusSpaceEntry,
 	inviterUserID string,
 	inviterDebtusContact models4debtus.DebtusSpaceContactEntry,
 ) (err error) {
-	logus.Debugf(c, "usersLinker.updateInvitedUser()")
+	logus.Debugf(ctx, "usersLinker.updateInvitedUser()")
 	var invitedUserChanged bool
 
 	if invitedUser.Data.InvitedByUserID == "" {
@@ -233,14 +233,14 @@ func (linker *usersLinker) updateInvitedUser(c context.Context,
 
 // Updates counterparty entity that belongs to inviter user (inviterContact.UserID == inviterUser.ContactID)
 func (linker *usersLinker) updateInviterContact(
-	tc context.Context,
+	tctx context.Context,
 	inviter *userLinkingParty,
 	invited *userLinkingParty,
 	linkedBy string,
 ) (
 	isJustConnected bool, err error,
 ) {
-	logus.Debugf(tc, "usersLinker.updateInviterContact(), inviterContact.CounterpartyUserID: %s, inviterContact.CountOfTransfers: %d", inviter.debtusContact.Data.CounterpartyUserID, inviter.debtusContact.Data.CountOfTransfers)
+	logus.Debugf(tctx, "usersLinker.updateInviterContact(), inviterContact.CounterpartyUserID: %s, inviterContact.CountOfTransfers: %d", inviter.debtusContact.Data.CounterpartyUserID, inviter.debtusContact.Data.CountOfTransfers)
 	// validate input
 	{
 		if inviter.user.ID == "" {
@@ -285,7 +285,7 @@ func (linker *usersLinker) updateInviterContact(
 	}
 	switch inviter.contact.Data.UserID {
 	case "":
-		logus.Debugf(tc, "Updating inviterUser.DebtusSpaceContactEntry* fields...")
+		logus.Debugf(tctx, "Updating inviterUser.DebtusSpaceContactEntry* fields...")
 		isJustConnected = true
 		inviterContactChanged = true
 		inviter.contact.Data.UserID = invited.user.ID
@@ -317,7 +317,7 @@ func (linker *usersLinker) updateInviterContact(
 		// Queue task to update all existing api4transfers
 		if inviter.debtusContact.Data.CountOfTransfers > 0 {
 			if err = dtdal.Transfer.DelayUpdateTransfersWithCounterparty(
-				tc,
+				tctx,
 				invited.contact.ID,
 				inviter.contact.ID,
 			); err != nil {
@@ -325,10 +325,10 @@ func (linker *usersLinker) updateInviterContact(
 				return
 			}
 		} else {
-			logus.Debugf(tc, "No need to update api4transfers of inviter as inviterContact.CountOfTransfers == 0")
+			logus.Debugf(tctx, "No need to update api4transfers of inviter as inviterContact.CountOfTransfers == 0")
 		}
 	case invited.user.ID:
-		logus.Infof(tc, "inviterContact.CounterpartyUserID is already set, updateInviterContact() did nothing")
+		logus.Infof(tctx, "inviterContact.CounterpartyUserID is already set, updateInviterContact() did nothing")
 	default:
 		err = fmt.Errorf("inviterContact.CounterpartyUserID is different from current user. inviterContact.CounterpartyUserID: %s, currentUserID: %s", inviter.debtusContact.Data.CounterpartyUserID, invited.user.ID)
 		return

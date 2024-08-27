@@ -27,7 +27,7 @@ type UserCounterpartiesResponse struct {
 	Counterparties []dto4debtus.ContactListDto
 }
 
-func HandleCreateCounterparty(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
+func HandleCreateCounterparty(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	if err := r.ParseForm(); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte(err.Error()))
@@ -57,13 +57,13 @@ func HandleCreateCounterparty(c context.Context, w http.ResponseWriter, r *http.
 	}
 	var err error
 	var debtusContact models4debtus.DebtusSpaceContactEntry
-	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-		_, _, debtusContact, err = facade4debtus.CreateContact(c, tx, authInfo.UserID, spaceID, contactDetails)
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+		_, _, debtusContact, err = facade4debtus.CreateContact(ctx, tx, authInfo.UserID, spaceID, contactDetails)
 		return err
 	})
 
 	if err != nil {
-		api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
+		api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 		return
 	}
 	_, _ = w.Write([]byte(debtusContact.ID))
@@ -78,7 +78,7 @@ func getContactID(w http.ResponseWriter, query url.Values) string {
 	return counterpartyID
 }
 
-func HandleGetContact(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
+func HandleGetContact(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	query := r.URL.Query()
 	contactID := getContactID(w, query)
 	spaceID := query.Get("spaceID")
@@ -88,7 +88,7 @@ func HandleGetContact(c context.Context, w http.ResponseWriter, r *http.Request,
 
 	var db dal.DB
 	var err error
-	if db, err = facade.GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(ctx); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
 		return
@@ -97,12 +97,12 @@ func HandleGetContact(c context.Context, w http.ResponseWriter, r *http.Request,
 	contact := dal4contactus.NewContactEntry(spaceID, contactID)
 	debtusContact := models4debtus.NewDebtusSpaceContactEntry(spaceID, contactID, nil)
 
-	if err = db.GetMulti(c, []dal.Record{contact.Record, debtusContact.Record}); err != nil {
+	if err = db.GetMulti(ctx, []dal.Record{contact.Record, debtusContact.Record}); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
-	contactToResponse(c, w, authInfo, contact, debtusContact)
+	contactToResponse(ctx, w, authInfo, contact, debtusContact)
 }
 
 func contactToResponse(
@@ -187,11 +187,11 @@ func contactToResponse(
 //
 //}
 
-func HandleDeleteContact(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
-	logus.Debugf(c, "HandleDeleteContact()")
+func HandleDeleteContact(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
+	logus.Debugf(ctx, "HandleDeleteContact()")
 	//err := r.ParseForm()
 	//if err != nil {
-	//	BadRequestError(c, hashedWriter, err)
+	//	BadRequestError(ctx, hashedWriter, err)
 	//	return
 	//}
 	contactID := getContactID(w, r.URL.Query())
@@ -199,19 +199,19 @@ func HandleDeleteContact(c context.Context, w http.ResponseWriter, r *http.Reque
 	if contactID == "" {
 		return
 	}
-	logus.Debugf(c, "contactID: %v", contactID)
+	logus.Debugf(ctx, "contactID: %v", contactID)
 	userCtx := facade.NewUserContext("")
-	if err := facade4debtus.DeleteContact(c, userCtx, spaceID, contactID); err != nil {
-		api4debtus.InternalError(c, w, err)
+	if err := facade4debtus.DeleteContact(ctx, userCtx, spaceID, contactID); err != nil {
+		api4debtus.InternalError(ctx, w, err)
 		return
 	}
-	logus.Infof(c, "DebtusSpaceContactEntry deleted: %v", contactID)
+	logus.Infof(ctx, "DebtusSpaceContactEntry deleted: %v", contactID)
 }
 
-func HandleArchiveCounterparty(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
+func HandleArchiveCounterparty(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	//err := r.ParseForm()
 	//if err != nil {
-	//	BadRequestError(c, hashedWriter, err)
+	//	BadRequestError(ctx, hashedWriter, err)
 	//	return
 	//}
 	contactID := getContactID(w, r.URL.Query())
@@ -220,18 +220,18 @@ func HandleArchiveCounterparty(c context.Context, w http.ResponseWriter, r *http
 		return
 	}
 	userCtx := facade.NewUserContext("")
-	if contact, debtusContact, err := facade4debtus.ChangeContactStatus(c, userCtx, spaceID, contactID, const4debtus.StatusArchived); err != nil {
-		api4debtus.InternalError(c, w, err)
+	if contact, debtusContact, err := facade4debtus.ChangeContactStatus(ctx, userCtx, spaceID, contactID, const4debtus.StatusArchived); err != nil {
+		api4debtus.InternalError(ctx, w, err)
 		return
 	} else {
-		contactToResponse(c, w, authInfo, contact, debtusContact)
+		contactToResponse(ctx, w, authInfo, contact, debtusContact)
 	}
 }
 
-func HandleActivateCounterparty(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
+func HandleActivateCounterparty(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	//err := r.ParseForm()
 	//if err != nil {
-	//	BadRequestError(c, hashedWriter, err)
+	//	BadRequestError(ctx, hashedWriter, err)
 	//	return
 	//}
 
@@ -241,15 +241,15 @@ func HandleActivateCounterparty(c context.Context, w http.ResponseWriter, r *htt
 	if contactID == "" {
 		return
 	}
-	if contact, debtusContact, err := facade4debtus.ChangeContactStatus(c, userCtx, spaceID, contactID, const4debtus.StatusActive); err != nil {
-		api4debtus.InternalError(c, w, err)
+	if contact, debtusContact, err := facade4debtus.ChangeContactStatus(ctx, userCtx, spaceID, contactID, const4debtus.StatusActive); err != nil {
+		api4debtus.InternalError(ctx, w, err)
 		return
 	} else {
-		contactToResponse(c, w, authInfo, contact, debtusContact)
+		contactToResponse(ctx, w, authInfo, contact, debtusContact)
 	}
 }
 
-func HandleUpdateCounterparty(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
+func HandleUpdateCounterparty(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	counterpartyID := getContactID(w, r.URL.Query())
 	if counterpartyID == "" {
 		return
@@ -269,11 +269,11 @@ func HandleUpdateCounterparty(c context.Context, w http.ResponseWriter, r *http.
 		}
 	}
 
-	if debtusContact, err := facade4debtus.UpdateContact(c, spaceID, counterpartyID, values); err != nil {
-		api4debtus.InternalError(c, w, err)
+	if debtusContact, err := facade4debtus.UpdateContact(ctx, spaceID, counterpartyID, values); err != nil {
+		api4debtus.InternalError(ctx, w, err)
 		return
 	} else {
 		contact := dal4contactus.NewContactEntry(spaceID, debtusContact.ID)
-		contactToResponse(c, w, authInfo, contact, debtusContact)
+		contactToResponse(ctx, w, authInfo, contact, debtusContact)
 	}
 }

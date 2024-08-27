@@ -16,10 +16,10 @@ import (
 var ErrUnauthorized = errors.New("unauthorized")
 var ErrBadRequest = errors.New("bad request")
 
-func signInFbUser(c context.Context, fbAppID, fbUserID string, r *http.Request, authInfo token4auth.AuthInfo) (
+func signInFbUser(ctx context.Context, fbAppID, fbUserID string, r *http.Request, authInfo token4auth.AuthInfo) (
 	user dbo4userus.UserEntry, isNewUser bool, userFacebook models4auth.UserFacebook, fbApp *fb.App, fbSession *fb.Session, err error,
 ) {
-	logus.Debugf(c, "api4debtus.signInFbUser()")
+	logus.Debugf(ctx, "api4debtus.signInFbUser()")
 
 	if fbAppID == "" {
 		panic("fbAppID is empty string")
@@ -40,7 +40,7 @@ func signInFbUser(c context.Context, fbAppID, fbUserID string, r *http.Request, 
 			return
 		} else if accessToken != "" {
 			panic("not imlemented")
-			//_, fbSession, err = debtusfbmbots.FbAppAndSessionFromAccessToken(c, r, accessToken)
+			//_, fbSession, err = debtusfbmbots.FbAppAndSessionFromAccessToken(ctx, r, accessToken)
 		} else if signedRequest != "" {
 			panic("not imlemented")
 			//var (
@@ -68,12 +68,12 @@ func signInFbUser(c context.Context, fbAppID, fbUserID string, r *http.Request, 
 			//		pageID = strconv.FormatFloat(signedData.Get("page_id").(float64), 'f', 0, 64)
 			//	}
 			//
-			//	logus.Debugf(c, "pageID: %v, signedData: %v", pageID, signedData)
-			//	if fbmBot, ok := debtusfbmbots.Bots(c).ByID[pageID]; !ok {
+			//	logus.Debugf(ctx, "pageID: %v, signedData: %v", pageID, signedData)
+			//	if fbmBot, ok := debtusfbmbots.Bots(ctx).ByID[pageID]; !ok {
 			//		err = errors.New("ReferredTo settings not found by page ContactID=" + pageID)
 			//	} else {
 			//		isFbm = true
-			//		_, fbSession, err = debtusfbmbots.FbAppAndSessionFromAccessToken(c, r, fbmBot.Token)
+			//		_, fbSession, err = debtusfbmbots.FbAppAndSessionFromAccessToken(ctx, r, fbmBot.Token)
 			//	}
 			//} else {
 			//	err = fmt.Errorf("Not implemented for signed request: %v", signedData)
@@ -89,7 +89,7 @@ func signInFbUser(c context.Context, fbAppID, fbUserID string, r *http.Request, 
 		//}
 	}
 
-	//if userFacebook, err = dtdal.UserFacebook.GetFbUserByFbID(c, fbAppID, fbUserID); err != nil && !dal.IsNotFound(err) {
+	//if userFacebook, err = dtdal.UserFacebook.GetFbUserByFbID(ctx, fbAppID, fbUserID); err != nil && !dal.IsNotFound(err) {
 	//	err = fmt.Errorf("%w: Failed to get UserFacebook record by ContactID", err)
 	//	return
 	//} else if !dal.IsNotFound(err) && fbUserID != "" && fbUserID != userFacebook.FbUserOrPageScopeID {
@@ -98,11 +98,11 @@ func signInFbUser(c context.Context, fbAppID, fbUserID string, r *http.Request, 
 	//}
 	//
 	//if accessToken != "" || userFacebook.Data == nil || userFacebook.Data.DtUpdated.Before(time.Now().Add(-1*time.Hour)) {
-	//	if user, userFacebook, isNewUser, err = createOrUpdateFbUserDbRecord(c, isFbm, fbAppID, fbUserID, fbSession, authInfo, models.NewClientInfoFromRequest(r)); err != nil {
+	//	if user, userFacebook, isNewUser, err = createOrUpdateFbUserDbRecord(ctx, isFbm, fbAppID, fbUserID, fbSession, authInfo, models.NewClientInfoFromRequest(r)); err != nil {
 	//		return
 	//	}
 	//} else {
-	//	logus.Debugf(c, "Not updating FB user db record as last updated less then an hour ago")
+	//	logus.Debugf(ctx, "Not updating FB user db record as last updated less then an hour ago")
 	//}
 	//
 	//if err != nil {
@@ -116,7 +116,7 @@ func signInFbUser(c context.Context, fbAppID, fbUserID string, r *http.Request, 
 	//return
 }
 
-//func getFbUserInfo(c context.Context, fbSession *fb.Session, isFbm bool, fbUserID string,
+//func getFbUserInfo(ctx context.Context, fbSession *fb.Session, isFbm bool, fbUserID string,
 //) (
 //	emailConfirmed bool, email, firstName, lastName string, err error,
 //) {
@@ -154,31 +154,31 @@ func signInFbUser(c context.Context, fbAppID, fbUserID string, r *http.Request, 
 //	return
 //}
 //
-//func createOrUpdateFbUserDbRecord(c context.Context, isFbm bool, fbAppID, fbUserID string, fbSession *fb.Session, authInfo auth.AuthInfo, clientInfo models.ClientInfo) (user models.AppUserOBSOLETE, userFacebook models.UserFacebook, isNewUser bool, err error) {
+//func createOrUpdateFbUserDbRecord(ctx context.Context, isFbm bool, fbAppID, fbUserID string, fbSession *fb.Session, authInfo auth.AuthInfo, clientInfo models.ClientInfo) (user models.AppUserOBSOLETE, userFacebook models.UserFacebook, isNewUser bool, err error) {
 //	var (
 //		emailConfirmed             bool
 //		email, firstName, lastName string
 //	)
 //	emailConfirmed, email, firstName, lastName, err = getFbUserInfo(c, fbSession, isFbm, fbUserID)
 //
-//	userFacebook, user, err = facade4debtus.UserEntry.GetOrCreateUserFacebookOnSignIn(c, authInfo.UserID, fbAppID, fbUserID, firstName, lastName, email, emailConfirmed, clientInfo)
+//	userFacebook, user, err = facade4debtus.UserEntry.GetOrCreateUserFacebookOnSignIn(ctx, authInfo.UserID, fbAppID, fbUserID, firstName, lastName, email, emailConfirmed, clientInfo)
 //	if err != nil {
 //		return
 //	}
 //	return
 //}
 
-func authWriteResponseForAuthFailed(c context.Context, w http.ResponseWriter, err error) {
+func authWriteResponseForAuthFailed(ctx context.Context, w http.ResponseWriter, err error) {
 	if errors.Is(err, ErrUnauthorized) {
 		w.WriteHeader(http.StatusUnauthorized)
-		logus.Debugf(c, err.Error())
+		logus.Debugf(ctx, err.Error())
 	} else {
 		w.WriteHeader(http.StatusInternalServerError)
-		logus.Errorf(c, "Auth failed: %v", err.Error())
+		logus.Errorf(ctx, "Auth failed: %v", err.Error())
 	}
 	_, _ = w.Write([]byte(err.Error()))
 }
 
-func authWriteResponseForUser(c context.Context, w http.ResponseWriter, user dbo4userus.UserEntry, issuer string, isNewUser bool) {
-	api4debtus.ReturnToken(c, w, user.ID, issuer, isNewUser, user.Data.EmailVerified && api4debtus.IsAdmin(user.Data.Email))
+func authWriteResponseForUser(ctx context.Context, w http.ResponseWriter, user dbo4userus.UserEntry, issuer string, isNewUser bool) {
+	api4debtus.ReturnToken(ctx, w, user.ID, issuer, isNewUser, user.Data.EmailVerified && api4debtus.IsAdmin(user.Data.Email))
 }

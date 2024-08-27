@@ -10,7 +10,7 @@ package dtb_fbm
 //	"github.com/bots-go-framework/bots-fw/botsfw"
 //)
 //
-//func SetWhitelistedDomains(c context.Context, r *http.Request, bot botsfw.BotSettings, api4debtus fbmbotapi.GraphAPI) (err error) {
+//func SetWhitelistedDomains(ctx context.Context, r *http.Request, bot botsfw.BotSettings, api4debtus fbmbotapi.GraphAPI) (err error) {
 //	var whitelistedDomainsMessage fbmbotapi.WhitelistedDomainsMessage
 //	switch bot.Env {
 //	case strongoapp.EnvProduction:

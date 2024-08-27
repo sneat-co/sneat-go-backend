@@ -22,8 +22,8 @@ import (
 	"time"
 )
 
-func sendReminderByTelegram(c context.Context, transfer models4debtus.TransferEntry, reminder models4debtus.Reminder, tgChatID int64, tgBot string) (sent, channelDisabledByUser bool, err error) {
-	logus.Debugf(c, "sendReminderByTelegram(transfer.ContactID=%v, reminder.ContactID=%v, tgChatID=%v, tgBot=%v)", transfer.ID, reminder.ID, tgChatID, tgBot)
+func sendReminderByTelegram(ctx context.Context, transfer models4debtus.TransferEntry, reminder models4debtus.Reminder, tgChatID int64, tgBot string) (sent, channelDisabledByUser bool, err error) {
+	logus.Debugf(ctx, "sendReminderByTelegram(transfer.ContactID=%v, reminder.ContactID=%v, tgChatID=%v, tgBot=%v)", transfer.ID, reminder.ID, tgChatID, tgBot)
 
 	if tgChatID == 0 {
 		panic("tgChatID == 0")
@@ -34,24 +34,24 @@ func sendReminderByTelegram(c context.Context, transfer models4debtus.TransferEn
 
 	var locale i18n.Locale
 
-	if locale, err = facade4debtus.GetLocale(c, tgBot, tgChatID, reminder.Data.UserID); err != nil {
+	if locale, err = facade4debtus.GetLocale(ctx, tgBot, tgChatID, reminder.Data.UserID); err != nil {
 		return
 	}
 
 	//if !tgChat.DtForbidden.IsZero() {
-	//	logus.Infof(c, "Telegram chat(id=%v) is not available since: %v", tgChatID, tgChat.DtForbidden)
+	//	logus.Infof(ctx, "Telegram chat(id=%v) is not available since: %v", tgChatID, tgChat.DtForbidden)
 	//	return false
 	//}
 
-	translator := i18n.NewSingleMapTranslator(locale, i18n.NewMapTranslator(c, trans.TRANS))
+	translator := i18n.NewSingleMapTranslator(locale, i18n.NewMapTranslator(ctx, trans.TRANS))
 
-	env := dtdal.HttpAppHost.GetEnvironment(c, nil)
+	env := dtdal.HttpAppHost.GetEnvironment(ctx, nil)
 
 	if botSettings, ok := debtustgbots.Bots(env).ByCode[tgBot]; !ok {
 		err = fmt.Errorf("bot settings not found (env=%v, tgBotID=%v)", env, tgBot)
 		return
 	} else {
-		tgBotApi := tgbotapi.NewBotAPIWithClient(botSettings.Token, dtdal.HttpClient(c))
+		tgBotApi := tgbotapi.NewBotAPIWithClient(botSettings.Token, dtdal.HttpClient(ctx))
 		messageText := fmt.Sprintf(
 			"<b>%v</b>\n%v\n\n",
 			translator.Translate(trans.MESSAGE_TEXT_REMINDER),
@@ -63,12 +63,12 @@ func sendReminderByTelegram(c context.Context, transfer models4debtus.TransferEn
 			Medium:   telegram.PlatformID,
 			Campaign: common4debtus.UTM_CAMPAIGN_REMINDER,
 		}
-		messageText += common4debtus.TextReceiptForTransfer(c, translator, transfer, reminder.Data.UserID, common4debtus.ShowReceiptToAutodetect, utm)
+		messageText += common4debtus.TextReceiptForTransfer(ctx, translator, transfer, reminder.Data.UserID, common4debtus.ShowReceiptToAutodetect, utm)
 
 		messageConfig := tgbotapi.NewMessage(tgChatID, messageText)
 
-		err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
-			reminder, err = dtdal.Reminder.GetReminderByID(c, tx, reminder.ID)
+		err = facade.RunReadwriteTransaction(ctx, func(tctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+			reminder, err = dtdal.Reminder.GetReminderByID(ctx, tx, reminder.ID)
 			if err != nil {
 				return err
 			}
@@ -88,50 +88,50 @@ func sendReminderByTelegram(c context.Context, transfer models4debtus.TransferEn
 			message, err := tgBotApi.Send(messageConfig)
 			if err != nil {
 				if _, isForbidden := err.(tgbotapi.ErrAPIForbidden); isForbidden { // TODO: Mark chat as deleted?
-					logus.Infof(c, "Telegram bot API returned status 'forbidden' - either issue with token or chat deleted by user")
-					if err2 := DelaySetChatIsForbidden(c, botSettings.Code, tgChatID, time.Now()); err2 != nil {
-						logus.Errorf(c, "Failed to delay to set chat as forbidden: %v", err2)
+					logus.Infof(ctx, "Telegram bot API returned status 'forbidden' - either issue with token or chat deleted by user")
+					if err2 := DelaySetChatIsForbidden(ctx, botSettings.Code, tgChatID, time.Now()); err2 != nil {
+						logus.Errorf(ctx, "Failed to delay to set chat as forbidden: %v", err2)
 					}
 					channelDisabledByUser = true
 					return nil // Do not pass error up
 				} else {
-					logus.Debugf(c, "messageConfig.Text: %v", messageConfig.Text)
+					logus.Debugf(ctx, "messageConfig.Text: %v", messageConfig.Text)
 					return fmt.Errorf("Failed in call to Telegram API: %w", err)
 				}
 			}
 			sent = true
-			logus.Infof(c, "Sent message to telegram. MessageID: %v", message.MessageID)
+			logus.Infof(ctx, "Sent message to telegram. MessageID: %v", message.MessageID)
 
-			if err = dtdal.Reminder.SetReminderIsSentInTransaction(tc, tx, reminder, time.Now(), int64(message.MessageID), "", locale.Code5, ""); err != nil {
-				err = dtdal.Reminder.DelaySetReminderIsSent(tc, reminder.ID, time.Now(), int64(message.MessageID), "", locale.Code5, "")
+			if err = dtdal.Reminder.SetReminderIsSentInTransaction(tctx, tx, reminder, time.Now(), int64(message.MessageID), "", locale.Code5, ""); err != nil {
+				err = dtdal.Reminder.DelaySetReminderIsSent(tctx, reminder.ID, time.Now(), int64(message.MessageID), "", locale.Code5, "")
 			}
 			//
 			return
 		}, nil)
 
 		if err != nil {
-			logus.Errorf(c, fmt.Errorf("error while sending by Telegram: %w", err).Error())
+			logus.Errorf(ctx, fmt.Errorf("error while sending by Telegram: %w", err).Error())
 			return
 		}
 		if sent {
-			analytics.ReminderSent(c, reminder.Data.UserID, translator.Locale().Code5, telegram.PlatformID)
+			analytics.ReminderSent(ctx, reminder.Data.UserID, translator.Locale().Code5, telegram.PlatformID)
 		}
 	}
 	return
 }
 
-func DelaySetChatIsForbidden(c context.Context, botID string, tgChatID int64, at time.Time) error {
-	return delaySetChatIsForbidden.EnqueueWork(c, delaying.With(queues.QueueChats, "set-chat-is-forbidden", 0), botID, tgChatID, at)
+func DelaySetChatIsForbidden(ctx context.Context, botID string, tgChatID int64, at time.Time) error {
+	return delaySetChatIsForbidden.EnqueueWork(ctx, delaying.With(queues.QueueChats, "set-chat-is-forbidden", 0), botID, tgChatID, at)
 }
 
-func SetChatIsForbidden(c context.Context, botID string, tgChatID int64, at time.Time) error {
-	logus.Debugf(c, "SetChatIsForbidden(tgChatID=%v, at=%v)", tgChatID, at)
+func SetChatIsForbidden(ctx context.Context, botID string, tgChatID int64, at time.Time) error {
+	logus.Debugf(ctx, "SetChatIsForbidden(tgChatID=%v, at=%v)", tgChatID, at)
 	panic("TODO: Implement SetChatIsForbidden")
-	//err := gaehost.MarkTelegramChatAsForbidden(c, botID, tgChatID, at)
+	//err := gaehost.MarkTelegramChatAsForbidden(ctx, botID, tgChatID, at)
 	//if err == nil {
-	//	logus.Infof(c, "Success")
+	//	logus.Infof(ctx, "Success")
 	//} else {
-	//	logus.Errorf(c, err.Error())
+	//	logus.Errorf(ctx, err.Error())
 	//	if err == datastore.ErrNoSuchEntity {
 	//		return nil // Do not re-try
 	//	}

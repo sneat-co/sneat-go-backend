@@ -17,11 +17,11 @@ func TransactionalCallbackAction(
 	f func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error),
 ) func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 	return func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-		c := whc.Context()
-		err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
-			whc.SetContext(tc)
+		ctx := whc.Context()
+		err = facade.RunReadwriteTransaction(ctx, func(tctx context.Context, tx dal.ReadwriteTransaction) error {
+			whc.SetContext(tctx)
 			m, err = f(whc, callbackUrl)
-			whc.SetContext(c)
+			whc.SetContext(ctx)
 			return err
 		})
 		return

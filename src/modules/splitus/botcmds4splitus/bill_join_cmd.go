@@ -38,7 +38,7 @@ var joinBillCommand = botsfw.Command{
 			err = errors.New("Missing bill ContactID")
 			return
 		}
-		if err = facade.RunReadwriteTransaction(whc.Context(), func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+		if err = facade.RunReadwriteTransaction(whc.Context(), func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 			if bill, err = facade4splitus.GetBillByID(whc.Context(), tx, bill.ID); err != nil {
 				return
 			}
@@ -53,8 +53,8 @@ var joinBillCommand = botsfw.Command{
 		_ = whc.AppUserID() // Make sure we have user before transaction starts, TODO: it smells, should be refactored?
 		//
 		return shared_all.TransactionalCallbackAction(billCallbackAction(func(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, callbackUrl *url.URL, bill models4splitus.BillEntry) (m botsfw.MessageFromBot, err error) {
-			c := whc.Context()
-			logus.Debugf(c, "joinBillCommand.CallbackAction()")
+			ctx := whc.Context()
+			logus.Debugf(ctx, "joinBillCommand.CallbackAction()")
 			memberStatus := callbackUrl.Query().Get("i")
 			m, err = joinBillAction(whc, tx, bill, memberStatus, true)
 			return
@@ -67,8 +67,8 @@ func joinBillAction(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, bill
 	if bill.ID == "" {
 		panic("bill.ContactID is empty string")
 	}
-	c := whc.Context()
-	logus.Debugf(c, "joinBillAction(bill.ContactID=%v)", bill.ID)
+	ctx := whc.Context()
+	logus.Debugf(ctx, "joinBillAction(bill.ContactID=%v)", bill.ID)
 
 	userID := whc.AppUserID()
 	var appUserData botsfwmodels.AppUserData
@@ -107,7 +107,7 @@ func joinBillAction(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, bill
 	}
 
 	if memberStatus == "" && isMember {
-		logus.Infof(c, "User is already member of the bill before transaction, memberStatus: "+memberStatus)
+		logus.Infof(ctx, "User is already member of the bill before transaction, memberStatus: "+memberStatus)
 		callbackAnswer := tgbotapi.NewCallback("", whc.Translate(trans.MESSAGE_TEXT_ALREADY_BILL_MEMBER, userName))
 		callbackAnswer.ShowAlert = true
 		m.BotMessage = telegram.CallbackAnswer(callbackAnswer)
@@ -116,19 +116,19 @@ func joinBillAction(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, bill
 			if m2, err := ShowBillCard(whc, true, bill, ""); err != nil {
 				return m2, err
 			} else if m2.Text != update.CallbackQuery.Message.Text {
-				logus.Debugf(c, "Need to update bill card")
-				if _, err = whc.Responder().SendMessage(c, m2, botsfw.BotAPISendMessageOverHTTPS); err != nil {
+				logus.Debugf(ctx, "Need to update bill card")
+				if _, err = whc.Responder().SendMessage(ctx, m2, botsfw.BotAPISendMessageOverHTTPS); err != nil {
 					return m2, err
 				}
 			} else {
-				logus.Debugf(c, "m.Text: %v", m2.Text)
+				logus.Debugf(ctx, "m.Text: %v", m2.Text)
 			}
 		}
 		return
 	}
 
-	//if err = dtdal.DB.RunInTransaction(c, func(c context.Context) (err error) {
-	//if bill, err = facade4debtus.GetBillByID(c, bill.ContactID); err != nil {
+	//if err = dtdal.DB.RunInTransaction(ctx, func(ctx context.Context) (err error) {
+	//if bill, err = facade4debtus.GetBillByID(ctx, bill.ContactID); err != nil {
 	//	return
 	//}
 
@@ -186,16 +186,16 @@ func joinBillAction(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, bill
 	}
 
 	billChanged2 := false
-	if bill, _, billChanged2, isJoined, err = facade4splitus.AddBillMember(c, tx, userID, bill, "", userID, userName, paid); err != nil {
+	if bill, _, billChanged2, isJoined, err = facade4splitus.AddBillMember(ctx, tx, userID, bill, "", userID, userName, paid); err != nil {
 		return
 	}
 	if billChanged = billChanged2 || billChanged; billChanged {
-		if err = facade4splitus.SaveBill(c, tx, bill); err != nil {
+		if err = facade4splitus.SaveBill(ctx, tx, bill); err != nil {
 			return
 		}
 		if isJoined {
-			if err = delayUpdateBillCardOnUserJoin(c, bill.ID, whc.Translate(fmt.Sprintf("%v: ", time.Now())+trans.MESSAGE_TEXT_USER_JOINED_BILL, userName)); err != nil {
-				logus.Errorf(c, "failed to daley update bill card on user join: %v", err)
+			if err = delayUpdateBillCardOnUserJoin(ctx, bill.ID, whc.Translate(fmt.Sprintf("%v: ", time.Now())+trans.MESSAGE_TEXT_USER_JOINED_BILL, userName)); err != nil {
+				logus.Errorf(ctx, "failed to daley update bill card on user join: %v", err)
 			}
 		}
 	}

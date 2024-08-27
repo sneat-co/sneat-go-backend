@@ -26,7 +26,7 @@ func _validateSetReminderIsSentMessageIDs(messageIntID int64, messageStrID strin
 	return nil
 }
 
-func (ReminderDalGae) DelaySetReminderIsSent(c context.Context, reminderID string, sentAt time.Time, messageIntID int64, messageStrID, locale, errDetails string) error {
+func (ReminderDalGae) DelaySetReminderIsSent(ctx context.Context, reminderID string, sentAt time.Time, messageIntID int64, messageStrID, locale, errDetails string) error {
 	if reminderID == "" {
 		return errors.New("reminderID == 0")
 	}
@@ -36,17 +36,17 @@ func (ReminderDalGae) DelaySetReminderIsSent(c context.Context, reminderID strin
 	if err := _validateSetReminderIsSentMessageIDs(messageIntID, messageStrID, sentAt); err != nil {
 		return err
 	}
-	if err := delayerSetReminderIsSent.EnqueueWork(c, delaying.With(queues.QueueReminders, "set-reminder-is-sent", 0), reminderID, sentAt, messageIntID, messageStrID, locale, errDetails); err != nil {
+	if err := delayerSetReminderIsSent.EnqueueWork(ctx, delaying.With(queues.QueueReminders, "set-reminder-is-sent", 0), reminderID, sentAt, messageIntID, messageStrID, locale, errDetails); err != nil {
 		return fmt.Errorf("failed to delay execution of delayedSetReminderIsSent: %w", err)
 	}
 	return nil
 }
 
-func delayedSetReminderIsSent(c context.Context, reminderID string, sentAt time.Time, messageIntID int64, messageStrID, locale, errDetails string) error {
-	return dtdal.Reminder.SetReminderIsSent(c, reminderID, sentAt, messageIntID, messageStrID, locale, errDetails)
+func delayedSetReminderIsSent(ctx context.Context, reminderID string, sentAt time.Time, messageIntID int64, messageStrID, locale, errDetails string) error {
+	return dtdal.Reminder.SetReminderIsSent(ctx, reminderID, sentAt, messageIntID, messageStrID, locale, errDetails)
 }
 
-func CreateSendReminderTask(c context.Context, reminderID string) *taskqueue.Task {
+func CreateSendReminderTask(_ context.Context, reminderID string) *taskqueue.Task {
 	if reminderID == "" {
 		panic("reminderID == 0")
 	}
@@ -54,13 +54,13 @@ func CreateSendReminderTask(c context.Context, reminderID string) *taskqueue.Tas
 	return t
 }
 
-func QueueSendReminder(c context.Context, reminderID string, dueIn time.Duration) error {
+func QueueSendReminder(ctx context.Context, reminderID string, dueIn time.Duration) error {
 	if dueIn < 3*time.Hour {
-		task := CreateSendReminderTask(c, reminderID)
+		task := CreateSendReminderTask(ctx, reminderID)
 		if dueIn > time.Duration(0) {
 			task.Delay = dueIn + (3 * time.Second)
 		}
-		if _, err := apphostgae.AddTaskToQueue(c, task, queues.QueueReminders); err != nil {
+		if _, err := apphostgae.AddTaskToQueue(ctx, task, queues.QueueReminders); err != nil {
 			return fmt.Errorf("failed to add task(name='%v', delay=%v) to '%v' queue: %w", task.Name, task.Delay, queues.QueueReminders, err)
 		}
 	}

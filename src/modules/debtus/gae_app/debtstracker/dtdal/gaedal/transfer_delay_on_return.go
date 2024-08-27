@@ -49,8 +49,8 @@ func updateTransfersOnReturn(ctx context.Context, returnTransferID string, trans
 	return
 }
 
-func DelayUpdateTransferOnReturn(c context.Context, returnTransferID, transferID string, returnedAmount decimal.Decimal64p2) error {
-	return delayerUpdateTransferOnReturn.EnqueueWork(c, delaying.With(const4debtus.QueueTransfers, "update-transfer-on-return", 0), returnTransferID, transferID, returnedAmount)
+func DelayUpdateTransferOnReturn(ctx context.Context, returnTransferID, transferID string, returnedAmount decimal.Decimal64p2) error {
+	return delayerUpdateTransferOnReturn.EnqueueWork(ctx, delaying.With(const4debtus.QueueTransfers, "update-transfer-on-return", 0), returnTransferID, transferID, returnedAmount)
 }
 
 func updateTransferOnReturn(ctx context.Context, returnTransferID, transferID string, returnedAmount decimal.Decimal64p2) (err error) {

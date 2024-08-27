@@ -15,8 +15,8 @@ import (
 type UserDalGae struct {
 }
 
-func (UserDalGae) DelaySetUserPreferredLocale(c context.Context, delay time.Duration, userID string, localeCode5 string) error {
-	//return delaySetUserPreferredLocale.EnqueueWork(c, delaying.With(common4debtus.QUEUE_USERS, "set-user-preferred-locale", delay), userID, localeCode5)
+func (UserDalGae) DelaySetUserPreferredLocale(_ context.Context, delay time.Duration, userID string, localeCode5 string) error {
+	//return delaySetUserPreferredLocale.EnqueueWork(ctx, delaying.With(common4debtus.QUEUE_USERS, "set-user-preferred-locale", delay), userID, localeCode5)
 	//TODO implement me
 	panic("implement me")
 }
@@ -27,18 +27,18 @@ func NewUserDalGae() UserDalGae {
 
 var _ UserDal = (*UserDalGae)(nil)
 
-func (userDal UserDalGae) GetUserByStrID(c context.Context, userID string) (user dbo4userus.UserEntry, err error) {
+func (userDal UserDalGae) GetUserByStrID(ctx context.Context, userID string) (user dbo4userus.UserEntry, err error) {
 	user = dbo4userus.NewUserEntry(userID)
-	return user, dal4userus.GetUser(c, nil, user)
+	return user, dal4userus.GetUser(ctx, nil, user)
 }
 
-func (userDal UserDalGae) GetUserByVkUserID(c context.Context, vkUserID int64) (dbo4userus.UserEntry, error) {
+func (userDal UserDalGae) GetUserByVkUserID(_ context.Context, vkUserID int64) (dbo4userus.UserEntry, error) {
 	panic("not implemented")
 	//query := datastore.NewQuery(models.AppUserKind).Filter("VkUserID =", vkUserID)
-	//return userDal.getUserByQuery(c, query, "VkUserID")
+	//return userDal.getUserByQuery(ctx, query, "VkUserID")
 }
 
-//func (userDal UserDalGae) getUserByQuery(c context.Context, query dal.Query, searchCriteria string) (appUser models4debtus.AppUserOBSOLETE, err error) {
+//func (userDal UserDalGae) getUserByQuery(ctx context.Context, query dal.Query, searchCriteria string) (appUser models4debtus.AppUserOBSOLETE, err error) {
 //	userEntities := make([]*models4debtus.DebutsAppUserDataOBSOLETE, 0, 2)
 //	var db dal.DB
 //	if db, err = facade.GetDatabase(c); err != nil {
@@ -46,7 +46,7 @@ func (userDal UserDalGae) GetUserByVkUserID(c context.Context, vkUserID int64) (
 //	}
 //	var userRecords []dal.Record
 //
-//	if userRecords, err = db.QueryAllRecords(c, query); err != nil {
+//	if userRecords, err = db.QueryAllRecords(ctx, query); err != nil {
 //		return
 //	}
 //	switch len(userRecords) {
@@ -71,17 +71,17 @@ func (userDal UserDalGae) GetUserByVkUserID(c context.Context, vkUserID int64) (
 //	}
 //}
 
-func (userDal UserDalGae) CreateAnonymousUser(c context.Context) (user dbo4userus.UserEntry, err error) {
-	return userDal.CreateUser(c, &dbo4userus.UserDbo{
+func (userDal UserDalGae) CreateAnonymousUser(ctx context.Context) (user dbo4userus.UserEntry, err error) {
+	return userDal.CreateUser(ctx, &dbo4userus.UserDbo{
 		IsAnonymous: true,
 	})
 }
 
-func (userDal UserDalGae) CreateUser(c context.Context, userData *dbo4userus.UserDbo) (user dbo4userus.UserEntry, err error) {
+func (userDal UserDalGae) CreateUser(ctx context.Context, userData *dbo4userus.UserDbo) (user dbo4userus.UserEntry, err error) {
 	user = dbo4userus.NewUserEntryWithDbo("", userData)
 
-	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-		if err = tx.Insert(c, user.Record); err != nil {
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+		if err = tx.Insert(ctx, user.Record); err != nil {
 			return err
 		}
 		user.ID = user.Record.Key().ID.(string)

@@ -32,7 +32,7 @@ func NewHtmlTemplates() HtmlTemplateProvider {
 var TextTemplates = NewTextTemplates()
 var HtmlTemplates = NewHtmlTemplates()
 
-func (templates *TextTemplateProvider) RenderTemplate(c context.Context, translator i18n.SingleLocaleTranslator, templateName string, params interface{}) (string, error) {
+func (templates *TextTemplateProvider) RenderTemplate(ctx context.Context, translator i18n.SingleLocaleTranslator, templateName string, params interface{}) (string, error) {
 	var t *text.Template
 	var err error
 	var ok bool
@@ -45,7 +45,7 @@ func (templates *TextTemplateProvider) RenderTemplate(c context.Context, transla
 		defer templates.mutex.Unlock()
 		templates.mutex.Lock()
 		templates.compiled[templateName] = t
-		logus.Infof(c, "Compiled & cached template [%v], total cached: %v", templateName, len(templates.compiled))
+		logus.Infof(ctx, "Compiled & cached template [%v], total cached: %v", templateName, len(templates.compiled))
 	}
 
 	var wr bytes.Buffer
@@ -56,7 +56,7 @@ func (templates *TextTemplateProvider) RenderTemplate(c context.Context, transla
 	return wr.String(), nil
 }
 
-func (templates *HtmlTemplateProvider) RenderTemplate(c context.Context, wr *bytes.Buffer, translator i18n.SingleLocaleTranslator, templateName string, params interface{}) (err error) {
+func (templates *HtmlTemplateProvider) RenderTemplate(ctx context.Context, wr *bytes.Buffer, translator i18n.SingleLocaleTranslator, templateName string, params interface{}) (err error) {
 	var t *html.Template
 	var ok bool
 	cacheCode := templateName + ":" + translator.Locale().Code5
@@ -69,7 +69,7 @@ func (templates *HtmlTemplateProvider) RenderTemplate(c context.Context, wr *byt
 		templates.mutex.Lock()
 		templates.compiled[cacheCode] = t
 
-		logus.Infof(c, "Compiled & cached template [%v], total cached: %v", cacheCode, len(templates.compiled))
+		logus.Infof(ctx, "Compiled & cached template [%v], total cached: %v", cacheCode, len(templates.compiled))
 	}
 
 	if err = t.Execute(wr, params); err != nil {

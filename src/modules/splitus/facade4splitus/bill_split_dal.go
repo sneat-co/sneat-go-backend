@@ -12,15 +12,15 @@ type splitDalGae struct {
 
 var _ dtdal.SplitDal = (*splitDalGae)(nil) // Make sure we implement interface
 
-func (splitDalGae) GetSplitByID(c context.Context, splitID int) (split models4splitus.Split, err error) {
+func (splitDalGae) GetSplitByID(_ context.Context, splitID int) (split models4splitus.Split, err error) {
 	split.ID = splitID
-	//err = dtdal.DB.Get(c, &split)
+	//err = dtdal.DB.Get(ctx, &split)
 	return split, errors.New("TODO: implement")
 }
 
-func (splitDalGae) InsertSplit(c context.Context, splitEntity models4splitus.SplitEntity) (split models4splitus.Split, err error) {
+func (splitDalGae) InsertSplit(_ context.Context, splitEntity models4splitus.SplitEntity) (split models4splitus.Split, err error) {
 	split.SplitEntity = &splitEntity
-	//if err = dtdal.DB.Update(c, &split); err != nil {
+	//if err = dtdal.DB.Update(ctx, &split); err != nil {
 	//	return
 	//}
 	return split, errors.New("TODO: implement")

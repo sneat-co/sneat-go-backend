@@ -12,27 +12,27 @@ import (
 	"context"
 )
 
-func CheckTransferCreatorNameAndFixIfNeeded(c context.Context, tx dal.ReadwriteTransaction, transfer models4debtus.TransferEntry) (err error) {
+func CheckTransferCreatorNameAndFixIfNeeded(ctx context.Context, tx dal.ReadwriteTransaction, transfer models4debtus.TransferEntry) (err error) {
 	if transfer.Data.Creator().UserName == "" {
-		user, err := dal4userus.GetUserByID(c, tx, transfer.Data.CreatorUserID)
+		user, err := dal4userus.GetUserByID(ctx, tx, transfer.Data.CreatorUserID)
 		if err != nil {
 			return err
 		}
 
 		creatorFullName := user.Data.GetFullName()
 		if creatorFullName == "" || creatorFullName == dto4contactus.NoName {
-			logus.Debugf(c, "Can't fix api4transfers creator name as user entity has no name defined.")
+			logus.Debugf(ctx, "Can't fix api4transfers creator name as user entity has no name defined.")
 			return nil
 		}
 
 		logMessage := fmt.Sprintf("Fixing transfer(%s).Creator().UserName, created: %v", transfer.ID, transfer.Data.DtCreated)
 		if transfer.Data.DtCreated.After(time.Date(2017, 8, 1, 0, 0, 0, 0, time.UTC)) {
-			logus.Warningf(c, logMessage)
+			logus.Warningf(ctx, logMessage)
 		} else {
-			logus.Infof(c, logMessage)
+			logus.Infof(ctx, logMessage)
 		}
 
-		if transfer, err = Transfers.GetTransferByID(c, tx, transfer.ID); err != nil {
+		if transfer, err = Transfers.GetTransferByID(ctx, tx, transfer.ID); err != nil {
 			return err
 		}
 		if transfer.Data.Creator().UserName == "" {
@@ -46,7 +46,7 @@ func CheckTransferCreatorNameAndFixIfNeeded(c context.Context, tx dal.ReadwriteT
 				changed = true
 			}
 			if changed {
-				if err = Transfers.SaveTransfer(c, tx, transfer); err != nil {
+				if err = Transfers.SaveTransfer(ctx, tx, transfer); err != nil {
 					return err
 				}
 			}

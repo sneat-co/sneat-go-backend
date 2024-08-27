@@ -27,7 +27,7 @@ func GetEnvironment(r *http.Request) string {
 	}
 }
 
-func GetStrID(c context.Context, w http.ResponseWriter, r *http.Request, idParamName string) string {
+func GetStrID(ctx context.Context, w http.ResponseWriter, r *http.Request, idParamName string) string {
 	q := r.URL.Query()
 	if idParamName == "" {
 		panic("idParamName is not specified")
@@ -41,7 +41,7 @@ func GetStrID(c context.Context, w http.ResponseWriter, r *http.Request, idParam
 	return idParamVal
 }
 
-func HasError(c context.Context, w http.ResponseWriter, err error, entity string, id string, notFoundStatus int) bool {
+func HasError(ctx context.Context, w http.ResponseWriter, err error, entity string, id string, notFoundStatus int) bool {
 	switch {
 	case err == nil:
 		return false
@@ -51,11 +51,11 @@ func HasError(c context.Context, w http.ResponseWriter, err error, entity string
 		}
 		w.WriteHeader(notFoundStatus)
 		m := fmt.Sprintf("Entity %s not found by id: %s", entity, id)
-		logus.Infof(c, m)
+		logus.Infof(ctx, m)
 		_, _ = w.Write([]byte(m))
 	default:
 		err = fmt.Errorf("failed to get entity %v by id=%v: %w", entity, id, err)
-		logus.Errorf(c, err.Error())
+		logus.Errorf(ctx, err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
 	}
@@ -63,36 +63,36 @@ func HasError(c context.Context, w http.ResponseWriter, err error, entity string
 }
 
 // TODO - replace with generic sneat one
-func JsonToResponse(c context.Context, w http.ResponseWriter, v interface{}) {
+func JsonToResponse(ctx context.Context, w http.ResponseWriter, v interface{}) {
 	header := w.Header()
 	if buffer, err := ffjson.Marshal(v); err != nil {
-		logus.Errorf(c, err.Error())
+		logus.Errorf(ctx, err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		header.Add("Access-Control-Allow-Origin", "*")
-		logus.Debugf(c, "w.Header(): %v", header)
+		logus.Debugf(ctx, "w.Header(): %v", header)
 		_, _ = w.Write([]byte(err.Error()))
 	} else {
 		MarkResponseAsJson(header)
-		logus.Debugf(c, "w.Header(): %v", header)
+		logus.Debugf(ctx, "w.Header(): %v", header)
 		_, err := w.Write(buffer)
 		ffjson.Pool(buffer)
 		if err != nil {
-			InternalError(c, w, err)
+			InternalError(ctx, w, err)
 		}
 	}
 }
 
-func ErrorAsJson(c context.Context, w http.ResponseWriter, status int, err error) {
+func ErrorAsJson(ctx context.Context, w http.ResponseWriter, status int, err error) {
 	if status == 0 {
 		panic("status == 0")
 	}
 	if status == http.StatusInternalServerError {
-		logus.Errorf(c, "Error: %v", err.Error())
+		logus.Errorf(ctx, "Error: %v", err.Error())
 	} else {
-		logus.Infof(c, "Error: %v", err.Error())
+		logus.Infof(ctx, "Error: %v", err.Error())
 	}
 	w.WriteHeader(status)
-	JsonToResponse(c, w, map[string]string{"error": err.Error()})
+	JsonToResponse(ctx, w, map[string]string{"error": err.Error()})
 }
 
 func MarkResponseAsJson(header http.Header) {

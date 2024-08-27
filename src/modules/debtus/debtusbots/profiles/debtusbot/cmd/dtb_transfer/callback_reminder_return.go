@@ -22,8 +22,8 @@ var ReturnCallbackCommand = botsfw.NewCallbackCommand(dtb_common.CALLBACK_DEBT_R
 
 func ProcessReturnAnswer(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 	//
-	c := whc.Context()
-	logus.Debugf(c, "ProcessReturnAnswer()")
+	ctx := whc.Context()
+	logus.Debugf(ctx, "ProcessReturnAnswer()")
 	q := callbackUrl.Query()
 	reminderID := q.Get("reminder")
 	if reminderID == "" {
@@ -37,7 +37,7 @@ func ProcessReturnAnswer(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 			}
 		}
 	} else {
-		if reminder, err := dtdal.Reminder.SetReminderStatus(c, reminderID, "", models4debtus.ReminderStatusUsed, time.Now()); err != nil {
+		if reminder, err := dtdal.Reminder.SetReminderStatus(ctx, reminderID, "", models4debtus.ReminderStatusUsed, time.Now()); err != nil {
 			return m, err
 		} else {
 			transferID = reminder.Data.TransferID
@@ -45,7 +45,7 @@ func ProcessReturnAnswer(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 	}
 
 	howMuch := q.Get("how-much")
-	transfer, err := facade4debtus.Transfers.GetTransferByID(c, nil, transferID)
+	transfer, err := facade4debtus.Transfers.GetTransferByID(ctx, nil, transferID)
 	if err != nil {
 		return m, err
 	}
@@ -66,8 +66,8 @@ func ProcessReturnAnswer(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 const commandCodeEnableReminderAgain = "enable-reminder-again"
 
 var EnableReminderAgainCallbackCommand = botsfw.NewCallbackCommand(commandCodeEnableReminderAgain, func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
-	logus.Debugf(c, "EnableReminderAgainCallbackCommand()")
+	ctx := whc.Context()
+	logus.Debugf(ctx, "EnableReminderAgainCallbackCommand()")
 	q := callbackUrl.Query()
 	var (
 		reminderID string
@@ -82,7 +82,7 @@ var EnableReminderAgainCallbackCommand = botsfw.NewCallbackCommand(commandCodeEn
 		return
 	}
 
-	if transfer, err = facade4debtus.Transfers.GetTransferByID(c, nil, transfer.ID); err != nil {
+	if transfer, err = facade4debtus.Transfers.GetTransferByID(ctx, nil, transfer.ID); err != nil {
 		return
 	}
 
@@ -220,7 +220,7 @@ const (
 var SetNextReminderDateCallbackCommand = botsfw.Command{
 	Code: SET_NEXT_REMINDER_DATE_COMMAND,
 	CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-		c := whc.Context()
+		ctx := whc.Context()
 
 		reminderID := callbackUrl.Query().Get("id")
 		if reminderID == "" {
@@ -231,11 +231,11 @@ var SetNextReminderDateCallbackCommand = botsfw.Command{
 		chatEntity.SetAwaitingReplyTo(SET_NEXT_REMINDER_DATE_COMMAND)
 		chatEntity.AddWizardParam(WizardParamReminder, reminderID)
 
-		reminder, err := dtdal.Reminder.GetReminderByID(c, nil, reminderID)
+		reminder, err := dtdal.Reminder.GetReminderByID(ctx, nil, reminderID)
 		if err != nil {
 			return m, fmt.Errorf("failed to get reminder by id: %w", err)
 		}
-		transfer, err := facade4debtus.Transfers.GetTransferByID(c, nil, reminder.Data.TransferID)
+		transfer, err := facade4debtus.Transfers.GetTransferByID(ctx, nil, reminder.Data.TransferID)
 		if err != nil {
 			return m, fmt.Errorf("failed to get transfer by id: %w", err)
 		}
@@ -244,7 +244,7 @@ var SetNextReminderDateCallbackCommand = botsfw.Command{
 			return
 		}
 
-		if _, err = whc.Responder().SendMessage(c, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
+		if _, err = whc.Responder().SendMessage(ctx, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
 			return m, err
 		}
 

@@ -29,7 +29,7 @@ func editSplitCallbackAction(
 	writeTitle func(buffer *bytes.Buffer) error,
 	addShares func(memberID string, addValue int) (member *briefs4splitus.BillMemberBrief, err error),
 ) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
+	ctx := whc.Context()
 
 	q := callbackUrl.Query()
 
@@ -42,10 +42,10 @@ func editSplitCallbackAction(
 		return
 	}
 
-	logus.Debugf(c, "current member: %v", member)
+	logus.Debugf(ctx, "current member: %v", member)
 
 	if addValue != 0 {
-		logus.Debugf(c, "add=%d", addValue)
+		logus.Debugf(ctx, "add=%d", addValue)
 
 		if member, err = addShares(member.ID, addValue); err != nil {
 			return

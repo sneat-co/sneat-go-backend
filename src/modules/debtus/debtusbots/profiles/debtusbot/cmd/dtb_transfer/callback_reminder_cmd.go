@@ -115,21 +115,21 @@ func rescheduleReminder(whc botsfw.WebhookContext, reminderID string, remindInDu
 
 //const ASK_FOR_FEEDBACK_TASK = "ask-for-feedback"
 //
-//func delayAskForFeedback(c context.Context, botCode string, chatID int64, userID int64) error {
-//	task, err := apphostgae.EnqueueWork(c, anybot.QUEUE_CHATS, ASK_FOR_FEEDBACK_TASK, 0, delayedAskForFeedback, botCode, chatID, userID)
+//func delayAskForFeedback(ctx context.Context, botCode string, chatID int64, userID int64) error {
+//	task, err := apphostgae.EnqueueWork(ctx, anybot.QUEUE_CHATS, ASK_FOR_FEEDBACK_TASK, 0, delayedAskForFeedback, botCode, chatID, userID)
 //	if err != nil {
 //		return err
 //	}
 //	task.Delay = time.Second / 2
-//	task, err = apphostgae.AddTaskToQueue(c, task, anybot.QUEUE_CHATS)
+//	task, err = apphostgae.AddTaskToQueue(ctx, task, anybot.QUEUE_CHATS)
 //	return err
 //}
 //
 //var delayedAskForFeedback = delaying.MustRegisterFunc(ASK_FOR_FEEDBACK_TASK,
-//	func(c context.Context, botID string, chatID, userID int64) error {
+//	func(ctx context.Context, botID string, chatID, userID int64) error {
 //		logus.Debugf(c, "delayedAskForFeedback(botID=%v, chatID=%d, userID=%d)", botID, chatID, userID)
 //		if botSettings, ok := telegram.Bots(gaestandard.GetEnvironment(c), nil).ByCode[botID]; !ok {
-//			logus.Errorf(c, "Bot settings not found by ContactID: "+botID)
+//			logus.Errorf(ctx, "Bot settings not found by ContactID: "+botID)
 //			return nil
 //		} else {
 //			locale, err := facade4debtus.GetLocale(c, botID, chatID, userID)
@@ -157,12 +157,12 @@ func rescheduleReminder(whc botsfw.WebhookContext, reminderID string, remindInDu
 //	})
 
 //func disableReminders(whc botsfw.WebhookContext, transferID int) (m botsfw.MessageFromBot, err error) {
-//	c := whc.Context()
+//	ctx := whc.Context()
 //	transferKey, transfer, err := facade4debtus.Transfers.GetTransferByID(c, transferID)
 //	userID := whc.AppUserID()
 //	if !transfer.IsRemindersDisabled(userID) {
-//		err = dtdal.DB.RunInTransaction(c, func(tc context.Context) error {
-//			transferKey, transfer, err = gaedal.GetTransferByID(tc, transferID)
+//		err = dtdal.DB.RunInTransaction(ctx, func(tctx context.Context) error {
+//			transferKey, transfer, err = gaedal.GetTransferByID(tctx, transferID)
 //			if err != nil {
 //				return err
 //			}
@@ -179,7 +179,7 @@ func rescheduleReminder(whc botsfw.WebhookContext, reminderID string, remindInDu
 //				}
 //			}
 //			if changed {
-//				_, err = nds.Put(tc, transferKey, transfer)
+//				_, err = nds.Put(tctx, transferKey, transfer)
 //			}
 //			return err
 //		}, nil)

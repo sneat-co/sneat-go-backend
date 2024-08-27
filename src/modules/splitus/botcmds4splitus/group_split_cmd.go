@@ -19,7 +19,7 @@ const spaceSplitCommandCode = "space-split"
 
 var spaceSplitCommand = shared_space.SpaceCallbackCommand(spaceSplitCommandCode,
 	func(whc botsfw.WebhookContext, callbackUrl *url.URL, space dbo4spaceus.SpaceEntry) (m botsfw.MessageFromBot, err error) {
-		c := whc.Context()
+		ctx := whc.Context()
 
 		//members := space.Data.GetMembers()
 		billMembers := make([]*briefs4splitus.BillMemberBrief, 0 /*len(members)*/)
@@ -36,8 +36,8 @@ var spaceSplitCommand = shared_space.SpaceCallbackCommand(spaceSplitCommandCode,
 			money.Amount{},
 			nil,
 			func(memberID string, addValue int) (member *briefs4splitus.BillMemberBrief, err error) {
-				err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-					//if space, err = dtdal.Group.GetGroupByID(c, tx, space.ContactID); err != nil {
+				err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+					//if space, err = dtdal.Group.GetGroupByID(ctx, tx, space.ContactID); err != nil {
 					//	return
 					//}
 					//members := space.Data.GetGroupMembers()
@@ -49,7 +49,7 @@ var spaceSplitCommand = shared_space.SpaceCallbackCommand(spaceSplitCommandCode,
 					//		}
 					//		members[i] = m
 					//		space.Data.SetGroupMembers(members)
-					//		if err = dtdal.Group.SaveGroup(c, tx, space); err != nil {
+					//		if err = dtdal.Group.SaveGroup(ctx, tx, space); err != nil {
 					//			return
 					//		}
 					//		member = briefs4splitus.BillMemberBrief{MemberBrief: m.MemberBrief}

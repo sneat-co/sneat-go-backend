@@ -49,7 +49,7 @@ func mergeContactsHandler(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write([]byte("done"))
 }
 
-func mergeContacts(c context.Context, userCtx facade.UserContext, tx dal.ReadwriteTransaction, spaceID, targetContactID string, sourceContactIDs ...string) (err error) {
+func mergeContacts(ctx context.Context, userCtx facade.UserContext, tx dal.ReadwriteTransaction, spaceID, targetContactID string, sourceContactIDs ...string) (err error) {
 	if len(sourceContactIDs) == 0 {
 		panic("len(sourceContactIDs) == 0")
 	}
@@ -61,13 +61,13 @@ func mergeContacts(c context.Context, userCtx facade.UserContext, tx dal.Readwri
 
 	var targetDebtusContact models4debtus.DebtusSpaceContactEntry
 
-	if targetDebtusContact, err = facade4debtus.GetDebtusSpaceContactByID(c, tx, spaceID, targetContactID); err != nil {
+	if targetDebtusContact, err = facade4debtus.GetDebtusSpaceContactByID(ctx, tx, spaceID, targetContactID); err != nil {
 		if dal.IsNotFound(err) && len(sourceContactIDs) == 1 {
-			if targetDebtusContact, err = facade4debtus.GetDebtusSpaceContactByID(c, tx, spaceID, sourceContactIDs[0]); err != nil {
+			if targetDebtusContact, err = facade4debtus.GetDebtusSpaceContactByID(ctx, tx, spaceID, sourceContactIDs[0]); err != nil {
 				return
 			}
 			targetDebtusContact.ID = targetContactID
-			if err = facade4debtus.SaveContact(c, targetDebtusContact); err != nil {
+			if err = facade4debtus.SaveContact(ctx, targetDebtusContact); err != nil {
 				return
 			}
 		} else {
@@ -75,7 +75,7 @@ func mergeContacts(c context.Context, userCtx facade.UserContext, tx dal.Readwri
 		}
 	}
 
-	if err = dal4contactus.GetContactusSpace(c, tx, contactusSpace); err != nil {
+	if err = dal4contactus.GetContactusSpace(ctx, tx, contactusSpace); err != nil {
 		return
 	}
 
@@ -85,7 +85,7 @@ func mergeContacts(c context.Context, userCtx facade.UserContext, tx dal.Readwri
 			return
 		}
 		sourceContact := dal4contactus.NewContactEntry(spaceID, sourceContactID)
-		if err = dal4contactus.GetContact(c, tx, sourceContact); err != nil {
+		if err = dal4contactus.GetContact(ctx, tx, sourceContact); err != nil {
 			if dal.IsNotFound(err) {
 				continue
 			}
@@ -103,8 +103,8 @@ func mergeContacts(c context.Context, userCtx facade.UserContext, tx dal.Readwri
 
 	for _, sourceContactID := range sourceContactIDs {
 		go func(sourceContactID string) {
-			if err2 := mergeContactTransfers(c, tx, wg, targetContactID, sourceContactID); err2 != nil {
-				logus.Errorf(c, "failed to merge api4transfers for contact %v: %v", sourceContactID, err2)
+			if err2 := mergeContactTransfers(ctx, tx, wg, targetContactID, sourceContactID); err2 != nil {
+				logus.Errorf(ctx, "failed to merge api4transfers for contact %v: %v", sourceContactID, err2)
 				if err == nil {
 					err = err2
 				}
@@ -117,8 +117,8 @@ func mergeContacts(c context.Context, userCtx facade.UserContext, tx dal.Readwri
 		return
 	}
 
-	if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-		if err = dal4contactus.GetContactusSpace(c, tx, contactusSpace); err != nil {
+	if err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+		if err = dal4contactus.GetContactusSpace(ctx, tx, contactusSpace); err != nil {
 			return
 		}
 		debtusContacts := make(map[string]*models4debtus.DebtusContactBrief)
@@ -130,7 +130,7 @@ func mergeContacts(c context.Context, userCtx facade.UserContext, tx dal.Readwri
 						targetContactBalance.Add(money.NewAmount(currency, value))
 					}
 					sourceDebtusContact := models4debtus.NewDebtusSpaceContactEntry(spaceID, sourceContactID, nil)
-					if err = facade4debtus.GetDebtusSpaceContact(c, tx, sourceDebtusContact); err != nil {
+					if err = facade4debtus.GetDebtusSpaceContact(ctx, tx, sourceDebtusContact); err != nil {
 						if !dal.IsNotFound(err) {
 							return
 						}
@@ -142,13 +142,13 @@ func mergeContacts(c context.Context, userCtx facade.UserContext, tx dal.Readwri
 						}
 						if sourceDebtusContact.Data.CounterpartyContactID != "" {
 							counterpartyContact := models4debtus.NewDebtusSpaceContactEntry(spaceID, sourceDebtusContact.Data.CounterpartyContactID, nil)
-							if err = facade4debtus.GetDebtusSpaceContact(c, tx, counterpartyContact); err != nil {
+							if err = facade4debtus.GetDebtusSpaceContact(ctx, tx, counterpartyContact); err != nil {
 								if !dal.IsNotFound(err) {
 									return
 								}
 							} else if counterpartyContact.Data.CounterpartyContactID == sourceContactID {
 								counterpartyContact.Data.CounterpartyContactID = targetContactID
-								if err = facade4debtus.SaveContact(c, counterpartyContact); err != nil {
+								if err = facade4debtus.SaveContact(ctx, counterpartyContact); err != nil {
 									return
 								}
 							} else if counterpartyContact.Data.CounterpartyContactID != "" && counterpartyContact.Data.CounterpartyContactID != targetContactID {
@@ -159,7 +159,7 @@ func mergeContacts(c context.Context, userCtx facade.UserContext, tx dal.Readwri
 							}
 						}
 					}
-					if err = facade4debtus.DeleteContactTx(c, userCtx, tx, spaceID, sourceContactID); err != nil {
+					if err = facade4debtus.DeleteContactTx(ctx, userCtx, tx, spaceID, sourceContactID); err != nil {
 						return
 					}
 				} else {
@@ -172,7 +172,7 @@ func mergeContacts(c context.Context, userCtx facade.UserContext, tx dal.Readwri
 			debtusSpace.Data.SetContacts(debtusContacts)
 		}
 
-		if err = tx.SetMulti(c, []dal.Record{debtusSpace.Record, contactusSpace.Record}); err != nil {
+		if err = tx.SetMulti(ctx, []dal.Record{debtusSpace.Record, contactusSpace.Record}); err != nil {
 			return
 		}
 		return
@@ -183,7 +183,7 @@ func mergeContacts(c context.Context, userCtx facade.UserContext, tx dal.Readwri
 	return
 }
 
-func mergeContactTransfers(c context.Context, tx dal.ReadwriteTransaction, wg *sync.WaitGroup, targetContactID string, sourceContactID string) (err error) {
+func mergeContactTransfers(ctx context.Context, tx dal.ReadwriteTransaction, wg *sync.WaitGroup, targetContactID string, sourceContactID string) (err error) {
 	defer func() {
 		wg.Done()
 	}()
@@ -192,7 +192,7 @@ func mergeContactTransfers(c context.Context, tx dal.ReadwriteTransaction, wg *s
 		SelectInto(func() dal.Record {
 			return models4debtus.NewTransfer("", nil).Record
 		})
-	transfers, err := tx.QueryReader(c, transfersQ)
+	transfers, err := tx.QueryReader(ctx, transfersQ)
 	if err != nil {
 		return fmt.Errorf("failed to select api4transfers: %w", err)
 	}
@@ -206,7 +206,7 @@ func mergeContactTransfers(c context.Context, tx dal.ReadwriteTransaction, wg *s
 				err = nil
 				break
 			}
-			logus.Errorf(c, "Failed to get next transfer: %v", err)
+			logus.Errorf(ctx, "Failed to get next transfer: %v", err)
 		}
 		transfer.ID = record.Key().ID.(string)
 		switch sourceContactID {
@@ -221,8 +221,8 @@ func mergeContactTransfers(c context.Context, tx dal.ReadwriteTransaction, wg *s
 		case transfer.Data.BothCounterpartyIDs[1]:
 			transfer.Data.BothCounterpartyIDs[1] = targetContactID
 		}
-		if err = facade4debtus.Transfers.SaveTransfer(c, tx, transfer); err != nil {
-			logus.Errorf(c, "Failed to save transfer #%v: %v", transfer.ID, err)
+		if err = facade4debtus.Transfers.SaveTransfer(ctx, tx, transfer); err != nil {
+			logus.Errorf(ctx, "Failed to save transfer #%v: %v", transfer.ID, err)
 		}
 	}
 	return

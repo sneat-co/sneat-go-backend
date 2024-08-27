@@ -36,13 +36,13 @@ var HistoryCommand = botsfw.Command{
 }
 
 func showHistoryCard(whc botsfw.WebhookContext, limit int) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
+	ctx := whc.Context()
 
 	var transfers []models4debtus.TransferEntry
 	var hasMore bool
 
 	if appUserID := whc.AppUserID(); appUserID != "" {
-		if transfers, hasMore, err = dtdal.Transfer.LoadTransfersByUserID(c, appUserID, 0, limit); err != nil {
+		if transfers, hasMore, err = dtdal.Transfer.LoadTransfersByUserID(ctx, appUserID, 0, limit); err != nil {
 			return m, err
 		}
 	}

@@ -24,14 +24,14 @@ import (
 	"github.com/strongo/decimal"
 )
 
-func AssignBillToGroup(c context.Context, tx dal.ReadwriteTransaction, inBill models4splitus.BillEntry, spaceID, userID string) (bill models4splitus.BillEntry, splitusSpace models4splitus.SplitusSpaceEntry, err error) {
+func AssignBillToGroup(ctx context.Context, tx dal.ReadwriteTransaction, inBill models4splitus.BillEntry, spaceID, userID string) (bill models4splitus.BillEntry, splitusSpace models4splitus.SplitusSpaceEntry, err error) {
 	bill = inBill
 	if err = bill.Data.AssignToGroup(spaceID); err != nil {
 		return
 	}
 	splitusSpace = models4splitus.NewSplitusSpaceEntry(spaceID)
 	if len(bill.Data.Members) == 0 {
-		if err = tx.Get(c, splitusSpace.Record); err != nil {
+		if err = tx.Get(ctx, splitusSpace.Record); err != nil {
 			return
 		}
 		if len(splitusSpace.Data.Members) > 0 {
@@ -60,7 +60,7 @@ func AssignBillToGroup(c context.Context, tx dal.ReadwriteTransaction, inBill mo
 				if !paidIsSet { // current user is not members of the bill
 					//splitusSpace.AddOrGetMember(userID, "", )
 					user := dbo4userus.NewUserEntry(userID)
-					if err = dal4userus.GetUser(c, tx, user); err != nil {
+					if err = dal4userus.GetUser(ctx, tx, user); err != nil {
 						return
 					}
 					_, _, _, groupMember, _ := splitusSpace.Data.AddOrGetMember(userID, "", user.Data.GetFullName())
@@ -78,21 +78,21 @@ func AssignBillToGroup(c context.Context, tx dal.ReadwriteTransaction, inBill mo
 				if _, err = splitusSpace.Data.ApplyBillBalanceDifference(bill.Data.Currency, bill.Data.GetBalance().BillBalanceDifference(briefs4splitus.BillBalanceByMember{})); err != nil {
 					return
 				}
-				if err = tx.Set(c, splitusSpace.Record); err != nil {
+				if err = tx.Set(ctx, splitusSpace.Record); err != nil {
 					return
 				}
 			}
-			logus.Debugf(c, "bill.GetBillMembers(): %+v", bill.Data.GetBillMembers())
+			logus.Debugf(ctx, "bill.GetBillMembers(): %+v", bill.Data.GetBillMembers())
 		}
 	}
 	return
 }
 
-func CreateBill(c context.Context, tx dal.ReadwriteTransaction, spaceID string, billEntity *models4splitus.BillDbo) (bill models4splitus.BillEntry, err error) {
-	if c == nil {
-		panic("Parameter c context.Context is required")
+func CreateBill(ctx context.Context, tx dal.ReadwriteTransaction, spaceID string, billEntity *models4splitus.BillDbo) (bill models4splitus.BillEntry, err error) {
+	if ctx == nil {
+		panic("Parameter ctx context.Context is required")
 	}
-	logus.Debugf(c, "billFacade.CreateBill(%v)", billEntity)
+	logus.Debugf(ctx, "billFacade.CreateBill(%v)", billEntity)
 	if tx == nil {
 		panic("parameter tx dal.ReadwriteTransaction is required")
 	}
@@ -329,7 +329,7 @@ func CreateBill(c context.Context, tx dal.ReadwriteTransaction, spaceID string, 
 		// Load counterparties so we can get respective userIDs
 		var counterparties []models4debtus.DebtusSpaceContactEntry
 		// Use non transactional context
-		counterparties, err = facade4debtus.GetDebtusSpaceContactsByIDs(c, tx, spaceID, contactIDs)
+		counterparties, err = facade4debtus.GetDebtusSpaceContactsByIDs(ctx, tx, spaceID, contactIDs)
 		if err != nil {
 			err = fmt.Errorf("failed to get counterparties by ContactID: %w", err)
 			return
@@ -349,19 +349,19 @@ func CreateBill(c context.Context, tx dal.ReadwriteTransaction, spaceID string, 
 		billEntity.ContactIDs = contactIDs[:]
 	}
 
-	if bill, err = InsertBillEntity(c, tx, billEntity); err != nil {
+	if bill, err = InsertBillEntity(ctx, tx, billEntity); err != nil {
 		return
 	}
 
 	billHistory := models4splitus.NewBillHistoryBillCreated(bill, nil)
-	if err = dtdal.InsertWithRandomStringID(c, tx, billHistory.Record); err != nil {
+	if err = dtdal.InsertWithRandomStringID(ctx, tx, billHistory.Record); err != nil {
 		return
 	}
 	return
 }
 
-//func (billFacade) CreateBillTransfers(c context.Context, billID string) error {
-//	bill, err := facade4debtus.GetBillByID(c, billID)
+//func (billFacade) CreateBillTransfers(ctx context.Context, billID string) error {
+//	bill, err := facade4debtus.GetBillByID(ctx, billID)
 //	if err != nil {
 //		return err
 //	}
@@ -393,9 +393,9 @@ func CreateBill(c context.Context, tx dal.ReadwriteTransaction, spaceID string, 
 //	return nil
 //}
 //
-//func (billFacade) createBillTransfer(c context.Context, billID string, creatorCounterpartyID int64) error {
-//	err := dtdal.DB.RunInTransaction(c, func(c context.Context) error {
-//		bill, err := facade4debtus.GetBillByID(c, billID)
+//func (billFacade) createBillTransfer(ctx context.Context, billID string, creatorCounterpartyID int64) error {
+//	err := dtdal.DB.RunInTransaction(ctx, func(ctx context.Context) error {
+//		bill, err := facade4debtus.GetBillByID(ctx, billID)
 //
 //		if err != nil {
 //			return err
@@ -439,8 +439,8 @@ func CreateBill(c context.Context, tx dal.ReadwriteTransaction, spaceID string, 
 //			UserID:    borrower.UserID,
 //			ContactID: payer.ContactByUser[sCreatorUserID].ContactID,
 //		}
-//		logus.Debugf(c, "from: %v", from)
-//		logus.Debugf(c, "to: %v", to)
+//		logus.Debugf(ctx, "from: %v", from)
+//		logus.Debugf(ctx, "to: %v", to)
 //		//_, _, _, _, _, _, err = CreateTransfer(
 //		//	c,
 //		//	strongoapp.EnvUnknown,
@@ -466,7 +466,7 @@ type BillMemberUserInfo struct {
 	Name      string
 }
 
-func GetBillMembersUserInfo(c context.Context, bill models4splitus.BillEntry, forUserID int64) (billMembersUserInfo []BillMemberUserInfo, err error) {
+func GetBillMembersUserInfo(_ context.Context, bill models4splitus.BillEntry, forUserID int64) (billMembersUserInfo []BillMemberUserInfo, err error) {
 	sUserID := strconv.FormatInt(forUserID, 10)
 
 	for i, member := range bill.Data.GetBillMembers() {
@@ -487,14 +487,14 @@ func GetBillMembersUserInfo(c context.Context, bill models4splitus.BillEntry, fo
 }
 
 func AddBillMember(
-	c context.Context, tx dal.ReadwriteTransaction, userID string, inBill models4splitus.BillEntry, memberID, memberUserID string, memberUserName string, paid decimal.Decimal64p2,
+	ctx context.Context, tx dal.ReadwriteTransaction, userID string, inBill models4splitus.BillEntry, memberID, memberUserID string, memberUserName string, paid decimal.Decimal64p2,
 ) (
 	bill models4splitus.BillEntry, splitusSpace models4splitus.SplitusSpaceEntry, changed, isJoined bool, err error,
 ) {
 	if tx == nil {
 		panic("This method should be called within transaction")
 	}
-	logus.Debugf(c, "billFacade.AddBillMember(bill.ContactID=%v, memberID=%v, memberUserID=%v, memberUserName=%v, paid=%v)", bill.ID, memberID, memberUserID, memberUserName, paid)
+	logus.Debugf(ctx, "billFacade.AddBillMember(bill.ContactID=%v, memberID=%v, memberUserID=%v, memberUserName=%v, paid=%v)", bill.ID, memberID, memberUserID, memberUserName, paid)
 	if paid < 0 {
 		panic("paid < 0")
 	}
@@ -521,7 +521,7 @@ func AddBillMember(
 	totalAboutBefore := bill.Data.AmountTotal
 
 	splitusSpace = models4splitus.NewSplitusSpaceEntry(bill.Data.SpaceID)
-	if err = tx.Get(c, splitusSpace.Record); err != nil {
+	if err = tx.Get(ctx, splitusSpace.Record); err != nil {
 		return
 	}
 	copy(splitusSpace.Data.Members, splitMembersBefore)
@@ -529,12 +529,12 @@ func AddBillMember(
 	if _, groupChanged, _, groupMember, groupMembers = splitusSpace.Data.AddOrGetMember(memberUserID, "", memberUserName); groupChanged {
 		splitusSpace.Data.SetGroupMembers(groupMembers)
 	} else {
-		logus.Debugf(c, "GroupEntry billMembers not changed, groupMember.ContactID: "+groupMember.ID)
+		logus.Debugf(ctx, "GroupEntry billMembers not changed, groupMember.ContactID: "+groupMember.ID)
 	}
 
 	_, changed, index, billMember, billMembers = bill.Data.AddOrGetMember(groupMember.ID, memberUserID, "", memberUserName)
 
-	logus.Debugf(c, "billMember.ContactID: "+billMember.ID)
+	logus.Debugf(ctx, "billMember.ContactID: "+billMember.ID)
 
 	if paid > 0 {
 		if billMember.Paid == paid {
@@ -565,39 +565,39 @@ func AddBillMember(
 
 	billMembers[index] = billMember
 
-	logus.Debugf(c, "billMembers: %+v", billMembers)
+	logus.Debugf(ctx, "billMembers: %+v", billMembers)
 	if err = bill.Data.SetBillMembers(billMembers); err != nil {
 		return
 	}
-	logus.Debugf(c, "bill.GetBillMembers(): %+v", bill.Data.GetBillMembers())
+	logus.Debugf(ctx, "bill.GetBillMembers(): %+v", bill.Data.GetBillMembers())
 
-	if err = SaveBill(c, tx, bill); err != nil {
+	if err = SaveBill(ctx, tx, bill); err != nil {
 		return
 	}
 
-	logus.Debugf(c, "bill.GetBillMembers() after save: %v", bill.Data.GetBillMembers())
+	logus.Debugf(ctx, "bill.GetBillMembers() after save: %v", bill.Data.GetBillMembers())
 
 	currentBalance := bill.Data.GetBalance()
 
 	if balanceDifference := currentBalance.BillBalanceDifference(previousBalance); balanceDifference.IsNoDifference() {
-		logus.Debugf(c, "BillEntry balanceDifference: %v", balanceDifference)
+		logus.Debugf(ctx, "BillEntry balanceDifference: %v", balanceDifference)
 		if groupChanged, err = splitusSpace.Data.ApplyBillBalanceDifference(bill.Data.Currency, balanceDifference); err != nil {
 			err = fmt.Errorf("failed to apply bill difference: %w", err)
 			return
 		}
 		if groupChanged {
-			if err = tx.Set(c, splitusSpace.Record); err != nil {
+			if err = tx.Set(ctx, splitusSpace.Record); err != nil {
 				return
 			}
 		}
 	}
 
-	logus.Debugf(c, "splitusSpace: %+v", splitusSpace)
+	logus.Debugf(ctx, "splitusSpace: %+v", splitusSpace)
 	var splitMembersAfter []briefs4splitus.SpaceSplitMember
 	copy(splitMembersAfter, splitusSpace.Data.Members)
 	billHistory := models4splitus.NewBillHistoryMemberAdded(userID, bill, totalAboutBefore, splitMembersBefore, splitMembersAfter)
 
-	if err = tx.Insert(c, billHistory.Record); err != nil {
+	if err = tx.Insert(ctx, billHistory.Record); err != nil {
 		return
 	}
 
@@ -610,9 +610,9 @@ var (
 	ErrOnlyDeletedBillsCanBeRestored = errors.New("only deleted bills can be restored")
 )
 
-func DeleteBill(c context.Context, billID string, userID string) (bill models4splitus.BillEntry, err error) {
-	if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-		if bill, err = GetBillByID(c, nil, billID); err != nil {
+func DeleteBill(ctx context.Context, billID string, userID string) (bill models4splitus.BillEntry, err error) {
+	if err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+		if bill, err = GetBillByID(ctx, nil, billID); err != nil {
 			return
 		}
 		if bill.Data.Status == models4splitus.BillStatusSettled {
@@ -621,17 +621,17 @@ func DeleteBill(c context.Context, billID string, userID string) (bill models4sp
 		}
 		if bill.Data.Status == models4splitus.BillStatusDraft || bill.Data.Status == models4splitus.BillStatusOutstanding {
 			billHistory := models4splitus.NewBillHistoryBillDeleted(userID, bill)
-			if err = tx.Insert(c, billHistory.Record); err != nil {
+			if err = tx.Insert(ctx, billHistory.Record); err != nil {
 				return
 			}
 			bill.Data.Status = models4splitus.BillStatusDeleted
-			if err = SaveBill(c, tx, bill); err != nil {
+			if err = SaveBill(ctx, tx, bill); err != nil {
 				return
 			}
 		}
 		if spaceID := bill.Data.GetUserGroupID(); spaceID != "" {
 			splitusSpace := models4splitus.NewSplitusSpaceEntry(spaceID)
-			if err = tx.Get(c, splitusSpace.Record); err != nil {
+			if err = tx.Get(ctx, splitusSpace.Record); err != nil {
 				return err
 			}
 			outstandingBills := splitusSpace.Data.GetOutstandingBills()
@@ -655,7 +655,7 @@ func DeleteBill(c context.Context, billID string, userID string) (bill models4sp
 			//			}
 			//		}
 			//		splitusSpace.Data.SetGroupMembers(groupMembers)
-			//		if err = dtdal.Group.SaveGroup(c, tx, splitusSpace); err != nil {
+			//		if err = dtdal.Group.SaveGroup(ctx, tx, splitusSpace); err != nil {
 			//			return
 			//		}
 			//		break
@@ -669,9 +669,9 @@ func DeleteBill(c context.Context, billID string, userID string) (bill models4sp
 	return
 }
 
-func RestoreBill(c context.Context, billID string, userID string) (bill models4splitus.BillEntry, err error) {
-	if err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-		if bill, err = GetBillByID(c, nil, billID); err != nil {
+func RestoreBill(ctx context.Context, billID string, userID string) (bill models4splitus.BillEntry, err error) {
+	if err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+		if bill, err = GetBillByID(ctx, nil, billID); err != nil {
 			return
 		}
 		if bill.Data.Status != models4splitus.BillStatusDeleted {
@@ -685,22 +685,22 @@ func RestoreBill(c context.Context, billID string, userID string) (bill models4s
 			bill.Data.Status = models4splitus.BillStatusDraft
 		}
 		billHistory := models4splitus.NewBillHistoryBillRestored(userID, bill)
-		if err = tx.Insert(c, billHistory.Record); err != nil {
+		if err = tx.Insert(ctx, billHistory.Record); err != nil {
 			return
 		}
-		if err = SaveBill(c, tx, bill); err != nil {
+		if err = SaveBill(ctx, tx, bill); err != nil {
 			return
 		}
 		if spaceID := bill.Data.SpaceID; spaceID != "" {
 			splitusSpace := models4splitus.NewSplitusSpaceEntry(spaceID)
-			if err = tx.Get(c, splitusSpace.Record); err != nil {
+			if err = tx.Get(ctx, splitusSpace.Record); err != nil {
 				return
 			}
 			var groupChanged bool
 			if groupChanged, err = splitusSpace.Data.AddBill(bill); err != nil {
 				return
 			} else if groupChanged {
-				if err = tx.Set(c, splitusSpace.Record); err != nil {
+				if err = tx.Set(ctx, splitusSpace.Record); err != nil {
 					return
 				}
 			}
@@ -712,9 +712,9 @@ func RestoreBill(c context.Context, billID string, userID string) (bill models4s
 	return
 }
 
-func GetBillByID(c context.Context, tx dal.ReadSession, billID string) (bill models4splitus.BillEntry, err error) {
+func GetBillByID(ctx context.Context, tx dal.ReadSession, billID string) (bill models4splitus.BillEntry, err error) {
 	if tx == nil {
-		if tx, err = facade.GetDatabase(c); err != nil {
+		if tx, err = facade.GetDatabase(ctx); err != nil {
 			return bill, err
 		}
 	}
@@ -722,11 +722,11 @@ func GetBillByID(c context.Context, tx dal.ReadSession, billID string) (bill mod
 	bill.Key = dal.NewKeyWithID(models4splitus.BillKind, billID)
 	bill.Data = new(models4splitus.BillDbo)
 	bill.Record = dal.NewRecordWithData(bill.Key, bill.Data)
-	err = tx.Get(c, bill.Record)
+	err = tx.Get(ctx, bill.Record)
 	return
 }
 
-func InsertBillEntity(c context.Context, tx dal.ReadwriteTransaction, billEntity *models4splitus.BillDbo) (bill models4splitus.BillEntry, err error) {
+func InsertBillEntity(ctx context.Context, tx dal.ReadwriteTransaction, billEntity *models4splitus.BillDbo) (bill models4splitus.BillEntry, err error) {
 	if billEntity == nil {
 		panic("billEntity == nil")
 	}
@@ -740,16 +740,16 @@ func InsertBillEntity(c context.Context, tx dal.ReadwriteTransaction, billEntity
 	billEntity.CreatedAt = time.Now()
 	bill.Data = billEntity
 
-	err = tx.Insert(c, bill.Record)
+	err = tx.Insert(ctx, bill.Record)
 	return
 }
 
-//func (billFacade billFacade) createTransfers(c context.Context, splitID int64) error {
-//	split, err := dtdal.Split.GetSplitByID(c, splitID)
+//func (billFacade billFacade) createTransfers(ctx context.Context, splitID int64) error {
+//	split, err := dtdal.Split.GetSplitByID(ctx, splitID)
 //	if err != nil {
 //		return err
 //	}
-//	bills, err := dtdal.BillEntry.GetBillsByIDs(c, split.BillIDs)
+//	bills, err := dtdal.BillEntry.GetBillsByIDs(ctx, split.BillIDs)
 //
 //	balances := billFacade.getBalances(splitID, bills)
 //	balances = billFacade.cleanupBalances(balances)
@@ -757,7 +757,7 @@ func InsertBillEntity(c context.Context, tx dal.ReadwriteTransaction, billEntity
 //	for currency, totalsByMember := range balances {
 //		for memberID, memberTotal := range totalsByMember {
 //			if memberTotal.Balance() > 0 { // TODO: Create delay task
-//				if err = billFacade.createTransfer(c, splitID, memberTotal.BillIDs, memberID, currency, memberTotal.Balance()); err != nil {
+//				if err = billFacade.createTransfer(ctx, splitID, memberTotal.BillIDs, memberID, currency, memberTotal.Balance()); err != nil {
 //					return err
 //				}
 //			}
@@ -766,6 +766,6 @@ func InsertBillEntity(c context.Context, tx dal.ReadwriteTransaction, billEntity
 //	return nil
 //}
 //
-//func (billFacade) createTransfer(c context.Context, splitID int64, billIDs []int64, memberID, currency string, amount decimal.Decimal64p2) error {
+//func (billFacade) createTransfer(_ context.Context, splitID int64, billIDs []int64, memberID, currency string, amount decimal.Decimal64p2) error {
 //	return nil
 //}

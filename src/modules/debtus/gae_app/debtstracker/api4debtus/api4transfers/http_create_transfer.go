@@ -14,13 +14,13 @@ import (
 	"net/http"
 )
 
-func HandleCreateTransfer(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
+func HandleCreateTransfer(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	var request facade4debtus.CreateTransferRequest
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.DefaultJsonWithAuthRequired, http.StatusCreated,
 		func(ctx context.Context, userCtx facade.UserContext) (interface{}, error) {
 			var from, to *models4debtus.TransferCounterpartyInfo
 
-			appUser, err := dal4userus.GetUserByID(c, nil, authInfo.UserID)
+			appUser, err := dal4userus.GetUserByID(ctx, nil, authInfo.UserID)
 			if err != nil {
 				return nil, err
 			}
@@ -32,7 +32,7 @@ func HandleCreateTransfer(c context.Context, w http.ResponseWriter, r *http.Requ
 				from, to,
 			)
 
-			output, err := facade4debtus.Transfers.CreateTransfer(c, newTransfer)
+			output, err := facade4debtus.Transfers.CreateTransfer(ctx, newTransfer)
 			if err != nil {
 				return nil, err
 			}

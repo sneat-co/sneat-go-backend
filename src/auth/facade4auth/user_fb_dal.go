@@ -7,7 +7,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/auth/models4auth"
 )
 
-func NewUserFacebookKey(c context.Context, fbAppOrPageID, fbUserOrPageScopeID string) *dal.Key {
+func NewUserFacebookKey(ctx context.Context, fbAppOrPageID, fbUserOrPageScopeID string) *dal.Key {
 	if fbAppOrPageID == "" {
 		panic("fbAppOrPageID is empty string")
 	}
@@ -24,8 +24,8 @@ func NewUserFacebookDalGae() UserFacebookDalGae {
 	return UserFacebookDalGae{}
 }
 
-func (UserFacebookDalGae) SaveFbUser(c context.Context, tx dal.ReadwriteTransaction, fbUser models4auth.UserFacebook) (err error) {
-	//key := NewUserFacebookKey(c, fbUser.FbAppOrPageID, fbUser.FbUserOrPageScopeID)
+func (UserFacebookDalGae) SaveFbUser(_ context.Context, tx dal.ReadwriteTransaction, fbUser models4auth.UserFacebook) (err error) {
+	//key := NewUserFacebookKey(ctx, fbUser.FbAppOrPageID, fbUser.FbUserOrPageScopeID)
 	//if _, err = gaedb.Put(c, key, fbUser.Data); err != nil {
 	//	return
 	//}
@@ -33,19 +33,19 @@ func (UserFacebookDalGae) SaveFbUser(c context.Context, tx dal.ReadwriteTransact
 	return errors.New("not implemented")
 }
 
-func (UserFacebookDalGae) DeleteFbUser(c context.Context, fbAppOrPageID, fbUserOrPageScopeID string) (err error) {
-	//key := NewUserFacebookKey(c, fbAppOrPageID, fbUserOrPageScopeID)
-	//if err = gaedb.Delete(c, key); err != nil {
+func (UserFacebookDalGae) DeleteFbUser(_ context.Context, fbAppOrPageID, fbUserOrPageScopeID string) (err error) {
+	//key := NewUserFacebookKey(ctx, fbAppOrPageID, fbUserOrPageScopeID)
+	//if err = gaedb.Delete(ctx, key); err != nil {
 	//	return
 	//}
 	return errors.New("not implemented")
 }
 
-func (UserFacebookDalGae) GetFbUserByFbID(c context.Context, fbAppOrPageID, fbUserOrPageScopeID string) (fbUser models4auth.UserFacebook, err error) {
+func (UserFacebookDalGae) GetFbUserByFbID(_ context.Context, fbAppOrPageID, fbUserOrPageScopeID string) (fbUser models4auth.UserFacebook, err error) {
 	err = errors.New("not implemented")
 	return
 	//var entity models.UserFacebookData
-	//if err = gaedb.Get(c, NewUserFacebookKey(c, fbAppOrPageID, fbUserOrPageScopeID), &entity); err != nil {
+	//if err = gaedb.Get(ctx, NewUserFacebookKey(ctx, fbAppOrPageID, fbUserOrPageScopeID), &entity); err != nil {
 	//	if err == datastore.ErrNoSuchEntity {
 	//		err = db.NewErrNotFoundByStrID(models.UserFacebookCollection, fbUserOrPageScopeID, err)
 	//	}

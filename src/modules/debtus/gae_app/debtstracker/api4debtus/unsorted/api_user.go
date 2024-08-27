@@ -21,8 +21,8 @@ import (
 	"context"
 )
 
-//func getApiUser(c context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) (user models4debtus.AppUser, err error) {
-//	if user.ContactID = GetUserID(c, w, r, authInfo); user.ContactID == "" {
+//func getApiUser(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) (user models4debtus.AppUser, err error) {
+//	if user.ContactID = GetUserID(ctx, w, r, authInfo); user.ContactID == "" {
 //		w.WriteHeader(http.StatusUnauthorized)
 //		return
 //	}
@@ -37,55 +37,55 @@ import (
 //	return
 //}
 
-func HandleUserInfo(c context.Context, w http.ResponseWriter, r *http.Request) {
+func HandleUserInfo(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if userID, err := strconv.ParseInt(r.URL.Query().Get("id"), 10, 64); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write(([]byte)(err.Error()))
 	} else {
-		if _, err = facade4userus.SaveUserBrowser(c, strconv.FormatInt(userID, 10), r.UserAgent()); err != nil {
-			logus.Errorf(c, err.Error())
+		if _, err = facade4userus.SaveUserBrowser(ctx, strconv.FormatInt(userID, 10), r.UserAgent()); err != nil {
+			logus.Errorf(ctx, err.Error())
 			w.WriteHeader(http.StatusInternalServerError)
 			_, _ = w.Write(([]byte)(err.Error()))
 		}
 	}
 }
 
-func HandleSaveVisitorData(c context.Context, w http.ResponseWriter, r *http.Request) {
+func HandleSaveVisitorData(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
-		api4debtus.ErrorAsJson(c, w, http.StatusBadRequest, err)
+		api4debtus.ErrorAsJson(ctx, w, http.StatusBadRequest, err)
 		return
 	}
 	gaClientId := r.FormValue("gaClientId")
 	if gaClientId == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		api4debtus.ErrorAsJson(c, w, http.StatusBadRequest, errors.New("missing required parameter gaClientId"))
+		api4debtus.ErrorAsJson(ctx, w, http.StatusBadRequest, errors.New("missing required parameter gaClientId"))
 		return
 	}
 
 	userAgent := r.UserAgent()
 	ipAddress := strings.SplitN(r.RemoteAddr, ":", 1)[0]
 
-	if _, err := facade4userus.SaveGaClient(c, gaClientId, userAgent, ipAddress); err != nil {
-		api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
+	if _, err := facade4userus.SaveGaClient(ctx, gaClientId, userAgent, ipAddress); err != nil {
+		api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 		return
 	}
 }
 
-func HandleMe(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo, user dbo4userus.UserEntry) {
-	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, errors.New("not implemented"))
+func HandleMe(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo, user dbo4userus.UserEntry) {
+	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, errors.New("not implemented"))
 	//meDto := dto4debtus.UserMeDto{
 	//	UserID:   authInfo.UserID,
 	//	FullName: user.Data.GetFullName(),
 	//}
 	//if ua, err := user.Data.GetAccount("google", ""); err != nil {
-	//	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
+	//	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 	//	return
 	//} else if ua != nil {
 	//	meDto.GoogleUserID = ua.ContactID
 	//}
 	//
 	//if fbAccounts, err := user.Data.GetAccounts("facebook"); err != nil {
-	//	api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
+	//	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 	//	return
 	//} else {
 	//	for _, ua := range fbAccounts {
@@ -98,38 +98,38 @@ func HandleMe(c context.Context, w http.ResponseWriter, r *http.Request, authInf
 	//	meDto.FullName = ""
 	//}
 	//
-	//api4debtus.JsonToResponse(c, w, meDto)
+	//api4debtus.JsonToResponse(ctx, w, meDto)
 }
 
-func SetUserName(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
+func SetUserName(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 
 	body, err := io.ReadAll(r.Body)
 
 	if err != nil {
-		api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
+		api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 		return
 	}
 
 	if len(body) == 0 {
-		api4debtus.ErrorAsJson(c, w, http.StatusBadRequest, fmt.Errorf("%w: UserEntry name is required", api4auth.ErrBadRequest))
+		api4debtus.ErrorAsJson(ctx, w, http.StatusBadRequest, fmt.Errorf("%w: UserEntry name is required", api4auth.ErrBadRequest))
 		return
 	}
 
 	userCtx := facade.NewUserContext(authInfo.UserID)
-	err = dal4userus.RunUserWorker(c, userCtx, func(c context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
+	err = dal4userus.RunUserWorker(ctx, userCtx, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
 		params.User.Data.Names.UserName = string(body)
 		params.UserUpdates = append(params.UserUpdates, dal.Update{
 			Field: "names.userName",
 			Value: params.User.Data.Names.UserName,
 		})
-		if err = gaedal.DelayUpdateTransfersWithCreatorName(c, params.User.ID); err != nil {
+		if err = gaedal.DelayUpdateTransfersWithCreatorName(ctx, params.User.ID); err != nil {
 			return err
 		}
 		return err
 	})
 
 	if err != nil {
-		api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
+		api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 		return
 	}
 }

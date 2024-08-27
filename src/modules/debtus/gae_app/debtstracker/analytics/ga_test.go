@@ -7,8 +7,8 @@ import (
 )
 
 func TestSendSingleMessage(t *testing.T) {
-	var c context.Context
-	if err := SendSingleMessage(c, nil); err == nil {
+	var ctx context.Context
+	if err := SendSingleMessage(ctx, nil); err == nil {
 		t.Error("Expected to get error on nil context")
 	}
 }

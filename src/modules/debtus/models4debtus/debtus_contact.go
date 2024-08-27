@@ -226,7 +226,7 @@ func (dbo *DebtusSpaceContactDbo) Validate() (err error) {
 //	return
 //}
 
-func (dbo *DebtusSpaceContactDbo) BalanceWithInterest(c context.Context, periodEnds time.Time) (balance money.Balance, err error) {
+func (dbo *DebtusSpaceContactDbo) BalanceWithInterest(_ context.Context, periodEnds time.Time) (balance money.Balance, err error) {
 	if transferInfo := dbo.GetTransfersInfo(); transferInfo != nil {
 		err = updateBalanceWithInterest(true, dbo.Balance, transferInfo.OutstandingWithInterest, periodEnds)
 	}

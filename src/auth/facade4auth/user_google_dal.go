@@ -18,10 +18,10 @@ func NewUserGoogleDalGae() UserGoogleDalGae {
 	return UserGoogleDalGae{}
 }
 
-func (UserGoogleDalGae) GetUserGoogleByID(c context.Context, googleUserID string) (userGoogle models4auth.UserAccountEntry, err error) {
+func (UserGoogleDalGae) GetUserGoogleByID(_ context.Context, googleUserID string) (userGoogle models4auth.UserAccountEntry, err error) {
 	//userGoogle.ContactID = googleUserID
 	//userGoogle.Data = new(models.UserGoogleData)
-	//if err = gaedb.Get(c, NewUserGoogleKey(googleUserID), userGoogle.Data); err != nil {
+	//if err = gaedb.Get(ctx, NewUserGoogleKey(googleUserID), userGoogle.Data); err != nil {
 	//	if err == datastore.ErrNoSuchEntity {
 	//		err = dal.ErrRecordNotFound
 	//	}
@@ -31,8 +31,8 @@ func (UserGoogleDalGae) GetUserGoogleByID(c context.Context, googleUserID string
 	return
 }
 
-func (UserGoogleDalGae) DeleteUserGoogle(c context.Context, googleUserID string) (err error) {
-	//if err = gaedb.Delete(c, NewUserGoogleKey(googleUserID)); err != nil {
+func (UserGoogleDalGae) DeleteUserGoogle(_ context.Context, googleUserID string) (err error) {
+	//if err = gaedb.Delete(ctx, NewUserGoogleKey(googleUserID)); err != nil {
 	//	return
 	//}
 	return errors.New("not implemented")

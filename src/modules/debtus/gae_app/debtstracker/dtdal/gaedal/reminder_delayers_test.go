@@ -49,7 +49,7 @@ func TestDelaySetReminderIsSent(t *testing.T) {
 	}
 
 	//countOfCallsToDelay := 0
-	//apphostgae.CallDelayFunc = func(c context.Context, queueName, subPath string, f *delay.Function, args ...interface{}) error {
+	//apphostgae.CallDelayFunc = func(ctx context.Context, queueName, subPath string, f *delay.Function, args ...interface{}) error {
 	//	countOfCallsToDelay += 1
 	//	return nil
 	//}

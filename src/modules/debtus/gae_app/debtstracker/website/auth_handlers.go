@@ -79,14 +79,14 @@ func LoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			//			logus.Errorf(c, err.Error())
 			//			return
 			//		}
-			//		err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
-			//			u, err := dal4userus.GetUserByID(tc, tx, userID)
+			//		err = db.RunReadwriteTransaction(c, func(tctx context.Context, tx dal.ReadwriteTransaction) error {
+			//			u, err := dal4userus.GetUserByID(tctx, tx, userID)
 			//			if err != nil {
 			//				return err
 			//			}
 			//			if u.Data.EmailAddress == "" {
 			//				u.Data.SetEmail(gaeUser.Email, true)
-			//				if err = facade4debtus.User.SaveUserOBSOLETE(c, tx, u); err != nil {
+			//				if err = facade4debtus.User.SaveUserOBSOLETE(tctx, tx, u); err != nil {
 			//					return fmt.Errorf("failed to save user: %w", err)
 			//				}
 			//			}
@@ -94,7 +94,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			//		}, nil)
 			//		if err != nil {
 			//			w.WriteHeader(http.StatusInternalServerError)
-			//			logus.Errorf(c, err.Error())
+			//			logus.Errorf(ctx, err.Error())
 			//		}
 			//	}
 			//}

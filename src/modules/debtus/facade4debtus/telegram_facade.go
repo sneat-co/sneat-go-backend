@@ -15,7 +15,7 @@ import (
 	"strconv"
 )
 
-func GetLocale(c context.Context, botID string, tgChatIntID int64, userID string) (locale i18n.Locale, err error) {
+func GetLocale(ctx context.Context, botID string, tgChatIntID int64, userID string) (locale i18n.Locale, err error) {
 	chatID := botsfwmodels.NewChatID(botID, strconv.FormatInt(tgChatIntID, 10))
 	//var tgChatEntity botsfwtgmodels.ChatEntity
 	//tgChatBaseData := botsfwtgmodels.NewTelegramChatBaseData()
@@ -23,15 +23,15 @@ func GetLocale(c context.Context, botID string, tgChatIntID int64, userID string
 	key := dal.NewKeyWithID(botsfwtgmodels.TgChatCollection, chatID)
 	var tgChat = record.NewDataWithID[string, *models4debtus.DebtusTelegramChatData](chatID, key, new(models4debtus.DebtusTelegramChatData))
 	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(ctx); err != nil {
 		return
 	}
-	if err = db.Get(c, tgChat.Record); err != nil {
-		logus.Debugf(c, "Failed to get TgChat entity by string ContactID=%v: %v", tgChat.ID, err) // TODO: Replace with error once load by int ContactID removed
+	if err = db.Get(ctx, tgChat.Record); err != nil {
+		logus.Debugf(ctx, "Failed to get TgChat entity by string ContactID=%v: %v", tgChat.ID, err) // TODO: Replace with error once load by int ContactID removed
 		if dal.IsNotFound(err) {
 			panic("TODO: Remove this load by int ContactID")
-			//if err = nds.Get(c, datastore.NewKey(c, botsfwtgmodels.TgChatCollection, "", tgChatIntID, nil), &tgChatEntity); err != nil { // TODO: Remove this load by int ContactID
-			//	logus.Errorf(c, "Failed to get TgChat entity by int ContactID=%v: %v", tgChatIntID, err)
+			//if err = nds.Get(ctx, datastore.NewKey(ctx, botsfwtgmodels.TgChatCollection, "", tgChatIntID, nil), &tgChatEntity); err != nil { // TODO: Remove this load by int ContactID
+			//	logus.Errorf(ctx, "Failed to get TgChat entity by int ContactID=%v: %v", tgChatIntID, err)
 			//	return
 			//}
 		} else {
@@ -44,16 +44,16 @@ func GetLocale(c context.Context, botID string, tgChatIntID int64, userID string
 			userID = tgChat.Data.BaseChatData().AppUserID
 		}
 		if userID != "" {
-			user, err := dal4userus.GetUserByID(c, db, userID)
+			user, err := dal4userus.GetUserByID(ctx, db, userID)
 			if err != nil {
-				logus.Errorf(c, fmt.Errorf("failed to get user by ContactID=%v: %w", userID, err).Error())
+				logus.Errorf(ctx, fmt.Errorf("failed to get user by ContactID=%v: %w", userID, err).Error())
 				return locale, err
 			}
 			tgChatPreferredLanguage = user.Data.PreferredLocale
 		}
 		if tgChatPreferredLanguage == "" {
 			tgChatPreferredLanguage = i18n.LocaleCodeEnUS
-			logus.Warningf(c, "tgChat.PreferredLanguage == '' && user.PreferredLanguage == '', set to %v", i18n.LocaleCodeEnUS)
+			logus.Warningf(ctx, "tgChat.PreferredLanguage == '' && user.PreferredLanguage == '', set to %v", i18n.LocaleCodeEnUS)
 		}
 	}
 	locale = i18n.LocalesByCode5[tgChatPreferredLanguage]

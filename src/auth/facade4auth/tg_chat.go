@@ -22,7 +22,7 @@ func NewTgChatDalGae() TgChatDalGae {
 	return TgChatDalGae{}
 }
 
-func (TgChatDalGae) GetTgChatByID(c context.Context, tgBotID string, tgChatID int64) (tgChat models4debtus.DebtusTelegramChat, err error) {
+func (TgChatDalGae) GetTgChatByID(ctx context.Context, tgBotID string, tgChatID int64) (tgChat models4debtus.DebtusTelegramChat, err error) {
 	tgChatFullID := fmt.Sprintf("%s:%d", tgBotID, tgChatID)
 	key := dal.NewKeyWithID(botsfwtgmodels.TgChatCollection, tgChatFullID)
 	data := new(models4debtus.DebtusTelegramChatData)
@@ -33,14 +33,15 @@ func (TgChatDalGae) GetTgChatByID(c context.Context, tgBotID string, tgChatID in
 	//tgChat.SetID(tgBotID, tgChatID)
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(ctx); err != nil {
 		return
 	}
-	err = db.Get(c, tgChat.Record)
+	err = db.Get(ctx, tgChat.Record)
 	return
 }
 
-func (TgChatDalGae) /* TODO: rename properly! */ DoSomething(c context.Context,
+func (TgChatDalGae) /* TODO: rename properly! */ DoSomething(
+	ctx context.Context,
 	userTask *sync.WaitGroup, currency string, tgChatID int64, authInfo token4auth.AuthInfo, user dbo4userus.UserEntry,
 	sendToTelegram func(tgChat botsfwtgmodels.TgChatData) error,
 ) (err error) {
@@ -53,17 +54,17 @@ func (TgChatDalGae) /* TODO: rename properly! */ DoSomething(c context.Context,
 		Data:   debtusTgChatData,
 	}
 
-	if err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
-		if err = tx.Get(tc, debtusTgChat.Record); err != nil {
+	if err = facade.RunReadwriteTransaction(ctx, func(tctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+		if err = tx.Get(tctx, debtusTgChat.Record); err != nil {
 			return err
 		}
 		//if debtusTgChat.Data.BotID == "" {
-		//	logus.Errorf(c, "Data inconsistency issue - TgChat(%v).BotID is empty string", tgChatID)
+		//	logus.Errorf(ctx, "Data inconsistency issue - TgChat(%v).BotID is empty string", tgChatID)
 		//	if strings.Contains(authInfo.Issuer, ":") {
 		//		issuer := strings.Split(authInfo.Issuer, ":")
 		//		if strings.ToLower(issuer[0]) == "telegram" {
 		//			debtusTgChat.Data.BotID = issuer[1]
-		//			logus.Infof(c, "Data inconsistency fixed, set to: %v", debtusTgChat.Data.BotID)
+		//			logus.Infof(ctx, "Data inconsistency fixed, set to: %v", debtusTgChat.Data.BotID)
 		//		}
 		//	}
 		//}
@@ -75,7 +76,7 @@ func (TgChatDalGae) /* TODO: rename properly! */ DoSomething(c context.Context,
 			}
 			isSentToTelegram = true
 		}
-		if err = tx.Set(tc, debtusTgChat.Record); err != nil {
+		if err = tx.Set(tctx, debtusTgChat.Record); err != nil {
 			return fmt.Errorf("failed to save Telegram chat record to db: %w", err)
 		}
 		return err

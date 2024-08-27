@@ -42,9 +42,9 @@ func createStartCommand(botParams BotParams) botsfw.Command {
 
 func startCommandAction(whc botsfw.WebhookContext, botParams BotParams) (m botsfw.MessageFromBot, err error) {
 	whc.LogRequest()
-	c := whc.Context()
+	ctx := whc.Context()
 	text := whc.Input().(botsfw.WebhookTextMessage).Text()
-	logus.Debugf(c, "createStartCommand.Action() => text: "+text)
+	logus.Debugf(ctx, "createStartCommand.Action() => text: "+text)
 
 	startParam, startParams := tgsharedcommands.ParseStartCommand(whc)
 
@@ -69,15 +69,15 @@ func startCommandAction(whc botsfw.WebhookContext, botParams BotParams) (m botsf
 			//case strings.HasPrefix(textToMatchNoStart, JOIN_BILL_COMMAND):
 			//	return JoinBillCommand.Action(whc)
 		case strings.HasPrefix(startParam, "refbytguser-") && startParam != "refbytguser-YOUR_CHANNEL":
-			facade4debtus.Referer.AddTelegramReferrer(c, whc.AppUserID(), strings.TrimPrefix(startParam, "refbytguser-"), whc.GetBotCode())
+			facade4debtus.Referer.AddTelegramReferrer(ctx, whc.AppUserID(), strings.TrimPrefix(startParam, "refbytguser-"), whc.GetBotCode())
 		}
 		return startInBotAction(whc, startParams, botParams)
 	}
 }
 func startLoginGac(whc botsfw.WebhookContext, loginID int) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
+	ctx := whc.Context()
 	var loginPin models4auth.LoginPin
-	if loginPin, err = facade4debtus.AuthFacade.AssignPinCode(c, loginID, whc.AppUserID()); err != nil {
+	if loginPin, err = facade4debtus.AuthFacade.AssignPinCode(ctx, loginID, whc.AppUserID()); err != nil {
 		return
 	}
 	return whc.NewMessageByCode(trans.MESSAGE_TEXT_LOGIN_CODE, models4auth.LoginCodeToString(loginPin.Data.Code)), nil
@@ -128,9 +128,9 @@ func onStartCallbackCommand(params BotParams) botsfw.Command {
 			lang := callbackUrl.Query().Get("lang")
 			mode := "onboarding" // TODO: should we set mode?
 			return setPreferredLanguageAction(whc, lang, mode, params)
-			//c := whc.Context()
+			//ctx := whc.Context()
 			//if lang != "" {
-			//	logus.Debugf(c, "Locale: "+lang)
+			//	logus.Debugf(ctx, "Locale: "+lang)
 			//
 			//	whc.ChatData().SetPreferredLanguage(lang)
 			//
@@ -141,7 +141,7 @@ func onStartCallbackCommand(params BotParams) botsfw.Command {
 			//	if appUserID != "" {
 			//		userCtx := facade.NewUserContext(whc.AppUserID())
 			//		if err = dal4userus.RunUserWorker(c, userCtx,
-			//			func(c context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
+			//			func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
 			//				if params.UserUpdates, err = params.UserEntry.Data.SetPreferredLocale(lang); err != nil {
 			//					return err
 			//				}

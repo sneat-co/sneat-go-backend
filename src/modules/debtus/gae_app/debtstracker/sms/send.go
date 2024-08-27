@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-func SendSms(c context.Context, isLive bool, toPhoneNumber, smsText string) (isTestSender bool, smsResponse *gotwilio.SmsResponse, twilioException *gotwilio.Exception, err error) {
+func SendSms(ctx context.Context, isLive bool, toPhoneNumber, smsText string) (isTestSender bool, smsResponse *gotwilio.SmsResponse, twilioException *gotwilio.Exception, err error) {
 	var (
 		accountSid   string
 		accountToken string
@@ -29,7 +29,7 @@ func SendSms(c context.Context, isLive bool, toPhoneNumber, smsText string) (isT
 		fromNumber = common4debtus.TWILIO_TEST_FROM
 	}
 
-	twilio := gotwilio.NewTwilioClientCustomHTTP(accountSid, accountToken, dtdal.HttpClient(c))
+	twilio := gotwilio.NewTwilioClientCustomHTTP(accountSid, accountToken, dtdal.HttpClient(ctx))
 
 	if smsResponse, twilioException, err = twilio.SendSMS(
 		fromNumber,
@@ -43,7 +43,7 @@ func SendSms(c context.Context, isLive bool, toPhoneNumber, smsText string) (isT
 
 	if twilioException != nil && twilioException.Code == 21211 && len(toPhoneNumber) == 12 && strings.HasPrefix(toPhoneNumber, "+8") { // is not a valid phone number
 		correctedPhoneNumber := strings.Replace(toPhoneNumber, "+8", "+7", 1)
-		logus.Warningf(c, "%v. Will try to send after changing phone number from %v to %v", twilioException.Message, toPhoneNumber, correctedPhoneNumber)
+		logus.Warningf(ctx, "%v. Will try to send after changing phone number from %v to %v", twilioException.Message, toPhoneNumber, correctedPhoneNumber)
 		smsResponse, twilioException, err = twilio.SendSMS(
 			fromNumber,
 			correctedPhoneNumber,

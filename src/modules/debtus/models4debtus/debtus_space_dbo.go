@@ -78,7 +78,7 @@ func (v *DebtusSpaceDbo) LatestCounterparties(limit int) (contacts []*DebtusCont
 	return
 }
 
-func (v *DebtusSpaceDbo) BalanceWithInterest(c context.Context, periodEnds time.Time) (balance money.Balance, err error) {
+func (v *DebtusSpaceDbo) BalanceWithInterest(_ context.Context, periodEnds time.Time) (balance money.Balance, err error) {
 	err = errors.New("method BalanceWithInterest() is not implemented")
 	//if v.TransfersWithInterestCount == 0 {
 	//	balance = v.Balance()
@@ -90,7 +90,7 @@ func (v *DebtusSpaceDbo) BalanceWithInterest(c context.Context, periodEnds time.
 	//	balance = make(money.Balance, v.BalanceCount)
 	//	for _, contact := range v.Contacts() {
 	//		var contactBalance money.Balance
-	//		if contactBalance, err = contact.BalanceWithInterest(c, periodEnds); err != nil {
+	//		if contactBalance, err = contact.BalanceWithInterest(ctx, periodEnds); err != nil {
 	//			err = fmt.Errorf("failed to get balance with interest for user's contact JSON %v: %w", contact.ContactID, err)
 	//			return
 	//		}
@@ -101,9 +101,9 @@ func (v *DebtusSpaceDbo) BalanceWithInterest(c context.Context, periodEnds time.
 	//	//if len(balance) != v.BalanceCount { // Theoretically can be eliminated by interest
 	//	//	panic(fmt.Sprintf("len(balance) != v.BalanceCount: %v != %v", len(balance), v.BalanceCount))
 	//	//}
-	//	//for c, v := range balance { // It can be less if we have different interest condition for 2 contacts different direction!!!
-	//	//	if tv := userBalance[c]; v < tv {
-	//	//		panic(fmt.Sprintf("For currency %v balance with interest is less than total balance: %v < %v", c, v, tv))
+	//	//for ctx, v := range balance { // It can be less if we have different interest condition for 2 contacts different direction!!!
+	//	//	if tv := userBalance[ctx]; v < tv {
+	//	//		panic(fmt.Sprintf("For currency %v balance with interest is less than total balance: %v < %v", ctx, v, tv))
 	//	//	}
 	//	//}
 	//} else {

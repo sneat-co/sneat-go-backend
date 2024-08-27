@@ -12,33 +12,33 @@ import (
 	"github.com/strongo/logus"
 )
 
-func DelayUpdateInviteClaimedCount(c context.Context, claimID int64) error {
-	return delayerUpdateInviteClaimedCount.EnqueueWork(c, delaying.With(queues.QueueInvites, "UpdateInviteClaimedCount", 0), claimID)
+func DelayUpdateInviteClaimedCount(ctx context.Context, claimID int64) error {
+	return delayerUpdateInviteClaimedCount.EnqueueWork(ctx, delaying.With(queues.QueueInvites, "UpdateInviteClaimedCount", 0), claimID)
 }
 
-func delayedUpdateInviteClaimedCount(c context.Context, claimID int64) (err error) {
-	logus.Debugf(c, "delayerUpdateInviteClaimedCount(claimID=%v)", claimID)
-	err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
+func delayedUpdateInviteClaimedCount(ctx context.Context, claimID int64) (err error) {
+	logus.Debugf(ctx, "delayerUpdateInviteClaimedCount(claimID=%v)", claimID)
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		claim := models4debtus.NewInviteClaim(claimID, nil)
-		err = tx.Get(c, claim.Record)
+		err = tx.Get(ctx, claim.Record)
 		if err != nil {
 			if dal.IsNotFound(err) {
-				logus.Errorf(c, "Claim not found by id: %v", claimID)
+				logus.Errorf(ctx, "Claim not found by id: %v", claimID)
 				return nil
 			}
 			return fmt.Errorf("failed to get InviteClaimData by id=%v: %w", claimID, err)
 		}
-		invite, err := dtdal.Invite.GetInvite(c, tx, claim.Data.InviteCode)
+		invite, err := dtdal.Invite.GetInvite(ctx, tx, claim.Data.InviteCode)
 		if err != nil {
 			if dal.IsNotFound(err) {
-				logus.Errorf(c, "Invite not found by code: %v", claim.Data.InviteCode)
+				logus.Errorf(ctx, "Invite not found by code: %v", claim.Data.InviteCode)
 				return nil // Internationally return NIL to avoid retrying
 			}
 			return err
 		}
 		for _, cid := range invite.Data.LastClaimIDs {
 			if cid == claimID {
-				logus.Infof(c, "Invite already has been updated for this claim (claimID=%v, inviteCode=%v).", claimID, claim.Data.InviteCode)
+				logus.Infof(ctx, "Invite already has been updated for this claim (claimID=%v, inviteCode=%v).", claimID, claim.Data.InviteCode)
 				return nil
 			}
 		}
@@ -51,13 +51,13 @@ func delayedUpdateInviteClaimedCount(c context.Context, claimID int64) (err erro
 			invite.Data.LastClaimIDs = invite.Data.LastClaimIDs[len(invite.Data.LastClaimIDs)-10:]
 		}
 
-		if err = tx.Set(tc, invite.Record); err != nil {
+		if err = tx.Set(ctx, invite.Record); err != nil {
 			return fmt.Errorf("failed to save invite to DB: %w", err)
 		}
 		return err
 	})
 	if err != nil {
-		logus.Errorf(c, "Failed to update Invite.ClaimedCount for claimID=%v", claimID)
+		logus.Errorf(ctx, "Failed to update Invite.ClaimedCount for claimID=%v", claimID)
 	}
 	return err
 }

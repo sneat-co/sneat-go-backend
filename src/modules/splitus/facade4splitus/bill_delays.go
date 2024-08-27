@@ -18,17 +18,17 @@ import (
 
 const updateUsersWithBillKeyName = "update-users-with-bill"
 
-func DelayUpdateUsersWithBill(c context.Context, billID string, userIDs []string) (err error) {
-	return delayerUpdateUsersWithBill.EnqueueWork(c, delaying.With(const4splitus.QueueSplitus, updateUsersWithBillKeyName, 0), billID, userIDs)
+func DelayUpdateUsersWithBill(ctx context.Context, billID string, userIDs []string) (err error) {
+	return delayerUpdateUsersWithBill.EnqueueWork(ctx, delaying.With(const4splitus.QueueSplitus, updateUsersWithBillKeyName, 0), billID, userIDs)
 }
 
-func delayedUpdateUsersWithBill(c context.Context, billID string, userIDs []string) (err error) {
+func delayedUpdateUsersWithBill(ctx context.Context, billID string, userIDs []string) (err error) {
 	wg := new(sync.WaitGroup)
 	wg.Add(len(userIDs))
 	for i := range userIDs {
 		go func(i int) {
 			defer wg.Done()
-			if err2 := delayerUpdateUserWithBill.EnqueueWork(c, delaying.With(const4splitus.QueueSplitus, updateUserWithBillKeyName, 0), billID, userIDs[i]); err != nil {
+			if err2 := delayerUpdateUserWithBill.EnqueueWork(ctx, delaying.With(const4splitus.QueueSplitus, updateUserWithBillKeyName, 0), billID, userIDs[i]); err != nil {
 				err = err2
 			}
 		}(i)
@@ -39,8 +39,8 @@ func delayedUpdateUsersWithBill(c context.Context, billID string, userIDs []stri
 
 const updateUserWithBillKeyName = "delayedUpdateUserWithBill"
 
-func delayedUpdateUserWithBill(c context.Context, billID, userID string) (err error) {
-	logus.Debugf(c, "delayedUpdateUserWithBill(billID=%v, userID=%v)", billID, userID)
+func delayedUpdateUserWithBill(ctx context.Context, billID, userID string) (err error) {
+	logus.Debugf(ctx, "delayedUpdateUserWithBill(billID=%v, userID=%v)", billID, userID)
 	var (
 		bill                 models4splitus.BillEntry
 		wg                   sync.WaitGroup
@@ -51,12 +51,12 @@ func delayedUpdateUserWithBill(c context.Context, billID, userID string) (err er
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		if bill, billErr = GetBillByID(c, nil, billID); err != nil {
+		if bill, billErr = GetBillByID(ctx, nil, billID); err != nil {
 			return
 		}
 	}()
 
-	if err = dal4userus.RunUserModuleWorker(c, userID, const4debtus.ModuleID, new(models4splitus.SplitusUserDbo),
+	if err = dal4userus.RunUserModuleWorker(ctx, userID, const4debtus.ModuleID, new(models4splitus.SplitusUserDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserModuleWorkerParams[models4splitus.SplitusUserDbo]) (err error) {
 			if err = tx.Get(ctx, params.UserModule.Record); err != nil {
 				return err
@@ -73,14 +73,14 @@ func delayedUpdateUserWithBill(c context.Context, billID, userID string) (err er
 					if billMember.UserID == userID {
 						userBillBalance = billMember.Balance()
 						userIsBillMember = true
-						logus.Debugf(c, "userBillBalance: %v; billMember.Owes: %v; billMember.Paid: %v",
+						logus.Debugf(ctx, "userBillBalance: %v; billMember.Owes: %v; billMember.Paid: %v",
 							userBillBalance, billMember.Owes, billMember.Paid)
 						break
 					}
 				}
 			}
 
-			logus.Debugf(c, "userIsBillMember: %v", userIsBillMember)
+			logus.Debugf(ctx, "userIsBillMember: %v", userIsBillMember)
 
 			shouldBeInOutstanding := userIsBillMember && (bill.Data.Status == models4splitus.BillStatusOutstanding || bill.Data.Status == models4splitus.BillStatusDraft)
 			userOutstandingBills := params.UserModule.Data.GetOutstandingBills()
@@ -128,18 +128,18 @@ func delayedUpdateUserWithBill(c context.Context, billID, userID string) (err er
 					return
 				}
 			} else {
-				logus.Debugf(c, "User not changed, ContactID: %v", userID)
+				logus.Debugf(ctx, "User not changed, ContactID: %v", userID)
 			}
 			return
 		}); err != nil {
 		if dal.IsNotFound(err) {
-			logus.Errorf(c, err.Error())
+			logus.Errorf(ctx, err.Error())
 			err = nil
 		}
 		return
 	}
 	if userModuleDboChanged {
-		logus.Infof(c, "User %v updated with info for bill %v", userID, billID)
+		logus.Infof(ctx, "User %v updated with info for bill %v", userID, billID)
 	}
 	return
 }

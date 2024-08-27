@@ -11,20 +11,20 @@ import (
 var billChangeSplitModeCommand = botsfw.Command{
 	Code: "split-mode",
 	CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-		c := whc.Context()
-		logus.Debugf(c, "billChangeSplitModeCommand.CallbackAction()")
+		ctx := whc.Context()
+		logus.Debugf(ctx, "billChangeSplitModeCommand.CallbackAction()")
 		var bill models4splitus.BillEntry
 		if bill.ID, err = GetBillID(callbackUrl); err != nil {
 			return
 		}
 		tx := whc.Tx()
-		if bill, err = facade4splitus.GetBillByID(c, tx, bill.ID); err != nil {
+		if bill, err = facade4splitus.GetBillByID(ctx, tx, bill.ID); err != nil {
 			return
 		}
 		splitMode := models4splitus.SplitMode(callbackUrl.Query().Get("mode"))
 		if bill.Data.SplitMode != splitMode {
 			bill.Data.SplitMode = splitMode
-			if err = facade4splitus.SaveBill(c, tx, bill); err != nil {
+			if err = facade4splitus.SaveBill(ctx, tx, bill); err != nil {
 				return
 			}
 		}

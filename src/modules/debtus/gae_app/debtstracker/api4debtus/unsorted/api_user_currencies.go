@@ -9,6 +9,6 @@ import (
 	"context"
 )
 
-func HandleGetUserCurrencies(c context.Context, w http.ResponseWriter, _ *http.Request, _ token4auth.AuthInfo, user dbo4userus.UserEntry) {
-	api4debtus.JsonToResponse(c, w, user.Data.LastCurrencies)
+func HandleGetUserCurrencies(ctx context.Context, w http.ResponseWriter, _ *http.Request, _ token4auth.AuthInfo, user dbo4userus.UserEntry) {
+	api4debtus.JsonToResponse(ctx, w, user.Data.LastCurrencies)
 }

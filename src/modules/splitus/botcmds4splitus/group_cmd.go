@@ -11,8 +11,8 @@ var groupCommand = botsfw.NewCallbackCommand(groupCommandCode,
 	func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 		panic("implement me")
 		//// we can't use GroupCallbackCommand as we have parameter id=[first|last|<id>]
-		//c := whc.Context()
-		//logus.Debugf(c, "groupCommand.CallbackAction()")
+		//ctx := whc.Context()
+		//logus.Debugf(ctx, "groupCommand.CallbackAction()")
 		//
 		//var user botsfwmodels.AppUserData
 		//if user, err = whc.AppUserData(); err != nil {

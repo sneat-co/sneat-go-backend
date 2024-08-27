@@ -26,12 +26,12 @@ import (
 var SendReceiptCallbackCommand = botsfw.NewCallbackCommand(SendReceiptCallbackPath, CallbackSendReceipt)
 
 func CallbackSendReceipt(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
+	ctx := whc.Context()
 	q := callbackUrl.Query()
 	sendBy := q.Get("by")
 	spaceID := q.Get("spaceID")
-	logus.Debugf(c, "CallbackSendReceipt(callbackUrl=%v)", callbackUrl)
-	return m, facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	logus.Debugf(ctx, "CallbackSendReceipt(callbackUrl=%v)", callbackUrl)
+	return m, facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		var (
 			transferID string
 			transfer   models4debtus.TransferEntry
@@ -40,13 +40,13 @@ func CallbackSendReceipt(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 		if transferID == "" {
 			return fmt.Errorf("missing transfer ContactID")
 		}
-		transfer, err = facade4debtus.Transfers.GetTransferByID(c, tx, transferID)
+		transfer, err = facade4debtus.Transfers.GetTransferByID(ctx, tx, transferID)
 		if err != nil {
 			return fmt.Errorf("failed to get transfer by ContactID: %w", err)
 		}
 		//chatEntity := whc.ChatData() //TODO: Need this to get appUser, has to be refactored
 		//appUser, err := whc.GetAppUser()
-		counterparty, err := facade4debtus.GetDebtusSpaceContactByID(c, tx, spaceID, transfer.Data.Counterparty().ContactID)
+		counterparty, err := facade4debtus.GetDebtusSpaceContactByID(ctx, tx, spaceID, transfer.Data.Counterparty().ContactID)
 		if err != nil {
 			return err
 		}
@@ -60,7 +60,7 @@ func CallbackSendReceipt(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 			m, err = createSendReceiptOptionsMessage(whc, transfer)
 			return
 		case ReceiptActionDoNotSend:
-			logus.Debugf(c, "CallbackSendReceipt(): do-not-send")
+			logus.Debugf(ctx, "CallbackSendReceipt(): do-not-send")
 			if m, err = whc.NewEditMessage(whc.Translate(trans.MESSAGE_TEXT_RECEIPT_WILL_NOT_BE_SENT), botsfw.MessageFormatHTML); err != nil {
 				return
 			}
@@ -94,8 +94,8 @@ func CallbackSendReceipt(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 				if updateMessage, err = whc.NewEditMessage(whc.Translate(trans.MESSAGE_TEXT_LETS_SEND_SMS), botsfw.MessageFormatHTML); err != nil {
 					return
 				}
-				if _, err = whc.Responder().SendMessage(c, updateMessage, botsfw.BotAPISendMessageOverHTTPS); err != nil {
-					logus.Errorf(c, fmt.Errorf("failed to update Telegram message: %w", err).Error())
+				if _, err = whc.Responder().SendMessage(ctx, updateMessage, botsfw.BotAPISendMessageOverHTTPS); err != nil {
+					logus.Errorf(ctx, fmt.Errorf("failed to update Telegram message: %w", err).Error())
 					err = nil
 				}
 
@@ -133,7 +133,7 @@ func CallbackSendReceipt(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 			m = whc.NewMessage(whc.Translate(trans.MESSAGE_TEXT_INVITE_ASK_EMAIL_FOR_RECEIPT, transfer.Data.Counterparty().ContactName))
 		default:
 			err = errors.New("Unknown channel to send receipt: " + sendBy)
-			logus.Errorf(c, err.Error())
+			logus.Errorf(ctx, err.Error())
 		}
 		return err
 	})

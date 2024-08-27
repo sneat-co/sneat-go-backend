@@ -21,7 +21,7 @@ package maintainance
 //type Worker func(counters *asyncCounters) error
 //type WorkerFactory func() Worker
 //
-////func (m *asyncMapper) startWorker(c context.Context, counters mapper.Counters, createWorker WorkerFactory) (err error) {
+////func (m *asyncMapper) startWorker(ctx context.Context, counters mapper.Counters, createWorker WorkerFactory) (err error) {
 ////	// gaedb.LoggingEnabled = false
 ////	// logus.Debugf(c, "*asyncMapper.startWorker()")
 ////	executeWorker := createWorker()
@@ -53,17 +53,17 @@ package maintainance
 ////}
 //
 //// JobStarted is called when a mapper job is started
-//func (*asyncMapper) JobStarted(c context.Context, id string) {
+//func (*asyncMapper) JobStarted(ctx context.Context, id string) {
 //	logus.Debugf(c, "Job started: %v", id)
 //}
 //
 //// JobCompleted is called when a mapper job is completed
-//func (*asyncMapper) JobCompleted(c context.Context, id string) {
-//	logJobCompletion(c, id)
+//func (*asyncMapper) JobCompleted(ctx context.Context, id string) {
+//	logJobCompletion(ctx, id)
 //}
 //
 //// SliceStarted is called when a mapper job for an individual slice of a
-//func (m *asyncMapper) SliceStarted(c context.Context, id string, namespace string, shard, slice int) {
+//func (m *asyncMapper) SliceStarted(ctx context.Context, id string, namespace string, shard, slice int) {
 //	if m.WaitGroup == nil {
 //		m.WaitGroup = new(sync.WaitGroup)
 //	}
@@ -72,7 +72,7 @@ package maintainance
 //
 //// SliceCompleted is called when a mapper job for an individual slice of a
 //// shard within a namespace is completed
-//func (m *asyncMapper) SliceCompleted(c context.Context, id string, namespace string, shard, slice int) {
+//func (m *asyncMapper) SliceCompleted(ctx context.Context, id string, namespace string, shard, slice int) {
 //	logus.Debugf(c, "Awaiting completion...")
 //	if m.WaitGroup != nil {
 //		m.WaitGroup.Wait()
@@ -81,9 +81,9 @@ package maintainance
 //	// gaedb.LoggingEnabled = true
 //}
 //
-//type filterByID func(c context.Context, q *mapper.Query, kind, paramVal string) (query *mapper.Query, filtered bool, err error)
+//type filterByID func(ctx context.Context, q *mapper.Query, kind, paramVal string) (query *mapper.Query, filtered bool, err error)
 //
-//func filterByIntID(c context.Context, q *mapper.Query, kind, paramVal string) (query *mapper.Query, filtered bool, err error) {
+//func filterByIntID(ctx context.Context, q *mapper.Query, kind, paramVal string) (query *mapper.Query, filtered bool, err error) {
 //	query = q
 //	if paramVal == "" {
 //		return

@@ -23,19 +23,19 @@ var inlineQueryCommand = botsfw.Command{
 	InputTypes: []botsfw.WebhookInputType{botsfw.WebhookInputInlineQuery},
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		whc.LogRequest()
-		c := whc.Context()
+		ctx := whc.Context()
 		if tgInput, ok := whc.Input().(telegram.TgWebhookInput); ok {
 			update := tgInput.TgUpdate()
 
 			if appUserData, err := whc.AppUserData(); err != nil {
 				return m, err
 			} else if preferredLocale := appUserData.BotsFwAdapter().GetPreferredLocale(); preferredLocale != "" {
-				logus.Debugf(c, "User has preferring locale")
+				logus.Debugf(ctx, "User has preferring locale")
 				_ = whc.SetLocale(preferredLocale)
 			} else if tgLang := update.InlineQuery.From.LanguageCode; len(tgLang) >= 2 {
 				switch strings.ToLower(tgLang[:2]) {
 				case "ru":
-					logus.Debugf(c, "Telegram client has known language code")
+					logus.Debugf(ctx, "Telegram client has known language code")
 					if err = whc.SetLocale(i18n.LocaleRuRu.Code5); err != nil {
 						return m, err
 					}
@@ -44,7 +44,7 @@ var inlineQueryCommand = botsfw.Command{
 		}
 		inlineQuery := whc.Input().(botsfw.WebhookInlineQuery)
 		query := strings.TrimSpace(inlineQuery.GetQuery())
-		logus.Debugf(c, "inlineQueryCommand.Action(query=%v)", query)
+		logus.Debugf(ctx, "inlineQueryCommand.Action(query=%v)", query)
 		switch {
 		case query == "":
 			return inlineEmptyQuery(whc, inlineQuery)
@@ -54,7 +54,7 @@ var inlineQueryCommand = botsfw.Command{
 			if reMatches := reInlineQueryNewBill.FindStringSubmatch(query); reMatches != nil {
 				return inlineQueryNewBill(whc, reMatches[1], reMatches[2], reMatches[3])
 			}
-			logus.Debugf(c, "Inline query not matched to any action: [%v]", query)
+			logus.Debugf(ctx, "Inline query not matched to any action: [%v]", query)
 		}
 
 		return
@@ -74,7 +74,7 @@ func inlineEmptyQuery(whc botsfw.WebhookContext, inlineQuery botsfw.WebhookInlin
 
 func inlineQueryJoinGroup(whc botsfw.WebhookContext, query string) (m botsfw.MessageFromBot, err error) {
 	err = errors.New("inlineQueryJoinGroup is not implemented")
-	//c := whc.Context()
+	//ctx := whc.Context()
 	//
 	//inlineQuery := whc.Input().(botsfw.WebhookInlineQuery)
 	//
@@ -83,7 +83,7 @@ func inlineQueryJoinGroup(whc botsfw.WebhookContext, query string) (m botsfw.Mes
 	//	err = errors.New("Missing group ContactID")
 	//	return
 	//}
-	//if group, err = dtdal.Group.GetGroupByID(c, nil, group.ContactID); err != nil {
+	//if group, err = dtdal.Group.GetGroupByID(ctx, nil, group.ContactID); err != nil {
 	//	return
 	//}
 	//

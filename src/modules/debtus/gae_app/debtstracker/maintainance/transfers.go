@@ -27,9 +27,9 @@ package maintainance
 //	return models.NewTransfer(key.ContactID.(int), &entity)
 //}
 //
-//type TransferWorker func(c context.Context, tx dal.ReadwriteTransaction, counters *asyncCounters, transfer models.Transfer) error
+//type TransferWorker func(ctx context.Context, tx dal.ReadwriteTransaction, counters *asyncCounters, transfer models.Transfer) error
 
-//func (m *transfersAsyncJob) startTransferWorker(c context.Context, counters mapper.Counters, key *dal.Key, transferWorker TransferWorker) error {
+//func (m *transfersAsyncJob) startTransferWorker(ctx context.Context, counters mapper.Counters, key *dal.Key, transferWorker TransferWorker) error {
 //	transfer := m.Transfer(key)
 //	w := func() Worker {
 //		return func(counters *asyncCounters) error {
@@ -37,8 +37,8 @@ package maintainance
 //			if err != nil {
 //				return err
 //			}
-//			return db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-//				return transferWorker(c, tx, counters, transfer)
+//			return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+//				return transferWorker(ctx, tx, counters, transfer)
 //			})
 //
 //		}

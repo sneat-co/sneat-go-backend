@@ -37,19 +37,19 @@ var AskEmailForReceiptCommand = botsfw.Command{
 }
 
 func sendReceiptByEmail(whc botsfw.WebhookContext, toEmail, toName string, transfer models4debtus.TransferEntry) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
+	ctx := whc.Context()
 	receiptEntity := models4debtus.NewReceiptEntity(whc.AppUserID(), transfer.ID, transfer.Data.Counterparty().UserID, whc.Locale().Code5, string(models4debtus.InviteByEmail), toEmail, general.CreatedOn{
 		CreatedOnPlatform: whc.BotPlatform().ID(),
 		CreatedOnID:       whc.GetBotCode(),
 	})
 	var receipt models4debtus.ReceiptEntry
-	if receipt, err = dtdal.Receipt.CreateReceipt(c, receiptEntity); err != nil {
+	if receipt, err = dtdal.Receipt.CreateReceipt(ctx, receiptEntity); err != nil {
 		return m, err
 	}
 
 	emailID := ""
 	if emailID, err = invites.SendReceiptByEmail(
-		c,
+		ctx,
 		whc,
 		receipt,
 		whc.GetSender().GetFirstName(),

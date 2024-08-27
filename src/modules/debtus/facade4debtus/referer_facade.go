@@ -30,15 +30,15 @@ const lastTgReferrers = "lastTgReferrers"
 
 //var errAlreadyReferred = errors.New("already referred")
 
-func delayedSetUserReferrer(c context.Context, userID string, referredBy string) (err error) {
+func delayedSetUserReferrer(ctx context.Context, userID string, referredBy string) (err error) {
 	userChanged := false
-	if err = dal4userus.RunUserWorker(c, facade.NewUserContext(userID),
-		func(c context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
+	if err = dal4userus.RunUserWorker(ctx, facade.NewUserContext(userID),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
 			if err != nil {
 				return err
 			}
 			if params.User.Data.ReferredBy != "" {
-				logus.Debugf(c, "already referred")
+				logus.Debugf(ctx, "already referred")
 				return nil
 			}
 			params.User.Data.ReferredBy = referredBy
@@ -47,38 +47,38 @@ func delayedSetUserReferrer(c context.Context, userID string, referredBy string)
 			userChanged = true
 			return nil
 		}); err != nil {
-		logus.Errorf(c, "failed to check & update user: %v", err)
+		logus.Errorf(ctx, "failed to check & update user: %v", err)
 		return err
 	}
 	if userChanged {
-		logus.Infof(c, "User's referrer saved")
+		logus.Infof(ctx, "User's referrer saved")
 	}
 	return nil
 }
 
-func delaySetUserReferrer(c context.Context, userID string, referredBy string) (err error) {
-	return delayerSetUserReferrer.EnqueueWork(c, delaying.With(const4userus.QueueUsers, "set-user-referrer", time.Second/2), userID, referredBy)
+func delaySetUserReferrer(ctx context.Context, userID string, referredBy string) (err error) {
+	return delayerSetUserReferrer.EnqueueWork(ctx, delaying.With(const4userus.QueueUsers, "set-user-referrer", time.Second/2), userID, referredBy)
 }
 
 var topReferralsCacheTime = time.Hour
 
-func (f refererFacade) AddTelegramReferrer(c context.Context, userID string, tgUsername, botID string) {
+func (f refererFacade) AddTelegramReferrer(ctx context.Context, userID string, tgUsername, botID string) {
 	tgUsername = strings.ToLower(tgUsername)
 	now := time.Now()
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
-				logus.Errorf(c, "panic in refererFacade.AddTelegramReferrer(): %v", r)
+				logus.Errorf(ctx, "panic in refererFacade.AddTelegramReferrer(): %v", r)
 			}
 		}()
-		if err := facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-			user, err := dal4userus.GetUserByID(c, tx, userID)
+		if err := facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+			user, err := dal4userus.GetUserByID(ctx, tx, userID)
 			if err != nil {
-				logus.Errorf(c, err.Error())
+				logus.Errorf(ctx, err.Error())
 				return nil
 			}
 			if user.Data.ReferredBy != "" {
-				logus.Debugf(c, "AddTelegramReferrer() => already referred")
+				logus.Debugf(ctx, "AddTelegramReferrer() => already referred")
 				return nil
 			}
 
@@ -93,31 +93,31 @@ func (f refererFacade) AddTelegramReferrer(c context.Context, userID string, tgU
 
 			referredBy := "tg:" + tgUsername
 
-			if err = delaySetUserReferrer(c, userID, referredBy); err != nil {
-				logus.Errorf(c, "Failed to delay set user referrer: %v", err)
-				if err = delayedSetUserReferrer(c, userID, referredBy); err != nil {
-					logus.Errorf(c, "Failed to set user referrer: %v", err)
+			if err = delaySetUserReferrer(ctx, userID, referredBy); err != nil {
+				logus.Errorf(ctx, "Failed to delay set user referrer: %v", err)
+				if err = delayedSetUserReferrer(ctx, userID, referredBy); err != nil {
+					logus.Errorf(ctx, "Failed to set user referrer: %v", err)
 					return nil
 				}
 			}
 
 			var isLocked bool
-			item, err := memcache.Get(c, lastTgReferrers)
+			item, err := memcache.Get(ctx, lastTgReferrers)
 			if err != nil {
 				if err == memcache.ErrCacheMiss {
-					item = f.lockMemcacheItem(c)
+					item = f.lockMemcacheItem(ctx)
 					isLocked = true
 					err = nil
 				} else {
-					logus.Warningf(c, "failed to get last-tg-referrers from memcache: %v", err)
+					logus.Warningf(ctx, "failed to get last-tg-referrers from memcache: %v", err)
 				}
 			}
-			if err := tx.Insert(c, referer.Record); err != nil {
-				logus.Errorf(c, "failed to insert referer to DB: %v", err)
+			if err := tx.Insert(ctx, referer.Record); err != nil {
+				logus.Errorf(ctx, "failed to insert referer to DB: %v", err)
 			}
 			if item == nil {
-				if err = memcache.Delete(c, lastTgReferrers); err != nil {
-					logus.Warningf(c, "Failed to clear memcache item: %v", err) // TODO: add a queue task to remove?
+				if err = memcache.Delete(ctx, lastTgReferrers); err != nil {
+					logus.Warningf(ctx, "Failed to clear memcache item: %v", err) // TODO: add a queue task to remove?
 					return nil
 				}
 			} else {
@@ -132,9 +132,9 @@ func (f refererFacade) AddTelegramReferrer(c context.Context, userID string, tgU
 				}
 				item.Value = []byte(strings.Join(tgUsernames, ","))
 				item.Expiration = topReferralsCacheTime
-				if err = memcache.CompareAndSwap(c, item); err != nil {
-					if err = memcache.Delete(c, lastTgReferrers); err != nil {
-						logus.Warningf(c, "failed to delete '%v' from memcache", lastTgReferrers)
+				if err = memcache.CompareAndSwap(ctx, item); err != nil {
+					if err = memcache.Delete(ctx, lastTgReferrers); err != nil {
+						logus.Warningf(ctx, "failed to delete '%v' from memcache", lastTgReferrers)
 					}
 				}
 			}
@@ -146,7 +146,7 @@ func (f refererFacade) AddTelegramReferrer(c context.Context, userID string, tgU
 	}()
 }
 
-func (refererFacade) lockMemcacheItem(c context.Context) (item *memcache.Item) {
+func (refererFacade) lockMemcacheItem(ctx context.Context) (item *memcache.Item) {
 	lock := make([]byte, 9)
 	lock[0] = []byte("_")[0]
 	binary.LittleEndian.PutUint64(lock[1:], rand.Uint64())
@@ -156,9 +156,9 @@ func (refererFacade) lockMemcacheItem(c context.Context) (item *memcache.Item) {
 		Expiration: time.Second * 10,
 	}
 
-	if err := memcache.Set(c, item); err == nil {
-		if item, err = memcache.Get(c, item.Key); err != nil {
-			logus.Warningf(c, "memcache error: %v", err)
+	if err := memcache.Set(ctx, item); err == nil {
+		if item, err = memcache.Get(ctx, item.Key); err != nil {
+			logus.Warningf(ctx, "memcache error: %v", err)
 			item = nil
 		} else if !bytes.Equal(lock, item.Value) {
 			item = nil
@@ -167,14 +167,14 @@ func (refererFacade) lockMemcacheItem(c context.Context) (item *memcache.Item) {
 	return
 }
 
-func (f refererFacade) TopTelegramReferrers(c context.Context, botID string, limit int) (topTelegramReferrers []string, err error) {
+func (f refererFacade) TopTelegramReferrers(ctx context.Context, botID string, limit int) (topTelegramReferrers []string, err error) {
 	var item *memcache.Item
 	var tgUsernames []string
 
 	isLockItem := func() bool {
 		return item != nil && len(item.Value) == 9 && item.Value[0] == []byte("_")[0]
 	}
-	if item, err = memcache.Get(c, lastTgReferrers); err == nil && !isLockItem() {
+	if item, err = memcache.Get(ctx, lastTgReferrers); err == nil && !isLockItem() {
 		tgUsernames = strings.Split(string(item.Value), ",")
 		item = nil
 	} else {
@@ -187,7 +187,7 @@ func (f refererFacade) TopTelegramReferrers(c context.Context, botID string, lim
 				return dal.NewRecordWithIncompleteKey(models4debtus.RefererKind, reflect.String, new(models4debtus.RefererDbo))
 			})
 		var reader dal.Reader
-		if reader, err = dtdal.DB.QueryReader(c, q); err != nil {
+		if reader, err = dtdal.DB.QueryReader(ctx, q); err != nil {
 			return nil, err
 		}
 		for {
@@ -202,11 +202,11 @@ func (f refererFacade) TopTelegramReferrers(c context.Context, botID string, lim
 			tgUsernames = append(tgUsernames, record.Data().(*models4debtus.RefererDbo).ReferredBy)
 		}
 		if !isLockItem() {
-			if item, err = memcache.Get(c, lastTgReferrers); err == nil && isLockItem() {
+			if item, err = memcache.Get(ctx, lastTgReferrers); err == nil && isLockItem() {
 				item.Value = []byte(strings.Join(tgUsernames, ","))
 				item.Expiration = topReferralsCacheTime
-				if err = memcache.CompareAndSwap(c, item); err != nil {
-					logus.Warningf(c, "Failed to set top referrals to memcache: %v", err)
+				if err = memcache.CompareAndSwap(ctx, item); err != nil {
+					logus.Warningf(ctx, "Failed to set top referrals to memcache: %v", err)
 					err = nil
 				}
 			} else { // We don't care about error here

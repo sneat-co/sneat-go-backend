@@ -31,10 +31,10 @@ var ReferrersCommand = botsfw.Command{
 }
 
 func topReferrersMessageText(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
+	ctx := whc.Context()
 
 	var topTelegramReferrers []string
-	if topTelegramReferrers, err = facade4debtus.Referer.TopTelegramReferrers(c, whc.GetBotCode(), 5); err != nil {
+	if topTelegramReferrers, err = facade4debtus.Referer.TopTelegramReferrers(ctx, whc.GetBotCode(), 5); err != nil {
 		return
 	} else if len(topTelegramReferrers) == 0 {
 		topTelegramReferrers = []string{"meduzalive", "varlamov"}

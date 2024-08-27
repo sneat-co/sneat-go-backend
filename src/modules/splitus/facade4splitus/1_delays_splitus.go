@@ -9,10 +9,10 @@ import (
 
 var delayerUpdateUserWithGroups delaying.Function
 
-func delayUpdateUserWithGroups(c context.Context, userID string, groupIDs2add, groupIDs2remove []string) (err error) { // TODO: make args meaningful
+func delayUpdateUserWithGroups(ctx context.Context, userID string, groupIDs2add, groupIDs2remove []string) (err error) { // TODO: make args meaningful
 	args := []any{userID, groupIDs2add, groupIDs2remove}
 	params := delaying.With(const4userus.QueueUsers, "update-user-with-groups", 0)
-	return delayerUpdateUserWithGroups.EnqueueWorkMulti(c, params, args)
+	return delayerUpdateUserWithGroups.EnqueueWorkMulti(ctx, params, args)
 }
 
 var delayerUpdateGroupUsers delaying.Function
@@ -21,8 +21,8 @@ var delayerUpdateContactWithGroups delaying.Function
 // ------------------------------------------------------------
 var delayerUpdateGroupWithBill delaying.Function
 
-func DelayUpdateGroupWithBill(c context.Context, groupID, billID string) (err error) {
-	if err = delayerUpdateGroupWithBill.EnqueueWork(c, delaying.With(const4splitus.QueueSplitus, "UpdateGroupWithBill", 0), groupID, billID); err != nil {
+func DelayUpdateGroupWithBill(ctx context.Context, groupID, billID string) (err error) {
+	if err = delayerUpdateGroupWithBill.EnqueueWork(ctx, delaying.With(const4splitus.QueueSplitus, "UpdateGroupWithBill", 0), groupID, billID); err != nil {
 		return
 	}
 	return
@@ -31,8 +31,8 @@ func DelayUpdateGroupWithBill(c context.Context, groupID, billID string) (err er
 // ------------------------------------------------------------
 var delayerUpdateBillDependencies delaying.Function
 
-func DelayUpdateBillDependencies(c context.Context, billID string) (err error) {
-	if err = delayerUpdateBillDependencies.EnqueueWork(c, delaying.With(const4splitus.QueueSplitus, "UpdateBillDependencies", 0), billID); err != nil {
+func DelayUpdateBillDependencies(ctx context.Context, billID string) (err error) {
+	if err = delayerUpdateBillDependencies.EnqueueWork(ctx, delaying.With(const4splitus.QueueSplitus, "UpdateBillDependencies", 0), billID); err != nil {
 		return
 	}
 	return

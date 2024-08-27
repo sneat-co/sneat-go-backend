@@ -179,13 +179,13 @@ func TransferAskDueDateCommand(code string, nextCommand botsfw.Command) botsfw.C
 		},
 		Action: func(whc botsfw.WebhookContext) (botsfw.MessageFromBot, error) {
 
-			c := whc.Context()
-			logus.Infof(c, "TransferAskDueDateCommand(code=%v).Action()", code)
+			ctx := whc.Context()
+			logus.Infof(ctx, "TransferAskDueDateCommand(code=%v).Action()", code)
 			m := whc.NewMessageByCode(trans.MESSAGE_TEXT_ASK_DUE)
 			chatEntity := whc.ChatData()
 			if chatEntity.IsAwaitingReplyTo(code) {
 				mt := strings.TrimSpace(whc.Input().(botsfw.WebhookTextMessage).Text())
-				logus.Debugf(c, "Chat is awating reply to %v", code)
+				logus.Debugf(ctx, "Chat is awating reply to %v", code)
 				var duration time.Duration
 				switch mt {
 				case whc.Translate(trans.COMMAND_TEXT_IN_FEW_MINUTES):
@@ -218,7 +218,7 @@ func TransferAskDueDateCommand(code string, nextCommand botsfw.Command) botsfw.C
 				}
 				return nextCommand.Action(whc)
 			} else {
-				logus.Debugf(c, "Chat is NOT awating reply to %v", code)
+				logus.Debugf(ctx, "Chat is NOT awating reply to %v", code)
 				chatEntity.PushStepToAwaitingReplyTo(code)
 				keyboard := tgbotapi.NewReplyKeyboardUsingStrings([][]string{
 					{
@@ -252,7 +252,7 @@ var TransferAskDueDateReturnToUser = TransferAskDueDateCommand(
 )
 
 func processSetDate(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, date time.Time, err error) {
-	c := whc.Context()
+	ctx := whc.Context()
 
 	mt := strings.TrimSpace(whc.Input().(botsfw.WebhookTextMessage).Text())
 	if match := reDate.FindStringSubmatch(mt); len(match) > 0 {
@@ -292,12 +292,12 @@ func processSetDate(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, date ti
 			day = temp
 		}
 		dateToParse := fmt.Sprintf("%02d.%02d", day, month) + "." + yearStr
-		logus.Debugf(c, "dateToParse: %v", dateFormat)
+		logus.Debugf(ctx, "dateToParse: %v", dateFormat)
 		if date, err = time.Parse(dateFormat, dateToParse); err != nil {
 			m = whc.NewMessageByCode(trans.MESSAGE_TEXT_WRONG_DATE)
 		}
 	} else {
-		logus.Debugf(c, "Regex not matched")
+		logus.Debugf(ctx, "Regex not matched")
 		m = whc.NewMessageByCode(trans.MESSAGE_TEXT_INVALID_DATE)
 	}
 	return m, date, nil

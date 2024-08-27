@@ -20,11 +20,11 @@ import (
 
 //const VK_USER_ALEXT = 7631716
 
-func HandleSignedWithVK(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
+func HandleSignedWithVK(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	panic("disabled")
 	//err := r.ParseForm()
 	//if err != nil {
-	//	BadRequestError(c, hashedWriter, err)
+	//	BadRequestError(ctx, hashedWriter, err)
 	//	return
 	//}
 	//
@@ -34,38 +34,38 @@ func HandleSignedWithVK(c context.Context, w http.ResponseWriter, r *http.Reques
 	//	//userAuth
 	//)
 	//if vkUserID, err = strconv.ParseInt(r.PostFormValue("vkUserID"), 10, 64); err != nil {
-	//	BadRequestError(c, hashedWriter, errors.Wrap(err, "Missing or bad vkUserID"))
+	//	BadRequestError(ctx, hashedWriter, errors.Wrap(err, "Missing or bad vkUserID"))
 	//	return
 	//}
 	//
 	//logTodoMergeUsers := func(userID int64) {
 	//	m := fmt.Sprintf("TODO: Merge users: userID=%v, authInfo.AppUserIntID=%v", userID, authInfo.UserID)
-	//	//logus.Errorf(c, m)
+	//	//logus.Errorf(ctx, m)
 	//	hashedWriter.WriteHeader(http.StatusInternalServerError)
 	//	hashedWriter.Write([]byte(m))
 	//}
 	//
 	//
 	//// Try to get UserVk entity by key and if it has AppUserIntID we can create and return token right away
-	//vkUser, err := dtdal.UserVk.GetUserVkByID(c, vkUserID)
+	//vkUser, err := dtdal.UserVk.GetUserVkByID(ctx, vkUserID)
 	//if err != nil {
 	//	if dal.IsNotFound(err) {  // It's OK if UserVk entity not found.
-	//		logus.Debugf(c, "UserVk entity not found by ContactID=%v", vkUserID)
+	//		logus.Debugf(ctx, "UserVk entity not found by ContactID=%v", vkUserID)
 	//	} else {  // For other errors fail gracefully.
-	//		InternalError(c, hashedWriter, err)
+	//		InternalError(ctx, hashedWriter, err)
 	//		return
 	//	}
 	//}
 	//if vkUserEntity.UserID == 0 {
 	//	// For some reason we have UserVk entity without associated AppUser
-	//	logus.Warningf(c, "vkUserEntity.AppUserIntID == 0 - TOOD: Create user?")// TODO: Create user?
+	//	logus.Warningf(ctx, "vkUserEntity.AppUserIntID == 0 - TOOD: Create user?")// TODO: Create user?
 	//} else {
 	//	if authInfo.UserID != 0 && vkUserEntity.UserID != authInfo.UserID {
 	//		logTodoMergeUsers(vkUserEntity.UserID)
 	//		return
 	//	}
-	//	logus.Debugf(c, "UserVk entity found by key and has AppUserIntID=%v", vkUserEntity.UserID)
-	//	ReturnToken(c, hashedWriter, vkUserEntity.UserID, vkUserID == VK_USER_ALEXT)
+	//	logus.Debugf(ctx, "UserVk entity found by key and has AppUserIntID=%v", vkUserEntity.UserID)
+	//	ReturnToken(ctx, hashedWriter, vkUserEntity.UserID, vkUserID == VK_USER_ALEXT)
 	//	return
 	//}
 	//
@@ -73,23 +73,23 @@ func HandleSignedWithVK(c context.Context, w http.ResponseWriter, r *http.Reques
 	//vkLanguage := r.PostFormValue("vkLanguage")
 	//
 	//if accessToken == "" {
-	//	BadRequestError(c, hashedWriter, errors.New("Missing accessToken"))
+	//	BadRequestError(ctx, hashedWriter, errors.New("Missing accessToken"))
 	//	return
 	//}
 	//if vkLanguage == "" {
-	//	BadRequestError(c, hashedWriter, errors.New("Missing vkLanguage"))
+	//	BadRequestError(ctx, hashedWriter, errors.New("Missing vkLanguage"))
 	//	return
 	//}
 	//
-	//vkApi := vk.NewApiWithAccessToken(dtdal.HttpClient(c), accessToken)
+	//vkApi := vk.NewApiWithAccessToken(dtdal.HttpClient(ctx), accessToken)
 	//
-	//vkUserInfo, err := vkApi.GetUserByIntID(c, vkUserID, "nom", vk.FieldFirstName, vk.FieldLastName, vk.FieldNickname, vk.FieldScreenName)
+	//vkUserInfo, err := vkApi.GetUserByIntID(ctx, vkUserID, "nom", vk.FieldFirstName, vk.FieldLastName, vk.FieldNickname, vk.FieldScreenName)
 	//if err != nil {
 	//	if vkErr, ok := err.(vk.VkError); ok && vkErr.VkErrorCode() == 5 && strings.Contains(err.Error(), "access_token was given to another ip address") {
 	//		// Good access token
 	//	} else {
 	//		err = errors.Wrap(err, "Failed to get verify VK access token")
-	//		logus.Warningf(c, err.Error())
+	//		logus.Warningf(ctx, err.Error())
 	//		hashedWriter.WriteHeader(http.StatusInternalServerError)
 	//		hashedWriter.Write([]byte(err.Error()))
 	//		return
@@ -98,10 +98,10 @@ func HandleSignedWithVK(c context.Context, w http.ResponseWriter, r *http.Reques
 	//vkUser.FirstName = r.PostFormValue("firstName")
 	//vkUser.LastName = r.PostFormValue("lastName")
 	//
-	//userID, user, err := dtdal.User.GetUserByVkUserID(c, vkUserID)
+	//userID, user, err := dtdal.User.GetUserByVkUserID(ctx, vkUserID)
 	//if err == nil && user.VkUserID == vkUserID {
 	//	// For some reason we have a user with VkUserID but without UserVk entity
-	//	err = dtdal.DB.RunInTransaction(c, func(tc context.Context) error {
+	//	err = dtdal.DB.RunInTransaction(ctx, func(tctx context.Context) error {
 	//		if err = nds.Get(tc, vkUserKey, &vkUserEntity); err != nil {
 	//			if err == datastore.ErrNoSuchEntity {
 	//				vkUserEntity = models.UserVkEntity{
@@ -111,7 +111,7 @@ func HandleSignedWithVK(c context.Context, w http.ResponseWriter, r *http.Reques
 	//					ScreenName: vkUser.ScreenName,
 	//					Nickname: vkUser.Nickname,
 	//				}
-	//				if _, err = nds.Put(tc, vkUserKey, &vkUserEntity); err != nil {
+	//				if _, err = nds.Put(tctx, vkUserKey, &vkUserEntity); err != nil {
 	//					err = errors.Wrap(err, "Failed to create a UserVk entity")
 	//					return err
 	//				}
@@ -125,15 +125,15 @@ func HandleSignedWithVK(c context.Context, w http.ResponseWriter, r *http.Reques
 	//	}, nil)
 	//} else if err == nil && err != datastore.ErrNoSuchEntity {
 	//	err = errors.Wrap(err, "Failed to get user by VkUserID")
-	//	InternalError(c, hashedWriter, err)
+	//	InternalError(ctx, hashedWriter, err)
 	//	return
 	//}
 	//
 	//updateUser := func() (err error) {
 	//	if (user.FirstName == "" && vkUser.FirstName != "") || (user.LastName == "" && vkUser.LastName != "") || (user.ScreenName == "" && vkUser.ScreenName != "") || (user.Nickname == "" && vkUser.Nickname != "") {
 	//		var changed bool
-	//		err = dtdal.DB.gaedb.RunInTransaction(c, func(c context.Context) error {
-	//			user, err := userDal.GetUserByIdOBSOLETE(c, userID)
+	//		err = dtdal.DB.gaedb.RunInTransaction(ctx, func(ctx context.Context) error {
+	//			user, err := userDal.GetUserByIdOBSOLETE(ctx, userID)
 	//			if err != nil {
 	//				return err
 	//			}
@@ -158,17 +158,17 @@ func HandleSignedWithVK(c context.Context, w http.ResponseWriter, r *http.Reques
 	//				changed = true
 	//			}
 	//			if changed {
-	//				_, err = nds.Put(c, gaedal.NewAppUserKey(c, userID), user)
+	//				_, err = nds.Put(ctx, gaedal.NewAppUserKey(ctx, userID), user)
 	//			}
 	//			return err
 	//		}, nil)
 	//		if err != nil {
 	//			err = errors.Wrap(err, "Failed to update user with VkUserID")
-	//			InternalError(c, hashedWriter, err)
+	//			InternalError(ctx, hashedWriter, err)
 	//			return
 	//		}
 	//		if changed {
-	//			logus.Infof(c, "User update with VK info")
+	//			logus.Infof(ctx, "User update with VK info")
 	//		}
 	//	}
 	//	return nil
@@ -182,18 +182,18 @@ func HandleSignedWithVK(c context.Context, w http.ResponseWriter, r *http.Reques
 	//	if err = updateUser(); err != nil {
 	//		return
 	//	}
-	//	ReturnToken(c, hashedWriter, userID, vkUserID == VK_USER_ALEXT)
+	//	ReturnToken(ctx, hashedWriter, userID, vkUserID == VK_USER_ALEXT)
 	//	return
 	//}
 	//
 	//if authInfo.UserID != 0 {
-	//	if user, err = dal4userus.GetUserByID(c, authInfo.UserID); err != nil {
+	//	if user, err = dal4userus.GetUserByID(ctx, authInfo.UserID); err != nil {
 	//		if err == datastore.ErrNoSuchEntity {
-	//			logus.Warningf(c, "User not found ContactID=%v", authInfo.UserID)
+	//			logus.Warningf(ctx, "User not found ContactID=%v", authInfo.UserID)
 	//		} else {
-	//			logus.Errorf(c, err.Error())
+	//			logus.Errorf(ctx, err.Error())
 	//		}
-	//		InternalError(c, hashedWriter, err)
+	//		InternalError(ctx, hashedWriter, err)
 	//		return
 	//	}
 	//	if user.VkUserID != 0 && user.VkUserID != vkUserID {
@@ -202,7 +202,7 @@ func HandleSignedWithVK(c context.Context, w http.ResponseWriter, r *http.Reques
 	//	} else if err = updateUser(); err != nil {
 	//		return
 	//	}
-	//	ReturnToken(c, hashedWriter, userID, vkUserID == VK_USER_ALEXT)
+	//	ReturnToken(ctx, hashedWriter, userID, vkUserID == VK_USER_ALEXT)
 	//	return
 	//}
 	//
@@ -214,10 +214,10 @@ func HandleSignedWithVK(c context.Context, w http.ResponseWriter, r *http.Reques
 	//	Nickname: vkUser.Nickname,
 	//}
 	//
-	//userID, _, err = facade4debtus.User.GetOrCreateUserByEmail(c, "", false, &createUserData)
+	//userID, _, err = facade4debtus.User.GetOrCreateUserByEmail(ctx, "", false, &createUserData)
 	//if err != nil {
-	//	InternalError(c, hashedWriter, err)
+	//	InternalError(ctx, hashedWriter, err)
 	//	return
 	//}
-	//ReturnToken(c, hashedWriter, userID, vkUserID == VK_USER_ALEXT)
+	//ReturnToken(ctx, hashedWriter, userID, vkUserID == VK_USER_ALEXT)
 }

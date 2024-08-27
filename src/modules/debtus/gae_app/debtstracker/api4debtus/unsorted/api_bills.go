@@ -23,18 +23,18 @@ import (
 	"net/http"
 )
 
-func HandleGetBill(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
+func HandleGetBill(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	billID := r.URL.Query().Get("id")
 	if billID == "" {
-		api4debtus.BadRequestError(c, w, errors.New("Missing id parameter"))
+		api4debtus.BadRequestError(ctx, w, errors.New("Missing id parameter"))
 		return
 	}
-	bill, err := facade4splitus.GetBillByID(c, nil, billID)
+	bill, err := facade4splitus.GetBillByID(ctx, nil, billID)
 	if err != nil {
-		api4debtus.InternalError(c, w, err)
+		api4debtus.InternalError(ctx, w, err)
 		return
 	}
-	billToResponse(c, w, authInfo.UserID, bill)
+	billToResponse(ctx, w, authInfo.UserID, bill)
 }
 
 func HandleCreateBill(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
@@ -182,7 +182,7 @@ func HandleCreateBill(ctx context.Context, w http.ResponseWriter, r *http.Reques
 	}
 
 	var bill models4splitus.BillEntry
-	err = facade.RunReadwriteTransaction(ctx, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		bill, err = facade4splitus.CreateBill(ctx, tx, spaceID, billEntity)
 		return
 	})
@@ -194,17 +194,17 @@ func HandleCreateBill(ctx context.Context, w http.ResponseWriter, r *http.Reques
 	billToResponse(ctx, w, authInfo.UserID, bill)
 }
 
-func billToResponse(c context.Context, w http.ResponseWriter, userID string, bill models4splitus.BillEntry) {
+func billToResponse(ctx context.Context, w http.ResponseWriter, userID string, bill models4splitus.BillEntry) {
 	if userID == "" {
-		api4debtus.InternalError(c, w, errors.New("Required parameter userID == 0."))
+		api4debtus.InternalError(ctx, w, errors.New("Required parameter userID == 0."))
 		return
 	}
 	if bill.ID == "" {
-		api4debtus.InternalError(c, w, errors.New("Required parameter bill.ContactID is empty string."))
+		api4debtus.InternalError(ctx, w, errors.New("Required parameter bill.ContactID is empty string."))
 		return
 	}
 	if bill.Data == nil {
-		api4debtus.InternalError(c, w, errors.New("Required parameter bill.BillDbo is nil."))
+		api4debtus.InternalError(ctx, w, errors.New("Required parameter bill.BillDbo is nil."))
 		return
 	}
 	billDto := dto4debtus.BillDto{
@@ -227,5 +227,5 @@ func billToResponse(c context.Context, w http.ResponseWriter, userID string, bil
 		}
 	}
 	billDto.Members = members
-	api4debtus.JsonToResponse(c, w, map[string]dto4debtus.BillDto{"BillEntry": billDto}) // TODO: Define DTO as need to clean BillMember.ContactByUser
+	api4debtus.JsonToResponse(ctx, w, map[string]dto4debtus.BillDto{"BillEntry": billDto}) // TODO: Define DTO as need to clean BillMember.ContactByUser
 }

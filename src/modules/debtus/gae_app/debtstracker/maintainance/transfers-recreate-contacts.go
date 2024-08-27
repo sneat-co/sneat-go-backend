@@ -17,28 +17,28 @@ package maintainance
 //	transfersAsyncJob
 //}
 //
-//func (m *transfersRecreateContacts) Next(c context.Context, counters mapper.Counters, key *dal.Key) (err error) {
-//	return m.startTransferWorker(c, counters, key, m.verifyAndFix)
+//func (m *transfersRecreateContacts) Next(ctx context.Context, counters mapper.Counters, key *dal.Key) (err error) {
+//	return m.startTransferWorker(ctx, counters, key, m.verifyAndFix)
 //}
 //
-//func (m *transfersRecreateContacts) verifyAndFix(c context.Context, tx dal.ReadwriteTransaction, counters *asyncCounters, transfer models.Transfer) (err error) {
+//func (m *transfersRecreateContacts) verifyAndFix(ctx context.Context, tx dal.ReadwriteTransaction, counters *asyncCounters, transfer models.Transfer) (err error) {
 //	defer func() {
 //		if r := recover(); r != nil {
-//			logus.Errorf(c, "*transfersRecreateContacts.verifyAndFix() => panic: %v\n\n%v", r, string(debug.Stack()))
+//			logus.Errorf(ctx, "*transfersRecreateContacts.verifyAndFix() => panic: %v\n\n%v", r, string(debug.Stack()))
 //		}
 //	}()
 //	var fixed bool
-//	fixed, err = verifyAndFixMissingTransferContacts(c, tx, transfer)
+//	fixed, err = verifyAndFixMissingTransferContacts(ctx, tx, transfer)
 //	if fixed {
 //		counters.Increment("fixed", 1)
 //	}
 //	return
 //}
 //
-//func verifyAndFixMissingTransferContacts(c context.Context, tx dal.ReadwriteTransaction, transfer models.Transfer) (fixed bool, err error) {
+//func verifyAndFixMissingTransferContacts(ctx context.Context, tx dal.ReadwriteTransaction, transfer models.Transfer) (fixed bool, err error) {
 //	isMissingAndCanBeFixed := func(contactID, contactUserID, counterpartyContactID int64) (bool, error) {
 //		if contactID != 0 && contactUserID != 0 && counterpartyContactID != 0 {
-//			if _, err := facade4debtus.GetContactByID(c, tx, contactID); err != nil {
+//			if _, err := facade4debtus.GetContactByID(ctx, tx, contactID); err != nil {
 //				if dal.IsNotFound(err) {
 //					if user, err := dal4userus.GetUserByID(c, tx, contactUserID); err != nil {
 //						return false, err
@@ -59,22 +59,22 @@ package maintainance
 //
 //	doFix := func(contactInfo *models.TransferCounterpartyInfo, counterpartyInfo *models.TransferCounterpartyInfo) (err error) {
 //		var db dal.DB
-//		if db, err = facade4debtus.GetDatabase(c); err != nil {
+//		if db, err = facade4debtus.GetDatabase(ctx); err != nil {
 //			return
 //		}
-//		err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
+//		err = db.RunReadwriteTransaction(ctx, func(tctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 //			logus.Debugf(c, "Recreating contact # %v", contactInfo.ContactID)
 //			var counterpartyContact models.DebtusSpaceContactEntry
-//			if counterpartyContact, err = facade4debtus.GetContactByID(c, tx, counterpartyInfo.ContactID); err != nil {
+//			if counterpartyContact, err = facade4debtus.GetContactByID(tctx, tx, counterpartyInfo.ContactID); err != nil {
 //				return
 //			}
 //			var contactUser, counterpartyUser models.AppUser
 //
-//			if contactUser, err = dal4userus.GetUserByID(c, tx, counterpartyInfo.UserID); err != nil {
+//			if contactUser, err = dal4userus.GetUserByID(tctx, tx, counterpartyInfo.UserID); err != nil {
 //				return
 //			}
 //
-//			if counterpartyUser, err = dal4userus.GetUserByID(c, tx, contactInfo.UserID); err != nil {
+//			if counterpartyUser, err = dal4userus.GetUserByID(tctx, tx, contactInfo.UserID); err != nil {
 //				return
 //			}
 //
@@ -100,7 +100,7 @@ package maintainance
 //					logus.Errorf(c, "counterpartyContact.CounterpartyContactID != contact.ContactID: %v != %v", counterpartyContact.Data.CounterpartyContactID, contactInfo.ContactID)
 //					return
 //				}
-//				if err = facade4debtus.SaveContact(c, counterpartyContact); err != nil {
+//				if err = facade4debtus.SaveContact(tctx, counterpartyContact); err != nil {
 //					return err
 //				}
 //			}
@@ -136,7 +136,7 @@ package maintainance
 //			return
 //		}
 //		fixed = true
-//		logus.Warningf(c, "Counterparty re-created: %v", contactInfo.ContactID)
+//		logus.Warningf(ctx, "Counterparty re-created: %v", contactInfo.ContactID)
 //		return
 //	}
 //

@@ -14,8 +14,8 @@ const deleteBillCommandCode = "delete_bill"
 
 var deleteBillCommand = billCallbackCommand(deleteBillCommandCode,
 	func(whc botsfw.WebhookContext, _ dal.ReadwriteTransaction, callbackUrl *url.URL, bill models4splitus.BillEntry) (m botsfw.MessageFromBot, err error) {
-		c := whc.Context()
-		if _, err = facade4splitus.DeleteBill(c, bill.ID, whc.AppUserID()); err != nil {
+		ctx := whc.Context()
+		if _, err = facade4splitus.DeleteBill(ctx, bill.ID, whc.AppUserID()); err != nil {
 			if err == facade4splitus.ErrSettledBillsCanNotBeDeleted {
 				m.Text = whc.Translate(err.Error())
 				err = nil
@@ -40,15 +40,15 @@ const restoreBillCommandCode = "restore_bill"
 
 var restoreBillCommand = billCallbackCommand(restoreBillCommandCode,
 	func(whc botsfw.WebhookContext, _ dal.ReadwriteTransaction, callbackUrl *url.URL, bill models4splitus.BillEntry) (m botsfw.MessageFromBot, err error) {
-		c := whc.Context()
-		if _, err = facade4splitus.RestoreBill(c, bill.ID, whc.AppUserID()); err != nil {
+		ctx := whc.Context()
+		if _, err = facade4splitus.RestoreBill(ctx, bill.ID, whc.AppUserID()); err != nil {
 			if err == facade4splitus.ErrSettledBillsCanNotBeDeleted {
 				m.Text = whc.Translate(err.Error())
 				err = nil
 			}
 			return
 		}
-		if m.Text, err = getBillCardMessageText(c, whc.GetBotCode(), whc, bill, false, "BillEntry has been restored"); err != nil {
+		if m.Text, err = getBillCardMessageText(ctx, whc.GetBotCode(), whc, bill, false, "BillEntry has been restored"); err != nil {
 			return
 		}
 		m.Format = botsfw.MessageFormatHTML

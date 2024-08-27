@@ -46,34 +46,34 @@ func newReceiptDbChanges() *receiptDbChanges {
 	}
 }
 
-func workaroundReinsertContact(c context.Context, receipt models4debtus.ReceiptEntry, invitedContact models4debtus.DebtusSpaceContactEntry, changes *receiptDbChanges) (err error) {
-	if _, err = GetDebtusSpaceContactByID(c, nil, receipt.Data.SpaceID, invitedContact.ID); err != nil {
+func workaroundReinsertContact(ctx context.Context, receipt models4debtus.ReceiptEntry, invitedContact models4debtus.DebtusSpaceContactEntry, changes *receiptDbChanges) (err error) {
+	if _, err = GetDebtusSpaceContactByID(ctx, nil, receipt.Data.SpaceID, invitedContact.ID); err != nil {
 		if dal.IsNotFound(err) {
-			logus.Warningf(c, "workaroundReinsertContact(invitedContact.ContactID=%s) => %v", invitedContact.ID, err)
+			logus.Warningf(ctx, "workaroundReinsertContact(invitedContact.ContactID=%s) => %v", invitedContact.ID, err)
 			err = nil
 			if receipt.Data.Status == models4debtus.ReceiptStatusAcknowledged {
 				if invitedContactInfo := changes.inviter.contactusSpace.Data.GetContactBriefByContactID(invitedContact.ID); invitedContactInfo != nil {
-					logus.Warningf(c, "Transactional retry, Contact was not created in DB but invitedUser already has the Contact info & receipt is acknowledged")
+					logus.Warningf(ctx, "Transactional retry, Contact was not created in DB but invitedUser already has the Contact info & receipt is acknowledged")
 					changes.invited.debtusContact = invitedContact
 				} else {
-					logus.Warningf(c, "Transactional retry, Contact was not created in DB but receipt is acknowledged & invitedUser has not Contact info in JSON")
+					logus.Warningf(ctx, "Transactional retry, Contact was not created in DB but receipt is acknowledged & invitedUser has not Contact info in JSON")
 				}
 			}
 			changes.FlagAsChanged(changes.invited.contact.Record)
 		} else {
-			logus.Errorf(c, "workaroundReinsertContact(invitedContact.ContactID=%s) => %v", invitedContact.ID, err)
+			logus.Errorf(ctx, "workaroundReinsertContact(invitedContact.ContactID=%s) => %v", invitedContact.ID, err)
 		}
 	} else {
-		logus.Debugf(c, "workaroundReinsertContact(%s) => Contact found by ContactID!", invitedContact.ID)
+		logus.Debugf(ctx, "workaroundReinsertContact(%s) => Contact found by ContactID!", invitedContact.ID)
 	}
 	return
 }
 
-func AcknowledgeReceipt(c context.Context, userCtx facade.UserContext, receiptID string, operation string) (
+func AcknowledgeReceipt(ctx context.Context, userCtx facade.UserContext, receiptID string, operation string) (
 	receipt models4debtus.ReceiptEntry, transfer models4debtus.TransferEntry, isCounterpartiesJustConnected bool, err error,
 ) {
 	currentUserID := userCtx.GetUserID()
-	logus.Debugf(c, "AcknowledgeReceipt(receiptID=%s, currentUserID=%s, operation=%s)", receiptID, currentUserID, operation)
+	logus.Debugf(ctx, "AcknowledgeReceipt(receiptID=%s, currentUserID=%s, operation=%s)", receiptID, currentUserID, operation)
 
 	var transferAckStatus string
 	switch operation {
@@ -88,13 +88,13 @@ func AcknowledgeReceipt(c context.Context, userCtx facade.UserContext, receiptID
 
 	var invitedContact dal4contactus.ContactEntry
 
-	err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
+	err = facade.RunReadwriteTransaction(ctx, func(tctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 
 		var inviterUser, invitedUser dbo4userus.UserEntry
 		var inviterDebtusUser, invitedDebtusUser models4debtus.DebtusUserEntry
 		var inviterContact dal4contactus.ContactEntry
 
-		receipt, transfer, inviterUser, inviterDebtusUser, invitedUser, invitedDebtusUser, err = getReceiptTransferAndUsers(tc, tx, receiptID, currentUserID)
+		receipt, transfer, inviterUser, inviterDebtusUser, invitedUser, invitedDebtusUser, err = getReceiptTransferAndUsers(tctx, tx, receiptID, currentUserID)
 		if err != nil {
 			return
 		}
@@ -103,13 +103,13 @@ func AcknowledgeReceipt(c context.Context, userCtx facade.UserContext, receiptID
 		var invitedDebtusSpace models4debtus.DebtusSpaceEntry
 		if spaceID != "" {
 			invitedDebtusSpace = models4debtus.NewDebtusSpaceEntry(spaceID)
-			if err = tx.Get(tc, invitedDebtusSpace.Record); err != nil {
+			if err = tx.Get(tctx, invitedDebtusSpace.Record); err != nil {
 				return
 			}
 		}
 
 		if transfer.Data.CreatorUserID == currentUserID {
-			logus.Errorf(tc, "An attempt to claim receipt on self created transfer")
+			logus.Errorf(tctx, "An attempt to claim receipt on self created transfer")
 			err = ErrSelfAcknowledgement
 			return
 		}
@@ -139,7 +139,7 @@ func AcknowledgeReceipt(c context.Context, userCtx facade.UserContext, receiptID
 		}
 
 		if invitedContact.ID != "" { // This means we are attempting to retry failed transaction
-			if err = workaroundReinsertContact(tc, receipt, changes.invited.debtusContact, changes); err != nil {
+			if err = workaroundReinsertContact(tctx, receipt, changes.invited.debtusContact, changes); err != nil {
 				return
 			}
 		}
@@ -159,7 +159,7 @@ func AcknowledgeReceipt(c context.Context, userCtx facade.UserContext, receiptID
 				err = fmt.Errorf("receipt.AcknowledgedByUserID != currentUserID (%s != %s)", receipt.Data.AcknowledgedByUserID, currentUserID)
 				return
 			}
-			logus.Debugf(c, "ReceiptEntry is already acknowledged")
+			logus.Debugf(ctx, "ReceiptEntry is already acknowledged")
 		} else {
 			receipt.Data.DtAcknowledged = time.Now()
 			receipt.Data.Status = models4debtus.ReceiptStatusAcknowledged
@@ -173,15 +173,15 @@ func AcknowledgeReceipt(c context.Context, userCtx facade.UserContext, receiptID
 		}
 
 		if transfer.Data.Counterparty().UserID == "" {
-			if isCounterpartiesJustConnected, err = NewReceiptUsersLinker(changes).linkUsersByReceiptWithinTransaction(c, tc, tx); err != nil {
+			if isCounterpartiesJustConnected, err = NewReceiptUsersLinker(changes).linkUsersByReceiptWithinTransaction(ctx, tctx, tx); err != nil {
 				return
 			}
 			invitedContact = changes.invited.contact
 			inviterContact = changes.inviter.contact
-			//logus.Debugf(c, "linkUsersByReceiptWithinTransaction() =>\n\tinvitedContact %s: %+v\n\tinviterContact %s: %v",
+			//logus.Debugf(ctx, "linkUsersByReceiptWithinTransaction() =>\n\tinvitedContact %s: %+v\n\tinviterContact %s: %v",
 			//	invitedContact.ContactID, invitedContact.Data, inviterContact.ContactID, inviterContact.Data)
 		} else {
-			logus.Debugf(c, "No need to link users as already linked")
+			logus.Debugf(ctx, "No need to link users as already linked")
 			inviterContact.ID = transfer.Data.CounterpartyInfoByUserID(inviterDebtusUser.ID).ContactID
 			invitedContact.ID = transfer.Data.CounterpartyInfoByUserID(invitedDebtusUser.ID).ContactID
 		}
@@ -190,18 +190,18 @@ func AcknowledgeReceipt(c context.Context, userCtx facade.UserContext, receiptID
 		invitedDebtusUser.Data.CountOfAckTransfersByUser += 1
 
 		if recordsToSave := changes.Records(); len(recordsToSave) > 0 {
-			//logus.Debugf(c, "%d entities to save: %+v", len(recordsToSave), recordsToSave)
-			if err = tx.SetMulti(c, recordsToSave); err != nil {
+			//logus.Debugf(ctx, "%d entities to save: %+v", len(recordsToSave), recordsToSave)
+			if err = tx.SetMulti(ctx, recordsToSave); err != nil {
 				return
 			}
 		} else {
-			logus.Debugf(c, "Nothing to save")
+			logus.Debugf(ctx, "Nothing to save")
 		}
 
-		//if _, err = GetDebtusSpaceContactByID(c, invitedContact.ContactID); err != nil {
+		//if _, err = GetDebtusSpaceContactByID(ctx, invitedContact.ContactID); err != nil {
 		//	if dal.IsNotFound(err) {
-		//		logus.Errorf(c, "Invited Contact is not found by ContactID, let's try to re-insert.")
-		//		if err = facade4debtus.SaveContact(c, invitedContact); err != nil {
+		//		logus.Errorf(ctx, "Invited Contact is not found by ContactID, let's try to re-insert.")
+		//		if err = facade4debtus.SaveContact(ctx, invitedContact); err != nil {
 		//			return
 		//		}
 		//	} else {
@@ -219,15 +219,15 @@ func AcknowledgeReceipt(c context.Context, userCtx facade.UserContext, receiptID
 		err = fmt.Errorf("failed to acknowledge receipt: %w", err)
 		return
 	}
-	logus.Infof(c, "ReceiptEntry successfully acknowledged")
+	logus.Infof(ctx, "ReceiptEntry successfully acknowledged")
 
 	{ // verify invitedContact
-		if _, err = GetDebtusSpaceContactByID(c, nil, receipt.Data.SpaceID, invitedContact.ID); err != nil {
+		if _, err = GetDebtusSpaceContactByID(ctx, nil, receipt.Data.SpaceID, invitedContact.ID); err != nil {
 			err = fmt.Errorf("failed to load invited Contact outside of transaction: %w", err)
 			if dal.IsNotFound(err) {
 				return
 			}
-			logus.Errorf(c, err.Error())
+			logus.Errorf(ctx, err.Error())
 			err = nil // We are OK to ignore technical issues here
 			return
 		}
@@ -235,9 +235,9 @@ func AcknowledgeReceipt(c context.Context, userCtx facade.UserContext, receiptID
 	return
 }
 
-func MarkReceiptAsViewed(c context.Context, receiptID, userID string) (receipt models4debtus.ReceiptEntry, err error) {
-	err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
-		receipt, err = dtdal.Receipt.GetReceiptByID(tc, tx, receiptID)
+func MarkReceiptAsViewed(ctx context.Context, receiptID, userID string) (receipt models4debtus.ReceiptEntry, err error) {
+	err = facade.RunReadwriteTransaction(ctx, func(tctx context.Context, tx dal.ReadwriteTransaction) error {
+		receipt, err = dtdal.Receipt.GetReceiptByID(tctx, tx, receiptID)
 		if err != nil {
 			return err
 		}
@@ -248,7 +248,7 @@ func MarkReceiptAsViewed(c context.Context, receiptID, userID string) (receipt m
 			changed = true
 		}
 		if changed {
-			if err = dtdal.Receipt.UpdateReceipt(c, tx, receipt); err != nil {
+			if err = dtdal.Receipt.UpdateReceipt(ctx, tx, receipt); err != nil {
 				return err
 			}
 		}
@@ -272,20 +272,20 @@ func markReceiptAsViewed(receipt *models4debtus.ReceiptDbo, userID string) (chan
 	return
 }
 
-func getReceiptTransferAndUsers(c context.Context, tx dal.ReadSession, receiptID, userID string) (
+func getReceiptTransferAndUsers(ctx context.Context, tx dal.ReadSession, receiptID, userID string) (
 	receipt models4debtus.ReceiptEntry,
 	transfer models4debtus.TransferEntry,
 	creatorUser dbo4userus.UserEntry, creatorDebtusUser models4debtus.DebtusUserEntry,
 	counterpartyUser dbo4userus.UserEntry, counterpartyDebtusUser models4debtus.DebtusUserEntry,
 	err error,
 ) {
-	logus.Debugf(c, "getReceiptTransferAndUsers(receiptID=%s, userID=%s)", receiptID, userID)
+	logus.Debugf(ctx, "getReceiptTransferAndUsers(receiptID=%s, userID=%s)", receiptID, userID)
 
-	if receipt, err = dtdal.Receipt.GetReceiptByID(c, tx, receiptID); err != nil {
+	if receipt, err = dtdal.Receipt.GetReceiptByID(ctx, tx, receiptID); err != nil {
 		return
 	}
 
-	if transfer, err = Transfers.GetTransferByID(c, tx, receipt.Data.TransferID); err != nil {
+	if transfer, err = Transfers.GetTransferByID(ctx, tx, receipt.Data.TransferID); err != nil {
 		return
 	}
 
@@ -305,11 +305,11 @@ func getReceiptTransferAndUsers(c context.Context, tx dal.ReadSession, receiptID
 		recordsToGet = append(recordsToGet, counterpartyUser.Record, counterpartyDebtusUser.Record)
 	}
 
-	if err = tx.GetMulti(c, recordsToGet); err != nil {
+	if err = tx.GetMulti(ctx, recordsToGet); err != nil {
 		return
 	}
 
-	logus.Debugf(c, "getReceiptTransferAndUsers(receiptID=%s, userID=%s) =>\n\tcreatorDebtusUser(id=%s): %+v\n\tcounterpartyDebtusUser(id=%s): %+v",
+	logus.Debugf(ctx, "getReceiptTransferAndUsers(receiptID=%s, userID=%s) =>\n\tcreatorDebtusUser(id=%s): %+v\n\tcounterpartyDebtusUser(id=%s): %+v",
 		receiptID, userID,
 		creatorDebtusUser.ID, creatorDebtusUser.Data,
 		counterpartyDebtusUser.ID, counterpartyDebtusUser.Data,

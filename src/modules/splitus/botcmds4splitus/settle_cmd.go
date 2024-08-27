@@ -21,11 +21,11 @@ var settleBillsCommand = botsfw.Command{
 }
 
 func settleBillsAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
-	logus.Debugf(c, "settleBillsAction()")
+	ctx := whc.Context()
+	logus.Debugf(ctx, "settleBillsAction()")
 	err = errors.New("settleBillsAction not implemented yet")
 	//var user models4debtus.AppUser
-	//if user, err = dal4userus.GetUserByID(c, nil, whc.AppUserID()); err != nil {
+	//if user, err = dal4userus.GetUserByID(ctx, nil, whc.AppUserID()); err != nil {
 	//	return
 	//}
 	//

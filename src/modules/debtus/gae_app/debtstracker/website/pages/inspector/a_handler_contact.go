@@ -83,12 +83,12 @@ func (h contactPage) contactPageHandler(w http.ResponseWriter, r *http.Request, 
 
 }
 
-func (contactPage) verifyTransfers(c context.Context, contactID string) (
+func (contactPage) verifyTransfers(ctx context.Context, contactID string) (
 	transfers []models4debtus.TransferEntry, err error,
 ) {
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(ctx); err != nil {
 		return
 	}
 	//select := dal.Select{
@@ -99,7 +99,7 @@ func (contactPage) verifyTransfers(c context.Context, contactID string) (
 		SelectInto(models4debtus.NewTransferRecord)
 
 	var reader dal.Reader
-	if reader, err = db.QueryReader(c, query); err != nil {
+	if reader, err = db.QueryReader(ctx, query); err != nil {
 		return
 	}
 

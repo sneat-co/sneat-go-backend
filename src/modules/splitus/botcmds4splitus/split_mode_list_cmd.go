@@ -13,10 +13,10 @@ import (
 
 var billSplitModesListCommand = billCallbackCommand("split-modes",
 	func(whc botsfw.WebhookContext, _ dal.ReadwriteTransaction, callbackUrl *url.URL, bill models4splitus.BillEntry) (m botsfw.MessageFromBot, err error) {
-		c := whc.Context()
-		logus.Debugf(c, "billSplitModesListCommand.CallbackAction()")
+		ctx := whc.Context()
+		logus.Debugf(ctx, "billSplitModesListCommand.CallbackAction()")
 		var mt string
-		if mt, err = getBillCardMessageText(c, whc.GetBotCode(), whc, bill, true, ""); err != nil {
+		if mt, err = getBillCardMessageText(ctx, whc.GetBotCode(), whc, bill, true, ""); err != nil {
 			return
 		}
 		if m, err = whc.NewEditMessage(mt, botsfw.MessageFormatHTML); err != nil {

@@ -112,11 +112,11 @@ func IndexPage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	indexPage(appengine.NewContext(r), w, r)
 }
 
-func indexPage(c context.Context, w http.ResponseWriter, r *http.Request) {
+func indexPage(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if referrer := r.Referer(); referrer != "" && !strings.Contains(referrer, "://"+r.Host) {
-		logus.Debugf(c, "Referer: %v", referrer)
+		logus.Debugf(ctx, "Referer: %v", referrer)
 	}
-	locale, err := getLocale(c, w, r)
+	locale, err := getLocale(ctx, w, r)
 	if err != nil {
 		return
 	}

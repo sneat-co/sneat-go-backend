@@ -44,9 +44,9 @@ func RegisterDal() {
 	dtdal.Feedback = NewFeedbackDalGae()
 	//dtdal.UserVk = NewUserVkDalGae()
 	//dtdal.GroupMember = NewGroupMemberDalGae()
-	dtdal.HttpClient = func(c context.Context) *http.Client {
+	dtdal.HttpClient = func(ctx context.Context) *http.Client {
 		return http.DefaultClient
-		//return urlfetch.Client(c)
+		//return urlfetch.Client(ctx)
 	}
 	dtdal.HttpAppHost = apphostgae.NewHttpAppHostGAE()
 
@@ -66,14 +66,14 @@ func (h ApiBotHost) Context(r *http.Request) context.Context {
 	return appengine.NewContext(r)
 }
 
-func (h ApiBotHost) GetHTTPClient(c context.Context) *http.Client {
-	return dtdal.HttpClient(c)
+func (h ApiBotHost) GetHTTPClient(ctx context.Context) *http.Client {
+	return dtdal.HttpClient(ctx)
 }
 
 //func (h ApiBotHost) GetBotCoreStores(platform string, appContext botsfw.BotAppContext, r *http.Request) botsfwdal.DataAccess {
 //	panic("Not implemented")
 //}
 
-func (h ApiBotHost) DB(c context.Context) (dal.DB, error) {
-	return facade.GetDatabase(c)
+func (h ApiBotHost) DB(ctx context.Context) (dal.DB, error) {
+	return facade.GetDatabase(ctx)
 }

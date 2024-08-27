@@ -27,10 +27,10 @@ const VIEW_RECEIPT_CALLBACK_COMMAND = "view-receipt"
 var ViewReceiptCallbackCommand = botsfw.NewCallbackCommand(VIEW_RECEIPT_CALLBACK_COMMAND, viewReceiptCallbackAction)
 
 func ShowReceipt(whc botsfw.WebhookContext, receiptID string) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
+	ctx := whc.Context()
 
 	var receipt models4debtus.ReceiptEntry
-	if receipt, err = dtdal.Receipt.GetReceiptByID(c, nil, receiptID); err != nil {
+	if receipt, err = dtdal.Receipt.GetReceiptByID(ctx, nil, receiptID); err != nil {
 		return m, err
 	}
 
@@ -39,12 +39,12 @@ func ShowReceipt(whc botsfw.WebhookContext, receiptID string) (m botsfw.MessageF
 		return
 	}
 
-	receipt, err = facade4debtus.MarkReceiptAsViewed(c, receiptID, whc.AppUserID())
+	receipt, err = facade4debtus.MarkReceiptAsViewed(ctx, receiptID, whc.AppUserID())
 	if err != nil {
 		return
 	}
 
-	transfer, err := facade4debtus.Transfers.GetTransferByID(c, nil, receipt.Data.TransferID)
+	transfer, err := facade4debtus.Transfers.GetTransferByID(ctx, nil, receipt.Data.TransferID)
 	if err != nil {
 		return m, err
 	}
@@ -58,9 +58,9 @@ func ShowReceipt(whc botsfw.WebhookContext, receiptID string) (m botsfw.MessageF
 	counterpartyCounterparty := transfer.Data.Creator()
 
 	if counterpartyCounterparty.ContactID != "" {
-		counterparty, err = facade4debtus.GetDebtusSpaceContactByID(c, nil, receipt.Data.SpaceID, counterpartyCounterparty.ContactID)
+		counterparty, err = facade4debtus.GetDebtusSpaceContactByID(ctx, nil, receipt.Data.SpaceID, counterpartyCounterparty.ContactID)
 	} else {
-		if user, err := dal4userus.GetUserByID(c, nil, transfer.Data.CreatorUserID); err != nil {
+		if user, err := dal4userus.GetUserByID(ctx, nil, transfer.Data.CreatorUserID); err != nil {
 			return m, err
 		} else {
 			counterparty.Data = &models4debtus.DebtusSpaceContactDbo{}
@@ -73,9 +73,9 @@ func ShowReceipt(whc botsfw.WebhookContext, receiptID string) (m botsfw.MessageF
 		return m, err
 	}
 	utm := common4debtus.NewUtmParams(whc, common4debtus.UTM_CAMPAIGN_REMINDER)
-	mt = common4debtus.TextReceiptForTransfer(c, whc, transfer, whc.AppUserID(), common4debtus.ShowReceiptToAutodetect, utm)
+	mt = common4debtus.TextReceiptForTransfer(ctx, whc, transfer, whc.AppUserID(), common4debtus.ShowReceiptToAutodetect, utm)
 
-	logus.Debugf(c, "ReceiptEntry text: %v", mt)
+	logus.Debugf(ctx, "ReceiptEntry text: %v", mt)
 
 	var inlineKeyboard *tgbotapi.InlineKeyboardMarkup
 
@@ -91,7 +91,7 @@ func ShowReceipt(whc botsfw.WebhookContext, receiptID string) (m botsfw.MessageF
 			case models4debtus.TransferDeclined:
 				mt += "\n" + whc.Translate(trans.MESSAGE_TEXT_ALREADY_DECLINED_TRANSFER)
 			default:
-				logus.Errorf(c, "!transfer.AcknowledgeTime.IsZero() && transfer.AcknowledgeStatus not in (accepted, declined)")
+				logus.Errorf(ctx, "!transfer.AcknowledgeTime.IsZero() && transfer.AcknowledgeStatus not in (accepted, declined)")
 			}
 		} else {
 			mt += "\n" + whc.Translate(trans.MESSAGE_TEXT_PLEASE_ACKNOWLEDGE_TRANSFER)
@@ -118,7 +118,7 @@ func ShowReceipt(whc botsfw.WebhookContext, receiptID string) (m botsfw.MessageF
 		}
 	}
 
-	logus.Debugf(c, "mt: %v", mt)
+	logus.Debugf(ctx, "mt: %v", mt)
 	switch inputType := whc.InputType(); inputType {
 	case botsfw.WebhookInputCallbackQuery:
 		if m, err = whc.NewEditMessage(mt, botsfw.MessageFormatHTML); err != nil {
@@ -134,12 +134,12 @@ func ShowReceipt(whc botsfw.WebhookContext, receiptID string) (m botsfw.MessageF
 			m.Keyboard = inlineKeyboard
 		}
 	default:
-		logus.Errorf(c, "Unknown input type: %s", botsfw.GetWebhookInputTypeIdNameString(inputType))
+		logus.Errorf(ctx, "Unknown input type: %s", botsfw.GetWebhookInputTypeIdNameString(inputType))
 	}
 
-	if _, err = whc.Responder().SendMessage(c, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
+	if _, err = whc.Responder().SendMessage(ctx, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
 		if strings.Contains(err.Error(), "message is not modified") { // TODO: Can fail on different receipts for same amount
-			logus.Warningf(c, fmt.Sprintf("Failed to send receipt to counterparty: %v", err))
+			logus.Warningf(ctx, fmt.Sprintf("Failed to send receipt to counterparty: %v", err))
 		} else {
 			return m, err
 		}
@@ -152,17 +152,17 @@ func ShowReceipt(whc botsfw.WebhookContext, receiptID string) (m botsfw.MessageF
 			return
 		}
 		m.EditMessageUID = telegram.NewChatMessageUID(transfer.Data.Creator().TgChatID, int(transfer.Data.CreatorTgReceiptByTgMsgID))
-		//if _, err := whc.Responder().SendMessage(c, editCreatorMessage, botsfw.BotAPISendMessageOverHTTPS); err != nil {
-		//	logus.Errorf(c, "Failed to edit creator message: %v", err)
+		//if _, err := whc.Responder().SendMessage(ctx, editCreatorMessage, botsfw.BotAPISendMessageOverHTTPS); err != nil {
+		//	logus.Errorf(ctx, "Failed to edit creator message: %v", err)
 		//}
 	}
 	return m, err
 }
 
 func viewReceiptCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
+	ctx := whc.Context()
 
-	logus.Debugf(c, "ViewReceiptAction(callbackUrl=%v)", callbackUrl)
+	logus.Debugf(ctx, "ViewReceiptAction(callbackUrl=%v)", callbackUrl)
 	callbackQuery := callbackUrl.Query()
 
 	localeCode5 := callbackQuery.Get("locale")
@@ -187,9 +187,9 @@ func viewReceiptCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) 
 }
 
 //func (viewReceiptCallback) onInvite(whc botsfw.WebhookContext, inviteCode string) (exit bool, transferID int, transfer *models.TransferEntry, m botsfw.MessageFromBot, err error) {
-//	c := whc.Context()
+//	ctx := whc.Context()
 //	var invite *invites.Invite
-//	if invite, err = invites.GetInvite(c, inviteCode); err != nil {
+//	if invite, err = invites.GetInvite(ctx, inviteCode); err != nil {
 //		return
 //	} else {
 //		if invite == nil {

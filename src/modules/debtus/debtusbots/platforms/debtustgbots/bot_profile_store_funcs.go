@@ -21,7 +21,7 @@ func newAppUserData() botsfwmodels.AppUserData {
 	return new(dbo4userus.UserDbo)
 }
 
-func getAppUserByID(c context.Context, tx dal.ReadSession, botID, appUserID string) (appUser record.DataWithID[string, botsfwmodels.AppUserData], err error) {
+func getAppUserByID(_ context.Context, tx dal.ReadSession, botID, appUserID string) (appUser record.DataWithID[string, botsfwmodels.AppUserData], err error) {
 	appUserData := newAppUserData()
 	key := dbo4userus.NewUserKey(appUserID)
 	appUser = record.NewDataWithID(appUserID, key, appUserData)

@@ -9,7 +9,7 @@ type BotParams struct {
 	//GetGroupBillCardInlineKeyboard   func(translator i18n.SingleLocaleTranslator, bill models.Bill) *tgbotapi.InlineKeyboardMarkup
 	//GetPrivateBillCardInlineKeyboard func(translator i18n.SingleLocaleTranslator, botCode string, bill models.Bill) *tgbotapi.InlineKeyboardMarkup
 	//OnAfterBillCurrencySelected      func(translator i18n.SingleLocaleTranslator, billID string) *tgbotapi.InlineKeyboardMarkup
-	//DelayUpdateBillCardOnUserJoin    func(c context.Context, billID string, message string) error
+	//DelayUpdateBillCardOnUserJoin    func(ctx context.Context, billID string, message string) error
 	//ShowGroupMembers                 func(whc botsfw.WebhookContext, group models.Group, isEdit bool) (m botsfw.MessageFromBot, err error)
 	//InGroupWelcomeMessage func(whc botsfw.WebhookContext, group models.Group) (m botsfw.MessageFromBot, err error)
 	InBotWelcomeMessage func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error)

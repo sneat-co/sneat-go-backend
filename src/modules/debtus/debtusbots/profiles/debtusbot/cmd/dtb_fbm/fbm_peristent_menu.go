@@ -14,7 +14,7 @@ package dtb_fbm
 //
 //var EM_SPACE = strings.Repeat("\u00A0", 2)
 //
-//func SetPersistentMenu(c context.Context, r *http.Request, bot botsfw.BotSettings, api4debtus fbmbotapi.GraphAPI) (err error) {
+//func SetPersistentMenu(ctx context.Context, r *http.Request, bot botsfw.BotSettings, api4debtus fbmbotapi.GraphAPI) (err error) {
 //	url := fmt.Sprintf("https://%v/app/#fbm%v", r.Host, bot.ContactID)
 //
 //	//menuItemWebUrl := func(icon, title, hash string) fbm_api.MenuItemWebURL {

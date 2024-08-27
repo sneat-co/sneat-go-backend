@@ -130,7 +130,7 @@ func (o *DebtusContactBrief) Equal(o2 *DebtusContactBrief) bool {
 		(o.Transfers == nil && o2.Transfers == nil || o.Transfers != nil && o2.Transfers != nil && o.Transfers.Equal(o2.Transfers))
 }
 
-func (o *DebtusContactBrief) BalanceWithInterest(c context.Context, periodEnds time.Time) (balance money.Balance, err error) {
+func (o *DebtusContactBrief) BalanceWithInterest(_ context.Context, periodEnds time.Time) (balance money.Balance, err error) {
 	balance = make(money.Balance, len(o.Balance))
 	for currency, amount := range o.Balance {
 		balance[currency] = amount

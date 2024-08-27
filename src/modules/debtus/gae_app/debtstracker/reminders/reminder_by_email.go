@@ -14,8 +14,8 @@ import (
 	"time"
 )
 
-func sendReminderByEmail(c context.Context, reminder models4debtus.Reminder, emailTo string, transfer models4debtus.TransferEntry, user dbo4userus.UserEntry) (err error) {
-	logus.Debugf(c, "sendReminderByEmail(reminder.ContactID=%v, emailTo=%v)", reminder.ID, emailTo)
+func sendReminderByEmail(ctx context.Context, reminder models4debtus.Reminder, emailTo string, transfer models4debtus.TransferEntry, user dbo4userus.UserEntry) (err error) {
+	logus.Debugf(ctx, "sendReminderByEmail(reminder.ContactID=%v, emailTo=%v)", reminder.ID, emailTo)
 
 	emailMessage := emails.Email{
 		From: common4debtus.FROM_REMINDER,
@@ -28,7 +28,7 @@ func sendReminderByEmail(c context.Context, reminder models4debtus.Reminder, ema
 
 	var emailClient emails.Client
 
-	if emailClient, err = emailing.GetEmailClient(c); err != nil {
+	if emailClient, err = emailing.GetEmailClient(ctx); err != nil {
 		return
 	}
 
@@ -46,8 +46,8 @@ func sendReminderByEmail(c context.Context, reminder models4debtus.Reminder, ema
 		emailMessageID = sent.MessageID()
 	}
 
-	if err = dtdal.Reminder.SetReminderIsSent(c, reminder.ID, sentAt, 0, emailMessageID, i18n.LocaleCodeEnUS, errDetails); err != nil {
-		if err = dtdal.Reminder.DelaySetReminderIsSent(c, reminder.ID, sentAt, 0, emailMessageID, i18n.LocaleCodeEnUS, errDetails); err != nil {
+	if err = dtdal.Reminder.SetReminderIsSent(ctx, reminder.ID, sentAt, 0, emailMessageID, i18n.LocaleCodeEnUS, errDetails); err != nil {
+		if err = dtdal.Reminder.DelaySetReminderIsSent(ctx, reminder.ID, sentAt, 0, emailMessageID, i18n.LocaleCodeEnUS, errDetails); err != nil {
 			return fmt.Errorf("failed to delay setting reminder as sent: %w", err)
 		}
 	}
@@ -59,6 +59,6 @@ func sendReminderByEmail(c context.Context, reminder models4debtus.Reminder, ema
 	}
 
 	// Pretty-print the response data.
-	logus.Debugf(c, "AWS SES output (for Reminder=%v): %v", reminder.ID, sent)
+	logus.Debugf(ctx, "AWS SES output (for Reminder=%v): %v", reminder.ID, sent)
 	return nil
 }

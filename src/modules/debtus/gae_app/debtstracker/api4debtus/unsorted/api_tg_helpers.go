@@ -24,42 +24,42 @@ import (
 	"sync"
 )
 
-func HandleTgHelperCurrencySelected(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
+func HandleTgHelperCurrencySelected(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	if err := r.ParseForm(); err != nil {
-		httpserver.HandleError(c, err, "", w, r)
+		httpserver.HandleError(ctx, err, "", w, r)
 		return
 	}
 	selectedCurrency := r.FormValue("currency")
 	if selectedCurrency == "" {
-		httpserver.HandleError(c, validation.NewErrRequestIsMissingRequiredField("currency"), "", w, r)
+		httpserver.HandleError(ctx, validation.NewErrRequestIsMissingRequiredField("currency"), "", w, r)
 		return
 	}
 	if len(selectedCurrency) != 3 {
-		httpserver.HandleError(c, validation.NewErrBadRequestFieldValue("currency", "wrong lengths of parameter value"), "", w, r)
+		httpserver.HandleError(ctx, validation.NewErrBadRequestFieldValue("currency", "wrong lengths of parameter value"), "", w, r)
 		return
 	}
 	if strings.ToUpper(selectedCurrency) != selectedCurrency {
-		httpserver.HandleError(c, validation.NewErrBadRequestFieldValue("currency", "wrong currency code"), "", w, r)
+		httpserver.HandleError(ctx, validation.NewErrBadRequestFieldValue("currency", "wrong currency code"), "", w, r)
 		return
 	}
 
 	tgChatKeyID := r.Form.Get("tg-chat")
 	if tgChatKeyID == "" {
-		httpserver.HandleError(c, validation.NewErrRequestIsMissingRequiredField("tg-chat"), "", w, r)
+		httpserver.HandleError(ctx, validation.NewErrRequestIsMissingRequiredField("tg-chat"), "", w, r)
 		return
 	}
 
 	if !strings.Contains(tgChatKeyID, ":") {
-		httpserver.HandleError(c, validation.NewErrBadRequestFieldValue("tg-chat", "wrong format of Telegram chat ContactID parameter"), "", w, r)
+		httpserver.HandleError(ctx, validation.NewErrBadRequestFieldValue("tg-chat", "wrong format of Telegram chat ContactID parameter"), "", w, r)
 		return
 	}
 
 	tgChatID, err := strconv.ParseInt(strings.Split(tgChatKeyID, ":")[1], 10, 64)
 	if err != nil {
-		httpserver.HandleError(c, validation.NewErrBadRequestFieldValue("tg-chat", "value of Telegram chat ContactID should be integer"), "", w, r)
+		httpserver.HandleError(ctx, validation.NewErrBadRequestFieldValue("tg-chat", "value of Telegram chat ContactID should be integer"), "", w, r)
 		return
 	}
-	logus.Debugf(c, "AppUserIntID: %v, tgChatKeyID: %v", authInfo.UserID, tgChatKeyID)
+	logus.Debugf(ctx, "AppUserIntID: %v, tgChatKeyID: %v", authInfo.UserID, tgChatKeyID)
 
 	errs := make(chan error, 2) // We use errors channel as sync pipe
 
@@ -71,11 +71,11 @@ func HandleTgHelperCurrencySelected(c context.Context, w http.ResponseWriter, r 
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
-				logus.Errorf(c, "panic in HandleTgHelperCurrencySelected() => dtdal.UserEntry.SetLastCurrency(): %v", r)
+				logus.Errorf(ctx, "panic in HandleTgHelperCurrencySelected() => dtdal.UserEntry.SetLastCurrency(): %v", r)
 			}
 		}()
-		if err := facade4userus.SetLastCurrency(c, facade.NewUserContext(authInfo.UserID), money.CurrencyCode(selectedCurrency)); err != nil {
-			logus.Errorf(c, "Failed to save user last currency: %v", err)
+		if err := facade4userus.SetLastCurrency(ctx, facade.NewUserContext(authInfo.UserID), money.CurrencyCode(selectedCurrency)); err != nil {
+			logus.Errorf(ctx, "Failed to save user last currency: %v", err)
 		}
 		userTask.Done()
 		errs <- nil
@@ -84,43 +84,43 @@ func HandleTgHelperCurrencySelected(c context.Context, w http.ResponseWriter, r 
 	go func(currency string) {
 		defer func() {
 			if r := recover(); r != nil {
-				logus.Errorf(c, "panic in HandleTgHelperCurrencySelected() => dtdal.TgChat.DoSomething() => sendToTelegram(): %v", r)
+				logus.Errorf(ctx, "panic in HandleTgHelperCurrencySelected() => dtdal.TgChat.DoSomething() => sendToTelegram(): %v", r)
 			}
 		}()
-		errs <- facade4auth.TgChat.DoSomething(c, &userTask, currency, tgChatID, authInfo, user,
+		errs <- facade4auth.TgChat.DoSomething(ctx, &userTask, currency, tgChatID, authInfo, user,
 			func(tgChat botsfwtgmodels.TgChatData) error {
 				// TODO: This is some serious architecture sheet. Too sleepy to make it right, just make it working.
 				botID := "TODO:setup_bot_id"
-				return sendToTelegram(c, user, botID, tgChatID, tgChat, &userTask, r)
+				return sendToTelegram(ctx, user, botID, tgChatID, tgChat, &userTask, r)
 			},
 		)
 	}(selectedCurrency)
 
 	for i := range []int{1, 2} {
 		if err := <-errs; err != nil {
-			logus.Errorf(c, "%v: %v", i, err.Error())
+			logus.Errorf(ctx, "%v: %v", i, err.Error())
 			w.WriteHeader(http.StatusInternalServerError)
 			_, _ = w.Write([]byte(err.Error()))
 			return
 		}
 	}
 
-	logus.Debugf(c, "Selected currency processed: %v", selectedCurrency)
+	logus.Debugf(ctx, "Selected currency processed: %v", selectedCurrency)
 }
 
 // TODO: This is some serious architecture sheet. Too sleepy to make it right, just make it working.
-func sendToTelegram(c context.Context, user dbo4userus.UserEntry, botID string, tgChatID int64, tgChat botsfwtgmodels.TgChatData, userTask *sync.WaitGroup, r *http.Request) (err error) {
-	telegramBots := debtustgbots.Bots(dtdal.HttpAppHost.GetEnvironment(c, nil))
+func sendToTelegram(ctx context.Context, user dbo4userus.UserEntry, botID string, tgChatID int64, tgChat botsfwtgmodels.TgChatData, userTask *sync.WaitGroup, r *http.Request) (err error) {
+	telegramBots := debtustgbots.Bots(dtdal.HttpAppHost.GetEnvironment(ctx, nil))
 	baseChatData := tgChat.BaseTgChatData()
 	botSettings, ok := telegramBots.ByCode[botID]
 	if !ok {
 		return fmt.Errorf("ReferredTo settings not found by tgChat.BotID=%v, out of %v items", botID, len(telegramBots.ByCode))
 	}
 
-	logus.Debugf(c, "botSettings(%v : %v)", botSettings.Code, botSettings.Token)
+	logus.Debugf(ctx, "botSettings(%v : %v)", botSettings.Code, botSettings.Token)
 
-	tgBotApi := tgbotapi.NewBotAPIWithClient(botSettings.Token, dtdal.HttpClient(c))
-	tgBotApi.EnableDebug(c)
+	tgBotApi := tgbotapi.NewBotAPIWithClient(botSettings.Token, dtdal.HttpClient(ctx))
+	tgBotApi.EnableDebug(ctx)
 
 	userTask.Wait()
 

@@ -42,7 +42,7 @@ var groupMembersCommand = botsfw.Command{
 }
 
 func groupMembersCard(
-	c context.Context,
+	_ context.Context,
 	t i18n.SingleLocaleTranslator,
 	contactusSpace dal4contactus.ContactusSpaceEntry,
 	selectedMemberID int64,
@@ -88,9 +88,9 @@ func groupMembersCard(
 }
 
 func showGroupMembers(whc botsfw.WebhookContext, contactusSpace dal4contactus.ContactusSpaceEntry, isEdit bool) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
+	ctx := whc.Context()
 
-	if m.Text, err = groupMembersCard(c, whc, contactusSpace, 0); err != nil {
+	if m.Text, err = groupMembersCard(ctx, whc, contactusSpace, 0); err != nil {
 		return
 	}
 

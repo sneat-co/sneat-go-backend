@@ -25,9 +25,9 @@ var User = userFacade{}
 var ErrEmailAlreadyRegistered = errors.New("email already registered")
 
 // Deprecated: use facade4userus instead
-func (userFacade) GetUserByIdOBSOLETE(c context.Context, tx dal.ReadSession, userID string) (user models4debtus.AppUserOBSOLETE, err error) {
+func (userFacade) GetUserByIdOBSOLETE(ctx context.Context, tx dal.ReadSession, userID string) (user models4debtus.AppUserOBSOLETE, err error) {
 	if tx == nil {
-		if tx, err = facade.GetDatabase(c); err != nil {
+		if tx, err = facade.GetDatabase(ctx); err != nil {
 			return
 		}
 	}
@@ -39,31 +39,31 @@ func (userFacade) GetUserByIdOBSOLETE(c context.Context, tx dal.ReadSession, use
 		Key:    key,
 		Record: dal.NewRecordWithData(key, user.Data),
 	}
-	err = tx.Get(c, user.Record)
+	err = tx.Get(ctx, user.Record)
 	return
 }
 
-func (userFacade) GetUsersByIDs(c context.Context, userIDs []string) (users []dbo4userus.UserEntry, err error) {
-	return dal4userus.GetUsersByIDs(c, userIDs)
+func (userFacade) GetUsersByIDs(ctx context.Context, userIDs []string) (users []dbo4userus.UserEntry, err error) {
+	return dal4userus.GetUsersByIDs(ctx, userIDs)
 }
 
 func (uf userFacade) CreateUserByEmail(
-	c context.Context,
+	ctx context.Context,
 	email, name string,
 ) (
 	user dbo4userus.UserEntry,
 	userEmail models4auth.UserEmailEntry,
 	err error,
 ) {
-	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-		if userEmail, err = facade4auth.UserEmail.GetUserEmailByID(c, tx, email); err == nil {
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+		if userEmail, err = facade4auth.UserEmail.GetUserEmailByID(ctx, tx, email); err == nil {
 			return ErrEmailAlreadyRegistered
 		} else if !dal.IsNotFound(err) {
 			return
 		}
 
 		if userEmail.ID == "" {
-			logus.Errorf(c, "userEmail.ContactID is empty string")
+			logus.Errorf(ctx, "userEmail.ContactID is empty string")
 			userEmail.ID = strings.ToLower(strings.TrimSpace(email))
 		}
 
@@ -74,7 +74,7 @@ func (uf userFacade) CreateUserByEmail(
 
 		err = errors.New("not implemented")
 		return
-		//if user, err = facade4auth.UserEntry.CreateUser(c, userData); err != nil {
+		//if user, err = facade4auth.UserEntry.CreateUser(ctx, userData); err != nil {
 		//	return
 		//}
 
@@ -84,7 +84,7 @@ func (uf userFacade) CreateUserByEmail(
 		//	return
 		//}
 		//
-		//err = facade4auth.UserEmail.SaveUserEmail(c, tx, userEmail)
+		//err = facade4auth.UserEmail.SaveUserEmail(ctx, tx, userEmail)
 		//return
 	})
 
@@ -93,7 +93,7 @@ func (uf userFacade) CreateUserByEmail(
 
 // GetOrCreateEmailUser is used in invites.
 func (uf userFacade) GetOrCreateEmailUser(
-	c context.Context,
+	ctx context.Context,
 	email string,
 	isConfirmed bool,
 	createUserData *facade4auth.CreateUserData,
@@ -106,8 +106,8 @@ func (uf userFacade) GetOrCreateEmailUser(
 
 	var appUser dbo4userus.UserEntry
 
-	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-		if userEmail, err = facade4auth.UserEmail.GetUserEmailByID(c, tx, email); err == nil {
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+		if userEmail, err = facade4auth.UserEmail.GetUserEmailByID(ctx, tx, email); err == nil {
 			return // UserEntry found
 		} else if !dal.IsNotFound(err) { //
 			return // Internal error
@@ -123,12 +123,12 @@ func (uf userFacade) GetOrCreateEmailUser(
 
 		//var to db.RunOptions = dtdal.CrossGroupTransaction
 
-		if err = tx.Set(c, appUser.Record); err != nil {
+		if err = tx.Set(ctx, appUser.Record); err != nil {
 			return fmt.Errorf("failed to save new appUser to datastore: %w", err)
 		}
 		userEmail.Data.CreatedAt = now
 
-		if err = facade4auth.UserEmail.SaveUserEmail(c, tx, userEmail); err != nil {
+		if err = facade4auth.UserEmail.SaveUserEmail(ctx, tx, userEmail); err != nil {
 			return err
 		}
 		return nil
@@ -138,18 +138,18 @@ func (uf userFacade) GetOrCreateEmailUser(
 }
 
 //func (uf userFacade) GetOrCreateUserGoogleOnSignIn(
-//	c context.Context, googleUser *gae_user.UserEntry, appUserID string, clientInfo models.ClientInfo,
+//	ctx context.Context, googleUser *gae_user.UserEntry, appUserID string, clientInfo models.ClientInfo,
 //) (
 //	userGoogle models.UserAccountEntry, appUser models.AppUserOBSOLETE, err error,
 //) {
 //	if googleUser == nil {
 //		panic("googleUser == nil")
 //	}
-//	getUserAccountRecordFromDB := func(c context.Context) (appuser.AccountRecord, error) {
-//		userGoogle, err = dtdal.UserGoogle.GetUserGoogleByID(c, googleUser.ContactID)
+//	getUserAccountRecordFromDB := func(ctx context.Context) (appuser.AccountRecord, error) {
+//		userGoogle, err = dtdal.UserGoogle.GetUserGoogleByID(ctx, googleUser.ContactID)
 //		return &userGoogle, err
 //	}
-//	newUserAccountRecord := func(c context.Context) (appuser.AccountRecord, error) {
+//	newUserAccountRecord := func(ctx context.Context) (appuser.AccountRecord, error) {
 //		if googleUser.Email == "" {
 //			return nil, errors.New("Not implemented yet: Google did not provided appUser email")
 //		}
@@ -177,23 +177,23 @@ func (uf userFacade) GetOrCreateEmailUser(
 //}
 
 //func getOrCreateUserAccountRecordOnSignIn(
-//	c context.Context,
+//	ctx context.Context,
 //	provider string,
 //	userID string,
-//	getUserAccountRecordFromDB func(c context.Context) (appuser.AccountRecord, error),
-//	newUserAccountRecord func(c context.Context) (appuser.AccountRecord, error),
+//	getUserAccountRecordFromDB func(ctx context.Context) (appuser.AccountRecord, error),
+//	newUserAccountRecord func(ctx context.Context) (appuser.AccountRecord, error),
 //	clientInfo models.ClientInfo,
 //) (
 //	appUser models.AppUserOBSOLETE, err error,
 //) {
-//	logus.Debugf(c, "getOrCreateUserAccountRecordOnSignIn(provider=%v, userID=%d)", provider, userID)
+//	logus.Debugf(ctx, "getOrCreateUserAccountRecordOnSignIn(provider=%v, userID=%d)", provider, userID)
 //	var db dal.DB
-//	if db, err = GetDatabase(c); err != nil {
+//	if db, err = GetDatabase(ctx); err != nil {
 //		return
 //	}
 //	var userAccount appuser.AccountRecord
-//	err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-//		if userAccount, err = getUserAccountRecordFromDB(c); err != nil {
+//	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+//		if userAccount, err = getUserAccountRecordFromDB(ctx); err != nil {
 //			if !dal.IsNotFound(err) {
 //				// Technical error
 //				return fmt.Errorf("failed to get user account record: %w", err)
@@ -339,7 +339,7 @@ func (uf userFacade) GetOrCreateEmailUser(
 //}
 
 //func (uf userFacade) GetOrCreateUserFacebookOnSignIn(
-//	c context.Context,
+//	ctx context.Context,
 //	appUserID int64,
 //	fbAppOrPageID, fbUserOrPageScopeID, firstName, lastName string,
 //	email string, isEmailConfirmed bool,
@@ -364,15 +364,15 @@ func (uf userFacade) GetOrCreateEmailUser(
 //		}
 //	}
 //
-//	getUserAccountRecordFromDB := func(c context.Context) (user.AccountRecord, error) {
-//		if userFacebook, err = dtdal.UserFacebook.GetFbUserByFbID(c, fbAppOrPageID, fbUserOrPageScopeID); err != nil {
+//	getUserAccountRecordFromDB := func(ctx context.Context) (user.AccountRecord, error) {
+//		if userFacebook, err = dtdal.UserFacebook.GetFbUserByFbID(ctx, fbAppOrPageID, fbUserOrPageScopeID); err != nil {
 //			return &userFacebook, err
 //		}
 //		updateNames(userFacebook.Data)
 //		return &userFacebook, err
 //	}
 //
-//	newUserAccountRecord := func(c context.Context) (user.AccountRecord, error) {
+//	newUserAccountRecord := func(ctx context.Context) (user.AccountRecord, error) {
 //		userFacebook = models.UserFacebook{
 //			FbAppOrPageID:       fbAppOrPageID,
 //			FbUserOrPageScopeID: fbUserOrPageScopeID,

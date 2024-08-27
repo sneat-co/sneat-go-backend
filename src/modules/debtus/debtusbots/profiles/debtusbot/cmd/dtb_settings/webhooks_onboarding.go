@@ -174,13 +174,13 @@ func NewMistypedCommand(messageToAdd string) botsfw.Command {
 //	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 //		// Check for code
 //
-//		c := whc.Context()
+//		ctx := whc.Context()
 //		chatEntity := whc.ChatData()
 //		chatEntity.PushStepToAwaitingReplyTo(CHECK_INVITE_COMMAND)
 //		inviteCode := strings.ToUpper(whc.Input().(botsfw.WebhookTextMessage).Text())
 //		userID := whc.AppUserID()
 //
-//		if err = dtdal.Invite.ClaimInvite(c, userID, inviteCode, whc.BotPlatform().ContactID(), whc.GetBotCode()); err != nil {
+//		if err = dtdal.Invite.ClaimInvite(ctx, userID, inviteCode, whc.BotPlatform().ContactID(), whc.GetBotCode()); err != nil {
 //			if dal.IsNotFound(err) {
 //				m = whc.NewMessage(emoji.NO_ENTRY_SIGN_ICON + " " + strings.TrimSpace(fmt.Sprintf(whc.Translate(trans.MESSAGE_TEXT_WRONG_INVITE_CODE), inviteCode)))
 //				m.Keyboard = tgbotapi.NewReplyKeyboardUsingStrings([][]string{
@@ -239,7 +239,7 @@ func TextCommand(on string, message []string, icon, replyIcon string, hideKeyboa
 //			NewMistypedCommand(cmd.message),
 //		},
 //		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-//			c := whc.Context()
+//			ctx := whc.Context()
 //
 //			logus.Infof(c, "Command(code=%v).Action()", cmd.code)
 //			chatEntity := whc.ChatData()
@@ -253,7 +253,7 @@ func TextCommand(on string, message []string, icon, replyIcon string, hideKeyboa
 //				message := whc.Input().(botsfw.WebhookTextMessage)
 //				messageText := message.Text()
 //				altOption := messageText == altCmd.title
-//				//logus.Debugf(c, "code: %v, awaitingReplyTo: %v, messageText: %v, altOption=%v, altCommand: %v", cmd.code, awaitingReplyTo, messageText, altOption, altCmd.title)
+//				//logus.Debugf(ctx, "code: %v, awaitingReplyTo: %v, messageText: %v, altOption=%v, altCommand: %v", cmd.code, awaitingReplyTo, messageText, altOption, altCmd.title)
 //				switch {
 //				case messageText == whc.CommandText(trans.COMMAND_TEXT_TELL_ME_MORE_ABOUT_INVITES, emoji.QUESTION_ICON):
 //					switch cmd.code {
@@ -349,7 +349,7 @@ var OnboardingOnUserContactReceivedCommand = botsfw.Command{
 }
 
 //func onboardingProcessPhoneContact(whc botsfw.WebhookContext, contact botsfw.WebhookContactMessage) (m botsfw.MessageFromBot, err error) {
-//	c := whc.Context()
+//	ctx := whc.Context()
 //	//whc.ChatData().SetAwaitingReplyTo(ON_USER_CONTACT_RECEIVED_COMMAND)
 //	invite, err := dtdal.Invite.CreatePersonalInvite(whc.ExecutionContext(), whc.AppUserID(), models.InviteBySms, contact.PhoneNumber(), whc.BotPlatform().ContactID(), whc.GetBotCode(), INVITE_IS_RELATED_TO_ONBOARDING)
 //	if err != nil {
@@ -369,11 +369,11 @@ var OnboardingOnUserContactReceivedCommand = botsfw.Command{
 //		Utm:        utmParams.String(),
 //	}
 //
-//	smsText, err := anybot.TextTemplates.RenderTemplate(c, whc, trans.SMS_INVITE_TEXT, templateParams)
+//	smsText, err := anybot.TextTemplates.RenderTemplate(ctx, whc, trans.SMS_INVITE_TEXT, templateParams)
 //	if err != nil {
 //		return m, err
 //	}
-//	isTestSender, smsResponse, twilioException, err := sms.SendSms(whc.Context(), whc.GetBotSettings().Env == strongoapp.EnvProduction, contact.PhoneNumber(), smsText)
+//	isTestSender, smsResponse, twilioException, err := sms.SendSms(ctx, whc.GetBotSettings().Env == strongoapp.EnvProduction, contact.PhoneNumber(), smsText)
 //	if err != nil {
 //		return m, err
 //	}

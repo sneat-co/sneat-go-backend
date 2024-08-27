@@ -29,8 +29,8 @@ type transfersInfo struct {
 	balance money.Balance
 }
 
-func newContactWithBalances(c context.Context, now time.Time, contact models4debtus.DebtusSpaceContactEntry) contactWithBalances {
-	balanceWithInterest, err := contact.Data.BalanceWithInterest(c, now)
+func newContactWithBalances(ctx context.Context, now time.Time, contact models4debtus.DebtusSpaceContactEntry) contactWithBalances {
+	balanceWithInterest, err := contact.Data.BalanceWithInterest(ctx, now)
 	result := contactWithBalances{
 		DebtusSpaceContactEntry: contact,
 		balances:                newBalances("contact", contact.Data.Balance, balanceWithInterest),
@@ -66,14 +66,14 @@ func (bs balancesByCurrency) SetBalance(setter func(bs balancesByCurrency)) {
 	bs.Unlock()
 }
 
-func validateTransfers(c context.Context, userID string, userBalances balances) (
+func validateTransfers(ctx context.Context, userID string, userBalances balances) (
 	byContactWithoutInterest map[string]transfersInfo, err error,
 ) {
 	query := datastore.NewQuery(models4debtus.TransfersCollection).Filter("BothUserIDs=", userID)
 
 	byContactWithoutInterest = make(map[string]transfersInfo)
 
-	iterator := query.Run(c)
+	iterator := query.Run(ctx)
 
 	for {
 		transferEntity := new(models4debtus.TransferData)

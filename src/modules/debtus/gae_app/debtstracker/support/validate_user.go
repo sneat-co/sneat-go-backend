@@ -18,26 +18,26 @@ import (
 )
 
 func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
-	c := appengine.NewContext(r)
+	ctx := appengine.NewContext(r)
 	doFixes := r.URL.Query().Get("fix") == "all"
 	spaceID := r.URL.Query().Get("spaceID")
 	userID := r.URL.Query().Get("id")
 	if userID == "" {
-		logus.Errorf(c, "UserEntry ContactID is empty")
+		logus.Errorf(ctx, "UserEntry ContactID is empty")
 		return
 	}
 	user := dbo4userus.NewUserEntry(userID)
 	var db dal.DB
 	var err error
-	if db, err = facade.GetDatabase(c); err != nil {
-		logus.Errorf(c, "Failed to get database: %v", err)
+	if db, err = facade.GetDatabase(ctx); err != nil {
+		logus.Errorf(ctx, "Failed to get database: %v", err)
 		return
 	}
-	if err = db.Get(c, user.Record); err != nil {
+	if err = db.Get(ctx, user.Record); err != nil {
 		if dal.IsNotFound(err) {
-			logus.Errorf(c, "UserEntry not found by key: %v", err)
+			logus.Errorf(ctx, "UserEntry not found by key: %v", err)
 		} else {
-			logus.Errorf(c, "Failed to get user by key=%v: %v", user.Key, err)
+			logus.Errorf(ctx, "Failed to get user by key=%v: %v", user.Key, err)
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 		return
@@ -45,9 +45,9 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 	query := dal.From(const4contactus.ContactsCollection).WhereField("UserID", dal.Equal, userID).SelectInto(func() dal.Record {
 		return dal.NewRecordWithIncompleteKey(dbo4userus.UsersCollection, reflect.Int64, new(dbo4userus.UserDbo))
 	})
-	userCounterpartyRecords, err := db.QueryAllRecords(c, query)
+	userCounterpartyRecords, err := db.QueryAllRecords(ctx, query)
 	if err != nil {
-		logus.Errorf(c, "Failed to load user counterparties: %v", err)
+		logus.Errorf(ctx, "Failed to load user counterparties: %v", err)
 		return
 	}
 
@@ -63,10 +63,10 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return dal.NewRecordWithIncompleteKey(models4debtus.AppUserKind, reflect.Int64, new(models4debtus.DebutsAppUserDataOBSOLETE))
 	})
 
-	transferRecords, err := db.QueryAllRecords(c, query)
+	transferRecords, err := db.QueryAllRecords(ctx, query)
 
 	if err != nil {
-		logus.Errorf(c, "Failed to load api4transfers: %v", err)
+		logus.Errorf(ctx, "Failed to load api4transfers: %v", err)
 		return
 	}
 
@@ -92,10 +92,10 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	//fixUserCounterparties := func() {
 	//	var txUser models4debtus.AppUserOBSOLETE
-	//	err := facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-	//		logus.Debugf(c, "Transaction started..")
+	//	err := facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+	//		logus.Debugf(ctx, "Transaction started..")
 	//		txUser = models4debtus.NewAppUserOBSOLETE(userID, nil)
-	//		if err := tx.Get(c, txUser.Record); err != nil {
+	//		if err := tx.Get(ctx, txUser.Record); err != nil {
 	//			return err
 	//		}
 	//		if txUser.Data.SavedCounter != user.Data.SavedCounter {
@@ -116,21 +116,21 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 	//			}
 	//			models4debtus.AddOrUpdateDebtusContact(&txUser, models4debtus.NewDebtusSpaceContactEntry(counterpartyID, counterpartyEntity))
 	//		}
-	//		if err = tx.Set(c, txUser.Record); err != nil {
+	//		if err = tx.Set(ctx, txUser.Record); err != nil {
 	//			return fmt.Errorf("failed to save fixed user: %w", err)
 	//		}
 	//		return nil
 	//	}, nil)
 	//	if err != nil {
-	//		logus.Errorf(c, "Failed to fix user.CounterpartyIDs: %v", err)
+	//		logus.Errorf(ctx, "Failed to fix user.CounterpartyIDs: %v", err)
 	//		return
 	//	}
-	//	logus.Infof(c, "Fixed user.ContactsJson\n\tfrom: %v\n\tto: %v", user.Data.ContactsJson, txUser.Data.ContactsJson)
+	//	logus.Infof(ctx, "Fixed user.ContactsJson\n\tfrom: %v\n\tto: %v", user.Data.ContactsJson, txUser.Data.ContactsJson)
 	//	user = txUser
 	//}
 
 	//if len(userCounterpartyIDs) != len(counterpartyIDs) {
-	//	logus.Warningf(c, "len(userCounterpartyIDs) != len(counterpartyIDs) => %v != %v", len(userCounterpartyIDs), len(counterpartyIDs))
+	//	logus.Warningf(ctx, "len(userCounterpartyIDs) != len(counterpartyIDs) => %v != %v", len(userCounterpartyIDs), len(counterpartyIDs))
 	//	if doFixes {
 	//		fixUserCounterparties()
 	//	} else {
@@ -139,7 +139,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 	//} else {
 	//	for i, v := range userCounterpartyIDs {
 	//		if counterpartyIDs[i] != v {
-	//			logus.Warningf(c, "user.CounterpartyIDs != counterpartyKeys\n\tuserCounterpartyIDs:\n\t\t%v\n\tcounterpartyIDs:\n\t\t%v", userCounterpartyIDs, counterpartyIDs)
+	//			logus.Warningf(ctx, "user.CounterpartyIDs != counterpartyKeys\n\tuserCounterpartyIDs:\n\t\t%v\n\tcounterpartyIDs:\n\t\t%v", userCounterpartyIDs, counterpartyIDs)
 	//			if doFixes {
 	//				fixUserCounterparties()
 	//				break
@@ -149,7 +149,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 	//		}
 	//	}
 	//}
-	//logus.Infof(c, "OK - UserEntry ContactsJson is OK")
+	//logus.Infof(ctx, "OK - UserEntry ContactsJson is OK")
 
 	// We need counterparties by ContactID to check balance against api4transfers
 	counterpartiesByID := make(map[int64]*models4debtus.DebtusSpaceContactDbo, len(counterpartyIDs))
@@ -159,34 +159,34 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	debtusUser := models4debtus.NewDebtusUserEntry(userID)
 
-	if err = db.Get(c, debtusUser.Record); err != nil {
+	if err = db.Get(ctx, debtusUser.Record); err != nil {
 		return
 	}
 
 	if len(transferRecords) > 0 && debtusUser.Data.LastTransferID == "" {
 		if doFixes {
 			var txUser dbo4userus.UserEntry
-			err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-				if err = tx.Get(c, debtusUser.Record); err != nil {
+			err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+				if err = tx.Get(ctx, debtusUser.Record); err != nil {
 					return err
 				}
 				if debtusUser.Data.LastTransferID == "" {
 					i := len(transferRecords) - 1
 					debtusUser.Data.LastTransferID = transferRecords[i].Key().ID.(string)
 					debtusUser.Data.LastTransferAt = transferRecords[i].Data().(*models4debtus.TransferData).DtCreated
-					err = tx.Set(c, txUser.Record)
+					err = tx.Set(ctx, txUser.Record)
 					return err
 				}
 				return nil
 			}, nil)
 			if err != nil {
-				logus.Errorf(c, "Failed to update user.LastTransferID")
+				logus.Errorf(ctx, "Failed to update user.LastTransferID")
 			} else {
-				logus.Infof(c, "Fixed user.LastTransferID")
+				logus.Infof(ctx, "Fixed user.LastTransferID")
 				user = txUser
 			}
 		} else {
-			logus.Warningf(c, "user.LastTransferID is not set")
+			logus.Warningf(ctx, "user.LastTransferID is not set")
 		}
 	}
 
@@ -202,7 +202,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 		case transferData.Counterparty().UserID:
 			counterpartyID = transferData.Creator().ContactID
 		default:
-			logus.Errorf(c, "userID=%v is NOT equal to transferData.CreatorUserID=%v or transferData.DebtusSpaceContactEntry().UserID=%v", userID, transferData.CreatorUserID, transferData.Counterparty().UserID)
+			logus.Errorf(ctx, "userID=%v is NOT equal to transferData.CreatorUserID=%v or transferData.DebtusSpaceContactEntry().UserID=%v", userID, transferData.CreatorUserID, transferData.Counterparty().UserID)
 			return
 		}
 		transfersCounterpartyBalance, ok := transfersBalanceByCounterpartyID[counterpartyID]
@@ -218,12 +218,12 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 		case models4debtus.TransferDirectionCounterparty2User:
 			transfersCounterpartyBalance[currency] -= value
 		default:
-			logus.Errorf(c, "TransferEntry %v has unknown direction: %v", transferRecords[i].Key().ID, transferData.DirectionForUser(userID))
+			logus.Errorf(ctx, "TransferEntry %v has unknown direction: %v", transferRecords[i].Key().ID, transferData.DirectionForUser(userID))
 			return
 		}
 	}
 
-	//logus.Debugf(c, "transfersBalanceByCounterpartyID: %v", transfersBalanceByCounterpartyID)
+	//logus.Debugf(ctx, "transfersBalanceByCounterpartyID: %v", transfersBalanceByCounterpartyID)
 
 	transfersTotalBalance := make(money.Balance)
 	for _, transfersCounterpartyBalance := range transfersBalanceByCounterpartyID {
@@ -243,40 +243,40 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(debtusUser.Data.Balance) != len(transfersTotalBalance) {
-		logus.Warningf(c, "len(userBalance) != len(transfersTotalBalance) =>\n\t%d: %v\n\t%d: %v", len(debtusUser.Data.Balance), debtusUser.Data.Balance, len(transfersTotalBalance), transfersTotalBalance)
+		logus.Warningf(ctx, "len(userBalance) != len(transfersTotalBalance) =>\n\t%d: %v\n\t%d: %v", len(debtusUser.Data.Balance), debtusUser.Data.Balance, len(transfersTotalBalance), transfersTotalBalance)
 	}
 
 	userBalanceIsOK := true
 
 	for currency, userVal := range debtusUser.Data.Balance {
 		if transfersVal, ok := transfersTotalBalance[currency]; !ok {
-			logus.Warningf(c, "UserEntry has %v=%v balance but no corresponding api4transfers' balance.", currency, userVal)
+			logus.Warningf(ctx, "UserEntry has %v=%v balance but no corresponding api4transfers' balance.", currency, userVal)
 			userBalanceIsOK = false
 		} else if transfersVal != userVal {
-			logus.Warningf(c, "Currency(%v) UserEntry balance %v not equal to api4transfers' balance %v", currency, userVal, transfersVal)
+			logus.Warningf(ctx, "Currency(%v) UserEntry balance %v not equal to api4transfers' balance %v", currency, userVal, transfersVal)
 			userBalanceIsOK = false
 		}
 	}
 
 	for currency, transfersVal := range transfersTotalBalance {
 		if _, ok := debtusUser.Data.Balance[currency]; !ok {
-			logus.Warningf(c, "Transfers has %v=%v balance but no corresponding user balance.", currency, transfersVal)
+			logus.Warningf(ctx, "Transfers has %v=%v balance but no corresponding user balance.", currency, transfersVal)
 			userBalanceIsOK = false
 		}
 	}
 
 	if userBalanceIsOK {
-		logus.Infof(c, "OK - UserEntry.Balance() is matching to %v api4transfers' balance.", len(transferRecords))
+		logus.Infof(ctx, "OK - UserEntry.Balance() is matching to %v api4transfers' balance.", len(transferRecords))
 	} else {
-		logus.Warningf(c, "Calculated balance for %v user api4transfers does not match user's total balance.", len(transferRecords))
+		logus.Warningf(ctx, "Calculated balance for %v user api4transfers does not match user's total balance.", len(transferRecords))
 		if !doFixes {
-			logus.Debugf(c, "Pass fix=all to fix user balance")
+			logus.Debugf(ctx, "Pass fix=all to fix user balance")
 		} else {
-			err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+			err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 				txUser := dbo4userus.NewUserEntry(userID)
 				spaceID := txUser.Data.GetFamilySpaceID()
 				debtusSpace := models4debtus.NewDebtusSpaceEntry(spaceID)
-				if err := tx.Get(c, txUser.Record); err != nil {
+				if err := tx.Get(ctx, txUser.Record); err != nil {
 					return err
 				}
 				if !debtusSpace.Data.Balance.Equal(debtusSpace.Data.Balance) {
@@ -284,19 +284,19 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 				}
 
 				debtusSpace.Data.Balance = transfersTotalBalance
-				if err = tx.Set(c, txUser.Record); err != nil {
+				if err = tx.Set(ctx, txUser.Record); err != nil {
 					return fmt.Errorf("failed to save user with fixed balance: %w", err)
 				}
 				return nil
 			}, nil)
 			if err != nil {
 				err = fmt.Errorf("failed to fix user balance: %w", err)
-				logus.Errorf(c, err.Error())
+				logus.Errorf(ctx, err.Error())
 				w.WriteHeader(http.StatusInternalServerError)
 				_, _ = w.Write([]byte(err.Error()))
 				return
 			}
-			logus.Infof(c, "Fixed user balance")
+			logus.Infof(ctx, "Fixed user balance")
 		}
 	}
 
@@ -311,17 +311,17 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 			counterpartyIDsWithMatchingBalance = append(counterpartyIDsWithMatchingBalance, counterpartyID)
 		} else {
 			counterpartyIDsWithNonMatchingBalance = append(counterpartyIDsWithNonMatchingBalance, counterpartyID)
-			logus.Warningf(c, "DebtusSpaceContactEntry ContactID=%v has balance not matching api4transfers' balance:\n\tDebtusSpaceContactEntry: %v\n\tTransfers: %v", counterpartyID, counterparty.Balance, transfersCounterpartyBalance)
+			logus.Warningf(ctx, "DebtusSpaceContactEntry ContactID=%v has balance not matching api4transfers' balance:\n\tDebtusSpaceContactEntry: %v\n\tTransfers: %v", counterpartyID, counterparty.Balance, transfersCounterpartyBalance)
 			if doFixes {
 				//var txCounterparty models.DebtusSpaceContactEntry
 				var db dal.DB
-				if db, err = facade.GetDatabase(c); err != nil {
-					logus.Errorf(c, "Failed to get database: %v", err)
+				if db, err = facade.GetDatabase(ctx); err != nil {
+					logus.Errorf(ctx, "Failed to get database: %v", err)
 					return
 				}
-				err := db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+				err := db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 					txCounterparty := models4debtus.NewDebtusSpaceContactEntry(spaceID, counterpartyKey.ID.(string), nil)
-					if err := tx.Get(c, txCounterparty.Record); err != nil {
+					if err := tx.Get(ctx, txCounterparty.Record); err != nil {
 						return err
 					}
 					if !txCounterparty.Data.Balance.Equal(counterparty.Balance) {
@@ -329,24 +329,24 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 					}
 
 					txCounterparty.Data.Balance = transfersCounterpartyBalance
-					if err = tx.Set(c, txCounterparty.Record); err != nil {
+					if err = tx.Set(ctx, txCounterparty.Record); err != nil {
 						return fmt.Errorf("failed to save counterparty with ContactID=%v: %w", counterpartyID, err)
 					}
 					return nil
 				}, nil)
 				if err != nil {
-					logus.Errorf(c, "Failed to fix counterparty with ContactID=%v: %v", counterpartyID, err)
+					logus.Errorf(ctx, "Failed to fix counterparty with ContactID=%v: %v", counterpartyID, err)
 				} else {
-					logus.Infof(c, "Fixed counterparty with ContactID=%v", counterpartyID)
+					logus.Infof(ctx, "Fixed counterparty with ContactID=%v", counterpartyID)
 					//userCounterpartyRecords[i] = txCounterparty.Data
 				}
 			}
 		}
 	}
 	if len(counterpartyIDsWithMatchingBalance) > 0 {
-		logus.Infof(c, "There are %v counterparties with balance matching to api4transfers: %v", len(counterpartyIDsWithMatchingBalance), counterpartyIDsWithMatchingBalance)
+		logus.Infof(ctx, "There are %v counterparties with balance matching to api4transfers: %v", len(counterpartyIDsWithMatchingBalance), counterpartyIDsWithMatchingBalance)
 	}
 	if len(counterpartyIDsWithNonMatchingBalance) > 0 {
-		logus.Warningf(c, "There are %v counterparties with balance NOT matching to api4transfers: %v", len(counterpartyIDsWithNonMatchingBalance), counterpartyIDsWithNonMatchingBalance)
+		logus.Warningf(ctx, "There are %v counterparties with balance NOT matching to api4transfers: %v", len(counterpartyIDsWithNonMatchingBalance), counterpartyIDsWithNonMatchingBalance)
 	}
 }

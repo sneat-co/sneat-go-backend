@@ -9,6 +9,6 @@ package dalmocks
 //	return TaskQueueDalMock{}
 //}
 //
-//func (TaskQueueDalMock) CallDelayFunc(c context.Context, queueName, subPath, key string, f interface{}, args ...interface{}) error {
+//func (TaskQueueDalMock) CallDelayFunc(_ context.Context, queueName, subPath, key string, f interface{}, args ...interface{}) error {
 //	return nil
 //}

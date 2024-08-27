@@ -16,9 +16,9 @@ func NewEmailDalGae() EmailDalGae {
 
 var _ dtdal.EmailDal = (*EmailDalGae)(nil)
 
-func (EmailDalGae) InsertEmail(c context.Context, tx dal.ReadwriteTransaction, data *models4auth.EmailData) (email models4auth.Email, err error) {
+func (EmailDalGae) InsertEmail(ctx context.Context, tx dal.ReadwriteTransaction, data *models4auth.EmailData) (email models4auth.Email, err error) {
 	email = models4auth.NewEmail(0, data)
-	if err = tx.Insert(c, email.Record); err != nil {
+	if err = tx.Insert(ctx, email.Record); err != nil {
 		return
 	}
 	email.ID = email.Record.Key().ID.(int64)
@@ -26,11 +26,11 @@ func (EmailDalGae) InsertEmail(c context.Context, tx dal.ReadwriteTransaction, d
 	return
 }
 
-func (EmailDalGae) UpdateEmail(c context.Context, tx dal.ReadwriteTransaction, email models4auth.Email) (err error) {
-	return tx.Set(c, email.Record)
+func (EmailDalGae) UpdateEmail(ctx context.Context, tx dal.ReadwriteTransaction, email models4auth.Email) (err error) {
+	return tx.Set(ctx, email.Record)
 }
 
-func (EmailDalGae) GetEmailByID(c context.Context, tx dal.ReadSession, id int64) (email models4auth.Email, err error) {
+func (EmailDalGae) GetEmailByID(ctx context.Context, tx dal.ReadSession, id int64) (email models4auth.Email, err error) {
 	email = models4auth.NewEmail(id, nil)
-	return email, tx.Get(c, email.Record)
+	return email, tx.Get(ctx, email.Record)
 }

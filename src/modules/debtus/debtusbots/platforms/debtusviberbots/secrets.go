@@ -7,7 +7,7 @@ import (
 
 var _bots botsfw.SettingsBy
 
-func Bots(c context.Context) botsfw.SettingsBy { //TODO: Consider to do pre-deployment replace
+func Bots(ctx context.Context) botsfw.SettingsBy { //TODO: Consider to do pre-deployment replace
 	//if len(_bots.ByCode) == 0 {
 	//	host := appengine.DefaultVersionHostname(c)
 	//	//if host == "" || strings.Contains(host, "dev") {
@@ -30,8 +30,8 @@ func Bots(c context.Context) botsfw.SettingsBy { //TODO: Consider to do pre-depl
 }
 
 // TODO: Decouple to anybot lib
-//func GetBotSettingsByLang(c context.Context, lang string) (botsfw.BotSettings, error) {
-//	botSettingsBy := Bots(c)
+//func GetBotSettingsByLang(ctx context.Context, lang string) (botsfw.BotSettings, error) {
+//	botSettingsBy := Bots(ctx)
 //	langLen := len(lang)
 //	if langLen == 2 {
 //		lang = fmt.Sprintf("%v-%v", strings.ToLower(lang), strings.ToUpper(lang))

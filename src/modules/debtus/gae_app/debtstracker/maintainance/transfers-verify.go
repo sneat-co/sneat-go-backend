@@ -20,25 +20,25 @@ package maintainance
 //	transfersAsyncJob
 //}
 //
-//func (m *verifyTransfers) Next(c context.Context, counters mapper.Counters, key *dal.Key) (err error) {
-//	return m.startTransferWorker(c, counters, key, m.verifyTransfer)
+//func (m *verifyTransfers) Next(ctx context.Context, counters mapper.Counters, key *dal.Key) (err error) {
+//	return m.startTransferWorker(ctx, counters, key, m.verifyTransfer)
 //}
 //
-//func (m *verifyTransfers) verifyTransfer(c context.Context, tx dal.ReadwriteTransaction, counters *asyncCounters, transfer models.Transfer) (err error) {
+//func (m *verifyTransfers) verifyTransfer(ctx context.Context, tx dal.ReadwriteTransaction, counters *asyncCounters, transfer models.Transfer) (err error) {
 //	buf := new(bytes.Buffer)
-//	if err = m.verifyTransferUsers(c, tx, transfer, buf, counters); err != nil {
+//	if err = m.verifyTransferUsers(ctx, tx, transfer, buf, counters); err != nil {
 //		logus.Errorf(c, fmt.Errorf("verifyTransferUsers:transfer=%d: %w", transfer.ContactID, err).Error())
 //		return
 //	}
-//	if err = m.verifyTransferContacts(c, tx, transfer, buf, counters); err != nil {
+//	if err = m.verifyTransferContacts(ctx, tx, transfer, buf, counters); err != nil {
 //		logus.Errorf(c, fmt.Errorf("verifyTransferContacts:transfer=%d: %w", transfer.ContactID, err).Error())
 //		return
 //	}
-//	if err = m.verifyTransferCurrency(c, tx, transfer, buf, counters); err != nil {
+//	if err = m.verifyTransferCurrency(ctx, tx, transfer, buf, counters); err != nil {
 //		logus.Errorf(c, fmt.Errorf("verifyTransferCurrency:transfer=%d: %w", transfer.ContactID, err).Error())
 //		return
 //	}
-//	if err = m.verifyReturnsToTransferIDs(c, tx, transfer, buf, counters); err != nil {
+//	if err = m.verifyReturnsToTransferIDs(ctx, tx, transfer, buf, counters); err != nil {
 //		logus.Errorf(c, fmt.Errorf("verifyReturnsToTransferIDs:transfer=%d: %w", transfer.ContactID, err).Error())
 //		return
 //	}
@@ -48,10 +48,10 @@ package maintainance
 //	return
 //}
 //
-//func (m *verifyTransfers) verifyTransferUsers(c context.Context, tx dal.ReadwriteTransaction, transfer models.Transfer, buf *bytes.Buffer, counters *asyncCounters) (err error) {
+//func (m *verifyTransfers) verifyTransferUsers(ctx context.Context, tx dal.ReadwriteTransaction, transfer models.Transfer, buf *bytes.Buffer, counters *asyncCounters) (err error) {
 //	for _, userID := range transfer.Data.BothUserIDs {
 //		if userID != 0 {
-//			if _, err2 := dal4userus.GetUserByID(c, tx, userID); dal.IsNotFound(err2) {
+//			if _, err2 := dal4userus.GetUserByID(ctx, tx, userID); dal.IsNotFound(err2) {
 //				counters.Increment(fmt.Sprintf("User:%d", userID), 1)
 //				fmt.Fprintf(buf, "Unknown user %d\n", userID)
 //			} else if err2 != nil {
@@ -63,10 +63,10 @@ package maintainance
 //	return
 //}
 //
-//func (m *verifyTransfers) verifyTransferContacts(c context.Context, tx dal.ReadwriteTransaction, transfer models.Transfer, buf *bytes.Buffer, counters *asyncCounters) (err error) {
+//func (m *verifyTransfers) verifyTransferContacts(ctx context.Context, tx dal.ReadwriteTransaction, transfer models.Transfer, buf *bytes.Buffer, counters *asyncCounters) (err error) {
 //	for _, contactID := range transfer.Data.BothCounterpartyIDs {
 //		if contactID != 0 {
-//			if _, err2 := facade4debtus.GetContactByID(c, tx, contactID); dal.IsNotFound(err2) {
+//			if _, err2 := facade4debtus.GetContactByID(ctx, tx, contactID); dal.IsNotFound(err2) {
 //				counters.Increment(fmt.Sprintf("DebtusSpaceContactEntry:%d", contactID), 1)
 //				_, _ = fmt.Fprintf(buf, "Unknown contact %d\n", contactID)
 //			} else if err2 != nil {
@@ -126,7 +126,7 @@ package maintainance
 //	return nil
 //}
 //
-//func (*verifyTransfers) verifyTransferCurrency(c context.Context, tx dal.ReadwriteTransaction, transfer models.Transfer, buf *bytes.Buffer, counters *asyncCounters) (err error) {
+//func (*verifyTransfers) verifyTransferCurrency(ctx context.Context, tx dal.ReadwriteTransaction, transfer models.Transfer, buf *bytes.Buffer, counters *asyncCounters) (err error) {
 //	var currency money.CurrencyCode
 //	if transfer.Data.Currency == money.CurrencyCode("euro") {
 //		currency = money.CurrencyCode("EUR")
@@ -136,8 +136,8 @@ package maintainance
 //		}
 //	}
 //	if currency != "" {
-//		if err = nds.RunInTransaction(c, func(c context.Context) error {
-//			if transfer, err = facade4debtus.Transfers.GetTransferByID(c, tx, transfer.ContactID); err != nil {
+//		if err = nds.RunInTransaction(ctx, func(ctx context.Context) error {
+//			if transfer, err = facade4debtus.Transfers.GetTransferByID(ctx, tx, transfer.ContactID); err != nil {
 //				return fmt.Errorf("failed to get transfer by ContactID=%d: %w", transfer.ContactID, err)
 //			}
 //			if transfer.Data.Currency != currency {
@@ -155,7 +155,7 @@ package maintainance
 //	return
 //}
 //
-//func (*verifyTransfers) verifyReturnsToTransferIDs(c context.Context, tx dal.ReadwriteTransaction, transfer models.Transfer, buf *bytes.Buffer, counters *asyncCounters) (err error) {
+//func (*verifyTransfers) verifyReturnsToTransferIDs(ctx context.Context, tx dal.ReadwriteTransaction, transfer models.Transfer, buf *bytes.Buffer, counters *asyncCounters) (err error) {
 //	if len(transfer.Data.ReturnToTransferIDs) == 0 {
 //		return
 //	}

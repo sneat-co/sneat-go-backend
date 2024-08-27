@@ -13,20 +13,20 @@ import (
 	"github.com/strongo/i18n"
 )
 
-func CreateEmailRecordAndQueueForSending(c context.Context, emailEntity *models4auth.EmailData) (id int64, err error) {
+func CreateEmailRecordAndQueueForSending(ctx context.Context, emailEntity *models4auth.EmailData) (id int64, err error) {
 	var email models4auth.Email
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(ctx); err != nil {
 		return
 	}
-	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+	if err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		emailEntity.Status = "queued"
-		if email, err = facade4debtus.Email.InsertEmail(c, tx, emailEntity); err != nil {
+		if email, err = facade4debtus.Email.InsertEmail(ctx, tx, emailEntity); err != nil {
 			err = fmt.Errorf("%w: Failed to insert Email record", err)
 			return err
 		}
-		if err = DelaySendEmail(c, email.ID); err != nil {
+		if err = DelaySendEmail(ctx, email.ID); err != nil {
 			err = fmt.Errorf("%w: Failed to delay sending", err)
 		}
 		return err
@@ -37,26 +37,26 @@ func CreateEmailRecordAndQueueForSending(c context.Context, emailEntity *models4
 	return email.ID, err
 }
 
-func GetEmailText(c context.Context, translator i18n.SingleLocaleTranslator, templateName string, templateParams interface{}) (string, error) {
-	return common4debtus.TextTemplates.RenderTemplate(c, translator, templateName, templateParams)
+func GetEmailText(ctx context.Context, translator i18n.SingleLocaleTranslator, templateName string, templateParams interface{}) (string, error) {
+	return common4debtus.TextTemplates.RenderTemplate(ctx, translator, templateName, templateParams)
 }
 
-func GetEmailHtml(c context.Context, translator i18n.SingleLocaleTranslator, templateName string, templateParams interface{}) (s string, err error) {
+func GetEmailHtml(ctx context.Context, translator i18n.SingleLocaleTranslator, templateName string, templateParams interface{}) (s string, err error) {
 	var buffer bytes.Buffer
-	err = common4debtus.HtmlTemplates.RenderTemplate(c, &buffer, translator, templateName, templateParams)
+	err = common4debtus.HtmlTemplates.RenderTemplate(ctx, &buffer, translator, templateName, templateParams)
 	return buffer.String(), err
 }
 
-var GetEmailClient = func(c context.Context) (emails.Client, error) {
+var GetEmailClient = func(_ context.Context) (emails.Client, error) {
 	panic("GetEmailClient is not initialized")
 }
 
-func SendEmail(c context.Context, email emails.Email) (messageID string, err error) {
+func SendEmail(ctx context.Context, email emails.Email) (messageID string, err error) {
 	if email.Text == "" && email.HTML == "" {
 		panic(`email.Text == "" && email.HTML == ""`)
 	}
 	var emailClient emails.Client
-	emailClient, err = GetEmailClient(c)
+	emailClient, err = GetEmailClient(ctx)
 	if err != nil {
 		return "", err
 	}
@@ -107,9 +107,9 @@ func SendEmail(c context.Context, email emails.Email) (messageID string, err err
 	//	}
 	//}
 	//
-	////http.DefaultClient = urlfetch.Client(c)
-	////http.DefaultTransport = &urlfetch.Transport{Context: c, AllowInvalidServerCertificate: false}
-	//logus.Debugf(c, "Sending email through AWS SES: %v", params)
+	////http.DefaultClient = urlfetch.Client(ctx)
+	////http.DefaultTransport = &urlfetch.Transport{Context: ctx, AllowInvalidServerCertificate: false}
+	//logus.Debugf(ctx, "Sending email through AWS SES: %v", params)
 	//
 	//resp, err := svc.SendEmail(params)
 	//
@@ -122,16 +122,16 @@ func SendEmail(c context.Context, email emails.Email) (messageID string, err err
 	//		params.Destination.ToAddresses[0] = aws.String(strings.ToLower(to))
 	//		resp, err = svc.SendEmail(params)
 	//		if err != nil {
-	//			logus.Errorf(c, "Failed to send ToLower(email): %v", err)
+	//			logus.Errorf(ctx, "Failed to send ToLower(email): %v", err)
 	//			return "", originalErr
 	//		}
 	//	} else {
-	//		logus.Errorf(c, "Failed to send email using AWS SES: %v", err)
+	//		logus.Errorf(ctx, "Failed to send email using AWS SES: %v", err)
 	//		return "", fmt.Errorf("failed to send email: %w", err)
 	//	}
 	//}
 	//
 	//// Pretty-print the response data.
-	//logus.Debugf(c, "AWS SES output: %v", resp)
+	//logus.Debugf(ctx, "AWS SES output: %v", resp)
 	//return *resp.MessageId, err
 }

@@ -14,13 +14,13 @@ const CHANGE_BILL_PAYER_COMMAND = "change-bill-payer"
 
 var changeBillPayerCommand = billCallbackCommand(CHANGE_BILL_PAYER_COMMAND,
 	func(whc botsfw.WebhookContext, _ dal.ReadwriteTransaction, callbackUrl *url.URL, bill models4splitus.BillEntry) (m botsfw.MessageFromBot, err error) {
-		c := whc.Context()
-		logus.Debugf(c, "changeBillPayerCommand.CallbackAction()")
+		ctx := whc.Context()
+		logus.Debugf(ctx, "changeBillPayerCommand.CallbackAction()")
 		var (
 			mt string
 			//editedMessage *tgbotapi.EditMessageTextConfig
 		)
-		if mt, err = getBillCardMessageText(c, whc.GetBotCode(), whc, bill, true, whc.Translate(trans.MESSAGE_TEXT_BILL_ASK_WHO_PAID)); err != nil {
+		if mt, err = getBillCardMessageText(ctx, whc.GetBotCode(), whc, bill, true, whc.Translate(trans.MESSAGE_TEXT_BILL_ASK_WHO_PAID)); err != nil {
 			return
 		}
 		if m, err = whc.NewEditMessage(mt, botsfw.MessageFormatHTML); err != nil {

@@ -42,37 +42,37 @@ package dalmocks
 // 	return mockDB
 // }
 //
-// func (mockDB MockDB) Get(c context.Context, entityHolder db.EntityHolder) error {
+// func (mockDB MockDB) Get(_ context.Context, entityHolder db.EntityHolder) error {
 // 	panic("not implemented yet")
 // }
 //
-// func (mockDB MockDB) Update(c context.Context, entityHolder db.EntityHolder) error {
+// func (mockDB MockDB) Update(_ context.Context, entityHolder db.EntityHolder) error {
 // 	panic("not implemented yet")
 // }
 //
-// func (mockDB MockDB) IsInTransaction(c context.Context) bool {
+// func (mockDB MockDB) IsInTransaction(_ context.Context) bool {
 // 	panic("not implemented yet")
 // }
 //
-// func (mockDB MockDB) NonTransactionalContext(c context.Context) context.Context {
+// func (mockDB MockDB) NonTransactionalContext(c_ context.Context) context.Context {
 // 	panic("not implemented yet")
 // }
 //
-// func (mockDB MockDB) Delete(c context.Context, entityHolder db.EntityHolder) error {
+// func (mockDB MockDB) Delete(_ context.Context, entityHolder db.EntityHolder) error {
 // 	panic("not implemented yet")
 // }
 //
-// func (mockDB MockDB) GetMulti(c context.Context, entityHolders []db.EntityHolder) error {
+// func (mockDB MockDB) GetMulti(ctx context.Context, entityHolders []db.EntityHolder) error {
 // 	for _, entityHolder := range entityHolders {
 // 		switch entityHolder.Kind() {
 // 		//case models.CounterpartyKind:
-// 		//	if newEntityHolder, err := mockDB.CounterpartyMock.GetCounterpartyByID(c, entityHolder.IntegerID()); err != nil {
+// 		//	if newEntityHolder, err := mockDB.CounterpartyMock.GetCounterpartyByID(ctx, entityHolder.IntegerID()); err != nil {
 // 		//		return err
 // 		//	} else {
 // 		//		entityHolder.SetEntity(newEntityHolder.Entity())
 // 		//	}
 // 		case models.BillKind:
-// 			if newEntityHolder, err := mockDB.BillMock.GetBillByID(c, entityHolder.StrID()); err != nil {
+// 			if newEntityHolder, err := mockDB.BillMock.GetBillByID(ctx, entityHolder.StrID()); err != nil {
 // 				return err
 // 			} else {
 // 				entityHolder.SetEntity(newEntityHolder.Entity())
@@ -102,7 +102,7 @@ package dalmocks
 // 	return nil
 // }
 //
-// func (mockDB MockDB) UpdateMulti(c context.Context, entityHolders []db.EntityHolder) error {
+// func (mockDB MockDB) UpdateMulti(ctx context.Context, entityHolders []db.EntityHolder) error {
 // 	for _, entityHolder := range entityHolders {
 // 		switch entityHolder.Kind() {
 // 		case models.BillKind:
@@ -120,6 +120,6 @@ package dalmocks
 // 	return nil
 // }
 //
-// func (MockDB) RunInTransaction(c context.Context, f func(c context.Context) error, options db.RunOptions) error {
-// 	return f(context.WithValue(c, "IsInTransaction", true))
+// func (MockDB) RunInTransaction(ctx context.Context, f func(ctx context.Context) error, options db.RunOptions) error {
+// 	return f(context.WithValue(ctx, "IsInTransaction", true))
 // }

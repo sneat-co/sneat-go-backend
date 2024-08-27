@@ -21,7 +21,7 @@ import (
 )
 
 func ChangeContactStatus(
-	c context.Context, userCtx facade.UserContext, spaceID, contactID string, newStatus models4debtus.DebtusContactStatus,
+	ctx context.Context, userCtx facade.UserContext, spaceID, contactID string, newStatus models4debtus.DebtusContactStatus,
 ) (
 	contact dal4contactus.ContactEntry,
 	debtusContact models4debtus.DebtusSpaceContactEntry,
@@ -31,21 +31,21 @@ func ChangeContactStatus(
 	spaceRequest := dto4spaceus.SpaceRequest{
 		SpaceID: spaceID,
 	}
-	err = dal4contactus.RunContactusSpaceWorker(c, userCtx, spaceRequest,
-		func(c context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) error {
-			if debtusContact, err = GetDebtusSpaceContactByID(c, tx, spaceID, contactID); err != nil {
+	err = dal4contactus.RunContactusSpaceWorker(ctx, userCtx, spaceRequest,
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) error {
+			if debtusContact, err = GetDebtusSpaceContactByID(ctx, tx, spaceID, contactID); err != nil {
 				return err
 			}
 			if debtusContact.Data.Status != newStatus {
 				debtusContact.Data.Status = newStatus
 				debtusSpace := models4debtus.NewDebtusSpaceEntry(spaceID)
-				if err = tx.Get(c, debtusSpace.Record); err != nil {
+				if err = tx.Get(ctx, debtusSpace.Record); err != nil {
 					return err
 				}
 				if _, userChanged := models4debtus.AddOrUpdateDebtusContact(debtusSpace, debtusContact); userChanged {
-					err = tx.SetMulti(c, []dal.Record{debtusContact.Record, debtusSpace.Record})
+					err = tx.SetMulti(ctx, []dal.Record{debtusContact.Record, debtusSpace.Record})
 				} else {
-					err = tx.Set(c, debtusContact.Record)
+					err = tx.Set(ctx, debtusContact.Record)
 				}
 			}
 			return err
@@ -54,7 +54,7 @@ func ChangeContactStatus(
 }
 
 func createContactWithinTransaction(
-	tc context.Context,
+	tctx context.Context,
 	tx dal.ReadwriteTransaction,
 	changes *createContactDbChanges,
 	spaceID string,
@@ -72,7 +72,7 @@ func createContactWithinTransaction(
 	}
 	appUser := changes.user
 
-	logus.Debugf(tc, "createContactWithinTransaction(appUser.ContactID=%v, counterpartyDetails=%v)", appUser.ID, contactDetails)
+	logus.Debugf(tctx, "createContactWithinTransaction(appUser.ContactID=%v, counterpartyDetails=%v)", appUser.ID, contactDetails)
 	if appUser.ID == "" {
 		err = errors.New("appUser.ContactID == 0")
 		return
@@ -92,7 +92,7 @@ func createContactWithinTransaction(
 	creator.DebtusContact.Data.CreatedBy = appUser.ID
 	if counterparty.Contact.ID != "" {
 		if counterparty.Contact.Data == nil {
-			if counterparty.DebtusContact, err = GetDebtusSpaceContactByID(tc, tx, spaceID, counterparty.Contact.ID); err != nil {
+			if counterparty.DebtusContact, err = GetDebtusSpaceContactByID(tctx, tx, spaceID, counterparty.Contact.ID); err != nil {
 				return
 			}
 			changes.counterparty.Contact = counterparty.Contact
@@ -113,12 +113,12 @@ func createContactWithinTransaction(
 			LastTransferAt:   counterparty.DebtusContact.Data.LastTransferAt,
 		}
 		invitedCounterpartyBalance := counterparty.DebtusContact.Data.Balance.Reversed()
-		logus.Debugf(tc, "invitedCounterpartyBalance: %v", invitedCounterpartyBalance)
+		logus.Debugf(tctx, "invitedCounterpartyBalance: %v", invitedCounterpartyBalance)
 		creator.DebtusContact.Data.Balance = invitedCounterpartyBalance
 		creator.DebtusContact.Data.MustMatchCounterparty(counterparty.DebtusContact)
 	}
 
-	if creator.DebtusContact, err = dtdal.Contact.InsertContact(tc, tx, creator.DebtusContact.Data); err != nil {
+	if creator.DebtusContact, err = dtdal.Contact.InsertContact(tctx, tx, creator.DebtusContact.Data); err != nil {
 		return
 	}
 
@@ -160,7 +160,7 @@ func createContactWithinTransaction(
 				panic(fmt.Sprintf("DebtusContact.UserID == counterpartyContact.UserID: %v", creator.Contact.Data.UserID))
 			}
 			if creator.DebtusContact.Data.Transfers != counterparty.DebtusContact.Data.Transfers {
-				logus.Errorf(tc, "DebtusContact.TransfersJson != counterpartyContact.TransfersJson\n DebtusContact: %v\n counterpartyContact: %v", creator.DebtusContact.Data.Transfers, counterparty.DebtusContact.Data.Transfers)
+				logus.Errorf(tctx, "DebtusContact.TransfersJson != counterpartyContact.TransfersJson\n DebtusContact: %v\n counterpartyContact: %v", creator.DebtusContact.Data.Transfers, counterparty.DebtusContact.Data.Transfers)
 			}
 			if cBalance, cpBalance := creator.DebtusContact.Data.Balance, counterparty.DebtusContact.Data.Balance; !cBalance.Equal(cpBalance.Reversed()) {
 				panic(fmt.Sprintf("!DebtusContact.Balance().Equal(counterpartyContact.Balance())\nDebtusContact.Balance(): %v\n counterpartyContact.Balance(): %v", cBalance, cpBalance))
@@ -184,7 +184,7 @@ type createContactDbChanges struct {
 }
 
 func CreateContact(
-	c context.Context, tx dal.ReadwriteTransaction, userID, spaceID string, contactDetails dto4contactus.ContactDetails,
+	ctx context.Context, tx dal.ReadwriteTransaction, userID, spaceID string, contactDetails dto4contactus.ContactDetails,
 ) (
 	contact dal4contactus.ContactEntry,
 	contactusSpace dal4contactus.ContactusSpaceEntry,
@@ -192,7 +192,7 @@ func CreateContact(
 	err error,
 ) {
 	var contactIDs []string
-	if contactIDs, err = dtdal.Contact.GetContactIDsByTitle(c, tx, spaceID, userID, contactDetails.UserName, false); err != nil {
+	if contactIDs, err = dtdal.Contact.GetContactIDsByTitle(ctx, tx, spaceID, userID, contactDetails.UserName, false); err != nil {
 		return
 	}
 	userCtx := facade.NewUserContext(userID)
@@ -202,30 +202,30 @@ func CreateContact(
 
 	switch len(contactIDs) {
 	case 0:
-		err = dal4contactus.RunContactusSpaceWorker(c, userCtx, spaceRequest, func(tc context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) (err error) {
+		err = dal4contactus.RunContactusSpaceWorker(ctx, userCtx, spaceRequest, func(tctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) (err error) {
 			changes := &createContactDbChanges{
 				//user:                user,
 				debtusSpace:    models4debtus.NewDebtusSpaceEntry(spaceID),
 				contactusSpace: dal4contactus.NewContactusSpaceEntry(spaceID),
 				counterparty:   ParticipantEntries{},
 			}
-			if err = createContactWithinTransaction(tc, tx, changes, spaceRequest.SpaceID, "", contactDetails); err != nil {
+			if err = createContactWithinTransaction(tctx, tx, changes, spaceRequest.SpaceID, "", contactDetails); err != nil {
 				err = fmt.Errorf("failed to create Contact within transaction: %w", err)
 				return
 			}
 
 			if changes.HasChanges() {
-				//db, err := dtdal.DB.GetDB(tc)
-				if err = tx.SetMulti(tc, changes.Records()); err != nil {
+				//db, err := dtdal.DB.GetDB(tctx)
+				if err = tx.SetMulti(tctx, changes.Records()); err != nil {
 					err = fmt.Errorf("failed to save entity related to new Contact: %w", err)
 					return
 				}
 				// TODO: move calls of delays to createContactWithinTransaction() ?
-				if err = delays4contactus.DelayUpdateContactusSpaceDboWithContact(tc, 0, userID, contact.ID); err != nil { // Just in case
+				if err = delays4contactus.DelayUpdateContactusSpaceDboWithContact(tctx, 0, userID, contact.ID); err != nil { // Just in case
 					return
 				}
 				if changes.counterparty.Contact.ID != "" {
-					if err = delays4contactus.DelayUpdateContactusSpaceDboWithContact(tc, 0, changes.counterparty.Contact.Data.UserID, changes.counterparty.Contact.ID); err != nil { // Just in case
+					if err = delays4contactus.DelayUpdateContactusSpaceDboWithContact(tctx, 0, changes.counterparty.Contact.Data.UserID, changes.counterparty.Contact.ID); err != nil { // Just in case
 						return
 					}
 				}
@@ -233,17 +233,17 @@ func CreateContact(
 			return
 		})
 		if err != nil {
-			if err = delays4contactus.DelayUpdateContactusSpaceDboWithContact(c, 0, contact.Data.UserID, contact.ID); err != nil {
+			if err = delays4contactus.DelayUpdateContactusSpaceDboWithContact(ctx, 0, contact.Data.UserID, contact.ID); err != nil {
 				return
 			}
 			return
 		}
 		return
 	case 1:
-		if debtusContact, err = GetDebtusSpaceContactByID(c, tx, spaceID, contactIDs[0]); err != nil {
+		if debtusContact, err = GetDebtusSpaceContactByID(ctx, tx, spaceID, contactIDs[0]); err != nil {
 			return
 		}
-		if err = tx.Get(c, contact.Record); err != nil {
+		if err = tx.Get(ctx, contact.Record); err != nil {
 			return
 		}
 		return
@@ -253,9 +253,9 @@ func CreateContact(
 	}
 }
 
-func UpdateContact(c context.Context, spaceID, contactID string, values map[string]string) (debtusSpaceContact models4debtus.DebtusSpaceContactEntry, err error) {
-	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-		if debtusSpaceContact, err = GetDebtusSpaceContactByID(c, tx, spaceID, contactID); err != nil {
+func UpdateContact(ctx context.Context, spaceID, contactID string, values map[string]string) (debtusSpaceContact models4debtus.DebtusSpaceContactEntry, err error) {
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+		if debtusSpaceContact, err = GetDebtusSpaceContactByID(ctx, tx, spaceID, contactID); err != nil {
 			return err
 		} else {
 			var changed bool
@@ -295,16 +295,16 @@ func UpdateContact(c context.Context, spaceID, contactID string, values map[stri
 						changed = true
 					}
 				default:
-					logus.Debugf(c, "Unknown field: %v", name)
+					logus.Debugf(ctx, "Unknown field: %v", name)
 				}
 			}
 			if changed {
 				debtusSpace := models4debtus.NewDebtusSpaceEntry(spaceID)
-				if err = tx.Get(c, debtusSpace.Record); err != nil {
+				if err = tx.Get(ctx, debtusSpace.Record); err != nil {
 					return err
 				} else {
 					models4debtus.AddOrUpdateDebtusContact(debtusSpace, debtusSpaceContact)
-					return tx.SetMulti(c, []dal.Record{debtusSpaceContact.Record, debtusSpace.Record})
+					return tx.SetMulti(ctx, []dal.Record{debtusSpaceContact.Record, debtusSpace.Record})
 				}
 			}
 		}
@@ -315,19 +315,19 @@ func UpdateContact(c context.Context, spaceID, contactID string, values map[stri
 
 var ErrContactIsNotDeletable = errors.New("Contact is not deletable")
 
-func DeleteContact(c context.Context, userCtx facade.UserContext, spaceID, contactID string) (err error) {
-	return facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-		return DeleteContactTx(c, userCtx, tx, spaceID, contactID)
+func DeleteContact(ctx context.Context, userCtx facade.UserContext, spaceID, contactID string) (err error) {
+	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+		return DeleteContactTx(ctx, userCtx, tx, spaceID, contactID)
 	})
 }
 
-func DeleteContactTx(c context.Context, userCtx facade.UserContext, tx dal.ReadwriteTransaction, spaceID, contactID string) (err error) {
-	logus.Warningf(c, "ContactDalGae.DeleteContact(%s)", contactID)
+func DeleteContactTx(ctx context.Context, userCtx facade.UserContext, tx dal.ReadwriteTransaction, spaceID, contactID string) (err error) {
+	logus.Warningf(ctx, "ContactDalGae.DeleteContact(%s)", contactID)
 	var contact models4debtus.DebtusSpaceContactEntry
-	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-		if contact, err = GetDebtusSpaceContactByID(c, tx, spaceID, contactID); err != nil {
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+		if contact, err = GetDebtusSpaceContactByID(ctx, tx, spaceID, contactID); err != nil {
 			if dal.IsNotFound(err) {
-				logus.Warningf(c, "DebtusSpaceContactEntry not found by ContactID: %v", contactID)
+				logus.Warningf(ctx, "DebtusSpaceContactEntry not found by ContactID: %v", contactID)
 				err = nil
 			}
 			return
@@ -338,7 +338,7 @@ func DeleteContactTx(c context.Context, userCtx facade.UserContext, tx dal.Readw
 
 		debtusSpace := models4debtus.NewDebtusSpaceEntry(spaceID)
 
-		if err = tx.Get(c, debtusSpace.Record); err != nil {
+		if err = tx.Get(ctx, debtusSpace.Record); err != nil {
 			return
 		}
 		if userContact := debtusSpace.Data.Contacts[contactID]; userContact != nil {
@@ -361,7 +361,7 @@ func DeleteContactTx(c context.Context, userCtx facade.UserContext, tx dal.Readw
 			}
 		}
 		key := models4debtus.NewDebtusContactKey(spaceID, contactID)
-		if err = tx.Delete(c, key); err != nil {
+		if err = tx.Delete(ctx, key); err != nil {
 			return err
 		}
 		return nil
@@ -369,21 +369,21 @@ func DeleteContactTx(c context.Context, userCtx facade.UserContext, tx dal.Readw
 	return
 }
 
-func SaveContact(c context.Context, contact models4debtus.DebtusSpaceContactEntry) error {
-	return facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-		return tx.Set(c, contact.Record)
+func SaveContact(ctx context.Context, contact models4debtus.DebtusSpaceContactEntry) error {
+	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+		return tx.Set(ctx, contact.Record)
 	})
 }
 
-func GetDebtusSpaceContactsByIDs(c context.Context, tx dal.ReadSession, spaceID string, contactsIDs []string) (debtusContacts []models4debtus.DebtusSpaceContactEntry, err error) {
+func GetDebtusSpaceContactsByIDs(ctx context.Context, tx dal.ReadSession, spaceID string, contactsIDs []string) (debtusContacts []models4debtus.DebtusSpaceContactEntry, err error) {
 	if tx == nil {
-		if tx, err = facade.GetDatabase(c); err != nil {
+		if tx, err = facade.GetDatabase(ctx); err != nil {
 			return
 		}
 	}
 	debtusContacts = models4debtus.NewDebtusSpaceContacts(spaceID, contactsIDs...)
 	records := models4debtus.DebtusContactRecords(debtusContacts)
-	return debtusContacts, tx.GetMulti(c, records)
+	return debtusContacts, tx.GetMulti(ctx, records)
 }
 
 func GetDebtusSpaceContactByID(ctx context.Context, tx dal.ReadSession, spaceID, contactID string) (contact models4debtus.DebtusSpaceContactEntry, err error) {
@@ -391,11 +391,11 @@ func GetDebtusSpaceContactByID(ctx context.Context, tx dal.ReadSession, spaceID,
 	return contact, GetDebtusSpaceContact(ctx, tx, contact)
 }
 
-func GetDebtusSpaceContact(c context.Context, tx dal.ReadSession, contact models4debtus.DebtusSpaceContactEntry) (err error) {
+func GetDebtusSpaceContact(ctx context.Context, tx dal.ReadSession, contact models4debtus.DebtusSpaceContactEntry) (err error) {
 	if tx == nil {
-		if tx, err = facade.GetDatabase(c); err != nil {
+		if tx, err = facade.GetDatabase(ctx); err != nil {
 			return
 		}
 	}
-	return tx.Get(c, contact.Record)
+	return tx.Get(ctx, contact.Record)
 }

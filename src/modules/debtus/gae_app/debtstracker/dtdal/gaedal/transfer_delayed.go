@@ -19,15 +19,15 @@ import (
 	"time"
 )
 
-func (TransferDalGae) DelayUpdateTransfersWithCounterparty(c context.Context, creatorCounterpartyID, counterpartyCounterpartyID string) (err error) {
-	logus.Debugf(c, "DelayUpdateTransfersWithCounterparty(creatorCounterpartyID=%s, counterpartyCounterpartyID=%s)", creatorCounterpartyID, counterpartyCounterpartyID)
+func (TransferDalGae) DelayUpdateTransfersWithCounterparty(ctx context.Context, creatorCounterpartyID, counterpartyCounterpartyID string) (err error) {
+	logus.Debugf(ctx, "DelayUpdateTransfersWithCounterparty(creatorCounterpartyID=%s, counterpartyCounterpartyID=%s)", creatorCounterpartyID, counterpartyCounterpartyID)
 	if creatorCounterpartyID == "" {
 		return errors.New("creatorCounterpartyID == 0")
 	}
 	if counterpartyCounterpartyID == "" {
 		return errors.New("counterpartyCounterpartyID == 0")
 	}
-	if err := delayerUpdateTransfersWithCounterparty.EnqueueWork(c, delaying.With(const4debtus.QueueTransfers, DELAY_UPDATE_TRANSFERS_WITH_COUNTERPARTY, 0), creatorCounterpartyID, counterpartyCounterpartyID); err != nil {
+	if err := delayerUpdateTransfersWithCounterparty.EnqueueWork(ctx, delaying.With(const4debtus.QueueTransfers, DELAY_UPDATE_TRANSFERS_WITH_COUNTERPARTY, 0), creatorCounterpartyID, counterpartyCounterpartyID); err != nil {
 		return err
 	}
 	return nil
@@ -38,19 +38,19 @@ const (
 	DELAY_UPDATE_1_TRANSFER_WITH_COUNTERPARTY = "update-1-transfer-with-counterparty"
 )
 
-func delayedUpdateTransfersWithCounterparty(c context.Context, creatorCounterpartyID, counterpartyCounterpartyID int64) (err error) {
-	logus.Infof(c, "delayerUpdateTransfersWithCounterparty(creatorCounterpartyID=%d, counterpartyCounterpartyID=%d)", creatorCounterpartyID, counterpartyCounterpartyID)
+func delayedUpdateTransfersWithCounterparty(ctx context.Context, creatorCounterpartyID, counterpartyCounterpartyID int64) (err error) {
+	logus.Infof(ctx, "delayerUpdateTransfersWithCounterparty(creatorCounterpartyID=%d, counterpartyCounterpartyID=%d)", creatorCounterpartyID, counterpartyCounterpartyID)
 	if creatorCounterpartyID == 0 {
-		logus.Errorf(c, "creatorCounterpartyID == 0")
+		logus.Errorf(ctx, "creatorCounterpartyID == 0")
 		return nil
 	}
 	if counterpartyCounterpartyID == 0 {
-		logus.Errorf(c, "counterpartyCounterpartyID == 0")
+		logus.Errorf(ctx, "counterpartyCounterpartyID == 0")
 		return nil
 	}
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(ctx); err != nil {
 		return fmt.Errorf("failed to create database: %w", err)
 	}
 	query := dal.From(models4debtus.TransfersCollection).
@@ -59,16 +59,16 @@ func delayedUpdateTransfersWithCounterparty(c context.Context, creatorCounterpar
 		SelectKeysOnly(reflect.Int)
 
 	var reader dal.Reader
-	if reader, err = db.QueryReader(c, query); err != nil {
+	if reader, err = db.QueryReader(ctx, query); err != nil {
 		return err
 	}
 	if transferIDs, err := dal.SelectAllIDs[int](reader, dal.WithLimit(query.Limit())); err != nil {
 		return fmt.Errorf("failed to load api4transfers: %w", err)
 	} else if len(transferIDs) > 0 {
-		logus.Infof(c, "Loaded %d transfer IDs", len(transferIDs))
+		logus.Infof(ctx, "Loaded %d transfer IDs", len(transferIDs))
 		delayDuration := 10 * time.Microsecond
 		for _, transferID := range transferIDs {
-			if err := delayerUpdateTransferWithCounterparty.EnqueueWork(c, delaying.With(const4debtus.QueueTransfers, DELAY_UPDATE_1_TRANSFER_WITH_COUNTERPARTY, delayDuration), transferID, counterpartyCounterpartyID); err != nil {
+			if err := delayerUpdateTransferWithCounterparty.EnqueueWork(ctx, delaying.With(const4debtus.QueueTransfers, DELAY_UPDATE_1_TRANSFER_WITH_COUNTERPARTY, delayDuration), transferID, counterpartyCounterpartyID); err != nil {
 				return fmt.Errorf("failed to create task for transfer id=%d: %w", transferID, err)
 			}
 			delayDuration += 10 * time.Microsecond
@@ -79,7 +79,7 @@ func delayedUpdateTransfersWithCounterparty(c context.Context, creatorCounterpar
 			Limit(1).
 			SelectKeysOnly(reflect.Int)
 		var reader dal.Reader
-		if reader, err = db.QueryReader(c, query); err != nil {
+		if reader, err = db.QueryReader(ctx, query); err != nil {
 			return err
 		}
 		var transferIDs []int
@@ -87,33 +87,33 @@ func delayedUpdateTransfersWithCounterparty(c context.Context, creatorCounterpar
 			return fmt.Errorf("failed to load api4transfers by 2 counterparty IDs: %w", err)
 		}
 		if len(transferIDs) > 0 {
-			logus.Infof(c, "No api4transfers found to update counterparty details")
+			logus.Infof(ctx, "No api4transfers found to update counterparty details")
 		} else {
-			logus.Warningf(c, "No api4transfers found to update counterparty details")
+			logus.Warningf(ctx, "No api4transfers found to update counterparty details")
 		}
 	}
 	return nil
 }
 
-func delayedUpdateTransferWithCounterparty(c context.Context, spaceID, transferID string, counterpartyCounterpartyID string) (err error) {
-	logus.Debugf(c, "delayerUpdateTransferWithCounterparty(transferID=%s, counterpartyCounterpartyID=%s)", transferID, counterpartyCounterpartyID)
+func delayedUpdateTransferWithCounterparty(ctx context.Context, spaceID, transferID string, counterpartyCounterpartyID string) (err error) {
+	logus.Debugf(ctx, "delayerUpdateTransferWithCounterparty(transferID=%s, counterpartyCounterpartyID=%s)", transferID, counterpartyCounterpartyID)
 	if transferID == "" {
-		logus.Errorf(c, "transferID == 0")
+		logus.Errorf(ctx, "transferID == 0")
 		return nil
 	}
 	if counterpartyCounterpartyID == "" {
-		logus.Errorf(c, "counterpartyCounterpartyID == 0")
+		logus.Errorf(ctx, "counterpartyCounterpartyID == 0")
 		return nil
 	}
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(ctx); err != nil {
 		return err
 	}
 
 	counterpartyCounterpartyContact := dal4contactus.NewContactEntry(spaceID, counterpartyCounterpartyID)
-	if err = dal4contactus.GetContact(c, db, counterpartyCounterpartyContact); err != nil {
-		logus.Errorf(c, err.Error())
+	if err = dal4contactus.GetContact(ctx, db, counterpartyCounterpartyContact); err != nil {
+		logus.Errorf(ctx, err.Error())
 		if dal.IsNotFound(err) {
 			return nil
 		}
@@ -121,30 +121,30 @@ func delayedUpdateTransferWithCounterparty(c context.Context, spaceID, transferI
 	}
 
 	counterpartyCounterpartyDebtusContact := models4debtus.NewDebtusSpaceContactEntry(spaceID, counterpartyCounterpartyID, nil)
-	if err = facade4debtus.GetDebtusSpaceContact(c, db, counterpartyCounterpartyDebtusContact); err != nil {
-		logus.Errorf(c, err.Error())
+	if err = facade4debtus.GetDebtusSpaceContact(ctx, db, counterpartyCounterpartyDebtusContact); err != nil {
+		logus.Errorf(ctx, err.Error())
 		if dal.IsNotFound(err) {
 			return nil
 		}
 		return err
 	}
 
-	logus.Debugf(c, "counterpartyCounterpartyDebtusContact: %v", counterpartyCounterpartyDebtusContact)
+	logus.Debugf(ctx, "counterpartyCounterpartyDebtusContact: %v", counterpartyCounterpartyDebtusContact)
 
 	counterpartyUser := dbo4userus.NewUserEntry(counterpartyCounterpartyContact.Data.UserID)
 
-	if err = dal4userus.GetUser(c, db, counterpartyUser); err != nil {
-		logus.Errorf(c, err.Error())
+	if err = dal4userus.GetUser(ctx, db, counterpartyUser); err != nil {
+		logus.Errorf(ctx, err.Error())
 		if dal.IsNotFound(err) {
 			return nil
 		}
 		return err
 	}
 
-	logus.Debugf(c, "counterpartyUser: %v", *counterpartyUser.Data)
+	logus.Debugf(ctx, "counterpartyUser: %v", *counterpartyUser.Data)
 
-	if err := facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
-		transfer, err := facade4debtus.Transfers.GetTransferByID(tc, tx, transferID)
+	if err := facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+		transfer, err := facade4debtus.Transfers.GetTransferByID(ctx, tx, transferID)
 		if err != nil {
 			return err
 		}
@@ -152,13 +152,13 @@ func delayedUpdateTransferWithCounterparty(c context.Context, spaceID, transferI
 
 		// TODO: allow to pass creator counterparty as well. Match by userID
 
-		logus.Debugf(c, "transfer.From() before: %v", transfer.Data.From())
-		logus.Debugf(c, "transfer.To() before: %v", transfer.Data.To())
+		logus.Debugf(ctx, "transfer.From() before: %v", transfer.Data.From())
+		logus.Debugf(ctx, "transfer.To() before: %v", transfer.Data.To())
 
 		// Update transfer creator
 		{
 			transferCreator := transfer.Data.Creator()
-			logus.Debugf(c, "transferCreator before: %v", transferCreator)
+			logus.Debugf(ctx, "transferCreator before: %v", transferCreator)
 			if transferCreator.ContactID == "" {
 				transferCreator.ContactID = counterpartyCounterpartyDebtusContact.ID
 				changed = true
@@ -166,20 +166,20 @@ func delayedUpdateTransferWithCounterparty(c context.Context, spaceID, transferI
 				err = fmt.Errorf("transferCounterparty.ContactID != counterpartyCounterpartyDebtusContact.ContactID: %s != %s", transferCreator.ContactID, counterpartyCounterpartyDebtusContact.ID)
 				return err
 			} else {
-				logus.Debugf(c, "transferCounterparty.ContactID == counterpartyCounterpartyDebtusContact.ContactID: %s", transferCreator.ContactID)
+				logus.Debugf(ctx, "transferCounterparty.ContactID == counterpartyCounterpartyDebtusContact.ContactID: %s", transferCreator.ContactID)
 			}
 			if transferCreator.ContactName == "" || transferCreator.ContactName != counterpartyCounterpartyDebtusContact.Data.FullName() {
 				transferCreator.ContactName = counterpartyCounterpartyDebtusContact.Data.FullName()
 				changed = true
 			}
-			logus.Debugf(c, "transferCreator after: %v", transferCreator)
-			logus.Debugf(c, "transfer.Creator() after: %v", transfer.Data.Creator())
+			logus.Debugf(ctx, "transferCreator after: %v", transferCreator)
+			logus.Debugf(ctx, "transfer.Creator() after: %v", transfer.Data.Creator())
 		}
 
 		// Update transfer counterparty
 		{
 			transferCounterparty := transfer.Data.Counterparty()
-			logus.Debugf(c, "transferCounterparty before: %v", transferCounterparty)
+			logus.Debugf(ctx, "transferCounterparty before: %v", transferCounterparty)
 			if transferCounterparty.UserID == "" {
 				transferCounterparty.UserID = counterpartyCounterpartyContact.Data.UserID
 				changed = true
@@ -187,44 +187,44 @@ func delayedUpdateTransferWithCounterparty(c context.Context, spaceID, transferI
 				err = fmt.Errorf("transferCounterparty.UserID != counterpartyCounterpartyDebtusContact.UserID: %s != %s", transferCounterparty.UserID, counterpartyCounterpartyContact.Data.UserID)
 				return err
 			} else {
-				logus.Debugf(c, "transferCounterparty.UserID == counterpartyCounterpartyDebtusContact.UserID: %s", transferCounterparty.UserID)
+				logus.Debugf(ctx, "transferCounterparty.UserID == counterpartyCounterpartyDebtusContact.UserID: %s", transferCounterparty.UserID)
 			}
 			if transferCounterparty.UserName == "" || transferCounterparty.UserName != counterpartyUser.Data.Names.GetFullName() {
 				transferCounterparty.UserName = counterpartyUser.Data.Names.GetFullName()
 				changed = true
 			}
-			logus.Debugf(c, "transferCounterparty after: %v", transferCounterparty)
-			logus.Debugf(c, "transfer.DebtusSpaceContactEntry() after: %v", transfer.Data.Counterparty())
+			logus.Debugf(ctx, "transferCounterparty after: %v", transferCounterparty)
+			logus.Debugf(ctx, "transfer.DebtusSpaceContactEntry() after: %v", transfer.Data.Counterparty())
 		}
-		logus.Debugf(c, "transfer.From() after: %v", transfer.Data.From())
-		logus.Debugf(c, "transfer.To() after: %v", transfer.Data.To())
+		logus.Debugf(ctx, "transfer.From() after: %v", transfer.Data.From())
+		logus.Debugf(ctx, "transfer.To() after: %v", transfer.Data.To())
 
 		if changed {
-			if err = facade4debtus.Transfers.SaveTransfer(tc, tx, transfer); err != nil {
+			if err = facade4debtus.Transfers.SaveTransfer(ctx, tx, transfer); err != nil {
 				return err
 			}
 			if !transfer.Data.DtDueOn.IsZero() {
 				counterpartyDebtusSpace := models4debtus.NewDebtusSpaceEntry(spaceID)
-				if err = models4debtus.GetDebtusSpace(c, tx, counterpartyDebtusSpace); err != nil {
+				if err = models4debtus.GetDebtusSpace(ctx, tx, counterpartyDebtusSpace); err != nil {
 					return err
 				}
 
 				if !counterpartyDebtusSpace.Data.HasDueTransfers {
-					if err = facade4debtus.DelayUpdateHasDueTransfers(tc, counterpartyCounterpartyContact.Data.UserID, spaceID); err != nil {
+					if err = facade4debtus.DelayUpdateHasDueTransfers(ctx, counterpartyCounterpartyContact.Data.UserID, spaceID); err != nil {
 						return err
 					}
 				}
 			}
-			logus.Infof(c, "TransferEntry saved to datastore")
+			logus.Infof(ctx, "TransferEntry saved to datastore")
 			return nil
 		} else {
-			logus.Infof(c, "No changes for the transfer")
+			logus.Infof(ctx, "No changes for the transfer")
 		}
 		return nil
 	}, nil); err != nil {
 		panic(fmt.Sprintf("failed to update transfer (%s): %v", transferID, err.Error()))
 	} else {
-		logus.Infof(c, "Transaction successfully completed")
+		logus.Infof(ctx, "Transaction successfully completed")
 	}
 	return nil
 }
@@ -233,20 +233,20 @@ const (
 	UPDATE_TRANSFERS_WITH_CREATOR_NAME = "update-api4transfers-with-creator-name"
 )
 
-func DelayUpdateTransfersWithCreatorName(c context.Context, userID string) error {
-	return delayerUpdateTransfersWithCreatorName.EnqueueWork(c, delaying.With(const4debtus.QueueTransfers, UPDATE_TRANSFERS_WITH_CREATOR_NAME, 0), userID)
+func DelayUpdateTransfersWithCreatorName(ctx context.Context, userID string) error {
+	return delayerUpdateTransfersWithCreatorName.EnqueueWork(ctx, delaying.With(const4debtus.QueueTransfers, UPDATE_TRANSFERS_WITH_CREATOR_NAME, 0), userID)
 }
 
-func delayedUpdateTransfersWithCreatorName(c context.Context, userID string) (err error) {
-	logus.Debugf(c, "delayedUpdateTransfersWithCreatorName(userID=%s)", userID)
+func delayedUpdateTransfersWithCreatorName(ctx context.Context, userID string) (err error) {
+	logus.Debugf(ctx, "delayedUpdateTransfersWithCreatorName(userID=%s)", userID)
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(ctx); err != nil {
 		return err
 	}
 	user := dbo4userus.NewUserEntry(userID)
-	if err = dal4userus.GetUser(c, db, user); err != nil {
-		logus.Errorf(c, err.Error())
+	if err = dal4userus.GetUser(ctx, db, user); err != nil {
+		logus.Errorf(ctx, err.Error())
 		if dal.IsNotFound(err) {
 			err = nil
 		}
@@ -260,7 +260,7 @@ func delayedUpdateTransfersWithCreatorName(c context.Context, userID string) (er
 		SelectInto(models4debtus.NewTransferRecord)
 
 	var reader dal.Reader
-	reader, err = db.QueryReader(c, query)
+	reader, err = db.QueryReader(ctx, query)
 
 	var wg sync.WaitGroup
 	defer wg.Wait()
@@ -274,14 +274,14 @@ func delayedUpdateTransfersWithCreatorName(c context.Context, userID string) (er
 			if errors.Is(err, dal.ErrNoMoreRecords) {
 				return nil
 			}
-			logus.Errorf(c, err.Error())
+			logus.Errorf(ctx, err.Error())
 			return err
 		}
 		wg.Add(1)
 		go func(transferID string) {
 			defer wg.Done()
-			err := facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-				transfer, err := facade4debtus.Transfers.GetTransferByID(c, tx, transferID)
+			err := facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+				transfer, err := facade4debtus.Transfers.GetTransferByID(ctx, tx, transferID)
 				if err != nil {
 					return err
 				}
@@ -298,17 +298,17 @@ func delayedUpdateTransfersWithCreatorName(c context.Context, userID string) (er
 						changed = true
 					}
 				default:
-					logus.Infof(c, "TransferEntry() creator is not a counterparty")
+					logus.Infof(ctx, "TransferEntry() creator is not a counterparty")
 				}
 				if changed {
-					if err = facade4debtus.Transfers.SaveTransfer(c, tx, transfer); err != nil {
+					if err = facade4debtus.Transfers.SaveTransfer(ctx, tx, transfer); err != nil {
 						return err
 					}
 				}
 				return err
 			})
 			if err != nil {
-				logus.Errorf(c, err.Error())
+				logus.Errorf(ctx, err.Error())
 			}
 		}(transfer.ID)
 	}

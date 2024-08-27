@@ -16,7 +16,7 @@ import (
 	"strings"
 )
 
-func HandleAuthLoginId(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
+func HandleAuthLoginId(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	query := r.URL.Query()
 	channel := query.Get("channel")
 	var (
@@ -28,24 +28,24 @@ func HandleAuthLoginId(c context.Context, w http.ResponseWriter, r *http.Request
 
 	if loginIdStr != "" {
 		if loginID, err = common4debtus.DecodeIntID(loginIdStr); err != nil {
-			api4debtus.BadRequestError(c, w, err)
+			api4debtus.BadRequestError(ctx, w, err)
 			return
 		}
 	}
 
 	returnLoginID := func(loginID int) {
 		encoded := common4debtus.EncodeIntID(loginID)
-		logus.Infof(c, "Login ContactID: %d, Encoded: %s", loginID, encoded)
+		logus.Infof(ctx, "Login ContactID: %d, Encoded: %s", loginID, encoded)
 		if _, err = w.Write([]byte(encoded)); err != nil {
-			logus.Criticalf(c, "Failed to write login ContactID to response: %v", err)
+			logus.Criticalf(ctx, "Failed to write login ContactID to response: %v", err)
 		}
 	}
 
 	if loginID != 0 {
-		if loginPin, err := dtdal.LoginPin.GetLoginPinByID(c, nil, loginID); err != nil {
+		if loginPin, err := dtdal.LoginPin.GetLoginPinByID(ctx, nil, loginID); err != nil {
 			if dal.IsNotFound(err) {
 				w.WriteHeader(http.StatusInternalServerError)
-				logus.Errorf(c, err.Error())
+				logus.Errorf(ctx, err.Error())
 				return
 			}
 		} else if loginPin.Data.IsActive(channel) {
@@ -56,27 +56,27 @@ func HandleAuthLoginId(c context.Context, w http.ResponseWriter, r *http.Request
 
 	var rBody []byte
 	if rBody, err = io.ReadAll(r.Body); err != nil {
-		api4debtus.BadRequestError(c, w, fmt.Errorf("failed to read request body: %w", err))
+		api4debtus.BadRequestError(ctx, w, fmt.Errorf("failed to read request body: %w", err))
 		return
 	}
 	gaClientID := string(rBody)
 
 	if gaClientID != "" {
 		if len(gaClientID) > 100 {
-			api4debtus.BadRequestMessage(c, w, fmt.Sprintf("Google Client ContactID is too long: %d", len(gaClientID)))
+			api4debtus.BadRequestMessage(ctx, w, fmt.Sprintf("Google Client ContactID is too long: %d", len(gaClientID)))
 			return
 		}
 
 		if strings.Count(gaClientID, ".") != 1 {
-			api4debtus.BadRequestMessage(c, w, "Google Client ContactID has wrong format, a '.' char expected")
+			api4debtus.BadRequestMessage(ctx, w, "Google Client ContactID has wrong format, a '.' char expected")
 			return
 		}
 	}
 
-	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		var loginPin models4auth.LoginPin
-		if loginPin, err = dtdal.LoginPin.CreateLoginPin(c, tx, channel, gaClientID, authInfo.UserID); err != nil {
-			api4debtus.ErrorAsJson(c, w, http.StatusInternalServerError, err)
+		if loginPin, err = dtdal.LoginPin.CreateLoginPin(ctx, tx, channel, gaClientID, authInfo.UserID); err != nil {
+			api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 			return
 		}
 		loginID = loginPin.ID
@@ -84,7 +84,7 @@ func HandleAuthLoginId(c context.Context, w http.ResponseWriter, r *http.Request
 	})
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		logus.Errorf(c, err.Error())
+		logus.Errorf(ctx, err.Error())
 		return
 	}
 	returnLoginID(loginID)

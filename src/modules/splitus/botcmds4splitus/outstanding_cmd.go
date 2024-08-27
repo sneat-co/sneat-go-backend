@@ -20,11 +20,11 @@ var outstandingBalanceCommand = botsfw.Command{
 }
 
 func outstandingBalanceAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
-	logus.Debugf(c, "outstandingBalanceAction()")
+	ctx := whc.Context()
+	logus.Debugf(ctx, "outstandingBalanceAction()")
 	userID := whc.AppUserID()
 	err = dal4userus.RunUserModuleWorker[models4debtus.DebtusUserDbo](
-		c, userID, const4debtus.ModuleID, new(models4debtus.DebtusUserDbo),
+		ctx, userID, const4debtus.ModuleID, new(models4debtus.DebtusUserDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, param *dal4userus.UserModuleWorkerParams[models4debtus.DebtusUserDbo]) (err error) {
 			outstandingBalance := param.UserModule.Data.GetOutstandingBalance()
 			m.Text = fmt.Sprintf("Outstanding balance: %v", outstandingBalance)

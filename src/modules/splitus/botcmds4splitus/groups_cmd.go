@@ -27,8 +27,8 @@ var groupsCommand = botsfw.Command{
 			return
 		}
 		if isRefresh {
-			c := whc.Context()
-			logus.Debugf(c, "do == 'refresh'")
+			ctx := whc.Context()
+			logus.Debugf(ctx, "do == 'refresh'")
 			if m, err = debtussender.SendRefreshOrNothingChanged(whc, m); err != nil {
 				return
 			}
@@ -43,8 +43,8 @@ func groupsAction(whc botsfw.WebhookContext, isEdit bool, groupsMessageID int) (
 	//	m.Text = "This command supported just in private chat with @" + whc.GetBotCode()
 	//	return
 	//}
-	//c := whc.Context()
-	//logus.Debugf(c, "groupsAction(isEdit=%v, groupsMessageID=%d)", isEdit, groupsMessageID)
+	//ctx := whc.Context()
+	//logus.Debugf(ctx, "groupsAction(isEdit=%v, groupsMessageID=%d)", isEdit, groupsMessageID)
 	//buf := new(bytes.Buffer)
 	//
 	//fmt.Fprintf(buf, "<b>%v</b>\n\n", whc.Translate(trans.MESSAGE_TEXT_YOUR_BILL_SPLITTING_GROUPS))

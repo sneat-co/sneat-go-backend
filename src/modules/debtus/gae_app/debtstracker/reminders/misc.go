@@ -18,10 +18,10 @@ const (
 	TransferReminderToCounterparty
 )
 
-func TestEmail(c context.Context, w http.ResponseWriter, r *http.Request) {
+func TestEmail(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	//sg_DEV_key := "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";
 	//	sg_DEV_key := ;
-	if err := SendEmail(c, "", "Testing SendGrid 2", "Simple Text"); err != nil {
+	if err := SendEmail(ctx, "", "Testing SendGrid 2", "Simple Text"); err != nil {
 		fmt.Fprint(w, err)
 	}
 }
@@ -50,32 +50,32 @@ func InviteFriend(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func SendEmail(c context.Context, fromName, subject, html string) (err error) {
+func SendEmail(ctx context.Context, fromName, subject, html string) (err error) {
 	if fromName == "" {
 		fromName = "DebtsTracker.IO"
 	}
 	sgClient := sendgrid.NewSendClient("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")
 	// set http.Client to use the appengine client
-	sendgrid.DefaultClient.HTTPClient = dtdal.HttpClient(c) //Just perform this swap, and you are good to go.
+	sendgrid.DefaultClient.HTTPClient = dtdal.HttpClient(ctx) //Just perform this swap, and you are good to go.
 	from := mail.NewEmail(fromName, "hello@debtusbot.io")
 	to := mail.NewEmail("Example User", "test@example.com")
 	message := mail.NewSingleEmail(from, subject, to, "", html)
-	logus.Infof(c, "Sending from %v email message: %v", fromName, html)
+	logus.Infof(ctx, "Sending from %v email message: %v", fromName, html)
 	_, err = sgClient.Send(message)
 	return
 }
 
-func SendReceipt(c context.Context, w http.ResponseWriter, r *http.Request) {
-	logus.Infof(c, "sendReceipt() started")
+func SendReceipt(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	logus.Infof(ctx, "sendReceipt() started")
 	err := r.ParseForm()
 	if err != nil {
 		m := "Failed to parse form: %v"
-		logus.Infof(c, m, err)
+		logus.Infof(ctx, m, err)
 		w.WriteHeader(500)
 		fmt.Fprintf(w, m, err)
 		return
 	}
-	logus.Infof(c, "Form parsed: %v", r.FormValue("from_name"))
+	logus.Infof(ctx, "Form parsed: %v", r.FormValue("from_name"))
 	fromName := r.Form.Get("from_name")
 	//	fromEmail := r.Form["from_email"][0]
 	//	toName := r.Form["to_name"][0]
@@ -85,8 +85,8 @@ func SendReceipt(c context.Context, w http.ResponseWriter, r *http.Request) {
 	subject := "Receipt for friend's loan money transfer"
 	message := "<p>You've got " + amount + currency + " from " + fromName + "</p><p>--<br>Sent via <a href='https://debtus.app/#utm_source=app&utm_medium=email&utm_campaign=receipt&utm_content=footer'><b>DebtsTracker.IO</b></a> - available at <a href=https://itunes.apple.com/en/app/debttracker-pro/id303497125>Apple AppStore</a> & <a href=https://play.google.com/store/apps/details?id=com.stellar.debtsfree&hl=en>Google Play</a></p>"
 	allowOrigin(w)
-	if err := SendEmail(c, fromName, subject, message); err != nil {
-		logus.Infof(c, "Failed to send email: %v", err)
+	if err := SendEmail(ctx, fromName, subject, message); err != nil {
+		logus.Infof(ctx, "Failed to send email: %v", err)
 		_, _ = fmt.Fprint(w, err)
 	} else {
 		_, _ = fmt.Fprint(w, "Email sent")

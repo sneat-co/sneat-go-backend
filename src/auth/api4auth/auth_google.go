@@ -27,53 +27,53 @@ type GoogleAuthData struct {
 	IdToken        string `json:"idToken" firestore:"idToken"`
 }
 
-func HandleSignedInWithGooglePlus(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
+func HandleSignedInWithGooglePlus(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	panic("Not implemented")
 	//decoder := ffjson.NewDecoder()
 	//googleAuthData := GoogleAuthData{}
 	//defer r.Body.Close()
 	//if err := decoder.DecodeReader(r.Body, &googleAuthData); err != nil {
-	//	BadRequestError(c, w, err)
+	//	BadRequestError(ctx, w, err)
 	//	return
 	//}
 	//
 	//if googleAuthData.UserId == "" {
-	//	BadRequestMessage(c, w, "Missing required field: userId")
+	//	BadRequestMessage(ctx, w, "Missing required field: userId")
 	//	return
 	//}
 	//
 	//if googleAuthData.Email == "" {
-	//	BadRequestMessage(c, w, "Missing required field: email")
+	//	BadRequestMessage(ctx, w, "Missing required field: email")
 	//	return
 	//}
 	//
 	//tokenData := make(map[string]string, 16)
 	//
 	//// TODO: https://developers.google.com/identity/sign-in/web/backend-auth - verify "aud" and check "sub" fields
-	//if resp, err := dtdal.HttpClient(c).Get("https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + googleAuthData.IdToken); err != nil {
-	//	ErrorAsJson(c, w, http.StatusBadRequest, fmt.Errorf("%w: Failed to call googleapis", err))
+	//if resp, err := dtdal.HttpClient(ctx).Get("https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + googleAuthData.IdToken); err != nil {
+	//	ErrorAsJson(ctx, w, http.StatusBadRequest, fmt.Errorf("%w: Failed to call googleapis", err))
 	//	return
 	//} else if resp.StatusCode != 200 {
 	//	defer resp.Body.Close()
 	//	if body, err := ioutil.ReadAll(resp.Body); err != nil {
-	//		BadRequestMessage(c, w, "Failed to verify idToken")
+	//		BadRequestMessage(ctx, w, "Failed to verify idToken")
 	//	} else {
-	//		BadRequestMessage(c, w, "Failed to verify idToken: "+string(body))
+	//		BadRequestMessage(ctx, w, "Failed to verify idToken: "+string(body))
 	//	}
 	//	return
 	//} else {
 	//	defer resp.Body.Close()
 	//	if body, err := ioutil.ReadAll(resp.Body); err != nil {
-	//		ErrorAsJson(c, w, http.StatusInternalServerError, errors.Wrap(err, "Failed to read response body"))
+	//		ErrorAsJson(ctx, w, http.StatusInternalServerError, errors.Wrap(err, "Failed to read response body"))
 	//		return
 	//	} else {
-	//		logus.Infof(c, "idToken verified: %s", string(body))
+	//		logus.Infof(ctx, "idToken verified: %s", string(body))
 	//		if err = json.Unmarshal(body, &tokenData); err != nil {
-	//			ErrorAsJson(c, w, http.StatusInternalServerError, errors.Wrap(err, "Failed to unmarshal response body as JSON"))
+	//			ErrorAsJson(ctx, w, http.StatusInternalServerError, errors.Wrap(err, "Failed to unmarshal response body as JSON"))
 	//			return
 	//		}
 	//		if aud, ok := tokenData["aud"]; !ok || !strings.HasPrefix(aud, "74823955721-") {
-	//			BadRequestMessage(c, w, "idToken data has unexpected AUD: "+aud)
+	//			BadRequestMessage(ctx, w, "idToken data has unexpected AUD: "+aud)
 	//			return
 	//		}
 	//	}
@@ -85,9 +85,9 @@ func HandleSignedInWithGooglePlus(c context.Context, w http.ResponseWriter, r *h
 	//)
 	//
 	//err := dtdal.DB.RunInTransaction(
-	//	c,
-	//	func(c context.Context) (err error) {
-	//		userGooglePlus, err = dtdal.UserGooglePlus.GetUserGooglePlusByID(c, googleAuthData.UserId)
+	//	ctx,
+	//	func(ctx context.Context) (err error) {
+	//		userGooglePlus, err = dtdal.UserGooglePlus.GetUserGooglePlusByID(ctx, googleAuthData.UserId)
 	//		if err != nil {
 	//			if dal.IsNotFound(err) {
 	//				err = nil
@@ -121,7 +121,7 @@ func HandleSignedInWithGooglePlus(c context.Context, w http.ResponseWriter, r *h
 	//			//	LastName:     userGooglePlus.NameLast,
 	//			//}
 	//			var user models.AppUser
-	//			//if user, isNewUser, err = facade4debtus.User.GetOrCreateEmailUser(c, googleAuthData.Email, userGooglePlus.EmailVerified, &createUserData); err != nil {
+	//			//if user, isNewUser, err = facade4debtus.User.GetOrCreateEmailUser(ctx, googleAuthData.Email, userGooglePlus.EmailVerified, &createUserData); err != nil {
 	//			//	return
 	//			//}
 	//			userGooglePlus.AppUserIntID = user.ContactID
@@ -160,7 +160,7 @@ func HandleSignedInWithGooglePlus(c context.Context, w http.ResponseWriter, r *h
 	//
 	//		if changed {
 	//			userGooglePlus.DtUpdated = time.Now()
-	//			if err = dtdal.UserGooglePlus.SaveUserGooglePlusByID(c, userGooglePlus); err != nil {
+	//			if err = dtdal.UserGooglePlus.SaveUserGooglePlusByID(ctx, userGooglePlus); err != nil {
 	//				return
 	//			}
 	//		}
@@ -170,9 +170,9 @@ func HandleSignedInWithGooglePlus(c context.Context, w http.ResponseWriter, r *h
 	//)
 	//
 	//if err != nil {
-	//	ErrorAsJson(c, w, http.StatusInternalServerError, err)
+	//	ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 	//	return
 	//}
 	//
-	//ReturnToken(c, w, userGooglePlus.AppUserIntID, isNewUser, googleAuthData.Email == "alexander.trakhimenok@gmail.com")
+	//ReturnToken(ctx, w, userGooglePlus.AppUserIntID, isNewUser, googleAuthData.Email == "alexander.trakhimenok@gmail.com")
 }

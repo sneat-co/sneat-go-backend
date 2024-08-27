@@ -156,7 +156,7 @@ func AskTransferAmountCommand(code, messageTextFormat string, nextCommand botsfw
 		Code:    code,
 		Replies: []botsfw.Command{nextCommand},
 		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-			c := whc.Context()
+			ctx := whc.Context()
 
 			//amount := 0
 			//whc.chatData.AwaitingReplyTo = fmt.Sprintf("%v>%v?%v&amount=%v", whc.AwaitingReplyToPath(), code, whc.AwaitingReplyToQuery(), amount)
@@ -211,7 +211,7 @@ func AskTransferAmountCommand(code, messageTextFormat string, nextCommand botsfw
 				currencyText := chatData.GetWizardParam("currency")
 				if currencyText == "" {
 					awaitingReplyToQuery := botsfwmodels.AwaitingReplyToQuery(awaitingReplyTo)
-					logus.Warningf(c, "No currency in params: %v", awaitingReplyToQuery)
+					logus.Warningf(ctx, "No currency in params: %v", awaitingReplyToQuery)
 				}
 				m = whc.NewMessageByCode(messageTextFormat, html.EscapeString(currencyText))
 				if len(currencyText) == 3 && currencyText == strings.ToUpper(currencyText) {
@@ -256,10 +256,10 @@ func CreateAskTransferCounterpartyCommand(
 		Icon:    icon,
 		Replies: replies,
 		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-			c := whc.Context()
+			ctx := whc.Context()
 
 			user := dbo4userus.NewUserEntry(whc.AppUserID())
-			if err = dal4userus.GetUser(c, nil, user); err != nil {
+			if err = dal4userus.GetUser(ctx, nil, user); err != nil {
 				return
 			}
 			spaceID := user.Data.GetFamilySpaceID()
@@ -268,24 +268,24 @@ func CreateAskTransferCounterpartyCommand(
 			contactusSpace := dal4contactus.NewContactusSpaceEntry(spaceID)
 
 			var db dal.DB
-			if db, err = facade.GetDatabase(c); err != nil {
+			if db, err = facade.GetDatabase(ctx); err != nil {
 				return
 			}
 
-			if err = db.GetMulti(c, []dal.Record{debtusSpace.Record, contactusSpace.Record}); err != nil {
+			if err = db.GetMulti(ctx, []dal.Record{debtusSpace.Record, contactusSpace.Record}); err != nil {
 				return
 			}
 
 			//amount := 0
 			//whc.chatEntity.AwaitingReplyTo = fmt.Sprintf("%v>%v?%v&amount=%v", whc.AwaitingReplyToPath(), code, whc.AwaitingReplyToQuery(), amount)
 
-			logus.Debugf(c, "AskTransferCounterpartyCommand.Action(command.code=%v)", code)
+			logus.Debugf(ctx, "AskTransferCounterpartyCommand.Action(command.code=%v)", code)
 			chatEntity := whc.ChatData()
 			awaitingReplyTo := chatEntity.GetAwaitingReplyTo()
 			awaitingReplyToPath := botsfwmodels.AwaitingReplyToPath(awaitingReplyTo)
 			switch {
 			case strings.HasSuffix(awaitingReplyToPath, code): // If ends with it's own code display list of counterparties
-				logus.Debugf(c, "strings.HasSuffix(awaitingReplyToPath, code)")
+				logus.Debugf(ctx, "strings.HasSuffix(awaitingReplyToPath, code)")
 				input := whc.Input()
 				switch input.(type) {
 				case botsfw.WebhookContactMessage:
@@ -298,20 +298,20 @@ func CreateAskTransferCounterpartyCommand(
 					}
 
 					var contactIDs []string
-					if contactIDs, err = dtdal.Contact.GetContactIDsByTitle(c, nil, spaceID, whc.AppUserID(), mt, true); err != nil {
+					if contactIDs, err = dtdal.Contact.GetContactIDsByTitle(ctx, nil, spaceID, whc.AppUserID(), mt, true); err != nil {
 						return m, err
 					}
 					if mt == whc.Translate(trans.COMMAND_TEXT_SHOW_ALL_CONTACTS) {
-						logus.Debugf(c, "mt == whc.Translate(trans.COMMAND_TEXT_SHOW_ALL_CONTACTS)")
+						logus.Debugf(ctx, "mt == whc.Translate(trans.COMMAND_TEXT_SHOW_ALL_CONTACTS)")
 						m, err = listCounterpartiesAsButtons(whc, *contactusSpace.Data, *debtusSpace.Data, messageText, newContactCommand)
 					} else {
-						logus.Debugf(c, "mt != whc.Translate(trans.COMMAND_TEXT_SHOW_ALL_CONTACTS), len(contactIDs): %v", len(contactIDs))
+						logus.Debugf(ctx, "mt != whc.Translate(trans.COMMAND_TEXT_SHOW_ALL_CONTACTS), len(contactIDs): %v", len(contactIDs))
 						switch len(contactIDs) {
 						case 1:
 							contactID := contactIDs[0]
 							chatEntity.AddWizardParam(WizardParamCounterparty, contactID)
 							var contact models4debtus.DebtusSpaceContactEntry
-							if contact, err = facade4debtus.GetDebtusSpaceContactByID(c, nil, spaceID, contactID); err != nil {
+							if contact, err = facade4debtus.GetDebtusSpaceContactByID(ctx, nil, spaceID, contactID); err != nil {
 								return
 							}
 							m, err = onContactSelectedAction(whc, contact)
@@ -327,10 +327,10 @@ func CreateAskTransferCounterpartyCommand(
 				}
 				return m, err
 			case strings.Contains(awaitingReplyToPath, code):
-				logus.Debugf(c, "strings.Contains(awaitingReplyToPath, code)")
+				logus.Debugf(ctx, "strings.Contains(awaitingReplyToPath, code)")
 				return m, fmt.Errorf("command %s is incorrectly matched, whc.AwaitingReplyToPath(): %s", code, awaitingReplyToPath)
 			default:
-				logus.Debugf(c, "default:")
+				logus.Debugf(ctx, "default:")
 				if isReturn && len(debtusSpace.Data.Balance) <= 3 && len(debtusSpace.Data.Contacts) <= 3 {
 					// If there is little debts in total show selection of debts immediately
 					counterparties, err := dtdal.Contact.GetLatestContacts(whc, nil, spaceID, 0, len(debtusSpace.Data.Contacts))
@@ -342,15 +342,15 @@ func CreateAskTransferCounterpartyCommand(
 					var isTooManyRows bool
 					now := time.Now()
 					for _, counterparty := range counterparties {
-						balance, err := counterparty.Data.BalanceWithInterest(c, now)
+						balance, err := counterparty.Data.BalanceWithInterest(ctx, now)
 						if err != nil {
-							logus.Errorf(c, "Failed to get balance with interest for contact %v: %v", counterparty.ID, err)
+							logus.Errorf(ctx, "Failed to get balance with interest for contact %v: %v", counterparty.ID, err)
 							buttons = append(buttons, []string{emoji.ERROR_ICON + " ERROR: " + counterparty.Data.FullName()})
 							continue
 						}
 						if (len(buttons) + len(balance)) > 4 {
 							isTooManyRows = true
-							logus.Warningf(c, "Consider performance optimization - duplicate queries to get counterparties")
+							logus.Warningf(ctx, "Consider performance optimization - duplicate queries to get counterparties")
 							break
 						}
 						for currency, value := range balance {
@@ -383,9 +383,9 @@ func listCounterpartiesAsButtons(
 	m botsfw.MessageFromBot,
 	err error,
 ) {
-	c := whc.Context()
+	ctx := whc.Context()
 
-	logus.Debugf(c, "listCounterpartiesAsButtons")
+	logus.Debugf(ctx, "listCounterpartiesAsButtons")
 	queryString, err := url.ParseQuery(botsfwmodels.AwaitingReplyToQuery(whc.ChatData().GetAwaitingReplyTo()))
 	if err != nil {
 		return m, err
@@ -480,13 +480,13 @@ func NewTransferWizard(whc botsfw.WebhookContext) (TransferWizard, error) {
 	return TransferWizard{params: params}, err
 }
 
-func (w TransferWizard) CounterpartyID(c context.Context) string {
+func (w TransferWizard) CounterpartyID(ctx context.Context) string {
 	s := w.params.Get(WizardParamCounterparty)
 	if s == "" {
 		s = w.params.Get(WizardParamContact)
 	}
 	if s == "" {
-		logus.Debugf(c, "Wizard params: %v", w.params)
+		logus.Debugf(ctx, "Wizard params: %v", w.params)
 		return ""
 	}
 	return s
@@ -496,13 +496,13 @@ func TransferWizardCompletedCommand(code string) botsfw.Command {
 	return botsfw.Command{
 		Code: code,
 		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-			c := whc.Context()
+			ctx := whc.Context()
 
 			if chatEntity := whc.ChatData(); strings.Contains(chatEntity.GetAwaitingReplyTo(), "counterparty=0") {
 				return dtb_general2.MainMenuAction(whc, trans.MESSGE_TEXT_DEBT_ERROR_FIXED_START_OVER, false)
 			}
 
-			logus.Infof(c, "TransferWizardCompletedCommand(code=%v).Action()", code)
+			logus.Infof(ctx, "TransferWizardCompletedCommand(code=%v).Action()", code)
 			transferWizard, err := NewTransferWizard(whc)
 			if err != nil {
 				return m, err
@@ -518,7 +518,7 @@ func TransferWizardCompletedCommand(code string) botsfw.Command {
 				return m, fmt.Errorf("Can not decide direction due to unknown code: %v", code)
 			}
 
-			counterpartyId := transferWizard.CounterpartyID(c)
+			counterpartyId := transferWizard.CounterpartyID(ctx)
 			params := transferWizard.params
 
 			value, err := decimal.ParseDecimal64p2(params.Get("value"))
@@ -601,7 +601,7 @@ func CreateTransferFromBot(
 	m botsfw.MessageFromBot,
 	err error,
 ) {
-	c := whc.Context()
+	ctx := whc.Context()
 
 	if returnToTransferID != "" && !isReturn {
 		panic("returnToTransferID != 0 && !isReturn")
@@ -614,7 +614,7 @@ func CreateTransferFromBot(
 		},
 	)
 
-	pleaseWaitMessage, err := whc.Responder().SendMessage(c, pleaseWaitMessageConfig, botsfw.BotAPISendMessageOverHTTPS)
+	pleaseWaitMessage, err := whc.Responder().SendMessage(ctx, pleaseWaitMessageConfig, botsfw.BotAPISendMessageOverHTTPS)
 
 	if err != nil {
 		return m, err
@@ -623,7 +623,7 @@ func CreateTransferFromBot(
 	from, to := facade4debtus.TransferCounterparties(direction, creatorInfo)
 
 	var user dbo4userus.UserEntry
-	if user, err = dal4userus.GetUserByID(c, nil, whc.AppUserID()); err != nil {
+	if user, err = dal4userus.GetUserByID(ctx, nil, whc.AppUserID()); err != nil {
 		return
 	}
 	request := facade4debtus.CreateTransferRequest{
@@ -647,18 +647,18 @@ func CreateTransferFromBot(
 		switch err {
 		case facade4debtus.ErrNoOutstandingTransfers:
 			m.Text = whc.Translate(trans.MT_NO_OUTSTANDING_TRANSFERS)
-			logus.Warningf(c, "Attempt to create return but no outstanding debts: %v", err)
+			logus.Warningf(ctx, "Attempt to create return but no outstanding debts: %v", err)
 			return
 		case facade4debtus.ErrAttemptToCreateDebtWithInterestAffectingOutstandingTransfers:
 			//err = nil
 			buf := new(bytes.Buffer)
 			buf.WriteString(whc.Translate(trans.MT_ATTEMPT_TO_CREATE_DEBT_WITH_INTEREST_AFFECTING_OUTSTANDING) + "\n")
 			var db dal.DB
-			if db, err = facade.GetDatabase(c); err != nil {
+			if db, err = facade.GetDatabase(ctx); err != nil {
 				return
 			}
 			now := time.Now()
-			if outstandingTransfer, err := dtdal.Transfer.LoadOutstandingTransfers(c, db, now, user.ID, creatorInfo.ContactID, amount.Currency, newTransfer.Direction().Reverse()); err != nil {
+			if outstandingTransfer, err := dtdal.Transfer.LoadOutstandingTransfers(ctx, db, now, user.ID, creatorInfo.ContactID, amount.Currency, newTransfer.Direction().Reverse()); err != nil {
 				buf.WriteString(fmt.Errorf("failed to load outstanding api4transfers: %w", err).Error() + "\n")
 			} else if len(outstandingTransfer) == 0 {
 				return m, errors.New("got facade4debtus.ErrAttemptToCreateDebtWithInterestAffectingOutstandingTransfers but no outstanding api4transfers found")
@@ -670,7 +670,7 @@ func CreateTransferFromBot(
 			m.Text = buf.String()
 			return m, err
 		}
-		logus.Errorf(c, "Failed to create transfer: %v", err)
+		logus.Errorf(ctx, "Failed to create transfer: %v", err)
 		if errors.Is(err, facade4debtus.ErrNotImplemented) {
 			m.Text = whc.Translate(trans.MESSAGE_TEXT_NOT_IMPLEMENTED_YET) + "\n\n" + err.Error()
 			err = nil
@@ -678,7 +678,7 @@ func CreateTransferFromBot(
 		return m, err
 	}
 
-	logus.Debugf(c, "isReturn: %v, transfer.IsReturn: %v", isReturn, output.Transfer.Data.IsReturn)
+	logus.Debugf(ctx, "isReturn: %v, transfer.IsReturn: %v", isReturn, output.Transfer.Data.IsReturn)
 
 	{ // Reporting to Google Analytics
 		ga := whc.GA()
@@ -701,25 +701,25 @@ func CreateTransferFromBot(
 		gaEvent.Value = uint(math.Abs(output.Transfer.Data.AmountInCents.AsFloat64()) + 0.5)
 
 		if gaErr := ga.Queue(gaEvent); gaErr != nil {
-			logus.Warningf(c, "Failed to log event: %v", gaErr)
+			logus.Warningf(ctx, "Failed to log event: %v", gaErr)
 		} else {
-			logus.Infof(c, "GA event queued: %v", gaEvent)
+			logus.Infof(ctx, "GA event queued: %v", gaEvent)
 		}
 
 		if !output.Transfer.Data.DtDueOn.IsZero() {
 			gaEvent = ga.GaEvent(analytics.EventCategoryTransfers, analytics.EventActionDebtDueDateSet)
 			//Do not set event value!: gaEvent.Value = uint(transfer.DtDueOn.Sub(time.Now()) / time.Hour)
 			if gaErr := ga.Queue(gaEvent); gaErr != nil {
-				logus.Warningf(c, "Failed to log event: %v", gaErr)
+				logus.Warningf(ctx, "Failed to log event: %v", gaErr)
 			} else {
-				logus.Infof(c, "GA event queued: %v", gaEvent)
+				logus.Infof(ctx, "GA event queued: %v", gaEvent)
 			}
 		}
 	}
 
 	{
 		utm := common4debtus.NewUtmParams(whc, common4debtus.UTM_CAMPAIGN_RECEIPT)
-		receiptMessageText := common4debtus.TextReceiptForTransfer(c, whc, output.Transfer, whc.AppUserID(), common4debtus.ShowReceiptToAutodetect, utm)
+		receiptMessageText := common4debtus.TextReceiptForTransfer(ctx, whc, output.Transfer, whc.AppUserID(), common4debtus.ShowReceiptToAutodetect, utm)
 
 		switch whc.BotPlatform().ID() {
 		case telegram.PlatformID:
@@ -728,14 +728,14 @@ func CreateTransferFromBot(
 				return receiptMessageFromBot, err
 			}
 			receiptMessageFromBot.EditMessageUID = telegram.NewChatMessageUID(0, pleaseWaitMessage.TelegramMessage.(tgbotapi.Message).MessageID)
-			_, err = whc.Responder().SendMessage(c, receiptMessageFromBot, botsfw.BotAPISendMessageOverHTTPS)
+			_, err = whc.Responder().SendMessage(ctx, receiptMessageFromBot, botsfw.BotAPISendMessageOverHTTPS)
 			if err != nil {
 				return m, err
 			}
 			if receiptSendOptionsMessage, err := createSendReceiptOptionsMessage(whc, output.Transfer); err != nil {
 				return m, err
 			} else {
-				if response, err := whc.Responder().SendMessage(c, receiptSendOptionsMessage, botsfw.BotAPISendMessageOverHTTPS); err != nil {
+				if response, err := whc.Responder().SendMessage(ctx, receiptSendOptionsMessage, botsfw.BotAPISendMessageOverHTTPS); err != nil {
 					return m, err
 				} else {
 					tgMessage := response.TelegramMessage.(tgbotapi.Message)
@@ -747,7 +747,7 @@ func CreateTransferFromBot(
 			}
 		//case viber.PlatformID:
 		//	receiptMessageFromBot := whc.NewMessage(receiptMessageText)
-		//	whc.Responder().SendMessage(c, receiptMessageFromBot, botsfw.BotAPISendMessageOverHTTPS)
+		//	whc.Responder().SendMessage(ctx, receiptMessageFromBot, botsfw.BotAPISendMessageOverHTTPS)
 		default:
 			panic("Unsupported bot platform: " + whc.BotPlatform().ID())
 		}

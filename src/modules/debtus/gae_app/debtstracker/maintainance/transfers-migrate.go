@@ -13,11 +13,11 @@ package maintainance
 //	transfersAsyncJob
 //}
 //
-//func (m *migrateTransfers) Next(c context.Context, counters mapper.Counters, key *dal.Key) (err error) {
-//	return m.startTransferWorker(c, counters, key, m.migrateTransfer)
+//func (m *migrateTransfers) Next(ctx context.Context, counters mapper.Counters, key *dal.Key) (err error) {
+//	return m.startTransferWorker(ctx, counters, key, m.migrateTransfer)
 //}
 //
-//func (m *migrateTransfers) migrateTransfer(c context.Context, tx dal.ReadwriteTransaction, counters *asyncCounters, transfer models.Transfer) (err error) {
+//func (m *migrateTransfers) migrateTransfer(ctx context.Context, tx dal.ReadwriteTransaction, counters *asyncCounters, transfer models.Transfer) (err error) {
 //	if transfer.Data.CreatorUserID == 0 {
 //		logus.Errorf(c, "Transfer(ContactID=%v) is missing CreatorUserID")
 //		return
@@ -31,12 +31,12 @@ package maintainance
 //		return err
 //	}
 //
-//	if err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
-//		if transfer, err = facade4debtus.Transfers.GetTransferByID(c, tx, transfer.ContactID); err != nil {
+//	if err = db.RunReadwriteTransaction(ctx, func(tctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+//		if transfer, err = facade4debtus.Transfers.GetTransferByID(tctx, tx, transfer.ContactID); err != nil {
 //			return
 //		}
 //		if transfer.Data.HasObsoleteProps() {
-//			if err = facade4debtus.Transfers.SaveTransfer(tc, tx, transfer); err != nil {
+//			if err = facade4debtus.Transfers.SaveTransfer(tctx, tx, transfer); err != nil {
 //				return
 //			}
 //			logus.Infof(c, "Transfer %v fixed", transfer.ContactID)

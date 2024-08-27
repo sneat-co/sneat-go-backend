@@ -9,8 +9,8 @@ import (
 	"context"
 )
 
-func HandleSignInWithFbm(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
-	logus.Debugf(c, "api4debtus.HandleSignInWithFbm()")
+func HandleSignInWithFbm(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
+	logus.Debugf(ctx, "api4debtus.HandleSignInWithFbm()")
 
 	threadID := r.PostFormValue("tid")
 	threadType := r.PostFormValue("thread_type")
@@ -18,30 +18,30 @@ func HandleSignInWithFbm(c context.Context, w http.ResponseWriter, r *http.Reque
 	fbAppID := r.PostFormValue("fbAppID")
 
 	if fbAppID == "" {
-		api4debtus.BadRequestMessage(c, w, "Missing fbAppID")
+		api4debtus.BadRequestMessage(ctx, w, "Missing fbAppID")
 		return
 	}
 	if threadID == "" {
-		api4debtus.BadRequestMessage(c, w, "Missing tid")
+		api4debtus.BadRequestMessage(ctx, w, "Missing tid")
 		return
 	}
 	if threadType == "" {
-		api4debtus.BadRequestMessage(c, w, "Missing thread_type")
+		api4debtus.BadRequestMessage(ctx, w, "Missing thread_type")
 		return
 	}
 	if pageScopedID == "" {
-		api4debtus.BadRequestMessage(c, w, "Missing psid")
+		api4debtus.BadRequestMessage(ctx, w, "Missing psid")
 		return
 	}
 
 	// TODO: Log FbApp Code & FbPage Code (e.g. fbAppID=12345 => code=DebtsTracker)
-	logus.Debugf(c, "FbmContext: thread_type=%v, tid=%v, psid=%v", threadType, threadID, pageScopedID)
+	logus.Debugf(ctx, "FbmContext: thread_type=%v, tid=%v, psid=%v", threadType, threadID, pageScopedID)
 
-	user, isNewUser, _, _, _, err := signInFbUser(c, fbAppID, pageScopedID, r, authInfo)
+	user, isNewUser, _, _, _, err := signInFbUser(ctx, fbAppID, pageScopedID, r, authInfo)
 	if err != nil {
-		authWriteResponseForAuthFailed(c, w, err)
+		authWriteResponseForAuthFailed(ctx, w, err)
 		return
 	}
 
-	authWriteResponseForUser(c, w, user, "fbm", isNewUser)
+	authWriteResponseForUser(ctx, w, user, "fbm", isNewUser)
 }

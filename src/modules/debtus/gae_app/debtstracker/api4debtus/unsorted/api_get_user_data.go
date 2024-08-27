@@ -10,10 +10,10 @@ import (
 //	panic("Unknown status: " + status)
 //}
 
-func HandleGetUserData(c context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
+func HandleGetUserData(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	panic("not implemented")
-	//logus.Debugf(c, "HandleGetUserData(authInfo.UserID: %s)", authInfo.UserID)
-	//user, err := getApiUser(c, w, r, authInfo)
+	//logus.Debugf(ctx, "HandleGetUserData(authInfo.UserID: %s)", authInfo.UserID)
+	//user, err := getApiUser(ctx, w, r, authInfo)
 	//if err != nil {
 	//	return
 	//}
@@ -40,53 +40,53 @@ func HandleGetUserData(c context.Context, w http.ResponseWriter, r *http.Request
 	//status := getQueryValue("status")
 	//
 	//if status != "" && status != models4debtus.STATUS_ACTIVE && status != models4debtus.STATUS_ARCHIVED {
-	//	api.BadRequestMessage(c, w, "Unknown status: "+status)
+	//	api.BadRequestMessage(ctx, w, "Unknown status: "+status)
 	//	return
 	//}
 	//
 	//dataCodes := strings.Split(getQueryValue("load"), ",")
 	//if len(dataCodes) == 0 {
-	//	api.BadRequestMessage(c, w, "Missing `load` parameter value")
+	//	api.BadRequestMessage(ctx, w, "Missing `load` parameter value")
 	//	return
 	//}
 	//
-	////logus.Debugf(c, "load: %v", dataCodes)
+	////logus.Debugf(ctx, "load: %v", dataCodes)
 	//
 	//dataResults := make([]*bytes.Buffer, len(dataCodes))
 	//
 	//hasContent := false
 	//for i, dataCode := range dataCodes {
-	//	//logus.Debugf(c, "i=%d, dataCode=%v", i, dataCode)
+	//	//logus.Debugf(ctx, "i=%d, dataCode=%v", i, dataCode)
 	//	dataResults[i] = &bytes.Buffer{}
 	//	switch dataCode {
 	//	case "Contacts":
 	//		if status == models4debtus.STATUS_ACTIVE || status == models4debtus.STATUS_ARCHIVED {
-	//			hasContent = writeUserContactsToJson(c, dataResults[i], status, user) || hasContent
+	//			hasContent = writeUserContactsToJson(ctx, dataResults[i], status, user) || hasContent
 	//		} else {
 	//			panicUnknownStatus(status)
 	//		}
 	//	case "Groups":
 	//		if status == models4debtus.STATUS_ACTIVE || status == models4debtus.STATUS_ARCHIVED {
-	//			hasContent = writeUserGroupsToJson(c, dataResults[i], status, user) || hasContent
+	//			hasContent = writeUserGroupsToJson(ctx, dataResults[i], status, user) || hasContent
 	//		} else {
 	//			panicUnknownStatus(status)
 	//		}
 	//	case "Bills":
 	//		switch status {
 	//		case models4debtus.STATUS_ACTIVE:
-	//			hasContent = writeUserActiveBillsToJson(c, dataResults[i], user) || hasContent
+	//			hasContent = writeUserActiveBillsToJson(ctx, dataResults[i], user) || hasContent
 	//		default:
 	//			panicUnknownStatus(status)
 	//		}
 	//	case "BillSchedules":
 	//		switch status {
 	//		case models4debtus.STATUS_ACTIVE:
-	//			hasContent = writeUserActiveBillSchedulesToJson(c, dataResults[i], user) || hasContent
+	//			hasContent = writeUserActiveBillSchedulesToJson(ctx, dataResults[i], user) || hasContent
 	//		default:
 	//			panicUnknownStatus(status)
 	//		}
 	//	default:
-	//		api.BadRequestMessage(c, w, "Unknown data code: "+dataCode)
+	//		api.BadRequestMessage(ctx, w, "Unknown data code: "+dataCode)
 	//		return
 	//	}
 	//}
@@ -130,7 +130,7 @@ func HandleGetUserData(c context.Context, w http.ResponseWriter, r *http.Request
 //	return false
 //}
 //
-//func writeUserContactsToJson(c context.Context, w io.Writer, status string, user models4debtus.AppUser) bool {
+//func writeUserContactsToJson(ctx context.Context, w io.Writer, status string, user models4debtus.AppUser) bool {
 //	//logus.Debugf(c, "writeUserContactsToJson(status=%v)", status)
 //	var jsonVal string
 //	switch status {
@@ -150,7 +150,7 @@ func HandleGetUserData(c context.Context, w http.ResponseWriter, r *http.Request
 //	return false
 //}
 //
-//func writeUserActiveBillsToJson(c context.Context, w io.Writer, user models4debtus.AppUser) bool {
+//func writeUserActiveBillsToJson(ctx context.Context, w io.Writer, user models4debtus.AppUser) bool {
 //	if user.Data.BillsJsonActive != "" {
 //		logus.Debugf(c, "User has BillsJsonActive")
 //		if user.Data.BillsCountActive == 0 {
@@ -163,7 +163,7 @@ func HandleGetUserData(c context.Context, w http.ResponseWriter, r *http.Request
 //	return false
 //}
 //
-//func writeUserActiveBillSchedulesToJson(c context.Context, w io.Writer, user models4debtus.AppUser) bool {
+//func writeUserActiveBillSchedulesToJson(ctx context.Context, w io.Writer, user models4debtus.AppUser) bool {
 //	if user.Data.BillSchedulesJsonActive != "" {
 //		logus.Debugf(c, "User has BillSchedulesJsonActive")
 //		if user.Data.BillSchedulesCountActive == 0 {

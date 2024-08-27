@@ -29,7 +29,7 @@ var billsCommand = botsfw.Command{
 }
 
 func billsAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
+	ctx := whc.Context()
 	var isInGroup bool
 	if isInGroup, err = whc.IsInGroup(); err != nil {
 		return
@@ -38,10 +38,10 @@ func billsAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error)
 		userDebtus := models4debtus.NewDebtusUserEntry(userID)
 
 		var db dal.DB
-		if db, err = facade.GetDatabase(c); err != nil {
+		if db, err = facade.GetDatabase(ctx); err != nil {
 			return
 		}
-		if err = db.Get(c, userDebtus.Record); err != nil {
+		if err = db.Get(ctx, userDebtus.Record); err != nil {
 			return
 		}
 		if len(userDebtus.Data.OutstandingBills) == 0 {

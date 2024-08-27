@@ -17,7 +17,7 @@ func InitDelays4debtus(mustRegisterFunc func(key string, i any) delaying.Functio
 	delayerUpdateSpaceHasDueTransfers = mustRegisterFunc("delayedUpdateSpaceHasDueTransfers", delayedUpdateSpaceHasDueTransfers)
 }
 
-func DelayUpdateHasDueTransfers(c context.Context, userID, spaceID string) error {
+func DelayUpdateHasDueTransfers(ctx context.Context, userID, spaceID string) error {
 	if userID == "" {
 		return errors.New("userID is a required parameter")
 	}
@@ -29,14 +29,14 @@ func DelayUpdateHasDueTransfers(c context.Context, userID, spaceID string) error
 	errs := make([]error, 0, 2)
 	go func() {
 		defer wg.Done()
-		err := delayerUpdateUserHasDueTransfers.EnqueueWork(c, delaying.With(const4debtus.QueueDebtus, "delayedUpdateUserHasDueTransfers", 0), userID, spaceID)
+		err := delayerUpdateUserHasDueTransfers.EnqueueWork(ctx, delaying.With(const4debtus.QueueDebtus, "delayedUpdateUserHasDueTransfers", 0), userID, spaceID)
 		if err != nil {
 			errs = append(errs, err)
 		}
 	}()
 	go func() {
 		defer wg.Done()
-		err := delayerUpdateSpaceHasDueTransfers.EnqueueWork(c, delaying.With(const4debtus.QueueDebtus, "delayedUpdateSpaceHasDueTransfers", 0), userID, spaceID)
+		err := delayerUpdateSpaceHasDueTransfers.EnqueueWork(ctx, delaying.With(const4debtus.QueueDebtus, "delayedUpdateSpaceHasDueTransfers", 0), userID, spaceID)
 		if err != nil {
 			errs = append(errs, err)
 		}

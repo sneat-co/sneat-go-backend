@@ -19,10 +19,10 @@ func NewUserVkDalGae() UserVkDalGae {
 	return UserVkDalGae{}
 }
 
-func (UserVkDalGae) GetUserVkByID(c context.Context, vkUserID int64) (vkUser models4auth.UserVk, err error) {
-	//vkUserKey := NewUserVkKey(c, vkUserID)
+func (UserVkDalGae) GetUserVkByID(_ context.Context, vkUserID int64) (vkUser models4auth.UserVk, err error) {
+	//vkUserKey := NewUserVkKey(ctx, vkUserID)
 	//var vkUserEntity models.UserVkEntity
-	//if err = gaedb.Get(c, vkUserKey, &vkUserEntity); err != nil {
+	//if err = gaedb.Get(ctx, vkUserKey, &vkUserEntity); err != nil {
 	//	if err == datastore.ErrNoSuchEntity {
 	//		err = db.NewErrNotFoundByIntID(models.UserVkKind, vkUserID, nil)
 	//	}
@@ -32,8 +32,8 @@ func (UserVkDalGae) GetUserVkByID(c context.Context, vkUserID int64) (vkUser mod
 	return vkUser, errors.New("not implemented")
 }
 
-func (UserVkDalGae) SaveUserVk(c context.Context, userVk models4auth.UserVk) (err error) {
-	//k := NewUserVkKey(c, userVk.ContactID)
-	//_, err = gaedb.Put(c, k, userVk)
+func (UserVkDalGae) SaveUserVk(_ context.Context, userVk models4auth.UserVk) (err error) {
+	//k := NewUserVkKey(ctx, userVk.ContactID)
+	//_, err = gaedb.Put(ctx, k, userVk)
 	return errors.New("not implemented")
 }

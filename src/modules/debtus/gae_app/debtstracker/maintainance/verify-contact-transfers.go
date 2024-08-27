@@ -4,12 +4,12 @@ package maintainance
 //	contactsAsyncJob
 //}
 //
-//func (m *verifyContactTransfers) Next(c context.Context, counters mapper.Counters, key *datastore.Key) error {
-//	return m.startContactWorker(c, counters, key, m.processContact)
+//func (m *verifyContactTransfers) Next(ctx context.Context, counters mapper.Counters, key *datastore.Key) error {
+//	return m.startContactWorker(ctx, counters, key, m.processContact)
 //}
 //
-//func (m *verifyContactTransfers) processContact(c context.Context, counters *asyncCounters, contact models.DebtusSpaceContactEntry) (err error) {
-//	//logus.Debugf(c, "processContact(contact.ContactID=%v)", contact.ContactID)
+//func (m *verifyContactTransfers) processContact(ctx context.Context, counters *asyncCounters, contact models.DebtusSpaceContactEntry) (err error) {
+//	//logus.Debugf(ctx, "processContact(contact.ContactID=%v)", contact.ContactID)
 //	buf := new(bytes.Buffer)
 //	now := time.Now()
 //	hasError := false
@@ -130,8 +130,8 @@ package maintainance
 //
 //			if changed {
 //				logus.Warningf(c, "Fixing contact details for transfer %v: From:%v, To: %v\n\noriginal: %v\n\n new: %v", transfer.ContactID, litter.Sdump(transfer.Data.From()), litter.Sdump(transfer.Data.To()), litter.Sdump(originalTransfer), litter.Sdump(transfer))
-//				err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-//					return facade4debtus.Transfers.SaveTransfer(c, tx, transfer)
+//				err = db.RunReadwriteTransaction(c, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+//					return facade4debtus.Transfers.SaveTransfer(ctx, tx, transfer)
 //				})
 //				if err != nil {
 //					logus.Errorf(c, fmt.Errorf("failed to save transfer: %w", err).Error())
@@ -224,8 +224,8 @@ package maintainance
 //				recordsToSave = append(recordsToSave, models.NewTransfer(id, transfer).Record)
 //			}
 //			//gaedb.LoggingEnabled = true
-//			err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-//				return tx.SetMulti(c, recordsToSave)
+//			err = db.RunReadwriteTransaction(c, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+//				return tx.SetMulti(ctx, recordsToSave)
 //			})
 //			if err != nil {
 //				_, _ = fmt.Fprintf(buf, "ERROR: failed to save api4transfers: %v\n", err)
@@ -313,17 +313,17 @@ package maintainance
 //	return
 //}
 //
-//func (m *verifyContactTransfers) fixContactAndUser(c context.Context, buf *bytes.Buffer, counters *asyncCounters, contactID int64, transfersBalance money.Balance, transfersCount int, lastTransfer models.Transfer) (contact models.DebtusSpaceContactEntry, user models.AppUser, err error) {
+//func (m *verifyContactTransfers) fixContactAndUser(ctx context.Context, buf *bytes.Buffer, counters *asyncCounters, contactID int64, transfersBalance money.Balance, transfersCount int, lastTransfer models.Transfer) (contact models.DebtusSpaceContactEntry, user models.AppUser, err error) {
 //	var db dal.DB
 //	if db, err = facade4debtus.GetDatabase(c); err != nil {
 //		return
 //	}
-//	if err = db.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) (err error) {
-//		if contact, user, err = m.fixContactAndUserWithinTransaction(c, tx, buf, counters, contactID, transfersBalance, transfersCount, lastTransfer); err != nil {
+//	if err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+//		if contact, user, err = m.fixContactAndUserWithinTransaction(ctx, tx, buf, counters, contactID, transfersBalance, transfersCount, lastTransfer); err != nil {
 //			return
 //		}
 //		if contact.Data.CounterpartyContactID != 0 {
-//			if _, _, err = m.fixContactAndUserWithinTransaction(c, tx, buf, counters, contact.Data.CounterpartyContactID, transfersBalance.Reversed(), transfersCount, lastTransfer); err != nil {
+//			if _, _, err = m.fixContactAndUserWithinTransaction(ctx, tx, buf, counters, contact.Data.CounterpartyContactID, transfersBalance.Reversed(), transfersCount, lastTransfer); err != nil {
 //				return
 //			}
 //		}
@@ -334,9 +334,9 @@ package maintainance
 //	return
 //}
 //
-//func (m *verifyContactTransfers) fixContactAndUserWithinTransaction(c context.Context, tx dal.ReadwriteTransaction, buf *bytes.Buffer, counters *asyncCounters, contactID int64, transfersBalance money.Balance, transfersCount int, lastTransfer models.Transfer) (contact models.DebtusSpaceContactEntry, user models.AppUser, err error) {
+//func (m *verifyContactTransfers) fixContactAndUserWithinTransaction(ctx context.Context, tx dal.ReadwriteTransaction, buf *bytes.Buffer, counters *asyncCounters, contactID int64, transfersBalance money.Balance, transfersCount int, lastTransfer models.Transfer) (contact models.DebtusSpaceContactEntry, user models.AppUser, err error) {
 //	fmt.Fprintf(buf, "Fixing contact %v...\n", contactID)
-//	if contact, err = facade4debtus.GetContactByID(c, tx, contactID); err != nil {
+//	if contact, err = facade4debtus.GetContactByID(ctx, tx, contactID); err != nil {
 //		return
 //	}
 //	changed := false
@@ -433,7 +433,7 @@ package maintainance
 //	return
 //}
 //
-//func (m *verifyContactTransfers) verifyOutstanding(c context.Context, iteration int, buf *bytes.Buffer, contactBalance money.Balance, transfersBalance money.Balance) (valid bool, warningsCount int) {
+//func (m *verifyContactTransfers) verifyOutstanding(ctx context.Context, iteration int, buf *bytes.Buffer, contactBalance money.Balance, transfersBalance money.Balance) (valid bool, warningsCount int) {
 //	fmt.Fprintf(buf, "\tverifyOutstanding(iteration=%v):\n", iteration)
 //	valid = true
 //
@@ -452,7 +452,7 @@ package maintainance
 //	return
 //}
 //
-//func (m *verifyContactTransfers) fixTransfers(c context.Context, now time.Time, buf *bytes.Buffer, contact models.DebtusSpaceContactEntry, api4transfers []models.Transfer) (
+//func (m *verifyContactTransfers) fixTransfers(ctx context.Context, now time.Time, buf *bytes.Buffer, contact models.DebtusSpaceContactEntry, api4transfers []models.Transfer) (
 //	transfersByCurrency map[money.CurrencyCode][]models.Transfer,
 //	transfersToSave map[int]*models.TransferData,
 //) {

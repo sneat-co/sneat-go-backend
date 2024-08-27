@@ -11,7 +11,7 @@ package dtb_fbm
 //var FbmGetStartedCommand = botsfw.Command{ // TODO: Move command to other package?
 //	Code: "fbm-get-started",
 //	CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-//		c := whc.Context()
+//		ctx := whc.Context()
 //		logus.Debugf(c, "FbmGetStartedCommand.CallbackAction() => callbackUrl: %v", callbackUrl)
 //		//m.Text = "Welcome!"
 //		m.FbmAttachment = &fbmbotapi.RequestAttachment{
@@ -36,8 +36,8 @@ package dtb_fbm
 //var FbmMainMenuCommand = botsfw.Command{
 //	Code: "fbm-main-menu",
 //	CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-//		c := whc.Context()
-//		logus.Debugf(c, "FbmMainMenuCommand.CallbackAction() => callbackUrl: %v", callbackUrl)
+//		ctx := whc.Context()
+//		logus.Debugf(ctx, "FbmMainMenuCommand.CallbackAction() => callbackUrl: %v", callbackUrl)
 //
 //		m.FbmAttachment = &fbmbotapi.RequestAttachment{
 //			ExtraType: fbmbotapi.RequestAttachmentTypeTemplate,
@@ -56,8 +56,8 @@ package dtb_fbm
 //var FbmDebtsCommand = botsfw.Command{
 //	Code: "fbm-debts",
 //	CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-//		c := whc.Context()
-//		logus.Debugf(c, "FbmDebtsCommand.CallbackAction() => callbackUrl: %v", callbackUrl)
+//		ctx := whc.Context()
+//		logus.Debugf(ctx, "FbmDebtsCommand.CallbackAction() => callbackUrl: %v", callbackUrl)
 //
 //		m.FbmAttachment = &fbmbotapi.RequestAttachment{
 //			ExtraType: fbmbotapi.RequestAttachmentTypeTemplate,
@@ -73,8 +73,8 @@ package dtb_fbm
 //var FbmBillsCommand = botsfw.Command{
 //	Code: "fbm-bills",
 //	CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-//		c := whc.Context()
-//		logus.Debugf(c, "FbmBillsCommand.CallbackAction() => callbackUrl: %v", callbackUrl)
+//		ctx := whc.Context()
+//		logus.Debugf(ctx, "FbmBillsCommand.CallbackAction() => callbackUrl: %v", callbackUrl)
 //		//m.Text = "Welcome!"
 //		m.FbmAttachment = &fbmbotapi.RequestAttachment{
 //			ExtraType: fbmbotapi.RequestAttachmentTypeTemplate,
@@ -90,7 +90,7 @@ package dtb_fbm
 //var FbmSettingsCommand = botsfw.Command{
 //	Code: "fbm-settings",
 //	CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-//		c := whc.Context()
+//		ctx := whc.Context()
 //		logus.Debugf(c, "FbmSettingsCommand.CallbackAction() => callbackUrl: %v", callbackUrl)
 //		m.FbmAttachment = &fbmbotapi.RequestAttachment{
 //			ExtraType: fbmbotapi.RequestAttachmentTypeTemplate,

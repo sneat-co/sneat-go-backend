@@ -18,9 +18,9 @@ type authFacade struct {
 
 var AuthFacade = authFacade{}
 
-func (authFacade) AssignPinCode(c context.Context, loginID int, userID string) (loginPin models4auth.LoginPin, err error) {
-	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-		if loginPin, err = dtdal.LoginPin.GetLoginPinByID(c, tx, loginID); err != nil {
+func (authFacade) AssignPinCode(ctx context.Context, loginID int, userID string) (loginPin models4auth.LoginPin, err error) {
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+		if loginPin, err = dtdal.LoginPin.GetLoginPinByID(ctx, tx, loginID); err != nil {
 			return fmt.Errorf("failed to get LoginPin entity by ContactID=%v: %w", loginID, err)
 		}
 		if loginPin.Data.UserID != "" && loginPin.Data.UserID != userID {
@@ -33,7 +33,7 @@ func (authFacade) AssignPinCode(c context.Context, loginID int, userID string) (
 		loginPin.Data.Code = random.Int31n(9000) + 1000
 		loginPin.Data.UserID = userID
 		loginPin.Data.Pinned = time.Now()
-		if err = dtdal.LoginPin.SaveLoginPin(c, tx, loginPin); err != nil {
+		if err = dtdal.LoginPin.SaveLoginPin(ctx, tx, loginPin); err != nil {
 			return fmt.Errorf("failed to save LoginPin entity with ContactID=%v: %w", loginID, err)
 		}
 		return err
@@ -41,11 +41,11 @@ func (authFacade) AssignPinCode(c context.Context, loginID int, userID string) (
 	return
 }
 
-func (authFacade) SignInWithPin(c context.Context, loginID int, loginPinCode int32) (userID string, err error) {
+func (authFacade) SignInWithPin(ctx context.Context, loginID int, loginPinCode int32) (userID string, err error) {
 	_ = loginPinCode
-	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		var loginPin models4auth.LoginPin
-		if loginPin, err = dtdal.LoginPin.GetLoginPinByID(c, tx, loginID); err != nil {
+		if loginPin, err = dtdal.LoginPin.GetLoginPinByID(ctx, tx, loginID); err != nil {
 			return fmt.Errorf("failed to get LoginPin entity by ContactID=%v: %w", loginID, err)
 		}
 		if !loginPin.Data.SignedIn.IsZero() {
@@ -59,7 +59,7 @@ func (authFacade) SignInWithPin(c context.Context, loginID int, loginPinCode int
 		}
 
 		loginPin.Data.SignedIn = time.Now()
-		if err = dtdal.LoginPin.SaveLoginPin(c, tx, loginPin); err != nil {
+		if err = dtdal.LoginPin.SaveLoginPin(ctx, tx, loginPin); err != nil {
 			return err
 		}
 		return err

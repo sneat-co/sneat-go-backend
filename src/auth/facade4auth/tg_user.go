@@ -16,9 +16,9 @@ func NewTgUserDalGae() TgUserDalGae {
 	return TgUserDalGae{}
 }
 
-func (TgUserDalGae) FindByUserName(c context.Context, tx dal.ReadSession, userName string) (tgUsers []botsfwtgmodels.TgPlatformUser, err error) {
+func (TgUserDalGae) FindByUserName(ctx context.Context, tx dal.ReadSession, userName string) (tgUsers []botsfwtgmodels.TgPlatformUser, err error) {
 	if tx == nil {
-		tx, err = facade.GetDatabase(c)
+		tx, err = facade.GetDatabase(ctx)
 		if err != nil {
 			return
 		}
@@ -31,7 +31,7 @@ func (TgUserDalGae) FindByUserName(c context.Context, tx dal.ReadSession, userNa
 	})
 	var records []dal.Record
 
-	if records, err = tx.QueryAllRecords(c, query); err != nil {
+	if records, err = tx.QueryAllRecords(ctx, query); err != nil {
 		return
 	}
 	tgUsers = make([]botsfwtgmodels.TgPlatformUser, len(records))

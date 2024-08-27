@@ -116,15 +116,15 @@ func groupSettingsSetCurrencyCommand(params shared_all.BotParams) botsfw.Command
 		CallbackAction: shared_space.NewSpaceCallbackAction(func(whc botsfw.WebhookContext, callbackUrl *url.URL, space dbo4spaceus.SpaceEntry) (m botsfw.MessageFromBot, err error) {
 			currency := money.CurrencyCode(callbackUrl.Query().Get(CURRENCY_PARAM_NAME))
 			if space.Data.PrimaryCurrency != currency {
-				c := whc.Context()
+				ctx := whc.Context()
 				user := facade.NewUserContext(whc.AppUserID())
-				if err := dal4spaceus.RunSpaceWorker(c, user, space.ID, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.SpaceWorkerParams) (err error) {
+				if err := dal4spaceus.RunSpaceWorker(ctx, user, space.ID, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.SpaceWorkerParams) (err error) {
 					params.SpaceUpdates, err = space.Data.SetPrimaryCurrency(currency)
 					return
 				}); err != nil {
 					logus.Errorf(whc.Context(), "failed to change space default currency: %v", err)
 				} else {
-					logus.Debugf(c, "Default currency for space %v updated to: %v", space.ID, currency)
+					logus.Debugf(ctx, "Default currency for space %v updated to: %v", space.ID, currency)
 				}
 			}
 			if callbackUrl.Query().Get("start") == "y" {

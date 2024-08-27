@@ -77,7 +77,7 @@ func SendInviteByEmail(ec strongoapp.ExecutionContext, translator i18n.SingleLoc
 	return
 }
 
-func SendReceiptByEmail(c context.Context, translator i18n.SingleLocaleTranslator, receipt models4debtus.ReceiptEntry, fromName, toName, toEmail string) (emailID string, err error) {
+func SendReceiptByEmail(ctx context.Context, translator i18n.SingleLocaleTranslator, receipt models4debtus.ReceiptEntry, fromName, toName, toEmail string) (emailID string, err error) {
 	templateParams := struct {
 		ToName     string
 		FromName   string
@@ -90,12 +90,12 @@ func SendReceiptByEmail(c context.Context, translator i18n.SingleLocaleTranslato
 		template.HTML(""),
 	}
 
-	subject, err := common4debtus.TextTemplates.RenderTemplate(c, translator, trans.EMAIL_RECEIPT_SUBJ, templateParams)
+	subject, err := common4debtus.TextTemplates.RenderTemplate(ctx, translator, trans.EMAIL_RECEIPT_SUBJ, templateParams)
 	if err != nil {
 		return "", err
 	}
 
-	bodyText, err := common4debtus.TextTemplates.RenderTemplate(c, translator, trans.EMAIL_RECEIPT_BODY_TEXT, templateParams)
+	bodyText, err := common4debtus.TextTemplates.RenderTemplate(ctx, translator, trans.EMAIL_RECEIPT_BODY_TEXT, templateParams)
 	if err != nil {
 		return "", err
 	}
@@ -104,7 +104,7 @@ func SendReceiptByEmail(c context.Context, translator i18n.SingleLocaleTranslato
 	//displayUrl := strings.Split(string(templateParams.ReceiptURL), "#")[0]
 	templateParams.ReceiptURL = template.HTML(fmt.Sprintf(`<a href="%v">%v</a>`, receiptURL, receiptURL))
 	var bodyHtml bytes.Buffer
-	if err = common4debtus.HtmlTemplates.RenderTemplate(c, &bodyHtml, translator, trans.EMAIL_RECEIPT_BODY_HTML, templateParams); err != nil {
+	if err = common4debtus.HtmlTemplates.RenderTemplate(ctx, &bodyHtml, translator, trans.EMAIL_RECEIPT_BODY_HTML, templateParams); err != nil {
 		return "", err
 	}
 
@@ -115,5 +115,5 @@ func SendReceiptByEmail(c context.Context, translator i18n.SingleLocaleTranslato
 		Text:    bodyText,
 		HTML:    bodyHtml.String(),
 	}
-	return emailing.SendEmail(c, emailMessage)
+	return emailing.SendEmail(ctx, emailMessage)
 }

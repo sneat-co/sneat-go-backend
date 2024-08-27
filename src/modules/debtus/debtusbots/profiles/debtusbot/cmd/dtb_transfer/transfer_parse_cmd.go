@@ -85,7 +85,7 @@ var ParseTransferCommand = botsfw.Command{
 			UserID:      whc.AppUserID(),
 			ContactName: counterpartyName,
 		}
-		c := whc.Context()
+		ctx := whc.Context()
 
 		from, to := facade4debtus.TransferCounterparties(direction, creatorInfo)
 
@@ -109,12 +109,12 @@ var ParseTransferCommand = botsfw.Command{
 			from, to,
 		)
 
-		output, err := facade4debtus.Transfers.CreateTransfer(c, newTransfer)
+		output, err := facade4debtus.Transfers.CreateTransfer(ctx, newTransfer)
 
 		//transferKey, err = nds.Put(ctx, transferKey, transfer)
 
 		if err != nil {
-			logus.Errorf(c, "Failed to save transfer & counterparty to datastore: %v", err)
+			logus.Errorf(ctx, "Failed to save transfer & counterparty to datastore: %v", err)
 			return m, err
 		}
 

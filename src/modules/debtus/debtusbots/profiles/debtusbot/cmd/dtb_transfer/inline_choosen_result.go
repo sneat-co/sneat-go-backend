@@ -22,14 +22,14 @@ func showReceiptAnnouncement(whc botsfw.WebhookContext, receiptID string, creato
 		return m, fmt.Errorf("showReceiptAnnouncement: Unsupported InputType=%T", input)
 	}
 
-	c := whc.Context()
+	ctx := whc.Context()
 
-	receipt, err := dtdal.Receipt.GetReceiptByID(c, nil, receiptID)
+	receipt, err := dtdal.Receipt.GetReceiptByID(ctx, nil, receiptID)
 	if err != nil {
 		return m, err
 	}
 	if creatorName == "" {
-		user, err := dal4userus.GetUserByID(c, nil, receipt.Data.CreatorUserID)
+		user, err := dal4userus.GetUserByID(ctx, nil, receipt.Data.CreatorUserID)
 		if err != nil {
 			return m, err
 		}

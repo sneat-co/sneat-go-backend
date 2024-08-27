@@ -36,7 +36,7 @@ package maintainance
 //	return
 //}
 //
-//func (m *verifyTelegramUserAccounts) Next(c context.Context, counters mapper.Counters, key *datastore.Key) (err error) {
+//func (m *verifyTelegramUserAccounts) Next(ctx context.Context, counters mapper.Counters, key *datastore.Key) (err error) {
 //	entity := *m.entity
 //	if key.StringID() == "" {
 //		if key.IntID() != 0 {
@@ -59,7 +59,7 @@ package maintainance
 //	return
 //}
 //
-//func (m *verifyTelegramUserAccounts) dealWithIntKey(c context.Context, counters *asyncCounters, key *datastore.Key, tgChatEntity *models.DebtusTelegramChatData) (err error) {
+//func (m *verifyTelegramUserAccounts) dealWithIntKey(ctx context.Context, counters *asyncCounters, key *datastore.Key, tgChatEntity *models.DebtusTelegramChatData) (err error) {
 //	panic("TODO: implement me")
 //	//if tgChatEntity.BotID == "" {
 //	//	counters.Increment("empty_BotID_count", 1)
@@ -70,15 +70,15 @@ package maintainance
 //	//	counters.Increment("empty_BotID_deleted", 1)
 //	//}
 //	//var tgChat models.DebtusTelegramChat
-//	//if tgChat, err = dtdal.TgChat.GetTgChatByID(c, tgChatEntity.BotID, tgChatEntity.TelegramUserID); err != nil {
+//	//if tgChat, err = dtdal.TgChat.GetTgChatByID(ctx, tgChatEntity.BotID, tgChatEntity.TelegramUserID); err != nil {
 //	//	if dal.IsNotFound(err) {
 //	//		//tgChat.SetID(tgChatEntity.BotID, tgChatEntity.TelegramUserID)
 //	//		//tgChat.SetEntity(tgChatEntity)
-//	//		if err = dtdal.DB.Update(c, &tgChat); err != nil {
+//	//		if err = dtdal.DB.Update(ctx, &tgChat); err != nil {
 //	//			logus.Errorf(c, "failed to created entity with fixed key %v: %v", tgChat.ContactID, err)
 //	//			return nil
 //	//		}
-//	//		if err = datastore.Delete(c, key); err != nil {
+//	//		if err = datastore.Delete(ctx, key); err != nil {
 //	//			logus.Errorf(c, "failed to delete migrated %v: %v", key.IntID(), err)
 //	//			return nil
 //	//		}
@@ -101,7 +101,7 @@ package maintainance
 //	//return
 //}
 //
-//func (m *verifyTelegramUserAccounts) processTelegramChat(c context.Context, tgChat models.DebtusTelegramChat, counters *asyncCounters) (err error) {
+//func (m *verifyTelegramUserAccounts) processTelegramChat(ctx context.Context, tgChat models.DebtusTelegramChat, counters *asyncCounters) (err error) {
 //	panic("TODO: implement")
 //	//var (
 //	//	user        models.AppUser
@@ -117,8 +117,8 @@ package maintainance
 //	//				return
 //	//			}
 //	//		}
-//	//		if err = dtdal.DB.RunInTransaction(c, func(c context.Context) (err error) {
-//	//			if tgChat, err = dtdal.TgChat.GetTgChatByID(c, botID, tgUserID); err != nil {
+//	//		if err = dtdal.DB.RunInTransaction(c, func(ctx context.Context) (err error) {
+//	//			if tgChat, err = dtdal.TgChat.GetTgChatByID(ctx, botID, tgUserID); err != nil {
 //	//				return
 //	//			}
 //	//			tgChat.TelegramUserID = tgUserID
@@ -138,8 +138,8 @@ package maintainance
 //	//	logus.Warningf(c, "TgChat(%v).AppUserIntID == 0", tgChat.ContactID)
 //	//	return
 //	//}
-//	//if err = dtdal.DB.RunInTransaction(c, func(c context.Context) (err error) {
-//	//	if user, err = dal4userus.GetUserByID(c, tgChat.AppUserIntID); err != nil {
+//	//if err = dtdal.DB.RunInTransaction(ctx, func(ctx context.Context) (err error) {
+//	//	if user, err = dal4userus.GetUserByID(ctx, tgChat.AppUserIntID); err != nil {
 //	//		if dal.IsNotFound(err) {
 //	//			logus.Errorf(c, "Failed to process %v: %v", tgChat.ContactID, err)
 //	//			err = nil

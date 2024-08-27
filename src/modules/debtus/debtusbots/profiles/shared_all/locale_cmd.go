@@ -113,8 +113,8 @@ func setLocaleCallbackCommand(botParams BotParams) botsfw.Command {
 }
 
 func setPreferredLanguageAction(whc botsfw.WebhookContext, code5, mode string, botParams BotParams) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
-	logus.Debugf(c, "setPreferredLanguageAction(code5=%v, mode=%v)", code5, mode)
+	ctx := whc.Context()
+	logus.Debugf(ctx, "setPreferredLanguageAction(code5=%v, mode=%v)", code5, mode)
 
 	var (
 		localeChanged  bool
@@ -123,23 +123,23 @@ func setPreferredLanguageAction(whc botsfw.WebhookContext, code5, mode string, b
 
 	chatData := whc.ChatData()
 	preferredLocale := chatData.GetPreferredLanguage()
-	logus.Debugf(c, "userEntity.PreferredLanguage: %v, chatData.GetPreferredLanguage(): %v, code5: %v", preferredLocale, chatData.GetPreferredLanguage(), code5)
+	logus.Debugf(ctx, "userEntity.PreferredLanguage: %v, chatData.GetPreferredLanguage(): %v, code5: %v", preferredLocale, chatData.GetPreferredLanguage(), code5)
 	if preferredLocale != code5 || chatData.GetPreferredLanguage() != code5 {
-		logus.Debugf(c, "PreferredLanguage will be updated for userEntity & chat entities.")
+		logus.Debugf(ctx, "PreferredLanguage will be updated for userEntity & chat entities.")
 		for _, locale := range trans.SupportedLocalesByCode5 {
 			if locale.Code5 == code5 {
 				_ = whc.SetLocale(locale.Code5)
 
 				if appUserID := whc.AppUserID(); appUserID != "" {
 					userCtx := facade.NewUserContext(appUserID)
-					if err = dal4userus.RunUserWorker(c, userCtx, func(c context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) (err error) {
+					if err = dal4userus.RunUserWorker(ctx, userCtx, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) (err error) {
 						if params.UserUpdates, err = params.User.Data.SetPreferredLocale(locale.Code5); err != nil {
 							return fmt.Errorf("%w: failed to set preferred locale for user", err)
 						}
 						chatData.SetPreferredLanguage(locale.Code5)
 						chatData.SetAwaitingReplyTo("")
 						//chatKey := botsfwmodels.NewChatKey(whc.GetBotCode(), whc.MustBotChatID())
-						if err = whc.SaveBotChat(c); err != nil {
+						if err = whc.SaveBotChat(ctx); err != nil {
 							return
 						}
 						return
@@ -152,9 +152,9 @@ func setPreferredLanguageAction(whc botsfw.WebhookContext, code5, mode string, b
 						ga := whc.GA()
 						gaEvent := ga.GaEventWithLabel("settings", "locale-changed", strings.ToLower(locale.Code5))
 						if gaErr := ga.Queue(gaEvent); gaErr != nil {
-							logus.Warningf(c, "Failed to log event: %v", gaErr)
+							logus.Warningf(ctx, "Failed to log event: %v", gaErr)
 						} else {
-							logus.Infof(c, "GA event queued: %v", gaEvent)
+							logus.Infof(ctx, "GA event queued: %v", gaEvent)
 						}
 					}
 				}
@@ -163,7 +163,7 @@ func setPreferredLanguageAction(whc botsfw.WebhookContext, code5, mode string, b
 			}
 		}
 		if !localeChanged {
-			logus.Errorf(c, "Unknown locale: %v", code5)
+			logus.Errorf(ctx, "Unknown locale: %v", code5)
 		}
 	} else {
 		selectedLocale = i18n.GetLocaleByCode5(chatData.GetPreferredLanguage())
@@ -172,11 +172,11 @@ func setPreferredLanguageAction(whc botsfw.WebhookContext, code5, mode string, b
 
 	switch mode {
 	case "onboarding":
-		logus.Debugf(c, "whc.Locale().Code5: %v", whc.Locale().Code5)
+		logus.Debugf(ctx, "whc.Locale().Code5: %v", whc.Locale().Code5)
 		m = whc.NewMessageByCode(trans.MESSAGE_TEXT_YOUR_SELECTED_PREFERRED_LANGUAGE, selectedLocale.NativeTitle)
 		botParams.SetMainMenu(whc, &m)
-		if _, err = whc.Responder().SendMessage(c, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
-			logus.Errorf(c, "Failed to notify userEntity about selected language: %v", err)
+		if _, err = whc.Responder().SendMessage(ctx, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
+			logus.Errorf(ctx, "Failed to notify userEntity about selected language: %v", err)
 			// Not critical, lets continue
 		}
 		return aboutDrawAction(whc, nil)
@@ -185,11 +185,11 @@ func setPreferredLanguageAction(whc botsfw.WebhookContext, code5, mode string, b
 			if m, err = dtb_general.MainMenuAction(whc, whc.Translate(trans.MESSAGE_TEXT_LOCALE_CHANGED, selectedLocale.TitleWithIcon()), false); err != nil {
 				return
 			}
-			if _, err = whc.Responder().SendMessage(c, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
+			if _, err = whc.Responder().SendMessage(ctx, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
 				return m, err
 			}
 			return SettingsMainAction(whc)
-			//if _, err = whc.Responder().SendMessage(c, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
+			//if _, err = whc.Responder().SendMessage(ctx, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
 			//	return m, err
 			//}
 			//return dtb_general.MainMenuAction(whc, )
@@ -221,7 +221,7 @@ var joinDrawCommand = botsfw.Command{
 }
 
 func aboutDrawAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
+	ctx := whc.Context()
 	buf := new(bytes.Buffer)
 	sender := whc.GetSender()
 	name := sender.GetFirstName()
@@ -262,8 +262,8 @@ func aboutDrawAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.
 			)
 			return
 		case joinDrawCommandCode:
-			if _, err = whc.Responder().SendMessage(c, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
-				logus.Warningf(c, "Failed to edit message: %v", err)
+			if _, err = whc.Responder().SendMessage(ctx, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
+				logus.Warningf(ctx, "Failed to edit message: %v", err)
 				err = nil // Not critical
 			}
 			m.IsEdit = false

@@ -11,11 +11,11 @@ import (
 	"time"
 )
 
-func SaveFeedback(c context.Context, tx dal.ReadwriteTransaction, feedbackID int64, feedbackEntity *models4debtus.FeedbackData) (feedback models4debtus.Feedback, user dbo4userus.UserEntry, err error) {
-	if c == nil {
-		panic("c == nil")
+func SaveFeedback(ctx context.Context, tx dal.ReadwriteTransaction, feedbackID int64, feedbackEntity *models4debtus.FeedbackData) (feedback models4debtus.Feedback, user dbo4userus.UserEntry, err error) {
+	if ctx == nil {
+		panic("ctx == nil")
 	}
-	logus.Debugf(c, "FeedbackDalGae.SaveFeedback(feedbackEntity:%v)", feedbackEntity)
+	logus.Debugf(ctx, "FeedbackDalGae.SaveFeedback(feedbackEntity:%v)", feedbackEntity)
 	if feedbackEntity == nil {
 		panic("feedbackEntity == nil")
 	}
@@ -27,7 +27,7 @@ func SaveFeedback(c context.Context, tx dal.ReadwriteTransaction, feedbackID int
 	}
 	feedback = models4debtus.Feedback{FeedbackData: feedbackEntity}
 	user = dbo4userus.NewUserEntry(feedbackEntity.UserStrID)
-	if err = dal4userus.GetUser(c, tx, user); err != nil {
+	if err = dal4userus.GetUser(ctx, tx, user); err != nil {
 		return
 	}
 	user.Data.LastFeedbackRate = feedbackEntity.Rate
@@ -38,7 +38,7 @@ func SaveFeedback(c context.Context, tx dal.ReadwriteTransaction, feedbackID int
 	} else {
 		user.Data.LastFeedbackAt = feedbackEntity.Created
 	}
-	if err = tx.SetMulti(c, []dal.Record{feedback.Record, user.Record}); err != nil {
+	if err = tx.SetMulti(ctx, []dal.Record{feedback.Record, user.Record}); err != nil {
 		err = fmt.Errorf("failed to put feedback & user entities to datastore: %w", err)
 	}
 	return

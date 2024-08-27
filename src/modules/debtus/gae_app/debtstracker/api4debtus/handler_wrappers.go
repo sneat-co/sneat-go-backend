@@ -9,7 +9,7 @@ import (
 	"context"
 )
 
-func OptionsHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
+func OptionsHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if r.Method != "OPTIONS" {
 		panic("Method != OPTIONS")
 	}
@@ -21,69 +21,69 @@ func OptionsHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 	case "https://debtstracker.local":
 	case "https://debtstracker.io":
 	case "":
-		BadRequestMessage(c, w, "Missing required request header: Origin")
+		BadRequestMessage(ctx, w, "Missing required request header: Origin")
 		return
 	default:
 		if !(strings.HasPrefix(origin, "http://") && strings.HasSuffix(origin, ":8100")) {
 			err := fmt.Errorf("unknown origin: %s", origin)
-			logus.Debugf(c, err.Error())
-			BadRequestError(c, w, err)
+			logus.Debugf(ctx, err.Error())
+			BadRequestError(ctx, w, err)
 			return
 		}
 	}
-	logus.Debugf(c, "Request 'Origin' header: %s", origin)
+	logus.Debugf(ctx, "Request 'Origin' header: %s", origin)
 	responseHeader := w.Header()
 	if accessControlRequestMethod := r.Header.Get("Access-Control-Request-Method"); !(accessControlRequestMethod == "GET" || accessControlRequestMethod == "POST") {
-		BadRequestMessage(c, w, "Requested method is unsupported: "+accessControlRequestMethod)
+		BadRequestMessage(ctx, w, "Requested method is unsupported: "+accessControlRequestMethod)
 		return
 	} else {
 		responseHeader.Set("Access-Control-Allow-Methods", accessControlRequestMethod)
 	}
 	if accessControlRequestHeaders := r.Header.Get("Access-Control-Request-Headers"); accessControlRequestHeaders != "" {
-		logus.Debugf(c, "Request Access-Control-Request-Headers: %v", accessControlRequestHeaders)
+		logus.Debugf(ctx, "Request Access-Control-Request-Headers: %v", accessControlRequestHeaders)
 		responseHeader.Set("Access-Control-Allow-Headers", accessControlRequestHeaders)
 	} else {
-		logus.Debugf(c, "Request header 'Access-Control-Allow-Headers' is empty or missing")
+		logus.Debugf(ctx, "Request header 'Access-Control-Allow-Headers' is empty or missing")
 		// TODO(security): Is it wrong to return 200 in this case?
 	}
 	responseHeader.Set("Access-Control-Allow-Origin", origin)
 }
 
 //func getOnly(handler dtdal.ContextHandler) func(w http.ResponseWriter, r *http.Request) {
-//	return dtdal.HttpAppHost.HandleWithContext(OptionsHandler(func(c context.Context, w http.ResponseWriter, r *http.Request) {
+//	return dtdal.HttpAppHost.HandleWithContext(OptionsHandler(func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 //		if r.Method != "GET" {
 //			BadRequestMessage(c, w, "Expecting to get request method GET, got: "+r.Method)
 //			return
 //		}
 //		hashedWriter := NewHashedResponseWriter(w)
-//		handler(c, hashedWriter, r)
-//		hashedWriter.setETagOrNotModifiedAndFlushBuffer(c, w, r)
+//		handler(ctx, hashedWriter, r)
+//		hashedWriter.setETagOrNotModifiedAndFlushBuffer(ctx, w, r)
 //	}))
 //}
 //
 //func postOnly(handler dtdal.ContextHandler) func(w http.ResponseWriter, r *http.Request) {
-//	return dtdal.HttpAppHost.HandleWithContext(OptionsHandler(func(c context.Context, w http.ResponseWriter, r *http.Request) {
+//	return dtdal.HttpAppHost.HandleWithContext(OptionsHandler(func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 //		if r.Method != "POST" {
-//			BadRequestMessage(c, w, "Expecting to get request method POST, got: "+r.Method)
+//			BadRequestMessage(ctx, w, "Expecting to get request method POST, got: "+r.Method)
 //			return
 //		}
-//		handler(c, w, r)
+//		handler(ctx, w, r)
 //	}))
 //}
 
-func BadRequestMessage(c context.Context, w http.ResponseWriter, m string) {
-	logus.Infof(c, m)
+func BadRequestMessage(ctx context.Context, w http.ResponseWriter, m string) {
+	logus.Infof(ctx, m)
 	w.WriteHeader(http.StatusBadRequest)
 	_, _ = w.Write([]byte(m))
 }
 
-func BadRequestError(c context.Context, w http.ResponseWriter, err error) {
-	BadRequestMessage(c, w, err.Error())
+func BadRequestError(ctx context.Context, w http.ResponseWriter, err error) {
+	BadRequestMessage(ctx, w, err.Error())
 }
 
-func InternalError(c context.Context, w http.ResponseWriter, err error) { // TODO: deprecate!
+func InternalError(ctx context.Context, w http.ResponseWriter, err error) { // TODO: deprecate!
 	m := err.Error()
-	logus.Errorf(c, m)
+	logus.Errorf(ctx, m)
 	w.WriteHeader(http.StatusInternalServerError)
 	_, _ = w.Write([]byte(m))
 }
@@ -132,7 +132,7 @@ func InternalError(c context.Context, w http.ResponseWriter, err error) { // TOD
 //	return i, err
 //}
 //
-//func (hashedWriter *HashedResponseWriter) setETagOrNotModifiedAndFlushBuffer(c context.Context, w http.ResponseWriter, r *http.Request) {
+//func (hashedWriter *HashedResponseWriter) setETagOrNotModifiedAndFlushBuffer(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 //	if hashedWriter.status != 0 && hashedWriter.status != 200 {
 //		if _, err := hashedWriter.flush(w); err != nil {
 //			w.WriteHeader(http.StatusInternalServerError)

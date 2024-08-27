@@ -50,19 +50,19 @@ type AuditStorage interface {
 }
 
 type AuditGaeStore struct {
-	c context.Context
+	ctx context.Context
 }
 
-func NewAuditGaeStore(c context.Context) AuditGaeStore {
-	return AuditGaeStore{c: c}
+func NewAuditGaeStore(ctx context.Context) AuditGaeStore {
+	return AuditGaeStore{ctx: ctx}
 }
 
-func (s AuditGaeStore) LogAuditRecord(c context.Context, action, message string, related ...string) (audit Audit, err error) {
+func (s AuditGaeStore) LogAuditRecord(ctx context.Context, action, message string, related ...string) (audit Audit, err error) {
 	audit.Data = NewAuditData(action, message, related...)
 	audit.Record = dal.NewRecordWithIncompleteKey("Audit", reflect.Int, audit.Data)
 	audit.Key = audit.Record.Key()
-	err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
-		return tx.Insert(c, audit.Record)
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+		return tx.Insert(ctx, audit.Record)
 	})
 	audit.ID = audit.Record.Key().ID.(int64)
 	return

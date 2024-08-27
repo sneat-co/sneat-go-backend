@@ -21,11 +21,11 @@ var InlineQueryCommand = botsfw.Command{
 	Matcher:    nil,
 	//InputTypes: []botsfw.WebhookInputType{botsfw.WebhookInputInlineQuery},
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-		c := whc.Context()
+		ctx := whc.Context()
 
 		inlineQuery := whc.Input().(botsfw.WebhookInlineQuery)
 		query := inlineQuery.GetQuery()
-		logus.Debugf(c, "InlineQueryCommand.Action(query=%v)", query)
+		logus.Debugf(ctx, "InlineQueryCommand.Action(query=%v)", query)
 		switch {
 		case query == "":
 			m, err = dtb_inline.InlineEmptyQuery(whc)
@@ -40,7 +40,7 @@ var InlineQueryCommand = botsfw.Command{
 			if amountMatches != nil {
 				return dtb_inline.InlineNewRecord(whc, amountMatches)
 			}
-			logus.Debugf(c, "Inline query not matched to any action: [%v]", query)
+			logus.Debugf(ctx, "Inline query not matched to any action: [%v]", query)
 		}
 		return
 	},

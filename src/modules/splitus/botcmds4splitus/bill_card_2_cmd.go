@@ -95,7 +95,7 @@ var billMembersCommand = billCallbackCommand(billMembersCommandCode,
 )
 
 func writeBillMembersList(
-	c context.Context,
+	ctx context.Context,
 	buffer *bytes.Buffer,
 	translator i18n.SingleLocaleTranslator,
 	bill models4splitus.BillEntry,
@@ -137,8 +137,8 @@ func writeBillMembersList(
 		if member.Paid == bill.Data.AmountTotal {
 			buffer.WriteString("<b>")
 		}
-		if err = common4debtus.HtmlTemplates.RenderTemplate(c, buffer, translator, trans.MESSAGE_TEXT_BILL_CARD_MEMBER_TITLE, templateParams); err != nil {
-			logus.Errorf(c, "Failed to render template")
+		if err = common4debtus.HtmlTemplates.RenderTemplate(ctx, buffer, translator, trans.MESSAGE_TEXT_BILL_CARD_MEMBER_TITLE, templateParams); err != nil {
+			logus.Errorf(ctx, "Failed to render template")
 			return
 		}
 		if member.Paid == bill.Data.AmountTotal {
@@ -160,10 +160,10 @@ func writeBillMembersList(
 			templateName = trans.MESSAGE_TEXT_BILL_CARD_MEMBERS_ROW
 		}
 
-		logus.Debugf(c, "Will render template")
+		logus.Debugf(ctx, "Will render template")
 		buffer.WriteString(" ")
-		if err = common4debtus.HtmlTemplates.RenderTemplate(c, buffer, translator, templateName, templateParams); err != nil {
-			logus.Errorf(c, "Failed to render template")
+		if err = common4debtus.HtmlTemplates.RenderTemplate(ctx, buffer, translator, templateName, templateParams); err != nil {
+			logus.Errorf(ctx, "Failed to render template")
 			return
 		}
 		buffer.WriteString("\n\n")
@@ -197,10 +197,10 @@ var inviteToBillCommand = billCallbackCommand(INVITE_BILL_MEMBER_COMMAND,
 )
 
 func ShowBillCard(whc botsfw.WebhookContext, isEdit bool, bill models4splitus.BillEntry, footer string) (m botsfw.MessageFromBot, err error) {
-	c := whc.Context()
+	ctx := whc.Context()
 	m = whc.NewMessage("")
 	m.IsEdit = isEdit
-	if m.Text, err = getBillCardMessageText(c, whc.GetBotCode(), whc, bill, true, footer); err != nil {
+	if m.Text, err = getBillCardMessageText(ctx, whc.GetBotCode(), whc, bill, true, footer); err != nil {
 		return
 	}
 	var isInGroup bool
@@ -214,7 +214,7 @@ func ShowBillCard(whc botsfw.WebhookContext, isEdit bool, bill models4splitus.Bi
 	return
 }
 
-func writeBillCardTitle(c context.Context, bill models4splitus.BillEntry, botID string, buffer *bytes.Buffer, translator i18n.SingleLocaleTranslator) error {
+func writeBillCardTitle(ctx context.Context, bill models4splitus.BillEntry, botID string, buffer *bytes.Buffer, translator i18n.SingleLocaleTranslator) error {
 	var amount interface{}
 	if bill.Data.Currency == "" {
 		amount = bill.Data.AmountTotal
@@ -222,23 +222,23 @@ func writeBillCardTitle(c context.Context, bill models4splitus.BillEntry, botID 
 		amount = bill.Data.TotalAmount()
 	}
 	titleWithLink := fmt.Sprintf(`<a href="https://t.me/%v?start=bill-%v">%v</a>`, botID, bill.ID, bill.Data.Name)
-	logus.Debugf(c, "titleWithLink: %v", titleWithLink)
+	logus.Debugf(ctx, "titleWithLink: %v", titleWithLink)
 	header := translator.Translate(trans.MESSAGE_TEXT_BILL_CARD_HEADER, amount, titleWithLink)
-	logus.Debugf(c, "header: %v", header)
+	logus.Debugf(ctx, "header: %v", header)
 	if _, err := buffer.WriteString(header); err != nil {
-		logus.Errorf(c, "Failed to write bill header")
+		logus.Errorf(ctx, "Failed to write bill header")
 		return err
 	}
 	return nil
 }
 
-func getBillCardMessageText(c context.Context, botID string, translator i18n.SingleLocaleTranslator, bill models4splitus.BillEntry, showMembers bool, footer string) (string, error) {
-	logus.Debugf(c, "getBillCardMessageText() => bill.BillDbo: %v", bill.Data)
+func getBillCardMessageText(ctx context.Context, botID string, translator i18n.SingleLocaleTranslator, bill models4splitus.BillEntry, showMembers bool, footer string) (string, error) {
+	logus.Debugf(ctx, "getBillCardMessageText() => bill.BillDbo: %v", bill.Data)
 
 	var buffer bytes.Buffer
-	logus.Debugf(c, "Will write bill header...")
+	logus.Debugf(ctx, "Will write bill header...")
 
-	if err := writeBillCardTitle(c, bill, botID, &buffer, translator); err != nil {
+	if err := writeBillCardTitle(ctx, bill, botID, &buffer, translator); err != nil {
 		return "", err
 	}
 	//buffer.WriteString("\n" + strings.Repeat("―", 15))
@@ -253,7 +253,7 @@ func getBillCardMessageText(c context.Context, botID string, translator i18n.Sin
 		//}
 		//buffer.WriteString(fmt.Sprintf("\n\n<b>%v</b> (%d)\n\n", translator.Translate(trans.MESSAGE_TEXT_MEMBERS_TITLE), bill.MembersCount))
 		buffer.WriteString("\n\n")
-		writeBillMembersList(c, &buffer, translator, bill, "")
+		writeBillMembersList(ctx, &buffer, translator, bill, "")
 	}
 
 	if footer != "" {
@@ -262,6 +262,6 @@ func getBillCardMessageText(c context.Context, botID string, translator i18n.Sin
 		}
 		buffer.WriteString(footer)
 	}
-	logus.Debugf(c, "getBillCardMessageText() completed")
+	logus.Debugf(ctx, "getBillCardMessageText() completed")
 	return buffer.String(), nil
 }

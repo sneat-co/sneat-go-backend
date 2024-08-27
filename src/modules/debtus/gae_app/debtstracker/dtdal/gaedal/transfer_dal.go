@@ -27,7 +27,7 @@ func NewTransferDalGae() TransferDalGae {
 
 var _ dtdal.TransferDal = (*TransferDalGae)(nil)
 
-func _loadDueOnTransfers(c context.Context, tx dal.ReadSession, userID string, limit int, filter func(q dal.QueryBuilder) dal.QueryBuilder) (transfers []models4debtus.TransferEntry, err error) {
+func _loadDueOnTransfers(ctx context.Context, tx dal.ReadSession, userID string, limit int, filter func(q dal.QueryBuilder) dal.QueryBuilder) (transfers []models4debtus.TransferEntry, err error) {
 	q := dal.From(models4debtus.TransfersCollection).
 		WhereField("BothUserIDs", "=", userID).
 		WhereField("IsOutstanding", "=", true).OrderBy(dal.AscendingField("DtDueOn"))
@@ -37,7 +37,7 @@ func _loadDueOnTransfers(c context.Context, tx dal.ReadSession, userID string, l
 		transferRecords []dal.Record
 	)
 
-	transferRecords, err = tx.QueryAllRecords(c, query)
+	transferRecords, err = tx.QueryAllRecords(ctx, query)
 
 	transfers = make([]models4debtus.TransferEntry, len(transferRecords))
 	for i, transferRecord := range transferRecords {
@@ -47,33 +47,33 @@ func _loadDueOnTransfers(c context.Context, tx dal.ReadSession, userID string, l
 	return
 }
 
-func (transferDalGae TransferDalGae) LoadOverdueTransfers(c context.Context, tx dal.ReadSession, userID string, limit int) ([]models4debtus.TransferEntry, error) {
-	return _loadDueOnTransfers(c, tx, userID, limit, func(q dal.QueryBuilder) dal.QueryBuilder {
+func (transferDalGae TransferDalGae) LoadOverdueTransfers(ctx context.Context, tx dal.ReadSession, userID string, limit int) ([]models4debtus.TransferEntry, error) {
+	return _loadDueOnTransfers(ctx, tx, userID, limit, func(q dal.QueryBuilder) dal.QueryBuilder {
 		return q.WhereField("DtDueOn", dal.GreaterThen, time.Time{}).WhereField("DtDueOn", dal.LessThen, time.Now())
 	})
 }
 
-func (transferDalGae TransferDalGae) LoadDueTransfers(c context.Context, tx dal.ReadSession, userID string, limit int) ([]models4debtus.TransferEntry, error) {
-	return _loadDueOnTransfers(c, tx, userID, limit, func(q dal.QueryBuilder) dal.QueryBuilder {
+func (transferDalGae TransferDalGae) LoadDueTransfers(ctx context.Context, tx dal.ReadSession, userID string, limit int) ([]models4debtus.TransferEntry, error) {
+	return _loadDueOnTransfers(ctx, tx, userID, limit, func(q dal.QueryBuilder) dal.QueryBuilder {
 		return q.WhereField("DtDueOn", dal.GreaterThen, time.Now())
 	})
 }
 
-func (transferDalGae TransferDalGae) GetTransfersByID(c context.Context, tx dal.ReadSession, transferIDs []string) (transfers []models4debtus.TransferEntry, err error) {
+func (transferDalGae TransferDalGae) GetTransfersByID(ctx context.Context, tx dal.ReadSession, transferIDs []string) (transfers []models4debtus.TransferEntry, err error) {
 	transfers = make([]models4debtus.TransferEntry, len(transferIDs))
 	records := make([]dal.Record, len(transferIDs))
 	for i, transferID := range transferIDs {
 		transfers[i] = models4debtus.NewTransfer(transferID, nil)
 		records[i] = transfers[i].Record
 	}
-	if err = tx.GetMulti(c, records); err != nil {
+	if err = tx.GetMulti(ctx, records); err != nil {
 		return
 	}
 	return
 }
 
-func (transferDalGae TransferDalGae) LoadOutstandingTransfers(c context.Context, tx dal.ReadSession, periodEnds time.Time, userID, contactID string, currency money.CurrencyCode, direction models4debtus.TransferDirection) (transfers []models4debtus.TransferEntry, err error) {
-	logus.Debugf(c, "TransferDalGae.LoadOutstandingTransfers(periodEnds=%v, userID=%v, contactID=%v currency=%v, direction=%v)", periodEnds, userID, contactID, currency, direction)
+func (transferDalGae TransferDalGae) LoadOutstandingTransfers(ctx context.Context, tx dal.ReadSession, periodEnds time.Time, userID, contactID string, currency money.CurrencyCode, direction models4debtus.TransferDirection) (transfers []models4debtus.TransferEntry, err error) {
+	logus.Debugf(ctx, "TransferDalGae.LoadOutstandingTransfers(periodEnds=%v, userID=%v, contactID=%v currency=%v, direction=%v)", periodEnds, userID, contactID, currency, direction)
 	const limit = 100
 
 	// TODO: Load outstanding transfer just for the specific contact & specific direction
@@ -87,7 +87,7 @@ func (transferDalGae TransferDalGae) LoadOutstandingTransfers(c context.Context,
 		Limit(limit).
 		SelectInto(models4debtus.NewTransferRecord)
 	var transferRecords []dal.Record
-	transferRecords, err = tx.QueryAllRecords(c, q)
+	transferRecords, err = tx.QueryAllRecords(ctx, q)
 	transfers = models4debtus.TransfersFromRecords(transferRecords)
 	var errorMessages, warnings, debugs bytes.Buffer
 	var transfersIDsToFixIsOutstanding []string
@@ -115,54 +115,54 @@ func (transferDalGae TransferDalGae) LoadOutstandingTransfers(c context.Context,
 		}
 	}
 	if len(transfersIDsToFixIsOutstanding) > 0 {
-		if err = delayerFixTransfersIsOutstanding.EnqueueWork(c, delaying.With(const4debtus.QueueTransfers, "fix-api4transfers-is-outstanding", 0), transfersIDsToFixIsOutstanding); err != nil {
-			logus.Errorf(c, "failed to delay task to fix api4transfers IsOutstanding")
+		if err = delayerFixTransfersIsOutstanding.EnqueueWork(ctx, delaying.With(const4debtus.QueueTransfers, "fix-api4transfers-is-outstanding", 0), transfersIDsToFixIsOutstanding); err != nil {
+			logus.Errorf(ctx, "failed to delay task to fix api4transfers IsOutstanding")
 			err = nil
 		}
 	}
 	if errorMessages.Len() > 0 {
-		logus.Errorf(c, errorMessages.String())
+		logus.Errorf(ctx, errorMessages.String())
 	}
 	if warnings.Len() > 0 {
-		logus.Warningf(c, warnings.String())
+		logus.Warningf(ctx, warnings.String())
 	}
 	if debugs.Len() > 0 {
-		logus.Debugf(c, debugs.String())
+		logus.Debugf(ctx, debugs.String())
 	}
 	return
 }
 
-func delayedFixTransfersIsOutstanding(c context.Context, transferIDs []string) (err error) {
-	logus.Debugf(c, "delayedFixTransfersIsOutstanding(%v)", transferIDs)
+func delayedFixTransfersIsOutstanding(ctx context.Context, transferIDs []string) (err error) {
+	logus.Debugf(ctx, "delayedFixTransfersIsOutstanding(%v)", transferIDs)
 	for _, transferID := range transferIDs {
-		if _, transferErr := fixTransferIsOutstanding(c, transferID); transferErr != nil {
-			logus.Errorf(c, "Failed to fix transfer %v: %v", transferID, err)
+		if _, transferErr := fixTransferIsOutstanding(ctx, transferID); transferErr != nil {
+			logus.Errorf(ctx, "Failed to fix transfer %v: %v", transferID, err)
 			err = transferErr
 		}
 	}
 	return
 }
 
-func fixTransferIsOutstanding(c context.Context, transferID string) (transfer models4debtus.TransferEntry, err error) {
-	err = facade.RunReadwriteTransaction(c, func(c context.Context, tx dal.ReadwriteTransaction) error {
-		if transfer, err = facade4debtus.Transfers.GetTransferByID(c, tx, transferID); err != nil {
+func fixTransferIsOutstanding(ctx context.Context, transferID string) (transfer models4debtus.TransferEntry, err error) {
+	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+		if transfer, err = facade4debtus.Transfers.GetTransferByID(ctx, tx, transferID); err != nil {
 			return err
 		}
 		if transfer.Data.GetOutstandingValue(time.Now()) == 0 {
 			transfer.Data.IsOutstanding = false
-			return facade4debtus.Transfers.SaveTransfer(c, tx, transfer)
+			return facade4debtus.Transfers.SaveTransfer(ctx, tx, transfer)
 		}
 		return nil
 	})
 	if err == nil {
-		logus.Warningf(c, "Fixed IsOutstanding (set to false) for transfer %v", transferID)
+		logus.Warningf(ctx, "Fixed IsOutstanding (set to false) for transfer %v", transferID)
 	} else {
-		logus.Errorf(c, "Failed to fix IsOutstanding for transfer %v", transferID)
+		logus.Errorf(ctx, "Failed to fix IsOutstanding for transfer %v", transferID)
 	}
 	return
 }
 
-func (transferDalGae TransferDalGae) LoadTransfersByUserID(c context.Context, userID string, offset, limit int) (transfers []models4debtus.TransferEntry, hasMore bool, err error) {
+func (transferDalGae TransferDalGae) LoadTransfersByUserID(ctx context.Context, userID string, offset, limit int) (transfers []models4debtus.TransferEntry, hasMore bool, err error) {
 	if limit == 0 {
 		err = errors.New("limit == 0")
 		return
@@ -176,14 +176,14 @@ func (transferDalGae TransferDalGae) LoadTransfersByUserID(c context.Context, us
 		OrderBy(dal.DescendingField("DtCreated")).
 		SelectInto(models4debtus.NewTransferRecord)
 
-	if transfers, err = transferDalGae.loadTransfers(c, q); err != nil {
+	if transfers, err = transferDalGae.loadTransfers(ctx, q); err != nil {
 		return
 	}
 	hasMore = len(transfers) > limit
 	return
 }
 
-func (transferDalGae TransferDalGae) LoadTransferIDsByContactID(c context.Context, contactID string, limit int, startCursor string) (transferIDs []string, endCursor string, err error) {
+func (transferDalGae TransferDalGae) LoadTransferIDsByContactID(ctx context.Context, contactID string, limit int, startCursor string) (transferIDs []string, endCursor string, err error) {
 	if limit == 0 {
 		err = errors.New("LoadTransferIDsByContactID(): limit == 0")
 		return
@@ -212,11 +212,11 @@ func (transferDalGae TransferDalGae) LoadTransferIDsByContactID(c context.Contex
 
 	transferIDs = make([]string, 0, limit)
 	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(ctx); err != nil {
 		return
 	}
 	var reader dal.Reader
-	if reader, err = db.QueryReader(c, q); err != nil {
+	if reader, err = db.QueryReader(ctx, q); err != nil {
 		return
 	}
 	var record dal.Record
@@ -234,7 +234,7 @@ func (transferDalGae TransferDalGae) LoadTransferIDsByContactID(c context.Contex
 	return
 }
 
-func (transferDalGae TransferDalGae) LoadTransfersByContactID(c context.Context, contactID string, offset, limit int) (transfers []models4debtus.TransferEntry, hasMore bool, err error) {
+func (transferDalGae TransferDalGae) LoadTransfersByContactID(ctx context.Context, contactID string, offset, limit int) (transfers []models4debtus.TransferEntry, hasMore bool, err error) {
 	if limit == 0 {
 		err = errors.New("LoadTransfersByContactID(): limit == 0")
 		return
@@ -250,33 +250,33 @@ func (transferDalGae TransferDalGae) LoadTransfersByContactID(c context.Context,
 		Offset(offset).
 		SelectInto(models4debtus.NewTransferRecord)
 
-	if transfers, err = transferDalGae.loadTransfers(c, q); err != nil {
+	if transfers, err = transferDalGae.loadTransfers(ctx, q); err != nil {
 		return
 	}
 	hasMore = len(transfers) > limit
 	return
 }
 
-func (transferDalGae TransferDalGae) LoadLatestTransfers(c context.Context, offset, limit int) ([]models4debtus.TransferEntry, error) {
+func (transferDalGae TransferDalGae) LoadLatestTransfers(ctx context.Context, offset, limit int) ([]models4debtus.TransferEntry, error) {
 	q := dal.From(models4debtus.TransfersCollection).
 		OrderBy(dal.DescendingField("DtCreated")).
 		Limit(limit).
 		Offset(offset).
 		SelectInto(models4debtus.NewTransferRecord)
-	return transferDalGae.loadTransfers(c, q)
+	return transferDalGae.loadTransfers(ctx, q)
 }
 
-func (transferDalGae TransferDalGae) loadTransfers(c context.Context, q dal.Query) (transfers []models4debtus.TransferEntry, err error) {
+func (transferDalGae TransferDalGae) loadTransfers(ctx context.Context, q dal.Query) (transfers []models4debtus.TransferEntry, err error) {
 	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(ctx); err != nil {
 		return
 	}
 	//var reader dal.Reader
-	//if reader, err = db.QueryReader(c, q); err != nil {
+	//if reader, err = db.QueryReader(ctx, q); err != nil {
 	//	return
 	//}
 	var records []dal.Record
-	if records, err = db.QueryAllRecords(c, q); err != nil {
+	if records, err = db.QueryAllRecords(ctx, q); err != nil {
 		return
 	}
 	transfers = make([]models4debtus.TransferEntry, len(records))

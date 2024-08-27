@@ -27,9 +27,9 @@ func TwilioWebhook(w http.ResponseWriter, r *http.Request) {
 		logus.Errorf(c, "Failed to get database: %v", err)
 		return
 	}
-	err = db.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) error {
+	err = db.RunReadwriteTransaction(c, func(tctx context.Context, tx dal.ReadwriteTransaction) error {
 		var twilioSms = models4debtus.NewTwilioSms(smsSid, nil)
-		err := tx.Get(tc, twilioSms.Record)
+		err := tx.Get(tctx, twilioSms.Record)
 		if err != nil {
 			return err
 		}
@@ -41,7 +41,7 @@ func TwilioWebhook(w http.ResponseWriter, r *http.Request) {
 			case "delivered":
 				twilioSms.Data.DtDelivered = time.Now()
 			}
-			return tx.Set(tc, twilioSms.Record)
+			return tx.Set(tctx, twilioSms.Record)
 		}
 		return nil
 	}, nil)

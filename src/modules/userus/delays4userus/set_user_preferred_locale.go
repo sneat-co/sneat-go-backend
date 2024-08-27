@@ -7,8 +7,8 @@ import (
 	"github.com/strongo/logus"
 )
 
-func delayedSetUserPreferredLocale(c context.Context, userID string, localeCode5 string) (err error) {
-	logus.Debugf(c, "delayedSetUserPreferredLocale(userID=%v, localeCode5=%v)", userID, localeCode5)
+func delayedSetUserPreferredLocale(ctx context.Context, userID string, localeCode5 string) (err error) {
+	logus.Debugf(ctx, "delayedSetUserPreferredLocale(userID=%v, localeCode5=%v)", userID, localeCode5)
 	userContext := facade.NewUserContext(userID)
-	return facade4userus.SetUserPreferredLocale(c, userContext, localeCode5)
+	return facade4userus.SetUserPreferredLocale(ctx, userContext, localeCode5)
 }

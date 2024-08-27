@@ -19,8 +19,8 @@ func GetUser(ctx context.Context, tx dal.ReadSession, user dbo4userus.UserEntry)
 }
 
 // GetUsersByIDs returns users by their IDs
-func GetUsersByIDs(c context.Context, userIDs []string) (users []dbo4userus.UserEntry, err error) {
-	//logus.Debugf(c, "UserDalGae.GetUsersByIDs(%d)", userIDs)
+func GetUsersByIDs(ctx context.Context, userIDs []string) (users []dbo4userus.UserEntry, err error) {
+	//logus.Debugf(ctx, "UserDalGae.GetUsersByIDs(%d)", userIDs)
 	if len(userIDs) == 0 {
 		return
 	}
@@ -28,10 +28,10 @@ func GetUsersByIDs(c context.Context, userIDs []string) (users []dbo4userus.User
 	appUsers := NewUserEntries(userIDs)
 	records := UserRecords(appUsers)
 	var db dal.DB
-	if db, err = facade.GetDatabase(c); err != nil {
+	if db, err = facade.GetDatabase(ctx); err != nil {
 		return
 	}
-	if err = db.GetMulti(c, records); err != nil {
+	if err = db.GetMulti(ctx, records); err != nil {
 		return
 	}
 	return

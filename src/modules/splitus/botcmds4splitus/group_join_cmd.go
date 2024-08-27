@@ -14,7 +14,7 @@ var joinSpaceCommand = shared_space.SpaceCallbackCommand(joinSpaceCommandCode,
 	func(whc botsfw.WebhookContext, callbackUrl *url.URL, space dbo4spaceus.SpaceEntry) (m botsfw.MessageFromBot, err error) {
 		err = errors.New("joinSpaceCommand is not implemented")
 		return
-		//c := whc.Context()
+		//ctx := whc.Context()
 		//
 		//userID := whc.AppUserID()
 		//
@@ -22,7 +22,7 @@ var joinSpaceCommand = shared_space.SpaceCallbackCommand(joinSpaceCommandCode,
 		//
 		//if space.Data.HasUserID(userID) {
 		//	user := dbo4userus.NewUserEntry(userID)
-		//	if err = facade4userus.GetUserByIdOBSOLETE(c, nil, user.Record); err != nil {
+		//	if err = facade4userus.GetUserByIdOBSOLETE(ctx, nil, user.Record); err != nil {
 		//		return
 		//	}
 		//	whc.LogRequest()

@@ -9,9 +9,9 @@ import (
 )
 
 func SendRefreshOrNothingChanged(whc botsfw.WebhookContext, m botsfw.MessageFromBot) (m2 botsfw.MessageFromBot, err error) {
-	c := whc.Context()
-	if _, err = whc.Responder().SendMessage(c, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
-		logus.Debugf(c, "error type: %T", err)
+	ctx := whc.Context()
+	if _, err = whc.Responder().SendMessage(ctx, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
+		logus.Debugf(ctx, "error type: %T", err)
 		if apiResponse, ok := err.(tgbotapi.APIResponse); ok && apiResponse.ErrorCode == 400 {
 			m.BotMessage = telegram.CallbackAnswer(tgbotapi.NewCallback("", whc.Translate(trans.ALERT_TEXT_NOTHING_CHANGED)))
 			err = nil

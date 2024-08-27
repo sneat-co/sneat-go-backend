@@ -54,7 +54,7 @@ func TestUsersLinker_LinkUsersWithinTransaction(t *testing.T) {
 		t.Error("inviterDebtusContact.CounterpartyContactID != 0")
 	}
 
-	err = facade.RunReadwriteTransaction(c, func(tc context.Context, tx dal.ReadwriteTransaction) (err error) {
+	err = facade.RunReadwriteTransaction(c, func(tctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		usersLinker = newUsersLinker(&usersLinkingDbChanges{
 			inviter: &userLinkingParty{
 				user:          inviterUser,
@@ -67,7 +67,7 @@ func TestUsersLinker_LinkUsersWithinTransaction(t *testing.T) {
 				debtusContact: invitedDebtusContact,
 			},
 		})
-		if err = usersLinker.linkUsersWithinTransaction(tc, tx, "unit-test:1"); err != nil {
+		if err = usersLinker.linkUsersWithinTransaction(tctx, tx, "unit-test:1"); err != nil {
 			return err
 		}
 		return nil

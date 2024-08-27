@@ -11,7 +11,7 @@ func TestNewUserEmailKey(t *testing.T) {
 }
 
 func TestUserEmailGaeDal_GetUserEmailByID(t *testing.T) {
-	//gaedb.Get = func(c context.Context, key *dal.Key, val interface{}) error {
+	//gaedb.Get = func(ctx context.Context, key *dal.Key, val interface{}) error {
 	//	return nil
 	//}
 	t.Log("TestUserEmailGaeDal_GetUserEmailByID commented out")
