@@ -64,7 +64,7 @@ func TestCreateMassInvite(t *testing.T) {
 		return
 	}
 
-	apicore.GetAuthTokenFromHttpRequest = func(r *http.Request) (token *sneatauth.Token, err error) {
+	apicore.GetAuthTokenFromHttpRequest = func(r *http.Request, authRequired bool) (token *sneatauth.Token, err error) {
 		return &sneatauth.Token{UID: "unit-test-user"}, nil
 	}
 

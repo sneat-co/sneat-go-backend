@@ -23,7 +23,7 @@ func TestRegisterLogistRoutes(t *testing.T) {
 			t.Errorf("Unexpected method [%s] for path [%s]", method, path)
 		}
 		var r = httptest.NewRequest(method, path, nil)
-		apicore.GetAuthTokenFromHttpRequest = func(r *http.Request) (token *sneatauth.Token, err error) {
+		apicore.GetAuthTokenFromHttpRequest = func(r *http.Request, authRequired bool) (token *sneatauth.Token, err error) {
 			return nil, nil
 		}
 		//apicore.NewContextWithToken = func(r *http.Request, authRequired bool) (ctx context.Context, err error) {

@@ -76,7 +76,7 @@ func TestHttpAddMember(t *testing.T) {
 	defer func() {
 		apicore.GetAuthTokenFromHttpRequest = nil
 	}()
-	apicore.GetAuthTokenFromHttpRequest = func(r *http.Request) (token *sneatauth.Token, err error) {
+	apicore.GetAuthTokenFromHttpRequest = func(r *http.Request, authRequired bool) (token *sneatauth.Token, err error) {
 		return &sneatauth.Token{UID: "TestUserID"}, nil
 	}
 
@@ -116,7 +116,7 @@ func TestHttpAddMember(t *testing.T) {
 	}
 
 	const uid = "unit-test-user"
-	apicore.GetAuthTokenFromHttpRequest = func(r *http.Request) (token *sneatauth.Token, err error) {
+	apicore.GetAuthTokenFromHttpRequest = func(r *http.Request, authRequired bool) (token *sneatauth.Token, err error) {
 		return &sneatauth.Token{UID: uid}, nil
 	}
 	//sneatfb.NewFirebaseAuthToken = func(ctx context.Context, fbIDToken func() (string, error), authRequired bool) (*auth.Token, error) {
