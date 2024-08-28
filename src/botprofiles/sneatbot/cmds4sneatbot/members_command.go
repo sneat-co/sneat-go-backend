@@ -24,7 +24,7 @@ var membersCommand = botsfw.Command{
 		keyboard.InlineKeyboard = append(keyboard.InlineKeyboard, []tgbotapi.InlineKeyboardButton{
 			{
 				Text:         "⬅️ Back to space menu",
-				CallbackData: "start",
+				CallbackData: "space",
 			},
 		})
 		if m, err = whc.NewEditMessage(m.Text, m.Format); err != nil {

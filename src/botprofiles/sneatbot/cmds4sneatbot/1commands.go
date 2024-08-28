@@ -6,6 +6,7 @@ import "github.com/bots-go-framework/bots-fw/botsfw"
 func AddSneatSharedCommands(commandsByType map[botsfw.WebhookInputType][]botsfw.Command) {
 	addCommands(commandsByType, []botsfw.Command{
 		spacesCommand,
+		spaceCommand,
 		membersCommand,
 	})
 }
