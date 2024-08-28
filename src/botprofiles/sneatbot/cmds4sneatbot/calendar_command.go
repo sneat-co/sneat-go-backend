@@ -18,14 +18,14 @@ var calendarCommand = botsfw.Command{
 	Action:         calendarAction,
 }
 
-func calendarCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.MessageFromBot, err error) {
+func calendarCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 	if m, err = calendarAction(whc); err != nil {
 		return
 	}
 
 	keyboard := m.Keyboard.(*tgbotapi.InlineKeyboardMarkup)
 	keyboard.InlineKeyboard = append(keyboard.InlineKeyboard, []tgbotapi.InlineKeyboardButton{
-		tghelpers.BackToSpaceMenuButton(),
+		tghelpers.BackToSpaceMenuButton(callbackUrl),
 	})
 	if m, err = whc.NewEditMessage(m.Text, m.Format); err != nil {
 		return

@@ -58,7 +58,7 @@ func watchCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 			},
 		},
 		[]tgbotapi.InlineKeyboardButton{
-			tghelpers.BackToSpaceMenuButton(),
+			tghelpers.BackToSpaceMenuButton(callbackUrl),
 		},
 	)
 	m.ResponseChannel = botsfw.BotAPISendMessageOverHTTPS

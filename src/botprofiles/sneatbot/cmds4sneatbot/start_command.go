@@ -2,6 +2,7 @@ package cmds4sneatbot
 
 import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
 )
 
 var startCommand = botsfw.Command{
@@ -27,6 +28,6 @@ func startAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error)
 	if _, err = responder.SendMessage(ctx, welcomeMsg, botsfw.BotAPISendMessageOverHTTPS); err != nil {
 		return
 	}
-	m, err = spaceAction(whc, "family")
+	m, err = spaceAction(whc, core4spaceus.SpaceTypeFamily, "")
 	return
 }

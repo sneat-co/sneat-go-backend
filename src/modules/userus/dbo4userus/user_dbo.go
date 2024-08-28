@@ -84,11 +84,16 @@ func (v *UserDbo) GetFullName() string {
 
 // SetSpaceBrief sets team brief and adds teamID to the list of team IDs if needed
 func (v *UserDbo) SetSpaceBrief(spaceID string, brief *UserSpaceBrief) (updates []dal.Update) {
-	if v.Spaces == nil {
-		v.Spaces = map[string]*UserSpaceBrief{spaceID: brief}
-	} else {
-		v.Spaces[spaceID] = brief
+	if spaceID == "" {
+		panic("spaceID is empty string")
 	}
+	if brief == nil {
+		panic("brief is nil")
+	}
+	if v.Spaces == nil {
+		v.Spaces = make(map[string]*UserSpaceBrief, 1)
+	}
+	v.Spaces[spaceID] = brief
 	updates = append(updates, dal.Update{Field: "spaces." + spaceID, Value: brief})
 	if !slices.Contains(v.SpaceIDs, spaceID) {
 		v.SpaceIDs = append(v.SpaceIDs, spaceID)
@@ -108,12 +113,17 @@ func (v *UserDbo) GetSpaceBriefByType(t core4spaceus.SpaceType) (spaceID string,
 }
 
 func (v *UserDbo) GetFamilySpaceID() string {
+	id, _ := v.GetFirstSpaceBriefBySpaceType(core4spaceus.SpaceTypeFamily)
+	return id
+}
+
+func (v *UserDbo) GetFirstSpaceBriefBySpaceType(spaceType core4spaceus.SpaceType) (spaceID string, spaceBrief *UserSpaceBrief) {
 	for id, space := range v.Spaces {
-		if space.Type == core4spaceus.SpaceTypeFamily {
-			return id
+		if space.Type == spaceType {
+			return id, space
 		}
 	}
-	return ""
+	return "", nil
 }
 
 // Validate validates user record

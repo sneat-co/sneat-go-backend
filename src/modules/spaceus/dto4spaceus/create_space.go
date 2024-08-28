@@ -20,7 +20,9 @@ func (request *CreateSpaceRequest) Validate() error {
 	if strings.TrimSpace(string(request.Type)) == "" {
 		return validation.NewErrRecordIsMissingRequiredField("type")
 	}
-	if request.Type != "family" && strings.TrimSpace(request.Title) == "" {
+	if request.Type != core4spaceus.SpaceTypeFamily &&
+		request.Type != core4spaceus.SpaceTypePrivate &&
+		strings.TrimSpace(request.Title) == "" {
 		return validation.NewErrRecordIsMissingRequiredField("title")
 	}
 	return nil

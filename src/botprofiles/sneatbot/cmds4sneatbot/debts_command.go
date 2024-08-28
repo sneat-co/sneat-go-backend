@@ -18,14 +18,14 @@ var debtsCommand = botsfw.Command{
 	Action:         debtsAction,
 }
 
-func debtsCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.MessageFromBot, err error) {
+func debtsCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 	if m, err = debtsAction(whc); err != nil {
 		return
 	}
 
 	keyboard := m.Keyboard.(*tgbotapi.InlineKeyboardMarkup)
 	keyboard.InlineKeyboard = append(keyboard.InlineKeyboard, []tgbotapi.InlineKeyboardButton{
-		tghelpers.BackToSpaceMenuButton(),
+		tghelpers.BackToSpaceMenuButton(callbackUrl),
 	})
 	if m, err = whc.NewEditMessage(m.Text, m.Format); err != nil {
 		return

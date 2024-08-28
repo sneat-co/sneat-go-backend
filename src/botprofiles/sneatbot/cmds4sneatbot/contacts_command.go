@@ -18,14 +18,14 @@ var contactsCommand = botsfw.Command{
 	Action:         contactsAction,
 }
 
-func contactsCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.MessageFromBot, err error) {
+func contactsCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 	if m, err = contactsAction(whc); err != nil {
 		return
 	}
 
 	keyboard := m.Keyboard.(*tgbotapi.InlineKeyboardMarkup)
 	keyboard.InlineKeyboard = append(keyboard.InlineKeyboard, []tgbotapi.InlineKeyboardButton{
-		tghelpers.BackToSpaceMenuButton(),
+		tghelpers.BackToSpaceMenuButton(callbackUrl),
 	})
 	if m, err = whc.NewEditMessage(m.Text, m.Format); err != nil {
 		return

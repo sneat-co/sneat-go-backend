@@ -118,14 +118,14 @@ func (v SpaceBrief) Validate() error {
 	if v.Type == "" {
 		return validation.NewErrRecordIsMissingRequiredField("type")
 	}
-	if v.Type != core4spaceus.SpaceTypeFamily && v.Title == "" {
-		return errors.New("non family team is required to have a title")
-	}
 	if !core4spaceus.IsValidSpaceType(v.Type) {
 		if v.Title == "" {
 			return validation.NewErrBadRecordFieldValue("type", "unknown value")
 		}
 		return validation.NewErrBadRecordFieldValue("type", "unknown value for team:"+v.Title)
+	}
+	if v.Title == "" && v.Type != core4spaceus.SpaceTypeFamily && v.Type != core4spaceus.SpaceTypePrivate {
+		return errors.New("non family team is required to have a title")
 	}
 	if v.Status == "" {
 		return validation.NewErrRequestIsMissingRequiredField("status")

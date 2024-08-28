@@ -28,24 +28,25 @@ type CreateSpaceResult struct {
 	User  dbo4userus.UserEntry   `json:"-"`
 }
 
-func CreateFamilySpace(ctx context.Context, userCtx facade.UserContext) (space dbo4spaceus.SpaceEntry, contactusSpace dal4contactus.ContactusSpaceEntry, err error) {
+func CreateFamilySpace(
+	ctx context.Context, userCtx facade.UserContext,
+) (
+	space dbo4spaceus.SpaceEntry, contactusSpace dal4contactus.ContactusSpaceEntry, err error,
+) {
 	request := dto4spaceus.CreateSpaceRequest{Type: core4spaceus.SpaceTypeFamily}
 	return CreateSpace(ctx, userCtx, request)
 }
 
 // CreateSpace creates SpaceIDs record
 func CreateSpace(ctx context.Context, userCtx facade.UserContext, request dto4spaceus.CreateSpaceRequest) (space dbo4spaceus.SpaceEntry, contactusSpace dal4contactus.ContactusSpaceEntry, err error) {
-	if err = request.Validate(); err != nil {
-		return
-	}
 	err = dal4userus.RunUserWorker(ctx, userCtx, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
-		space, contactusSpace, err = createSpaceTxWorker(ctx, tx, request, params)
+		space, contactusSpace, err = CreateSpaceTxWorker(ctx, tx, request, params)
 		return err
 	})
 	return
 }
 
-func createSpaceTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, request dto4spaceus.CreateSpaceRequest, params *dal4userus.UserWorkerParams) (space dbo4spaceus.SpaceEntry, contactusSpace dal4contactus.ContactusSpaceEntry, err error) {
+func CreateSpaceTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, request dto4spaceus.CreateSpaceRequest, params *dal4userus.UserWorkerParams) (space dbo4spaceus.SpaceEntry, contactusSpace dal4contactus.ContactusSpaceEntry, err error) {
 	now := time.Now()
 	if request.Title == "" {
 		space.ID, _ = params.User.Data.GetSpaceBriefByType(request.Type)
@@ -171,22 +172,16 @@ func createSpaceTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, reque
 		Roles:         roles,
 	}
 
-	if params.User.Data.Spaces == nil {
-		params.User.Data.Spaces = make(map[string]*dbo4userus.UserSpaceBrief, 1)
-	}
-	updates := params.User.Data.SetSpaceBrief(spaceID, &userSpaceBrief)
+	params.UserUpdates = append(params.UserUpdates, params.User.Data.SetSpaceBrief(spaceID, &userSpaceBrief)...)
 
-	updates = append(updates, dbo4linkage.UpdateRelatedIDs(&params.User.Data.WithRelated, &params.User.Data.WithRelatedIDs)...)
+	params.UserUpdates = append(params.UserUpdates, dbo4linkage.UpdateRelatedIDs(&params.User.Data.WithRelated, &params.User.Data.WithRelatedIDs)...)
 
 	if err = params.User.Data.Validate(); err != nil {
-		err = fmt.Errorf("user record is not valid after adding new team info: %v", err)
+		err = fmt.Errorf("user record is not valid after adding new space info: %v", err)
 		return
 	}
 	if params.User.Record.Exists() {
-		if err = tx.Update(ctx, params.User.Key, updates); err != nil {
-			err = fmt.Errorf("failed to update user record with a new spaceDbo info: %w", err)
-			return
-		}
+		// Will be updated by RunUserWorker
 	} else {
 		if err = tx.Insert(ctx, params.User.Record); err != nil {
 			err = fmt.Errorf("failed to insert new user record: %w", err)

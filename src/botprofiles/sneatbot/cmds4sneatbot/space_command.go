@@ -5,8 +5,15 @@ import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/tghelpers"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/facade4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"net/url"
 	"strings"
+	"time"
 )
 
 var spaceCommand = botsfw.Command{
@@ -17,8 +24,8 @@ var spaceCommand = botsfw.Command{
 }
 
 func spaceCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-	spaceID := callbackUrl.Query().Get("id")
-	if m, err = spaceAction(whc, spaceID); err != nil {
+	spaceType, spaceID := tghelpers.GetSpaceParams(callbackUrl)
+	if m, err = spaceAction(whc, spaceType, spaceID); err != nil {
 		return
 	}
 	keyboard := m.Keyboard
@@ -32,80 +39,118 @@ func spaceCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 	return
 }
 
-func spaceAction(_ botsfw.WebhookContext, spaceID string) (m botsfw.MessageFromBot, err error) {
-	if spaceID == "" {
-		spaceID = "family"
+func getSpaceID(whc botsfw.WebhookContext, spaceType core4spaceus.SpaceType) (spaceID string, user dbo4userus.UserEntry, err error) {
+	appUserID := whc.AppUserID()
+	user = dbo4userus.NewUserEntry(appUserID)
+	ctx := whc.Context()
+	tx := whc.Tx()
+	if err = tx.Get(ctx, user.Record); err != nil {
+		return
 	}
+	spaceID, _ = user.Data.GetFirstSpaceBriefBySpaceType(spaceType)
+	return
+}
 
+func spaceAction(whc botsfw.WebhookContext, spaceType core4spaceus.SpaceType, spaceID string) (m botsfw.MessageFromBot, err error) {
+	if spaceID == "" {
+		var user dbo4userus.UserEntry
+		if spaceID, user, err = getSpaceID(whc, spaceType); err != nil {
+			return
+		}
+		if spaceID == "" {
+			var spaceEntry dbo4spaceus.SpaceEntry
+			ctx := whc.Context()
+			tx := whc.Tx()
+			request := dto4spaceus.CreateSpaceRequest{Type: spaceType}
+			params := dal4userus.UserWorkerParams{
+				Started: time.Now(), // TODO: get from tx
+				User:    user,
+			}
+			if spaceEntry, _, err = facade4spaceus.CreateSpaceTxWorker(ctx, tx, request, &params); err != nil {
+				return
+			}
+			if err = params.User.Data.Validate(); err != nil {
+				err = fmt.Errorf("user record is not valid after CreateSpaceTxWorker: %w", err)
+				return
+			}
+			if err = tx.Update(ctx, params.User.Key, params.UserUpdates); err != nil {
+				return
+			}
+			spaceID = spaceEntry.ID
+		}
+	}
 	var spaceIcon string
 
 	var switchSpaceCallbackData string
 	var switchSpaceTitle string
-	switch spaceID {
-	case "family":
-		switchSpaceCallbackData = "space?id=private"
+	switch spaceType {
+	case core4spaceus.SpaceTypeFamily:
+		switchSpaceCallbackData = "space?spaceType=private"
 		switchSpaceTitle = "Private"
 		spaceIcon = "👪"
-	case "private":
-		switchSpaceCallbackData = "space?id=family"
+	case core4spaceus.SpaceTypePrivate:
+		switchSpaceCallbackData = "space?spaceType=family"
 		switchSpaceTitle = "Family"
 		spaceIcon = "🔒"
 	}
 
-	spaceTitle := strings.ToUpper(spaceID[:1]) + spaceID[1:]
+	spaceTitle := strings.ToUpper(string(spaceType)[:1]) + string(spaceType)[1:]
 	m.Text += fmt.Sprintf("Current space: %s <b>%s</b>", spaceIcon, spaceTitle)
 	m.Format = botsfw.MessageFormatHTML
+
+	spaceCallbackParams := fmt.Sprintf("spaceType=%s&spaceID=%s", spaceType, spaceID)
 
 	firstRow := []tgbotapi.InlineKeyboardButton{
 		{
 			Text:         "📇 Contacts",
-			CallbackData: "contacts",
+			CallbackData: "contacts?" + spaceCallbackParams,
 		},
 	}
 	if spaceID != "private" {
 		firstRow = append(firstRow, tgbotapi.InlineKeyboardButton{
 			Text:         "👪 Members",
-			CallbackData: "members",
+			CallbackData: "members?" + spaceCallbackParams,
 		})
 	}
+
 	m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
 		firstRow,
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text:         "🚗 Assets",
-				CallbackData: "assets",
+				CallbackData: "assets?" + spaceCallbackParams,
 			},
 			{
 				Text:         "💰 Budget",
-				CallbackData: "budget",
+				CallbackData: "budget?" + spaceCallbackParams,
 			},
 			{
 				Text:         "💸 Debts",
-				CallbackData: "debts",
+				CallbackData: "debts?" + spaceCallbackParams,
 			},
 		},
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text:         "🛒 Buy",
-				CallbackData: "buy",
+				CallbackData: "buy?" + spaceCallbackParams,
 			},
 			{
 				Text:         "🏗️ ToDo",
-				CallbackData: "todo",
+				CallbackData: "todo?" + spaceCallbackParams,
 			},
 			{
 				Text:         "📽️ Watch",
-				CallbackData: "watch",
+				CallbackData: "watch?" + spaceCallbackParams,
 			},
 		},
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text:         "🗓️ Calendar",
-				CallbackData: "calendar",
+				CallbackData: "calendar?" + spaceCallbackParams,
 			},
 			{
 				Text:         "⚙️ Settings",
-				CallbackData: "settings",
+				CallbackData: "settings?" + spaceCallbackParams,
 			},
 		},
 		[]tgbotapi.InlineKeyboardButton{
