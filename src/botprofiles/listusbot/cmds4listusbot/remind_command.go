@@ -10,6 +10,9 @@ import (
 
 var remindCommand = botsfw.Command{
 	Code: "remind",
+	InputTypes: []botsfw.WebhookInputType{
+		botsfw.WebhookInputText,
+	},
 	Matcher: func(command botsfw.Command, context botsfw.WebhookContext) bool {
 		switch input := context.Input().(type) {
 		case botsfw.WebhookTextMessage:

@@ -8,23 +8,25 @@ import (
 )
 
 var spaceCommand = botsfw.Command{
-	Code:       "space",
-	Commands:   []string{"/space"},
-	InputTypes: []botsfw.WebhookInputType{botsfw.WebhookInputCallbackQuery},
-	CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-		if m, err = spaceAction(whc); err != nil {
-			return
-		}
-		keyboard := m.Keyboard
-		if m, err = whc.NewEditMessage(m.Text, m.Format); err != nil {
-			return
-		}
-		m.Keyboard = keyboard
-		if m.EditMessageUID, err = tghelpers.GetEditMessageUID(whc); err != nil {
-			return
-		}
+	Code:           "space",
+	Commands:       []string{"/space"},
+	InputTypes:     []botsfw.WebhookInputType{botsfw.WebhookInputCallbackQuery},
+	CallbackAction: spaceCallbackAction,
+}
+
+func spaceCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
+	if m, err = spaceAction(whc); err != nil {
 		return
-	},
+	}
+	keyboard := m.Keyboard
+	if m, err = whc.NewEditMessage(m.Text, m.Format); err != nil {
+		return
+	}
+	m.Keyboard = keyboard
+	if m.EditMessageUID, err = tghelpers.GetEditMessageUID(whc); err != nil {
+		return
+	}
+	return
 }
 
 func spaceAction(_ botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
@@ -58,15 +60,15 @@ func spaceAction(_ botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text:         "🛒 Buy",
-				CallbackData: "/listus to-buy",
+				CallbackData: "buy",
 			},
 			{
 				Text:         "🏗️ ToDo",
-				CallbackData: "/listus to-do",
+				CallbackData: "do",
 			},
 			{
 				Text:         "📽️ Watch",
-				CallbackData: "/listus to-watch",
+				CallbackData: "watch",
 			},
 		},
 		[]tgbotapi.InlineKeyboardButton{

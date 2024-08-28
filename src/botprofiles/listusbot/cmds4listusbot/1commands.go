@@ -2,25 +2,21 @@ package cmds4listusbot
 
 import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
+	"github.com/sneat-co/sneat-go-backend/src/botscore/bothelpers"
 )
 
-var Commands = []botsfw.Command{
-	listCommand,
-	addBuyItemCommand,
-	remindCommand,
+// AddListusOnlyBotCommands adds listus commands to a Listus bot
+func AddListusOnlyBotCommands(commandsByType map[botsfw.WebhookInputType][]botsfw.Command) {
+	bothelpers.AddCommands(commandsByType, []botsfw.Command{
+		startCommand,
+	})
 }
 
-// AddListusBotCommands adds listus commands to a Listus bot
-func AddListusBotCommands(commandsByType map[botsfw.WebhookInputType][]botsfw.Command) {
-	commandsByType[botsfw.WebhookInputText] = append(commandsByType[botsfw.WebhookInputText], startCommand)
-	AddListusSharedCommands(commandsByType)
-}
-
-// AddListusSharedCommands adds anybot listus commands to a Sneat bot
+// AddListusSharedCommands adds listus commands to a Sneat bot
 func AddListusSharedCommands(commandsByType map[botsfw.WebhookInputType][]botsfw.Command) {
-	commandsByType[botsfw.WebhookInputText] = append(commandsByType[botsfw.WebhookInputText],
+	bothelpers.AddCommands(commandsByType, []botsfw.Command{
 		listCommand,
-		addBuyItemCommand,
+		buyCommand,
 		remindCommand,
-	)
+	})
 }

@@ -15,27 +15,26 @@ var membersCommand = botsfw.Command{
 		botsfw.WebhookInputText,
 		botsfw.WebhookInputCallbackQuery,
 	},
-	CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-		if m, err = membersAction(whc); err != nil {
-			return
-		}
+	CallbackAction: membersCallbackAction,
+	Action:         membersAction,
+}
 
-		keyboard := m.Keyboard.(*tgbotapi.InlineKeyboardMarkup)
-		keyboard.InlineKeyboard = append(keyboard.InlineKeyboard, []tgbotapi.InlineKeyboardButton{
-			{
-				Text:         "⬅️ Back to space menu",
-				CallbackData: "space",
-			},
-		})
-		if m, err = whc.NewEditMessage(m.Text, m.Format); err != nil {
-			return
-		}
-		m.Keyboard = keyboard
-
-		m.EditMessageUID, err = tghelpers.GetEditMessageUID(whc)
+func membersCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.MessageFromBot, err error) {
+	if m, err = membersAction(whc); err != nil {
 		return
-	},
-	Action: membersAction,
+	}
+
+	keyboard := m.Keyboard.(*tgbotapi.InlineKeyboardMarkup)
+	keyboard.InlineKeyboard = append(keyboard.InlineKeyboard, []tgbotapi.InlineKeyboardButton{
+		tghelpers.BackToSpaceMenuButton(),
+	})
+	if m, err = whc.NewEditMessage(m.Text, m.Format); err != nil {
+		return
+	}
+	m.Keyboard = keyboard
+
+	m.EditMessageUID, err = tghelpers.GetEditMessageUID(whc)
+	return
 }
 
 func membersAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {

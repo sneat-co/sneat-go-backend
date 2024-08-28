@@ -33,7 +33,7 @@ func createStartCommand(botParams BotParams) botsfw.Command {
 	return botsfw.Command{
 		Code:       "start",
 		Commands:   []string{"/start"},
-		InputTypes: []botsfw.WebhookInputType{botsfw.WebhookInputInlineQuery},
+		InputTypes: []botsfw.WebhookInputType{botsfw.WebhookInputText},
 		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 			return startCommandAction(whc, botParams)
 		},
