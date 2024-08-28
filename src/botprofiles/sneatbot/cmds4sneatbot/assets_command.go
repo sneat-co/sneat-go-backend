@@ -4,7 +4,6 @@ import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/tghelpers"
-	"github.com/strongo/logus"
 	"net/url"
 )
 
@@ -37,10 +36,9 @@ func assetsCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.Messa
 	return
 }
 
-func assetsAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-	ctx := whc.Context()
-	logus.Infof(ctx, "membersCommand.Action(): InputType=%v", whc.Input().InputType())
+func assetsAction(_ botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 	m.Text = "<b>Family assets</b>"
+	m.Text += "\n\n<i>Not implemented yet</i>"
 	m.Format = botsfw.MessageFormatHTML
 	m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
 		[]tgbotapi.InlineKeyboardButton{
@@ -56,6 +54,5 @@ func assetsAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error
 			},
 		},
 	)
-	m.ResponseChannel = botsfw.BotAPISendMessageOverHTTPS // TODO: remove this line after debugging
 	return
 }

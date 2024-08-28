@@ -36,9 +36,10 @@ func budgetCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.Messa
 	return
 }
 
-func budgetAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-	m.Text = "<b>Family budget</b>"
+func budgetAction(_ botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 	m.Format = botsfw.MessageFormatHTML
+	m.Text = "<b>Family budget</b>"
+	m.Text += "\n\n<i>Not implemented yet</i>"
 	m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
 		[]tgbotapi.InlineKeyboardButton{
 			{
@@ -49,6 +50,5 @@ func budgetAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error
 			},
 		},
 	)
-	m.ResponseChannel = botsfw.BotAPISendMessageOverHTTPS // TODO: remove this line after debugging
 	return
 }

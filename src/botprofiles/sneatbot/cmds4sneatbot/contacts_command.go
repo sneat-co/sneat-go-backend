@@ -36,9 +36,10 @@ func contactsCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.Mes
 	return
 }
 
-func contactsAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-	m.Text = "<b>Family contacts</b>"
+func contactsAction(_ botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 	m.Format = botsfw.MessageFormatHTML
+	m.Text = "<b>Family contacts</b>"
+	m.Text += "\n\n<i>Not implemented yet</i>"
 	m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
 		[]tgbotapi.InlineKeyboardButton{
 			{
@@ -59,6 +60,5 @@ func contactsAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err err
 			},
 		},
 	)
-	m.ResponseChannel = botsfw.BotAPISendMessageOverHTTPS // TODO: remove this line after debugging
 	return
 }

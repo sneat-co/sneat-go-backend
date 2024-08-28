@@ -47,7 +47,6 @@ var spacesCommand = botsfw.Command{
 				},
 			},
 		)
-		//m.ResponseChannel = botsfw.BotAPISendMessageOverHTTPS // TODO: remove this line after debugging
 		return
 	},
 }

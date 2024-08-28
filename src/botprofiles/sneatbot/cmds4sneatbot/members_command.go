@@ -62,6 +62,5 @@ func membersAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err erro
 			},
 		},
 	)
-	m.ResponseChannel = botsfw.BotAPISendMessageOverHTTPS // TODO: remove this line after debugging
 	return
 }
