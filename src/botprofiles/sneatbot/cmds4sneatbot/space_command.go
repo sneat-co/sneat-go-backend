@@ -36,6 +36,7 @@ func spaceCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 	if m.EditMessageUID, err = tghelpers.GetEditMessageUID(whc); err != nil {
 		return
 	}
+	whc.ChatData().SetAwaitingReplyTo("")
 	return
 }
 

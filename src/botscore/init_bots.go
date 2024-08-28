@@ -24,6 +24,14 @@ func (v botsHttpRouter) Handle(method, path string, handle http.HandlerFunc) {
 	})
 }
 
+func sneatAppTgUserDboMaker(botID string) (botsfwmodels.PlatformUserData, error) {
+	panic("deprecated: use profile.NewChatData()")
+}
+
+func sneatAppTgChatDboMaker(botID string) (botChat botsfwmodels.BotChatData, err error) {
+	panic("deprecated: use profile.NewChatData()")
+}
+
 func InitializeBots(botHost botsfw.BotHost, httpRouter *httprouter.Router) {
 	if botHost == nil {
 		panic("botHost == nil")
@@ -46,8 +54,8 @@ func InitializeBots(botHost botsfw.BotHost, httpRouter *httprouter.Router) {
 	var recordsMaker = botsfwmodels.NewBotRecordsMaker(
 		"*",
 		makeAppUserDto,
-		telegram.BaseTgUserDtoMaker,
-		telegram.BaseTgChatDtoMaker,
+		sneatAppTgUserDboMaker, //telegram.BaseTgUserDtoMaker,
+		sneatAppTgChatDboMaker, //telegram.BaseTgChatDtoMaker
 	)
 
 	//dataAccess := dalgo4botsfw.NewDataAccess(telegram.PlatformID, getDb, recordsMaker)

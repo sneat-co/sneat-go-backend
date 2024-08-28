@@ -128,6 +128,7 @@ func createListItemTxWorker(ctx context.Context, request CreateListItemsRequest,
 			Field: "lists." + listID,
 			Value: listBrief,
 		})
+		params.SpaceModuleEntry.Record.MarkAsChanged()
 	} else {
 		params.SpaceModuleEntry.Data.CreatedAt = params.Started
 		params.SpaceModuleEntry.Data.CreatedBy = params.UserID

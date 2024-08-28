@@ -47,7 +47,7 @@ func Init(botHost botsfw.BotHost) {
 	InitCronHandlers(httpRouter)
 	InitTaskQueueHandlers(httpRouter)
 
-	InitBots(httpRouter, botHost, nil)
+	//InitBots(httpRouter, botHost, nil)
 
 	//httpRouter.GET("/test-pointer", testModelPointer)
 	httpRouter.GET("/Users/astec/", NotFoundSilent)

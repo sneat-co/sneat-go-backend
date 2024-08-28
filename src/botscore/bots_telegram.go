@@ -84,7 +84,8 @@ func telegramBots(environment string) botsfw.SettingsBy {
 			default:
 				panic(fmt.Sprintf("Unsupported profileID: %s", profileID))
 			}
-			botSettings = append(botSettings, telegram.NewTelegramBot(botsfw.EnvLocal, profile, botID, "", "", "", "", i18n.LocaleEnUS, GetDb, getAppUser))
+			botSettings = append(botSettings,
+				telegram.NewTelegramBot(botsfw.EnvLocal, profile, botID, "", "", "", "", i18n.LocaleEnUS, GetDb, getAppUser))
 		}
 		_bots = botsfw.NewBotSettingsBy(botSettings...)
 	default:

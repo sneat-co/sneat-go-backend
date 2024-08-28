@@ -243,7 +243,9 @@ func applySpaceModuleUpdates[D SpaceModuleDbo](
 	}
 
 	if params.SpaceModuleEntry.Record.Exists() {
-		if err = txUpdateSpaceModule(ctx, tx, params.Started, params.SpaceModuleEntry, params.SpaceModuleUpdates); err != nil {
+		if len(params.SpaceModuleUpdates) == 0 {
+			return tx.Set(ctx, params.SpaceModuleEntry.Record)
+		} else if err = txUpdateSpaceModule(ctx, tx, params.Started, params.SpaceModuleEntry, params.SpaceModuleUpdates); err != nil {
 			return fmt.Errorf("failed to update space module record: %w", err)
 		}
 	} else {

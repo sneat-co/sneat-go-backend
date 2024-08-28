@@ -11,13 +11,35 @@ import (
 	"github.com/strongo/i18n"
 )
 
+type SneatAppTgData struct {
+	SpaceID string `json:"spaceID,omitempty" firestore:"spaceID,omitempty"`
+}
+
+func (v *SneatAppTgData) GetSpaceID() string {
+	return v.SpaceID
+}
+
+func (v *SneatAppTgData) SetSpaceID(spaceID string) {
+	v.SpaceID = spaceID
+}
+
+type SneatAppTgChatDbo struct {
+	botsfwtgmodels.TgChatBaseData
+	SneatAppTgData
+}
+
+type SneatAppTgUserDbo struct {
+	botsfwtgmodels.TgPlatformUserBaseDbo
+	SneatAppTgData
+}
+
 func NewProfile(id string, router *botsfw.WebhooksRouter) botsfw.BotProfile {
 	return botsfw.NewBotProfile(id, router,
 		func() botsfwmodels.BotChatData {
-			return new(botsfwtgmodels.TgChatBaseData)
+			return new(SneatAppTgChatDbo)
 		},
 		func() botsfwmodels.PlatformUserData {
-			return new(botsfwtgmodels.TgPlatformUserBaseDbo)
+			return new(SneatAppTgUserDbo)
 		},
 		func() botsfwmodels.AppUserData {
 			return new(dbo4userus.UserDbo)

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/listusbot/dal4listusbot"
+	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/tghelpers"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/facade4listus"
@@ -13,6 +13,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
+	"github.com/strongo/random"
 	"net/url"
 	"strings"
 )
@@ -50,11 +51,20 @@ func buyCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsf
 	if m, err = whc.NewEditMessage(m.Text, m.Format); err != nil {
 		return
 	}
+
+	spaceType, spaceID := tghelpers.GetSpaceParams(callbackUrl)
+
 	m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
 		[]tgbotapi.InlineKeyboardButton{
 			{
-				Text:         "Clear list",
-				CallbackData: "buy?action=clear",
+				Text:         "❌ Clear list",
+				CallbackData: fmt.Sprintf("buy?action=clear&spaceType=%s&spaceID=%s", spaceType, spaceID),
+			},
+			{
+				Text: "💻 Edit list",
+				WebApp: &tgbotapi.WebappInfo{
+					Url: "https://local-app.sneat.ws/space/family/h4qax/budget", // TODO: generate URL
+				},
 			},
 		},
 		[]tgbotapi.InlineKeyboardButton{
@@ -62,6 +72,14 @@ func buyCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsf
 		},
 	)
 	m.ResponseChannel = botsfw.BotAPISendMessageOverHTTPS
+	chatData := whc.ChatData()
+	chatData.SetAwaitingReplyTo("buy")
+	switch chatData := chatData.(type) {
+	case interface{ SetSpaceID(string) }:
+		chatData.SetSpaceID(spaceID)
+	default:
+		err = fmt.Errorf("chatData %T does not support SetSpaceID()", chatData)
+	}
 	return
 }
 
@@ -70,28 +88,36 @@ func buyAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 
 	chatData := whc.ChatData()
 
-	listusChatData := chatData.(*dal4listus.ListusChatData)
+	sneatAppChatData := chatData.(interface{ GetSpaceID() string })
 
 	input := whc.Input().(botsfw.WebhookTextMessage)
 	text := strings.TrimSpace(input.Text())
-	text = text[strings.Index(text, " ")+1:]
+	firstSpaceIndex := strings.Index(text, " ")
+	if firstSpaceIndex > 0 {
+		firstWord := text[:]
+		if firstWord == "buy" || firstWord == "/buy" {
+			text = text[len(firstWord):]
+		}
+	}
 	userCtx := facade.NewUserContext(whc.AppUserID())
 
-	user := dbo4userus.NewUserEntry(userCtx.GetUserID())
-
-	if err = dal4userus.GetUser(ctx, whc.DB(), user); err != nil {
-		return m, err
-	}
-
-	spaceID := listusChatData.SpaceID
+	spaceID := sneatAppChatData.GetSpaceID()
 
 	if spaceID == "" {
-		familySpaceID, familySpaceBrief := user.Data.GetSpaceBriefByType(core4spaceus.SpaceTypeFamily)
-		if familySpaceBrief == nil {
+		userID := userCtx.GetUserID()
+		var user dbo4userus.UserEntry
+		var db dal.DB
+		if db, err = facade.GetDatabase(ctx); err != nil {
+			return
+		}
+		if user, err = dal4userus.GetUserByID(ctx, db, userID); err != nil {
+			return
+		}
+		spaceID, _ = user.Data.GetSpaceBriefByType(core4spaceus.SpaceTypeFamily)
+		if spaceID == "" {
 			m = whc.NewMessage("You are not a member of any family team")
 			return m, nil
 		}
-		spaceID = familySpaceID
 	}
 
 	request := facade4listus.CreateListItemsRequest{
@@ -103,6 +129,7 @@ func buyAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		},
 		Items: []facade4listus.CreateListItemRequest{
 			{
+				ID: random.ID(5), // TODO: should be generated inside transaction?
 				ListItemBase: dbo4listus.ListItemBase{
 					Title: text,
 				},
