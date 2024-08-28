@@ -4,23 +4,22 @@ import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/tghelpers"
-	"github.com/strongo/logus"
 	"net/url"
 )
 
-var membersCommand = botsfw.Command{
-	Code:     "members",
-	Commands: []string{"/members"},
+var budgetCommand = botsfw.Command{
+	Code:     "budget",
+	Commands: []string{"/budget"},
 	InputTypes: []botsfw.WebhookInputType{
 		botsfw.WebhookInputText,
 		botsfw.WebhookInputCallbackQuery,
 	},
-	CallbackAction: membersCallbackAction,
-	Action:         membersAction,
+	CallbackAction: budgetCallbackAction,
+	Action:         budgetAction,
 }
 
-func membersCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.MessageFromBot, err error) {
-	if m, err = membersAction(whc); err != nil {
+func budgetCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.MessageFromBot, err error) {
+	if m, err = budgetAction(whc); err != nil {
 		return
 	}
 
@@ -37,28 +36,16 @@ func membersCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.Mess
 	return
 }
 
-func membersAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-	ctx := whc.Context()
-	logus.Infof(ctx, "membersCommand.Action(): InputType=%v", whc.Input().InputType())
-	m.Text = "<b>Family members</b>"
+func budgetAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
+	m.Text = "<b>Family budget</b>"
 	m.Format = botsfw.MessageFormatHTML
 	m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text: "💻 Manage in app",
 				WebApp: &tgbotapi.WebappInfo{
-					Url: "https://local-app.sneat.ws/space/family/h4qax/members", // TODO: generate URL
+					Url: "https://local-app.sneat.ws/space/family/h4qax/budget", // TODO: generate URL
 				},
-			},
-			{
-				Text:         "➕ Add member",
-				CallbackData: "/add-member",
-			},
-		},
-		[]tgbotapi.InlineKeyboardButton{
-			{
-				Text:         "🧑 Myself",
-				CallbackData: "/contact=myself",
 			},
 		},
 	)

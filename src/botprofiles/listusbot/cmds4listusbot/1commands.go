@@ -17,6 +17,8 @@ func AddListusSharedCommands(commandsByType map[botsfw.WebhookInputType][]botsfw
 	bothelpers.AddCommands(commandsByType, []botsfw.Command{
 		listCommand,
 		buyCommand,
+		todoCommand,
+		watchCommand,
 		remindCommand,
 	})
 }

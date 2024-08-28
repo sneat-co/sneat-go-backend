@@ -59,7 +59,7 @@ func spaceAction(_ botsfw.WebhookContext, spaceID string) (m botsfw.MessageFromB
 	firstRow := []tgbotapi.InlineKeyboardButton{
 		{
 			Text:         "📇 Contacts",
-			CallbackData: "/contacts",
+			CallbackData: "contacts",
 		},
 	}
 	if spaceID != "private" {
@@ -73,15 +73,15 @@ func spaceAction(_ botsfw.WebhookContext, spaceID string) (m botsfw.MessageFromB
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text:         "🚗 Assets",
-				CallbackData: "/assets",
+				CallbackData: "assets",
 			},
 			{
 				Text:         "💰 Budget",
-				CallbackData: "/budget",
+				CallbackData: "budget",
 			},
 			{
 				Text:         "💸 Debts",
-				CallbackData: "/debts",
+				CallbackData: "debts",
 			},
 		},
 		[]tgbotapi.InlineKeyboardButton{
@@ -91,7 +91,7 @@ func spaceAction(_ botsfw.WebhookContext, spaceID string) (m botsfw.MessageFromB
 			},
 			{
 				Text:         "🏗️ ToDo",
-				CallbackData: "do",
+				CallbackData: "todo",
 			},
 			{
 				Text:         "📽️ Watch",
@@ -101,11 +101,11 @@ func spaceAction(_ botsfw.WebhookContext, spaceID string) (m botsfw.MessageFromB
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text:         "🗓️ Calendar",
-				CallbackData: "/calendar",
+				CallbackData: "calendar",
 			},
 			{
 				Text:         "⚙️ Settings",
-				CallbackData: "/settings",
+				CallbackData: "settings",
 			},
 		},
 		[]tgbotapi.InlineKeyboardButton{

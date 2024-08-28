@@ -8,19 +8,19 @@ import (
 	"net/url"
 )
 
-var membersCommand = botsfw.Command{
-	Code:     "members",
-	Commands: []string{"/members"},
+var calendarCommand = botsfw.Command{
+	Code:     "calendar",
+	Commands: []string{"/calendar"},
 	InputTypes: []botsfw.WebhookInputType{
 		botsfw.WebhookInputText,
 		botsfw.WebhookInputCallbackQuery,
 	},
-	CallbackAction: membersCallbackAction,
-	Action:         membersAction,
+	CallbackAction: calendarCallbackAction,
+	Action:         calendarAction,
 }
 
-func membersCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.MessageFromBot, err error) {
-	if m, err = membersAction(whc); err != nil {
+func calendarCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.MessageFromBot, err error) {
+	if m, err = calendarAction(whc); err != nil {
 		return
 	}
 
@@ -37,28 +37,38 @@ func membersCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.Mess
 	return
 }
 
-func membersAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
+func calendarAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 	ctx := whc.Context()
 	logus.Infof(ctx, "membersCommand.Action(): InputType=%v", whc.Input().InputType())
-	m.Text = "<b>Family members</b>"
+	m.Text = "<b>Family calendar</b>"
 	m.Format = botsfw.MessageFormatHTML
 	m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text: "💻 Manage in app",
 				WebApp: &tgbotapi.WebappInfo{
-					Url: "https://local-app.sneat.ws/space/family/h4qax/members", // TODO: generate URL
+					Url: "https://local-app.sneat.ws/space/family/h4qax/calendar", // TODO: generate URL
 				},
 			},
 			{
-				Text:         "➕ Add member",
-				CallbackData: "/add-member",
+				Text: "➕ Add event",
+				WebApp: &tgbotapi.WebappInfo{
+					Url: "https://local-app.sneat.ws/space/family/h4qax/calendar", // TODO: generate URL
+				},
 			},
 		},
 		[]tgbotapi.InlineKeyboardButton{
 			{
-				Text:         "🧑 Myself",
-				CallbackData: "/contact=myself",
+				Text:         "📆 Yesterday",
+				CallbackData: "calendar?action=yesterday",
+			},
+			{
+				Text:         "📅 Today",
+				CallbackData: "calendar?action=today",
+			},
+			{
+				Text:         "🗓️ Tomorrow",
+				CallbackData: "calendar?action=tomorrow",
 			},
 		},
 	)

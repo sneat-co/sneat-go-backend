@@ -8,19 +8,19 @@ import (
 	"net/url"
 )
 
-var membersCommand = botsfw.Command{
-	Code:     "members",
-	Commands: []string{"/members"},
+var settingsCommand = botsfw.Command{
+	Code:     "settings",
+	Commands: []string{"/settings"},
 	InputTypes: []botsfw.WebhookInputType{
 		botsfw.WebhookInputText,
 		botsfw.WebhookInputCallbackQuery,
 	},
-	CallbackAction: membersCallbackAction,
-	Action:         membersAction,
+	CallbackAction: settingsCallbackAction,
+	Action:         settingsAction,
 }
 
-func membersCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.MessageFromBot, err error) {
-	if m, err = membersAction(whc); err != nil {
+func settingsCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.MessageFromBot, err error) {
+	if m, err = settingsAction(whc); err != nil {
 		return
 	}
 
@@ -37,28 +37,18 @@ func membersCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.Mess
 	return
 }
 
-func membersAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
+func settingsAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 	ctx := whc.Context()
 	logus.Infof(ctx, "membersCommand.Action(): InputType=%v", whc.Input().InputType())
-	m.Text = "<b>Family members</b>"
+	m.Text = "<b>Family settings</b>"
 	m.Format = botsfw.MessageFormatHTML
 	m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text: "💻 Manage in app",
 				WebApp: &tgbotapi.WebappInfo{
-					Url: "https://local-app.sneat.ws/space/family/h4qax/members", // TODO: generate URL
+					Url: "https://local-app.sneat.ws/space/family/h4qax/settings", // TODO: generate URL
 				},
-			},
-			{
-				Text:         "➕ Add member",
-				CallbackData: "/add-member",
-			},
-		},
-		[]tgbotapi.InlineKeyboardButton{
-			{
-				Text:         "🧑 Myself",
-				CallbackData: "/contact=myself",
 			},
 		},
 	)

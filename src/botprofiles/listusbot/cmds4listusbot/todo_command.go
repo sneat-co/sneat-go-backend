@@ -17,9 +17,9 @@ import (
 	"strings"
 )
 
-var buyCommand = botsfw.Command{
-	Code:     "buy",
-	Commands: []string{"/buy"},
+var todoCommand = botsfw.Command{
+	Code:     "todo",
+	Commands: []string{"/todo"},
 	Icon:     "🛒",
 	InputTypes: []botsfw.WebhookInputType{
 		botsfw.WebhookInputText,
@@ -29,22 +29,22 @@ var buyCommand = botsfw.Command{
 		input := context.Input()
 		if input.InputType() == botsfw.WebhookInputText {
 			text := strings.ToLower(strings.TrimSpace(input.(botsfw.WebhookTextMessage).Text()))
-			return strings.HasPrefix(text, "buy ") || strings.HasPrefix(text, "купить ")
+			return strings.HasPrefix(text, "todo ") || strings.HasPrefix(text, "купить ")
 		}
 		return false
 	},
-	Action:         buyAction,
-	CallbackAction: buyCallbackAction,
+	Action:         todoAction,
+	CallbackAction: todoCallbackAction,
 }
 
-func buyCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
+func todoCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 	m.Format = botsfw.MessageFormatHTML
-	m.Text = "🛒 <b>Groceries to buy</b>"
+	m.Text = "🛒 <b>Tasks ToDo</b>"
 	if callbackUrl.Query().Get("action") == "clear" {
 		m.Text += "\n\n<i>List is empty.</i>"
 	} else {
-		m.Text += "\n\n🥛 Milk"
-		m.Text += "\n\n🍞 Bread"
+		m.Text += "\n\n🏊 Swim 100m"
+		m.Text += "\n\n🏃 Run half-marathon"
 	}
 	m.Text += "\n\nSent text to add it to the \"To-Buy\" list."
 	if m, err = whc.NewEditMessage(m.Text, m.Format); err != nil {
@@ -54,7 +54,7 @@ func buyCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsf
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text:         "Clear list",
-				CallbackData: "buy?action=clear",
+				CallbackData: "todo?action=clear",
 			},
 		},
 		[]tgbotapi.InlineKeyboardButton{
@@ -65,7 +65,7 @@ func buyCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsf
 	return
 }
 
-func buyAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
+func todoAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 	ctx := whc.Context()
 
 	chatData := whc.ChatData()

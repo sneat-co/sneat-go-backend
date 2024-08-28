@@ -4,23 +4,22 @@ import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/tghelpers"
-	"github.com/strongo/logus"
 	"net/url"
 )
 
-var membersCommand = botsfw.Command{
-	Code:     "members",
-	Commands: []string{"/members"},
+var debtsCommand = botsfw.Command{
+	Code:     "debts",
+	Commands: []string{"/debts"},
 	InputTypes: []botsfw.WebhookInputType{
 		botsfw.WebhookInputText,
 		botsfw.WebhookInputCallbackQuery,
 	},
-	CallbackAction: membersCallbackAction,
-	Action:         membersAction,
+	CallbackAction: debtsCallbackAction,
+	Action:         debtsAction,
 }
 
-func membersCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.MessageFromBot, err error) {
-	if m, err = membersAction(whc); err != nil {
+func debtsCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.MessageFromBot, err error) {
+	if m, err = debtsAction(whc); err != nil {
 		return
 	}
 
@@ -37,10 +36,8 @@ func membersCallbackAction(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.Mess
 	return
 }
 
-func membersAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-	ctx := whc.Context()
-	logus.Infof(ctx, "membersCommand.Action(): InputType=%v", whc.Input().InputType())
-	m.Text = "<b>Family members</b>"
+func debtsAction(_ botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
+	m.Text = "<b>Family debts</b>"
 	m.Format = botsfw.MessageFormatHTML
 	m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
 		[]tgbotapi.InlineKeyboardButton{
@@ -51,14 +48,8 @@ func membersAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err erro
 				},
 			},
 			{
-				Text:         "➕ Add member",
-				CallbackData: "/add-member",
-			},
-		},
-		[]tgbotapi.InlineKeyboardButton{
-			{
-				Text:         "🧑 Myself",
-				CallbackData: "/contact=myself",
+				Text:         "➕ Add asset",
+				CallbackData: "/add-asset",
 			},
 		},
 	)
