@@ -46,23 +46,21 @@ func membersAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err erro
 	m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
 		[]tgbotapi.InlineKeyboardButton{
 			{
-				Text: "Manage members in web app",
+				Text: "💻 Manage in app",
 				//URL:  "https://local-app.sneat.ws/space/family",
 				WebApp: &tgbotapi.WebappInfo{
 					Url: "https://local-app.sneat.ws/space/family/h4qax/members", // TODO: generate URL
 				},
+			},
+			{
+				Text:         "➕ Add member",
+				CallbackData: "/add-member",
 			},
 		},
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text:         "🧑 Myself",
 				CallbackData: "/contact=myself",
-			},
-		},
-		[]tgbotapi.InlineKeyboardButton{
-			{
-				Text:         "➕ Add family member",
-				CallbackData: "/add-member",
 			},
 		},
 	)

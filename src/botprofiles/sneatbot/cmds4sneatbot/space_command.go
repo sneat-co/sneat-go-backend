@@ -1,10 +1,12 @@
 package cmds4sneatbot
 
 import (
+	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/tghelpers"
 	"net/url"
+	"strings"
 )
 
 var spaceCommand = botsfw.Command{
@@ -15,7 +17,8 @@ var spaceCommand = botsfw.Command{
 }
 
 func spaceCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-	if m, err = spaceAction(whc); err != nil {
+	spaceID := callbackUrl.Query().Get("id")
+	if m, err = spaceAction(whc, spaceID); err != nil {
 		return
 	}
 	keyboard := m.Keyboard
@@ -29,20 +32,44 @@ func spaceCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 	return
 }
 
-func spaceAction(_ botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-	m.Text += "Current space: 👪 <b>Family</b>"
+func spaceAction(_ botsfw.WebhookContext, spaceID string) (m botsfw.MessageFromBot, err error) {
+	if spaceID == "" {
+		spaceID = "family"
+	}
+
+	var spaceIcon string
+
+	var switchSpaceCallbackData string
+	var switchSpaceTitle string
+	switch spaceID {
+	case "family":
+		switchSpaceCallbackData = "space?id=private"
+		switchSpaceTitle = "Private"
+		spaceIcon = "👪"
+	case "private":
+		switchSpaceCallbackData = "space?id=family"
+		switchSpaceTitle = "Family"
+		spaceIcon = "🔒"
+	}
+
+	spaceTitle := strings.ToUpper(spaceID[:1]) + spaceID[1:]
+	m.Text += fmt.Sprintf("Current space: %s <b>%s</b>", spaceIcon, spaceTitle)
 	m.Format = botsfw.MessageFormatHTML
-	m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
-		[]tgbotapi.InlineKeyboardButton{
-			{
-				Text:         "📇 Contacts",
-				CallbackData: "/contacts",
-			},
-			{
-				Text:         "👪 Members",
-				CallbackData: "members",
-			},
+
+	firstRow := []tgbotapi.InlineKeyboardButton{
+		{
+			Text:         "📇 Contacts",
+			CallbackData: "/contacts",
 		},
+	}
+	if spaceID != "private" {
+		firstRow = append(firstRow, tgbotapi.InlineKeyboardButton{
+			Text:         "👪 Members",
+			CallbackData: "members",
+		})
+	}
+	m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
+		firstRow,
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text:         "🚗 Assets",
@@ -54,7 +81,7 @@ func spaceAction(_ botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 			},
 			{
 				Text:         "💸 Debts",
-				CallbackData: "/debtus",
+				CallbackData: "/debts",
 			},
 		},
 		[]tgbotapi.InlineKeyboardButton{
@@ -79,6 +106,12 @@ func spaceAction(_ botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 			{
 				Text:         "⚙️ Settings",
 				CallbackData: "/settings",
+			},
+		},
+		[]tgbotapi.InlineKeyboardButton{
+			{
+				Text:         fmt.Sprintf("🔀 Switch to \"%s\" space", switchSpaceTitle),
+				CallbackData: switchSpaceCallbackData,
 			},
 		},
 	)

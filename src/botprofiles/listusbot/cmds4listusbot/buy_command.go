@@ -20,6 +20,7 @@ import (
 var buyCommand = botsfw.Command{
 	Code:     "buy",
 	Commands: []string{"/buy"},
+	Icon:     "🛒",
 	InputTypes: []botsfw.WebhookInputType{
 		botsfw.WebhookInputText,
 		botsfw.WebhookInputCallbackQuery,
@@ -38,7 +39,7 @@ var buyCommand = botsfw.Command{
 
 func buyCallbackAction(whc botsfw.WebhookContext, calbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 	m.Format = botsfw.MessageFormatHTML
-	m.Text = "<b>Groceries to buy</b>"
+	m.Text = "🛒 <b>Groceries to buy</b>"
 	if calbackUrl.Query().Get("action") == "clear" {
 		m.Text += "\n\n<i>List is empty.</i>"
 	} else {
