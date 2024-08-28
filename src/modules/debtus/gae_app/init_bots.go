@@ -62,12 +62,12 @@ func InitBots(httpRouter *httprouter.Router, botHost botsfw.BotHost, appContext 
 
 	driver.RegisterWebhookHandlers(botsHttpRouter{httpRouter}, "/bot",
 		//telegram.NewTelegramWebhookHandler(
-		//	telegramBotsWithRouter, // Maps of bots by code, language, token, etc...
+		//	telegramBotsWithRouter, // Maps of botscore by code, language, token, etc...
 		//	newTranslator,          // Creates translator that gets a context.Context (for logging purpose)
 		//),
 		telegram.NewTelegramWebhookHandler(
 			//dataAccess,
-			telegramBotsWithRouter, // Maps of bots by code, language, token, etc...
+			telegramBotsWithRouter, // Maps of botscore by code, language, token, etc...
 			newTranslator,          // Creates translator that gets a context.Context (for logging purpose)
 			recordsMaker,
 			func(data botsfwmodels.AppUserData, sender botsfw.WebhookSender) error { // TODO: implement?

@@ -9,5 +9,5 @@ func init() {
 	//router := botsfw.NewWebhookRouter(commandsByType, func() string {
 	//	return "Please report any issues to @trakhimenok"
 	//})
-	//bots.NewProfile("listus", &router)
+	//botscore.NewProfile("listus", &router)
 }

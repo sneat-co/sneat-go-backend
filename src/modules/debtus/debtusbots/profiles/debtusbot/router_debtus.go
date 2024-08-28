@@ -32,7 +32,7 @@ var botParams = shared_all.BotParams{
 	//	return whc.NewEditMessage(whc.Translate(trans.MESSAGE_TEXT_HI)+
 	//		"\n\n"+ whc.Translate(trans.SPLITUS_TEXT_HI_IN_GROUP)+
 	//		"\n\n"+ whc.Translate(trans.SPLITUS_TEXT_ABOUT_ME_AND_CO),
-	//		bots.MessageFormatHTML)
+	//		botscore.MessageFormatHTML)
 	//},
 	InBotWelcomeMessage: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		m.Text = "Hi there"

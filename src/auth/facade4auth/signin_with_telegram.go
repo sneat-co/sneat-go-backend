@@ -9,7 +9,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw/botsdal"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
-	"github.com/sneat-co/sneat-go-backend/src/bots/models4bots"
+	"github.com/sneat-co/sneat-go-backend/src/botscore/models4bots"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/strongoapp/appuser"

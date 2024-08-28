@@ -4,5 +4,5 @@ import (
 	"github.com/dal-go/dalgo/record"
 )
 
-// ListusChat is not used by bots framework
+// ListusChat is not used by botscore framework
 type ListusChat = record.DataWithID[string, *ListusChatData]

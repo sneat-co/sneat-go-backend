@@ -1,9 +1,9 @@
-package listusbot
+package cmds4listusbot
 
 import (
 	"fmt"
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/sneat-go-backend/src/bots/botprofiles/listusbot/dal4listusbot"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/listusbot/dal4listusbot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/facade4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"

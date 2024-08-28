@@ -1,4 +1,4 @@
-package listusbot
+package cmds4listusbot
 
 import "github.com/bots-go-framework/bots-fw/botsfw"
 

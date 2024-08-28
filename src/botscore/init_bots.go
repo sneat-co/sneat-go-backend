@@ -1,4 +1,4 @@
-package bots
+package botscore
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botswebhook"
 	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/bots/botprofiles/sneatbot"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/sneatbot"
 	"github.com/strongo/i18n"
 	"net/http"
 )
@@ -54,7 +54,7 @@ func InitializeBots(botHost botsfw.BotHost, httpRouter *httprouter.Router) {
 	driver.RegisterWebhookHandlers(botsHttpRouter{httpRouter}, "/bot",
 		telegram.NewTelegramWebhookHandler(
 			//dataAccess,
-			telegramBotsWithRouter, // Maps of bots by code, language, token, etc...
+			telegramBotsWithRouter, // Maps of botscore by code, language, token, etc...
 			newTranslator,          // Creates translator that gets a context.Context (for logging purpose)
 			recordsMaker,
 			func(data botsfwmodels.AppUserData, sender botsfw.WebhookSender) error { // TODO: implement?

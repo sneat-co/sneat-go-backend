@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/bots-go-framework/bots-fw/botsfw/botsdal"
 	"github.com/dal-go/dalgo/record"
-	"github.com/sneat-co/sneat-go-backend/src/bots/models4bots"
+	"github.com/sneat-co/sneat-go-backend/src/botscore/models4bots"
 )
 
 func GetBotUserRecord(ctx context.Context, botPlatformID, botID, userID string) (

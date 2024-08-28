@@ -17,7 +17,7 @@ func Bots(ctx context.Context) botsfw.SettingsBy { //TODO: Consider to do pre-de
 	//		//)
 	//		//} else if strings.Contains(host, "st1") {
 	//		//_bots = botsfw.NewBotSettingsBy(
-	//		//	// Staging bots
+	//		//	// Staging botscore
 	//		//)
 	//		//} else if strings.HasPrefix(host, "debtusbot-io.") {
 	//		//_bots = botsfw.NewBotSettingsBy(nil,

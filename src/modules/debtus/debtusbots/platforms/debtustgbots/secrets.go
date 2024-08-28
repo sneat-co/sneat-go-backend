@@ -43,7 +43,7 @@ func Bots(environment string) botsfw.SettingsBy { //TODO: Consider to do pre-dep
 		//logus.Debugf(c, "Bots() => hostname:%v, environment:%s:%s", hostname, environment, strongoapp.EnvironmentNames[environment])
 		switch environment {
 		case prod:
-			_bots = botsfw.NewBotSettingsBy( // Production bots
+			_bots = botsfw.NewBotSettingsBy( // Production botscore
 				newTelegramBot(prod, debtusBotProfile, "DebtusBot", common4debtus.GA_TRACKING_ID, i18n.LocaleEnUS),
 				newTelegramBot(prod, splitusBotProfile, "SplitusBot", common4debtus.GA_TRACKING_ID, i18n.LocaleEnUS),
 				newTelegramBot(prod, collectusBotProfile, "CollectusBot", common4debtus.GA_TRACKING_ID, i18n.LocaleEnUS),
@@ -58,17 +58,17 @@ func Bots(environment string) botsfw.SettingsBy { //TODO: Consider to do pre-dep
 				//newTelegramBot(prod, debtusBotProfile, "DebtsTrackerEsBot", common4debtus.GA_TRACKING_ID, i18n.LocalePtBr),
 			)
 		case "dev":
-			_bots = botsfw.NewBotSettingsBy( // Development bots
+			_bots = botsfw.NewBotSettingsBy( // Development botscore
 				newTelegramBot("dev", debtusBotProfile, "DebtsTrackerDev1Bot", common4debtus.GA_TRACKING_ID, i18n.LocaleEnUS),
 				newTelegramBot("dev", debtusBotProfile, "DebtsTrackerDev1RuBot", common4debtus.GA_TRACKING_ID, i18n.LocaleRuRu),
 				//telegram.NewTelegramBot(strongoapp.EnvDevTest, bot.ProfileDebtus, "DebtsTrackerDev2RuBot", "360514041:AAFXuT0STHBD9cOn1SFmKzTYDmalP0Rz-7M", "", "", anybot.GA_TRACKING_ID, i18n.LocalesByCode5[i18n.LocalCodeRuRu]),
 			)
 		case "staging":
-			_bots = botsfw.NewBotSettingsBy( // Staging bots
+			_bots = botsfw.NewBotSettingsBy( // Staging botscore
 				newTelegramBot("staging", debtusBotProfile, "DebtsTrackerSt1Bot", common4debtus.GA_TRACKING_ID, i18n.LocaleEnUS),
 			)
 		case strongoapp.LocalHostEnv:
-			_bots = botsfw.NewBotSettingsBy( // Staging bots
+			_bots = botsfw.NewBotSettingsBy( // Staging botscore
 				newTelegramBot(strongoapp.LocalHostEnv, debtusBotProfile, "DebtsTrackerLocalBot", common4debtus.GA_TRACKING_ID, i18n.LocaleEnUS),
 				newTelegramBot(strongoapp.LocalHostEnv, splitusBotProfile, "SplitusLocalBot", common4debtus.GA_TRACKING_ID, i18n.LocaleEnUS),
 				newTelegramBot(strongoapp.LocalHostEnv, collectusBotProfile, "CollectusLocalBot", common4debtus.GA_TRACKING_ID, i18n.LocaleEnUS),

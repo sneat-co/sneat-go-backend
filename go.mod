@@ -8,6 +8,7 @@ go 1.23.0
 //replace github.com/sneat-co/sneat-go-modules => ../sneat-go-modules
 
 //replace github.com/bots-go-framework/bots-fw => ../../bots-go-framework/bots-fw
+
 //replace github.com/bots-go-framework/bots-fw-store => ../../bots-go-framework/bots-fw-store
 //replace github.com/bots-go-framework/bots-fw-telegram => ../../bots-go-framework/bots-fw-telegram
 //replace github.com/bots-go-framework/bots-fw-telegram-models => ../../bots-go-framework/bots-fw-telegram-models
@@ -21,8 +22,8 @@ go 1.23.0
 
 require (
 	firebase.google.com/go/v4 v4.14.1
-	github.com/bots-go-framework/bots-api-telegram v0.5.0
-	github.com/bots-go-framework/bots-fw v0.32.0
+	github.com/bots-go-framework/bots-api-telegram v0.6.2
+	github.com/bots-go-framework/bots-fw v0.33.0
 	github.com/bots-go-framework/bots-fw-store v0.7.0
 	github.com/bots-go-framework/bots-fw-telegram v0.9.4
 	github.com/bots-go-framework/bots-fw-telegram-models v0.3.2
@@ -87,7 +88,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
-	github.com/google/pprof v0.0.0-20240727154555-813a5fbdbec8 // indirect
+	github.com/google/pprof v0.0.0-20240827171923-fa2c70bbbfe5 // indirect
 	github.com/google/s2a-go v0.1.8 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.3 // indirect
@@ -112,10 +113,10 @@ require (
 	golang.org/x/text v0.17.0 // indirect
 	golang.org/x/time v0.6.0 // indirect
 	google.golang.org/api v0.194.0 // indirect
-	google.golang.org/genproto v0.0.0-20240826202546-f6391c0de4c7 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20240826202546-f6391c0de4c7 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240826202546-f6391c0de4c7 // indirect
-	google.golang.org/grpc v1.65.0 // indirect
+	google.golang.org/genproto v0.0.0-20240827150818-7e3bb234dfed // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20240827150818-7e3bb234dfed // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240827150818-7e3bb234dfed // indirect
+	google.golang.org/grpc v1.66.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

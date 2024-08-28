@@ -26,7 +26,7 @@ func TestWriteReceiptText(t *testing.T) {
 
 	c := context.TODO()
 
-	//logger := &bots.MockLogger{T: t}
+	//logger := &botscore.MockLogger{T: t}
 
 	translator := i18n.NewSingleMapTranslator(i18n.LocaleEnUS, i18n.NewMapTranslator(c, trans.TRANS))
 

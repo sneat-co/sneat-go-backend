@@ -26,7 +26,7 @@ var newChatMembersCommand = botsfw.Command{
 
 		newMembers := newMembersMessage.NewChatMembers()
 
-		{ // filter out bots
+		{ // filter out botscore
 			j := 0
 			for _, member := range newMembers {
 				if !member.IsBotUser() {

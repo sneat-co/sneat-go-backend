@@ -19,8 +19,8 @@ More details at https://github.com/bots-go-framework/bots-fw-telegram
 
 Possible values for <BOT#_PROFILE> are:
 
-- [`sneat`](botprofiles/sneatbot) - profile for [@SneatBot](https://t.me/SneatBot)
-- [`listus`](botprofiles/listusbot) - profile for [@Listus_Bot](https://t.me/Listus_bot)
+- [`sneat`](../botprofiles/sneatbot) - profile for [@SneatBot](https://t.me/SneatBot)
+- [`listus`](../botprofiles/listusbot) - profile for [@Listus_Bot](https://t.me/Listus_bot)
 
 ### 2. Telegram bot token for each bot:
 

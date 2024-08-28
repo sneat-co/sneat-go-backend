@@ -39,7 +39,7 @@ func Start(reportPanic func(err any), wrapHandler HandlerWrapper, httpRouter *ht
 
 	initInfrastructure(emailClient)
 
-	//bots.InitializeBots(httpRouter) // TODO: should be part of module registration?
+	//botscore.InitializeBots(httpRouter) // TODO: should be part of module registration?
 
 	// A shortcut to map handlers to httpRouter
 	var handle = func(method, path string, handler http.HandlerFunc) { // TODO: change from HandlerFunc to Handler?

@@ -1,4 +1,4 @@
-package anybot
+package cmds4anybot
 
 import (
 	"fmt"

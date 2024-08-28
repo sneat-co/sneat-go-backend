@@ -1,0 +1,12 @@
+start - starts the bot
+spaces - shows list of spaces
+ping - checks connectivity
+count - simple counter
+do - adds items to a TO-DO list
+buy - adds items to a TO-BUY list
+watch - adds items to a TO-WATCH list
+calendar - shows calendar
+contacts - manage your contacts
+members - manage members of the current space
+debtus - manages your debts
+listus - To-Do, To-Buy & To-Watch lists

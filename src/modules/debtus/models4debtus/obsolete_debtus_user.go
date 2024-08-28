@@ -96,7 +96,7 @@ type DebutsAppUserDataOBSOLETE struct { // TODO: Remove obsolete struct
 	GoogleUniqueUserID string  `firestore:"googleUniqueUserID,omitempty"` // TODO: Obsolete
 	//FbUserID           string `firestore:",omitempty"` // TODO: Obsolete Facebook assigns different IDs to same FB user for FB app & Messenger app.
 	//FbmUserID          string `firestore:",omitempty"` // TODO: Obsolete So we would want to keep both IDs?
-	// TODO: How do we support multiple FBM bots? They will have different PSID (PageScopeID)
+	// TODO: How do we support multiple FBM botscore? They will have different PSID (PageScopeID)
 
 	OBSOLETE_CounterpartyIDs []int64 `firestore:"counterpartyIDs,omitempty"` // TODO: Remove obsolete
 

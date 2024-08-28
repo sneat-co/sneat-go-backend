@@ -4,7 +4,7 @@ import (
 	"flag"
 	gae "github.com/bots-go-framework/bots-host-gae"
 	"github.com/julienschmidt/httprouter"
-	"github.com/sneat-co/sneat-go-backend/src/bots"
+	"github.com/sneat-co/sneat-go-backend/src/botscore"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"log"
 )
@@ -21,7 +21,7 @@ func initBots(httpRouter *httprouter.Router) {
 	if /*!isDevAppServer ||*/ withBotsFlag != nil && *withBotsFlag {
 		log.Println("Initializing bots...")
 
-		bots.GetDb = facade.GetDatabase
-		bots.InitializeBots(botHost, httpRouter) // TODO: should be part of module registration?
+		botscore.GetDb = facade.GetDatabase
+		botscore.InitializeBots(botHost, httpRouter) // TODO: should be part of module registration?
 	}
 }
