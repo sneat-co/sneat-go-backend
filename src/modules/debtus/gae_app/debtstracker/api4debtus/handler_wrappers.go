@@ -18,8 +18,8 @@ func OptionsHandler(ctx context.Context, w http.ResponseWriter, r *http.Request)
 	switch origin {
 	case "http://localhost:8080":
 	case "http://localhost:8100":
-	case "https://debtstracker.local":
-	case "https://debtstracker.io":
+	case "https://local-app.sneat.ws":
+	case "https://sneat.app":
 	case "":
 		BadRequestMessage(ctx, w, "Missing required request header: Origin")
 		return

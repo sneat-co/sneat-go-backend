@@ -1,4 +1,4 @@
-package dto4userus
+package dto4auth
 
 import (
 	"crypto/hmac"
@@ -17,6 +17,7 @@ type TelegramAuthData struct {
 	AuthDate  int    `json:"auth_date"`
 	Username  string `json:"username,omitempty"`
 	Hash      string `json:"hash"`
+	HashBytes []byte `json:"-"`
 	FirstName string `json:"first_name,omitempty"`
 	LastName  string `json:"last_name,omitempty"`
 	PhotoURL  string `json:"photo_url,omitempty"`
@@ -66,12 +67,13 @@ func (v TelegramAuthData) DataCheckString() string {
 }
 
 // IsHashMatchesData validates SHA256 of v.DataCheckString() matches v.Hash
-func (v TelegramAuthData) IsHashMatchesData(secretKey []byte) (bool, error) {
+func (v TelegramAuthData) IsHashMatchesData(secretKey []byte) (isValid bool, err error) {
 	// Convert the provided hash to bytes
-	// Do it as a first step as if hash is invalid we don't need to compute HMAC
-	hashBytes, err := hex.DecodeString(v.Hash)
-	if err != nil {
-		return false, fmt.Errorf("error decoding hash: %w", err)
+	// Do it as a first step, as if hash is invalid, we don't need to compute HMAC
+	if len(v.HashBytes) == 0 {
+		if v.HashBytes, err = hex.DecodeString(v.Hash); err != nil {
+			return false, fmt.Errorf("error decoding hash: %w", err)
+		}
 	}
 
 	// Create an HMAC with SHA256 hash function using the secret key
@@ -85,7 +87,7 @@ func (v TelegramAuthData) IsHashMatchesData(secretKey []byte) (bool, error) {
 	computedHash := h.Sum(nil)
 
 	// Compare the computed hash with the provided hash
-	if hmac.Equal(hashBytes, computedHash) {
+	if hmac.Equal(v.HashBytes, computedHash) {
 		return true, nil
 	}
 

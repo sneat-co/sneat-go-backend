@@ -89,7 +89,7 @@ func ReturnToken(ctx context.Context, w http.ResponseWriter, userID, issuer stri
 		return
 	}
 	header := w.Header()
-	header.Add("Access-Control-Allow-Origin", "*")
+	//header.Add("Access-Control-Allow-Origin", "*")
 	header.Add("Content-Type", "application/json")
 	_, _ = w.Write([]byte("{"))
 	if isNewUser {

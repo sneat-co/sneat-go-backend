@@ -9,8 +9,6 @@ import (
 	"net/http"
 )
 
-var initUserRecord = facade4userus.InitUserRecord
-
 // httpInitUserRecord sets user title
 func httpInitUserRecord(w http.ResponseWriter, r *http.Request) {
 	ctx, userContext, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
@@ -23,6 +21,9 @@ func httpInitUserRecord(w http.ResponseWriter, r *http.Request) {
 	}
 	request.RemoteClient = apicore.GetRemoteClientInfo(r)
 	var user dbo4userus.UserEntry
-	user, err = initUserRecord(ctx, userContext, request)
+	if user, err = facade4userus.InitUserRecord(ctx, userContext, request); err != nil {
+		apicore.ReturnError(ctx, w, r, err)
+		return
+	}
 	apicore.ReturnJSON(ctx, w, r, http.StatusOK, err, user.Data)
 }
