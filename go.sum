@@ -310,6 +310,8 @@ github.com/strongo/app-host-gae v0.1.30 h1:vTrcW4eTz98tWqy4IzwXyTP+uUbSG1jTAN8ew
 github.com/strongo/app-host-gae v0.1.30/go.mod h1:1BYNLupz+GcH56837ejc4Lw5lRJNSO0ky4AraBwATcw=
 github.com/strongo/app-host-gae v0.1.31 h1:WQhry+HVLY/MRf9yiwUzbU6Y3B3L4YKGSPptTh169Zc=
 github.com/strongo/app-host-gae v0.1.31/go.mod h1:bH3A8cvtI0l/1rkjQAYfdjAsX6p3CxDQYLyP6jWZvYc=
+github.com/strongo/app-host-gae v0.1.32 h1:OOXl/OMubtZ3AbPl2f59/2FBsHuHLrPkhL9ah13Ct+s=
+github.com/strongo/app-host-gae v0.1.32/go.mod h1:TpaLp7iGL8xSGQip4m5IEpisVI3ihy4axI6QpcUqjZI=
 github.com/strongo/decimal v0.1.1 h1:k7HY/0NmG6Ne5YPV7XybII+AT7O4AShl6HZpLiNZsb4=
 github.com/strongo/decimal v0.1.1/go.mod h1:uKFgetJbR2uT026stdbK54ELXTH9h0vZOPPOp7DAODk=
 github.com/strongo/delaying v0.0.1 h1:avN7p5oKcowaDeEbGJLB4QHgttK6y9OtGwFN0UkEDi8=
