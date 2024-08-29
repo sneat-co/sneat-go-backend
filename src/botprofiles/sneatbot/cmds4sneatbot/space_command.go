@@ -57,7 +57,8 @@ func getSpaceID(whc botsfw.WebhookContext, spaceType core4spaceus.SpaceType) (sp
 
 func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m botsfw.MessageFromBot, err error) {
 	spaceID, spaceType := spaceRef.SpaceID(), spaceRef.SpaceType()
-	if spaceID == "" {
+	appUserID := whc.AppUserID()
+	if spaceID == "" && appUserID != "" {
 		var user dbo4userus.UserEntry
 		if spaceID, user, err = getSpaceID(whc, spaceType); err != nil {
 			return

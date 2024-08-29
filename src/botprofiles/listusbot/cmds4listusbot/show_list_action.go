@@ -17,16 +17,22 @@ func showListAction(
 ) (
 	m botsfw.MessageFromBot, err error,
 ) {
-	list := dal4listus.NewSpaceListEntry(spaceRef.SpaceID(), listKey)
-	if tx == nil {
-		if tx, err = facade.GetDatabase(ctx); err != nil {
+	spaceID := spaceRef.SpaceID()
+	var list dal4listus.ListEntry
+	if spaceID == "" {
+		list.Data = new(dbo4listus.ListDbo)
+	} else {
+		list = dal4listus.NewSpaceListEntry(spaceID, listKey)
+		if tx == nil {
+			if tx, err = facade.GetDatabase(ctx); err != nil {
+				return
+			}
+		}
+		if err = tx.Get(ctx, list.Record); dal.IsNotFound(err) {
+			err = nil
+		} else if err != nil {
 			return
 		}
-	}
-	if err = tx.Get(ctx, list.Record); dal.IsNotFound(err) {
-		err = nil
-	} else if err != nil {
-		return
 	}
 	title := list.Data.Title
 	emoji := list.Data.Emoji
