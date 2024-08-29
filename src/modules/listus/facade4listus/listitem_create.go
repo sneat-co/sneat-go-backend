@@ -90,6 +90,9 @@ func createListItemTxWorker(ctx context.Context, request dto4listus.CreateListIt
 			ID:           id,
 			ListItemBase: item.ListItemBase,
 		}
+		if listItem.Emoji == "" {
+			listItem.Emoji = deductListItemEmoji(listItem.Title)
+		}
 		listItem.CreatedAt = params.Started
 		listItem.CreatedBy = params.UserID
 		list.Data.Items = append(list.Data.Items, &listItem)

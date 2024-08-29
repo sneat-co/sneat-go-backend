@@ -2,7 +2,6 @@ package botscore
 
 import (
 	"context"
-	"fmt"
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
 	telegram "github.com/bots-go-framework/bots-fw-telegram"
 	"github.com/bots-go-framework/bots-fw/botsfw"
@@ -24,13 +23,13 @@ func (v botsHttpRouter) Handle(method, path string, handle http.HandlerFunc) {
 	})
 }
 
-func sneatAppTgUserDboMaker(botID string) (botsfwmodels.PlatformUserData, error) {
-	panic("deprecated: use profile.NewChatData()")
-}
-
-func sneatAppTgChatDboMaker(botID string) (botChat botsfwmodels.BotChatData, err error) {
-	panic("deprecated: use profile.NewChatData()")
-}
+//func sneatAppTgUserDboMaker(botID string) (botsfwmodels.PlatformUserData, error) {
+//	panic("deprecated: use profile.NewChatData()")
+//}
+//
+//func sneatAppTgChatDboMaker(botID string) (botChat botsfwmodels.BotChatData, err error) {
+//	panic("deprecated: use profile.NewChatData()")
+//}
 
 func InitializeBots(botHost botsfw.BotHost, httpRouter *httprouter.Router) {
 	if botHost == nil {
@@ -48,15 +47,15 @@ func InitializeBots(botHost botsfw.BotHost, httpRouter *httprouter.Router) {
 		"Please report any issues to @trakhimenok",      // TODO: Is it a wrong place? Router has similar.
 	)
 
-	makeAppUserDto := func(botID string) (appUser botsfwmodels.AppUserData, err error) {
-		return nil, fmt.Errorf("%w: makeAppUserDto() is not implemented", botsfw.ErrNotImplemented)
-	}
-	var recordsMaker = botsfwmodels.NewBotRecordsMaker(
-		"*",
-		makeAppUserDto,
-		sneatAppTgUserDboMaker, //telegram.BaseTgUserDtoMaker,
-		sneatAppTgChatDboMaker, //telegram.BaseTgChatDtoMaker
-	)
+	//makeAppUserDto := func(botID string) (appUser botsfwmodels.AppUserData, err error) {
+	//	return nil, fmt.Errorf("%w: makeAppUserDto() is not implemented", botsfw.ErrNotImplemented)
+	//}
+	//var recordsMaker = botsfwmodels.NewBotRecordsMaker(
+	//	"*",
+	//	makeAppUserDto,
+	//	sneatAppTgUserDboMaker, //telegram.BaseTgUserDtoMaker,
+	//	sneatAppTgChatDboMaker, //telegram.BaseTgChatDtoMaker
+	//)
 
 	//dataAccess := dalgo4botsfw.NewDataAccess(telegram.PlatformID, getDb, recordsMaker)
 	driver.RegisterWebhookHandlers(botsHttpRouter{httpRouter}, "/bot",
@@ -64,7 +63,7 @@ func InitializeBots(botHost botsfw.BotHost, httpRouter *httprouter.Router) {
 			//dataAccess,
 			telegramBotsWithRouter, // Maps of botscore by code, language, token, etc...
 			newTranslator,          // Creates translator that gets a context.Context (for logging purpose)
-			recordsMaker,
+			//recordsMaker,
 			func(data botsfwmodels.AppUserData, sender botsfw.WebhookSender) error { // TODO: implement?
 				return nil
 			},

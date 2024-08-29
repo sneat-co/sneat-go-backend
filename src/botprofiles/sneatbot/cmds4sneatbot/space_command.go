@@ -42,6 +42,9 @@ func spaceCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 
 func getSpaceID(whc botsfw.WebhookContext, spaceType core4spaceus.SpaceType) (spaceID string, user dbo4userus.UserEntry, err error) {
 	appUserID := whc.AppUserID()
+	if appUserID == "" {
+		return
+	}
 	user = dbo4userus.NewUserEntry(appUserID)
 	ctx := whc.Context()
 	tx := whc.Tx()
