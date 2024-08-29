@@ -1,7 +1,6 @@
-package facade4listus
+package dto4listus
 
 import (
-	"fmt"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/validate"
@@ -12,22 +11,7 @@ import (
 // ListRequest DTO
 type ListRequest struct {
 	dto4spaceus.SpaceRequest
-	ListID   string `json:"listID"`
-	listType dbo4listus.ListType
-}
-
-func (v *ListRequest) ListType() dbo4listus.ListType {
-	if v.listType != "" {
-		return v.listType
-	}
-	if v.ListID == "" {
-		return ""
-	}
-	i := strings.Index(v.ListID, dbo4listus.ListIDSeparator)
-	if i < 0 {
-		return ""
-	}
-	return v.ListID[:i]
+	ListID dbo4listus.ListKey `json:"listID"`
 }
 
 // Validate returns error if not valid
@@ -35,13 +19,8 @@ func (v *ListRequest) Validate() error {
 	if err := v.SpaceRequest.Validate(); err != nil {
 		return err
 	}
-	if strings.TrimSpace(v.ListID) == "" {
-		return validation.NewErrRequestIsMissingRequiredField("list")
-	}
-	switch v.ListType() {
-	case "", "to-buy", "to-do":
-	default:
-		return fmt.Errorf("")
+	if err := v.ListID.Validate(); err != nil {
+		return validation.NewErrBadRecordFieldValue("listID", err.Error())
 	}
 	return nil
 }
@@ -49,8 +28,8 @@ func (v *ListRequest) Validate() error {
 // CreateListRequest DTO
 type CreateListRequest struct {
 	dto4spaceus.SpaceRequest
-	Type  string `json:"type"`
-	Title string `json:"title"`
+	Type  dbo4listus.ListType `json:"type"`
+	Title string              `json:"title"`
 }
 
 // Validate returns error if not valid

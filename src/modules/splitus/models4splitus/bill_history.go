@@ -214,7 +214,7 @@ func NewBillHistoryBillDeleted(userID string, bill BillEntry) (record BillsHisto
 	//		TotalAmountAfter:  bill.Data.AmountTotal,
 	//		Action:            BillHistoryActionMemberAdded,
 	//		BillIDs:           []string{bill.ContactID},
-	//		SpaceIDs:          []string{bill.Data.SpaceID},
+	//		SpaceIDs:          []string{bill.Data.SpaceRef},
 	//	},
 	//}
 }

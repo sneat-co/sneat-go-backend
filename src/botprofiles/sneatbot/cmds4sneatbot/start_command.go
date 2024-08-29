@@ -28,6 +28,6 @@ func startAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error)
 	if _, err = responder.SendMessage(ctx, welcomeMsg, botsfw.BotAPISendMessageOverHTTPS); err != nil {
 		return
 	}
-	m, err = spaceAction(whc, core4spaceus.SpaceTypeFamily, "")
+	m, err = spaceAction(whc, core4spaceus.NewSpaceRef(core4spaceus.SpaceTypeFamily, ""))
 	return
 }

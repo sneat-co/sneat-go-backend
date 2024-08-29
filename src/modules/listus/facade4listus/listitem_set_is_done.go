@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"github.com/strongo/validation"
 )
 
 // SetListItemsIsDone marks list item as completed
-func SetListItemsIsDone(ctx context.Context, userCtx facade.UserContext, request ListItemsSetIsDoneRequest) (err error) {
+func SetListItemsIsDone(ctx context.Context, userCtx facade.UserContext, request dto4listus.ListItemsSetIsDoneRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
@@ -23,7 +24,7 @@ func SetListItemsIsDone(ctx context.Context, userCtx facade.UserContext, request
 		listID := request.ListID
 		list := dal4listus.NewSpaceListEntry(request.SpaceID, listID)
 
-		if err := GetListForUpdate(ctx, tx, list); err != nil {
+		if err := dal4listus.GetListForUpdate(ctx, tx, list); err != nil {
 			if dal.IsNotFound(err) {
 				return nil
 			}

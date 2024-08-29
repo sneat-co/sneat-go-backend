@@ -1,6 +1,7 @@
 package api4listus
 
 import (
+	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/facade4listus"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/apicore/verify"
@@ -11,7 +12,7 @@ var deleteListItems = facade4listus.DeleteListItems
 
 // httpDeleteListItems deletes list items
 func httpDeleteListItems(w http.ResponseWriter, r *http.Request) {
-	var request facade4listus.ListItemIDsRequest
+	var request dto4listus.ListItemIDsRequest
 	request.ListRequest = getListRequestParamsFromURL(r)
 	ctx, userContext, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
 	if err != nil {

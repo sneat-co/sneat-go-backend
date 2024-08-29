@@ -1,5 +1,7 @@
 package core4spaceus
 
+import "strings"
+
 type SpaceType string
 
 const (
@@ -18,6 +20,28 @@ const (
 	// SpaceTypeClub is a "club" space type
 	SpaceTypeClub SpaceType = "club"
 )
+
+type SpaceRef string
+
+func (v SpaceRef) SpaceType() SpaceType {
+	if i := strings.Index(string(v), SpaceRefSeparator); i > 0 {
+		return SpaceType(v[:i])
+	}
+	return ""
+}
+
+func (v SpaceRef) SpaceID() string {
+	if i := strings.Index(string(v), SpaceRefSeparator); i > 0 {
+		return string(v[i+1:])
+	}
+	return ""
+}
+
+const SpaceRefSeparator = "!"
+
+func NewSpaceRef(spaceType SpaceType, spaceID string) SpaceRef {
+	return SpaceRef(string(spaceType) + SpaceRefSeparator + spaceID)
+}
 
 // IsValidSpaceType checks if space has a valid/known type
 func IsValidSpaceType(v SpaceType) bool {

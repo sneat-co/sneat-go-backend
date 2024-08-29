@@ -14,17 +14,17 @@ const ListsCollection = "lists"
 type ListType = string
 
 const (
-	// ListTypeGeneral = "general"
-	ListTypeGeneral ListType = "general"
+	// ListTypeGeneral = "general" - not used at the moment
+	ListTypeGeneral ListType = "general" // According to ChatGPT, it's more correct then "Generic"
 
 	// ListTypeToBuy = "to-by"
-	ListTypeToBuy ListType = "to-buy"
+	ListTypeToBuy ListType = "buy"
 
 	// ListTypeToDo = "to-do"
-	ListTypeToDo ListType = "to-do"
+	ListTypeToDo ListType = "do"
 
 	// ListTypeToWatch = "to-watch"
-	ListTypeToWatch ListType = "to-watch"
+	ListTypeToWatch ListType = "watch"
 )
 
 // IsKnownListType checks if it is a known list type
@@ -38,17 +38,55 @@ func IsKnownListType(v string) bool {
 
 const ListIDSeparator = "!"
 
-// GetFullListID returns full list ContactID
-func GetFullListID(listType ListType, listID string) string {
-	return listType + ListIDSeparator + listID
+// NewListKey returns ist key in format of "{listType}!{listSubID}"
+func NewListKey(listType ListType, listID string) ListKey {
+	return ListKey(listType + ListIDSeparator + listID)
+}
+
+type ListKey string
+
+func (v ListKey) Validate() error {
+	if s := strings.TrimSpace(string(v)); s == "" {
+		return validation.NewValidationError("list key is empty string")
+	} else if s != string(v) {
+		return validation.NewValidationError("list key has leading or trailing spaces")
+	}
+	if i := strings.Index(string(v), ListIDSeparator); i < 0 {
+		return validation.NewValidationError(fmt.Sprintf("list key does not contain required separator '%s'", ListIDSeparator))
+	} else if strings.TrimSpace(string(v[:i])) == "" {
+		return validation.NewValidationError("list type is empty")
+	} else if strings.TrimSpace(string(v[i+1:])) == "" {
+		return validation.NewValidationError("list sub ID is empty")
+	}
+	if listType := v.ListType(); !IsKnownListType(listType) {
+		return validation.NewValidationError("unknown list type: " + listType)
+	}
+	return nil
+}
+
+func (v ListKey) ListType() ListType {
+	if i := strings.Index(string(v), ListIDSeparator); i > 0 {
+		return ListType(v[:i])
+	}
+	return ""
+}
+
+func (v ListKey) ListSubID() string {
+	if i := strings.Index(string(v), ListIDSeparator); i > 0 {
+		return string(v[i+1:])
+	}
+	return ""
 }
 
 // ListBase DTO
 type ListBase struct {
-	Type  ListType `json:"type" firestore:"type"`
-	Emoji string   `json:"emoji,omitempty" firestore:"emoji,omitempty"`
+	Type ListType `json:"type" firestore:"type"`
+
 	// Title should be unique across owning team/company/group/etc
 	Title string `json:"title" firestore:"title"`
+
+	// Emoji is optional, by default uses emoji of the list type
+	Emoji string `json:"emoji,omitempty" firestore:"emoji,omitempty"`
 }
 
 // Validate returns error if not valid
@@ -67,9 +105,9 @@ func (v ListBase) Validate() error {
 
 // ListGroup DTO
 type ListGroup struct {
-	Type  string                `json:"type" firestore:"type"`
-	Title string                `json:"title" firestore:"title"`
-	Lists map[string]*ListBrief `json:"lists,omitempty"`
+	Type  string     `json:"type" firestore:"type"`
+	Title string     `json:"title" firestore:"title"`
+	Lists ListBriefs `json:"lists,omitempty"`
 }
 
 // Validate returns error if not valid
@@ -92,7 +130,9 @@ type ListBrief struct {
 	ItemsCount int `json:"itemsCount" firestore:"itemsCount"`
 }
 
-func validateListBriefs(lists map[string]*ListBrief) error {
+type ListBriefs map[string]*ListBrief
+
+func validateListBriefs(lists ListBriefs) error {
 	for id, list := range lists {
 		if err := list.Validate(); err != nil {
 			return fmt.Errorf("invalid list brief ContactID=%s: %w", id, err)

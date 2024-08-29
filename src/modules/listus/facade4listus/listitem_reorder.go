@@ -6,12 +6,13 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )
 
 // ReorderListItem reorders list items
-func ReorderListItem(ctx context.Context, userCtx facade.UserContext, request ReorderListItemsRequest) (err error) {
+func ReorderListItem(ctx context.Context, userCtx facade.UserContext, request dto4listus.ReorderListItemsRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
@@ -23,7 +24,7 @@ func ReorderListItem(ctx context.Context, userCtx facade.UserContext, request Re
 		listID := request.ListID
 		list := dal4listus.NewSpaceListEntry(request.SpaceID, listID)
 
-		if err = GetListForUpdate(ctx, tx, list); err != nil {
+		if err = dal4listus.GetListForUpdate(ctx, tx, list); err != nil {
 			return fmt.Errorf("failed to get a list for reordering of list items: %w", err)
 		}
 		//listUpdates := make([]dal.Update, 0, len(request.ItemIDs))

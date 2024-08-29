@@ -7,20 +7,21 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/strongo/i18n"
 )
 
 type SneatAppTgData struct {
-	SpaceID string `json:"spaceID,omitempty" firestore:"spaceID,omitempty"`
+	SpaceRef string `json:"spaceRef,omitempty" firestore:"spaceRef,omitempty"`
 }
 
-func (v *SneatAppTgData) GetSpaceID() string {
-	return v.SpaceID
+func (v *SneatAppTgData) GetSpaceRef() core4spaceus.SpaceRef {
+	return core4spaceus.SpaceRef(v.SpaceRef)
 }
 
-func (v *SneatAppTgData) SetSpaceID(spaceID string) {
-	v.SpaceID = spaceID
+func (v *SneatAppTgData) SetSpaceRef(spaceRef core4spaceus.SpaceRef) {
+	v.SpaceRef = string(spaceRef)
 }
 
 type SneatAppTgChatDbo struct {

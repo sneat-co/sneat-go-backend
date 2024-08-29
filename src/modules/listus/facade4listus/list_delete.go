@@ -6,13 +6,14 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/const4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )
 
 // DeleteList deletes list
-func DeleteList(ctx context.Context, userCtx facade.UserContext, request ListRequest) (err error) {
+func DeleteList(ctx context.Context, userCtx facade.UserContext, request dto4listus.ListRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
@@ -20,8 +21,6 @@ func DeleteList(ctx context.Context, userCtx facade.UserContext, request ListReq
 	if uid == "" {
 		return validation.NewErrRecordIsMissingRequiredField("userCtx.ContactID()")
 	}
-	listType := request.ListType()
-	id := dbo4listus.GetFullListID(listType, request.ListID)
 	briefsAdapter := dal4spaceus.NewMapBriefsAdapter(
 		func(teamModuleDbo *dbo4listus.ListusSpaceDbo) int {
 			return len(teamModuleDbo.Lists)
@@ -33,7 +32,7 @@ func DeleteList(ctx context.Context, userCtx facade.UserContext, request ListReq
 	)
 	spaceItemRequest := dal4spaceus.SpaceItemRequest{
 		SpaceRequest: request.SpaceRequest,
-		ID:           id,
+		ID:           string(request.ListID),
 	}
 	err = dal4spaceus.DeleteSpaceItem(
 		ctx,

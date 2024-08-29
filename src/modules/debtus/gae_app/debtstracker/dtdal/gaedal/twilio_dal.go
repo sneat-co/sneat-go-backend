@@ -55,7 +55,7 @@ func (TwilioDalGae) SaveTwilioSms(
 		user := dbo4userus.NewUserEntry(userID)
 		twilioSms = models4debtus.NewTwilioSms(smsResponse.Sid, nil)
 		counterparty := transfer.Data.Counterparty()
-		//counterpartyDebtusContact := models4debtus.NewDebtusSpaceContactEntry(counterparty.SpaceID, counterparty.ContactID, nil)
+		//counterpartyDebtusContact := models4debtus.NewDebtusSpaceContactEntry(counterparty.SpaceRef, counterparty.ContactID, nil)
 		counterpartyContact := dal4contactus.NewContactEntry(counterparty.SpaceID, counterparty.ContactID)
 		if err := tx.GetMulti(tctx, []dal.Record{user.Record, twilioSms.Record, transfer.Record, counterpartyContact.Record}); err != nil {
 			var multiError appengine.MultiError

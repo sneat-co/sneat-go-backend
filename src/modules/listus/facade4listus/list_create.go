@@ -2,12 +2,12 @@ package facade4listus
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/const4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
@@ -18,7 +18,7 @@ import (
 )
 
 // CreateList creates a new list
-func CreateList(ctx context.Context, userCtx facade.UserContext, request CreateListRequest) (response CreateListResponse, err error) {
+func CreateList(ctx context.Context, userCtx facade.UserContext, request dto4listus.CreateListRequest) (response dto4listus.CreateListResponse, err error) {
 	request.Title = strings.TrimSpace(request.Title)
 	if err = request.Validate(); err != nil {
 		return
@@ -28,33 +28,33 @@ func CreateList(ctx context.Context, userCtx facade.UserContext, request CreateL
 
 			for id, brief := range params.SpaceModuleEntry.Data.Lists {
 				if brief.Title == request.Title {
-					return fmt.Errorf("an attempt to create a new list with duplicate title [%s] equal to list {id=%s, type=%s}", request.Title, id, brief.Type)
+					return fmt.Errorf("an attempt to create a new listDbo with duplicate title [%s] equal to listDbo {listType=%s, type=%s}", request.Title, id, brief.Type)
 				}
 			}
-			id := request.Type
-			idTryNumber := 0
+			listType := request.Type
 			idLen := 2               // must be before checkId label
 			idGenerationAttempt := 0 // must be before checkId label
-		checkId:
-			if idTryNumber++; idTryNumber == 10 {
-				return errors.New("too many attempts to generate random list ContactID")
-			}
-			for briefID := range params.SpaceModuleEntry.Data.Lists {
-				if briefID == id {
-					id = random.ID(idLen)
-					idGenerationAttempt++
-					if idGenerationAttempt > 1000 {
-						idLen++
-						idGenerationAttempt = 0
-					}
-					goto checkId
+			var listSubID string
+			for {
+				listSubID = random.ID(idLen)
+				listID := dbo4listus.NewListKey(listType, listSubID)
+				if _, found := params.SpaceModuleEntry.Data.Lists[string(listID)]; !found {
+					break
+				}
+				idGenerationAttempt++
+				if idGenerationAttempt > 1000 {
+					err = fmt.Errorf("too many attempts to generate random listDbo ID")
+					return
 				}
 			}
+
+			listID := dbo4listus.NewListKey(listType, listSubID)
+
 			modified := dbmodels.Modified{
 				By: userCtx.GetUserID(),
 				At: time.Now(),
 			}
-			list := dbo4listus.ListDbo{
+			listDbo := dbo4listus.ListDbo{
 				WithModified: dbmodels.WithModified{
 					CreatedFields: with.CreatedFields{
 						CreatedAtField: with.CreatedAtField{
@@ -77,16 +77,16 @@ func CreateList(ctx context.Context, userCtx facade.UserContext, request CreateL
 					Title: request.Title,
 				},
 			}
-			if err = list.Validate(); err != nil {
-				return fmt.Errorf("formed list DTO struct is not valid: %w", err)
+			if err = listDbo.Validate(); err != nil {
+				return fmt.Errorf("formed listDbo DTO struct is not valid: %w", err)
 			}
-			listKey := dal4listus.NewSpaceListKey(request.SpaceID, id)
-			listRecord := dal.NewRecordWithData(listKey, &list)
+			listKey := dal4listus.NewSpaceListKey(request.SpaceID, listID)
+			listRecord := dal.NewRecordWithData(listKey, &listDbo)
 			if err = tx.Insert(ctx, listRecord); err != nil {
-				return fmt.Errorf("failed to insert list record")
+				return fmt.Errorf("failed to insert listDbo record")
 			}
 			if params.SpaceModuleEntry.Data.Lists == nil {
-				params.SpaceModuleEntry.Data.Lists = make(map[string]*dbo4listus.ListBrief, 1)
+				params.SpaceModuleEntry.Data.Lists = make(dbo4listus.ListBriefs, 1)
 			}
 			listBrief := &dbo4listus.ListBrief{
 				ListBase: dbo4listus.ListBase{
@@ -94,14 +94,14 @@ func CreateList(ctx context.Context, userCtx facade.UserContext, request CreateL
 					Title: request.Type,
 				},
 			}
-			params.SpaceModuleEntry.Data.Lists[id] = listBrief
+			params.SpaceModuleEntry.Data.Lists[string(listID)] = listBrief
 			if params.SpaceModuleEntry.Record.Exists() {
 				if err = tx.Insert(ctx, params.SpaceModuleEntry.Record); err != nil {
 					return fmt.Errorf("failed to insert team module entry record: %w", err)
 				}
 			} else {
 				params.SpaceUpdates = append(params.SpaceUpdates, dal.Update{
-					Field: "lists." + id,
+					Field: "lists." + listType,
 					Value: listBrief,
 				})
 			}

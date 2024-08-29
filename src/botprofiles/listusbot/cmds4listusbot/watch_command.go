@@ -7,6 +7,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/botprofiles/listusbot/dal4listusbot"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/tghelpers"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/facade4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
@@ -50,6 +51,7 @@ func watchCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 	if m, err = whc.NewEditMessage(m.Text, m.Format); err != nil {
 		return
 	}
+	spaceRef := tghelpers.GetSpaceRef(callbackUrl)
 	m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
 		[]tgbotapi.InlineKeyboardButton{
 			{
@@ -58,7 +60,7 @@ func watchCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 			},
 		},
 		[]tgbotapi.InlineKeyboardButton{
-			tghelpers.BackToSpaceMenuButton(callbackUrl),
+			tghelpers.BackToSpaceMenuButton(spaceRef),
 		},
 	)
 	m.ResponseChannel = botsfw.BotAPISendMessageOverHTTPS
@@ -94,14 +96,14 @@ func watchAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error)
 		spaceID = familySpaceID
 	}
 
-	request := facade4listus.CreateListItemsRequest{
-		ListRequest: facade4listus.ListRequest{
-			ListID: dbo4listus.GetFullListID(dbo4listus.ListTypeToBuy, "groceries"),
+	request := dto4listus.CreateListItemsRequest{
+		ListRequest: dto4listus.ListRequest{
+			ListID: dbo4listus.NewListKey(dbo4listus.ListTypeToBuy, "groceries"),
 			SpaceRequest: dto4spaceus.SpaceRequest{
 				SpaceID: spaceID,
 			},
 		},
-		Items: []facade4listus.CreateListItemRequest{
+		Items: []dto4listus.CreateListItemRequest{
 			{
 				ListItemBase: dbo4listus.ListItemBase{
 					Title: text,

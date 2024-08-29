@@ -78,7 +78,7 @@ func (dbo *DebtusSpaceContactDbo) MustMatchCounterparty(counterparty DebtusSpace
 
 type WithCounterpartyFields struct {
 	CounterpartyUserID    string `json:"counterpartyUserID,omitempty" firestore:"counterpartyUserID,omitempty"`       // The counterparty user UserID if registered
-	CounterpartySpaceID   string `json:"counterpartySpaceID,omitempty" firestore:"counterpartyUserID,omitempty"`      // The counterparty user SpaceID if registered
+	CounterpartySpaceID   string `json:"counterpartySpaceID,omitempty" firestore:"counterpartyUserID,omitempty"`      // The counterparty user SpaceRef if registered
 	CounterpartyContactID string `json:"counterpartyContactID,omitempty" firestore:"counterpartyContactID,omitempty"` // The counterparty user ContactID if registered
 }
 

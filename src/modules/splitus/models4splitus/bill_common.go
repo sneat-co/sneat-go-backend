@@ -165,7 +165,7 @@ Members:
 //func (entity *BillCommon) load(ps []datastore.Property) []datastore.Property {
 //	for i, p := range ps {
 //		if p.Name == "GetUserGroupID" {
-//			entity.SpaceID = p.Value.(string)
+//			entity.SpaceRef = p.Value.(string)
 //			return append(ps[:i], ps[i+1:]...)
 //		}
 //	}
@@ -195,8 +195,8 @@ func (entity *BillCommon) Validate() (err error) {
 	//}); err != nil {
 	//	return
 	//}
-	//if entity.SpaceID != "" {
-	//	filtered = append(filtered, datastore.Property{Name: "GetUserGroupID", Value: entity.SpaceID, NoIndex: false})
+	//if entity.SpaceRef != "" {
+	//	filtered = append(filtered, datastore.Property{Name: "GetUserGroupID", Value: entity.SpaceRef, NoIndex: false})
 	//}
 	return
 }

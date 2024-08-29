@@ -7,17 +7,14 @@ import (
 	"net/url"
 )
 
-func GetSpaceParams(callbackUrl *url.URL) (spaceType core4spaceus.SpaceType, spaceID string) {
+func GetSpaceRef(callbackUrl *url.URL) (spaceRef core4spaceus.SpaceRef) {
 	q := callbackUrl.Query()
-	spaceType = core4spaceus.SpaceType(q.Get("spaceType"))
-	spaceID = q.Get("spaceID")
-	return spaceType, spaceID
+	return core4spaceus.SpaceRef(q.Get("s"))
 }
 
-func BackToSpaceMenuButton(callbackUrl *url.URL) tgbotapi.InlineKeyboardButton {
-	spaceType, spaceID := GetSpaceParams(callbackUrl)
+func BackToSpaceMenuButton(spaceRef core4spaceus.SpaceRef) tgbotapi.InlineKeyboardButton {
 	return tgbotapi.InlineKeyboardButton{
 		Text:         "⬅️ Back to space menu",
-		CallbackData: fmt.Sprintf("space?spaceType=%s&spaceID=%s", spaceType, spaceID),
+		CallbackData: fmt.Sprintf("space?s=%s", spaceRef),
 	}
 }

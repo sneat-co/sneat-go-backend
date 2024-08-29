@@ -1,4 +1,4 @@
-package facade4listus
+package dto4listus
 
 import (
 	"fmt"

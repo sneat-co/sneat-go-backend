@@ -129,9 +129,9 @@ func createSpaceForTelegramGroup(ctx context.Context, whc botsfw.WebhookContext,
 	//			return
 	//		}
 	//	}
-	//	if tgGroup.Data != nil && tgGroup.Data.SpaceID != "" {
+	//	if tgGroup.Data != nil && tgGroup.Data.SpaceRef != "" {
 	//		hasTgGroupEntity = true
-	//		return dtdal.Group.GetGroupByID(ctx, tx, tgGroup.Data.SpaceID)
+	//		return dtdal.Group.GetGroupByID(ctx, tx, tgGroup.Data.SpaceRef)
 	//	}
 	//	_, _, idx, member, members := groupEntity.AddOrGetMember(userID, "", user.FullName())
 	//	member.TgUserID = strconv.FormatInt(int64(whc.Input().GetSender().GetID().(int)), 10)
@@ -144,7 +144,7 @@ func createSpaceForTelegramGroup(ctx context.Context, whc botsfw.WebhookContext,
 	//	logus.Debugf(ctx, "afterGroupInsert()")
 	//	if !hasTgGroupEntity {
 	//		data := &models4auth.TgGroupData{
-	//			SpaceID: group.ContactID,
+	//			SpaceRef: group.ContactID,
 	//		}
 	//		tgGroup := models4auth.NewTgGroup(tgChat.ContactID, data)
 	//		if err = dtdal.TgGroup.SaveTgGroup(ctx, tx, tgGroup); err != nil {
@@ -153,7 +153,7 @@ func createSpaceForTelegramGroup(ctx context.Context, whc botsfw.WebhookContext,
 	//	}
 	//
 	//	_ = user.Data.AddGroup(group, whc.GetBotCode())
-	//	chatData.SpaceID = group.ContactID // TODO: !!! has to be updated in transaction!!!
+	//	chatData.SpaceRef = group.ContactID // TODO: !!! has to be updated in transaction!!!
 	//	if err = whc.SaveBotChat(ctx); err != nil {
 	//		return
 	//	}

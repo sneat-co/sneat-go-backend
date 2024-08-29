@@ -24,8 +24,9 @@ func debtsCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 	}
 
 	keyboard := m.Keyboard.(*tgbotapi.InlineKeyboardMarkup)
+	spaceRef := tghelpers.GetSpaceRef(callbackUrl)
 	keyboard.InlineKeyboard = append(keyboard.InlineKeyboard, []tgbotapi.InlineKeyboardButton{
-		tghelpers.BackToSpaceMenuButton(callbackUrl),
+		tghelpers.BackToSpaceMenuButton(spaceRef),
 	})
 	if m, err = whc.NewEditMessage(m.Text, m.Format); err != nil {
 		return

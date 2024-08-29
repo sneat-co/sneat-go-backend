@@ -24,8 +24,8 @@ var spaceCommand = botsfw.Command{
 }
 
 func spaceCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-	spaceType, spaceID := tghelpers.GetSpaceParams(callbackUrl)
-	if m, err = spaceAction(whc, spaceType, spaceID); err != nil {
+	spaceRef := tghelpers.GetSpaceRef(callbackUrl)
+	if m, err = spaceAction(whc, spaceRef); err != nil {
 		return
 	}
 	keyboard := m.Keyboard
@@ -52,7 +52,8 @@ func getSpaceID(whc botsfw.WebhookContext, spaceType core4spaceus.SpaceType) (sp
 	return
 }
 
-func spaceAction(whc botsfw.WebhookContext, spaceType core4spaceus.SpaceType, spaceID string) (m botsfw.MessageFromBot, err error) {
+func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m botsfw.MessageFromBot, err error) {
+	spaceID, spaceType := spaceRef.SpaceID(), spaceRef.SpaceType()
 	if spaceID == "" {
 		var user dbo4userus.UserEntry
 		if spaceID, user, err = getSpaceID(whc, spaceType); err != nil {
@@ -86,20 +87,20 @@ func spaceAction(whc botsfw.WebhookContext, spaceType core4spaceus.SpaceType, sp
 	var switchSpaceTitle string
 	switch spaceType {
 	case core4spaceus.SpaceTypeFamily:
-		switchSpaceCallbackData = "space?spaceType=private"
-		switchSpaceTitle = "Private"
 		spaceIcon = "👪"
+		switchSpaceTitle = "Private"
+		switchSpaceCallbackData = "space?s=" + string(core4spaceus.NewSpaceRef(core4spaceus.SpaceTypePrivate, ""))
 	case core4spaceus.SpaceTypePrivate:
-		switchSpaceCallbackData = "space?spaceType=family"
-		switchSpaceTitle = "Family"
 		spaceIcon = "🔒"
+		switchSpaceTitle = "Family"
+		switchSpaceCallbackData = "space?s=" + string(core4spaceus.NewSpaceRef(core4spaceus.SpaceTypeFamily, ""))
 	}
 
 	spaceTitle := strings.ToUpper(string(spaceType)[:1]) + string(spaceType)[1:]
 	m.Text += fmt.Sprintf("Current space: %s <b>%s</b>", spaceIcon, spaceTitle)
 	m.Format = botsfw.MessageFormatHTML
 
-	spaceCallbackParams := fmt.Sprintf("spaceType=%s&spaceID=%s", spaceType, spaceID)
+	spaceCallbackParams := "s=" + string(core4spaceus.NewSpaceRef(spaceType, spaceID))
 
 	firstRow := []tgbotapi.InlineKeyboardButton{
 		{
@@ -133,15 +134,15 @@ func spaceAction(whc botsfw.WebhookContext, spaceType core4spaceus.SpaceType, sp
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text:         "🛒 Buy",
-				CallbackData: "buy?" + spaceCallbackParams,
+				CallbackData: "list?k=buy!groceries&" + spaceCallbackParams,
 			},
 			{
 				Text:         "🏗️ ToDo",
-				CallbackData: "todo?" + spaceCallbackParams,
+				CallbackData: "list?k=do!tasks&" + spaceCallbackParams,
 			},
 			{
 				Text:         "📽️ Watch",
-				CallbackData: "watch?" + spaceCallbackParams,
+				CallbackData: "list?k=watch!movies&" + spaceCallbackParams,
 			},
 		},
 		[]tgbotapi.InlineKeyboardButton{

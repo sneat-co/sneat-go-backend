@@ -2,55 +2,41 @@ package facade4listus
 
 import (
 	"context"
-	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
 	"github.com/sneat-co/sneat-go-core/facade"
-	"github.com/strongo/validation"
 )
 
 // DeleteListItems deletes list items
-func DeleteListItems(ctx context.Context, userCtx facade.UserContext, request ListItemIDsRequest) (err error) {
+func DeleteListItems(ctx context.Context, userCtx facade.UserContext, request dto4listus.ListItemIDsRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
-	uid := userCtx.GetUserID()
-	if uid == "" {
-		return validation.NewErrRequestIsMissingRequiredField("userCtx.ContactID()")
-	}
-	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
-		listID := request.ListID
-		list := dal4listus.NewSpaceListEntry(request.SpaceID, listID)
-
-		if err := GetListForUpdate(ctx, tx, list); err != nil {
-			return err
-		}
+	err = dal4listus.RunListWorker(ctx, userCtx, request.ListRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4listus.ListWorkerParams) error {
 		var found int
 	nextItem:
-		for i, item := range list.Data.Items {
+		for i, item := range params.List.Data.Items {
 			for _, id := range request.ItemIDs {
 				if item.ID == id {
 					found++
 					continue nextItem
 				}
 			}
-			list.Data.Items[i-found] = item
+			params.List.Data.Items[i-found] = item
 		}
 		if found > 0 {
-			list.Data.Items = list.Data.Items[:len(list.Data.Items)-found]
+			params.List.Data.Items = params.List.Data.Items[:len(params.List.Data.Items)-found]
 		}
-		listUpdates := []dal.Update{
+		params.ListUpdates = []dal.Update{
 			{
 				Field: "items",
-				Value: list.Data.Items,
+				Value: params.List.Data.Items,
 			},
 			{
 				Field: "count",
-				Value: len(list.Data.Items),
+				Value: len(params.List.Data.Items),
 			},
-		}
-		if err = tx.Update(ctx, list.Record.Key(), listUpdates); err != nil {
-			return fmt.Errorf("failed to update list record: %w", err)
 		}
 		return nil
 	})

@@ -7,7 +7,7 @@ import (
 
 type ListusSpaceDbo struct {
 	with.CreatedFields
-	Lists map[string]*ListBrief `json:"lists,omitempty" firestore:"lists,omitempty"`
+	Lists ListBriefs `json:"lists,omitempty" firestore:"lists,omitempty"`
 	//ListGroups []*ListGroup          `json:"listGroups,omitempty" firestore:"listGroups,omitempty"`
 }
 
