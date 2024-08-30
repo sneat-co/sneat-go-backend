@@ -798,7 +798,7 @@ func createSendReceiptOptionsMessage(whc botsfw.WebhookContext, transfer models4
 	var isCounterpartyUserHasTelegram bool
 	if transfer.Data.Creator().ContactID != "" {
 		if user, err := dal4userus.GetUserByID(ctx, nil, transfer.Data.Counterparty().UserID); err != nil {
-			err = fmt.Errorf("failed to get counterparty user by ContactID=%v: %w", transfer.Data.Counterparty().UserID, err)
+			err = fmt.Errorf("failed to get counterparty user by UserID=%s: %w", transfer.Data.Counterparty().UserID, err)
 			return m, err
 		} else {
 			isCounterpartyUserHasTelegram = user.Data.HasAccount(telegram.PlatformID, "")

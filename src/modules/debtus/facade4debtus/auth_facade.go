@@ -21,7 +21,7 @@ var AuthFacade = authFacade{}
 func (authFacade) AssignPinCode(ctx context.Context, loginID int, userID string) (loginPin models4auth.LoginPin, err error) {
 	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		if loginPin, err = dtdal.LoginPin.GetLoginPinByID(ctx, tx, loginID); err != nil {
-			return fmt.Errorf("failed to get LoginPin entity by ContactID=%v: %w", loginID, err)
+			return fmt.Errorf("failed to get LoginPin entity by loginID=%d: %w", loginID, err)
 		}
 		if loginPin.Data.UserID != "" && loginPin.Data.UserID != userID {
 			return errors.New("LoginPin.UserID != userID")
@@ -46,7 +46,7 @@ func (authFacade) SignInWithPin(ctx context.Context, loginID int, loginPinCode i
 	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		var loginPin models4auth.LoginPin
 		if loginPin, err = dtdal.LoginPin.GetLoginPinByID(ctx, tx, loginID); err != nil {
-			return fmt.Errorf("failed to get LoginPin entity by ContactID=%v: %w", loginID, err)
+			return fmt.Errorf("failed to get LoginPin entity by loginID=%d: %w", loginID, err)
 		}
 		if !loginPin.Data.SignedIn.IsZero() {
 			return ErrLoginAlreadySigned

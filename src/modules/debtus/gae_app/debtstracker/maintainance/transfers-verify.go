@@ -55,7 +55,7 @@ package maintainance
 //				counters.Increment(fmt.Sprintf("User:%d", userID), 1)
 //				fmt.Fprintf(buf, "Unknown user %d\n", userID)
 //			} else if err2 != nil {
-//				err = fmt.Errorf("failed to get user by ContactID=%v: %w", userID, err2)
+//				err = fmt.Errorf("failed to get user by userID=%s: %w", userID, err2)
 //				return
 //			}
 //		}
@@ -70,7 +70,7 @@ package maintainance
 //				counters.Increment(fmt.Sprintf("DebtusSpaceContactEntry:%d", contactID), 1)
 //				_, _ = fmt.Fprintf(buf, "Unknown contact %d\n", contactID)
 //			} else if err2 != nil {
-//				err = fmt.Errorf("failed to get contact by ContactID=%v: %w", contactID, err2)
+//				err = fmt.Errorf("failed to get contact by ContactID=%s: %w", contactID, err2)
 //				return
 //			}
 //		}
@@ -137,8 +137,8 @@ package maintainance
 //	}
 //	if currency != "" {
 //		if err = nds.RunInTransaction(ctx, func(ctx context.Context) error {
-//			if transfer, err = facade4debtus.Transfers.GetTransferByID(ctx, tx, transfer.ContactID); err != nil {
-//				return fmt.Errorf("failed to get transfer by ContactID=%d: %w", transfer.ContactID, err)
+//			if transfer, err = facade4debtus.Transfers.GetTransferByID(ctx, tx, transfer.ID); err != nil {
+//				return fmt.Errorf("failed to get transfer by transferID=%d: %w", transfer.ID, err)
 //			}
 //			if transfer.Data.Currency != currency {
 //				transfer.Data.Currency = currency

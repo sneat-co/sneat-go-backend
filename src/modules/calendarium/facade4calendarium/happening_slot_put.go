@@ -36,7 +36,7 @@ func putSlotTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *d
 	}
 
 	if existingSlot := params.Happening.Data.GetSlot(request.Slot.ID); existingSlot == nil && putMode == UpdateSlot {
-		return validation.NewErrBadRequestFieldValue("slot.id", "slot not found by ContactID="+request.Slot.ID)
+		return validation.NewErrBadRequestFieldValue("slot.id", "slot not found by SlotID="+request.Slot.ID)
 	} else {
 		slot := &request.Slot.HappeningSlot
 		params.Happening.Record.MarkAsChanged()
@@ -62,7 +62,7 @@ func putSlotTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *d
 				}
 			case UpdateSlot:
 				if !happeningBrief.HasSlot(request.Slot.ID) {
-					return validation.NewErrBadRequestFieldValue("slotID", "slot not found by ContactID="+request.Slot.ID)
+					return validation.NewErrBadRequestFieldValue("slotID", "slot not found by SlotID="+request.Slot.ID)
 				}
 			default:
 				return fmt.Errorf("unsupported put mode: %v", putMode)

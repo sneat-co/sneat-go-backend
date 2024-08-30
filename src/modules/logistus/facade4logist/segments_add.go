@@ -45,7 +45,7 @@ func updateContainerWithAddedSegment(orderDto *dbo4logist.OrderDbo, containerDat
 	_, container := orderDto.GetContainerByID(containerData.ID)
 
 	if container == nil {
-		return fmt.Errorf("container not found in order by ContactID=%s", containerData.ID)
+		return fmt.Errorf("container not found in order by containerData.ID=%s", containerData.ID)
 	}
 
 	//if !containerData.ToLoad.IsEmpty() {
@@ -286,7 +286,7 @@ func addShippingPointToOrderIfNeeded(
 	}
 
 	if location.Data.ParentID == "" {
-		return shippingPoint, fmt.Errorf("segment counteparty with role=[%s] reference contact by ContactID=[%s] that has no reference to parent: %w",
+		return shippingPoint, fmt.Errorf("segment counteparty with role=[%s] reference contact by segmentCounterparty.ContactID=[%s] that has no reference to parent: %w",
 			segmentCounterparty.Role, segmentCounterparty.ContactID,
 			validation.NewErrRecordIsMissingRequiredField("parentContactID"))
 	}
@@ -424,7 +424,7 @@ func addCounterpartyToOrderIfNeeded(
 	if contact.Data.ParentID != "" {
 		parent := dal4contactus.NewContactEntry(spaceID, contact.Data.ParentID)
 		if err := tx.Get(ctx, parent.Record); err != nil {
-			return changes, fmt.Errorf("failed to get parent contact by ContactID=[%s]: %w", contact.Data.ParentID, err)
+			return changes, fmt.Errorf("failed to get parent contact by contact.Data.ParentID=[%s]: %w", contact.Data.ParentID, err)
 		}
 
 		var parentCounterpartyRole dbo4logist.CounterpartyRole

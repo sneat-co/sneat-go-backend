@@ -40,7 +40,7 @@ package dtb_transfer
 //		userKey := gaedal.NewAppUserKey(tc, userID)
 //		transferKey := gaedal.NewTransferKey(tc, transferID)
 //		if err = nds.Get(tc, transferKey, transfer); err != nil {
-//			return errors.Wrapf(err, "Failed to get transfer by ContactID=%v", transferKey)
+//			return errors.Wrapf(err, "failed to get transfer by transferKey=%v", transferKey)
 //
 //		}
 //		if transfer.CreatorUserID == userID {
@@ -51,7 +51,7 @@ package dtb_transfer
 //		if transfer.DebtusSpaceContactEntry().UserID == 0 {
 //			user := new(models.AppUser)
 //			if err = nds.Get(tc, userKey, user); err != nil {
-//				return errors.Wrapf(err, "Failed to get user by ContactID=%v", userKey.IntID())
+//				return errors.Wrapf(err, "failed to get user by userKey=%v", userKey.IntID())
 //			}
 //			if user.InvitedByUserID == 0 {
 //				user.InvitedByUserID = invite.CreatedByUserID

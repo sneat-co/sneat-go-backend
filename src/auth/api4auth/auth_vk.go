@@ -50,7 +50,7 @@ func HandleSignedWithVK(ctx context.Context, w http.ResponseWriter, r *http.Requ
 	//vkUser, err := dtdal.UserVk.GetUserVkByID(ctx, vkUserID)
 	//if err != nil {
 	//	if dal.IsNotFound(err) {  // It's OK if UserVk entity not found.
-	//		logus.Debugf(ctx, "UserVk entity not found by ContactID=%v", vkUserID)
+	//		logus.Debugf(ctx, "UserVk entity not found by vkUserID=%d", vkUserID)
 	//	} else {  // For other errors fail gracefully.
 	//		InternalError(ctx, hashedWriter, err)
 	//		return

@@ -22,7 +22,7 @@ func setHappeningPricesTx(ctx context.Context, tx dal.ReadwriteTransaction, _ fa
 		return err
 	}
 	if !params.Happening.Record.Exists() {
-		return fmt.Errorf("happening not found by ContactID=%s: %v", params.Happening.Key.String(), params.Happening.Record.Error())
+		return fmt.Errorf("happening not found by key=%s: %v", params.Happening.Key.String(), params.Happening.Record.Error())
 	}
 	happeningDbo := params.Happening.Data
 

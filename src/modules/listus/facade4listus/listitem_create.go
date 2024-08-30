@@ -48,7 +48,7 @@ func createListItemTxWorker(ctx context.Context, request dto4listus.CreateListIt
 				request.ListID == dbo4listus.NewListKey(dbo4listus.ListTypeToWatch, "movies")
 
 		if !isOkToAutoCreateList {
-			err = fmt.Errorf("list not found by ContactID=%s: %w", request.ListID, err)
+			err = fmt.Errorf("list not found by ID=%s: %w", request.ListID, err)
 			return err
 		}
 

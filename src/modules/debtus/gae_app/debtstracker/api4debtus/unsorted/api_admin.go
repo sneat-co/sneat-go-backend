@@ -28,7 +28,7 @@ func HandleAdminFindUser(ctx context.Context, w http.ResponseWriter, r *http.Req
 	if userID := r.URL.Query().Get("userID"); userID != "" {
 		appUser := dbo4userus.NewUserEntry(userID)
 		if err := dal4userus.GetUser(ctx, nil, appUser); err != nil {
-			logus.Errorf(ctx, fmt.Errorf("failed to get user by ContactID=%v: %w", userID, err).Error())
+			logus.Errorf(ctx, fmt.Errorf("failed to get user by userID=%s: %w", userID, err).Error())
 		} else {
 			api4debtus.JsonToResponse(ctx, w, []dto4debtus.ApiUserDto{{ID: userID, Name: appUser.Data.GetFullName()}})
 		}

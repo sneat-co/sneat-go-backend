@@ -156,7 +156,7 @@ func HandleCreateBill(ctx context.Context, w http.ResponseWriter, r *http.Reques
 					goto contactFound
 				}
 			}
-			api4debtus.BadRequestError(ctx, w, fmt.Errorf("debtusContact not found by ContactID=%v", member.ContactID))
+			api4debtus.BadRequestError(ctx, w, fmt.Errorf("debtusContact not found by member.ContactID=%s", member.ContactID))
 			return
 		contactFound:
 		}

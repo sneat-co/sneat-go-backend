@@ -147,7 +147,7 @@ func (v *WithShippingPoints) validateShippingPoint(i int, shippingPoint *OrderSh
 	if shippingPoint.Location != nil && shippingPoint.Location.Address != nil {
 		_, contact := orderDto.GetContactByID(shippingPoint.Location.ContactID)
 		if contact == nil {
-			return validation.NewErrBadRecordFieldValue(field()+"location.contactID", "not found in order contacts by ContactID="+shippingPoint.Location.ContactID)
+			return validation.NewErrBadRecordFieldValue(field()+"location.contactID", "not found in order contacts by shippingPoint.Location.ContactID="+shippingPoint.Location.ContactID)
 		}
 		//if shippingPoint.Location.Address != nil && shippingPoint.Location.Address.CountryID != contact.CountryID {
 		//	return validation.NewErrBadRecordFieldValue(

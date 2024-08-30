@@ -35,7 +35,7 @@ func (v WithOrderContacts) Validate() error {
 		if contact.ParentID != "" {
 			_, parent := v.GetContactByID(contact.ParentID)
 			if parent == nil {
-				return fmt.Errorf("parent contact not found in `contacts` by ContactID=[%s]", contact.ParentID)
+				return fmt.Errorf("parent contact not found in `contacts` by contact.ParentID=[%s]", contact.ParentID)
 			}
 		}
 		//if contact.ExtraType == dbmodels.ContactTypeLocation && strings.TrimSpace(contact.Address.Lines) == "" {
@@ -72,7 +72,7 @@ func (v WithOrderContacts) MustGetContactByID(id string) *OrderContact {
 			return contact
 		}
 	}
-	panic("contact not found by ContactID=" + id)
+	panic("contact not found by id=" + id)
 }
 
 // GetContactByParentID returns first contact by parent ContactID

@@ -127,7 +127,7 @@ func (v *OrderDbo) Validate() error {
 	for _, cp := range v.Counterparties {
 		_, contact := v.GetContactByID(cp.ContactID)
 		if contact == nil {
-			return validation.NewErrBadRecordFieldValue("contactID", "not found in `contacts` by ContactID="+cp.ContactID)
+			return validation.NewErrBadRecordFieldValue("contactID", "not found in `contacts` by cp.ContactID="+cp.ContactID)
 		}
 		if cp.Title != contact.Title {
 			return validation.NewErrBadRecordFieldValue("title", fmt.Sprintf(`"%s" does not match contact title "%s"`, cp.Title, contact.Title))

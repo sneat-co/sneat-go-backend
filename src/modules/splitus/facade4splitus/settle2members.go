@@ -120,11 +120,11 @@ func Settle2members(ctx context.Context, spaceID, debtorID, sponsorID string, cu
 				}
 			}
 			if debtor == nil {
-				logus.Warningf(ctx, "Debtor not found by ContactID="+debtorID)
+				logus.Warningf(ctx, "contact not found by debtorID="+debtorID)
 				goto nextBill
 			}
 			if sponsor == nil {
-				logus.Warningf(ctx, "Sponsor not found by ContactID="+sponsorID)
+				logus.Warningf(ctx, "contact not found by sponsorID="+sponsorID)
 				goto nextBill
 			}
 			debtorInvertedBalance = -1 * debtor.Balance()

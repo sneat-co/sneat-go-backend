@@ -189,7 +189,7 @@ func (transferFacade TransfersFacade) CreateTransfer(ctx context.Context, input 
 			goto contactFound
 		}
 		if err == nil {
-			err = fmt.Errorf("user Contact not found by ContactID=%v", creatorContactID)
+			err = fmt.Errorf("user Contact not found by creatorContactID=%s", creatorContactID)
 		}
 		return
 	contactFound:

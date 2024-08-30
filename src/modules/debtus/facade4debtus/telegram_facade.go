@@ -9,6 +9,7 @@ import (
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/i18n"
 	"github.com/strongo/logus"
@@ -44,9 +45,9 @@ func GetLocale(ctx context.Context, botID string, tgChatIntID int64, userID stri
 			userID = tgChat.Data.BaseChatData().AppUserID
 		}
 		if userID != "" {
-			user, err := dal4userus.GetUserByID(ctx, db, userID)
-			if err != nil {
-				logus.Errorf(ctx, fmt.Errorf("failed to get user by ContactID=%v: %w", userID, err).Error())
+			var user dbo4userus.UserEntry
+			if user, err = dal4userus.GetUserByID(ctx, db, userID); err != nil {
+				logus.Errorf(ctx, fmt.Errorf("failed to get user by userID=%s: %w", userID, err).Error())
 				return locale, err
 			}
 			tgChatPreferredLanguage = user.Data.PreferredLocale

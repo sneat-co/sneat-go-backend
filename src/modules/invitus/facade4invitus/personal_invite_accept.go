@@ -186,7 +186,7 @@ func updateSpaceRecord(
 		}
 	}
 	if teamMember == nil {
-		return teamMember, fmt.Errorf("space member is not found by ContactID=%s", inviteToMemberID)
+		return teamMember, fmt.Errorf("space member is not found by inviteToMemberID=%s", inviteToMemberID)
 	}
 
 	if params.Space.Data.HasUserID(uid) {

@@ -27,10 +27,10 @@ import (
 //		return
 //	}
 //
-//	if user, err = dal4userus.GetUserByID(c, nil, user.ContactID); api4debtus.HasError(c, w, err, models4debtus.AppUserKind, user.ContactID, 0) {
+//	if user, err = dal4userus.GetUserByID(c, nil, user.ID); api4debtus.HasError(c, w, err, models4debtus.AppUserKind, user.ContactID, 0) {
 //		return
 //	} else if user.Data == nil {
-//		_, _ = w.Write([]byte(fmt.Sprintf("UserEntry not found by ContactID=%v", user.ContactID)))
+//		_, _ = w.Write([]byte(fmt.Sprintf("UserEntry not found by UserID=%v", user.ID)))
 //		http.NotFound(w, r) // TODO: Check response output
 //		return
 //	}

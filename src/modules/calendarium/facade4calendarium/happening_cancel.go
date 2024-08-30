@@ -152,7 +152,7 @@ func addCancellationToCalendarDayAdjustments(
 	if slotAdjustment == nil {
 		slot := happening.Data.GetSlot(request.SlotID)
 		if slot == nil {
-			return fmt.Errorf("%w: slot not found by ContactID=%v", facade.ErrBadRequest, request.SlotID)
+			return fmt.Errorf("%w: slot not found by SlotID=%v", facade.ErrBadRequest, request.SlotID)
 		}
 		slotAdjustment = &dbo4calendarium.SlotAdjustment{
 			Cancellation: cancellation,

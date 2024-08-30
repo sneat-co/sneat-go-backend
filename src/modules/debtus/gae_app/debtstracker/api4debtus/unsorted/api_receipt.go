@@ -412,7 +412,7 @@ func HandleCreateReceipt(ctx context.Context, w http.ResponseWriter, r *http.Req
 	//user, err = dal4userus.GetUserByID(ctx, transfer.CreatorUserID)
 	//if err != nil {
 	//	w.WriteHeader(http.StatusInternalServerError)
-	//	err = errors.Wrapf(err, "Failed to get user by ContactID=%v", transfer.CreatorUserID)
+	//	err = errors.Wrapf(err, "failed to get user by CreatorUserID=%v", transfer.CreatorUserID)
 	//	w.Write([]byte(err.Error()))
 	//	logus.Warningf(ctx, err.Error())
 	//	return
