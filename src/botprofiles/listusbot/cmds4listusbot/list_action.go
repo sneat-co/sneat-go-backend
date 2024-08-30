@@ -8,7 +8,9 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/facade4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/facade4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -40,7 +42,9 @@ func listAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) 
 
 	spaceRef := sneatAppChatData.GetSpaceRef()
 
-	if spaceRef == "" {
+	spaceID, spaceType := spaceRef.SpaceID(), spaceRef.SpaceType()
+
+	if spaceID == "" {
 		userID := userCtx.GetUserID()
 		var user dbo4userus.UserEntry
 		var db dal.DB
@@ -50,13 +54,21 @@ func listAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) 
 		if user, err = dal4userus.GetUserByID(ctx, db, userID); err != nil {
 			return
 		}
-		var spaceID string
-		spaceID, _ = user.Data.GetSpaceBriefByType(core4spaceus.SpaceTypeFamily)
+		spaceID, _ = user.Data.GetSpaceBriefByType(spaceRef.SpaceType())
 		if spaceID == "" {
-			m = whc.NewMessage("You are not a member of any family team")
-			return m, nil
+			if spaceType == core4spaceus.SpaceTypeFamily {
+				var space dbo4spaceus.SpaceEntry
+				if space, _, err = facade4spaceus.CreateSpace(ctx, userCtx, dto4spaceus.CreateSpaceRequest{Type: spaceType}); err != nil {
+					err = fmt.Errorf("failed to create missing family space: %w", err)
+					return
+				}
+				spaceID = space.ID
+				spaceRef = core4spaceus.NewSpaceRef(spaceType, spaceID)
+			} else {
+				m = whc.NewMessage(fmt.Sprintf("You are not a member of any %s space", spaceType))
+				return m, nil
+			}
 		}
-		spaceRef = core4spaceus.NewSpaceRef(core4spaceus.SpaceTypeFamily, spaceID)
 	}
 
 	request := dto4listus.CreateListItemsRequest{
