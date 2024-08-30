@@ -32,7 +32,7 @@ require (
 	github.com/bots-go-framework/bots-fw-telegram v0.12.0
 	github.com/bots-go-framework/bots-fw-telegram-models v0.3.2
 	github.com/bots-go-framework/bots-fw-telegram-webapp v0.0.1
-	github.com/bots-go-framework/bots-host-gae v0.5.12
+	github.com/bots-go-framework/bots-host-gae v0.5.13
 	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85
 	github.com/crediterra/money v0.3.0
 	github.com/dal-go/dalgo v0.12.2
@@ -50,7 +50,7 @@ require (
 	github.com/shiyanhui/hero v0.0.2
 	github.com/sneat-co/debtstracker-translations v0.0.26
 	github.com/sneat-co/sneat-go-core v0.32.3
-	github.com/sneat-co/sneat-go-firebase v0.5.5
+	github.com/sneat-co/sneat-go-firebase v0.5.6
 	github.com/stretchr/testify v1.9.0
 	github.com/strongo/app-host-gae v0.1.32
 	github.com/strongo/decimal v0.1.1
@@ -83,9 +83,9 @@ require (
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
 	github.com/alexsergivan/transliterator v1.0.1 // indirect
 	github.com/bots-go-framework/bots-go-core v0.0.2 // indirect
-	github.com/dal-go/dalgo2firestore v0.1.73 // indirect
+	github.com/dal-go/dalgo2firestore v0.1.74 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/felixge/fgprof v0.9.4 // indirect
+	github.com/felixge/fgprof v0.9.5 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
