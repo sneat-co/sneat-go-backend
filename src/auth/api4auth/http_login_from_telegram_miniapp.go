@@ -71,14 +71,14 @@ func httpLoginFromTelegramMiniapp(w http.ResponseWriter, r *http.Request) {
 func signInWithTelegram(ctx context.Context, w http.ResponseWriter, r *http.Request, initData twainitdata.InitData) {
 	var (
 		err       error
-		tgBotUser facade4auth.TelegramPlatformUserEntry
+		tgBotUser facade4auth.BotUserEntry
 		isNewUser bool
 	)
 	remoteClientInfo := dbmodels.RemoteClientInfo{
 		HostOrApp:  r.Host,
 		RemoteAddr: r.RemoteAddr,
 	}
-	if tgBotUser, isNewUser, err = facade4auth.SignInWithTelegram(ctx, initData, remoteClientInfo); err != nil {
+	if tgBotUser, _, isNewUser, err = facade4auth.SignInWithTelegram(ctx, initData, remoteClientInfo); err != nil {
 		apicore.ReturnError(ctx, w, r, err)
 		return
 	}

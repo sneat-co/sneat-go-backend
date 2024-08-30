@@ -102,7 +102,7 @@ func Test_createOrUpdateUserRecord(t *testing.T) {
 				userRecordError: dal.ErrRecordNotFound,
 				team: dbo4spaceus.NewSpaceEntryWithDbo("testteamid", &dbo4spaceus.SpaceDbo{
 					SpaceBrief: dbo4spaceus.SpaceBrief{
-						RequiredCountryID: with.RequiredCountryID{
+						OptionalCountryID: with.OptionalCountryID{
 							CountryID: with.UnknownCountryID,
 						},
 						Type:  "family",

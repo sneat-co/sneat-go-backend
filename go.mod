@@ -8,6 +8,7 @@ go 1.23.0
 //replace github.com/sneat-co/sneat-go-modules => ../sneat-go-modules
 
 //replace github.com/bots-go-framework/bots-fw => ../../bots-go-framework/bots-fw
+
 //replace github.com/bots-go-framework/bots-fw-telegram => ../../bots-go-framework/bots-fw-telegram
 
 //
@@ -26,7 +27,7 @@ go 1.23.0
 require (
 	firebase.google.com/go/v4 v4.14.1
 	github.com/bots-go-framework/bots-api-telegram v0.6.2
-	github.com/bots-go-framework/bots-fw v0.36.0
+	github.com/bots-go-framework/bots-fw v0.37.0
 	github.com/bots-go-framework/bots-fw-store v0.8.0
 	github.com/bots-go-framework/bots-fw-telegram v0.12.0
 	github.com/bots-go-framework/bots-fw-telegram-models v0.3.2
@@ -48,7 +49,7 @@ require (
 	github.com/sendgrid/sendgrid-go v3.16.0+incompatible
 	github.com/shiyanhui/hero v0.0.2
 	github.com/sneat-co/debtstracker-translations v0.0.26
-	github.com/sneat-co/sneat-go-core v0.32.2
+	github.com/sneat-co/sneat-go-core v0.32.3
 	github.com/sneat-co/sneat-go-firebase v0.5.5
 	github.com/stretchr/testify v1.9.0
 	github.com/strongo/app-host-gae v0.1.32

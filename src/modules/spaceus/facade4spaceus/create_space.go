@@ -103,6 +103,7 @@ func CreateSpaceTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, reque
 	}
 	space.Data.IncreaseVersion(now, params.User.ID)
 	space.Data.CountryID = params.User.Data.CountryID
+
 	if request.Type == "work" {
 		zero := 0
 		hundred := 100

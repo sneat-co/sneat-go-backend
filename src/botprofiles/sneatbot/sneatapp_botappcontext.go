@@ -9,6 +9,9 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/sneat-co/sneat-go-backend/src/auth/facade4auth"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
+	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/i18n"
 	"github.com/strongo/strongoapp/appuser"
 	"reflect"
@@ -27,9 +30,38 @@ var _ botsdal.AppUserDal = (*sneatAppBotDal)(nil)
 type sneatAppBotDal struct {
 }
 
-func (s sneatAppBotDal) CreateAppUserFromBotUser(ctx context.Context, tx dal.ReadwriteTransaction, bot botsdal.Bot) (appUser record.DataWithID[string, botsfwmodels.AppUserData], err error) {
-	//TODO implement me
-	panic("implement me")
+func (s sneatAppBotDal) CreateAppUserFromBotUser(ctx context.Context,
+	_ dal.ReadwriteTransaction, // intentionally do not use transaction as we can't have reads after writes
+	bot botsdal.Bot,
+) (
+	appUser record.DataWithID[string, botsfwmodels.AppUserData],
+	botUser record.DataWithID[string, botsfwmodels.PlatformUserData],
+	err error,
+) {
+	botUserData := facade4auth.BotUserData{
+		PlatformID:   bot.Platform,
+		BotID:        bot.ID,
+		BotUserID:    fmt.Sprintf("%v", bot.User.GetID()),
+		FirstName:    bot.User.GetFirstName(),
+		LastName:     bot.User.GetLastName(),
+		Username:     bot.User.GetUserName(),
+		LanguageCode: bot.User.GetLanguage(),
+	}
+	remoteClientInfo := dbmodels.RemoteClientInfo{
+		HostOrApp: string(bot.Platform) + "@" + bot.ID,
+	}
+	var user dbo4userus.UserEntry
+
+	botUser, user, err = facade4auth.CreateBotUserAndAppUserRecords(ctx, nil, botUserData, remoteClientInfo)
+	if err != nil {
+		err = fmt.Errorf("failed to create user records: %w", err)
+		return
+	}
+	appUser = record.DataWithID[string, botsfwmodels.AppUserData]{
+		WithID: user.WithID,
+		Data:   user.Data,
+	}
+	return
 }
 
 type sneatAppBotContext struct { // TODO: Duplication?!

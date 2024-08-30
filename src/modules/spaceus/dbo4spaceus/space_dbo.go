@@ -107,7 +107,7 @@ type SpaceBrief struct {
 
 	Modules []string `json:"modules,omitempty" firestore:"modules,omitempty"`
 
-	with.RequiredCountryID
+	with.OptionalCountryID
 
 	// TODO: This should be populated
 	ParentSpaceID string `json:"parentSpaceID,omitempty" firestore:"parentSpaceID,omitempty"`
@@ -132,7 +132,7 @@ func (v SpaceBrief) Validate() error {
 	} else if !IsKnownSpaceStatus(v.Status) {
 		return validation.NewErrBadRecordFieldValue("status", "unknown value: "+v.Status)
 	}
-	if err := v.RequiredCountryID.Validate(); err != nil {
+	if err := v.OptionalCountryID.Validate(); err != nil {
 		return err
 	}
 	return nil

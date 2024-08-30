@@ -74,6 +74,7 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 				User:    user,
 			}
 			if spaceEntry, _, err = facade4spaceus.CreateSpaceTxWorker(ctx, tx, request, &params); err != nil {
+				err = fmt.Errorf("failed to create space: %w", err)
 				return
 			}
 			if err = params.User.Data.Validate(); err != nil {

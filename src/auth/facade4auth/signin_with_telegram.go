@@ -7,9 +7,11 @@ import (
 	telegram "github.com/bots-go-framework/bots-fw-telegram"
 	"github.com/bots-go-framework/bots-fw-telegram-webapp/twainitdata"
 	"github.com/bots-go-framework/bots-fw/botsdal"
+	"github.com/bots-go-framework/bots-fw/botsfwconst"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/models4bots"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/strongoapp/appuser"
@@ -17,12 +19,11 @@ import (
 	"strconv"
 )
 
-type TelegramPlatformUserEntry = record.DataWithID[string, botsfwmodels.PlatformUserData]
-
 func SignInWithTelegram(
 	ctx context.Context, initData twainitdata.InitData, remoteClientInfo dbmodels.RemoteClientInfo,
 ) (
-	tgPlatformUser TelegramPlatformUserEntry,
+	botUser BotUserEntry,
+	appUser dbo4userus.UserEntry,
 	isNewUser bool, // TODO: Document why needed or remove
 	err error,
 ) {
@@ -33,21 +34,29 @@ func SignInWithTelegram(
 		return
 	}
 
+	botUserData := BotUserData{
+		PlatformID: telegram.PlatformID,
+		BotID:      "", // TODO: populate
+		FirstName:  initData.User.FirstName,
+		LastName:   initData.User.LastName,
+		Username:   initData.User.Username,
+	}
+
 	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
-		if tgPlatformUser, err = botsdal.GetPlatformUser(ctx, db, telegram.PlatformID, tgUserID, new(models4bots.TelegramUserDbo)); err != nil {
+		if botUser, err = botsdal.GetPlatformUser(ctx, db, telegram.PlatformID, tgUserID, new(models4bots.TelegramUserDbo)); err != nil {
 			if !dal.IsNotFound(err) {
 				return
 			}
-			if tgPlatformUser, err = createTelegramUserAndAppUserRecords(ctx, tx, initData, remoteClientInfo); err != nil {
+			if botUser, appUser, err = CreateBotUserAndAppUserRecords(ctx, tx, botUserData, remoteClientInfo); err != nil {
 				return
 			}
 			isNewUser = true
 			return
 		}
 
-		if appUserID := tgPlatformUser.Data.GetAppUserID(); appUserID == "" {
+		if appUserID := botUser.Data.GetAppUserID(); appUserID == "" {
 
-			if err = createAppUserRecordAndUpdateTelegramUserRecord(ctx, tx, initData, remoteClientInfo, tgPlatformUser); err != nil {
+			if err = createAppUserRecordAndUpdateTelegramUserRecord(ctx, tx, botUserData, remoteClientInfo, botUser); err != nil {
 				err = fmt.Errorf("failed in createAppUserRecordAndUpdateTelegramUserRecord(): %w", err)
 				return
 			}
@@ -57,34 +66,47 @@ func SignInWithTelegram(
 	return
 }
 
-func createTelegramUserAndAppUserRecords(
-	ctx context.Context, tx dal.ReadwriteTransaction,
-	initData twainitdata.InitData,
+type BotUserData struct {
+	PlatformID   botsfwconst.Platform
+	BotID        string
+	BotUserID    string
+	FirstName    string
+	LastName     string
+	Username     string
+	PhotoURL     string
+	LanguageCode string
+}
+
+func CreateBotUserAndAppUserRecords(
+	ctx context.Context,
+	tx dal.ReadwriteTransaction,
+	botUserData BotUserData,
 	remoteClientInfo dbmodels.RemoteClientInfo,
 ) (
-	tgPlatformUser TelegramPlatformUserEntry, err error,
+	botUser BotUserEntry, appUser dbo4userus.UserEntry, err error,
 ) {
+
 	telegramUserData := new(models4bots.TelegramUserDbo)
-	telegramUserData.FirstName = initData.User.FirstName
-	telegramUserData.LastName = initData.User.LastName
-	telegramUserData.UserName = initData.User.Username
-	tgPlatformUser.Data = telegramUserData
-	tgUserID := strconv.FormatInt(initData.User.ID, 10)
-	tgPlatformUserKey := botsdal.NewPlatformUserKey(telegram.PlatformID, tgUserID)
-	tgPlatformUser = record.NewDataWithID[string, botsfwmodels.PlatformUserData](tgUserID, tgPlatformUserKey, telegramUserData)
+	telegramUserData.FirstName = botUserData.FirstName
+	telegramUserData.LastName = botUserData.LastName
+	telegramUserData.UserName = botUserData.Username
+	botUser.Data = telegramUserData
+	tgPlatformUserKey := botsdal.NewPlatformUserKey(telegram.PlatformID, botUserData.BotUserID)
+	botUser = record.NewDataWithID[string, botsfwmodels.PlatformUserData](botUserData.BotUserID, tgPlatformUserKey, telegramUserData)
 
-	tgPlatformUser.ID = strconv.FormatInt(initData.User.ID, 10)
-	key := botsdal.NewPlatformUserKey(telegram.PlatformID, tgPlatformUser.ID)
-	tgPlatformUser.Record = dal.NewRecordWithData(key, telegramUserData)
+	botUser.ID = botUserData.BotUserID
+	key := botsdal.NewPlatformUserKey(telegram.PlatformID, botUser.ID)
+	botUser.Record = dal.NewRecordWithData(key, telegramUserData)
 
-	var uid string
-	if uid, err = createUserFromTelegramUser(ctx, tx, initData, remoteClientInfo); err != nil {
+	if appUser, err = createUserFromTelegramUser(ctx, tx, botUserData, remoteClientInfo); err != nil {
 		return
 	}
-	telegramUserData.SetAppUserID(uid)
-	if err = tx.Insert(ctx, tgPlatformUser.Record); err != nil {
-		err = fmt.Errorf("failed to insert telegram user record: %w", err)
-		return
+	telegramUserData.SetAppUserID(appUser.ID)
+	if tx != nil {
+		if err = tx.Insert(ctx, botUser.Record); err != nil {
+			err = fmt.Errorf("failed to insert telegram user record: %w", err)
+			return
+		}
 	}
 	return
 }
@@ -92,19 +114,19 @@ func createTelegramUserAndAppUserRecords(
 func createAppUserRecordAndUpdateTelegramUserRecord(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	initData twainitdata.InitData,
+	botUserData BotUserData,
 	remoteClientInfo dbmodels.RemoteClientInfo,
 	tgBotUser record.DataWithID[string, botsfwmodels.PlatformUserData],
 ) (err error) {
-	var uid string
-	if uid, err = createUserFromTelegramUser(ctx, tx, initData, remoteClientInfo); err != nil {
+	var user dbo4userus.UserEntry
+	if user, err = createUserFromTelegramUser(ctx, tx, botUserData, remoteClientInfo); err != nil {
 		return
 	}
-	tgBotUser.Data.SetAppUserID(uid)
+	tgBotUser.Data.SetAppUserID(user.ID)
 	tgUserDbo := tgBotUser.Data.(*models4bots.TelegramUserDbo)
-	tgUserDbo.FirstName = initData.User.FirstName
-	tgUserDbo.LastName = initData.User.LastName
-	tgUserDbo.UserName = initData.User.Username
+	tgUserDbo.FirstName = botUserData.FirstName
+	tgUserDbo.LastName = botUserData.LastName
+	tgUserDbo.UserName = botUserData.Username
 
 	if err = tgUserDbo.Validate(); err != nil {
 		err = fmt.Errorf("failed to validate telegram user data: %w", err)
@@ -112,7 +134,7 @@ func createAppUserRecordAndUpdateTelegramUserRecord(
 	}
 
 	updates := []dal.Update{
-		{Field: "appUserID", Value: uid},
+		{Field: "appUserID", Value: user.ID},
 		{Field: "firstName", Value: tgUserDbo.FirstName},
 		{Field: "lastName", Value: tgUserDbo.LastName},
 		{Field: "userName", Value: tgUserDbo.UserName},
@@ -125,17 +147,24 @@ func createAppUserRecordAndUpdateTelegramUserRecord(
 	return
 }
 
-func createUserFromTelegramUser(ctx context.Context, tx dal.ReadwriteTransaction, initData twainitdata.InitData, remoteClientInfo dbmodels.RemoteClientInfo) (uid string, err error) {
+func createUserFromTelegramUser(
+	ctx context.Context,
+	tx dal.ReadwriteTransaction,
+	botUserData BotUserData,
+	remoteClientInfo dbmodels.RemoteClientInfo,
+) (
+	user dbo4userus.UserEntry, err error,
+) {
 	userToCreate := &UserToCreate{
 		Names: person.NameFields{
-			FirstName: initData.User.FirstName,
-			LastName:  initData.User.LastName,
+			FirstName: botUserData.FirstName,
+			LastName:  botUserData.LastName,
 		},
-		PhotoURL:     initData.User.PhotoURL,
-		LanguageCode: initData.User.LanguageCode,
+		PhotoURL:     botUserData.PhotoURL,
+		LanguageCode: botUserData.LanguageCode,
 		Account: appuser.AccountKey{
 			Provider: telegram.PlatformID,
-			ID:       strconv.FormatInt(initData.User.ID, 10),
+			ID:       botUserData.BotUserID,
 		},
 		RemoteClientInfo: remoteClientInfo,
 	}

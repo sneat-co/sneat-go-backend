@@ -22,7 +22,7 @@ type UserToCreate struct {
 	Account          appuser.AccountKey
 }
 
-func createUser(ctx context.Context, tx dal.ReadwriteTransaction, userToCreate *UserToCreate) (uid string, err error) {
+func createUser(ctx context.Context, tx dal.ReadwriteTransaction, userToCreate *UserToCreate) (user dbo4userus.UserEntry, err error) {
 
 	displayName := userToCreate.Names.FirstName
 	if userToCreate.Names.LastName != "" {
@@ -50,16 +50,16 @@ func createUser(ctx context.Context, tx dal.ReadwriteTransaction, userToCreate *
 		err = fmt.Errorf("failed to create firebase user: %w", err)
 		return
 	}
-	uid = fbUserRecord.UID
+	user.ID = fbUserRecord.UID
 	customClaims := map[string]interface{}{
 		"authProvider": userToCreate.Account.Provider,
 	}
-	if err = fbAuthClient.SetCustomUserClaims(ctx, uid, customClaims); err != nil {
+	if err = fbAuthClient.SetCustomUserClaims(ctx, user.ID, customClaims); err != nil {
 		err = fmt.Errorf("failed to set custom claims: %w", err)
 		return
 	}
 	now := time.Now()
-	user := dbo4userus.NewUserEntry(uid)
+	user = dbo4userus.NewUserEntry(user.ID)
 	user.Data.SetCreatedAt(now)
 	user.Data.SetLastLoginAt(now)
 	user.Data.Type = briefs4contactus.ContactTypePerson
@@ -80,9 +80,11 @@ func createUser(ctx context.Context, tx dal.ReadwriteTransaction, userToCreate *
 		return
 	}
 
-	if err = tx.Insert(ctx, user.Record); err != nil {
-		err = fmt.Errorf("failed to insert user record: %w", err)
-		return
+	if tx != nil {
+		if err = tx.Insert(ctx, user.Record); err != nil {
+			err = fmt.Errorf("failed to insert user record: %w", err)
+			return
+		}
 	}
 	return
 }
