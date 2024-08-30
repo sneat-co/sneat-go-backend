@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/bots-go-framework/bots-fw-telegram"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
@@ -24,10 +25,10 @@ import (
 
 var chosenInlineResultCommand = botsfw.Command{
 	Code:       "chosen-inline-result-command",
-	InputTypes: []botsfw.WebhookInputType{botsfw.WebhookInputChosenInlineResult},
+	InputTypes: []botinput.WebhookInputType{botinput.WebhookInputChosenInlineResult},
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		logus.Debugf(whc.Context(), "splitus.chosenInlineResultHandler.Action()")
-		chosenResult := whc.Input().(botsfw.WebhookChosenInlineResult)
+		chosenResult := whc.Input().(botinput.WebhookChosenInlineResult)
 		resultID := chosenResult.GetResultID()
 		if strings.HasPrefix(resultID, "bill?") {
 			return createBillFromInlineChosenResult(whc, chosenResult)
@@ -38,7 +39,7 @@ var chosenInlineResultCommand = botsfw.Command{
 
 var reDecimal = regexp.MustCompile(`\d+(\.\d+)?`)
 
-func createBillFromInlineChosenResult(whc botsfw.WebhookContext, chosenResult botsfw.WebhookChosenInlineResult) (m botsfw.MessageFromBot, err error) {
+func createBillFromInlineChosenResult(whc botsfw.WebhookContext, chosenResult botinput.WebhookChosenInlineResult) (m botsfw.MessageFromBot, err error) {
 	ctx := whc.Context()
 	logus.Debugf(ctx, "createBillFromInlineChosenResult()")
 
@@ -119,7 +120,7 @@ func createBillFromInlineChosenResult(whc botsfw.WebhookContext, chosenResult bo
 
 		defer func() {
 			if r := recover(); r != nil {
-				whc.LogRequest()
+				whc.Input().LogRequest()
 				panic(r)
 			}
 		}()
@@ -212,7 +213,7 @@ func getBillIDFromUrlInEditedMessage(whc botsfw.WebhookContext) (billID string) 
 var EditedBillCardHookCommand = botsfw.Command{ // TODO: seems to be not used anywhere
 	Code: "edited-bill-card",
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-		whc.LogRequest()
+		whc.Input().LogRequest()
 		ctx := whc.Context()
 		billID := getBillIDFromUrlInEditedMessage(whc)
 		logus.Debugf(ctx, "editedBillCardHookCommand.Action() => billID: %s", billID)

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
-	"github.com/bots-go-framework/bots-fw/botsfw"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/models4splitus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/const4userus"
@@ -97,7 +97,7 @@ func CreateGroup(ctx context.Context,
 type NewUser struct {
 	Name string
 	botsfwmodels.PlatformUserData
-	ChatMember botsfw.WebhookActor
+	ChatMember botinput.WebhookActor
 }
 
 func AddUsersToTheGroupAndOutstandingBills(ctx context.Context, spaceID string, newUsers []NewUser) (splitusSpace models4splitus.SplitusSpaceEntry, newUsers2 []NewUser, err error) {

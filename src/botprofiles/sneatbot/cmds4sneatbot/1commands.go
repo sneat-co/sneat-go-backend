@@ -1,12 +1,13 @@
 package cmds4sneatbot
 
 import (
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/bothelpers"
 )
 
 // AddSneatSharedCommands registers commands shared by all Sneat bots
-func AddSneatSharedCommands(commandsByType map[botsfw.WebhookInputType][]botsfw.Command) {
+func AddSneatSharedCommands(commandsByType map[botinput.WebhookInputType][]botsfw.Command) {
 	bothelpers.AddCommands(commandsByType, []botsfw.Command{
 		spacesCommand,
 		spaceCommand,
@@ -21,7 +22,7 @@ func AddSneatSharedCommands(commandsByType map[botsfw.WebhookInputType][]botsfw.
 }
 
 // AddSneatBotCommands registers commands specific only to @SneatBot
-func AddSneatBotCommands(commandsByType map[botsfw.WebhookInputType][]botsfw.Command) {
+func AddSneatBotCommands(commandsByType map[botinput.WebhookInputType][]botsfw.Command) {
 	bothelpers.AddCommands(commandsByType, []botsfw.Command{
 		startCommand,
 	})

@@ -1,6 +1,7 @@
 package debtusbot
 
 import (
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_inline"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_invite"
@@ -23,7 +24,7 @@ var InlineQueryCommand = botsfw.Command{
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		ctx := whc.Context()
 
-		inlineQuery := whc.Input().(botsfw.WebhookInlineQuery)
+		inlineQuery := whc.Input().(botinput.WebhookInlineQuery)
 		query := inlineQuery.GetQuery()
 		logus.Debugf(ctx, "InlineQueryCommand.Action(query=%v)", query)
 		switch {

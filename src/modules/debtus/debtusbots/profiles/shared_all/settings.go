@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw-telegram"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
@@ -29,7 +30,7 @@ func SettingsMainAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err
 
 func SettingsMainTelegram(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, keyboard *tgbotapi.InlineKeyboardMarkup, err error) {
 	m = whc.NewMessage(whc.Translate(trans.MESSAGE_TEXT_SETTINGS))
-	m.IsEdit = whc.InputType() == botsfw.WebhookInputCallbackQuery
+	m.IsEdit = whc.Input().InputType() == botinput.WebhookInputCallbackQuery
 	keyboard = tgbotapi.NewInlineKeyboardMarkup(
 		[]tgbotapi.InlineKeyboardButton{
 			{

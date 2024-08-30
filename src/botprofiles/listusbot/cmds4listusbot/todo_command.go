@@ -3,6 +3,7 @@ package cmds4listusbot
 import (
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/botprofiles/listusbot/dal4listusbot"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/tghelpers"
@@ -22,14 +23,14 @@ var todoCommand = botsfw.Command{
 	Code:     "todo",
 	Commands: []string{"/todo"},
 	Icon:     "🛒",
-	InputTypes: []botsfw.WebhookInputType{
-		botsfw.WebhookInputText,
-		botsfw.WebhookInputCallbackQuery,
+	InputTypes: []botinput.WebhookInputType{
+		botinput.WebhookInputText,
+		botinput.WebhookInputCallbackQuery,
 	},
 	Matcher: func(_ botsfw.Command, context botsfw.WebhookContext) bool {
 		input := context.Input()
-		if input.InputType() == botsfw.WebhookInputText {
-			text := strings.ToLower(strings.TrimSpace(input.(botsfw.WebhookTextMessage).Text()))
+		if input.InputType() == botinput.WebhookInputText {
+			text := strings.ToLower(strings.TrimSpace(input.(botinput.WebhookTextMessage).Text()))
 			return strings.HasPrefix(text, "todo ") || strings.HasPrefix(text, "купить ")
 		}
 		return false
@@ -74,7 +75,7 @@ func todoAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) 
 
 	listusChatData := chatData.(*dal4listus.ListusChatData)
 
-	input := whc.Input().(botsfw.WebhookTextMessage)
+	input := whc.Input().(botinput.WebhookTextMessage)
 	text := strings.TrimSpace(input.Text())
 	text = text[strings.Index(text, " ")+1:]
 	userCtx := facade.NewUserContext(whc.AppUserID())

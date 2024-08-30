@@ -1,6 +1,7 @@
 package cmds4sneatbot
 
 import (
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
 )
@@ -8,10 +9,10 @@ import (
 var startCommand = botsfw.Command{
 	Code:     "start",
 	Commands: []string{"/start"},
-	InputTypes: []botsfw.WebhookInputType{
-		botsfw.WebhookInputText,
-		botsfw.WebhookInputCallbackQuery,
-		botsfw.WebhookInputInlineQuery,
+	InputTypes: []botinput.WebhookInputType{
+		botinput.WebhookInputText,
+		botinput.WebhookInputCallbackQuery,
+		botinput.WebhookInputInlineQuery,
 	},
 	Action: startAction,
 }

@@ -2,6 +2,7 @@ package dtb_transfer
 
 import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
@@ -57,15 +58,15 @@ var AskPhoneNumberForReceiptCommand = botsfw.Command{
 				phoneNumber    int64
 			)
 
-			contact, isContactMessage := input.(botsfw.WebhookContactMessage)
+			contact, isContactMessage := input.(botinput.WebhookContactMessage)
 
 			if isContactMessage {
 				if contact == nil {
 					m = whc.NewMessageByCode(trans.MESSAGE_TEXT_INVALID_PHONE_NUMBER)
 					return nil
 				}
-				if params.User.Data.Names.FirstName == contact.FirstName() && params.User.Data.Names.LastName == contact.LastName() {
-					phoneNumberStr = cleanPhoneNumber(contact.PhoneNumber())
+				if params.User.Data.Names.FirstName == contact.GetFirstName() && params.User.Data.Names.LastName == contact.GetLastName() {
+					phoneNumberStr = cleanPhoneNumber(contact.GetPhoneNumber())
 					if phoneNumber, err = strconv.ParseInt(phoneNumberStr, 10, 64); err != nil {
 						logus.Warningf(ctx, "Failed to parse contact's phone number: [%v]", phoneNumberStr)
 						return err
@@ -82,9 +83,9 @@ var AskPhoneNumberForReceiptCommand = botsfw.Command{
 					m = whc.NewMessage(trans.MESSAGE_TEXT_YOU_CAN_SEND_RECEIPT_TO_YOURSELF_BY_SMS)
 					return nil
 				}
-				mt = contact.PhoneNumber()
+				mt = contact.GetPhoneNumber()
 			} else {
-				mt = whc.Input().(botsfw.WebhookTextMessage).Text()
+				mt = whc.Input().(botinput.WebhookTextMessage).Text()
 			}
 
 			if twilioTestNumber, ok := common4debtus.TwilioTestNumbers[mt]; ok {
@@ -202,7 +203,7 @@ func sendReceiptBySms(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, sp
 		var msgSmsStatus botsfw.MessageFromBot
 		mt := whc.Translate(trans.MESSAGE_TEXT_SMS_QUEUING_FOR_SENDING, phoneContact.PhoneNumberAsString())
 		//logus.Debugf(ctx, "whc.InputTypes(): %v, botsfw.WebhookInputCallbackQuery: %v, MessageID: %v", whc.InputTypes(), botsfw.WebhookInputCallbackQuery, whc.InputCallbackQuery().GetMessage().IntID())
-		if whc.InputType() == botsfw.WebhookInputCallbackQuery {
+		if whc.Input().InputType() == botinput.WebhookInputCallbackQuery {
 			//logus.Debugf(ctx, "editMessage.MessageID: %v", editMessage.MessageID)
 			if msgSmsStatus, err = whc.NewEditMessage(mt, botsfw.MessageFormatHTML); err != nil {
 				return err

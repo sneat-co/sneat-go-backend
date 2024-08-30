@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/crediterra/money"
 	"github.com/sneat-co/debtstracker-translations/emoji"
@@ -21,14 +22,14 @@ var ParseTransferCommand = botsfw.Command{
 	Matcher: func(c botsfw.Command, whc botsfw.WebhookContext) bool {
 		input := whc.Input()
 		switch input := input.(type) {
-		case botsfw.WebhookTextMessage:
+		case botinput.WebhookTextMessage:
 			return transferRegex.MatchString(input.Text())
 		default:
 			return false
 		}
 	},
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-		match := transferRegex.FindStringSubmatch(whc.Input().(botsfw.WebhookTextMessage).Text())
+		match := transferRegex.FindStringSubmatch(whc.Input().(botinput.WebhookTextMessage).Text())
 		var verb, valueS, counterpartyName, when string
 		var direction models4debtus.TransferDirection
 		var currency money.CurrencyCode

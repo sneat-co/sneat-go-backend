@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/crediterra/money"
 	"github.com/sneat-co/debtstracker-translations/emoji"
@@ -26,7 +27,7 @@ func CreateStartTransferWizardCommand(code, messageText string, commands []strin
 		Commands: commands,
 		Replies:  []botsfw.Command{askTransferAmountCommand},
 		Matcher: func(c botsfw.Command, whc botsfw.WebhookContext) bool {
-			if m, ok := whc.Input().(botsfw.WebhookTextMessage); ok && IsCurrencyIcon(m.Text()) && whc.ChatData().GetAwaitingReplyTo() == code {
+			if m, ok := whc.Input().(botinput.WebhookTextMessage); ok && IsCurrencyIcon(m.Text()) && whc.ChatData().GetAwaitingReplyTo() == code {
 				return true
 			}
 			return false
@@ -34,7 +35,7 @@ func CreateStartTransferWizardCommand(code, messageText string, commands []strin
 		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 			ctx := whc.Context()
 			logus.Debugf(ctx, "CreateStartTransferWizardCommand(code=%v).Action()", code)
-			mt := strings.TrimSpace(whc.Input().(botsfw.WebhookTextMessage).Text())
+			mt := strings.TrimSpace(whc.Input().(botinput.WebhookTextMessage).Text())
 			chatEntity := whc.ChatData()
 			switch {
 			case money.HasCurrencyPrefix(mt) || IsCurrencyIcon(mt):
@@ -184,7 +185,7 @@ func TransferAskDueDateCommand(code string, nextCommand botsfw.Command) botsfw.C
 			m := whc.NewMessageByCode(trans.MESSAGE_TEXT_ASK_DUE)
 			chatEntity := whc.ChatData()
 			if chatEntity.IsAwaitingReplyTo(code) {
-				mt := strings.TrimSpace(whc.Input().(botsfw.WebhookTextMessage).Text())
+				mt := strings.TrimSpace(whc.Input().(botinput.WebhookTextMessage).Text())
 				logus.Debugf(ctx, "Chat is awating reply to %v", code)
 				var duration time.Duration
 				switch mt {
@@ -254,7 +255,7 @@ var TransferAskDueDateReturnToUser = TransferAskDueDateCommand(
 func processSetDate(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, date time.Time, err error) {
 	ctx := whc.Context()
 
-	mt := strings.TrimSpace(whc.Input().(botsfw.WebhookTextMessage).Text())
+	mt := strings.TrimSpace(whc.Input().(botinput.WebhookTextMessage).Text())
 	if match := reDate.FindStringSubmatch(mt); len(match) > 0 {
 		if match[2] != match[4] {
 			m = whc.NewMessageByCode(trans.MESSAGE_TEXT_INVALID_DATE)

@@ -5,6 +5,7 @@ import (
 	//"fmt"
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
@@ -116,7 +117,7 @@ func createTransferAskNoteOrCommentCommand(code string, nextCommand botsfw.Comma
 				if m, err = interestAction(whc, nextCommand.Action); err != nil || m.Text != "" {
 					return
 				}
-				mt := whc.Input().(botsfw.WebhookTextMessage).Text()
+				mt := whc.Input().(botinput.WebhookTextMessage).Text()
 				switch mt {
 				//case whc.Translate(trans.COMMAND_TEXT_ADD_NOTE_TO_TRANSFER):
 				//	return addNoteCommand.Action(whc)

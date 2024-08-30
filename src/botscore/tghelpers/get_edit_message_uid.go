@@ -9,7 +9,7 @@ import (
 // GetEditMessageUID returns UID of the message to be edited
 // TODO: Move to bots-fw-telegram?
 func GetEditMessageUID(whc botsfw.WebhookContext) (*telegram.ChatMessageUID, error) {
-	chatID, err := whc.BotChatID()
+	chatID, err := whc.Input().BotChatID()
 	if err != nil {
 		return nil, err
 	}

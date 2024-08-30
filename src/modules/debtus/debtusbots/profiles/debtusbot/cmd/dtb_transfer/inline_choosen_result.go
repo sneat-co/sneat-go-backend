@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw-telegram"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_inline"
@@ -14,9 +15,9 @@ import (
 func showReceiptAnnouncement(whc botsfw.WebhookContext, receiptID string, creatorName string) (m botsfw.MessageFromBot, err error) {
 	var inlineMessageID string
 	switch input := whc.Input().(type) {
-	case botsfw.WebhookChosenInlineResult:
+	case botinput.WebhookChosenInlineResult:
 		inlineMessageID = input.GetInlineMessageID()
-	case botsfw.WebhookCallbackQuery:
+	case botinput.WebhookCallbackQuery:
 		inlineMessageID = input.GetInlineMessageID()
 	default:
 		return m, fmt.Errorf("showReceiptAnnouncement: Unsupported InputType=%T", input)

@@ -3,6 +3,7 @@ package dtb_settings
 import (
 	"errors"
 	"fmt"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
@@ -22,7 +23,7 @@ var LoginPinCommand = botsfw.Command{
 		//}
 	},
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-		mt := whc.Input().(botsfw.WebhookTextMessage).Text()
+		mt := whc.Input().(botinput.WebhookTextMessage).Text()
 		context := strings.Split(mt, " ")[0]
 		contextParams := strings.Split(context, "_")
 		var (

@@ -2,7 +2,7 @@ package dal4bots
 
 import (
 	"context"
-	"github.com/bots-go-framework/bots-fw/botsfw/botsdal"
+	"github.com/bots-go-framework/bots-fw/botsdal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/models4bots"
 )

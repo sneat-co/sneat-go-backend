@@ -1,6 +1,7 @@
 package sneatbot
 
 import (
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot"
 	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
@@ -10,17 +11,17 @@ import (
 
 const ProfileID = "sneat_bot"
 
-var profile botsfw.BotProfile
+var sneatBotProfile botsfw.BotProfile
 
 func GetProfile(errFooterText func() string) botsfw.BotProfile {
-	if profile == nil {
-		profile = createSneatBotProfile(errFooterText)
+	if sneatBotProfile == nil {
+		sneatBotProfile = createSneatBotProfile(errFooterText)
 	}
-	return profile
+	return sneatBotProfile
 }
 
 func createSneatBotProfile(errFooterText func() string) botsfw.BotProfile {
-	commandsByType := make(map[botsfw.WebhookInputType][]botsfw.Command)
+	commandsByType := make(map[botinput.WebhookInputType][]botsfw.Command)
 	cmds4anybot.AddSharedCommands(commandsByType)
 	cmds4sneatbot.AddSneatBotCommands(commandsByType)
 	cmds4sneatbot.AddSneatSharedCommands(commandsByType)

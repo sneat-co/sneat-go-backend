@@ -2,13 +2,14 @@ package cmds4sneatbot
 
 import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 )
 
 var spacesCommand = botsfw.Command{
 	Code:       "spaces",
 	Commands:   []string{"/spaces"},
-	InputTypes: []botsfw.WebhookInputType{botsfw.WebhookInputText},
+	InputTypes: []botinput.WebhookInputType{botinput.WebhookInputText},
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		m.Text = "<b>Your spaces</b>"
 		m.Text += "\nCurrent space: <b>Family</b>"

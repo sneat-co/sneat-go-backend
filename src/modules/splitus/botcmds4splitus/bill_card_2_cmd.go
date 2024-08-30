@@ -206,7 +206,7 @@ func ShowBillCard(whc botsfw.WebhookContext, isEdit bool, bill models4splitus.Bi
 	var isInGroup bool
 	if isInGroup, err = whc.IsInGroup(); err != nil {
 		return
-	} else if isInGroup || whc.Chat() == nil {
+	} else if isInGroup || whc.Input().Chat() == nil {
 		m.Keyboard = getGroupBillCardInlineKeyboard(whc, bill)
 	} else {
 		m.Keyboard = getPrivateBillCardInlineKeyboard(whc, whc.GetBotCode(), bill)

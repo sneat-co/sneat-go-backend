@@ -169,7 +169,7 @@ func createSpaceForTelegramGroup(ctx context.Context, whc botsfw.WebhookContext,
 func getTgChatEntity(whc botsfw.WebhookContext) (tgChatEntity *models4debtus.DebtusTelegramChatData, err error) {
 	chatEntity := whc.ChatData()
 	if chatEntity == nil {
-		whc.LogRequest()
+		whc.Input().LogRequest()
 		logus.Debugf(whc.Context(), "can't get group as chatEntity == nil")
 		return
 	}

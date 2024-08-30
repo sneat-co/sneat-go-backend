@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/shared_all"
@@ -69,7 +70,7 @@ func groupBalanceAction(whc botsfw.WebhookContext, splitusSpace models4splitus.S
 
 	m.Text = buf.String()
 	m.Format = botsfw.MessageFormatHTML
-	m.IsEdit = whc.Input().InputType() == botsfw.WebhookInputCallbackQuery
+	m.IsEdit = whc.Input().InputType() == botinput.WebhookInputCallbackQuery
 
 	m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
 		[]tgbotapi.InlineKeyboardButton{

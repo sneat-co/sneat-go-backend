@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
@@ -62,7 +63,7 @@ var newBillCommand = botsfw.Command{
 		)
 		//tgMessage := whc.Input().(telegram.TelegramWebhookInput).
 		//callbackQuery :=
-		tgChatMessageID := fmt.Sprintf("%v@%v@%v", whc.Input().(botsfw.WebhookCallbackQuery).GetInlineMessageID(), whc.GetBotCode(), whc.Locale().Code5)
+		tgChatMessageID := fmt.Sprintf("%v@%v@%v", whc.Input().(botinput.WebhookCallbackQuery).GetInlineMessageID(), whc.GetBotCode(), whc.Locale().Code5)
 		billEntity.TgChatMessageIDs = []string{tgChatMessageID}
 
 		var appUser botsfwmodels.AppUserData

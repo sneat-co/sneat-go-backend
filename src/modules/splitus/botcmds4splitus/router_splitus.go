@@ -2,6 +2,7 @@ package botcmds4splitus
 
 import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
@@ -51,8 +52,8 @@ var botParams = shared_all.BotParams{
 }
 
 var Router = botsfw.NewWebhookRouter(
-	map[botsfw.WebhookInputType][]botsfw.Command{
-		botsfw.WebhookInputText: {
+	map[botinput.WebhookInputType][]botsfw.Command{
+		botinput.WebhookInputText: {
 			EditedBillCardHookCommand,
 			billsCommand,
 			groupBalanceCommand,
@@ -63,7 +64,7 @@ var Router = botsfw.NewWebhookRouter(
 			settleBillsCommand,
 			outstandingBalanceCommand,
 		},
-		botsfw.WebhookInputCallbackQuery: {
+		botinput.WebhookInputCallbackQuery: {
 			joinBillCommand,
 			closeBillCommand,
 			editBillCommand,
@@ -99,13 +100,13 @@ var Router = botsfw.NewWebhookRouter(
 			settleGroupCounterpartyConfirmedCommand,
 			settleBillsCommand,
 		},
-		botsfw.WebhookInputInlineQuery: {
+		botinput.WebhookInputInlineQuery: {
 			inlineQueryCommand,
 		},
-		botsfw.WebhookInputChosenInlineResult: {
+		botinput.WebhookInputChosenInlineResult: {
 			chosenInlineResultCommand,
 		},
-		botsfw.WebhookInputNewChatMembers: {
+		botinput.WebhookInputNewChatMembers: {
 			newChatMembersCommand,
 		},
 	},

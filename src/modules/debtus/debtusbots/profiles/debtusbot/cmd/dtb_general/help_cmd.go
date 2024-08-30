@@ -2,6 +2,7 @@ package dtb_general
 
 import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
@@ -106,7 +107,7 @@ var AdsCommand = botsfw.Command{
 				[]tgbotapi.KeyboardButton{tgbotapi.NewKeyboardButton(MainMenuCommand.DefaultTitle(whc))},
 			)
 		} else {
-			switch whc.Input().(botsfw.WebhookTextMessage).Text() {
+			switch whc.Input().(botinput.WebhookTextMessage).Text() {
 			case yesOption:
 				m = whc.NewMessageByCode(trans.MESSAGE_TEXT_SUBSCRIBED_TO_APP)
 				SetMainMenuKeyboard(whc, &m)

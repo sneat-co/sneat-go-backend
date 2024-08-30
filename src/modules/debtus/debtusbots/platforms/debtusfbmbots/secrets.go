@@ -44,9 +44,9 @@ var (
 //	}
 )
 
-var _bots botsfw.SettingsBy
+var _bots botsfw.BotSettingsBy
 
-func Bots(_ context.Context) botsfw.SettingsBy {
+func Bots(_ context.Context) botsfw.BotSettingsBy {
 	//if len(_bots.ByCode) == 0 {
 	//	_bots = botsfw.NewBotSettingsBy(nil,
 	//		fbm.NewFbmBot(

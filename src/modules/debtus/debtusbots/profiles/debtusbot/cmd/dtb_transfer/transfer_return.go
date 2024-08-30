@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/crediterra/money"
 	"github.com/sneat-co/debtstracker-translations/trans"
@@ -152,7 +153,7 @@ var AskIfReturnedInFullCommand = botsfw.Command{
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		chatEntity := whc.ChatData()
 		if chatEntity.IsAwaitingReplyTo(ASK_IF_RETURNED_IN_FULL_COMMAND) {
-			switch whc.Input().(botsfw.WebhookTextMessage).Text() {
+			switch whc.Input().(botinput.WebhookTextMessage).Text() {
 			case whc.Translate(trans.BUTTON_TEXT_DEBT_RETURNED_FULLY):
 				m, err = processReturnCommand(whc, 0)
 				//anybot.CreateTransfer(whc.Context(), whc.AppUserID(), )
@@ -247,7 +248,7 @@ var AskHowMuchHaveBeenReturnedCommand = botsfw.Command{
 }
 
 func TryToProcessHowMuchHasBeenReturned(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-	if amountValue, err := decimal.ParseDecimal64p2(whc.Input().(botsfw.WebhookTextMessage).Text()); err != nil {
+	if amountValue, err := decimal.ParseDecimal64p2(whc.Input().(botinput.WebhookTextMessage).Text()); err != nil {
 		m = whc.NewMessage(whc.Translate(trans.MESSAGE_TEXT_INCORRECT_VALUE_NOT_A_NUMBER))
 		return m, nil
 	} else {
@@ -276,7 +277,7 @@ var AskToChooseDebtToReturnCommand = botsfw.Command{
 		)
 		if contactID == "" {
 			// Let's try to get counterpartyEntity from message text
-			mt := whc.Input().(botsfw.WebhookTextMessage).Text()
+			mt := whc.Input().(botinput.WebhookTextMessage).Text()
 			splittedBySeparator := strings.Split(mt, "|")
 			counterpartyTitle := strings.Join(splittedBySeparator[:len(splittedBySeparator)-1], "|")
 			counterpartyTitle = strings.TrimSpace(counterpartyTitle)
@@ -322,7 +323,7 @@ var AskToChooseDebtToReturnCommand = botsfw.Command{
 			theCounterparty = counterparty
 		}
 
-		mt := whc.Input().(botsfw.WebhookTextMessage).Text()
+		mt := whc.Input().(botinput.WebhookTextMessage).Text()
 		for currency, value := range balance {
 			if mt == _debtAmountButtonText(whc, currency, value, theCounterparty) {
 				return askIfReturnedInFull(whc, theCounterparty, currency, value)

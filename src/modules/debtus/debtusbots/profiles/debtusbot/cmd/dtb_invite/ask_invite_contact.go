@@ -3,6 +3,7 @@ package dtb_invite
 import (
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
@@ -31,7 +32,7 @@ func AskInviteAddress(channel, icon, commandText, messageCode, invalidMessageCod
 			chatEntity := whc.ChatData()
 
 			if chatEntity.IsAwaitingReplyTo(code) {
-				email := strings.TrimSpace(whc.Input().(botsfw.WebhookTextMessage).Text())
+				email := strings.TrimSpace(whc.Input().(botinput.WebhookTextMessage).Text())
 				isValid := channel == string(models4debtus.InviteByEmail) && strings.Contains(email, "@") && strings.Contains(email, ".")
 				if isValid {
 					invite, err := dtdal.Invite.CreatePersonalInvite(whc, whc.AppUserID(), models4debtus.InviteByEmail, email, whc.BotPlatform().ID(), whc.GetBotCode(), "counterparty=?")
@@ -43,7 +44,7 @@ func AskInviteAddress(channel, icon, commandText, messageCode, invalidMessageCod
 					emailID, err = invites.SendInviteByEmail(
 						whc.ExecutionContext(),
 						whc,
-						whc.GetSender().GetFirstName(),
+						whc.Input().GetSender().GetFirstName(),
 						"alex@debtusbot.io",
 						"Stranger",
 						invite.ID,

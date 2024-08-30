@@ -3,6 +3,7 @@ package cmds4sneatbot
 import (
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/tghelpers"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
@@ -19,7 +20,7 @@ import (
 var spaceCommand = botsfw.Command{
 	Code:           "space",
 	Commands:       []string{"/space"},
-	InputTypes:     []botsfw.WebhookInputType{botsfw.WebhookInputCallbackQuery},
+	InputTypes:     []botinput.WebhookInputType{botinput.WebhookInputCallbackQuery},
 	CallbackAction: spaceCallbackAction,
 }
 

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
@@ -33,7 +34,7 @@ func createStartCommand(botParams BotParams) botsfw.Command {
 	return botsfw.Command{
 		Code:       "start",
 		Commands:   []string{"/start"},
-		InputTypes: []botsfw.WebhookInputType{botsfw.WebhookInputText},
+		InputTypes: []botinput.WebhookInputType{botinput.WebhookInputText},
 		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 			return startCommandAction(whc, botParams)
 		},
@@ -41,9 +42,9 @@ func createStartCommand(botParams BotParams) botsfw.Command {
 }
 
 func startCommandAction(whc botsfw.WebhookContext, botParams BotParams) (m botsfw.MessageFromBot, err error) {
-	whc.LogRequest()
+	whc.Input().LogRequest()
 	ctx := whc.Context()
-	text := whc.Input().(botsfw.WebhookTextMessage).Text()
+	text := whc.Input().(botinput.WebhookTextMessage).Text()
 	logus.Debugf(ctx, "createStartCommand.Action() => text: "+text)
 
 	startParam, startParams := tgsharedcommands.ParseStartCommand(whc)

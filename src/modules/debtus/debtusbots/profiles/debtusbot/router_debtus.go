@@ -1,6 +1,7 @@
 package debtusbot
 
 import (
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_admin"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_general"
@@ -139,18 +140,18 @@ var callbackCommands = []botsfw.Command{
 }
 
 var Router = botsfw.NewWebhookRouter(
-	map[botsfw.WebhookInputType][]botsfw.Command{
-		botsfw.WebhookInputText:          textAndContactCommands,
-		botsfw.WebhookInputContact:       textAndContactCommands,
-		botsfw.WebhookInputCallbackQuery: callbackCommands,
+	map[botinput.WebhookInputType][]botsfw.Command{
+		botinput.WebhookInputText:          textAndContactCommands,
+		botinput.WebhookInputContact:       textAndContactCommands,
+		botinput.WebhookInputCallbackQuery: callbackCommands,
 		//
-		botsfw.WebhookInputInlineQuery: {
+		botinput.WebhookInputInlineQuery: {
 			InlineQueryCommand,
 		},
-		botsfw.WebhookInputChosenInlineResult: {
+		botinput.WebhookInputChosenInlineResult: {
 			dtb_invite.ChosenInlineResultCommand,
 		},
-		botsfw.WebhookInputNewChatMembers: {
+		botinput.WebhookInputNewChatMembers: {
 			newChatMembersCommand,
 		},
 	},

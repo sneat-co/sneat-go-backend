@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
@@ -167,8 +168,8 @@ func AskTransferAmountCommand(code, messageTextFormat string, nextCommand botsfw
 			switch {
 			case chatData.IsAwaitingReplyTo(code):
 				switch whc.Input().(type) {
-				case botsfw.WebhookTextMessage:
-					mt := strings.TrimSpace(whc.Input().(botsfw.WebhookTextMessage).Text())
+				case botinput.WebhookTextMessage:
+					mt := strings.TrimSpace(whc.Input().(botinput.WebhookTextMessage).Text())
 					if mt == "." || mt == "0" || strings.Contains(mt, emoji.NO_ENTRY_SIGN_ICON) {
 						return CancelTransferWizardCommand.Action(whc)
 					}
@@ -189,7 +190,7 @@ func AskTransferAmountCommand(code, messageTextFormat string, nextCommand botsfw
 						chatData.AddWizardParam("value", mt)
 						return nextCommand.Action(whc)
 					}
-				case botsfw.WebhookContactMessage:
+				case botinput.WebhookContactMessage:
 					m.Text = whc.Translate("Please enter amount now, and then contact.")
 					return
 				default:
@@ -288,11 +289,11 @@ func CreateAskTransferCounterpartyCommand(
 				logus.Debugf(ctx, "strings.HasSuffix(awaitingReplyToPath, code)")
 				input := whc.Input()
 				switch input.(type) {
-				case botsfw.WebhookContactMessage:
+				case botinput.WebhookContactMessage:
 					chatEntity.PushStepToAwaitingReplyTo(newContactCommand.Code)
 					return newContactCommand.Action(whc)
-				case botsfw.WebhookTextMessage:
-					mt := whc.Input().(botsfw.WebhookTextMessage).Text()
+				case botinput.WebhookTextMessage:
+					mt := whc.Input().(botinput.WebhookTextMessage).Text()
 					if mt == "." {
 						return cancelTransferWizardCommandAction(whc)
 					}
@@ -421,7 +422,7 @@ func listCounterpartiesAsButtons(
 			buttons = append(buttons, controlButtons)
 		}
 	}
-	if webhookMessage, ok := whc.Input().(botsfw.WebhookTextMessage); ok && webhookMessage.Text() == showAllContactsText {
+	if webhookMessage, ok := whc.Input().(botinput.WebhookTextMessage); ok && webhookMessage.Text() == showAllContactsText {
 		counterparties2buttons(contactusSpaceDbo.Contacts, true)
 	} else {
 		switch len(debtusSpaceDbo.Balance) {
@@ -783,7 +784,7 @@ func createSendReceiptOptionsMessage(whc botsfw.WebhookContext, transfer models4
 		mt = strings.Replace(mt, "<a counterparty>", fmt.Sprintf(`<a href="%v">`, s), 1)
 	}
 
-	if whc.InputType() == botsfw.WebhookInputCallbackQuery {
+	if whc.Input().InputType() == botinput.WebhookInputCallbackQuery {
 		if m, err = whc.NewEditMessage(mt, botsfw.MessageFormatHTML); err != nil {
 			return
 		}

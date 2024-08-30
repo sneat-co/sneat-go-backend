@@ -27,7 +27,7 @@ var DeleteAllCommand = botsfw.Command{
 		SetMainMenuKeyboard(whc, &m)
 
 		var chatID string
-		if chatID, err = whc.BotChatID(); err != nil {
+		if chatID, err = whc.Input().BotChatID(); err != nil {
 			return
 		}
 

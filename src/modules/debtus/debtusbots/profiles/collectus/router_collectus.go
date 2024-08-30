@@ -2,6 +2,7 @@ package collectus
 
 import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
@@ -38,7 +39,7 @@ var botParams = shared_all2.BotParams{
 }
 
 var Router = botsfw.NewWebhookRouter(
-	map[botsfw.WebhookInputType][]botsfw.Command{},
+	map[botinput.WebhookInputType][]botsfw.Command{},
 	func() string { return "Please report any errors to @CollectusGroup" },
 )
 

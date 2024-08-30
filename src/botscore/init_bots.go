@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
 	telegram "github.com/bots-go-framework/bots-fw-telegram"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/bots-go-framework/bots-fw/botswebhook"
 	"github.com/julienschmidt/httprouter"
@@ -42,9 +43,9 @@ func InitializeBots(botHost botsfw.BotHost, httpRouter *httprouter.Router) {
 
 	driver := botswebhook.NewBotDriver( // Orchestrate requests to appropriate handlers
 		botswebhook.AnalyticsSettings{GaTrackingID: ""}, // TODO: Refactor to list of analytics providers
-		sneatbot.NewSneatAppBotContext(),                // Holds User entity kind name, translator, etc.
-		botHost,                                         // Defines how to create context.Context, HttpClient, DB, etc...
-		"Please report any issues to @trakhimenok",      // TODO: Is it a wrong place? Router has similar.
+		//sneatbot.NewSneatAppContextForBotsFW(),                // Holds User entity kind name, translator, etc.
+		botHost, // Defines how to create context.Context, HttpClient, DB, etc...
+		"Please report any issues to @trakhimenok", // TODO: Is it a wrong place? Router has similar.
 	)
 
 	//makeAppUserDto := func(botID string) (appUser botsfwmodels.AppUserData, err error) {
@@ -57,17 +58,18 @@ func InitializeBots(botHost botsfw.BotHost, httpRouter *httprouter.Router) {
 	//	sneatAppTgChatDboMaker, //telegram.BaseTgChatDtoMaker
 	//)
 
+	botContextProvider := botsfw.NewBotContextProvider(botHost, sneatbot.NewSneatAppContextForBotsFW(), telegramBotsWithRouter)
+
+	var tgWebhookHandler botsfw.WebhookHandler = telegram.NewTelegramWebhookHandler(
+		botContextProvider,
+		newTranslator, // Creates translator that gets a context.Context (for logging purpose)
+		func(data botsfwmodels.AppUserData, sender botinput.WebhookSender) error { // TODO: implement?
+			return nil
+		},
+	)
 	//dataAccess := dalgo4botsfw.NewDataAccess(telegram.PlatformID, getDb, recordsMaker)
 	driver.RegisterWebhookHandlers(botsHttpRouter{httpRouter}, "/bot",
-		telegram.NewTelegramWebhookHandler(
-			//dataAccess,
-			telegramBotsWithRouter, // Maps of botscore by code, language, token, etc...
-			newTranslator,          // Creates translator that gets a context.Context (for logging purpose)
-			//recordsMaker,
-			func(data botsfwmodels.AppUserData, sender botsfw.WebhookSender) error { // TODO: implement?
-				return nil
-			},
-		),
+		tgWebhookHandler,
 		//viber.NewViberWebhookHandler(...),
 		//fbm.NewFbmWebhookHandler(...),
 	)
@@ -77,7 +79,7 @@ func newTranslator(ctx context.Context) i18n.Translator {
 	return i18n.NewMapTranslator(ctx, trans.TRANS)
 }
 
-func telegramBotsWithRouter(context.Context) botsfw.SettingsBy {
+func telegramBotsWithRouter(context.Context) botsfw.BotSettingsBy {
 	//env := app.Host.GetEnvironment(c, nil) // TODO: request is not being passed, needs to be fixed
 	return telegramBots(botsfw.EnvLocal)
 }

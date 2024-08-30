@@ -3,6 +3,7 @@ package botcmds4splitus
 import (
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/strongo/i18n"
@@ -20,9 +21,9 @@ var reInlineQueryNewBill = regexp.MustCompile(`^\s*(\d+(?:\.\d*)?)([^\s]*)\s+(.+
 
 var inlineQueryCommand = botsfw.Command{
 	Code:       "inline-query",
-	InputTypes: []botsfw.WebhookInputType{botsfw.WebhookInputInlineQuery},
+	InputTypes: []botinput.WebhookInputType{botinput.WebhookInputInlineQuery},
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-		whc.LogRequest()
+		whc.Input().LogRequest()
 		ctx := whc.Context()
 		if tgInput, ok := whc.Input().(telegram.TgWebhookInput); ok {
 			update := tgInput.TgUpdate()
@@ -42,7 +43,7 @@ var inlineQueryCommand = botsfw.Command{
 				}
 			}
 		}
-		inlineQuery := whc.Input().(botsfw.WebhookInlineQuery)
+		inlineQuery := whc.Input().(botinput.WebhookInlineQuery)
 		query := strings.TrimSpace(inlineQuery.GetQuery())
 		logus.Debugf(ctx, "inlineQueryCommand.Action(query=%v)", query)
 		switch {
@@ -61,7 +62,7 @@ var inlineQueryCommand = botsfw.Command{
 	},
 }
 
-func inlineEmptyQuery(whc botsfw.WebhookContext, inlineQuery botsfw.WebhookInlineQuery) (m botsfw.MessageFromBot, err error) {
+func inlineEmptyQuery(whc botsfw.WebhookContext, inlineQuery botinput.WebhookInlineQuery) (m botsfw.MessageFromBot, err error) {
 	logus.Debugf(whc.Context(), "InlineEmptyQuery()")
 	m.BotMessage = telegram.InlineBotMessage(tgbotapi.InlineConfig{
 		InlineQueryID:     inlineQuery.GetInlineQueryID(),
@@ -125,7 +126,7 @@ func inlineQueryNewBill(whc botsfw.WebhookContext, amountNum, amountCurr, billNa
 
 	m.Text = fmt.Sprintf("Amount: %v %v, BillEntry name: %v", amountNum, amountCurr, billName)
 
-	inlineQuery := whc.Input().(botsfw.WebhookInlineQuery)
+	inlineQuery := whc.Input().(botinput.WebhookInlineQuery)
 
 	params := fmt.Sprintf("amount=%v&lang=%v", url.QueryEscape(amountNum+amountCurr), whc.Locale().Code5)
 

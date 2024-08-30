@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw-telegram"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/emoji"
@@ -299,7 +300,7 @@ func editTelegramMessageText(whc botsfw.WebhookContext, awaitingReplyTo, text st
 		chatID   string
 	)
 
-	if chatID, err = whc.BotChatID(); err != nil {
+	if chatID, err = whc.Input().BotChatID(); err != nil {
 		return
 	}
 
@@ -327,8 +328,8 @@ var FeedbackTextCommand = botsfw.Command{
 	Code: FEEDBACK_TEXT_COMMAND,
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		switch whc.Input().(type) {
-		case botsfw.WebhookTextMessage:
-			mt := whc.Input().(botsfw.WebhookTextMessage).Text()
+		case botinput.WebhookTextMessage:
+			mt := whc.Input().(botinput.WebhookTextMessage).Text()
 			feedbackParam := whc.ChatData().GetWizardParam("feedback")
 
 			var feedback models4debtus.Feedback

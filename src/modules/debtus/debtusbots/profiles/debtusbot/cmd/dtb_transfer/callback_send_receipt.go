@@ -116,7 +116,7 @@ func CallbackSendReceipt(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 						{RequestContact: true, Text: whc.Translate(trans.COMMAND_TEXT_VIEW_MY_NUMBER_IN_INTERNATIONAL_FORMAT)},
 					},
 				}
-				lastName := whc.GetSender().GetLastName()
+				lastName := whc.Input().GetSender().GetLastName()
 				if lastName == "Trakhimenok" || lastName == "Paltseva" {
 					for k := range common4debtus.TwilioTestNumbers {
 						keyboard = append(keyboard, []tgbotapi.KeyboardButton{{Text: k}})

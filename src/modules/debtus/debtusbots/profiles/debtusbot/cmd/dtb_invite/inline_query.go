@@ -3,6 +3,7 @@ package dtb_invite
 import (
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/strongo/logus"
@@ -12,7 +13,7 @@ import (
 
 func InlineSendInvite(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 	logus.Debugf(whc.Context(), "InlineSendInvite()")
-	inlineQuery := whc.Input().(botsfw.WebhookInlineQuery)
+	inlineQuery := whc.Input().(botinput.WebhookInlineQuery)
 	//callbackData := "call-back1"
 	//url := fmt.Sprintf("https://telegram.me/%v?start=invite-%v", whc.GetBotCode(), "some-code")
 	botCode := whc.GetBotCode()
@@ -30,7 +31,7 @@ func InlineSendInvite(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err e
 				Title:       fmt.Sprintf(whc.Translate(trans.INLINE_INVITE_TITLE), botCode),
 				Description: whc.Translate(trans.INLINE_INVITE_DESCRIPTION),
 				InputMessageContent: tgbotapi.InputTextMessageContent{
-					Text: fmt.Sprintf(whc.Translate(trans.INLINE_INVITE_MESSAGE), whc.GetSender().GetFirstName(), botCode) + getMessagePleaseWaitWhileWeGenerateInviteCode(whc),
+					Text: fmt.Sprintf(whc.Translate(trans.INLINE_INVITE_MESSAGE), whc.Input().GetSender().GetFirstName(), botCode) + getMessagePleaseWaitWhileWeGenerateInviteCode(whc),
 				},
 				ReplyMarkup: &tgbotapi.InlineKeyboardMarkup{
 					InlineKeyboard: [][]tgbotapi.InlineKeyboardButton{

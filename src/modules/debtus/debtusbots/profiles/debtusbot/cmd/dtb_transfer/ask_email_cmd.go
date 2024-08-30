@@ -1,6 +1,7 @@
 package dtb_transfer
 
 import (
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
@@ -20,7 +21,7 @@ var AskEmailForReceiptCommand = botsfw.Command{
 		ctx := whc.Context()
 
 		logus.Debugf(ctx, "AskEmailForReceiptCommand.Action()")
-		email := whc.Input().(botsfw.WebhookTextMessage).Text()
+		email := whc.Input().(botinput.WebhookTextMessage).Text()
 		if !strings.Contains(email, "@") {
 			return whc.NewMessage(whc.Translate(trans.MESSAGE_TEXT_INVALID_EMAIL)), nil
 		}
@@ -52,7 +53,7 @@ func sendReceiptByEmail(whc botsfw.WebhookContext, toEmail, toName string, trans
 		ctx,
 		whc,
 		receipt,
-		whc.GetSender().GetFirstName(),
+		whc.Input().GetSender().GetFirstName(),
 		toName,
 		toEmail,
 	); err != nil {

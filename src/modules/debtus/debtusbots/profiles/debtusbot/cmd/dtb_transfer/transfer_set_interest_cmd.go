@@ -2,6 +2,7 @@ package dtb_transfer
 
 import (
 	"fmt"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
@@ -16,7 +17,7 @@ import (
 var reInterest = regexp.MustCompile(`^\s*(?P<percent>\d+(?:[\.,]\d+)?)%?(?:/(?P<period>\d+|w(?:eek)?|y(?:ear)?|m(?:onth)?))?(?:/(?P<minimum>\d+))?(?:/(?P<grace>\d+))?(?::\s*(?P<comment>.+?))?\s*$`)
 
 func interestAction(whc botsfw.WebhookContext, nextAction botsfw.CommandAction) (m botsfw.MessageFromBot, err error) {
-	mt := whc.Input().(botsfw.WebhookTextMessage).Text()
+	mt := whc.Input().(botinput.WebhookTextMessage).Text()
 
 	if matches := reInterest.FindStringSubmatch(mt); len(matches) > 0 {
 		chatEntity := whc.ChatData()

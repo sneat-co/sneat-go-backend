@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
@@ -53,7 +54,7 @@ func onboardingAskLocaleAction(whc botsfw.WebhookContext, messagePrefix string, 
 	chatEntity := whc.ChatData()
 
 	if chatEntity.IsAwaitingReplyTo(onboardingAskLocaleCommandCode) {
-		messageText := whc.Input().(botsfw.WebhookTextMessage).Text()
+		messageText := whc.Input().(botinput.WebhookTextMessage).Text()
 		for _, locale := range trans.SupportedLocales {
 			if locale.TitleWithIcon() == messageText {
 				return setPreferredLanguageAction(whc, locale.Code5, "onboarding", botParams)
@@ -65,7 +66,7 @@ func onboardingAskLocaleAction(whc botsfw.WebhookContext, messagePrefix string, 
 	} else {
 		m.Text = messagePrefix + m.Text
 		chatEntity.SetAwaitingReplyTo(onboardingAskLocaleCommandCode)
-		m = whc.NewMessageByCode(trans.MESSAGE_TEXT_ONBOARDING_ASK_TO_CHOOSE_LANGUAGE, whc.GetSender().GetFirstName())
+		m = whc.NewMessageByCode(trans.MESSAGE_TEXT_ONBOARDING_ASK_TO_CHOOSE_LANGUAGE, whc.Input().GetSender().GetFirstName())
 		m.Format = botsfw.MessageFormatHTML
 		//localesReplyKeyboard.OneTimeKeyboard = true
 		m.Keyboard = localesReplyKeyboard
@@ -223,7 +224,7 @@ var joinDrawCommand = botsfw.Command{
 func aboutDrawAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 	ctx := whc.Context()
 	buf := new(bytes.Buffer)
-	sender := whc.GetSender()
+	sender := whc.Input().GetSender()
 	name := sender.GetFirstName()
 	if name == "" {
 		name = sender.GetUserName()

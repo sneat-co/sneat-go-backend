@@ -1,6 +1,7 @@
 package botcmds4splitus
 
 import (
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
@@ -13,7 +14,7 @@ const groupsCommandCode = "groups"
 
 var groupsCommand = botsfw.Command{
 	Code:       groupsCommandCode,
-	InputTypes: []botsfw.WebhookInputType{botsfw.WebhookInputText, botsfw.WebhookInputCallbackQuery},
+	InputTypes: []botinput.WebhookInputType{botinput.WebhookInputText, botinput.WebhookInputCallbackQuery},
 	Commands:   trans.Commands(trans.COMMAND_TEXT_GROUPS, emoji.MAN_AND_WOMAN, "/"+groupsCommandCode),
 	Icon:       emoji.MAN_AND_WOMAN,
 	Title:      trans.COMMAND_TEXT_GROUPS,

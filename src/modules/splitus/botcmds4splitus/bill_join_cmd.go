@@ -7,6 +7,7 @@ import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
 	"github.com/bots-go-framework/bots-fw-telegram"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
@@ -32,7 +33,7 @@ const leaveBillCommandCode = "leave_bill"
 var joinBillCommand = botsfw.Command{
 	Code: joinBillCommandCode,
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-		text := whc.Input().(botsfw.WebhookTextMessage).Text()
+		text := whc.Input().(botinput.WebhookTextMessage).Text()
 		var bill models4splitus.BillEntry
 		if bill.ID = strings.Replace(text, "/start join_bill-", "", 1); bill.ID == "" {
 			err = errors.New("Missing bill ContactID")
@@ -111,7 +112,7 @@ func joinBillAction(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, bill
 		callbackAnswer := tgbotapi.NewCallback("", whc.Translate(trans.MESSAGE_TEXT_ALREADY_BILL_MEMBER, userName))
 		callbackAnswer.ShowAlert = true
 		m.BotMessage = telegram.CallbackAnswer(callbackAnswer)
-		whc.LogRequest()
+		whc.Input().LogRequest()
 		if update := whc.Input().(telegram.TgWebhookInput).TgUpdate(); update.CallbackQuery.Message != nil {
 			if m2, err := ShowBillCard(whc, true, bill, ""); err != nil {
 				return m2, err

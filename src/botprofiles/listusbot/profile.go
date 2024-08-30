@@ -1,6 +1,7 @@
 package listusbot
 
 import (
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot"
 	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
@@ -19,7 +20,7 @@ func GetProfile(errFooterText func() string) botsfw.BotProfile {
 }
 
 func createProfile(errFooterText func() string) botsfw.BotProfile {
-	commandsByType := make(map[botsfw.WebhookInputType][]botsfw.Command)
+	commandsByType := make(map[botinput.WebhookInputType][]botsfw.Command)
 	cmds4anybot.AddSharedCommands(commandsByType)
 
 	cmds4listusbot.AddListusOnlyBotCommands(commandsByType)

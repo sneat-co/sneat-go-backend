@@ -2,6 +2,7 @@ package cmds4anybot
 
 import (
 	"fmt"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"strconv"
 )
@@ -9,7 +10,7 @@ import (
 var counterCommand = botsfw.Command{
 	Code:       "count",
 	Commands:   []string{"/count"},
-	InputTypes: []botsfw.WebhookInputType{botsfw.WebhookInputText},
+	InputTypes: []botinput.WebhookInputType{botinput.WebhookInputText},
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		chatData := whc.ChatData()
 		v := 0

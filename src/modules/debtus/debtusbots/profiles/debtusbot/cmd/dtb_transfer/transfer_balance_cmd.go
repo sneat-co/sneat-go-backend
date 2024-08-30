@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
@@ -144,7 +145,7 @@ func balanceAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err erro
 	//buffer.WriteString(dtb_general.AdSlot(whc, "balance"))
 	const THUMB_UP = "👍"
 	buffer.WriteString(THUMB_UP + " " + whc.Translate(trans.MESSAGE_TEXT_PLEASE_HELP_MAKE_IT_BETTER))
-	if whc.InputType() == botsfw.WebhookInputCallbackQuery {
+	if whc.Input().InputType() == botinput.WebhookInputCallbackQuery {
 		if m, err = whc.NewEditMessage(buffer.String(), botsfw.MessageFormatHTML); err != nil {
 			return
 		}

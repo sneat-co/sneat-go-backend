@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw-telegram"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/crediterra/money"
 	"github.com/sneat-co/debtstracker-translations/trans"
@@ -21,7 +22,7 @@ func InlineNewRecord(whc botsfw.WebhookContext, amountMatches []string) (m botsf
 	ctx := whc.Context()
 	logus.Debugf(ctx, "InlineNewRecord()")
 
-	inlineQuery := whc.Input().(botsfw.WebhookInlineQuery)
+	inlineQuery := whc.Input().(botinput.WebhookInlineQuery)
 	var (
 		amountValue    decimal.Decimal64p2
 		amountCurrency money.CurrencyCode

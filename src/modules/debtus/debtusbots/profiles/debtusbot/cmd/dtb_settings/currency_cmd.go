@@ -3,6 +3,7 @@ package dtb_settings
 import (
 	"context"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
@@ -46,7 +47,7 @@ var SetPrimaryCurrency = botsfw.Command{
 		ctx := whc.Context()
 		logus.Debugf(ctx, "SetPrimaryCurrency.Action()")
 		whc.ChatData().SetAwaitingReplyTo("")
-		primaryCurrency := whc.Input().(botsfw.WebhookTextMessage).Text()
+		primaryCurrency := whc.Input().(botinput.WebhookTextMessage).Text()
 		userID := whc.AppUserID()
 		userContext := facade.NewUserContext(userID)
 		err = dal4userus.RunUserWorker(ctx, userContext, func(ctx context.Context, tx dal.ReadwriteTransaction, userWorkerParams *dal4userus.UserWorkerParams) error {
@@ -56,6 +57,6 @@ var SetPrimaryCurrency = botsfw.Command{
 		if err != nil {
 			return m, err
 		}
-		return whc.NewMessageByCode(trans.MESSAGE_TEXT_PRIMARY_CURRENCY_IS_SET_TO, whc.Input().(botsfw.WebhookTextMessage).Text()), err
+		return whc.NewMessageByCode(trans.MESSAGE_TEXT_PRIMARY_CURRENCY_IS_SET_TO, whc.Input().(botinput.WebhookTextMessage).Text()), err
 	},
 }

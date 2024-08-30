@@ -2,6 +2,7 @@ package cmds4sneatbot
 
 import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/tghelpers"
 	"net/url"
@@ -10,9 +11,9 @@ import (
 var calendarCommand = botsfw.Command{
 	Code:     "calendar",
 	Commands: []string{"/calendar"},
-	InputTypes: []botsfw.WebhookInputType{
-		botsfw.WebhookInputText,
-		botsfw.WebhookInputCallbackQuery,
+	InputTypes: []botinput.WebhookInputType{
+		botinput.WebhookInputText,
+		botinput.WebhookInputCallbackQuery,
 	},
 	CallbackAction: calendarCallbackAction,
 	Action:         calendarAction,

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
@@ -47,9 +48,9 @@ func NewCounterpartyCommand(nextCommand botsfw.Command) botsfw.Command {
 					existingContact bool
 				)
 
-				switch input2 := input.(type) {
-				case botsfw.WebhookTextMessage:
-					mt := strings.TrimSpace(input2.Text())
+				switch input := input.(type) {
+				case botinput.WebhookTextMessage:
+					mt := strings.TrimSpace(input.Text())
 					if mt == "." {
 						return dtb_general.MainMenuAction(whc, "", false)
 					}
@@ -65,19 +66,19 @@ func NewCounterpartyCommand(nextCommand botsfw.Command) botsfw.Command {
 							UserName: mt,
 						},
 					}
-				case botsfw.WebhookContactMessage:
+				case botinput.WebhookContactMessage:
 					if input == nil {
 						return m, errors.New("failed to get WebhookContactMessage: contactMessage == nil")
 					}
 
 					contactDetails = dto4contactus.ContactDetails{
 						NameFields: person.NameFields{
-							FirstName: input2.FirstName(),
-							LastName:  input2.LastName(),
+							FirstName: input.GetFirstName(),
+							LastName:  input.GetLastName(),
 						},
 						//Username: username,
 					}
-					phoneStr := input2.PhoneNumber()
+					phoneStr := input.GetPhoneNumber()
 					if phoneNum, err := strconv.ParseInt(phoneStr, 10, 64); err != nil {
 						logus.Warningf(ctx, "Failed to parse phone string to int (%v)", phoneStr)
 					} else {
@@ -87,25 +88,29 @@ func NewCounterpartyCommand(nextCommand botsfw.Command) botsfw.Command {
 						}
 					}
 
-					switch input.InputType() {
-					case botsfw.WebhookInputContact:
-						contactDetails.TelegramUserID = input2.UserID().(int64) // TODO: check we are on Telegram
-						var telegramUserID string
-						if contactDetails.TelegramUserID != 0 {
-							telegramUserID = strconv.FormatInt(contactDetails.TelegramUserID, 10)
+					contactBotUserID := input.GetBotUserID()
+					if contactBotUserID != "" {
+						contactDetails.TelegramUserID, err = strconv.ParseInt(input.GetBotUserID(), 10, 64) // TODO: check we are on Telegram
+						if err != nil {
+							err = fmt.Errorf("failed to parse contactBotUserID: %w", err)
+							return
 						}
+					}
+					var telegramUserID string
+					if contactDetails.TelegramUserID != 0 {
+						telegramUserID = strconv.FormatInt(contactDetails.TelegramUserID, 10)
+					}
 
-						if contactDetails.TelegramUserID != 0 {
-							for contactID, contactBrief := range contactusSpace.Data.Contacts {
-								var tgAccount *appuser.AccountKey
-								if tgAccount, err = contactBrief.AccountsOfUser.GetAccount(const4userus.TelegramAuthProvider, ""); err != nil {
-									return
-								}
-								if tgAccount != nil && tgAccount.ID == telegramUserID {
-									logus.Debugf(ctx, "Matched debtusContact my TelegramUserID=%d", contactDetails.TelegramUserID)
-									existingContact = true
-									debtusContact.ID = contactID
-								}
+					if contactDetails.TelegramUserID != 0 {
+						for contactID, contactBrief := range contactusSpace.Data.Contacts {
+							var tgAccount *appuser.AccountKey
+							if tgAccount, err = contactBrief.AccountsOfUser.GetAccount(const4userus.TelegramAuthProvider, ""); err != nil {
+								return
+							}
+							if tgAccount != nil && tgAccount.ID == telegramUserID {
+								logus.Debugf(ctx, "Matched debtusContact my TelegramUserID=%d", contactDetails.TelegramUserID)
+								existingContact = true
+								debtusContact.ID = contactID
 							}
 						}
 					}

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
@@ -35,16 +36,16 @@ const CREATE_RECEIPT_IF_NO_INLINE_CHOSEN_NOTIFICATION = "create-receipt"
 
 var CreateReceiptIfNoInlineNotificationCommand = botsfw.Command{
 	Code:       CREATE_RECEIPT_IF_NO_INLINE_CHOSEN_NOTIFICATION,
-	InputTypes: []botsfw.WebhookInputType{botsfw.WebhookInputCallbackQuery},
+	InputTypes: []botinput.WebhookInputType{botinput.WebhookInputCallbackQuery},
 	CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-		return OnInlineChosenCreateReceipt(whc, whc.Input().(botsfw.WebhookCallbackQuery).GetInlineMessageID(), callbackUrl)
+		return OnInlineChosenCreateReceipt(whc, whc.Input().(botinput.WebhookCallbackQuery).GetInlineMessageID(), callbackUrl)
 	},
 }
 
 func InlineSendReceipt(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 	ctx := whc.Context()
 	logus.Debugf(ctx, "InlineSendReceipt()")
-	inlineQuery := whc.Input().(botsfw.WebhookInlineQuery)
+	inlineQuery := whc.Input().(botinput.WebhookInlineQuery)
 	query := inlineQuery.GetQuery()
 	values, err := url.ParseQuery(query[len("receipt?"):])
 	if err != nil {
@@ -67,7 +68,7 @@ func InlineSendReceipt(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err 
 	}
 
 	logus.Debugf(ctx, "Loaded transfer: %v", transfer)
-	creator := whc.GetSender()
+	creator := whc.Input().GetSender()
 
 	m.BotMessage = telegram.InlineBotMessage(tgbotapi.InlineConfig{
 		InlineQueryID: inlineQuery.GetInlineQueryID(),
@@ -149,7 +150,7 @@ func OnInlineChosenCreateReceipt(whc botsfw.WebhookContext, inlineMessageID stri
 
 	logus.Debugf(ctx, "OnInlineChosenCreateReceipt(queryUrl: %v)", queryUrl)
 	transferID := queryUrl.Query().Get("id")
-	creator := whc.GetSender()
+	creator := whc.Input().GetSender()
 	creatorName := fmt.Sprintf("%v %v", creator.GetFirstName(), creator.GetLastName())
 
 	transfer, err := facade4debtus.Transfers.GetTransferByID(ctx, nil, transferID)

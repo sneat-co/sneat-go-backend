@@ -8,10 +8,11 @@ go 1.23.0
 //replace github.com/sneat-co/sneat-go-modules => ../sneat-go-modules
 
 //replace github.com/bots-go-framework/bots-fw => ../../bots-go-framework/bots-fw
+//replace github.com/bots-go-framework/bots-fw-telegram => ../../bots-go-framework/bots-fw-telegram
+
 //
 //replace github.com/bots-go-framework/bots-fw-store => ../../bots-go-framework/bots-fw-store
 //
-//replace github.com/bots-go-framework/bots-fw-telegram => ../../bots-go-framework/bots-fw-telegram
 
 //replace github.com/bots-go-framework/bots-fw-telegram-models => ../../bots-go-framework/bots-fw-telegram-models
 //replace github.com/bots-go-framework/bots-host-gae => ../../bots-go-framework/bots-host-gae
@@ -25,9 +26,9 @@ go 1.23.0
 require (
 	firebase.google.com/go/v4 v4.14.1
 	github.com/bots-go-framework/bots-api-telegram v0.6.2
-	github.com/bots-go-framework/bots-fw v0.34.0
+	github.com/bots-go-framework/bots-fw v0.36.0
 	github.com/bots-go-framework/bots-fw-store v0.8.0
-	github.com/bots-go-framework/bots-fw-telegram v0.10.0
+	github.com/bots-go-framework/bots-fw-telegram v0.12.0
 	github.com/bots-go-framework/bots-fw-telegram-models v0.3.2
 	github.com/bots-go-framework/bots-fw-telegram-webapp v0.0.1
 	github.com/bots-go-framework/bots-host-gae v0.5.12

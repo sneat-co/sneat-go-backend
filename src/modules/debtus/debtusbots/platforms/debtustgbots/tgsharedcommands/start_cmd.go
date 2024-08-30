@@ -2,6 +2,7 @@ package tgsharedcommands
 
 import (
 	"fmt"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/strongo/logus"
 	"regexp"
@@ -14,9 +15,9 @@ func ParseStartCommand(whc botsfw.WebhookContext) (startParam string, startParam
 	input := whc.Input()
 
 	switch input := input.(type) {
-	case botsfw.WebhookTextMessage:
+	case botinput.WebhookTextMessage:
 		startParam = input.Text()
-	case botsfw.WebhookReferralMessage:
+	case botinput.WebhookReferralMessage:
 		startParam = input.RefData()
 	default:
 		panic("Unknown input type")

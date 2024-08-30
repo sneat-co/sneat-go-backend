@@ -6,7 +6,7 @@ import (
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
 	telegram "github.com/bots-go-framework/bots-fw-telegram"
 	"github.com/bots-go-framework/bots-fw-telegram-webapp/twainitdata"
-	"github.com/bots-go-framework/bots-fw/botsfw/botsdal"
+	"github.com/bots-go-framework/bots-fw/botsdal"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/models4bots"

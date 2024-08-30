@@ -1,6 +1,7 @@
 package dtb_invite
 
 import (
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_transfer"
 	"github.com/strongo/logus"
@@ -9,10 +10,10 @@ import (
 
 var ChosenInlineResultCommand = botsfw.Command{
 	Code:       "inline-create-invite",
-	InputTypes: []botsfw.WebhookInputType{botsfw.WebhookInputChosenInlineResult},
+	InputTypes: []botinput.WebhookInputType{botinput.WebhookInputChosenInlineResult},
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		ctx := whc.Context()
-		chosenResult := whc.Input().(botsfw.WebhookChosenInlineResult)
+		chosenResult := whc.Input().(botinput.WebhookChosenInlineResult)
 		query := chosenResult.GetQuery()
 		logus.Debugf(ctx, "ChosenInlineResultCommand.Action() => query: %v", query)
 

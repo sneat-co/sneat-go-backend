@@ -12,7 +12,7 @@ import (
 	"slices"
 )
 
-var _bots botsfw.SettingsBy
+var _bots botsfw.BotSettingsBy
 
 const DefaultLocale = i18n.LocaleCodeEnUS
 
@@ -27,7 +27,7 @@ func newTelegramBot(
 	return telegram.NewTelegramBot(mode, botProfile, code, "", "", "", gaToken, i18n.LocaleEnUS, nil, nil)
 }
 
-func Bots(environment string) botsfw.SettingsBy { //TODO: Consider to do pre-deployment replace
+func Bots(environment string) botsfw.BotSettingsBy { //TODO: Consider to do pre-deployment replace
 
 	errFooterText := func() string {
 		return "error footer"

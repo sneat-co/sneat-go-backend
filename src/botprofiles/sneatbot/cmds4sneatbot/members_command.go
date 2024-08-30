@@ -2,6 +2,7 @@ package cmds4sneatbot
 
 import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/tghelpers"
 	"github.com/strongo/logus"
@@ -11,9 +12,9 @@ import (
 var membersCommand = botsfw.Command{
 	Code:     "members",
 	Commands: []string{"/members"},
-	InputTypes: []botsfw.WebhookInputType{
-		botsfw.WebhookInputText,
-		botsfw.WebhookInputCallbackQuery,
+	InputTypes: []botinput.WebhookInputType{
+		botinput.WebhookInputText,
+		botinput.WebhookInputCallbackQuery,
 	},
 	CallbackAction: membersCallbackAction,
 	Action:         membersAction,

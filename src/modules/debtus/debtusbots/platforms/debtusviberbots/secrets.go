@@ -5,9 +5,9 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 )
 
-var _bots botsfw.SettingsBy
+var _bots botsfw.BotSettingsBy
 
-func Bots(ctx context.Context) botsfw.SettingsBy { //TODO: Consider to do pre-deployment replace
+func Bots(_ context.Context) botsfw.BotSettingsBy { //TODO: Consider to do pre-deployment replace
 	//if len(_bots.ByCode) == 0 {
 	//	host := appengine.DefaultVersionHostname(c)
 	//	//if host == "" || strings.Contains(host, "dev") {

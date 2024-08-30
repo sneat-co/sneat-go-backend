@@ -3,6 +3,7 @@ package dtb_transfer
 import (
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
@@ -119,8 +120,8 @@ func ShowReceipt(whc botsfw.WebhookContext, receiptID string) (m botsfw.MessageF
 	}
 
 	logus.Debugf(ctx, "mt: %v", mt)
-	switch inputType := whc.InputType(); inputType {
-	case botsfw.WebhookInputCallbackQuery:
+	switch inputType := whc.Input().InputType(); inputType {
+	case botinput.WebhookInputCallbackQuery:
 		if m, err = whc.NewEditMessage(mt, botsfw.MessageFormatHTML); err != nil {
 			return
 		}
@@ -128,13 +129,13 @@ func ShowReceipt(whc botsfw.WebhookContext, receiptID string) (m botsfw.MessageF
 		if inlineKeyboard != nil {
 			m.Keyboard = inlineKeyboard
 		}
-	case botsfw.WebhookInputText:
+	case botinput.WebhookInputText:
 		m = whc.NewMessage(mt)
 		if inlineKeyboard != nil {
 			m.Keyboard = inlineKeyboard
 		}
 	default:
-		logus.Errorf(ctx, "Unknown input type: %s", botsfw.GetWebhookInputTypeIdNameString(inputType))
+		logus.Errorf(ctx, "Unknown input type: %s", botinput.GetWebhookInputTypeIdNameString(inputType))
 	}
 
 	if _, err = whc.Responder().SendMessage(ctx, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {

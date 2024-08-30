@@ -2,10 +2,11 @@ package sneatbot
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
+	"github.com/bots-go-framework/bots-fw/botsdal"
 	"github.com/bots-go-framework/bots-fw/botsfw"
+	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/strongo/i18n"
@@ -13,33 +14,43 @@ import (
 	"reflect"
 )
 
-var _ botsfw.BotAppContext = (*sneatAppBotContext)(nil)
+var _ botsfw.AppContext = (*sneatAppBotContext)(nil)
 
-func NewSneatAppBotContext() botsfw.BotAppContext {
+func NewSneatAppContextForBotsFW() botsfw.AppContext {
 	return sneatAppBotContext{
 		LocalesProvider: i18n.NewSupportedLocales([]string{i18n.LocaleCodeEnUS, i18n.LocalCodeRuRu}),
 	}
 }
 
+var _ botsdal.AppUserDal = (*sneatAppBotDal)(nil)
+
+type sneatAppBotDal struct {
+}
+
+func (s sneatAppBotDal) CreateAppUserFromBotUser(ctx context.Context, tx dal.ReadwriteTransaction, bot botsdal.Bot) (appUser record.DataWithID[string, botsfwmodels.AppUserData], err error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 type sneatAppBotContext struct { // TODO: Duplication?!
+	sneatAppBotDal
 	i18n.LocalesProvider
 }
 
-func (s sneatAppBotContext) GetAppUserByBotUserID(ctx context.Context, platform, botID, botUserID string) (appUser record.DataWithID[string, botsfwmodels.AppUserData], err error) {
-	err = errors.New("GetAppUserByBotUserID() is not implemented in sneatAppBotContext")
-	return
-}
-
-func (s sneatAppBotContext) AppUserCollectionName() string {
-	return "Users"
-}
-
+//	func (s sneatAppBotContext) GetAppUserByBotUserID(ctx context.Context, tx dal.ReadwriteTransaction, platform, botID, botUserID string) (appUser record.DataWithID[string, botsfwmodels.AppUserData], err error) {
+//		//TODO implement me
+//		panic("implement me")
+//	}
+//
+//	func (s sneatAppBotContext) AppUserCollectionName() string {
+//		return "Users"
+//	}
+//
+//	func (s sneatAppBotContext) AppUserEntityKind() string {
+//		return "User"
+//	}
 func (s sneatAppBotContext) SetLocale(code5 string) error {
 	panic(fmt.Sprintf("TODO: why we have this? should be removed?: code5=%s", code5))
-}
-
-func (s sneatAppBotContext) AppUserEntityKind() string {
-	return "User"
 }
 
 func (s sneatAppBotContext) AppUserEntityType() reflect.Type {

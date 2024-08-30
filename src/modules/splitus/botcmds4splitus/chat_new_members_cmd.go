@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
@@ -22,7 +23,7 @@ var newChatMembersCommand = botsfw.Command{
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		ctx := whc.Context()
 
-		newMembersMessage := whc.Input().(botsfw.WebhookNewChatMembersMessage)
+		newMembersMessage := whc.Input().(botinput.WebhookNewChatMembersMessage)
 
 		newMembers := newMembersMessage.NewChatMembers()
 
@@ -80,7 +81,7 @@ var newChatMembersCommand = botsfw.Command{
 			return
 		}
 
-		createWelcomeMsg := func(member botsfw.WebhookActor) botsfw.MessageFromBot {
+		createWelcomeMsg := func(member botinput.WebhookActor) botsfw.MessageFromBot {
 			m := whc.NewMessageByCode(trans.MESSAGE_TEXT_USER_JOINED_GROUP, member.GetFirstName())
 			m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
 				[]tgbotapi.InlineKeyboardButton{

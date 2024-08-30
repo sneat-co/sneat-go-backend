@@ -19,11 +19,11 @@ import (
 	"strings"
 )
 
-var _bots botsfw.SettingsBy
+var _bots botsfw.BotSettingsBy
 
 var GetDb = facade.GetDatabase
 
-func telegramBots(environment string) botsfw.SettingsBy {
+func telegramBots(environment string) botsfw.BotSettingsBy {
 	if _bots.ByCode != nil {
 		return _bots
 	}

@@ -18,7 +18,7 @@ const billSharesCommandCode = "bill_shares"
 
 var billSharesCommand = billCallbackCommand(billSharesCommandCode,
 	func(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, callbackUrl *url.URL, bill models4splitus.BillEntry) (m botsfw.MessageFromBot, err error) {
-		whc.LogRequest()
+		whc.Input().LogRequest()
 		ctx := whc.Context()
 		members := bill.Data.GetBillMembers()
 		if bill.Data.Currency == "" {

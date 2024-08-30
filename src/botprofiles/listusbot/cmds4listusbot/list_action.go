@@ -2,6 +2,7 @@ package cmds4listusbot
 
 import (
 	"fmt"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
@@ -26,7 +27,7 @@ func listAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) 
 
 	sneatAppChatData := chatData.(interface{ GetSpaceRef() core4spaceus.SpaceRef })
 
-	input := whc.Input().(botsfw.WebhookTextMessage)
+	input := whc.Input().(botinput.WebhookTextMessage)
 	text := strings.TrimSpace(input.Text())
 	if slices.Contains(listCommandPrefixes, text) {
 		text = ""
