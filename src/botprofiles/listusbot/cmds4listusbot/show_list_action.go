@@ -94,7 +94,7 @@ func showListAction(
 	firstRow = append(firstRow, tgbotapi.InlineKeyboardButton{
 		Text: "💻 Edit list",
 		WebApp: &tgbotapi.WebappInfo{
-			Url: "https://local-app.sneat.ws/space/family/h4qax/budget", // TODO: generate URL
+			Url: fmt.Sprintf("https://local-app.sneat.ws/space/family/h4qax/list/%s/%s", listKey.ListType(), listKey.ListSubID()),
 		},
 	})
 	m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(

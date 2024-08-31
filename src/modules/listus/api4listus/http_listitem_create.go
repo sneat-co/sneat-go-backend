@@ -8,8 +8,6 @@ import (
 	"net/http"
 )
 
-var createListItems = facade4listus.CreateListItems
-
 // httpPostCreateListItems creates list items
 func httpPostCreateListItems(w http.ResponseWriter, r *http.Request) {
 	var request dto4listus.CreateListItemsRequest
@@ -17,6 +15,7 @@ func httpPostCreateListItems(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	response, err := createListItems(ctx, userContext, request)
+	var response dto4listus.CreateListItemResponse
+	response, err = facade4listus.CreateListItems(ctx, userContext, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusCreated, err, &response)
 }
