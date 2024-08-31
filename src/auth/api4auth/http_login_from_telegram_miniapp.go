@@ -79,7 +79,7 @@ func signInWithTelegram(ctx context.Context, w http.ResponseWriter, r *http.Requ
 		RemoteAddr: r.RemoteAddr,
 	}
 	if tgBotUser, _, isNewUser, err = facade4auth.SignInWithTelegram(ctx, initData, remoteClientInfo); err != nil {
-		apicore.ReturnError(ctx, w, r, err)
+		apicore.ReturnError(ctx, w, r, fmt.Errorf("failed to sign in with Telegram: %w", err))
 		return
 	}
 

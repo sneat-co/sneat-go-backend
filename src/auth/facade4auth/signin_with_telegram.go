@@ -27,8 +27,6 @@ func SignInWithTelegram(
 	isNewUser bool, // TODO: Document why needed or remove
 	err error,
 ) {
-	tgUserID := strconv.FormatInt(initData.User.ID, 10)
-
 	var db dal.DB
 	if db, err = facade.GetDatabase(ctx); err != nil {
 		return
@@ -37,13 +35,14 @@ func SignInWithTelegram(
 	botUserData := BotUserData{
 		PlatformID: telegram.PlatformID,
 		BotID:      "", // TODO: populate
+		BotUserID:  strconv.FormatInt(initData.User.ID, 10),
 		FirstName:  initData.User.FirstName,
 		LastName:   initData.User.LastName,
 		Username:   initData.User.Username,
 	}
 
 	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
-		if botUser, err = botsdal.GetPlatformUser(ctx, db, telegram.PlatformID, tgUserID, new(models4bots.TelegramUserDbo)); err != nil {
+		if botUser, err = botsdal.GetPlatformUser(ctx, db, telegram.PlatformID, botUserData.BotUserID, new(models4bots.TelegramUserDbo)); err != nil {
 			if !dal.IsNotFound(err) {
 				return
 			}
