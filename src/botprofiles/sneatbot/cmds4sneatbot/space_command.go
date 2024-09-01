@@ -108,16 +108,27 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 
 	spaceCallbackParams := "s=" + string(core4spaceus.NewSpaceRef(spaceType, spaceID))
 
+	var spaceUrlPath = spaceRef.UrlPath()
+	spacePageUrl := func(page string) string {
+		return "https://local-app.sneat.ws/space/" + spaceUrlPath + "/" + page
+	}
+
 	firstRow := []tgbotapi.InlineKeyboardButton{
 		{
-			Text:         "📇 Contacts",
-			CallbackData: "contacts?" + spaceCallbackParams,
+			Text: "📇 Contacts",
+			//CallbackData: "contacts?" + spaceCallbackParams,
+			WebApp: &tgbotapi.WebappInfo{
+				Url: spacePageUrl("contacts"),
+			},
 		},
 	}
 	if spaceID != "private" {
 		firstRow = append(firstRow, tgbotapi.InlineKeyboardButton{
-			Text:         "👪 Members",
-			CallbackData: "members?" + spaceCallbackParams,
+			Text: "👪 Members",
+			//CallbackData: "members?" + spaceCallbackParams,
+			WebApp: &tgbotapi.WebappInfo{
+				Url: spacePageUrl("members"),
+			},
 		})
 	}
 
@@ -125,16 +136,25 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 		firstRow,
 		[]tgbotapi.InlineKeyboardButton{
 			{
-				Text:         "🚗 Assets",
-				CallbackData: "assets?" + spaceCallbackParams,
+				Text: "🚗 Assets",
+				//CallbackData: "assets?" + spaceCallbackParams,
+				WebApp: &tgbotapi.WebappInfo{
+					Url: spacePageUrl("assets"),
+				},
 			},
 			{
-				Text:         "💰 Budget",
-				CallbackData: "budget?" + spaceCallbackParams,
+				Text: "💰 Budget",
+				//CallbackData: "budget?" + spaceCallbackParams,
+				WebApp: &tgbotapi.WebappInfo{
+					Url: spacePageUrl("budget"),
+				},
 			},
 			{
-				Text:         "💸 Debts",
-				CallbackData: "debts?" + spaceCallbackParams,
+				Text: "💸 Debts",
+				//CallbackData: "debts?" + spaceCallbackParams,
+				WebApp: &tgbotapi.WebappInfo{
+					Url: spacePageUrl("debts"),
+				},
 			},
 		},
 		[]tgbotapi.InlineKeyboardButton{
@@ -153,12 +173,18 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 		},
 		[]tgbotapi.InlineKeyboardButton{
 			{
-				Text:         "🗓️ Calendar",
-				CallbackData: "calendar?" + spaceCallbackParams,
+				Text: "🗓️ Calendar",
+				//CallbackData: "calendar?" + spaceCallbackParams,
+				WebApp: &tgbotapi.WebappInfo{
+					Url: spacePageUrl("calendar"),
+				},
 			},
 			{
 				Text:         "⚙️ Settings",
 				CallbackData: "settings?" + spaceCallbackParams,
+				//WebApp: &tgbotapi.WebappInfo{
+				//	Url: spacePageUrl("settings"),
+				//},
 			},
 		},
 		[]tgbotapi.InlineKeyboardButton{

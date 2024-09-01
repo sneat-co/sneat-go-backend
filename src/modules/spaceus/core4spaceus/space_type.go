@@ -1,6 +1,9 @@
 package core4spaceus
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 type SpaceType string
 
@@ -35,6 +38,10 @@ func (v SpaceRef) SpaceID() string {
 		return string(v[i+1:])
 	}
 	return ""
+}
+
+func (v SpaceRef) UrlPath() string {
+	return fmt.Sprintf("%s/%s", v.SpaceType(), v.SpaceID())
 }
 
 const SpaceRefSeparator = "!"
