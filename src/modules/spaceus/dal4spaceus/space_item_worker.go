@@ -10,6 +10,7 @@ import (
 	"github.com/strongo/validation"
 )
 
+// SpaceItemDbo is an interface for space item DB data object. Examples: ContactDbo, ListDbo, etc.
 type SpaceItemDbo = interface {
 	Validate() error
 }
@@ -37,10 +38,12 @@ type SliceIndexes struct {
 	End   int
 }
 
+// Brief is an interface for a brief of a DB data object
 type Brief = interface {
 	Validate()
 }
 
+// BriefsAdapter is an interface for a briefs adapter
 type BriefsAdapter[ModuleDbo SpaceModuleDbo] interface {
 	DeleteBrief(space ModuleDbo, id string) ([]dal.Update, error)
 	GetBriefsCount(team ModuleDbo) int
@@ -76,6 +79,7 @@ type SpaceItemWorkerParams[ModuleDbo SpaceModuleDbo, ItemDbo SpaceItemDbo] struc
 	SpaceItemUpdates []dal.Update
 }
 
+// RunSpaceItemWorker runs space item worker
 func RunSpaceItemWorker[ModuleDbo SpaceModuleDbo, ItemDbo SpaceItemDbo](
 	ctx context.Context,
 	userCtx facade.UserContext,
