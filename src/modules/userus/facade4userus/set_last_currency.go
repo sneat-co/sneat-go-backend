@@ -9,7 +9,7 @@ import (
 )
 
 func SetLastCurrency(ctx context.Context, userCtx facade.UserContext, currencyCode money.CurrencyCode) (err error) {
-	return dal4userus.RunUserWorker(ctx, userCtx, func(ctx context.Context, tx dal.ReadwriteTransaction, userWorkerParams *dal4userus.UserWorkerParams) (err error) {
+	return dal4userus.RunUserWorker(ctx, userCtx, true, func(ctx context.Context, tx dal.ReadwriteTransaction, userWorkerParams *dal4userus.UserWorkerParams) (err error) {
 		return txSetLastCurrency(ctx, tx, userWorkerParams, currencyCode)
 	})
 }

@@ -50,7 +50,7 @@ var SetPrimaryCurrency = botsfw.Command{
 		primaryCurrency := whc.Input().(botinput.WebhookTextMessage).Text()
 		userID := whc.AppUserID()
 		userContext := facade.NewUserContext(userID)
-		err = dal4userus.RunUserWorker(ctx, userContext, func(ctx context.Context, tx dal.ReadwriteTransaction, userWorkerParams *dal4userus.UserWorkerParams) error {
+		err = dal4userus.RunUserWorker(ctx, userContext, true, func(ctx context.Context, tx dal.ReadwriteTransaction, userWorkerParams *dal4userus.UserWorkerParams) error {
 			userWorkerParams.UserUpdates, err = userWorkerParams.User.Data.SetPrimaryCurrency(money.CurrencyCode(primaryCurrency))
 			return err
 		})

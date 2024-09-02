@@ -3,7 +3,6 @@ package dto4userus
 import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/sneat-co/sneat-go-core/security"
@@ -33,12 +32,11 @@ func (v InitSpaceInfo) Validate() error {
 
 // InitUserRecordRequest request
 type InitUserRecordRequest struct {
-	AuthProvider    string                          `json:"authProvider,omitempty"`
-	Email           string                          `json:"email,omitempty"`
-	EmailIsVerified bool                            `json:"emailIsVerified,omitempty"`
-	IanaTimezone    string                          `json:"ianaTimezone,omitempty"`
-	Names           *person.NameFields              `json:"names"`
-	Space           *dto4spaceus.CreateSpaceRequest `json:"space,omitempty"`
+	AuthProvider    string             `json:"authProvider,omitempty"`
+	Email           string             `json:"email,omitempty"`
+	EmailIsVerified bool               `json:"emailIsVerified,omitempty"`
+	IanaTimezone    string             `json:"ianaTimezone,omitempty"`
+	Names           *person.NameFields `json:"names"`
 	//
 	RemoteClient dbmodels.RemoteClientInfo `json:"remoteClient"`
 }
@@ -58,11 +56,11 @@ func (v *InitUserRecordRequest) Validate() error {
 			return validation.NewErrBadRequestFieldValue("email", err.Error())
 		}
 	}
-	if v.Space != nil {
-		if err := v.Space.Validate(); err != nil {
-			return validation.NewErrBadRecordFieldValue("space", err.Error())
-		}
-	}
+	//if v.Space != nil {
+	//	if err := v.Space.Validate(); err != nil {
+	//		return validation.NewErrBadRecordFieldValue("space", err.Error())
+	//	}
+	//}
 	return nil
 }
 

@@ -21,16 +21,12 @@ func TestCreateSpace(t *testing.T) { // TODO: Implement unit tests
 	user := facade.NewUserContext("TestUser")
 	//userKey := dbo4userus.NewUserKey(user.GetID())
 
-	t.Run("error on bad request", func(t *testing.T) {
-		space, contactusSpace, err := CreateSpace(ctx, user, dto4spaceus.CreateSpaceRequest{})
-		assert.Error(t, err)
-		assert.Equal(t, "", space.ID)
-		assert.Equal(t, "", contactusSpace.ID)
-	})
-
-	t.Run("user's 1st team", func(t *testing.T) {
+	setupMockDb := func() {
 		mockCtrl := gomock.NewController(t)
 		db := mocks4dal.NewMockDatabase(mockCtrl)
+		facade.GetDatabase = func(ctx context.Context) (dal.DB, error) {
+			return db, nil
+		}
 
 		tx := mocks4dal.NewMockReadwriteTransaction(mockCtrl)
 		tx.EXPECT().Get(ctx, gomock.Any()).DoAndReturn(func(ctx context.Context, record dal.Record) error {
@@ -73,6 +69,19 @@ func TestCreateSpace(t *testing.T) { // TODO: Implement unit tests
 		facade.GetDatabase = func(ctx context.Context) (dal.DB, error) {
 			return db, nil
 		}
+	}
+
+	t.Run("error on bad request", func(t *testing.T) {
+		setupMockDb()
+		space, contactusSpace, err := CreateSpace(ctx, user, dto4spaceus.CreateSpaceRequest{})
+		assert.Error(t, err)
+		assert.Equal(t, "", space.ID)
+		assert.Equal(t, "", contactusSpace.ID)
+	})
+
+	t.Run("user's 1st team", func(t *testing.T) {
+		setupMockDb()
+
 		space, contactusSpace, err := CreateSpace(ctx, user, dto4spaceus.CreateSpaceRequest{Type: core4spaceus.SpaceTypeFamily})
 		assert.Nil(t, err)
 

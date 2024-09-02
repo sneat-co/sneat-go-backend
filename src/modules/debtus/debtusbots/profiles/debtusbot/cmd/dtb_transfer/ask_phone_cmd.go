@@ -47,7 +47,7 @@ var AskPhoneNumberForReceiptCommand = botsfw.Command{
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		ctx := whc.Context()
 		userCtx := facade.NewUserContext(whc.AppUserID())
-		return m, dal4userus.RunUserWorker(ctx, userCtx, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) (err error) {
+		return m, dal4userus.RunUserWorker(ctx, userCtx, true, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) (err error) {
 			logus.Debugf(ctx, "AskPhoneNumberForReceiptCommand.Action()")
 
 			input := whc.Input()

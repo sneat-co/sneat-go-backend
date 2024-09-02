@@ -2,7 +2,7 @@ module github.com/sneat-co/sneat-go-backend
 
 go 1.23.0
 
-//replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
+replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
 
 //replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
 //replace github.com/sneat-co/sneat-go-modules => ../sneat-go-modules
@@ -36,7 +36,7 @@ require (
 	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85
 	github.com/crediterra/money v0.3.0
 	github.com/dal-go/dalgo v0.13.0
-	github.com/dal-go/mocks4dalgo v0.1.21
+	github.com/dal-go/mocks4dalgo v0.1.22
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/golang/mock v1.6.0
 	github.com/gorilla/sessions v1.4.0

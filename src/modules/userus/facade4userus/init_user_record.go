@@ -30,64 +30,53 @@ func InitUserRecord(ctx context.Context, userCtx facade.UserContext, request dto
 	if userInfo, err = sneatauth.GetUserInfo(ctx, userID); err != nil {
 		return user, fmt.Errorf("failed to get user info: %w", err)
 	}
-	err = runReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
-		user, err = initUserRecordTxWorker(ctx, tx, userID, userInfo, request)
-		return err
+
+	err = dal4userus.RunUserWorker(ctx, userCtx, false, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) (err error) {
+		user = params.User
+		if err = initUserRecordTxWorker(userInfo, request, params); err != nil {
+			return
+		}
+
+		if !user.Record.Exists() {
+			if _, _, err = facade4spaceus.CreateDefaultUserSpacesTx(ctx, tx, params); err != nil {
+				return fmt.Errorf("failed to create default user spaces: %w", err)
+			}
+		}
+
+		user.Record.MarkAsChanged()
+
+		return
 	})
 	if err != nil {
 		user.Data = nil
-		return user, fmt.Errorf("failet to init user record: %w", err)
-	}
-	if request.Space != nil {
-		var hasSpaceOfSameType bool
-		for _, team := range user.Data.Spaces {
-			if team.Type == request.Space.Type {
-				hasSpaceOfSameType = true
-				break
-			}
-		}
-		if !hasSpaceOfSameType && request.Space != nil {
-			if _, _, err = facade4spaceus.CreateSpace(ctx, userCtx, *request.Space); err != nil {
-				err = fmt.Errorf("failed to create team for user: %w", err)
-				return
-			}
-		}
+		return user, fmt.Errorf("failed to init user record and to create default user spaces: %w", err)
 	}
 
 	return
 }
 
-func initUserRecordTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, uid string, userInfo *sneatauth.AuthUserInfo, request dto4userus.InitUserRecordRequest) (user dbo4userus.UserEntry, err error) {
-	var isNewUser bool
-	user = dbo4userus.NewUserEntry(uid)
-	if err = dal4userus.GetUser(ctx, tx, user); err != nil {
-		if dal.IsNotFound(err) {
-			isNewUser = true
-		} else {
+func initUserRecordTxWorker(userInfo *sneatauth.AuthUserInfo, request dto4userus.InitUserRecordRequest, params *dal4userus.UserWorkerParams) (err error) {
+	if !params.User.Record.Exists() {
+		if err = createUserRecord(request, params.User, userInfo); err != nil {
+			err = fmt.Errorf("faield to populate new user record data: %w", err)
 			return
 		}
-	}
-	if isNewUser {
-		if err = createUserRecordTx(ctx, tx, request, user, userInfo); err != nil {
-			err = fmt.Errorf("faield to create user record: %w", err)
-			return
-		}
-	} else if err = updateUserRecordWithInitData(ctx, tx, request, user); err != nil {
-		err = fmt.Errorf("faield to update user record: %w", err)
+	} else if err = updateUserRecordWithInitData(request, params); err != nil {
+		err = fmt.Errorf("failed to update user record data: %w", err)
 		return
 	}
 	return
 }
 
-func createUserRecordTx(ctx context.Context, tx dal.ReadwriteTransaction, request dto4userus.InitUserRecordRequest, user dbo4userus.UserEntry, userInfo *sneatauth.AuthUserInfo) error {
+func createUserRecord(request dto4userus.InitUserRecordRequest, user dbo4userus.UserEntry, userInfo *sneatauth.AuthUserInfo) error {
 	user.Data.Status = "active"
-	user.Data.Type = briefs4contactus.ContactTypePerson
-	user.Data.CountryID = with.UnknownCountryID
-	user.Data.AgeGroup = "unknown"
-	user.Data.Gender = "unknown"
+	user.Data.ContactBrief.Type = briefs4contactus.ContactTypePerson
+	user.Data.ContactBrief.AgeGroup = "unknown"
+	user.Data.ContactBrief.Gender = "unknown"
+	user.Data.OptionalCountryID.CountryID = with.UnknownCountryID
 
 	if request.Names != nil && !request.Names.IsEmpty() {
-		user.Data.Names = request.Names
+		user.Data.ContactBrief.Names = request.Names
 	}
 
 	if user.Data.Names != nil && user.Data.Names.FullName != "" && (user.Data.Names.FirstName == "" || user.Data.Names.LastName == "") {
@@ -141,42 +130,38 @@ func createUserRecordTx(ctx context.Context, tx dal.ReadwriteTransaction, reques
 	if err := user.Data.Validate(); err != nil {
 		return fmt.Errorf("user record prepared for insert is not valid: %w", err)
 	}
-	if err := tx.Insert(ctx, user.Record); err != nil {
-		return fmt.Errorf("failed to insert user record: %w", err)
-	}
 	return nil
 }
 
-func updateUserRecordWithInitData(ctx context.Context, tx dal.ReadwriteTransaction, request dto4userus.InitUserRecordRequest, user dbo4userus.UserEntry) error {
-	var updates []dal.Update
+func updateUserRecordWithInitData(request dto4userus.InitUserRecordRequest, params *dal4userus.UserWorkerParams) error {
 	if name := request.Names; name != nil {
 		if name.FullName == "" && !name.IsEmpty() {
 			name.FullName = name.GetFullName()
 		}
 		if !name.IsEmpty() {
-			updates = append(updates, dal.Update{Field: "name", Value: name})
+			params.UserUpdates = append(params.UserUpdates, dal.Update{Field: "name", Value: name})
 		}
-		user.Data.Names = name
+		params.User.Data.Names = name
 	}
 
-	if request.IanaTimezone != "" && (user.Data.Timezone == nil || user.Data.Timezone.Iana == "") {
-		if user.Data.Timezone == nil {
-			user.Data.Timezone = &dbmodels.Timezone{}
+	if request.IanaTimezone != "" && (params.User.Data.Timezone == nil || params.User.Data.Timezone.Iana == "") {
+		if params.User.Data.Timezone == nil {
+			params.User.Data.Timezone = &dbmodels.Timezone{}
 		}
-		user.Data.Timezone.Iana = request.IanaTimezone
-		updates = append(updates, dal.Update{Field: "timezone.iana", Value: request.IanaTimezone})
+		params.User.Data.Timezone.Iana = request.IanaTimezone
+		params.UserUpdates = append(params.UserUpdates, dal.Update{Field: "timezone.iana", Value: request.IanaTimezone})
 	}
-	if user.Data.Title == user.Data.Email && user.Data.Names != nil && !user.Data.Names.IsEmpty() {
-		user.Data.Title = ""
-		updates = append(updates, dal.Update{Field: "title", Value: dal.DeleteField})
+	if params.User.Data.Title == params.User.Data.Email && params.User.Data.Names != nil && !params.User.Data.Names.IsEmpty() {
+		params.User.Data.Title = ""
+		params.UserUpdates = append(params.UserUpdates, dal.Update{Field: "title", Value: dal.DeleteField})
 	}
-	if len(updates) > 0 {
-		if err := user.Data.Validate(); err != nil {
-			return fmt.Errorf("user record prepared for update is not valid: %w", err)
-		}
-		if err := tx.Update(ctx, user.Key, updates); err != nil {
-			return err
-		}
-	}
+	//if len(params.UserUpdates) > 0 {
+	//	if err := params.User.Data.Validate(); err != nil {
+	//		return fmt.Errorf("user record prepared for update is not valid: %w", err)
+	//	}
+	//	if err := tx.Update(ctx, params.User.Key, params.UserUpdates); err != nil {
+	//		return err
+	//	}
+	//}
 	return nil
 }

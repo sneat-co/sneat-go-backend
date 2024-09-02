@@ -21,7 +21,7 @@ func HandleDisconnect(ctx context.Context, w http.ResponseWriter, r *http.Reques
 
 	userCtx := facade.NewUserContext(authInfo.UserID)
 
-	if err := dal4userus.RunUserWorker(ctx, userCtx, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
+	if err := dal4userus.RunUserWorker(ctx, userCtx, true, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
 		appUser, err := dal4userus.GetUserByID(ctx, tx, authInfo.UserID)
 		if err != nil {
 			return err

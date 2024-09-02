@@ -133,7 +133,7 @@ func setPreferredLanguageAction(whc botsfw.WebhookContext, code5, mode string, b
 
 				if appUserID := whc.AppUserID(); appUserID != "" {
 					userCtx := facade.NewUserContext(appUserID)
-					if err = dal4userus.RunUserWorker(ctx, userCtx, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) (err error) {
+					if err = dal4userus.RunUserWorker(ctx, userCtx, true, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) (err error) {
 						if params.UserUpdates, err = params.User.Data.SetPreferredLocale(locale.Code5); err != nil {
 							return fmt.Errorf("%w: failed to set preferred locale for user", err)
 						}

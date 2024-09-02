@@ -116,7 +116,7 @@ func SetUserName(ctx context.Context, w http.ResponseWriter, r *http.Request, au
 	}
 
 	userCtx := facade.NewUserContext(authInfo.UserID)
-	err = dal4userus.RunUserWorker(ctx, userCtx, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
+	err = dal4userus.RunUserWorker(ctx, userCtx, true, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
 		params.User.Data.Names.UserName = string(body)
 		params.UserUpdates = append(params.UserUpdates, dal.Update{
 			Field: "names.userName",

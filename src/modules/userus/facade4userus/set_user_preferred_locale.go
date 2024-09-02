@@ -9,7 +9,7 @@ import (
 )
 
 func SetUserPreferredLocale(ctx context.Context, userCtx facade.UserContext, localeCode5 string) (err error) {
-	err = dal4userus.RunUserWorker(ctx, userCtx, func(ctx context.Context, tx dal.ReadwriteTransaction, userWorkerParams *dal4userus.UserWorkerParams) (err error) {
+	err = dal4userus.RunUserWorker(ctx, userCtx, true, func(ctx context.Context, tx dal.ReadwriteTransaction, userWorkerParams *dal4userus.UserWorkerParams) (err error) {
 		if dal.IsNotFound(err) {
 			logus.Errorf(ctx, "User not found by ContactID: %v", err)
 			return nil

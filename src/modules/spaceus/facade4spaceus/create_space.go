@@ -60,7 +60,7 @@ func CreateDefaultUserSpacesTx(
 
 // CreateSpace creates SpaceIDs record
 func CreateSpace(ctx context.Context, userCtx facade.UserContext, request dto4spaceus.CreateSpaceRequest) (space dbo4spaceus.SpaceEntry, contactusSpace dal4contactus.ContactusSpaceEntry, err error) {
-	err = dal4userus.RunUserWorker(ctx, userCtx, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
+	err = dal4userus.RunUserWorker(ctx, userCtx, true, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
 		space, contactusSpace, err = CreateSpaceTxWorker(ctx, tx, time.Now(), request, params)
 		return err
 	})

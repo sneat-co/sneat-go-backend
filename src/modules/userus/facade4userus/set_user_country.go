@@ -27,7 +27,7 @@ func (v SetUserCountryRequest) Validate() error {
 }
 
 func SetUserCountry(ctx context.Context, userCtx facade.UserContext, request SetUserCountryRequest) (err error) {
-	return dal4userus.RunUserWorker(ctx, userCtx, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
+	return dal4userus.RunUserWorker(ctx, userCtx, true, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
 		return txSetUserCountry(ctx, userCtx, request, tx, params)
 	})
 }

@@ -32,7 +32,7 @@ const lastTgReferrers = "lastTgReferrers"
 
 func delayedSetUserReferrer(ctx context.Context, userID string, referredBy string) (err error) {
 	userChanged := false
-	if err = dal4userus.RunUserWorker(ctx, facade.NewUserContext(userID),
+	if err = dal4userus.RunUserWorker(ctx, facade.NewUserContext(userID), true,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
 			if err != nil {
 				return err

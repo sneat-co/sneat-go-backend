@@ -18,7 +18,7 @@ type UserWorkerParams struct {
 
 type userWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, userWorkerParams *UserWorkerParams) (err error)
 
-var RunUserWorker = func(ctx context.Context, userCtx facade.UserContext, worker userWorker) (err error) {
+var RunUserWorker = func(ctx context.Context, userCtx facade.UserContext, userRecordMustExists bool, worker userWorker) (err error) {
 	if userCtx == nil {
 		panic("userCtx == nil")
 	}
@@ -28,9 +28,12 @@ var RunUserWorker = func(ctx context.Context, userCtx facade.UserContext, worker
 	}
 	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		if err = tx.Get(ctx, params.User.Record); err != nil {
-			return fmt.Errorf("failed to load userCtx record: %w", err)
-		}
-		if err = params.User.Data.Validate(); err != nil {
+			if dal.IsNotFound(err) && !userRecordMustExists {
+				params.User.Record.SetError(dal.ErrRecordNotFound)
+			} else {
+				return fmt.Errorf("failed to load user record: %w", err)
+			}
+		} else if err = params.User.Data.Validate(); err != nil { // Do not validate if user record is not found
 			err = fmt.Errorf("user record loaded from DB is not valid: %v: userID=%s data=%+v", err, params.User.ID, params.User.Data)
 			return
 		}
@@ -40,9 +43,21 @@ var RunUserWorker = func(ctx context.Context, userCtx facade.UserContext, worker
 		if err = params.User.Data.Validate(); err != nil {
 			return fmt.Errorf("user record is not valid after userWorker completion: %w", err)
 		}
-		if len(params.UserUpdates) > 0 {
-			if err = TxUpdateUser(ctx, tx, params.Started, params.User.Key, params.UserUpdates); err != nil {
-				return fmt.Errorf("failed to update team record: %w", err)
+		if params.User.Record.HasChanged() {
+			if params.User.Record.Exists() {
+				if len(params.UserUpdates) > 0 {
+					if err = TxUpdateUser(ctx, tx, params.Started, params.User.Key, params.UserUpdates); err != nil {
+						return fmt.Errorf("failed to apply updates to user record: %w", err)
+					}
+				} else {
+					if err = tx.Set(ctx, params.User.Record); err != nil {
+						return fmt.Errorf("failed to update user record: %w", err)
+					}
+				}
+			} else {
+				if err = tx.Insert(ctx, params.User.Record); err != nil {
+					return fmt.Errorf("failed to insert user record: %w", err)
+				}
 			}
 		}
 		return err
