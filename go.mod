@@ -2,7 +2,7 @@ module github.com/sneat-co/sneat-go-backend
 
 go 1.23.0
 
-replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
+//replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
 
 //replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
 //replace github.com/sneat-co/sneat-go-modules => ../sneat-go-modules
@@ -49,7 +49,7 @@ require (
 	github.com/sendgrid/sendgrid-go v3.16.0+incompatible
 	github.com/shiyanhui/hero v0.0.2
 	github.com/sneat-co/debtstracker-translations v0.0.27
-	github.com/sneat-co/sneat-go-core v0.32.4
+	github.com/sneat-co/sneat-go-core v0.32.5
 	github.com/sneat-co/sneat-go-firebase v0.5.7
 	github.com/stretchr/testify v1.9.0
 	github.com/strongo/app-host-gae v0.1.33
