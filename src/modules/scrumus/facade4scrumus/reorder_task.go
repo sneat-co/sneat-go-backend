@@ -16,11 +16,10 @@ func ReorderTask(ctx context.Context, userCtx facade.UserContext, request Reorde
 		return
 	}
 
-	uid := userCtx.GetUserID()
 	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		var params facade4meetingus.WorkerParams
 		scrum := dbo4scrumus.Scrum{}
-		if params, err = facade4meetingus.GetMeetingAndSpace(ctx, tx, uid, request.SpaceID, request.MeetingID, MeetingRecordFactory{}); err != nil {
+		if params, err = facade4meetingus.GetMeetingAndSpace(ctx, tx, userCtx, request.SpaceID, request.MeetingID, MeetingRecordFactory{}); err != nil {
 			return
 		}
 		if !params.Meeting.Record.Exists() {

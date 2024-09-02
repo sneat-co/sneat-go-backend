@@ -14,7 +14,7 @@ import (
 type worker = func(ctx context.Context, tx dal.ReadwriteTransaction, params facade4meetingus.WorkerParams) (err error)
 
 func runScrumWorker(ctx context.Context, userCtx facade.UserContext, request facade4meetingus.Request, worker worker) error {
-	return facade4meetingus.RunMeetingWorker(ctx, userCtx.GetUserID(), request, MeetingRecordFactory{}, worker)
+	return facade4meetingus.RunMeetingWorker(ctx, userCtx, request, MeetingRecordFactory{}, worker)
 }
 
 // UpdateLastScrumIDIfNeeded updates scrum if needed

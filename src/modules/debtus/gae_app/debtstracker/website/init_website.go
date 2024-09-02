@@ -52,7 +52,7 @@ func CreateInvitePage(w http.ResponseWriter, r *http.Request, authInfo token4aut
 	//panic("Not implemented")
 	userID := authInfo.UserID
 	//session, _ := anybot.GetSession(r)
-	//userID := session.GetUserID()
+	//userID := session.UserID()
 	//if userID == 0 {
 	//	w.WriteHeader(http.StatusUnauthorized)
 	//	return

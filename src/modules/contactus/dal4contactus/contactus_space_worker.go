@@ -12,8 +12,8 @@ import (
 
 type ContactusSpaceWorkerParams = dal4spaceus.ModuleSpaceWorkerParams[*models4contactus.ContactusSpaceDbo]
 
-func NewContactusSpaceWorkerParams(userID, spaceID string) *ContactusSpaceWorkerParams {
-	teamWorkerParams := dal4spaceus.NewSpaceWorkerParams(userID, spaceID)
+func NewContactusSpaceWorkerParams(userCtx facade.UserContext, spaceID string) *ContactusSpaceWorkerParams {
+	teamWorkerParams := dal4spaceus.NewSpaceWorkerParams(userCtx, spaceID)
 	return dal4spaceus.NewSpaceModuleWorkerParams(const4contactus.ModuleID, teamWorkerParams, new(models4contactus.ContactusSpaceDbo))
 }
 

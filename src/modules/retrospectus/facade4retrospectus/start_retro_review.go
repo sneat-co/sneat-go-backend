@@ -17,8 +17,7 @@ func StartRetroReview(ctx context.Context, userCtx facade.UserContext, request R
 	if err = request.Validate(); err != nil {
 		return
 	}
-	uid := userCtx.GetUserID()
-	err = runRetroWorker(ctx, uid, request,
+	err = runRetroWorker(ctx, userCtx, request,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params facade4meetingus.WorkerParams) error {
 			retrospective := params.Meeting.Record.Data().(*dbo4retrospectus.Retrospective)
 			retrospective.Stage = dbo4retrospectus.StageReview

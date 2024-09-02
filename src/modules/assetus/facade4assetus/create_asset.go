@@ -49,10 +49,10 @@ func createAssetTx(
 ) {
 	asset := dal4assetus.NewAssetEntry(request.SpaceRequest.SpaceID, random.ID(8)) // TODO: use DALgo random ContactID generator
 	asset.Data.AssetBaseDbo = request.Asset
-	asset.Data.UserIDs = []string{params.UserID}
+	asset.Data.UserIDs = []string{params.UserID()}
 	asset.Data.SpaceIDs = []string{request.SpaceRequest.SpaceID}
 	//asset.Data.ContactIDs = []string{"*"}
-	asset.Data.WithModified = dbmodels.NewWithModified(params.Started, params.UserID)
+	asset.Data.WithModified = dbmodels.NewWithModified(params.Started, params.UserID())
 
 	asset.Record.SetError(nil) // Mark record as not having an error
 

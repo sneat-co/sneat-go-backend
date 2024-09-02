@@ -22,7 +22,7 @@ import (
 )
 
 //func getApiUser(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo auth.AuthInfo) (user models4debtus.AppUser, err error) {
-//	if user.ContactID = GetUserID(ctx, w, r, authInfo); user.ContactID == "" {
+//	if user.ContactID = UserID(ctx, w, r, authInfo); user.ContactID == "" {
 //		w.WriteHeader(http.StatusUnauthorized)
 //		return
 //	}

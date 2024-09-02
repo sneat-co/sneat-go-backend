@@ -59,9 +59,9 @@ type RecordFactory interface {
 type Worker = func(ctx context.Context, tx dal.ReadwriteTransaction, params WorkerParams) (err error)
 
 // RunMeetingWorker runs api4meetingus worker
-func RunMeetingWorker(ctx context.Context, userID string, request Request, recordFactory RecordFactory, worker Worker) error {
+func RunMeetingWorker(ctx context.Context, userCtx facade.UserContext, request Request, recordFactory RecordFactory, worker Worker) error {
 	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
-		params, err := GetMeetingAndSpace(ctx, tx, userID, request.SpaceID, request.MeetingID, recordFactory)
+		params, err := GetMeetingAndSpace(ctx, tx, userCtx, request.SpaceID, request.MeetingID, recordFactory)
 		if err != nil {
 			return fmt.Errorf("failed to get api4meetingus & team records: %w", err)
 		}
@@ -70,8 +70,8 @@ func RunMeetingWorker(ctx context.Context, userID string, request Request, recor
 }
 
 // GetMeetingAndSpace retrieve api4meetingus and team records
-var GetMeetingAndSpace = func(ctx context.Context, tx dal.ReadwriteTransaction, uid, teamID, meetingID string, recordFactory RecordFactory) (params WorkerParams, err error) {
-	params.ContactusSpaceWorkerParams = dal4contactus.NewContactusSpaceWorkerParams(uid, teamID)
+var GetMeetingAndSpace = func(ctx context.Context, tx dal.ReadwriteTransaction, userCtx facade.UserContext, teamID, meetingID string, recordFactory RecordFactory) (params WorkerParams, err error) {
+	params.ContactusSpaceWorkerParams = dal4contactus.NewContactusSpaceWorkerParams(userCtx, teamID)
 	// Create team parameter
 	// Create api4meetingus parameter
 	meetingKey := dal.NewKeyWithParentAndID(params.Space.Key, recordFactory.Collection(), meetingID)
@@ -103,14 +103,15 @@ var GetMeetingAndSpace = func(ctx context.Context, tx dal.ReadwriteTransaction, 
 			))
 		return
 	}
+	userID := userCtx.GetUserID()
 	for _, v := range teamData.UserIDs {
-		if v == uid {
+		if v == userID {
 			userBelongsToSpace = true
 			break
 		}
 	}
 	if !userBelongsToSpace {
-		err = validation.NewErrBadRequestFieldValue("UserIDs", fmt.Sprintf("User does not belong to team, uid=%v, team.UserIDs: %+v", uid, teamData.UserIDs))
+		err = validation.NewErrBadRequestFieldValue("UserIDs", fmt.Sprintf("User does not belong to team, uid=%v, team.UserIDs: %+v", userID, teamData.UserIDs))
 		return
 	}
 

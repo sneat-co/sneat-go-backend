@@ -66,7 +66,7 @@ func ToggleTimer(ctx context.Context, userCtx facade.UserContext, params ToggleP
 
 	request := params.Request
 
-	err = RunMeetingWorker(ctx, uid, request.Request, params.RecordFactory,
+	err = RunMeetingWorker(ctx, userCtx, request.Request, params.RecordFactory,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, workerParams WorkerParams) (err error) {
 			now := time.Now()
 

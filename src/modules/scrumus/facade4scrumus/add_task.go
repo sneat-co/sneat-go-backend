@@ -123,7 +123,7 @@ func AddTask(ctx context.Context, userCtx facade.UserContext, request AddTaskReq
 			if err := tx.GetMulti(ctx, []dal.Record{params.SpaceModuleEntry.Record, params.Meeting.Record}); err != nil {
 				return err
 			}
-			response, err = addTaskInTransaction(ctx, params.UserID, tx, request, params)
+			response, err = addTaskInTransaction(ctx, params.UserID(), tx, request, params)
 			return err
 		},
 	)

@@ -45,7 +45,7 @@ var RunOrderWorker = func(ctx context.Context, userCtx facade.UserContext, reque
 	if err := request.Validate(); err != nil {
 		return fmt.Errorf("invalid order request: %w", err)
 	}
-	return dal4spaceus.RunSpaceWorker(ctx, userCtx, request.SpaceID, func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4spaceus.SpaceWorkerParams) (err error) {
+	return dal4spaceus.RunSpaceWorkerWithUserContext(ctx, userCtx, request.SpaceID, func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4spaceus.SpaceWorkerParams) (err error) {
 		order := dbo4logist.NewOrder(teamWorkerParams.Space.ID, request.OrderID)
 		params := OrderWorkerParams{
 			SpaceWorkerParams: teamWorkerParams,
@@ -100,7 +100,7 @@ var RunOrderWorker = func(ctx context.Context, userCtx facade.UserContext, reque
 		}
 		orderUpdates = append(orderUpdates, order.Dto.DatesFields.UpdatesWhenDatesChanged()...)
 
-		order.Dto.WithModified.MarkAsUpdated(params.SpaceWorkerParams.UserID)
+		order.Dto.WithModified.MarkAsUpdated(params.SpaceWorkerParams.UserID())
 		if err := order.Dto.Validate(); err != nil {
 			return fmt.Errorf(
 				"order is not valid before pushing updates to DB (ContactID=%s): %w",

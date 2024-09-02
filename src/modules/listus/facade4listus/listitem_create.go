@@ -53,7 +53,7 @@ func createListItemTxWorker(ctx context.Context, request dto4listus.CreateListIt
 		}
 
 		list.Data.SpaceIDs = []string{request.SpaceID}
-		list.Data.UserIDs = []string{params.UserID}
+		list.Data.UserIDs = []string{params.UserID()}
 		list.Data.Type = listType
 		list.Data.Title = string(request.ListID)
 		if list.Data.Emoji == "" {
@@ -94,7 +94,7 @@ func createListItemTxWorker(ctx context.Context, request dto4listus.CreateListIt
 			listItem.Emoji = deductListItemEmoji(listItem.Title)
 		}
 		listItem.CreatedAt = params.Started
-		listItem.CreatedBy = params.UserID
+		listItem.CreatedBy = params.UserID()
 		list.Data.Items = append(list.Data.Items, &listItem)
 	}
 	list.Data.Count = len(list.Data.Items)
@@ -103,8 +103,8 @@ func createListItemTxWorker(ctx context.Context, request dto4listus.CreateListIt
 		return fmt.Errorf("list record is not valid: %w", err)
 	}
 	if list.Record.Exists() {
-		if slice.Index(list.Data.UserIDs, params.UserID) < 0 {
-			return errors.New("current user does not have access to the list: userID=" + params.UserID)
+		if slice.Index(list.Data.UserIDs, params.UserID()) < 0 {
+			return errors.New("current user does not have access to the list: userID=" + params.UserID())
 		}
 		if err = tx.Update(ctx, list.Key, []dal.Update{
 			{
@@ -132,7 +132,7 @@ func createListItemTxWorker(ctx context.Context, request dto4listus.CreateListIt
 		params.SpaceModuleEntry.Record.MarkAsChanged()
 	} else {
 		params.SpaceModuleEntry.Data.CreatedAt = params.Started
-		params.SpaceModuleEntry.Data.CreatedBy = params.UserID
+		params.SpaceModuleEntry.Data.CreatedBy = params.UserID()
 		if err = tx.Insert(ctx, params.SpaceModuleEntry.Record); err != nil {
 			return fmt.Errorf("failed to insert team module entry record: %w", err)
 		}

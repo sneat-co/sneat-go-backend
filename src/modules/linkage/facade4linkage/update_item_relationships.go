@@ -12,7 +12,7 @@ import (
 )
 
 func UpdateItemRelationships(ctx context.Context, userCtx facade.UserContext, request dto4linkage.UpdateItemRequest) (item record.DataWithID[string, *dbo4linkage.WithRelatedAndIDsAndUserID], err error) {
-	if err = dal4spaceus.RunSpaceWorker(ctx, userCtx, request.Space, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.SpaceWorkerParams) (err error) {
+	if err = dal4spaceus.RunSpaceWorkerWithUserContext(ctx, userCtx, request.Space, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.SpaceWorkerParams) (err error) {
 		item, err = txUpdateItemRelationships(ctx, tx, params, request)
 		return err
 	}); err != nil {

@@ -8,7 +8,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
-	"github.com/strongo/logus"
 	"slices"
 	"strings"
 	"time"
@@ -16,9 +15,9 @@ import (
 
 type spaceWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *SpaceWorkerParams) (err error)
 
-func NewSpaceWorkerParams(userID, spaceID string) *SpaceWorkerParams {
+func NewSpaceWorkerParams(userCtx facade.UserContext, spaceID string) *SpaceWorkerParams {
 	return &SpaceWorkerParams{
-		UserID:  userID,
+		UserCtx: userCtx,
 		Space:   dbo4spaceus.NewSpaceEntry(spaceID),
 		Started: time.Now(),
 	}
@@ -26,12 +25,16 @@ func NewSpaceWorkerParams(userID, spaceID string) *SpaceWorkerParams {
 
 // SpaceWorkerParams passes data to a space worker
 type SpaceWorkerParams struct {
-	UserID  string
+	UserCtx facade.UserContext
 	Started time.Time
 	//
 	Space         dbo4spaceus.SpaceEntry
 	SpaceUpdates  []dal.Update
 	RecordUpdates []RecordUpdates
+}
+
+func (v SpaceWorkerParams) UserID() string {
+	return v.UserCtx.GetUserID()
 }
 
 // GetRecords loads records from DB. If userID is passed, it will check for user permissions
@@ -41,9 +44,9 @@ func (v SpaceWorkerParams) GetRecords(ctx context.Context, tx dal.ReadSession, r
 	if err != nil {
 		return err
 	}
-	if v.UserID != "" && v.Space.Record.Exists() {
-		if !slices.Contains(v.Space.Data.UserIDs, v.UserID) {
-			return fmt.Errorf("%w: space record has no current user ContactID in UserIDs field: %s", facade.ErrUnauthorized, v.UserID)
+	if v.UserID() != "" && v.Space.Record.Exists() {
+		if !slices.Contains(v.Space.Data.UserIDs, v.UserID()) {
+			return fmt.Errorf("%w: space record has no current user ContactID in UserIDs field: %s", facade.ErrUnauthorized, v.UserID())
 		}
 	}
 	return nil
@@ -85,7 +88,7 @@ func RunModuleSpaceWorkerTx[D SpaceModuleDbo](
 	if worker == nil {
 		panic("worker is nil")
 	}
-	spaceWorkerParams := NewSpaceWorkerParams(userCtx.GetUserID(), request.SpaceID)
+	spaceWorkerParams := NewSpaceWorkerParams(userCtx, request.SpaceID)
 	params := NewSpaceModuleWorkerParams(moduleID, spaceWorkerParams, data)
 	return runModuleSpaceWorkerReadwriteTx(ctx, tx, params, worker)
 }
@@ -142,7 +145,7 @@ func RunReadonlyModuleSpaceWorker[D SpaceModuleDbo](
 	data D,
 	worker func(ctx context.Context, tx dal.ReadTransaction, spaceWorkerParams *ModuleSpaceWorkerParams[D]) (err error),
 ) (err error) {
-	spaceWorkerParams := NewSpaceWorkerParams(userCtx.GetUserID(), request.SpaceID)
+	spaceWorkerParams := NewSpaceWorkerParams(userCtx, request.SpaceID)
 	params := NewSpaceModuleWorkerParams(moduleID, spaceWorkerParams, data)
 
 	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
@@ -158,7 +161,7 @@ func RunModuleSpaceWorker[D SpaceModuleDbo](
 	data D,
 	worker func(ctx context.Context, tx dal.ReadwriteTransaction, spaceWorkerParams *ModuleSpaceWorkerParams[D]) (err error),
 ) (err error) {
-	spaceWorkerParams := NewSpaceWorkerParams(userCtx.GetUserID(), spaceID)
+	spaceWorkerParams := NewSpaceWorkerParams(userCtx, spaceID)
 	params := NewSpaceModuleWorkerParams(moduleID, spaceWorkerParams, data)
 	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		if err = runModuleSpaceWorkerReadwriteTx(ctx, tx, params, worker); err != nil {
@@ -168,13 +171,32 @@ func RunModuleSpaceWorker[D SpaceModuleDbo](
 	})
 }
 
-// RunSpaceWorker executes a space worker
-var RunSpaceWorker = func(ctx context.Context, userCtx facade.UserContext, spaceID string, worker spaceWorker) (err error) {
+// RunSpaceWorkerWithUserContext executes a space worker
+var RunSpaceWorkerWithUserContext = func(ctx context.Context, userCtx facade.UserContext, spaceID string, worker spaceWorker) (err error) {
+	if strings.TrimSpace(spaceID) == "" {
+		return fmt.Errorf("required parameter `spaceID` of RunSpaceWorkerWithUserContext() is an empty string")
+	}
 	if userCtx == nil {
 		panic("userCtx is nil")
 	}
+	if userCtx.GetUserID() == "" {
+		err = facade.ErrUnauthorized
+		return
+	}
+	return runSpaceWorker(ctx, userCtx, spaceID, worker)
+}
+
+// RunSpaceWorkerWithoutUserContext executes a space worker without user context
+var RunSpaceWorkerWithoutUserContext = func(ctx context.Context, spaceID string, worker spaceWorker) (err error) {
 	if strings.TrimSpace(spaceID) == "" {
-		return fmt.Errorf("spaceID is empty")
+		return fmt.Errorf("required parameter `spaceID` of RunSpaceWorkerWithoutUserContext() is an empty string")
+	}
+	return runSpaceWorker(ctx, nil, spaceID, worker)
+}
+
+var runSpaceWorker = func(ctx context.Context, userCtx facade.UserContext, spaceID string, worker spaceWorker) (err error) {
+	if strings.TrimSpace(spaceID) == "" {
+		return fmt.Errorf("required parameter `spaceID` of runSpaceWorker() is an empty string")
 	}
 	userID := userCtx.GetUserID()
 	if userID == "" {
@@ -182,26 +204,40 @@ var RunSpaceWorker = func(ctx context.Context, userCtx facade.UserContext, space
 		return
 	}
 	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
-		params := NewSpaceWorkerParams(userID, spaceID)
-		if err = tx.Get(ctx, params.Space.Record); err != nil {
-			return fmt.Errorf("failed to load space record: %w", err)
-		}
-		if err = params.Space.Data.Validate(); err != nil {
-			logus.Warningf(ctx, "Space record loaded from DB is not valid: %v: dto4debtus=%+v", err, params.Space.Data)
-		}
-		if err = worker(ctx, tx, params); err != nil {
-			return fmt.Errorf("failed to execute space worker: %w", err)
-		}
-		if err = applySpaceUpdates(ctx, tx, params); err != nil {
-			return fmt.Errorf("space worker failed to apply space record updates: %w", err)
-		}
-		for _, record := range params.RecordUpdates {
-			if err = tx.Update(ctx, record.Key, record.Updates); err != nil {
-				return fmt.Errorf("failed to update record (key=%s): %w", record.Key, err)
-			}
-		}
-		return err
+		return RunSpaceWorkerTx(ctx, tx, userCtx, spaceID, worker)
 	})
+}
+
+func RunSpaceWorkerTx(ctx context.Context, tx dal.ReadwriteTransaction, userCtx facade.UserContext, spaceID string, worker spaceWorker) (err error) {
+	params := NewSpaceWorkerParams(userCtx, spaceID)
+	if err = tx.Get(ctx, params.Space.Record); err != nil {
+		return fmt.Errorf("failed to load space record: %w", err)
+	}
+	if err = params.Space.Data.Validate(); err != nil {
+		return fmt.Errorf("space record loaded from DB is not valid: %w", err)
+	}
+	if err = worker(ctx, tx, params); err != nil {
+		return fmt.Errorf("failed to execute space worker: %w", err)
+	}
+	if err = applySpaceUpdates(ctx, tx, params); err != nil {
+		return fmt.Errorf("space worker failed to apply space record updates: %w", err)
+	}
+	for _, rec := range params.RecordUpdates {
+		if err = tx.Update(ctx, rec.Key, rec.Updates); err != nil {
+			updateFields := make([]string, len(rec.Updates))
+			for _, u := range rec.Updates {
+				updateField := u.Field
+				if updateField == "" {
+					updateField = strings.Join(u.FieldPath, ".")
+				}
+				updateFields = append(updateFields, updateField)
+			}
+			return fmt.Errorf(
+				"failed to apply record updates (key=%s, updateFields: %s): %w",
+				rec.Key, strings.Join(updateFields, ","), err)
+		}
+	}
+	return
 }
 
 func applySpaceUpdates(ctx context.Context, tx dal.ReadwriteTransaction, params *SpaceWorkerParams) (err error) {

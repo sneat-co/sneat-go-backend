@@ -63,7 +63,7 @@ func (v *ContactBrief) IsSpaceMember() bool {
 	return v.HasRole(const4contactus.SpaceMemberRoleMember)
 }
 
-// GetUserID returns UserID field value
+// GetUserID returns GetUserID field value
 func (v *ContactBrief) GetUserID() string {
 	return v.UserID
 }

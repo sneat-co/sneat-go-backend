@@ -173,7 +173,7 @@ func Test_createOrUpdateUserRecord(t *testing.T) {
 				tx.EXPECT().Insert(gomock.Any(), tt.args.user.Record).Return(nil)
 			}
 			now := time.Now()
-			params := dal4contactus.NewContactusSpaceWorkerParams(tt.args.user.ID, tt.args.team.ID)
+			params := dal4contactus.NewContactusSpaceWorkerParams(facade.NewUserContext(tt.args.user.ID), tt.args.team.ID)
 			if err := createOrUpdateUserRecord(ctx, tx, now, tt.args.user, tt.args.request, params, tt.args.teamMember.Data, tt.args.invite); err != nil {
 				if !tt.wantErr {
 					t.Errorf("createOrUpdateUserRecord() error = %v, wantErr %v", err, tt.wantErr)
@@ -331,7 +331,7 @@ func Test_updateSpaceRecord(t *testing.T) {
 			//tx.EXPECT().Update(gomock.Any(), tt.args.team.Key, gomock.Any()).Return(nil)
 			//tx.EXPECT().Update(gomock.Any(), tt.args.contactusSpace.Key, gomock.Any()).Return(nil)
 			tt.args.contactusSpace.Record.SetError(tt.teamRecordErr)
-			params := dal4contactus.NewContactusSpaceWorkerParams(tt.args.uid, tt.args.team.ID)
+			params := dal4contactus.NewContactusSpaceWorkerParams(facade.NewUserContext(tt.args.uid), tt.args.team.ID)
 			params.SpaceModuleEntry.Data.AddContact(tt.args.memberID, &tt.args.requestMember.Data.ContactBrief)
 			params.SpaceModuleEntry.Data.AddUserID(tt.args.uid)
 			params.Space.Data.AddUserID(tt.args.uid)

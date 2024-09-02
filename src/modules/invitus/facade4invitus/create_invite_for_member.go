@@ -59,7 +59,7 @@ func CreateOrReuseInviteForMember(ctx context.Context, userCtx facade.UserContex
 	}
 	err = dal4contactus.RunContactusSpaceWorker(ctx, userCtx, request.SpaceRequest,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) (err error) {
-			fromContactID, fromContactBrief := params.SpaceModuleEntry.Data.GetContactBriefByUserID(params.UserID)
+			fromContactID, fromContactBrief := params.SpaceModuleEntry.Data.GetContactBriefByUserID(params.UserID())
 
 			if fromContactBrief == nil {
 				// TODO: Should return specific error so we can return HTTP 401
@@ -99,7 +99,7 @@ func CreateOrReuseInviteForMember(ctx context.Context, userCtx facade.UserContex
 			}
 			if personalInvite == nil {
 				inviteID, personalInvite, err =
-					createPersonalInvite(ctx, tx, params.UserID, request, params, fromContact)
+					createPersonalInvite(ctx, tx, params.UserID(), request, params, fromContact)
 				if err != nil {
 					return fmt.Errorf("failed to create personal invite record: %w", err)
 				}

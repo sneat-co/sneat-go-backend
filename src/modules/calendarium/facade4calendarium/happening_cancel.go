@@ -32,9 +32,9 @@ func CancelHappening(ctx context.Context, userCtx facade.UserContext, request dt
 			case "":
 				return fmt.Errorf("happening record has no type: %w", validation.NewErrRecordIsMissingRequiredField("type"))
 			case dbo4calendarium.HappeningTypeSingle:
-				return cancelSingleHappening(ctx, tx, params.UserID, happening)
+				return cancelSingleHappening(ctx, tx, params.UserID(), happening)
 			case dbo4calendarium.HappeningTypeRecurring:
-				return cancelRecurringHappeningInstance(ctx, tx, params, params.UserID, happening, request)
+				return cancelRecurringHappeningInstance(ctx, tx, params, params.UserID(), happening, request)
 			default:
 				return validation.NewErrBadRecordFieldValue("type", "happening has unknown type: "+happening.Data.Type)
 			}

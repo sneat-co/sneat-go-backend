@@ -24,9 +24,9 @@ func CreateOrder(
 ) (
 	orderBrief *dbo4logist.OrderBrief, err error,
 ) {
-	err = dal4spaceus.RunSpaceWorker(ctx, userCtx, request.SpaceID,
+	err = dal4spaceus.RunSpaceWorkerWithUserContext(ctx, userCtx, request.SpaceID,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.SpaceWorkerParams) (err error) {
-			orderBrief, err = createOrderTxWorker(ctx, tx, params, params.UserID, request)
+			orderBrief, err = createOrderTxWorker(ctx, tx, params, params.UserID(), request)
 			return err
 		},
 	)

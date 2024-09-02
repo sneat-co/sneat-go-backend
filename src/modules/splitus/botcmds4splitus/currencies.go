@@ -118,7 +118,7 @@ func groupSettingsSetCurrencyCommand(params shared_all.BotParams) botsfw.Command
 			if space.Data.PrimaryCurrency != currency {
 				ctx := whc.Context()
 				user := facade.NewUserContext(whc.AppUserID())
-				if err := dal4spaceus.RunSpaceWorker(ctx, user, space.ID, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.SpaceWorkerParams) (err error) {
+				if err := dal4spaceus.RunSpaceWorkerWithUserContext(ctx, user, space.ID, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.SpaceWorkerParams) (err error) {
 					params.SpaceUpdates, err = space.Data.SetPrimaryCurrency(currency)
 					return
 				}); err != nil {

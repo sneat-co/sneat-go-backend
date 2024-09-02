@@ -73,7 +73,7 @@ func CreateContactTx(
 	if err = params.GetRecords(ctx, tx); err != nil {
 		return
 	}
-	userContactID, userContactBrief := params.SpaceModuleEntry.Data.GetContactBriefByUserID(params.UserID)
+	userContactID, userContactBrief := params.SpaceModuleEntry.Data.GetContactBriefByUserID(params.UserID())
 	if !userCanBeNonSpaceMember && (userContactBrief == nil || !userContactBrief.IsSpaceMember()) {
 		err = errors.New("user is not a member of the team")
 		return
@@ -85,7 +85,7 @@ func CreateContactTx(
 			if len(relatedItems) > 0 {
 				var isRelatedByUserID bool
 				for _, relatedItem := range relatedItems {
-					isRelatedByUserID = dbo4linkage.HasRelatedItem(relatedItems, dbo4linkage.RelatedItemKey{SpaceID: params.Space.ID, ItemID: params.UserID})
+					isRelatedByUserID = dbo4linkage.HasRelatedItem(relatedItems, dbo4linkage.RelatedItemKey{SpaceID: params.Space.ID, ItemID: params.UserID()})
 					if !isRelatedByUserID {
 						contactID := relatedItem.Keys[0].ItemID
 						if contactBrief := params.SpaceModuleEntry.Data.GetContactBriefByContactID(contactID); contactBrief == nil {
@@ -113,7 +113,7 @@ func CreateContactTx(
 					}
 				}
 				if isRelatedByUserID {
-					userRelatedItem := dbo4linkage.GetRelatedItemByKey(relatedItems, dbo4linkage.RelatedItemKey{SpaceID: params.Space.ID, ItemID: params.UserID})
+					userRelatedItem := dbo4linkage.GetRelatedItemByKey(relatedItems, dbo4linkage.RelatedItemKey{SpaceID: params.Space.ID, ItemID: params.UserID()})
 					userRelatedItem.Keys[0].ItemID = userContactID
 				}
 			}
@@ -132,7 +132,7 @@ func CreateContactTx(
 
 	contactDbo := new(models4contactus.ContactDbo)
 	contactDbo.CreatedAt = params.Started
-	contactDbo.CreatedBy = params.UserID
+	contactDbo.CreatedBy = params.UserID()
 	contactDbo.Status = "active"
 	contactDbo.ParentID = parentContactID
 	contactDbo.RolesField = request.RolesField
@@ -201,7 +201,7 @@ func CreateContactTx(
 	//params.SpaceUpdates = append(params.SpaceUpdates, params.Space.Data.UpdateNumberOf(const4contactus.ContactsField, len(params.SpaceModuleEntry.Data.Contacts)))
 
 	if request.Related != nil {
-		if err = updateRelationshipsInRelatedItems(ctx, tx, params.UserID, userContactID, params.Space.ID, contactID, params.SpaceModuleEntry, contactDbo, request.Related); err != nil {
+		if err = updateRelationshipsInRelatedItems(ctx, tx, params.UserID(), userContactID, params.Space.ID, contactID, params.SpaceModuleEntry, contactDbo, request.Related); err != nil {
 			err = fmt.Errorf("failed to update relationships in related items: %w", err)
 			return
 		}

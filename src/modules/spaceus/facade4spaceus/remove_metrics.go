@@ -14,7 +14,7 @@ func RemoveMetrics(ctx context.Context, userCtx facade.UserContext, request dto4
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4spaceus.RunSpaceWorker(ctx, userCtx, request.SpaceID,
+	err = dal4spaceus.RunSpaceWorkerWithUserContext(ctx, userCtx, request.SpaceID,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.SpaceWorkerParams) (err error) {
 			changed := false
 			team := params.Space

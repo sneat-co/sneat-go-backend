@@ -31,7 +31,7 @@ type DTSession struct {
 //	cookie_USER_ID = "UserID"
 //)
 //
-//func (s *DTSession) GetUserID(w http.ResponseWriter, r http.Request) int64 {
+//func (s *DTSession) UserID(w http.ResponseWriter, r http.Request) int64 {
 //	if uid, ok := s.Values[session_PARAM_USER_ID]; ok {
 //		if cookie, err := r.Cookie(cookie_USER_ID); err == nil {
 //			if len(cookie.Value) > 0 {

@@ -33,7 +33,7 @@ func VoteItem(ctx context.Context, userCtx facade.UserContext, request VoteItemR
 		return err
 	}
 	uid := userCtx.GetUserID()
-	err := runRetroWorker(ctx, uid, request.Request,
+	err := runRetroWorker(ctx, userCtx, request.Request,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params facade4meetingus.WorkerParams) error {
 			retrospective := params.Meeting.Record.Data().(*dbo4retrospectus.Retrospective)
 			nodesByID, err := retrospective.GetMapOfRetroItemsByID()
