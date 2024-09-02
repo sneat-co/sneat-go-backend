@@ -29,8 +29,8 @@ require (
 	github.com/bots-go-framework/bots-api-telegram v0.6.2
 	github.com/bots-go-framework/bots-fw v0.37.0
 	github.com/bots-go-framework/bots-fw-store v0.8.0
-	github.com/bots-go-framework/bots-fw-telegram v0.12.1
-	github.com/bots-go-framework/bots-fw-telegram-models v0.3.2
+	github.com/bots-go-framework/bots-fw-telegram v0.12.2
+	github.com/bots-go-framework/bots-fw-telegram-models v0.3.3
 	github.com/bots-go-framework/bots-fw-telegram-webapp v0.0.1
 	github.com/bots-go-framework/bots-host-gae v0.5.14
 	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85
@@ -49,10 +49,10 @@ require (
 	github.com/sendgrid/sendgrid-go v3.16.0+incompatible
 	github.com/shiyanhui/hero v0.0.2
 	github.com/sneat-co/debtstracker-translations v0.0.27
-	github.com/sneat-co/sneat-go-core v0.32.3
+	github.com/sneat-co/sneat-go-core v0.32.4
 	github.com/sneat-co/sneat-go-firebase v0.5.7
 	github.com/stretchr/testify v1.9.0
-	github.com/strongo/app-host-gae v0.1.32
+	github.com/strongo/app-host-gae v0.1.33
 	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.0.1
 	github.com/strongo/facebook v1.8.1
