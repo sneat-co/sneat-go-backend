@@ -38,7 +38,7 @@ func InitUserRecord(ctx context.Context, userCtx facade.UserContext, request dto
 		}
 
 		if !user.Record.Exists() {
-			if _, _, err = facade4spaceus.CreateDefaultUserSpacesTx(ctx, tx, params); err != nil {
+			if _, _, err = facade4spaceus.CreateDefaultUserSpacesTx(ctx, tx, params.User.Data.CreatedAt, params); err != nil {
 				return fmt.Errorf("failed to create default user spaces: %w", err)
 			}
 		}
@@ -48,7 +48,7 @@ func InitUserRecord(ctx context.Context, userCtx facade.UserContext, request dto
 		return
 	})
 	if err != nil {
-		user.Data = nil
+		//user.Data = nil
 		return user, fmt.Errorf("failed to init user record and to create default user spaces: %w", err)
 	}
 

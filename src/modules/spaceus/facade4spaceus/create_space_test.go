@@ -73,7 +73,7 @@ func TestCreateSpace(t *testing.T) { // TODO: Implement unit tests
 
 	t.Run("error on bad request", func(t *testing.T) {
 		setupMockDb()
-		space, contactusSpace, err := CreateSpace(ctx, user, dto4spaceus.CreateSpaceRequest{})
+		space, contactusSpace, _, err := CreateSpace(ctx, user, dto4spaceus.CreateSpaceRequest{})
 		assert.Error(t, err)
 		assert.Equal(t, "", space.ID)
 		assert.Equal(t, "", contactusSpace.ID)
@@ -82,7 +82,7 @@ func TestCreateSpace(t *testing.T) { // TODO: Implement unit tests
 	t.Run("user's 1st team", func(t *testing.T) {
 		setupMockDb()
 
-		space, contactusSpace, err := CreateSpace(ctx, user, dto4spaceus.CreateSpaceRequest{Type: core4spaceus.SpaceTypeFamily})
+		space, contactusSpace, _, err := CreateSpace(ctx, user, dto4spaceus.CreateSpaceRequest{Type: core4spaceus.SpaceTypeFamily})
 		assert.Nil(t, err)
 
 		assert.NotEqual(t, "", space.ID)

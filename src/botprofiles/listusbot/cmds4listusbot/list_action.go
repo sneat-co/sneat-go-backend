@@ -59,7 +59,7 @@ func listAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) 
 		if spaceID == "" {
 			if spaceType == core4spaceus.SpaceTypeFamily {
 				var space dbo4spaceus.SpaceEntry
-				if space, _, err = facade4spaceus.CreateSpace(ctx, userCtx, dto4spaceus.CreateSpaceRequest{Type: spaceType}); err != nil {
+				if space, _, _, err = facade4spaceus.CreateSpace(ctx, userCtx, dto4spaceus.CreateSpaceRequest{Type: spaceType}); err != nil {
 					err = fmt.Errorf("failed to create missing family space: %w", err)
 					return
 				}

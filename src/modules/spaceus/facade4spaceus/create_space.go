@@ -31,24 +31,28 @@ type CreateSpaceResult struct {
 func CreateDefaultUserSpacesTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
+	timestamp time.Time,
 	userWorkerParams *dal4userus.UserWorkerParams,
 ) (
 	spaces []dbo4spaceus.SpaceEntry,
 	contactusSpaces []dal4contactus.ContactusSpaceEntry,
 	err error,
 ) {
-	now := time.Now()
 	var recordsToInsert []dal.Record
-	if spaceID, _ := userWorkerParams.User.Data.GetFirstSpaceBriefBySpaceType(core4spaceus.SpaceTypeFamily); spaceID == "" {
-		var space dbo4spaceus.SpaceEntry
-		var contactusSpace dal4contactus.ContactusSpaceEntry
-		spaceRequest := dto4spaceus.CreateSpaceRequest{Type: core4spaceus.SpaceTypeFamily}
-		if space, contactusSpace, err = CreateSpaceTxWorker(ctx, tx, now, spaceRequest, userWorkerParams); err != nil {
-			return
+
+	for _, spaceType := range []core4spaceus.SpaceType{core4spaceus.SpaceTypeFamily, core4spaceus.SpaceTypePrivate} {
+		if spaceID, _ := userWorkerParams.User.Data.GetFirstSpaceBriefBySpaceType(spaceType); spaceID == "" {
+			var space dbo4spaceus.SpaceEntry
+			var contactusSpace dal4contactus.ContactusSpaceEntry
+			var member dal4contactus.ContactEntry
+			spaceRequest := dto4spaceus.CreateSpaceRequest{Type: spaceType}
+			if space, contactusSpace, member, err = CreateSpaceTxWorker(ctx, tx, timestamp, spaceRequest, userWorkerParams); err != nil {
+				return
+			}
+			spaces = append(spaces, space)
+			contactusSpaces = append(contactusSpaces, contactusSpace)
+			recordsToInsert = append(recordsToInsert, space.Record, contactusSpace.Record, member.Record)
 		}
-		spaces = append(spaces, space)
-		contactusSpaces = append(contactusSpaces, contactusSpace)
-		recordsToInsert = append(recordsToInsert, space.Record, contactusSpace.Record)
 	}
 
 	if err = tx.InsertMulti(ctx, recordsToInsert); err != nil {
@@ -59,10 +63,28 @@ func CreateDefaultUserSpacesTx(
 }
 
 // CreateSpace creates SpaceIDs record
-func CreateSpace(ctx context.Context, userCtx facade.UserContext, request dto4spaceus.CreateSpaceRequest) (space dbo4spaceus.SpaceEntry, contactusSpace dal4contactus.ContactusSpaceEntry, err error) {
-	err = dal4userus.RunUserWorker(ctx, userCtx, true, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
-		space, contactusSpace, err = CreateSpaceTxWorker(ctx, tx, time.Now(), request, params)
-		return err
+func CreateSpace(
+	ctx context.Context,
+	userCtx facade.UserContext,
+	request dto4spaceus.CreateSpaceRequest,
+) (
+	space dbo4spaceus.SpaceEntry,
+	contactusSpace dal4contactus.ContactusSpaceEntry,
+	member dal4contactus.ContactEntry,
+	err error,
+) {
+	if err = request.Validate(); err != nil {
+		return
+	}
+	err = dal4userus.RunUserWorker(ctx, userCtx, true, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) (err error) {
+		if space, contactusSpace, member, err = CreateSpaceTxWorker(ctx, tx, time.Now(), request, params); err != nil {
+			return
+		}
+		recordsToInsert := []dal.Record{space.Record, contactusSpace.Record, member.Record}
+		if err = tx.InsertMulti(ctx, recordsToInsert); err != nil {
+			return
+		}
+		return
 	})
 	return
 }
@@ -76,6 +98,7 @@ func CreateSpaceTxWorker(
 ) (
 	space dbo4spaceus.SpaceEntry,
 	contactusSpace dal4contactus.ContactusSpaceEntry,
+	member dal4contactus.ContactEntry,
 	err error,
 ) {
 	if request.Title == "" {
@@ -105,9 +128,9 @@ func CreateSpaceTxWorker(
 		roles = append(roles, const4contactus.SpaceMemberRoleAdult)
 	}
 
-	if request.Type == "family" && request.Title == "" {
-		request.Title = "Family"
-	}
+	//if request.Type == "family" && request.Title == "" {
+	//	request.Title = "Family"
+	//}
 	space.Data = &dbo4spaceus.SpaceDbo{
 		SpaceBrief: dbo4spaceus.SpaceBrief{
 			Type:   request.Type,
@@ -162,15 +185,15 @@ func CreateSpaceTxWorker(
 	}
 	spaceID, err = getUniqueSpaceID(ctx, tx, title)
 	if err != nil {
-		err = fmt.Errorf("failed to get an unique ContactID for a new spaceDbo: %w", err)
+		err = fmt.Errorf("failed to get an unique spaceID for a new spaceDbo: %w", err)
 		return
 	}
 
 	space = dbo4spaceus.NewSpaceEntryWithDbo(spaceID, space.Data)
-	if err = tx.Insert(ctx, space.Record); err != nil {
-		err = fmt.Errorf("failed to insert a new spaceDbo record: %w", err)
-		return
-	}
+	//if err = tx.Insert(ctx, space.Record); err != nil {
+	//	err = fmt.Errorf("failed to insert a new spaceDbo record: %w", err)
+	//	return
+	//}
 
 	contactusSpace = dal4contactus.NewContactusSpaceEntry(spaceID)
 
@@ -192,10 +215,10 @@ func CreateSpaceTxWorker(
 	//}
 	contactusSpace.Data.AddContact(userSpaceContactID, &spaceMember)
 
-	if err = tx.Insert(ctx, contactusSpace.Record); err != nil {
-		err = fmt.Errorf("failed to insert a new spaceDbo contactus record: %w", err)
-		return
-	}
+	//if err = tx.Insert(ctx, contactusSpace.Record); err != nil {
+	//	err = fmt.Errorf("failed to insert a new spaceDbo contactus record: %w", err)
+	//	return
+	//}
 
 	userSpaceBrief := dbo4userus.UserSpaceBrief{
 		SpaceBrief:    space.Data.SpaceBrief,
@@ -211,17 +234,18 @@ func CreateSpaceTxWorker(
 		err = fmt.Errorf("user record is not valid after adding new space info: %v", err)
 		return
 	}
-	if params.User.Record.Exists() {
-		// Will be updated by RunUserWorker
-	} else {
-		if err = tx.Insert(ctx, params.User.Record); err != nil {
-			err = fmt.Errorf("failed to insert new user record: %w", err)
-			return
-		}
-	}
+	params.User.Record.MarkAsChanged()
+	//if params.User.Record.Exists() {
+	//	// Will be updated by RunUserWorker
+	//} else {
+	//	if err = tx.Insert(ctx, params.User.Record); err != nil {
+	//		err = fmt.Errorf("failed to insert new user record: %w", err)
+	//		return
+	//	}
+	//}
 
 	spaceMember.Roles = roles
-	if _, err = CreateMemberRecordFromBrief(ctx, tx, spaceID, userSpaceContactID, spaceMember, createdAt, params.User.ID); err != nil {
+	if member, err = CreateMemberEntryFromBrief(spaceID, userSpaceContactID, spaceMember, createdAt, params.User.ID); err != nil {
 		err = fmt.Errorf("failed to create member's record: %w", err)
 		return
 	}

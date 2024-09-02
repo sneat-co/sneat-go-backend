@@ -1,9 +1,7 @@
 package facade4spaceus
 
 import (
-	"context"
 	"fmt"
-	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
@@ -12,10 +10,8 @@ import (
 	"time"
 )
 
-// CreateMemberRecordFromBrief creates a member record from member's brief
-func CreateMemberRecordFromBrief(
-	ctx context.Context,
-	tx dal.ReadwriteTransaction,
+// CreateMemberEntryFromBrief creates a member record from member's brief
+func CreateMemberEntryFromBrief(
 	spaceID string,
 	contactID string,
 	memberBrief briefs4contactus.ContactBrief,
@@ -41,8 +37,8 @@ func CreateMemberRecordFromBrief(
 	if err = member.Data.Validate(); err != nil {
 		return member, fmt.Errorf("failed to validate member data: %w", err)
 	}
-	if err := tx.Insert(ctx, member.Record); err != nil {
-		return member, fmt.Errorf("failed to inser member record into DB: %w", err)
-	}
+	//if err = tx.Insert(ctx, member.Record); err != nil {
+	//	return member, fmt.Errorf("failed to inser member record into DB: %w", err)
+	//}
 	return member, nil
 }

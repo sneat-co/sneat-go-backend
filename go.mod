@@ -20,6 +20,9 @@ go 1.23.0
 //replace github.com/bots-go-framework/dalgo4botsfw => ../../bots-go-framework/dalgo4botsfw
 
 //replace github.com/dal-go/dalgo => ../../dal-go/dalgo
+
+ replace github.com/dal-go/dalgo2firestore => ../../dal-go/dalgo2firestore
+
 //replace github.com/strongo/app => ../../strongo/app
 //replace github.com/strongo/i18n => ../../strongo/i18n
 //replace github.com/strongo/strongoapp => ../../strongo/strongoapp

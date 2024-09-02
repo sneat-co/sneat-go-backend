@@ -60,8 +60,8 @@ func Test_InitUserRecord(t *testing.T) {
 			db.EXPECT().RunReadwriteTransaction(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(func(ctx context.Context, f dal.RWTxWorker, options ...dal.TransactionOption) error {
 				mockCtrl := gomock.NewController(t)
 				tx := mocks4dal.NewMockReadwriteTransaction(mockCtrl)
-				tx.EXPECT().Get(ctx, gomock.Any()).Return(dal.ErrRecordNotFound).Times(2) // TODO: Assert gets
-				tx.EXPECT().Insert(ctx, gomock.Any()).Return(nil).AnyTimes()              // TODO: Assert inserts
+				tx.EXPECT().Get(ctx, gomock.Any()).Return(dal.ErrRecordNotFound).AnyTimes() // TODO: Assert gets
+				tx.EXPECT().Insert(ctx, gomock.Any()).Return(nil).AnyTimes()                // TODO: Assert inserts
 				return f(ctx, tx)
 			})
 
