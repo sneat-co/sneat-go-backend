@@ -55,7 +55,7 @@ func listAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) 
 		if user, err = dal4userus.GetUserByID(ctx, db, userID); err != nil {
 			return
 		}
-		spaceID, _ = user.Data.GetSpaceBriefByType(spaceRef.SpaceType())
+		spaceID, _ = user.Data.GetFirstSpaceBriefBySpaceType(spaceRef.SpaceType())
 		if spaceID == "" {
 			if spaceType == core4spaceus.SpaceTypeFamily {
 				var space dbo4spaceus.SpaceEntry

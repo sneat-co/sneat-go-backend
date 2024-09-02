@@ -89,7 +89,7 @@ func watchAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error)
 	spaceID := listusChatData.SpaceID
 
 	if spaceID == "" {
-		familySpaceID, familySpaceBrief := user.Data.GetSpaceBriefByType(core4spaceus.SpaceTypeFamily)
+		familySpaceID, familySpaceBrief := user.Data.GetFirstSpaceBriefBySpaceType(core4spaceus.SpaceTypeFamily)
 		if familySpaceBrief == nil {
 			m = whc.NewMessage("You are not a member of any family team")
 			return m, nil

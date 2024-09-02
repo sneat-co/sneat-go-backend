@@ -2,6 +2,7 @@ package dal4spaceus
 
 import (
 	"context"
+	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/mocks4dalgo/mocks4dal"
 	"github.com/golang/mock/gomock"
@@ -30,7 +31,7 @@ func TestRunModuleSpaceWorker(t *testing.T) {
 	request := dto4spaceus.SpaceRequest{SpaceID: "space1"}
 	const moduleID = "test_module"
 	assertTxWorker := func(ctx context.Context, tx dal.ReadwriteTransaction, params *ModuleSpaceWorkerParams[*fooModuleSpaceData]) (err error) {
-		if err := params.GetRecords(ctx, tx); err != nil {
+		if err = params.GetRecords(ctx, tx); err != nil {
 			return err
 		}
 		assert.NotNil(t, params)
@@ -47,18 +48,39 @@ func TestRunModuleSpaceWorker(t *testing.T) {
 		//db2.RunReadwriteTransaction()
 		db.EXPECT().RunReadwriteTransaction(ctx, gomock.Any()).DoAndReturn(func(ctx context.Context, worker dal.RWTxWorker, options ...dal.TransactionOption) error {
 			tx := mocks4dal.NewMockReadwriteTransaction(ctrl)
+			tx.EXPECT().Get(ctx, gomock.Any()).DoAndReturn(func(ctx context.Context, record dal.Record) error {
+				switch key := record.Key(); key.Collection() {
+				case "spaces":
+					record.SetError(nil)
+					spaceDbo := record.Data().(*dbo4spaceus.SpaceDbo)
+					spaceDbo.CreatedAt = time.Now()
+					spaceDbo.CreatedBy = "test"
+					spaceDbo.IncreaseVersion(spaceDbo.CreatedAt, spaceDbo.CreatedBy)
+					spaceDbo.Type = core4spaceus.SpaceTypeFamily
+					spaceDbo.CountryID = "UK"
+					spaceDbo.Status = dbmodels.StatusActive
+					spaceDbo.UserIDs = []string{user.ID}
+				case "modules":
+					record.SetError(nil)
+				default:
+					err := fmt.Errorf("unexpected Get(key=%+v)", key)
+					record.SetError(err)
+					return err
+				}
+				return nil
+			})
 			tx.EXPECT().GetMulti(ctx, gomock.Any()).DoAndReturn(func(ctx context.Context, records []dal.Record) error {
 				for _, record := range records {
-					record.SetError(nil)
-					if record.Key().Collection() == "spaces" {
-						teamData := record.Data().(*dbo4spaceus.SpaceDbo)
-						teamData.CreatedAt = time.Now()
-						teamData.CreatedBy = "test"
-						teamData.IncreaseVersion(teamData.CreatedAt, teamData.CreatedBy)
-						teamData.Type = core4spaceus.SpaceTypeFamily
-						teamData.CountryID = "UK"
-						teamData.Status = dbmodels.StatusActive
-						teamData.UserIDs = []string{user.ID}
+					switch key := record.Key(); key.Collection() {
+					case "spaces":
+						if err := record.Error(); err == nil {
+							t.Error(fmt.Errorf("duplicate call to get space record"))
+						}
+					case "modules":
+						record.SetError(nil)
+					default:
+						err := fmt.Errorf("unexpected GetMulti(key=%+v)", key)
+						record.SetError(err)
 					}
 				}
 				return nil

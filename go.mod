@@ -35,8 +35,8 @@ require (
 	github.com/bots-go-framework/bots-host-gae v0.5.14
 	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85
 	github.com/crediterra/money v0.3.0
-	github.com/dal-go/dalgo v0.12.2
-	github.com/dal-go/mocks4dalgo v0.1.20
+	github.com/dal-go/dalgo v0.13.0
+	github.com/dal-go/mocks4dalgo v0.1.21
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/golang/mock v1.6.0
 	github.com/gorilla/sessions v1.4.0
@@ -72,7 +72,7 @@ require (
 
 require (
 	cloud.google.com/go v0.115.1 // indirect
-	cloud.google.com/go/auth v0.9.1 // indirect
+	cloud.google.com/go/auth v0.9.2 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.4 // indirect
 	cloud.google.com/go/compute/metadata v0.5.0 // indirect
 	cloud.google.com/go/firestore v1.16.0 // indirect
@@ -83,7 +83,7 @@ require (
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
 	github.com/alexsergivan/transliterator v1.0.1 // indirect
 	github.com/bots-go-framework/bots-go-core v0.0.2 // indirect
-	github.com/dal-go/dalgo2firestore v0.1.74 // indirect
+	github.com/dal-go/dalgo2firestore v0.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/fgprof v0.9.5 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect

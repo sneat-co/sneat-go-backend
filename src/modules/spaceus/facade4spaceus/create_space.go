@@ -28,28 +28,58 @@ type CreateSpaceResult struct {
 	User  dbo4userus.UserEntry   `json:"-"`
 }
 
-func CreateFamilySpace(
-	ctx context.Context, userCtx facade.UserContext,
+func CreateDefaultUserSpacesTx(
+	ctx context.Context,
+	tx dal.ReadwriteTransaction,
+	userWorkerParams *dal4userus.UserWorkerParams,
 ) (
-	space dbo4spaceus.SpaceEntry, contactusSpace dal4contactus.ContactusSpaceEntry, err error,
+	spaces []dbo4spaceus.SpaceEntry,
+	contactusSpaces []dal4contactus.ContactusSpaceEntry,
+	err error,
 ) {
-	request := dto4spaceus.CreateSpaceRequest{Type: core4spaceus.SpaceTypeFamily}
-	return CreateSpace(ctx, userCtx, request)
+	now := time.Now()
+	var recordsToInsert []dal.Record
+	if spaceID, _ := userWorkerParams.User.Data.GetFirstSpaceBriefBySpaceType(core4spaceus.SpaceTypeFamily); spaceID == "" {
+		var space dbo4spaceus.SpaceEntry
+		var contactusSpace dal4contactus.ContactusSpaceEntry
+		spaceRequest := dto4spaceus.CreateSpaceRequest{Type: core4spaceus.SpaceTypeFamily}
+		if space, contactusSpace, err = CreateSpaceTxWorker(ctx, tx, now, spaceRequest, userWorkerParams); err != nil {
+			return
+		}
+		spaces = append(spaces, space)
+		contactusSpaces = append(contactusSpaces, contactusSpace)
+		recordsToInsert = append(recordsToInsert, space.Record, contactusSpace.Record)
+	}
+
+	if err = tx.InsertMulti(ctx, recordsToInsert); err != nil {
+		return
+	}
+
+	return
 }
 
 // CreateSpace creates SpaceIDs record
 func CreateSpace(ctx context.Context, userCtx facade.UserContext, request dto4spaceus.CreateSpaceRequest) (space dbo4spaceus.SpaceEntry, contactusSpace dal4contactus.ContactusSpaceEntry, err error) {
 	err = dal4userus.RunUserWorker(ctx, userCtx, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
-		space, contactusSpace, err = CreateSpaceTxWorker(ctx, tx, request, params)
+		space, contactusSpace, err = CreateSpaceTxWorker(ctx, tx, time.Now(), request, params)
 		return err
 	})
 	return
 }
 
-func CreateSpaceTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, request dto4spaceus.CreateSpaceRequest, params *dal4userus.UserWorkerParams) (space dbo4spaceus.SpaceEntry, contactusSpace dal4contactus.ContactusSpaceEntry, err error) {
-	now := time.Now()
+func CreateSpaceTxWorker(
+	ctx context.Context,
+	tx dal.ReadwriteTransaction,
+	createdAt time.Time,
+	request dto4spaceus.CreateSpaceRequest,
+	params *dal4userus.UserWorkerParams,
+) (
+	space dbo4spaceus.SpaceEntry,
+	contactusSpace dal4contactus.ContactusSpaceEntry,
+	err error,
+) {
 	if request.Title == "" {
-		space.ID, _ = params.User.Data.GetSpaceBriefByType(request.Type)
+		space.ID, _ = params.User.Data.GetFirstSpaceBriefBySpaceType(request.Type)
 		if space.ID != "" {
 			space = dbo4spaceus.NewSpaceEntry(space.ID)
 			contactusSpace = dal4contactus.NewContactusSpaceEntry(space.ID)
@@ -89,7 +119,7 @@ func CreateSpaceTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, reque
 		},
 		CreatedFields: with.CreatedFields{
 			CreatedAtField: with.CreatedAtField{
-				CreatedAt: now,
+				CreatedAt: createdAt,
 			},
 			CreatedByField: with.CreatedByField{
 				CreatedBy: params.User.ID,
@@ -101,7 +131,7 @@ func CreateSpaceTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, reque
 		//	"members": 1,
 		//},
 	}
-	space.Data.IncreaseVersion(now, params.User.ID)
+	space.Data.IncreaseVersion(createdAt, params.User.ID)
 	space.Data.CountryID = params.User.Data.CountryID
 
 	if request.Type == "work" {
@@ -191,7 +221,7 @@ func CreateSpaceTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, reque
 	}
 
 	spaceMember.Roles = roles
-	if _, err = CreateMemberRecordFromBrief(ctx, tx, spaceID, userSpaceContactID, spaceMember, now, params.User.ID); err != nil {
+	if _, err = CreateMemberRecordFromBrief(ctx, tx, spaceID, userSpaceContactID, spaceMember, createdAt, params.User.ID); err != nil {
 		err = fmt.Errorf("failed to create member's record: %w", err)
 		return
 	}

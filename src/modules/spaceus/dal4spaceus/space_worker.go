@@ -38,10 +38,12 @@ func (v SpaceWorkerParams) UserID() string {
 }
 
 // GetRecords loads records from DB. If userID is passed, it will check for user permissions
-func (v SpaceWorkerParams) GetRecords(ctx context.Context, tx dal.ReadSession, records ...dal.Record) error {
-	records = append(records, v.Space.Record)
-	err := tx.GetMulti(ctx, records)
-	if err != nil {
+func (v SpaceWorkerParams) GetRecords(ctx context.Context, tx dal.ReadSession, records ...dal.Record) (err error) {
+
+	// We do not add space record as we load it separately in RunSpaceWorkerTx()
+	//records = append(records, v.Space.Record)
+
+	if err = tx.GetMulti(ctx, records); err != nil {
 		return err
 	}
 	if !v.Space.Record.Exists() {
@@ -49,7 +51,7 @@ func (v SpaceWorkerParams) GetRecords(ctx context.Context, tx dal.ReadSession, r
 	}
 	if userID := v.UserID(); userID != "" && v.Space.Record.Exists() {
 		if !slices.Contains(v.Space.Data.UserIDs, userID) {
-			return fmt.Errorf("%w: space record has no current user ContactID in UserIDs field: %s", facade.ErrUnauthorized, userID)
+			return fmt.Errorf("%w: space record has no current userID in UserIDs field: %s", facade.ErrUnauthorized, userID)
 		}
 	}
 	return nil

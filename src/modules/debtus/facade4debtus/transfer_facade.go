@@ -11,7 +11,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/facade4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -105,23 +104,15 @@ func (transferFacade TransfersFacade) CreateTransfer(ctx context.Context, input 
 	//	}
 	//}
 
-	spaceID := input.CreatorUser.Data.GetFamilySpaceID()
-	var creatorContactusSpace dal4contactus.ContactusSpaceEntry
-	if spaceID == "" {
-		if _, creatorContactusSpace, err = facade4spaceus.CreateFamilySpace(ctx, facade.NewUserContext(input.CreatorUser.ID)); err != nil {
+	creatorContactusSpace := dal4contactus.NewContactusSpaceEntry(input.Request.SpaceID)
+	if err = db.Get(ctx, creatorContactusSpace.Record); err != nil {
+		if !dal.IsNotFound(err) {
+			err = fmt.Errorf("failed to get creatorContactusSpace: %w", err)
 			return
-		}
-	} else {
-		creatorContactusSpace = dal4contactus.NewContactusSpaceEntry(spaceID)
-		if err = db.Get(ctx, creatorContactusSpace.Record); err != nil {
-			if !dal.IsNotFound(err) {
-				err = fmt.Errorf("failed to get creatorContactusSpace: %w", err)
-				return
-			}
 		}
 	}
 
-	creatorDebtusSpace := models4debtus.NewDebtusSpaceEntry(spaceID)
+	creatorDebtusSpace := models4debtus.NewDebtusSpaceEntry(input.Request.SpaceID)
 	if err = db.Get(ctx, creatorDebtusSpace.Record); err != nil && !dal.IsNotFound(err) {
 		err = fmt.Errorf("faield to get debtusbot space entry: %w", err)
 		return
@@ -166,12 +157,12 @@ func (transferFacade TransfersFacade) CreateTransfer(ctx context.Context, input 
 		}
 
 		// If Contact not found in user's JSON try to recover from DB record
-		if creatorContact, err = dal4contactus.GetContactByID(ctx, nil, spaceID, creatorContactID); err != nil {
+		if creatorContact, err = dal4contactus.GetContactByID(ctx, nil, input.Request.SpaceID, creatorContactID); err != nil {
 			return
 		}
 
 		// If Contact not found in user's JSON try to recover from DB record
-		if creatorDebtusContact, err = GetDebtusSpaceContactByID(ctx, nil, spaceID, creatorContactID); err != nil {
+		if creatorDebtusContact, err = GetDebtusSpaceContactByID(ctx, nil, input.Request.SpaceID, creatorContactID); err != nil {
 			return
 		}
 

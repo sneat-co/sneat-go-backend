@@ -102,19 +102,22 @@ func (v *UserDbo) SetSpaceBrief(spaceID string, brief *UserSpaceBrief) (updates 
 	return
 }
 
-// GetSpaceBriefByType returns the first team brief that matches a specific type
-func (v *UserDbo) GetSpaceBriefByType(t core4spaceus.SpaceType) (spaceID string, teamBrief *UserSpaceBrief) {
-	for id, brief := range v.Spaces {
-		if brief.Type == t {
-			return id, brief
-		}
-	}
-	return "", nil
-}
-
 func (v *UserDbo) GetFamilySpaceID() string {
 	id, _ := v.GetFirstSpaceBriefBySpaceType(core4spaceus.SpaceTypeFamily)
 	return id
+}
+
+// GetSpaceBriefsByType returns the all spaces matching a specific type
+func (v *UserDbo) GetSpaceBriefsByType(t core4spaceus.SpaceType) (spaces map[string]*UserSpaceBrief) {
+	for id, brief := range v.Spaces {
+		if brief.Type == t {
+			if spaces == nil {
+				spaces = make(map[string]*UserSpaceBrief)
+			}
+			spaces[id] = brief
+		}
+	}
+	return
 }
 
 func (v *UserDbo) GetFirstSpaceBriefBySpaceType(spaceType core4spaceus.SpaceType) (spaceID string, spaceBrief *UserSpaceBrief) {
