@@ -62,7 +62,7 @@ func txSetUserCountry(ctx context.Context, tx dal.ReadwriteTransaction, userCtx 
 				if err = params.GetRecords(ctx, tx, params.Space.Record); err != nil {
 					return
 				}
-				if params.Space.Data.CountryID == "" || params.Space.Data.CountryID == with.UnknownCountryID {
+				if IsUnknownCountryID(params.Space.Data.CountryID) {
 					params.Space.Data.CountryID = request.CountryID
 					params.SpaceUpdates = append(params.SpaceUpdates, dal.Update{Field: "countryID", Value: request.CountryID})
 					params.Space.Record.MarkAsChanged()
@@ -71,7 +71,7 @@ func txSetUserCountry(ctx context.Context, tx dal.ReadwriteTransaction, userCtx 
 				if userContactBrief != nil && IsUnknownCountryID(userContactBrief.CountryID) {
 					userContactBrief.CountryID = request.CountryID
 					params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, dal.Update{Field: "contacts." + userContactID + ".countryID", Value: request.CountryID})
-					params.Space.Record.MarkAsChanged()
+					params.SpaceModuleEntry.Record.MarkAsChanged()
 					userContact := dal4contactus.NewContactEntry(spaceID, userContactID)
 					if err = tx.Get(ctx, userContact.Record); err != nil {
 						return
@@ -79,9 +79,6 @@ func txSetUserCountry(ctx context.Context, tx dal.ReadwriteTransaction, userCtx 
 					if IsUnknownCountryID(userContact.Data.CountryID) {
 						userContact.Data.CountryID = request.CountryID
 						recordsToUpdate = append(recordsToUpdate, RecordToUpdate{Key: userContact.Key, Updates: []dal.Update{{Field: "countryID", Value: request.CountryID}}})
-						//if err = tx.Update(ctx, userContact.Key, []dal.Update{{Field: "countryID", Value: request.CountryID}}); err != nil {
-						//	return
-						//}
 					}
 				}
 				if params.Space.Record.HasChanged() && len(params.SpaceUpdates) > 0 {
