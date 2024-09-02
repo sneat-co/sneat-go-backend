@@ -34,8 +34,12 @@ github.com/bots-go-framework/bots-fw-telegram v0.12.0 h1:C5XyPmsc4MO98rDOaxzviol
 github.com/bots-go-framework/bots-fw-telegram v0.12.0/go.mod h1:NxyQLHlP0ERrOatF01nfallM02UP8NHaDsnDVk+zeik=
 github.com/bots-go-framework/bots-fw-telegram v0.12.1 h1:ww64P+I4ZdReAhaOdRUvFK007znSPI7ZwImJA/GbibE=
 github.com/bots-go-framework/bots-fw-telegram v0.12.1/go.mod h1:b8AC5Xu/KLN5qvqxfWng8d+TqjqMQOkIX4QFHwyKhl8=
+github.com/bots-go-framework/bots-fw-telegram v0.12.2 h1:VHv3Vd1l6leYIByWQTsxznl1wzicGp/HHjQF4JN6OL0=
+github.com/bots-go-framework/bots-fw-telegram v0.12.2/go.mod h1:rlx57znXo+BXcQsr5nF25Gw4QcqG15qaIZ6QceXge7Y=
 github.com/bots-go-framework/bots-fw-telegram-models v0.3.2 h1:U40cQpShvgHaAfs1745d7+WJC04fojyw+uAHfNNoUpo=
 github.com/bots-go-framework/bots-fw-telegram-models v0.3.2/go.mod h1:1zeVRRLFO3pV2CC6rftsn3y9eB7T4/pxK91SBeh+kYU=
+github.com/bots-go-framework/bots-fw-telegram-models v0.3.3 h1:qKUMaPDFUmDS+dfibUu8c8rljwR/YwB36HuderfBa4U=
+github.com/bots-go-framework/bots-fw-telegram-models v0.3.3/go.mod h1:1b7ft55pfOBHLTcr7S1irq9IFUlCpzNmSAXC5Y3pqhk=
 github.com/bots-go-framework/bots-fw-telegram-webapp v0.0.1 h1:Fe2oGQLDNZiXNoziElYbbiWz6NVWgMydn1UotX8XW6Y=
 github.com/bots-go-framework/bots-fw-telegram-webapp v0.0.1/go.mod h1:UsqEgta1prGGFZ4r06j/zGwV9S5EI7x3GQj+wV4dDYY=
 github.com/bots-go-framework/bots-go-core v0.0.2 h1:3F/czNOLZCO5rco1Zr9rATLvJrze5PZpa2dMRv4ON+M=
@@ -186,6 +190,8 @@ github.com/sneat-co/debtstracker-translations v0.0.27 h1:ljMq41Uh7xTD8QymKHt75uy
 github.com/sneat-co/debtstracker-translations v0.0.27/go.mod h1:akkIIa+Vvg9cUmvRlSqeS0jOzBu47UslJRQpB1UTkGU=
 github.com/sneat-co/sneat-go-core v0.32.3 h1:c9+s2CRXvnAEyEdeNLiwsRjR+Za5/bTx+Ta+ZeNi9tQ=
 github.com/sneat-co/sneat-go-core v0.32.3/go.mod h1:8P7zpkJs2lsn2m3Rkb28cPVLnWfvZM9kpyuP424JxNw=
+github.com/sneat-co/sneat-go-core v0.32.4 h1:Omqxz6FaVE932qI9DdEJ9XHnlCWf3Ubx7cbpykX+MT0=
+github.com/sneat-co/sneat-go-core v0.32.4/go.mod h1:ZupEJFTLx6Ip7BWN55TXZ9t7vU3jW9p6AttGJGh4MrY=
 github.com/sneat-co/sneat-go-firebase v0.5.6 h1:Zv2t4afMRAsmwn+Q2Wd9KMyCQWUNNO/vXUKIaqKZLgQ=
 github.com/sneat-co/sneat-go-firebase v0.5.6/go.mod h1:WVG86Y+geLGae4kUCYuVyLF1g97KJQnBBwEEgu4y8dc=
 github.com/sneat-co/sneat-go-firebase v0.5.7 h1:HbS3WuZ1wg0AooC0YPsJ3DlEzAzucPnjlmWb+cw7P7Q=
@@ -202,6 +208,8 @@ github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsT
 github.com/stretchr/testify v1.9.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
 github.com/strongo/app-host-gae v0.1.32 h1:OOXl/OMubtZ3AbPl2f59/2FBsHuHLrPkhL9ah13Ct+s=
 github.com/strongo/app-host-gae v0.1.32/go.mod h1:TpaLp7iGL8xSGQip4m5IEpisVI3ihy4axI6QpcUqjZI=
+github.com/strongo/app-host-gae v0.1.33 h1:XiL2+eXv9NEqJnEuRZqkjNjbYIoDXzya/ZGoajKJKuc=
+github.com/strongo/app-host-gae v0.1.33/go.mod h1:5Kqq4AjPn3EUmwfVoyjG0tloPJ/QGuRwMAd/Dbtj4mM=
 github.com/strongo/decimal v0.1.1 h1:k7HY/0NmG6Ne5YPV7XybII+AT7O4AShl6HZpLiNZsb4=
 github.com/strongo/decimal v0.1.1/go.mod h1:uKFgetJbR2uT026stdbK54ELXTH9h0vZOPPOp7DAODk=
 github.com/strongo/delaying v0.0.1 h1:avN7p5oKcowaDeEbGJLB4QHgttK6y9OtGwFN0UkEDi8=
