@@ -51,6 +51,23 @@ func RunModuleSpaceWorkerTx[D SpaceModuleDbo](
 	return runModuleSpaceWorkerReadwriteTx(ctx, tx, params, worker)
 }
 
+func RunModuleSpaceWorkerNoUpdates[D SpaceModuleDbo](
+	ctx context.Context,
+	tx dal.ReadwriteTransaction,
+	userCtx facade.UserContext,
+	request dto4spaceus.SpaceRequest,
+	moduleID string,
+	data D,
+	worker func(ctx context.Context, tx dal.ReadwriteTransaction, spaceWorkerParams *ModuleSpaceWorkerParams[D]) (err error),
+) (err error) {
+	if worker == nil {
+		panic("worker is nil")
+	}
+	spaceWorkerParams := NewSpaceWorkerParams(userCtx, request.SpaceID)
+	params := NewSpaceModuleWorkerParams(moduleID, spaceWorkerParams, data)
+	return worker(ctx, tx, params)
+}
+
 func NewSpaceModuleWorkerParams[D SpaceModuleDbo](
 	moduleID string,
 	spaceWorkerParams *SpaceWorkerParams,

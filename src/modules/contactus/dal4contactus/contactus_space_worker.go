@@ -46,3 +46,13 @@ func RunContactusSpaceWorkerTx(
 ) error {
 	return dal4spaceus.RunModuleSpaceWorkerTx(ctx, tx, userCtx, request, const4contactus.ModuleID, new(models4contactus.ContactusSpaceDbo), worker)
 }
+
+func RunContactusSpaceWorkerNoUpdate(
+	ctx context.Context,
+	tx dal.ReadwriteTransaction,
+	userCtx facade.UserContext,
+	request dto4spaceus.SpaceRequest,
+	worker ContactusModuleWorker,
+) error {
+	return dal4spaceus.RunModuleSpaceWorkerNoUpdates(ctx, tx, userCtx, request, const4contactus.ModuleID, new(models4contactus.ContactusSpaceDbo), worker)
+}

@@ -59,6 +59,8 @@ var RunUserWorker = func(ctx context.Context, userCtx facade.UserContext, userRe
 					return fmt.Errorf("failed to insert user record: %w", err)
 				}
 			}
+		} else if len(params.UserUpdates) > 0 {
+			return fmt.Errorf("user record is not marked as changed but there are updates to apply")
 		}
 		return err
 	})
