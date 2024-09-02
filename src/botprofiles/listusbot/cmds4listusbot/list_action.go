@@ -39,14 +39,14 @@ func listAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) 
 			text = strings.TrimSpace(text[len(firstWord):])
 		}
 	}
-	userCtx := facade.NewUserContext(whc.AppUserID())
+	userID := whc.AppUserID()
+	userCtx := facade.NewUserContext(userID)
 
 	spaceRef := sneatAppChatData.GetSpaceRef()
 
 	spaceID, spaceType := spaceRef.SpaceID(), spaceRef.SpaceType()
 
 	if spaceID == "" {
-		userID := userCtx.GetUserID()
 		var user dbo4userus.UserEntry
 		var db dal.DB
 		if db, err = facade.GetDatabase(ctx); err != nil {

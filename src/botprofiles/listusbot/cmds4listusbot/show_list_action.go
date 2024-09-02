@@ -68,7 +68,7 @@ func showListAction(
 			title = fmt.Sprintf("%s: %s", listKey.ListType(), listKey.ListSubID())
 		}
 	}
-	title = fmt.Sprintf("%s <b>%s</b>", emoji, title)
+	title = fmt.Sprintf("%s <b>%s</b> (id=%s)", emoji, title, spaceID)
 
 	m = whc.NewMessage(title)
 	m.Format = botsfw.MessageFormatHTML

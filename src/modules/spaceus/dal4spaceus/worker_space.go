@@ -2,6 +2,7 @@ package dal4spaceus
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
@@ -44,9 +45,12 @@ func (v SpaceWorkerParams) GetRecords(ctx context.Context, tx dal.ReadSession, r
 	if err != nil {
 		return err
 	}
-	if v.UserID() != "" && v.Space.Record.Exists() {
-		if !slices.Contains(v.Space.Data.UserIDs, v.UserID()) {
-			return fmt.Errorf("%w: space record has no current user ContactID in UserIDs field: %s", facade.ErrUnauthorized, v.UserID())
+	if !v.Space.Record.Exists() {
+		return errors.New("space record does not exist")
+	}
+	if userID := v.UserID(); userID != "" && v.Space.Record.Exists() {
+		if !slices.Contains(v.Space.Data.UserIDs, userID) {
+			return fmt.Errorf("%w: space record has no current user ContactID in UserIDs field: %s", facade.ErrUnauthorized, userID)
 		}
 	}
 	return nil
