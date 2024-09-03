@@ -21,7 +21,7 @@ go 1.23.0
 
 //replace github.com/dal-go/dalgo => ../../dal-go/dalgo
 
- replace github.com/dal-go/dalgo2firestore => ../../dal-go/dalgo2firestore
+//replace github.com/dal-go/dalgo2firestore => ../../dal-go/dalgo2firestore
 
 //replace github.com/strongo/app => ../../strongo/app
 //replace github.com/strongo/i18n => ../../strongo/i18n
@@ -30,7 +30,7 @@ go 1.23.0
 require (
 	firebase.google.com/go/v4 v4.14.1
 	github.com/bots-go-framework/bots-api-telegram v0.6.2
-	github.com/bots-go-framework/bots-fw v0.37.0
+	github.com/bots-go-framework/bots-fw v0.37.1
 	github.com/bots-go-framework/bots-fw-store v0.8.0
 	github.com/bots-go-framework/bots-fw-telegram v0.12.2
 	github.com/bots-go-framework/bots-fw-telegram-models v0.3.3
@@ -52,7 +52,7 @@ require (
 	github.com/sendgrid/sendgrid-go v3.16.0+incompatible
 	github.com/shiyanhui/hero v0.0.2
 	github.com/sneat-co/debtstracker-translations v0.0.27
-	github.com/sneat-co/sneat-go-core v0.32.5
+	github.com/sneat-co/sneat-go-core v0.32.6
 	github.com/sneat-co/sneat-go-firebase v0.5.7
 	github.com/stretchr/testify v1.9.0
 	github.com/strongo/app-host-gae v0.1.33
@@ -86,7 +86,7 @@ require (
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
 	github.com/alexsergivan/transliterator v1.0.1 // indirect
 	github.com/bots-go-framework/bots-go-core v0.0.2 // indirect
-	github.com/dal-go/dalgo2firestore v0.2.0 // indirect
+	github.com/dal-go/dalgo2firestore v0.2.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/fgprof v0.9.5 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect

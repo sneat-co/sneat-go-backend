@@ -14,13 +14,9 @@ import (
 
 func GetEnvironment(r *http.Request) string {
 	switch r.Host {
-	case "debtus.app":
+	case "api.sneat.ws":
 		return "prod"
-	case "debtusbot-dev1.appspot.com":
-		return "dev"
-	case "local.debtus.app":
-		return strongoapp.LocalHostEnv
-	case "localhost":
+	case "localhost", "local-api.sneat.ws":
 		return strongoapp.LocalHostEnv
 	default:
 		panic("Unknown host: " + r.Host)

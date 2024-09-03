@@ -28,6 +28,8 @@ github.com/bots-go-framework/bots-api-telegram v0.6.2 h1:OltCuL8LgGAW8dpYK5EF7V6
 github.com/bots-go-framework/bots-api-telegram v0.6.2/go.mod h1:/OIGYdIYbHO4E9LryIbDJmGcMQTpvvTTJMoSnX8r6ls=
 github.com/bots-go-framework/bots-fw v0.37.0 h1:bd2h1gO3HMFvrRJ8M1LyhZ6ORQym9+oj2SpYyy4/wL0=
 github.com/bots-go-framework/bots-fw v0.37.0/go.mod h1:6a5002XWgbQkbaOgMMD5fBVTCmXkEf0sKSc3yZ4RxQg=
+github.com/bots-go-framework/bots-fw v0.37.1 h1:h9PK4/PffwaN15nb6vS0zUP45z4M9LZAVV/6zdvzSqs=
+github.com/bots-go-framework/bots-fw v0.37.1/go.mod h1:JDUu9oPjZrZnPMSMZZIxgSXuy4WGp4GREnYevDMW/oQ=
 github.com/bots-go-framework/bots-fw-store v0.8.0 h1:MLIFcM+ez6KZ5uA7y/jNu5i7JVCjRmcySIwRn400OTs=
 github.com/bots-go-framework/bots-fw-store v0.8.0/go.mod h1:T2yX1QodQ9A1nep/aIAL/czt9adqMyIBVTGOAdNVPAI=
 github.com/bots-go-framework/bots-fw-telegram v0.12.2 h1:VHv3Vd1l6leYIByWQTsxznl1wzicGp/HHjQF4JN6OL0=
@@ -61,6 +63,8 @@ github.com/dal-go/dalgo v0.13.0 h1:aCkNSW9VuTH2jXfPtFhbneII77ZM6MZtB/XY8Twe48k=
 github.com/dal-go/dalgo v0.13.0/go.mod h1:lY3vCOnl9bI8c82reF+kQNpKvSklgoFImGGmNgkFHls=
 github.com/dal-go/dalgo2firestore v0.2.0 h1:NtAOeBtJ6OFA5M2f6u1kzDf4/ji6fPiaW191tw3deIc=
 github.com/dal-go/dalgo2firestore v0.2.0/go.mod h1:A1kNXG3XPCqRadaZQkt/kZBZY8dh+ArrPs0TPqh6QbM=
+github.com/dal-go/dalgo2firestore v0.2.1 h1:6DJhp3KyOAz0+qIWZPTweQorOAB0Y18G4T73OVMyxT0=
+github.com/dal-go/dalgo2firestore v0.2.1/go.mod h1:A1kNXG3XPCqRadaZQkt/kZBZY8dh+ArrPs0TPqh6QbM=
 github.com/dal-go/mocks4dalgo v0.1.22 h1:mZw+gOTrtO8v2aRK+ScPet+wle+F3OmxHYsOdySLxGo=
 github.com/dal-go/mocks4dalgo v0.1.22/go.mod h1:1m7KKfAR9g1u5Hqk2xQ0EsPUt3a1DIPp9KOrTVHlpCo=
 github.com/davecgh/go-spew v0.0.0-20161028175848-04cdfd42973b/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -180,6 +184,8 @@ github.com/sneat-co/debtstracker-translations v0.0.27 h1:ljMq41Uh7xTD8QymKHt75uy
 github.com/sneat-co/debtstracker-translations v0.0.27/go.mod h1:akkIIa+Vvg9cUmvRlSqeS0jOzBu47UslJRQpB1UTkGU=
 github.com/sneat-co/sneat-go-core v0.32.5 h1:PDSsY/RwqNoei2PjGt82O41KZZWZ2sSZa4Tim+F5HLc=
 github.com/sneat-co/sneat-go-core v0.32.5/go.mod h1:ZupEJFTLx6Ip7BWN55TXZ9t7vU3jW9p6AttGJGh4MrY=
+github.com/sneat-co/sneat-go-core v0.32.6 h1:PO2Dd5aydenfvs3zfw58pPH790nEmdO8mlym1spdqh4=
+github.com/sneat-co/sneat-go-core v0.32.6/go.mod h1:ZupEJFTLx6Ip7BWN55TXZ9t7vU3jW9p6AttGJGh4MrY=
 github.com/sneat-co/sneat-go-firebase v0.5.7 h1:HbS3WuZ1wg0AooC0YPsJ3DlEzAzucPnjlmWb+cw7P7Q=
 github.com/sneat-co/sneat-go-firebase v0.5.7/go.mod h1:50uiFanVSBcLjS9d7PswNiv1Zs2OviA9vulpk2I4ZK8=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=

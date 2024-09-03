@@ -75,12 +75,17 @@ var noWrapper = func(handler http.Handler) http.Handler {
 	return handler
 }
 
+func isDevServer(r *http.Request) bool {
+	return appengine.IsDevAppServer() || r.Host == "localhost" || r.Host == "local-api.sneat.ws"
+}
+
 func wrapHTTPHandler(handler http.HandlerFunc, wrapHandler HandlerWrapper) http.HandlerFunc {
 	var wrappedHandlerFunc http.HandlerFunc = func(w http.ResponseWriter, r *http.Request) {
 		if _, isAllowedOrigin := allowedOrigin(r, w); !isAllowedOrigin { // Check origin, is this  unnecessary?
 			return
 		}
-		if appengine.IsDevAppServer() {
+		if isDevServer(r) {
+			logus.Debugf(r.Context(), "wrapHTTPHandler: HTTP %s %s @ %s", r.Method, r.URL, r.Host)
 			defer func(started time.Time) { // needs to be inside handler wrapped by wrapHandler to keep context with logger
 				c := r.Context()
 				url := r.URL.String()
