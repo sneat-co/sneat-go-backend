@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/coretodo"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -30,7 +31,7 @@ type SpaceWorkerParams struct {
 	//
 	Space         dbo4spaceus.SpaceEntry
 	SpaceUpdates  []dal.Update
-	RecordUpdates []RecordUpdates
+	RecordUpdates []coretodo.RecordUpdates
 }
 
 func (v SpaceWorkerParams) UserID() string {
@@ -109,7 +110,8 @@ func RunSpaceWorkerTx(ctx context.Context, tx dal.ReadwriteTransaction, userCtx 
 		return fmt.Errorf("space worker failed to apply space record updates: %w", err)
 	}
 	for _, rec := range params.RecordUpdates {
-		if err = tx.Update(ctx, rec.Key, rec.Updates); err != nil {
+		key := rec.Record.Key()
+		if err = tx.Update(ctx, key, rec.Updates); err != nil {
 			updateFields := make([]string, len(rec.Updates))
 			for _, u := range rec.Updates {
 				updateField := u.Field
@@ -120,7 +122,7 @@ func RunSpaceWorkerTx(ctx context.Context, tx dal.ReadwriteTransaction, userCtx 
 			}
 			return fmt.Errorf(
 				"failed to apply record updates (key=%s, updateFields: %s): %w",
-				rec.Key, strings.Join(updateFields, ","), err)
+				key, strings.Join(updateFields, ","), err)
 		}
 	}
 	return

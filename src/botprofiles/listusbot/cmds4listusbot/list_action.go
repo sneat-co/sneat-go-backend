@@ -9,7 +9,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/facade4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/facade4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
@@ -58,12 +57,12 @@ func listAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) 
 		spaceID, _ = user.Data.GetFirstSpaceBriefBySpaceType(spaceRef.SpaceType())
 		if spaceID == "" {
 			if spaceType == core4spaceus.SpaceTypeFamily {
-				var space dbo4spaceus.SpaceEntry
-				if space, _, _, err = facade4spaceus.CreateSpace(ctx, userCtx, dto4spaceus.CreateSpaceRequest{Type: spaceType}); err != nil {
+				var result facade4spaceus.CreateSpaceResult
+				if result, err = facade4spaceus.CreateSpace(ctx, userCtx, dto4spaceus.CreateSpaceRequest{Type: spaceType}); err != nil {
 					err = fmt.Errorf("failed to create missing family space: %w", err)
 					return
 				}
-				spaceID = space.ID
+				spaceID = result.Space.ID
 				spaceRef = core4spaceus.NewSpaceRef(spaceType, spaceID)
 			} else {
 				m = whc.NewMessage(fmt.Sprintf("You are not a member of any %s space", spaceType))

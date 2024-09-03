@@ -31,7 +31,7 @@ type sneatAppBotDal struct {
 }
 
 func (s sneatAppBotDal) CreateAppUserFromBotUser(ctx context.Context,
-	_ dal.ReadwriteTransaction, // intentionally do not use transaction as we can't have reads after writes
+	tx dal.ReadwriteTransaction, // TODO(fix): intentionally not using transaction as we can't have reads after writes
 	bot botsdal.Bot,
 ) (
 	appUser record.DataWithID[string, botsfwmodels.AppUserData],
@@ -52,7 +52,7 @@ func (s sneatAppBotDal) CreateAppUserFromBotUser(ctx context.Context,
 	}
 	var user dbo4userus.UserEntry
 
-	botUser, user, err = facade4auth.CreateBotUserAndAppUserRecords(ctx, nil, botUserData, remoteClientInfo)
+	botUser, user, err = facade4auth.CreateBotUserAndAppUserRecords(ctx, tx, botUserData, remoteClientInfo)
 	if err != nil {
 		err = fmt.Errorf("failed to create user records: %w", err)
 		return

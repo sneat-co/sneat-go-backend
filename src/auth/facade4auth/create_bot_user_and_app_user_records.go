@@ -2,6 +2,7 @@ package facade4auth
 
 import (
 	"context"
+	"firebase.google.com/go/v4/auth"
 	"fmt"
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
 	"github.com/bots-go-framework/bots-fw-telegram"
@@ -9,10 +10,13 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/models4bots"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
+	"github.com/sneat-co/sneat-go-core/sneatauth"
 	"github.com/strongo/strongoapp/appuser"
 	"github.com/strongo/strongoapp/person"
+	"time"
 )
 
 func CreateBotUserAndAppUserRecords(
@@ -35,7 +39,8 @@ func CreateBotUserAndAppUserRecords(
 	key := botsdal.NewPlatformUserKey(telegram.PlatformID, botUser.ID)
 	botUser.Record = dal.NewRecordWithData(key, telegramUserData)
 
-	if appUser, err = createUserFromBotUser(ctx, tx, botUserData, remoteClientInfo); err != nil {
+	started := time.Now()
+	if appUser, err = getOrCreateAppUserRecordFromBotUser(ctx, tx, started, botUserData, remoteClientInfo); err != nil {
 		return
 	}
 	telegramUserData.SetAppUserID(appUser.ID)
@@ -48,14 +53,16 @@ func CreateBotUserAndAppUserRecords(
 	return
 }
 
-func createUserFromBotUser(
+func getOrCreateAppUserRecordFromBotUser(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
+	started time.Time,
 	botUserData BotUserData,
 	remoteClientInfo dbmodels.RemoteClientInfo,
 ) (
 	user dbo4userus.UserEntry, err error,
 ) {
+
 	userToCreate := DataToCreateUser{
 		AuthProvider: string(botUserData.PlatformID),
 		Names: person.NameFields{
@@ -70,5 +77,38 @@ func createUserFromBotUser(
 		},
 		RemoteClient: remoteClientInfo,
 	}
-	return createUserFromBot(ctx, tx, userToCreate)
+
+	var firebaseUserRecord *auth.UserRecord
+	if firebaseUserRecord, err = createFirebaseUser(ctx, userToCreate); err != nil {
+		return
+	}
+
+	providerUserInfo := &sneatauth.AuthProviderUserInfo{
+		DisplayName: userToCreate.Names.GetFullName(),
+		UID:         botUserData.BotUserID,
+		ProviderID:  string(botUserData.PlatformID),
+		PhotoURL:    userToCreate.PhotoURL,
+	}
+	userInfo := &sneatauth.AuthUserInfo{ // TODO: Does this duplicate userToCreate?
+		AuthProviderUserInfo: providerUserInfo,
+		ProviderUserInfo:     []*sneatauth.AuthProviderUserInfo{providerUserInfo}, // TODO: Why it duplicates AuthProviderUserInfo?
+	}
+	params := createUserWorkerParams{
+		UserWorkerParams: &dal4userus.UserWorkerParams{
+			Started: started,
+			User:    dbo4userus.NewUserEntry(firebaseUserRecord.UID),
+		},
+	}
+	if err = tx.Get(ctx, params.User.Record); err != nil && !dal.IsNotFound(err) {
+		return
+	}
+	if err = createUserRecordsTxWorker(ctx, tx, userInfo, userToCreate, &params); err != nil {
+		return
+	}
+	if err = params.ApplyChanges(ctx, tx); err != nil {
+		err = fmt.Errorf("failed to apply changes generate by createUserRecordsTxWorker(): %w", err)
+		return
+	}
+	user = params.User
+	return
 }

@@ -6,7 +6,6 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/facade4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -30,11 +29,20 @@ func CreateUserRecords(ctx context.Context, userCtx facade.UserContext, userToCr
 		return user, fmt.Errorf("failed to get user info: %w", err)
 	}
 
-	err = dal4userus.RunUserWorker(ctx, userCtx, false, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) (err error) {
-		if err = createUserRecordsTxWorker(ctx, tx, userInfo, userToCreate, params); err != nil {
+	err = dal4userus.RunUserWorker(ctx, userCtx, false, func(ctx context.Context, tx dal.ReadwriteTransaction, userWorkerParams *dal4userus.UserWorkerParams) (err error) {
+		params := createUserWorkerParams{
+			started:          time.Now(),
+			UserWorkerParams: userWorkerParams,
+		}
+		if err = createUserRecordsTxWorker(ctx, tx, userInfo, userToCreate, &params); err != nil {
 			return
 		}
-		user = params.User
+		user = userWorkerParams.User
+		if len(params.RecordsToInsert) > 0 {
+			if err = tx.InsertMulti(ctx, params.RecordsToInsert); err != nil {
+				return fmt.Errorf("failed to insert records created by createUserRecordsTxWorker(): %w", err)
+			}
+		}
 		return
 	})
 	if err != nil {
@@ -43,14 +51,19 @@ func CreateUserRecords(ctx context.Context, userCtx facade.UserContext, userToCr
 	return
 }
 
-func createUserRecordsTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, userInfo *sneatauth.AuthUserInfo, userToCreate DataToCreateUser, params *dal4userus.UserWorkerParams) (err error) {
-	if err = initUserRecordTxWorker(userInfo, userToCreate, params); err != nil {
+func createUserRecordsTxWorker(
+	ctx context.Context,
+	tx dal.ReadwriteTransaction,
+	userInfo *sneatauth.AuthUserInfo, userToCreate DataToCreateUser, // TODO: Does this 2 duplicate each other?
+	params *createUserWorkerParams,
+) (err error) {
+	if err = initUserRecordTxWorker(userInfo, userToCreate, params.UserWorkerParams); err != nil {
 		return
 	}
 
 	if !params.User.Record.Exists() {
 		params.User.Record.MarkAsChanged()
-		if _, _, err = facade4spaceus.CreateDefaultUserSpacesTx(ctx, tx, params.User.Data.CreatedAt, params); err != nil {
+		if _, _, err = createDefaultUserSpacesTx(ctx, tx, params); err != nil {
 			return fmt.Errorf("failed to create default user spaces: %w", err)
 		}
 	}
@@ -60,7 +73,7 @@ func createUserRecordsTxWorker(ctx context.Context, tx dal.ReadwriteTransaction,
 func initUserRecordTxWorker(userInfo *sneatauth.AuthUserInfo, userToCreate DataToCreateUser, params *dal4userus.UserWorkerParams) (err error) {
 	if !params.User.Record.Exists() {
 		if err = createUserRecord(userToCreate, params.User, userInfo); err != nil {
-			err = fmt.Errorf("faield to populate new user record data: %w", err)
+			err = fmt.Errorf("failed to populate new user record data: %w", err)
 			return
 		}
 		params.User.Record.MarkAsChanged()
@@ -113,13 +126,15 @@ func createUserRecord(userToCreate DataToCreateUser, user dbo4userus.UserEntry, 
 			authProvider = userInfo.ProviderID
 		}
 	}
-	user.Data.Emails = []dbmodels.PersonEmail{
-		{
-			Type:         "primary",
-			Address:      user.Data.Email,
-			Verified:     user.Data.EmailVerified,
-			AuthProvider: authProvider,
-		},
+	if user.Data.Email != "" {
+		user.Data.Emails = []dbmodels.PersonEmail{
+			{
+				Type:         "primary",
+				Address:      user.Data.Email,
+				Verified:     user.Data.EmailVerified,
+				AuthProvider: authProvider,
+			},
+		}
 	}
 	if userToCreate.IanaTimezone != "" {
 		user.Data.Timezone = &dbmodels.Timezone{

@@ -7,7 +7,6 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/tghelpers"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/facade4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
@@ -65,7 +64,6 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 			return
 		}
 		if spaceID == "" {
-			var spaceEntry dbo4spaceus.SpaceEntry
 			ctx := whc.Context()
 			tx := whc.Tx()
 			request := dto4spaceus.CreateSpaceRequest{Type: spaceType}
@@ -73,7 +71,8 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 				Started: time.Now(), // TODO: get from tx
 				User:    user,
 			}
-			if spaceEntry, _, _, err = facade4spaceus.CreateSpaceTxWorker(ctx, tx, time.Now(), request, &params); err != nil {
+			var result facade4spaceus.CreateSpaceResult
+			if result, err = facade4spaceus.CreateSpaceTxWorker(ctx, tx, time.Now(), request, &params); err != nil {
 				err = fmt.Errorf("failed to create space: %w", err)
 				return
 			}
@@ -84,7 +83,7 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 			if err = tx.Update(ctx, params.User.Key, params.UserUpdates); err != nil {
 				return
 			}
-			spaceID = spaceEntry.ID
+			spaceID = result.Space.ID
 		}
 	}
 	var spaceIcon string

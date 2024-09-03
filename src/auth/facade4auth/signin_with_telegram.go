@@ -14,6 +14,7 @@ import (
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"strconv"
+	"time"
 )
 
 func SignInWithTelegram(
@@ -29,52 +30,78 @@ func SignInWithTelegram(
 		return
 	}
 
-	botUserData := BotUserData{
-		PlatformID: telegram.PlatformID,
-		BotID:      "", // TODO: populate
-		BotUserID:  strconv.FormatInt(initData.User.ID, 10),
-		FirstName:  initData.User.FirstName,
-		LastName:   initData.User.LastName,
-		Username:   initData.User.Username,
+	botUserID := strconv.FormatInt(initData.User.ID, 10)
+
+	newBotUserData := func() BotUserData {
+		return BotUserData{
+			PlatformID: telegram.PlatformID,
+			BotID:      "", // TODO: populate
+			BotUserID:  botUserID,
+			FirstName:  initData.User.FirstName,
+			LastName:   initData.User.LastName,
+			Username:   initData.User.Username,
+		}
 	}
 
 	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
-		if botUser, err = botsdal.GetPlatformUser(ctx, db, telegram.PlatformID, botUserData.BotUserID, new(models4bots.TelegramUserDbo)); err != nil {
-			if !dal.IsNotFound(err) {
-				return
-			}
-			if botUser, appUser, err = CreateBotUserAndAppUserRecords(ctx, tx, botUserData, remoteClientInfo); err != nil {
-				return
-			}
-			isNewUser = true
+		if botUser, appUser, isNewUser, err = createBotUserAndAppUserRecordsTx(ctx, tx, botUserID, newBotUserData, remoteClientInfo); err != nil {
 			return
-		}
-
-		if appUserID := botUser.Data.GetAppUserID(); appUserID == "" {
-
-			if err = createAppUserRecordAndUpdateTelegramUserRecord(ctx, tx, botUserData, remoteClientInfo, botUser); err != nil {
-				err = fmt.Errorf("failed in createAppUserRecordAndUpdateTelegramUserRecord(): %w", err)
-				return
-			}
 		}
 		return
 	})
 	return
 }
 
-func createAppUserRecordAndUpdateTelegramUserRecord(
+func createBotUserAndAppUserRecordsTx(
+	ctx context.Context,
+	tx dal.ReadwriteTransaction,
+	botUserID string,
+	newBotUserData func() BotUserData,
+	remoteClientInfo dbmodels.RemoteClientInfo,
+) (
+	botUser BotUserEntry,
+	appUser dbo4userus.UserEntry,
+	isNewUser bool, // TODO: Document why needed or remove
+	err error,
+) {
+	if botUser, err = botsdal.GetPlatformUser(ctx, tx, telegram.PlatformID, botUserID, new(models4bots.TelegramUserDbo)); err != nil {
+		if dal.IsNotFound(err) {
+			botUserData := newBotUserData()
+			if botUser, appUser, err = CreateBotUserAndAppUserRecords(ctx, tx, botUserData, remoteClientInfo); err != nil {
+				return
+			}
+			isNewUser = true
+			return
+		}
+		return
+	}
+
+	if appUserID := botUser.Data.GetAppUserID(); appUserID == "" {
+		botUserData := newBotUserData()
+		if err = createAppUserRecordAndUpdateBotUserRecord(ctx, tx, botUserData, remoteClientInfo, botUser); err != nil {
+			err = fmt.Errorf("failed in createAppUserRecordAndUpdateBotUserRecord(): %w", err)
+			return
+		}
+	}
+	return
+}
+
+func createAppUserRecordAndUpdateBotUserRecord(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	botUserData BotUserData,
 	remoteClientInfo dbmodels.RemoteClientInfo,
 	tgBotUser record.DataWithID[string, botsfwmodels.PlatformUserData],
 ) (err error) {
+	started := time.Now()
 	var user dbo4userus.UserEntry
-	if user, err = createUserFromBotUser(ctx, tx, botUserData, remoteClientInfo); err != nil {
+	if user, err = getOrCreateAppUserRecordFromBotUser(ctx, tx, started, botUserData, remoteClientInfo); err != nil {
 		return
 	}
 	tgBotUser.Data.SetAppUserID(user.ID)
 	tgUserDbo := tgBotUser.Data.(*models4bots.TelegramUserDbo)
+	tgUserDbo.DtCreated = started
+	tgUserDbo.DtUpdated = started
 	tgUserDbo.FirstName = botUserData.FirstName
 	tgUserDbo.LastName = botUserData.LastName
 	tgUserDbo.UserName = botUserData.Username

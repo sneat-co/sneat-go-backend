@@ -9,7 +9,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
@@ -23,43 +22,15 @@ import (
 	"time"
 )
 
+// CreateSpaceResult is a result of CreateSpace
 type CreateSpaceResult struct {
-	Space dbo4spaceus.SpaceEntry `json:"-"`
-	User  dbo4userus.UserEntry   `json:"-"`
+	Space          dbo4spaceus.SpaceEntry
+	ContactusSpace dal4contactus.ContactusSpaceEntry
+	Member         dal4contactus.ContactEntry
 }
 
-func CreateDefaultUserSpacesTx(
-	ctx context.Context,
-	tx dal.ReadwriteTransaction,
-	timestamp time.Time,
-	userWorkerParams *dal4userus.UserWorkerParams,
-) (
-	spaces []dbo4spaceus.SpaceEntry,
-	contactusSpaces []dal4contactus.ContactusSpaceEntry,
-	err error,
-) {
-	var recordsToInsert []dal.Record
-
-	for _, spaceType := range []core4spaceus.SpaceType{core4spaceus.SpaceTypeFamily, core4spaceus.SpaceTypePrivate} {
-		if spaceID, _ := userWorkerParams.User.Data.GetFirstSpaceBriefBySpaceType(spaceType); spaceID == "" {
-			var space dbo4spaceus.SpaceEntry
-			var contactusSpace dal4contactus.ContactusSpaceEntry
-			var member dal4contactus.ContactEntry
-			spaceRequest := dto4spaceus.CreateSpaceRequest{Type: spaceType}
-			if space, contactusSpace, member, err = CreateSpaceTxWorker(ctx, tx, timestamp, spaceRequest, userWorkerParams); err != nil {
-				return
-			}
-			spaces = append(spaces, space)
-			contactusSpaces = append(contactusSpaces, contactusSpace)
-			recordsToInsert = append(recordsToInsert, space.Record, contactusSpace.Record, member.Record)
-		}
-	}
-
-	if err = tx.InsertMulti(ctx, recordsToInsert); err != nil {
-		return
-	}
-
-	return
+func (result CreateSpaceResult) Records() []dal.Record {
+	return []dal.Record{result.Space.Record, result.ContactusSpace.Record, result.Member.Record}
 }
 
 // CreateSpace creates SpaceIDs record
@@ -68,19 +39,17 @@ func CreateSpace(
 	userCtx facade.UserContext,
 	request dto4spaceus.CreateSpaceRequest,
 ) (
-	space dbo4spaceus.SpaceEntry,
-	contactusSpace dal4contactus.ContactusSpaceEntry,
-	member dal4contactus.ContactEntry,
+	result CreateSpaceResult,
 	err error,
 ) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 	err = dal4userus.RunUserWorker(ctx, userCtx, true, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) (err error) {
-		if space, contactusSpace, member, err = CreateSpaceTxWorker(ctx, tx, time.Now(), request, params); err != nil {
+		if result, err = CreateSpaceTxWorker(ctx, tx, time.Now(), request, params); err != nil {
 			return
 		}
-		recordsToInsert := []dal.Record{space.Record, contactusSpace.Record, member.Record}
+		recordsToInsert := result.Records()
 		if err = tx.InsertMulti(ctx, recordsToInsert); err != nil {
 			return
 		}
@@ -96,17 +65,15 @@ func CreateSpaceTxWorker(
 	request dto4spaceus.CreateSpaceRequest,
 	params *dal4userus.UserWorkerParams,
 ) (
-	space dbo4spaceus.SpaceEntry,
-	contactusSpace dal4contactus.ContactusSpaceEntry,
-	member dal4contactus.ContactEntry,
+	result CreateSpaceResult,
 	err error,
 ) {
 	if request.Title == "" {
-		space.ID, _ = params.User.Data.GetFirstSpaceBriefBySpaceType(request.Type)
-		if space.ID != "" {
-			space = dbo4spaceus.NewSpaceEntry(space.ID)
-			contactusSpace = dal4contactus.NewContactusSpaceEntry(space.ID)
-			err = tx.GetMulti(ctx, []dal.Record{space.Record, contactusSpace.Record})
+		result.Space.ID, _ = params.User.Data.GetFirstSpaceBriefBySpaceType(request.Type)
+		if result.Space.ID != "" {
+			result.Space = dbo4spaceus.NewSpaceEntry(result.Space.ID)
+			result.ContactusSpace = dal4contactus.NewContactusSpaceEntry(result.Space.ID)
+			err = tx.GetMulti(ctx, []dal.Record{result.Space.Record, result.ContactusSpace.Record})
 			return
 		}
 	}
@@ -131,7 +98,7 @@ func CreateSpaceTxWorker(
 	//if request.Type == "family" && request.Title == "" {
 	//	request.Title = "Family"
 	//}
-	space.Data = &dbo4spaceus.SpaceDbo{
+	result.Space.Data = &dbo4spaceus.SpaceDbo{
 		SpaceBrief: dbo4spaceus.SpaceBrief{
 			Type:   request.Type,
 			Title:  request.Title,
@@ -154,13 +121,13 @@ func CreateSpaceTxWorker(
 		//	"members": 1,
 		//},
 	}
-	space.Data.IncreaseVersion(createdAt, params.User.ID)
-	space.Data.CountryID = params.User.Data.CountryID
+	result.Space.Data.IncreaseVersion(createdAt, params.User.ID)
+	result.Space.Data.CountryID = params.User.Data.CountryID
 
 	if request.Type == "work" {
 		zero := 0
 		hundred := 100
-		space.Data.Metrics = []*dbo4spaceus.SpaceMetric{
+		result.Space.Data.Metrics = []*dbo4spaceus.SpaceMetric{
 			{ID: "cc", Title: "Code coverage", Type: "int", Mode: "SpaceIDs", Min: &zero, Max: &hundred},
 			{ID: "bb", Title: "Build is broken", Type: "bool", Mode: "SpaceIDs", Bool: &dbo4spaceus.BoolMetric{
 				True:  &dbo4spaceus.BoolMetricVal{Label: "Yes", Color: "danger"},
@@ -173,7 +140,7 @@ func CreateSpaceTxWorker(
 		}
 	}
 
-	if err = space.Data.Validate(); err != nil {
+	if err = result.Space.Data.Validate(); err != nil {
 		err = fmt.Errorf("spaceDbo reacord is not valid: %w", err)
 		return
 	}
@@ -189,13 +156,13 @@ func CreateSpaceTxWorker(
 		return
 	}
 
-	space = dbo4spaceus.NewSpaceEntryWithDbo(spaceID, space.Data)
+	result.Space = dbo4spaceus.NewSpaceEntryWithDbo(spaceID, result.Space.Data)
 	//if err = tx.Insert(ctx, space.Record); err != nil {
 	//	err = fmt.Errorf("failed to insert a new spaceDbo record: %w", err)
 	//	return
 	//}
 
-	contactusSpace = dal4contactus.NewContactusSpaceEntry(spaceID)
+	result.ContactusSpace = dal4contactus.NewContactusSpaceEntry(spaceID)
 
 	spaceMember := params.User.Data.ContactBrief // This should copy data from user's contact brief as it's not a pointer
 
@@ -213,7 +180,7 @@ func CreateSpaceTxWorker(
 	//if len(spaceMember.Phones) == 0 && len(user.Data.Phones) > 0 {
 	//	spaceMember.Phones = user.Data.Phones
 	//}
-	contactusSpace.Data.AddContact(userSpaceContactID, &spaceMember)
+	result.ContactusSpace.Data.AddContact(userSpaceContactID, &spaceMember)
 
 	//if err = tx.Insert(ctx, contactusSpace.Record); err != nil {
 	//	err = fmt.Errorf("failed to insert a new spaceDbo contactus record: %w", err)
@@ -221,7 +188,7 @@ func CreateSpaceTxWorker(
 	//}
 
 	userSpaceBrief := dbo4userus.UserSpaceBrief{
-		SpaceBrief:    space.Data.SpaceBrief,
+		SpaceBrief:    result.Space.Data.SpaceBrief,
 		UserContactID: userSpaceContactID,
 		Roles:         roles,
 	}
@@ -245,7 +212,7 @@ func CreateSpaceTxWorker(
 	//}
 
 	spaceMember.Roles = roles
-	if member, err = CreateMemberEntryFromBrief(spaceID, userSpaceContactID, spaceMember, createdAt, params.User.ID); err != nil {
+	if result.Member, err = CreateMemberEntryFromBrief(spaceID, userSpaceContactID, spaceMember, createdAt, params.User.ID); err != nil {
 		err = fmt.Errorf("failed to create member's record: %w", err)
 		return
 	}

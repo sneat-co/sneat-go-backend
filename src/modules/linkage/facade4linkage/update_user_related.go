@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
+	"github.com/sneat-co/sneat-go-backend/src/coretodo"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 )
 
@@ -15,7 +15,7 @@ func updateUserRelated(
 	userID string,
 	objectRef dbo4linkage.SpaceModuleItemRef,
 	item record.DataWithID[string, *dbo4linkage.WithRelated],
-) (userUpdates dal4spaceus.RecordUpdates, err error) {
+) (userUpdates coretodo.RecordUpdates, err error) {
 	user := dbo4userus.NewUserEntry(userID)
 	if err = tx.Get(ctx, user.Record); err != nil {
 		return

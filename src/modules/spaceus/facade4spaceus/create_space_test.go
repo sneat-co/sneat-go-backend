@@ -73,23 +73,23 @@ func TestCreateSpace(t *testing.T) { // TODO: Implement unit tests
 
 	t.Run("error on bad request", func(t *testing.T) {
 		setupMockDb()
-		space, contactusSpace, _, err := CreateSpace(ctx, user, dto4spaceus.CreateSpaceRequest{})
+		result, err := CreateSpace(ctx, user, dto4spaceus.CreateSpaceRequest{})
 		assert.Error(t, err)
-		assert.Equal(t, "", space.ID)
-		assert.Equal(t, "", contactusSpace.ID)
+		assert.Equal(t, "", result.Space.ID)
+		assert.Equal(t, "", result.ContactusSpace.ID)
 	})
 
 	t.Run("user's 1st team", func(t *testing.T) {
 		setupMockDb()
 
-		space, contactusSpace, _, err := CreateSpace(ctx, user, dto4spaceus.CreateSpaceRequest{Type: core4spaceus.SpaceTypeFamily})
+		result, err := CreateSpace(ctx, user, dto4spaceus.CreateSpaceRequest{Type: core4spaceus.SpaceTypeFamily})
 		assert.Nil(t, err)
 
-		assert.NotEqual(t, "", space.ID)
-		assert.Nil(t, space.Data.Validate())
-		assert.Equal(t, 1, len(space.Data.UserIDs))
-		assert.Equal(t, 1, space.Data.Version)
-		assert.Equal(t, "contactus", contactusSpace.ID)
+		assert.NotEqual(t, "", result.Space.ID)
+		assert.Nil(t, result.Space.Data.Validate())
+		assert.Equal(t, 1, len(result.Space.Data.UserIDs))
+		assert.Equal(t, 1, result.Space.Data.Version)
+		assert.Equal(t, "contactus", result.ContactusSpace.ID)
 	})
 
 }
