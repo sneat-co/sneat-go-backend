@@ -37,7 +37,8 @@ type InitUserRecordRequest struct {
 	EmailIsVerified bool               `json:"emailIsVerified,omitempty"`
 	IanaTimezone    string             `json:"ianaTimezone,omitempty"`
 	Names           *person.NameFields `json:"names"`
-	//
+
+	// RemoteClient contains information about the remote client making the request.
 	RemoteClient dbmodels.RemoteClientInfo `json:"remoteClient"`
 }
 

@@ -9,20 +9,10 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
-	"github.com/strongo/strongoapp/appuser"
-	"github.com/strongo/strongoapp/person"
 	"time"
 )
 
-type UserToCreate struct {
-	Names            person.NameFields
-	PhotoURL         string
-	LanguageCode     string
-	RemoteClientInfo dbmodels.RemoteClientInfo
-	Account          appuser.AccountKey
-}
-
-func createUser(ctx context.Context, tx dal.ReadwriteTransaction, userToCreate *UserToCreate) (user dbo4userus.UserEntry, err error) {
+func createUserFromBot(ctx context.Context, tx dal.ReadwriteTransaction, userToCreate DataToCreateUser) (user dbo4userus.UserEntry, err error) {
 
 	displayName := userToCreate.Names.FirstName
 	if userToCreate.Names.LastName != "" {
@@ -67,7 +57,7 @@ func createUser(ctx context.Context, tx dal.ReadwriteTransaction, userToCreate *
 	user.Data.AgeGroup = dbmodels.AgeGroupUnknown
 	user.Data.Gender = dbmodels.GenderUnknown
 	user.Data.Created = dbmodels.CreatedInfo{
-		Client: userToCreate.RemoteClientInfo,
+		Client: userToCreate.RemoteClient,
 	}
 	if !userToCreate.Names.IsEmpty() {
 		user.Data.Names = &userToCreate.Names

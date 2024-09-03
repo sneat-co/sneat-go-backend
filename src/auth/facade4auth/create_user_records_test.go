@@ -1,4 +1,4 @@
-package facade4userus
+package facade4auth
 
 import (
 	"context"
@@ -6,7 +6,6 @@ import (
 	"github.com/dal-go/mocks4dalgo/mocks4dal"
 	"github.com/golang/mock/gomock"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dto4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/sneat-co/sneat-go-core/sneatauth"
@@ -18,8 +17,8 @@ import (
 func Test_InitUserRecord(t *testing.T) {
 	ctx := context.Background()
 	type args struct {
-		user    facade.UserContext
-		request dto4userus.InitUserRecordRequest
+		user         facade.UserContext
+		userToCreate DataToCreateUser
 	}
 	tests := []struct {
 		name     string
@@ -31,9 +30,9 @@ func Test_InitUserRecord(t *testing.T) {
 			name: "should_create_user_record",
 			args: args{
 				user: facade.NewUserContext("test_user_1"),
-				request: dto4userus.InitUserRecordRequest{
+				userToCreate: DataToCreateUser{
 					AuthProvider: "password",
-					Names: &person.NameFields{
+					Names: person.NameFields{
 						FirstName: "First",
 						LastName:  "UserEntry",
 					},
@@ -76,14 +75,14 @@ func Test_InitUserRecord(t *testing.T) {
 			// SETUP MOCKS ENDS
 
 			// TEST CALL BEGINS
-			gotUser, err := InitUserRecord(ctx, tt.args.user, tt.args.request)
+			gotUser, err := CreateUserRecords(ctx, tt.args.user, tt.args.userToCreate)
 			// TEST CALL ENDS
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("initUserRecordTxWorker() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			assert.Equal(t, tt.args.request.Email, gotUser.Data.Email)
+			assert.Equal(t, tt.args.userToCreate.Email, gotUser.Data.Email)
 		})
 	}
 }
