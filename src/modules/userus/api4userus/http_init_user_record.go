@@ -1,7 +1,6 @@
 package api4userus
 
 import (
-	"errors"
 	"github.com/sneat-co/sneat-go-backend/src/auth/facade4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dto4userus"
 	"github.com/sneat-co/sneat-go-core/apicore"
@@ -11,10 +10,6 @@ import (
 
 // httpInitUserRecord sets user title
 func httpInitUserRecord(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "" {
-		apicore.ReturnError(r.Context(), w, r, errors.New("temporary disabled"))
-		return
-	}
 	ctx, userContext, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
 	if err != nil {
 		return
