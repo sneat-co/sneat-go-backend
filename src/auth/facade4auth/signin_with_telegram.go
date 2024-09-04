@@ -29,5 +29,5 @@ func SignInWithTelegram(
 			Username:   initData.User.Username,
 		}
 	}
-	return SignInWithBot(ctx, botUserID, remoteClientInfo, newBotUserData)
+	return SignInWithBot(ctx, remoteClientInfo, telegram.PlatformID, botUserID, newBotUserData)
 }

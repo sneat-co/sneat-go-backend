@@ -6,6 +6,7 @@ import (
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
 	telegram "github.com/bots-go-framework/bots-fw-telegram"
 	"github.com/bots-go-framework/bots-fw/botsdal"
+	"github.com/bots-go-framework/bots-fw/botsfwconst"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/models4bots"
@@ -16,7 +17,10 @@ import (
 )
 
 func SignInWithBot(
-	ctx context.Context, botUserID string, remoteClientInfo dbmodels.RemoteClientInfo,
+	ctx context.Context,
+	remoteClientInfo dbmodels.RemoteClientInfo,
+	botPlatformID botsfwconst.Platform,
+	botUserID string,
 	newBotUserData func() BotUserData,
 ) (
 	botUser BotUserEntry,
@@ -30,11 +34,13 @@ func SignInWithBot(
 	}
 	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		var params CreateUserWorkerParams
-		if botUser, params, isNewUser, err = createBotUserAndAppUserRecordsTx(ctx, tx, botUserID, newBotUserData, remoteClientInfo); err != nil {
+		if botUser, params, isNewUser, err = createBotUserAndAppUserRecordsTx(ctx, tx, botPlatformID, botUserID, newBotUserData, remoteClientInfo); err != nil {
 			return
 		}
-		params.RecordsToInsert = append(params.RecordsToInsert, botUser.Record)
-		return params.ApplyChanges(ctx, tx)
+		if err = params.ApplyChanges(ctx, tx); err != nil {
+			err = fmt.Errorf("failed to apply changes returned by createBotUserAndAppUserRecordsTx(): %w", err)
+		}
+		return err
 	})
 	return
 
@@ -43,6 +49,7 @@ func SignInWithBot(
 func createBotUserAndAppUserRecordsTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
+	botPlatformID botsfwconst.Platform,
 	botUserID string,
 	newBotUserData func() BotUserData,
 	remoteClientInfo dbmodels.RemoteClientInfo,
@@ -55,7 +62,7 @@ func createBotUserAndAppUserRecordsTx(
 	if botUser, err = botsdal.GetPlatformUser(ctx, tx, telegram.PlatformID, botUserID, new(models4bots.TelegramUserDbo)); err != nil {
 		if dal.IsNotFound(err) {
 			botUserData := newBotUserData()
-			if botUser, params, err = CreateBotUserAndAppUserRecords(ctx, tx, botUserData, remoteClientInfo); err != nil {
+			if botUser, params, err = CreateBotUserAndAppUserRecords(ctx, tx, botPlatformID, botUserData, remoteClientInfo); err != nil {
 				return
 			}
 			isNewUser = true
@@ -66,15 +73,15 @@ func createBotUserAndAppUserRecordsTx(
 
 	if appUserID := botUser.Data.GetAppUserID(); appUserID == "" {
 		botUserData := newBotUserData()
-		if params, err = createAppUserRecordAndUpdateBotUserRecord(ctx, tx, botUserData, remoteClientInfo, botUser); err != nil {
-			err = fmt.Errorf("failed in createAppUserRecordAndUpdateBotUserRecord(): %w", err)
+		if params, err = createAppUserRecordsAndUpdateBotUserRecord(ctx, tx, botUserData, remoteClientInfo, botUser); err != nil {
+			err = fmt.Errorf("failed in createAppUserRecordsAndUpdateBotUserRecord(): %w", err)
 			return
 		}
 	}
 	return
 }
 
-func createAppUserRecordAndUpdateBotUserRecord(
+func createAppUserRecordsAndUpdateBotUserRecord(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	botUserData BotUserData,

@@ -7,14 +7,35 @@ import (
 )
 
 type WithRecordChanges struct { // TODO: move to github.com/dal-go/dalgo/dal?
-	RecordsToInsert []dal.Record // We might need to consider to use []*dal.Record to simplify updating dal.Record.ID
+	recordsToInsert []dal.Record // We might need to consider to use []*dal.Record to simplify updating dal.Record.ID
 	RecordsToUpdate []RecordUpdates
 	RecordsToDelete []*dal.Key
 }
 
-func (v WithRecordChanges) ApplyChanges(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
-	if len(v.RecordsToInsert) > 0 {
-		if err = tx.InsertMulti(ctx, v.RecordsToInsert); err != nil {
+func (v *WithRecordChanges) RecordsToInsert() (records []dal.Record) {
+	records = make([]dal.Record, len(v.recordsToInsert))
+	copy(records, v.recordsToInsert)
+	return
+}
+
+func (v *WithRecordChanges) QueueForInsert(records ...dal.Record) {
+	for i, record := range records {
+		if record == nil {
+			panic(fmt.Sprintf("record #%d is required", i))
+		}
+		if record.Key() == nil {
+			panic(fmt.Sprintf("record #%d.Key() is required", i))
+		}
+		if record.Data() == nil {
+			panic(fmt.Sprintf("record #%d.Data() is required", i))
+		}
+		v.recordsToInsert = append(v.recordsToInsert, record)
+	}
+}
+
+func (v *WithRecordChanges) ApplyChanges(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+	if len(v.recordsToInsert) > 0 {
+		if err = tx.InsertMulti(ctx, v.recordsToInsert); err != nil {
 			err = fmt.Errorf("failed to insert records: %w", err)
 			return
 		}
@@ -33,5 +54,8 @@ func (v WithRecordChanges) ApplyChanges(ctx context.Context, tx dal.ReadwriteTra
 			return
 		}
 	}
+	v.recordsToInsert = nil
+	v.RecordsToUpdate = nil
+	v.RecordsToDelete = nil
 	return
 }

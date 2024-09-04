@@ -75,14 +75,14 @@ func Test_InitUserRecord(t *testing.T) {
 			// SETUP MOCKS ENDS
 
 			// TEST CALL BEGINS
-			gotUser, err := CreateUserRecords(ctx, tt.args.user, tt.args.userToCreate)
+			gotParams, err := CreateUserRecords(ctx, tt.args.user, tt.args.userToCreate)
 			// TEST CALL ENDS
 
 			if (err != nil) != tt.wantErr {
-				t.Errorf("initUserRecordTxWorker() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("createOrUpdateUserRecord() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			assert.Equal(t, tt.args.userToCreate.Email, gotUser.Data.Email)
+			assert.Equal(t, tt.args.userToCreate.Email, gotParams.User.Data.Email)
 		})
 	}
 }

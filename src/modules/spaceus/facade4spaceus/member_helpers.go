@@ -35,10 +35,9 @@ func CreateMemberEntryFromBrief(
 	dbo4linkage.UpdateRelatedIDs(&member.Data.WithRelated, &member.Data.WithRelatedIDs)
 	member.Data.IncreaseVersion(now, byUserID)
 	if err = member.Data.Validate(); err != nil {
+		member.Record.SetError(err)
 		return member, fmt.Errorf("failed to validate member data: %w", err)
 	}
-	//if err = tx.Insert(ctx, member.Record); err != nil {
-	//	return member, fmt.Errorf("failed to inser member record into DB: %w", err)
-	//}
+	member.Record.SetError(nil)
 	return member, nil
 }

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/gosimple/slug"
+	"github.com/sneat-co/sneat-go-backend/src/coretodo"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
@@ -22,15 +23,14 @@ import (
 	"time"
 )
 
-// CreateSpaceResult is a result of CreateSpace
-type CreateSpaceResult struct {
+// CreateSpaceParams is a result of CreateSpace
+type CreateSpaceParams struct {
+	UserUpdates    []dal.Update
+	User           dbo4userus.UserEntry
 	Space          dbo4spaceus.SpaceEntry
 	ContactusSpace dal4contactus.ContactusSpaceEntry
 	Member         dal4contactus.ContactEntry
-}
-
-func (result CreateSpaceResult) Records() []dal.Record {
-	return []dal.Record{result.Space.Record, result.ContactusSpace.Record, result.Member.Record}
+	*coretodo.WithRecordChanges
 }
 
 // CreateSpace creates SpaceIDs record
@@ -39,19 +39,21 @@ func CreateSpace(
 	userCtx facade.UserContext,
 	request dto4spaceus.CreateSpaceRequest,
 ) (
-	result CreateSpaceResult,
+	createSpaceParams CreateSpaceParams,
 	err error,
 ) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 	err = dal4userus.RunUserWorker(ctx, userCtx, true, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) (err error) {
-		if result, err = CreateSpaceTxWorker(ctx, tx, time.Now(), request, params); err != nil {
+		createSpaceParams = CreateSpaceParams{
+			User: params.User,
+		}
+		if err = CreateSpaceTxWorker(ctx, tx, time.Now(), request, &createSpaceParams); err != nil {
 			return
 		}
-		recordsToInsert := result.Records()
-		if err = tx.InsertMulti(ctx, recordsToInsert); err != nil {
-			return
+		if err = createSpaceParams.ApplyChanges(ctx, tx); err != nil {
+			err = fmt.Errorf("failed to apply changes returned by CreateSpaceTxWorker(): %w", err)
 		}
 		return
 	})
@@ -63,17 +65,16 @@ func CreateSpaceTxWorker(
 	tx dal.ReadwriteTransaction,
 	createdAt time.Time,
 	request dto4spaceus.CreateSpaceRequest,
-	params *dal4userus.UserWorkerParams,
+	params *CreateSpaceParams,
 ) (
-	result CreateSpaceResult,
 	err error,
 ) {
 	if request.Title == "" {
-		result.Space.ID, _ = params.User.Data.GetFirstSpaceBriefBySpaceType(request.Type)
-		if result.Space.ID != "" {
-			result.Space = dbo4spaceus.NewSpaceEntry(result.Space.ID)
-			result.ContactusSpace = dal4contactus.NewContactusSpaceEntry(result.Space.ID)
-			err = tx.GetMulti(ctx, []dal.Record{result.Space.Record, result.ContactusSpace.Record})
+		params.Space.ID, _ = params.User.Data.GetFirstSpaceBriefBySpaceType(request.Type)
+		if params.Space.ID != "" {
+			params.Space = dbo4spaceus.NewSpaceEntry(params.Space.ID)
+			params.ContactusSpace = dal4contactus.NewContactusSpaceEntry(params.Space.ID)
+			err = tx.GetMulti(ctx, []dal.Record{params.Space.Record, params.ContactusSpace.Record})
 			return
 		}
 	}
@@ -98,7 +99,7 @@ func CreateSpaceTxWorker(
 	//if request.Type == "family" && request.Title == "" {
 	//	request.Title = "Family"
 	//}
-	result.Space.Data = &dbo4spaceus.SpaceDbo{
+	params.Space.Data = &dbo4spaceus.SpaceDbo{
 		SpaceBrief: dbo4spaceus.SpaceBrief{
 			Type:   request.Type,
 			Title:  request.Title,
@@ -121,13 +122,13 @@ func CreateSpaceTxWorker(
 		//	"members": 1,
 		//},
 	}
-	result.Space.Data.IncreaseVersion(createdAt, params.User.ID)
-	result.Space.Data.CountryID = params.User.Data.CountryID
+	params.Space.Data.IncreaseVersion(createdAt, params.User.ID)
+	params.Space.Data.CountryID = params.User.Data.CountryID
 
 	if request.Type == "work" {
 		zero := 0
 		hundred := 100
-		result.Space.Data.Metrics = []*dbo4spaceus.SpaceMetric{
+		params.Space.Data.Metrics = []*dbo4spaceus.SpaceMetric{
 			{ID: "cc", Title: "Code coverage", Type: "int", Mode: "SpaceIDs", Min: &zero, Max: &hundred},
 			{ID: "bb", Title: "Build is broken", Type: "bool", Mode: "SpaceIDs", Bool: &dbo4spaceus.BoolMetric{
 				True:  &dbo4spaceus.BoolMetricVal{Label: "Yes", Color: "danger"},
@@ -140,7 +141,7 @@ func CreateSpaceTxWorker(
 		}
 	}
 
-	if err = result.Space.Data.Validate(); err != nil {
+	if err = params.Space.Data.Validate(); err != nil {
 		err = fmt.Errorf("spaceDbo reacord is not valid: %w", err)
 		return
 	}
@@ -156,13 +157,13 @@ func CreateSpaceTxWorker(
 		return
 	}
 
-	result.Space = dbo4spaceus.NewSpaceEntryWithDbo(spaceID, result.Space.Data)
+	params.Space = dbo4spaceus.NewSpaceEntryWithDbo(spaceID, params.Space.Data)
 	//if err = tx.Insert(ctx, space.Record); err != nil {
 	//	err = fmt.Errorf("failed to insert a new spaceDbo record: %w", err)
 	//	return
 	//}
 
-	result.ContactusSpace = dal4contactus.NewContactusSpaceEntry(spaceID)
+	params.ContactusSpace = dal4contactus.NewContactusSpaceEntry(spaceID)
 
 	spaceMember := params.User.Data.ContactBrief // This should copy data from user's contact brief as it's not a pointer
 
@@ -180,7 +181,7 @@ func CreateSpaceTxWorker(
 	//if len(spaceMember.Phones) == 0 && len(user.Data.Phones) > 0 {
 	//	spaceMember.Phones = user.Data.Phones
 	//}
-	result.ContactusSpace.Data.AddContact(userSpaceContactID, &spaceMember)
+	params.ContactusSpace.Data.AddContact(userSpaceContactID, &spaceMember)
 
 	//if err = tx.Insert(ctx, contactusSpace.Record); err != nil {
 	//	err = fmt.Errorf("failed to insert a new spaceDbo contactus record: %w", err)
@@ -188,7 +189,7 @@ func CreateSpaceTxWorker(
 	//}
 
 	userSpaceBrief := dbo4userus.UserSpaceBrief{
-		SpaceBrief:    result.Space.Data.SpaceBrief,
+		SpaceBrief:    params.Space.Data.SpaceBrief,
 		UserContactID: userSpaceContactID,
 		Roles:         roles,
 	}
@@ -212,10 +213,21 @@ func CreateSpaceTxWorker(
 	//}
 
 	spaceMember.Roles = roles
-	if result.Member, err = CreateMemberEntryFromBrief(spaceID, userSpaceContactID, spaceMember, createdAt, params.User.ID); err != nil {
+	if params.Member, err = CreateMemberEntryFromBrief(spaceID, userSpaceContactID, spaceMember, createdAt, params.User.ID); err != nil {
 		err = fmt.Errorf("failed to create member's record: %w", err)
 		return
 	}
+
+	if !params.Member.Record.Exists() {
+		params.QueueForInsert(params.Member.Record)
+	}
+
+	if err = params.Space.Data.Validate(); err != nil {
+		params.Space.Record.SetError(err)
+		return fmt.Errorf("newly created space data is not valid: %w", err)
+	}
+	params.Space.Record.SetError(nil)
+	params.QueueForInsert(params.Space.Record)
 
 	return
 }

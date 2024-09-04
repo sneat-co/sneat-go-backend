@@ -18,7 +18,7 @@ import (
 )
 
 // CreateUserRecords sets user title
-func CreateUserRecords(ctx context.Context, userCtx facade.UserContext, userToCreate DataToCreateUser) (user dbo4userus.UserEntry, err error) {
+func CreateUserRecords(ctx context.Context, userCtx facade.UserContext, userToCreate DataToCreateUser) (params CreateUserWorkerParams, err error) {
 	if err = userToCreate.Validate(); err != nil {
 		err = fmt.Errorf("%w: %v", facade.ErrBadRequest, err)
 		return
@@ -26,27 +26,25 @@ func CreateUserRecords(ctx context.Context, userCtx facade.UserContext, userToCr
 	userID := userCtx.GetUserID()
 	var userInfo *sneatauth.AuthUserInfo
 	if userInfo, err = sneatauth.GetUserInfo(ctx, userID); err != nil {
-		return user, fmt.Errorf("failed to get user info: %w", err)
+		err = fmt.Errorf("failed to get user info: %w", err)
+		return
 	}
 
 	err = dal4userus.RunUserWorker(ctx, userCtx, false, func(ctx context.Context, tx dal.ReadwriteTransaction, userWorkerParams *dal4userus.UserWorkerParams) (err error) {
-		params := CreateUserWorkerParams{
+		params = CreateUserWorkerParams{
 			started:          time.Now(),
 			UserWorkerParams: userWorkerParams,
 		}
 		if err = createUserRecordsTxWorker(ctx, tx, userInfo, userToCreate, &params); err != nil {
 			return
 		}
-		user = userWorkerParams.User
-		if len(params.RecordsToInsert) > 0 {
-			if err = tx.InsertMulti(ctx, params.RecordsToInsert); err != nil {
-				return fmt.Errorf("failed to insert records created by createUserRecordsTxWorker(): %w", err)
-			}
+		if err = params.ApplyChanges(ctx, tx); err != nil {
+			err = fmt.Errorf("failed to apply changes returned by createUserRecordsTxWorker(): %w", err)
 		}
 		return
 	})
 	if err != nil {
-		return user, fmt.Errorf("failed to init user record and to create default user spaces: %w", err)
+		return params, fmt.Errorf("failed to init user record and to create default user spaces: %w", err)
 	}
 	return
 }
@@ -57,34 +55,48 @@ func createUserRecordsTxWorker(
 	userInfo *sneatauth.AuthUserInfo, userToCreate DataToCreateUser, // TODO: Does this 2 duplicate each other?
 	params *CreateUserWorkerParams,
 ) (err error) {
-	if err = initUserRecordTxWorker(userInfo, userToCreate, params.UserWorkerParams); err != nil {
+	if params == nil {
+		panic("params is nil")
+	}
+	if userInfo == nil {
+		panic("userInfo is nil")
+	}
+	if err = createOrUpdateUserRecord(userInfo, userToCreate, params); err != nil {
 		return
 	}
 
 	if !params.User.Record.Exists() {
-		params.User.Record.MarkAsChanged()
-		if _, _, err = createDefaultUserSpacesTx(ctx, tx, params); err != nil {
+		if err = createDefaultUserSpacesTx(ctx, tx, params); err != nil {
 			return fmt.Errorf("failed to create default user spaces: %w", err)
 		}
 	}
 	return
 }
 
-func initUserRecordTxWorker(userInfo *sneatauth.AuthUserInfo, userToCreate DataToCreateUser, params *dal4userus.UserWorkerParams) (err error) {
+func createOrUpdateUserRecord(userInfo *sneatauth.AuthUserInfo, userToCreate DataToCreateUser, params *CreateUserWorkerParams) (err error) {
+	if params == nil {
+		panic("params is nil")
+	}
 	if !params.User.Record.Exists() {
 		if err = createUserRecord(userToCreate, params.User, userInfo); err != nil {
 			err = fmt.Errorf("failed to populate new user record data: %w", err)
 			return
 		}
 		params.User.Record.MarkAsChanged()
-	} else if err = updateUserRecordWithInitData(userToCreate, params); err != nil {
+		params.QueueForInsert(params.User.Record)
+	} else if err = updateUserRecordWithInitData(userToCreate, params.UserWorkerParams); err != nil {
 		err = fmt.Errorf("failed to update user record data: %w", err)
+		// It might be too earlier to add updates to RecordsToUpdate?
+		//params.RecordsToUpdate = append(params.RecordsToUpdate, coretodo.RecordUpdates{Record: params.User.Record, Updates: params.UserUpdates})
 		return
 	}
 	return
 }
 
 func createUserRecord(userToCreate DataToCreateUser, user dbo4userus.UserEntry, userInfo *sneatauth.AuthUserInfo) error {
+	if userInfo == nil {
+		panic("userInfo is nil")
+	}
 	user.Data.Status = "active"
 	user.Data.ContactBrief.Type = briefs4contactus.ContactTypePerson
 	user.Data.ContactBrief.AgeGroup = "unknown"

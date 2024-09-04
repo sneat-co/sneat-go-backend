@@ -7,6 +7,7 @@ import (
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
 	"github.com/bots-go-framework/bots-fw-telegram"
 	"github.com/bots-go-framework/bots-fw/botsdal"
+	"github.com/bots-go-framework/bots-fw/botsfwconst"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/models4bots"
@@ -22,12 +23,18 @@ import (
 func CreateBotUserAndAppUserRecords(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
+	botPlatformID botsfwconst.Platform,
 	botUserData BotUserData,
 	remoteClientInfo dbmodels.RemoteClientInfo,
 ) (
 	botUser BotUserEntry, params CreateUserWorkerParams, err error,
 ) {
+	started := time.Now()
+
 	telegramUserData := new(models4bots.TelegramUserDbo)
+	telegramUserData.AccessGranted = true // TODO: Do we really need this field?
+	telegramUserData.DtCreated = started
+	telegramUserData.DtUpdated = started
 	telegramUserData.FirstName = botUserData.FirstName
 	telegramUserData.LastName = botUserData.LastName
 	telegramUserData.UserName = botUserData.Username
@@ -39,17 +46,19 @@ func CreateBotUserAndAppUserRecords(
 	key := botsdal.NewPlatformUserKey(telegram.PlatformID, botUser.ID)
 	botUser.Record = dal.NewRecordWithData(key, telegramUserData)
 
-	started := time.Now()
 	if params, err = getOrCreateAppUserRecordFromBotUser(ctx, tx, started, botUserData, remoteClientInfo); err != nil {
 		return
 	}
 	telegramUserData.SetAppUserID(params.User.ID)
-	if tx != nil {
-		if err = tx.Insert(ctx, botUser.Record); err != nil {
-			err = fmt.Errorf("failed to insert telegram user record: %w", err)
-			return
-		}
+	if err = telegramUserData.Validate(); err != nil {
+		err = fmt.Errorf("newly created telegram user data is not valid: %w", err)
+		return
 	}
+	botUser.Record.SetError(nil)
+	if tx != nil {
+		params.QueueForInsert(botUser.Record)
+	}
+	params.User.Data.AccountsOfUser.AddAccount(appuser.AccountKey{Provider: string(botPlatformID), ID: botUserData.BotUserID})
 	return
 }
 
@@ -103,10 +112,6 @@ func getOrCreateAppUserRecordFromBotUser(
 		return
 	}
 	if err = createUserRecordsTxWorker(ctx, tx, userInfo, userToCreate, &params); err != nil {
-		return
-	}
-	if err = params.ApplyChanges(ctx, tx); err != nil {
-		err = fmt.Errorf("failed to apply changes generate by createUserRecordsTxWorker(): %w", err)
 		return
 	}
 	return
