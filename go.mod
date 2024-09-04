@@ -4,6 +4,8 @@ go 1.23.0
 
 //replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
 
+//replace github.com/sneat-co/sneat-go-firebase => ../sneat-go-firebase
+
 //replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
 //replace github.com/sneat-co/sneat-go-modules => ../sneat-go-modules
 
@@ -53,7 +55,7 @@ require (
 	github.com/shiyanhui/hero v0.0.2
 	github.com/sneat-co/debtstracker-translations v0.0.27
 	github.com/sneat-co/sneat-go-core v0.32.6
-	github.com/sneat-co/sneat-go-firebase v0.5.7
+	github.com/sneat-co/sneat-go-firebase v0.5.9
 	github.com/stretchr/testify v1.9.0
 	github.com/strongo/app-host-gae v0.1.33
 	github.com/strongo/decimal v0.1.1
@@ -75,7 +77,7 @@ require (
 
 require (
 	cloud.google.com/go v0.115.1 // indirect
-	cloud.google.com/go/auth v0.9.2 // indirect
+	cloud.google.com/go/auth v0.9.3 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.4 // indirect
 	cloud.google.com/go/compute/metadata v0.5.0 // indirect
 	cloud.google.com/go/firestore v1.16.0 // indirect
@@ -86,7 +88,7 @@ require (
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
 	github.com/alexsergivan/transliterator v1.0.1 // indirect
 	github.com/bots-go-framework/bots-go-core v0.0.2 // indirect
-	github.com/dal-go/dalgo2firestore v0.2.1 // indirect
+	github.com/dal-go/dalgo2firestore v0.2.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/fgprof v0.9.5 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
@@ -119,10 +121,10 @@ require (
 	golang.org/x/sys v0.24.0 // indirect
 	golang.org/x/text v0.17.0 // indirect
 	golang.org/x/time v0.6.0 // indirect
-	google.golang.org/api v0.195.0 // indirect
-	google.golang.org/genproto v0.0.0-20240827150818-7e3bb234dfed // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20240827150818-7e3bb234dfed // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240827150818-7e3bb234dfed // indirect
+	google.golang.org/api v0.196.0 // indirect
+	google.golang.org/genproto v0.0.0-20240903143218-8af14fe29dc1 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20240903143218-8af14fe29dc1 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240903143218-8af14fe29dc1 // indirect
 	google.golang.org/grpc v1.66.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

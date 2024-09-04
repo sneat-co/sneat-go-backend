@@ -47,14 +47,17 @@ func CreateSpace(
 	}
 	err = dal4userus.RunUserWorker(ctx, userCtx, true, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) (err error) {
 		createSpaceParams = CreateSpaceParams{
-			User: params.User,
+			User:              params.User,
+			WithRecordChanges: new(coretodo.WithRecordChanges),
 		}
-		if err = CreateSpaceTxWorker(ctx, tx, time.Now(), request, &createSpaceParams); err != nil {
+		now := time.Now()
+		if err = CreateSpaceTxWorker(ctx, tx, now, request, &createSpaceParams); err != nil {
 			return
 		}
 		if err = createSpaceParams.ApplyChanges(ctx, tx); err != nil {
 			err = fmt.Errorf("failed to apply changes returned by CreateSpaceTxWorker(): %w", err)
 		}
+		params.UserUpdates = append(params.UserUpdates, createSpaceParams.UserUpdates...)
 		return
 	})
 	return
