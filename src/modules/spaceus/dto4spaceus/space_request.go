@@ -18,7 +18,7 @@ type SpaceRequest struct {
 // Validate validates request
 func (v *SpaceRequest) Validate() error {
 	if strings.TrimSpace(v.SpaceID) == "" {
-		return validation.NewErrRecordIsMissingRequiredField("space")
+		return validation.NewErrRecordIsMissingRequiredField("spaceID")
 	}
 	return nil
 }

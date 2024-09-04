@@ -31,10 +31,10 @@ go 1.23.0
 
 require (
 	firebase.google.com/go/v4 v4.14.1
-	github.com/bots-go-framework/bots-api-telegram v0.6.2
-	github.com/bots-go-framework/bots-fw v0.37.1
+	github.com/bots-go-framework/bots-api-telegram v0.7.0
+	github.com/bots-go-framework/bots-fw v0.38.1
 	github.com/bots-go-framework/bots-fw-store v0.8.0
-	github.com/bots-go-framework/bots-fw-telegram v0.12.2
+	github.com/bots-go-framework/bots-fw-telegram v0.13.0
 	github.com/bots-go-framework/bots-fw-telegram-models v0.3.3
 	github.com/bots-go-framework/bots-fw-telegram-webapp v0.3.0
 	github.com/bots-go-framework/bots-host-gae v0.5.14

@@ -6,12 +6,13 @@ import (
 )
 
 func AddSharedCommands(commandsByType map[botinput.WebhookInputType][]botsfw.Command) {
-	for commandType, commands := range map[botinput.WebhookInputType][]botsfw.Command{
-		botinput.WebhookInputText: {
-			pingCommand,
-			counterCommand,
-		},
+	for _, commands := range []botsfw.Command{
+		pingCommand,
+		counterCommand,
+		contactMessageCommand,
 	} {
-		commandsByType[commandType] = append(commandsByType[commandType], commands...)
+		for _, inputType := range commands.InputTypes {
+			commandsByType[inputType] = append(commandsByType[inputType], commands)
+		}
 	}
 }
