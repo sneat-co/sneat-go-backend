@@ -10,7 +10,7 @@ import (
 )
 
 func OptionsHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	if r.Method != "OPTIONS" {
+	if r.Method != http.MethodOptions {
 		panic("Method != OPTIONS")
 	}
 	// Pre-flight request
@@ -33,7 +33,7 @@ func OptionsHandler(ctx context.Context, w http.ResponseWriter, r *http.Request)
 	}
 	logus.Debugf(ctx, "Request 'Origin' header: %s", origin)
 	responseHeader := w.Header()
-	if accessControlRequestMethod := r.Header.Get("Access-Control-Request-Method"); !(accessControlRequestMethod == "GET" || accessControlRequestMethod == "POST") {
+	if accessControlRequestMethod := r.Header.Get("Access-Control-Request-Method"); !(accessControlRequestMethod == http.MethodGet || accessControlRequestMethod == http.MethodPost) {
 		BadRequestMessage(ctx, w, "Requested method is unsupported: "+accessControlRequestMethod)
 		return
 	} else {
@@ -51,7 +51,7 @@ func OptionsHandler(ctx context.Context, w http.ResponseWriter, r *http.Request)
 
 //func getOnly(handler dtdal.ContextHandler) func(w http.ResponseWriter, r *http.Request) {
 //	return dtdal.HttpAppHost.HandleWithContext(OptionsHandler(func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-//		if r.Method != "GET" {
+//		if r.Method != http.MethodGet {
 //			BadRequestMessage(c, w, "Expecting to get request method GET, got: "+r.Method)
 //			return
 //		}
@@ -63,7 +63,7 @@ func OptionsHandler(ctx context.Context, w http.ResponseWriter, r *http.Request)
 //
 //func postOnly(handler dtdal.ContextHandler) func(w http.ResponseWriter, r *http.Request) {
 //	return dtdal.HttpAppHost.HandleWithContext(OptionsHandler(func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-//		if r.Method != "POST" {
+//		if r.Method != http.MethodPost {
 //			BadRequestMessage(ctx, w, "Expecting to get request method POST, got: "+r.Method)
 //			return
 //		}

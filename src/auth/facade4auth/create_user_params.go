@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-type createUserWorkerParams struct {
+type CreateUserWorkerParams struct {
 	started time.Time
 	*dal4userus.UserWorkerParams
 	coretodo.WithRecordChanges

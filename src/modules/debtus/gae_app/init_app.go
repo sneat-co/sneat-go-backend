@@ -72,12 +72,12 @@ func NotFoundSilent(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 }
 
 func InitCronHandlers(router *httprouter.Router) {
-	router.HandlerFunc("GET", "/cron/send-reminders", dtdal.HttpAppHost.HandleWithContext(reminders.CronSendReminders))
+	router.HandlerFunc(http.MethodGet, "/cron/send-reminders", dtdal.HttpAppHost.HandleWithContext(reminders.CronSendReminders))
 }
 
 func InitTaskQueueHandlers(router *httprouter.Router) {
-	router.HandlerFunc("POST", "/taskqueu/send-reminder", dtdal.HttpAppHost.HandleWithContext(reminders.SendReminderHandler)) // TODO: Remove obsolete!
-	router.HandlerFunc("POST", "/task-queue/send-reminder", dtdal.HttpAppHost.HandleWithContext(reminders.SendReminderHandler))
+	router.HandlerFunc(http.MethodPost, "/taskqueu/send-reminder", dtdal.HttpAppHost.HandleWithContext(reminders.SendReminderHandler)) // TODO: Remove obsolete!
+	router.HandlerFunc(http.MethodPost, "/task-queue/send-reminder", dtdal.HttpAppHost.HandleWithContext(reminders.SendReminderHandler))
 }
 
 type TestTransferCounterparty struct {

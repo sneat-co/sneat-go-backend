@@ -8,9 +8,9 @@ import (
 
 func CleanupPage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	switch r.Method {
-	case "GET":
+	case http.MethodGet:
 		_, _ = w.Write([]byte("<form method=post><button type=submit></form>"))
-	case "POST":
+	case http.MethodPost:
 		_, _ = w.Write([]byte("Not implemented yet"))
 	default:
 		w.WriteHeader(http.StatusBadRequest)

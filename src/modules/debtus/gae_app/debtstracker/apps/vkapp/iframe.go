@@ -9,7 +9,7 @@ type router interface {
 }
 
 func InitVkIFrameApp(router router) {
-	router.HandlerFunc("GET", "/apps/vk/iframe", IFrameHandler)
+	router.HandlerFunc(http.MethodGet, "/apps/vk/iframe", IFrameHandler)
 }
 
 //var vkIFrameTemplate *template.Template

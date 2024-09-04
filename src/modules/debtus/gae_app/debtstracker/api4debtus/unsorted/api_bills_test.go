@@ -62,7 +62,7 @@ func TestBillApiCreateBill(t *testing.T) {
 	responseRecorder := httptest.NewRecorder()
 
 	body := strings.NewReader("")
-	request, err := http.NewRequest("POST", "/api/bill-create", body)
+	request, err := http.NewRequest(http.MethodPost, "/api/bill-create", body)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -87,7 +87,7 @@ func TestBillApiCreateBill(t *testing.T) {
 
 	//body = strings.NewReader("name=Test+bill&currency=EUR&amount=1.23")
 	responseRecorder = httptest.NewRecorder()
-	request = &http.Request{Method: "POST", URL: &url.URL{Path: "/api/bill-create"}, PostForm: form}
+	request = &http.Request{Method: http.MethodPost, URL: &url.URL{Path: "/api/bill-create"}, PostForm: form}
 	HandleCreateBill(c, responseRecorder, request, token4auth.AuthInfo{UserID: creatorUserID})
 
 	if responseRecorder.Code != http.StatusOK {

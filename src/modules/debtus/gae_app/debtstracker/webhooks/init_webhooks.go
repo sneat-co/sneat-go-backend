@@ -2,8 +2,9 @@ package webhooks
 
 import (
 	"github.com/julienschmidt/httprouter"
+	"net/http"
 )
 
 func InitWebhooks(router *httprouter.Router) {
-	router.HandlerFunc("POST", "/webhooks/twilio/", TwilioWebhook)
+	router.HandlerFunc(http.MethodPost, "/webhooks/twilio/", TwilioWebhook)
 }

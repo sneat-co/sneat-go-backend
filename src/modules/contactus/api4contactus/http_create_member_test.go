@@ -82,7 +82,7 @@ func TestHttpAddMember(t *testing.T) {
 
 	//t.Log(buffer.String())
 
-	req := httpmock.NewPostJSONRequest("POST", "/v0/team/create_member", request)
+	req := httpmock.NewPostJSONRequest(http.MethodPost, "/v0/team/create_member", request)
 	req.Host = "localhost"
 	req.Header.Set("Origin", "http://localhost:3000")
 

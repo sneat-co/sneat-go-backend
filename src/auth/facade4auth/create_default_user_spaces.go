@@ -13,7 +13,7 @@ import (
 func createDefaultUserSpacesTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	params *createUserWorkerParams,
+	params *CreateUserWorkerParams,
 ) (
 	spaces []dbo4spaceus.SpaceEntry,
 	contactusSpaces []dal4contactus.ContactusSpaceEntry,

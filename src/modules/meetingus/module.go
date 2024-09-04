@@ -8,7 +8,7 @@ import (
 
 func Module() module.Module {
 	return module.NewModule(const4meetingus.ModuleID, module.RegisterRoutes(func(handle module.HTTPHandleFunc) {
-		handle("POST", "/api4meetingus/about", func(writer http.ResponseWriter, request *http.Request) {
+		handle(http.MethodPost, "/api4meetingus/about", func(writer http.ResponseWriter, request *http.Request) {
 			_, _ = writer.Write([]byte("meetingus"))
 		})
 	}))

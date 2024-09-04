@@ -18,18 +18,21 @@ func httpLoginFromTelegramWidget(w http.ResponseWriter, r *http.Request) {
 
 	var tgAuthData dto4auth.TelegramAuthData
 	if err = apicore.DecodeRequestBody(w, r, &tgAuthData); err != nil {
-		// apicore.ReturnError(ctx, w, r, err)
+		apicore.ReturnError(ctx, w, r, err)
 		return
 	}
 
-	var initData twainitdata.InitData
-	initData.Hash = tgAuthData.Hash
-	initData.AuthDateRaw = tgAuthData.AuthDate
-	initData.User.ID = tgAuthData.ID
-	initData.User.Username = tgAuthData.Username
-	initData.User.FirstName = tgAuthData.FirstName
-	initData.User.LastName = tgAuthData.LastName
-	initData.User.PhotoURL = tgAuthData.PhotoURL
+	initData := twainitdata.InitData{
+		Hash:        tgAuthData.Hash,
+		AuthDateRaw: tgAuthData.AuthDate,
+		User: twainitdata.User{
+			ID:        tgAuthData.ID,
+			Username:  tgAuthData.Username,
+			FirstName: tgAuthData.FirstName,
+			LastName:  tgAuthData.LastName,
+			PhotoURL:  tgAuthData.PhotoURL,
+		},
+	}
 
-	signInWithTelegram(ctx, w, r, initData)
+	signInWithTelegram(ctx, w, r, "", initData)
 }

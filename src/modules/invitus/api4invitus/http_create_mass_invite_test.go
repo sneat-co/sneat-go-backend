@@ -53,7 +53,7 @@ func TestCreateMassInvite(t *testing.T) {
 	}
 	//t.Log(buffer.String())
 
-	req, err := http.NewRequest("POST", "/api4meetingus/create-invite", buffer)
+	req, err := http.NewRequest(http.MethodPost, "/api4meetingus/create-invite", buffer)
 	if err != nil {
 		t.Fatal(err)
 	}

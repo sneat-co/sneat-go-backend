@@ -25,7 +25,7 @@ func CreateBotUserAndAppUserRecords(
 	botUserData BotUserData,
 	remoteClientInfo dbmodels.RemoteClientInfo,
 ) (
-	botUser BotUserEntry, appUser dbo4userus.UserEntry, err error,
+	botUser BotUserEntry, params CreateUserWorkerParams, err error,
 ) {
 	telegramUserData := new(models4bots.TelegramUserDbo)
 	telegramUserData.FirstName = botUserData.FirstName
@@ -40,10 +40,10 @@ func CreateBotUserAndAppUserRecords(
 	botUser.Record = dal.NewRecordWithData(key, telegramUserData)
 
 	started := time.Now()
-	if appUser, err = getOrCreateAppUserRecordFromBotUser(ctx, tx, started, botUserData, remoteClientInfo); err != nil {
+	if params, err = getOrCreateAppUserRecordFromBotUser(ctx, tx, started, botUserData, remoteClientInfo); err != nil {
 		return
 	}
-	telegramUserData.SetAppUserID(appUser.ID)
+	telegramUserData.SetAppUserID(params.User.ID)
 	if tx != nil {
 		if err = tx.Insert(ctx, botUser.Record); err != nil {
 			err = fmt.Errorf("failed to insert telegram user record: %w", err)
@@ -60,7 +60,7 @@ func getOrCreateAppUserRecordFromBotUser(
 	botUserData BotUserData,
 	remoteClientInfo dbmodels.RemoteClientInfo,
 ) (
-	user dbo4userus.UserEntry, err error,
+	params CreateUserWorkerParams, err error,
 ) {
 
 	userToCreate := DataToCreateUser{
@@ -93,7 +93,7 @@ func getOrCreateAppUserRecordFromBotUser(
 		AuthProviderUserInfo: providerUserInfo,
 		ProviderUserInfo:     []*sneatauth.AuthProviderUserInfo{providerUserInfo}, // TODO: Why it duplicates AuthProviderUserInfo?
 	}
-	params := createUserWorkerParams{
+	params = CreateUserWorkerParams{
 		UserWorkerParams: &dal4userus.UserWorkerParams{
 			Started: started,
 			User:    dbo4userus.NewUserEntry(firebaseUserRecord.UID),
@@ -109,6 +109,5 @@ func getOrCreateAppUserRecordFromBotUser(
 		err = fmt.Errorf("failed to apply changes generate by createUserRecordsTxWorker(): %w", err)
 		return
 	}
-	user = params.User
 	return
 }

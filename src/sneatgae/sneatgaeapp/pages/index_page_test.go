@@ -22,7 +22,7 @@ import (
 )
 
 func TestIndexHandler(t *testing.T) {
-	req, err := http.NewRequest("GET", "/", nil)
+	req, err := http.NewRequest(http.MethodGet, "/", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -50,7 +50,7 @@ func TestIndexHandler(t *testing.T) {
 }
 
 func TestIndexHandlerNotFound(t *testing.T) {
-	req, err := http.NewRequest("GET", "/404", nil)
+	req, err := http.NewRequest(http.MethodGet, "/404", nil)
 	if err != nil {
 		t.Fatal(err)
 	}

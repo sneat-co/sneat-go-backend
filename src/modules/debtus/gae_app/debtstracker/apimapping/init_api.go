@@ -10,22 +10,23 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/reminders"
 	"github.com/strongo/strongoapp"
+	"net/http"
 )
 
 func InitApi(router *httprouter.Router) {
-	router.HandlerFunc("GET", "/api4debtus/ping", botsfw.PingHandler)
+	router.HandlerFunc(http.MethodGet, "/api4debtus/ping", botsfw.PingHandler)
 
 	HandlerFunc := func(method, path string, handler strongoapp.HttpHandlerWithContext) {
 		// TODO: Refactor optionsHandler so it's does not handle GET requests (see AuthOnly() for example)
 		router.HandlerFunc(method, path, dtdal.HttpAppHost.HandleWithContext(handler))
-		router.HandlerFunc("OPTIONS", path, dtdal.HttpAppHost.HandleWithContext(api4debtus.OptionsHandler))
+		router.HandlerFunc(http.MethodOptions, path, dtdal.HttpAppHost.HandleWithContext(api4debtus.OptionsHandler))
 	}
 
 	GET := func(path string, handler strongoapp.HttpHandlerWithContext) {
-		HandlerFunc("GET", path, handler)
+		HandlerFunc(http.MethodGet, path, handler)
 	}
 	POST := func(path string, handler strongoapp.HttpHandlerWithContext) {
-		HandlerFunc("POST", path, handler)
+		HandlerFunc(http.MethodPost, path, handler)
 	}
 
 	POST("/api4debtus/auth/login-id", api4debtus.OptionalAuth(api4auth.HandleAuthLoginId))

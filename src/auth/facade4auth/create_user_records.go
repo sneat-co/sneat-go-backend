@@ -30,7 +30,7 @@ func CreateUserRecords(ctx context.Context, userCtx facade.UserContext, userToCr
 	}
 
 	err = dal4userus.RunUserWorker(ctx, userCtx, false, func(ctx context.Context, tx dal.ReadwriteTransaction, userWorkerParams *dal4userus.UserWorkerParams) (err error) {
-		params := createUserWorkerParams{
+		params := CreateUserWorkerParams{
 			started:          time.Now(),
 			UserWorkerParams: userWorkerParams,
 		}
@@ -55,7 +55,7 @@ func createUserRecordsTxWorker(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	userInfo *sneatauth.AuthUserInfo, userToCreate DataToCreateUser, // TODO: Does this 2 duplicate each other?
-	params *createUserWorkerParams,
+	params *CreateUserWorkerParams,
 ) (err error) {
 	if err = initUserRecordTxWorker(userInfo, userToCreate, params.UserWorkerParams); err != nil {
 		return

@@ -13,8 +13,8 @@ import (
 )
 
 func InitSupportHandlers(router *httprouter.Router) {
-	router.HandlerFunc("GET", "/support/validate-users", ValidateUsersHandler)
-	router.HandlerFunc("GET", "/support/validate-user", ValidateUserHandler)
+	router.HandlerFunc(http.MethodGet, "/support/validate-users", ValidateUsersHandler)
+	router.HandlerFunc(http.MethodGet, "/support/validate-user", ValidateUserHandler)
 }
 
 func ValidateUsersHandler(w http.ResponseWriter, r *http.Request) {

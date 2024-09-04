@@ -16,7 +16,7 @@ ga('send','pageview');
       ga('set','userId',userId);
 
       var xhReq = new XMLHttpRequest();
-		xhReq.open("GET", "/api4debtus/user?id="+userId, false);
+		xhReq.open(http.MethodGet, "/api4debtus/user?id="+userId, false);
 		xhReq.send(null)
 
       l.replace(l.hash.replace(e,m[3]));

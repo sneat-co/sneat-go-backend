@@ -10,7 +10,6 @@ import (
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/auth/facade4auth"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/i18n"
 	"github.com/strongo/strongoapp/appuser"
@@ -50,16 +49,16 @@ func (s sneatAppBotDal) CreateAppUserFromBotUser(ctx context.Context,
 	remoteClientInfo := dbmodels.RemoteClientInfo{
 		HostOrApp: string(bot.Platform) + "@" + bot.ID,
 	}
-	var user dbo4userus.UserEntry
+	var params facade4auth.CreateUserWorkerParams
 
-	botUser, user, err = facade4auth.CreateBotUserAndAppUserRecords(ctx, tx, botUserData, remoteClientInfo)
+	botUser, params, err = facade4auth.CreateBotUserAndAppUserRecords(ctx, tx, botUserData, remoteClientInfo)
 	if err != nil {
 		err = fmt.Errorf("failed to create user records: %w", err)
 		return
 	}
 	appUser = record.DataWithID[string, botsfwmodels.AppUserData]{
-		WithID: user.WithID,
-		Data:   user.Data,
+		WithID: params.User.WithID,
+		Data:   params.User.Data,
 	}
 	return
 }
