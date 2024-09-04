@@ -9,11 +9,10 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/facade4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"net/url"
 	"strings"
-	"time"
 )
 
 var spaceCommand = botsfw.Command{
@@ -59,28 +58,16 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 	spaceID, spaceType := spaceRef.SpaceID(), spaceRef.SpaceType()
 	appUserID := whc.AppUserID()
 	if spaceID == "" && appUserID != "" {
-		var user dbo4userus.UserEntry
-		if spaceID, user, err = getSpaceID(whc, spaceType); err != nil {
+		if spaceID, _, err = getSpaceID(whc, spaceType); err != nil {
 			return
 		}
 		if spaceID == "" {
 			ctx := whc.Context()
-			tx := whc.Tx()
-			request := dto4spaceus.CreateSpaceRequest{Type: spaceType}
-			params := dal4userus.UserWorkerParams{
-				Started: time.Now(), // TODO: get from tx
-				User:    user,
-			}
+
+			userCtx := facade.NewUserContext(appUserID)
+
 			var createSpaceParams facade4spaceus.CreateSpaceParams
-			if err = facade4spaceus.CreateSpaceTxWorker(ctx, tx, time.Now(), request, &createSpaceParams); err != nil {
-				err = fmt.Errorf("failed to create space: %w", err)
-				return
-			}
-			if err = params.User.Data.Validate(); err != nil {
-				err = fmt.Errorf("user record is not valid after CreateSpaceTxWorker: %w", err)
-				return
-			}
-			if err = tx.Update(ctx, params.User.Key, params.UserUpdates); err != nil {
+			if createSpaceParams, err = facade4spaceus.CreateSpace(ctx, userCtx, dto4spaceus.CreateSpaceRequest{Type: spaceType}); err != nil {
 				return
 			}
 			spaceID = createSpaceParams.Space.ID

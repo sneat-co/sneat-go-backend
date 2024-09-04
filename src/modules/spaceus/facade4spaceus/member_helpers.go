@@ -10,8 +10,8 @@ import (
 	"time"
 )
 
-// CreateMemberEntryFromBrief creates a member record from member's brief
-func CreateMemberEntryFromBrief(
+// NewMemberContactEntryFromContactBrief creates a member record from member's brief
+func NewMemberContactEntryFromContactBrief(
 	spaceID string,
 	contactID string,
 	memberBrief briefs4contactus.ContactBrief,

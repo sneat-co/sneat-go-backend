@@ -19,9 +19,6 @@ func createDefaultUserSpacesTx(ctx context.Context, tx dal.ReadwriteTransaction,
 			if err = facade4spaceus.CreateSpaceTxWorker(ctx, tx, params.Started, spaceRequest, &createSpaceParams); err != nil {
 				return
 			}
-			//if len(createSpaceParams.UserUpdates) > 0 {
-			//	params.UserUpdates = append(params.UserUpdates, createSpaceParams.UserUpdates...)
-			//}
 		}
 	}
 	return

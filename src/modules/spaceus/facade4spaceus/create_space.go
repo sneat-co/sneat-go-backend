@@ -10,6 +10,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
+	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
@@ -89,16 +90,6 @@ func CreateSpaceTxWorker(
 		return
 	}
 
-	roles := []string{
-		const4contactus.SpaceMemberRoleMember,
-		const4contactus.SpaceMemberRoleCreator,
-		const4contactus.SpaceMemberRoleOwner,
-		const4contactus.SpaceMemberRoleContributor,
-	}
-	if request.Type == "family" {
-		roles = append(roles, const4contactus.SpaceMemberRoleAdult)
-	}
-
 	//if request.Type == "family" && request.Title == "" {
 	//	request.Title = "Family"
 	//}
@@ -161,69 +152,52 @@ func CreateSpaceTxWorker(
 	}
 
 	params.Space = dbo4spaceus.NewSpaceEntryWithDbo(spaceID, params.Space.Data)
-	//if err = tx.Insert(ctx, space.Record); err != nil {
-	//	err = fmt.Errorf("failed to insert a new spaceDbo record: %w", err)
-	//	return
-	//}
 
 	params.ContactusSpace = dal4contactus.NewContactusSpaceEntry(spaceID)
 
-	spaceMember := params.User.Data.ContactBrief // This should copy data from user's contact brief as it's not a pointer
+	spaceContactBrief := params.User.Data.ContactBrief // This should copy data from user's contact brief as it's not a pointer
 
-	spaceMember.UserID = params.User.ID
-	spaceMember.Roles = roles
-	if spaceMember.Gender == "" {
-		spaceMember.Gender = "unknown"
+	spaceContactBrief.UserID = params.User.ID
+
+	roles := []string{
+		const4contactus.SpaceMemberRoleMember,
+		const4contactus.SpaceMemberRoleCreator,
+		const4contactus.SpaceMemberRoleOwner,
+		const4contactus.SpaceMemberRoleContributor,
+	}
+	if request.Type == core4spaceus.SpaceTypeFamily {
+		roles = append(roles, const4contactus.SpaceMemberRoleAdult)
+	}
+	spaceContactBrief.Roles = roles
+
+	if spaceContactBrief.Gender == "" {
+		spaceContactBrief.Gender = "unknown"
 	}
 	if params.User.Data.Defaults != nil && len(params.User.Data.Defaults.ShortNames) > 0 {
-		spaceMember.ShortTitle = params.User.Data.Defaults.ShortNames[0].Name
+		spaceContactBrief.ShortTitle = params.User.Data.Defaults.ShortNames[0].Name
 	}
-	//if len(spaceMember.Emails) == 0 && len(user.Emails) > 0 {
-	//	spaceMember.Emails = user.Emails
-	//}
-	//if len(spaceMember.Phones) == 0 && len(user.Data.Phones) > 0 {
-	//	spaceMember.Phones = user.Data.Phones
-	//}
-	params.ContactusSpace.Data.AddContact(userSpaceContactID, &spaceMember)
-
-	//if err = tx.Insert(ctx, contactusSpace.Record); err != nil {
-	//	err = fmt.Errorf("failed to insert a new spaceDbo contactus record: %w", err)
-	//	return
-	//}
-
-	userSpaceBrief := dbo4userus.UserSpaceBrief{
-		SpaceBrief:    params.Space.Data.SpaceBrief,
-		UserContactID: userSpaceContactID,
-		Roles:         roles,
+	params.ContactusSpace.Data.AddContact(userSpaceContactID, &spaceContactBrief)
+	if err = params.ContactusSpace.Data.Validate(); err != nil {
+		err = fmt.Errorf("newly created contactus space record is not valid: %w", err)
+		return
 	}
+	params.ContactusSpace.Record.MarkAsChanged()
+	params.ContactusSpace.Record.SetError(nil)
+	params.QueueForInsert(params.ContactusSpace.Record)
 
-	params.UserUpdates = append(params.UserUpdates, params.User.Data.SetSpaceBrief(spaceID, &userSpaceBrief)...)
-
-	params.UserUpdates = append(params.UserUpdates, dbo4linkage.UpdateRelatedIDs(&params.User.Data.WithRelated, &params.User.Data.WithRelatedIDs)...)
+	params.UserUpdates = append(params.UserUpdates, updateUserWithSpaceBrief(params.User, spaceID, userSpaceContactID, params.Space.Data.SpaceBrief, roles)...)
 
 	if err = params.User.Data.Validate(); err != nil {
 		err = fmt.Errorf("user record is not valid after adding new space info: %v", err)
 		return
 	}
 	params.User.Record.MarkAsChanged()
-	//if params.User.Record.Exists() {
-	//	// Will be updated by RunUserWorker
-	//} else {
-	//	if err = tx.Insert(ctx, params.User.Record); err != nil {
-	//		err = fmt.Errorf("failed to insert new user record: %w", err)
-	//		return
-	//	}
-	//}
 
-	spaceMember.Roles = roles
-	if params.Member, err = CreateMemberEntryFromBrief(spaceID, userSpaceContactID, spaceMember, createdAt, params.User.ID); err != nil {
+	if params.Member, err = NewMemberContactEntryFromContactBrief(spaceID, userSpaceContactID, spaceContactBrief, createdAt, params.User.ID); err != nil {
 		err = fmt.Errorf("failed to create member's record: %w", err)
 		return
 	}
-
-	if !params.Member.Record.Exists() {
-		params.QueueForInsert(params.Member.Record)
-	}
+	params.QueueForInsert(params.Member.Record)
 
 	if err = params.Space.Data.Validate(); err != nil {
 		params.Space.Record.SetError(err)
@@ -232,6 +206,17 @@ func CreateSpaceTxWorker(
 	params.Space.Record.SetError(nil)
 	params.QueueForInsert(params.Space.Record)
 
+	return
+}
+
+func updateUserWithSpaceBrief(user dbo4userus.UserEntry, spaceID, userSpaceContactID string, spaceBrief dbo4spaceus.SpaceBrief, spaceUserRoles []string) (updates []dal.Update) {
+	userSpaceBrief := dbo4userus.UserSpaceBrief{
+		SpaceBrief:    spaceBrief,
+		UserContactID: userSpaceContactID,
+		Roles:         spaceUserRoles,
+	}
+	updates = append(updates, user.Data.SetSpaceBrief(spaceID, &userSpaceBrief)...)
+	updates = append(updates, dbo4linkage.UpdateRelatedIDs(&user.Data.WithRelated, &user.Data.WithRelatedIDs)...)
 	return
 }
 

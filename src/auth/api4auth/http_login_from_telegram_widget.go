@@ -1,17 +1,23 @@
 package api4auth
 
 import (
+	telegram "github.com/bots-go-framework/bots-fw-telegram"
 	"github.com/bots-go-framework/bots-fw-telegram-webapp/tgloginwidget"
 	"github.com/bots-go-framework/bots-fw-telegram-webapp/twainitdata"
+	"github.com/sneat-co/sneat-go-backend/src/botscore"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/apicore/verify"
 	"github.com/strongo/validation"
 	"net/http"
-	"os"
-	"strings"
 )
 
 func httpLoginFromTelegramWidget(w http.ResponseWriter, r *http.Request) {
+
+	botID := r.URL.Query().Get("botID")
+	if botID == "" {
+		apicore.ReturnError(r.Context(), w, r, validation.NewErrRecordIsMissingRequiredField("botID"))
+		return
+	}
 
 	ctx, err := apicore.VerifyRequest(w, r, verify.DefaultJsonWithNoAuthRequired)
 	if err != nil {
@@ -25,11 +31,10 @@ func httpLoginFromTelegramWidget(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	botID := os.Getenv("TELEGRAM_BOT_ID")
-	if botID == "" {
-		botID = "SneatBot"
+	var botToken string
+	if botToken, err = botscore.GetBotToken(telegram.PlatformID, botID); err != nil {
+		return
 	}
-	botToken := os.Getenv("TELEGRAM_BOT_TOKEN_" + strings.ToUpper(botID))
 
 	if err = tgAuthData.Check(botToken); err != nil {
 		apicore.ReturnError(ctx, w, r, validation.NewBadRequestError(err))
@@ -48,5 +53,5 @@ func httpLoginFromTelegramWidget(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	signInWithTelegram(ctx, w, r, "", initData)
+	signInWithTelegram(ctx, w, r, botID, initData)
 }
