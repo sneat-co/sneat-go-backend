@@ -34,7 +34,7 @@ require (
 	github.com/bots-go-framework/bots-fw-store v0.8.0
 	github.com/bots-go-framework/bots-fw-telegram v0.12.2
 	github.com/bots-go-framework/bots-fw-telegram-models v0.3.3
-	github.com/bots-go-framework/bots-fw-telegram-webapp v0.0.1
+	github.com/bots-go-framework/bots-fw-telegram-webapp v0.3.0
 	github.com/bots-go-framework/bots-host-gae v0.5.14
 	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85
 	github.com/crediterra/money v0.3.0
