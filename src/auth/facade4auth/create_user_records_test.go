@@ -10,6 +10,7 @@ import (
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/sneat-co/sneat-go-core/sneatauth"
 	"github.com/stretchr/testify/assert"
+	"github.com/strongo/strongoapp/appuser"
 	"github.com/strongo/strongoapp/person"
 	"testing"
 )
@@ -31,7 +32,10 @@ func Test_InitUserRecord(t *testing.T) {
 			args: args{
 				user: facade.NewUserContext("test_user_1"),
 				userToCreate: DataToCreateUser{
-					AuthProvider: "password",
+					AuthAccount: appuser.AccountKey{
+						Provider: "password",
+						ID:       "u1@example.com",
+					},
 					Names: person.NameFields{
 						FirstName: "First",
 						LastName:  "UserEntry",

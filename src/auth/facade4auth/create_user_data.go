@@ -10,8 +10,7 @@ import (
 
 // DataToCreateUser is NOT a DTO object - do not user at transport layer!
 type DataToCreateUser struct {
-	Account         appuser.AccountKey
-	AuthProvider    string // TODO: Seems to be a duplicate of Account.Provider - document why needed or remove
+	AuthAccount     appuser.AccountKey
 	Email           string
 	EmailIsVerified bool
 	IanaTimezone    string
@@ -22,11 +21,8 @@ type DataToCreateUser struct {
 }
 
 func (v DataToCreateUser) Validate() error {
-	if v.AuthProvider == "" {
-		return validation.NewErrRequestIsMissingRequiredField("authProvider")
-	}
-	if v.Account.Provider != "" && v.Account.Provider != v.AuthProvider {
-		return validation.NewErrBadRequestFieldValue("authProvider", "mismatch with account provider")
+	if err := v.AuthAccount.Validate(); err != nil {
+		return validation.NewErrBadRequestFieldValue("authAccount", "mismatch with account provider")
 	}
 	if err := v.RemoteClient.Validate(); err != nil {
 		return fmt.Errorf("invalid remote client: %w", err)

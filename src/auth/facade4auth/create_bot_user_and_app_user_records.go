@@ -23,6 +23,7 @@ import (
 func CreateBotUserAndAppUserRecords(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
+	appUserID string,
 	botPlatformID botsfwconst.Platform,
 	botUserData BotUserData,
 	remoteClientInfo dbmodels.RemoteClientInfo,
@@ -46,17 +47,33 @@ func CreateBotUserAndAppUserRecords(
 	key := botsdal.NewPlatformUserKey(telegram.PlatformID, botUser.ID)
 	botUser.Record = dal.NewRecordWithData(key, telegramUserData)
 
-	if params, err = getOrCreateAppUserRecordFromBotUser(ctx, tx, started, botUserData, remoteClientInfo); err != nil {
-		return
+	if appUserID == "" {
+		if params, err = getOrCreateAppUserRecordFromBotUser(ctx, tx, started, botUserData, remoteClientInfo); err != nil {
+			return
+		}
+		_ = params.User.Data.AccountsOfUser.AddAccount(appuser.AccountKey{Provider: string(botPlatformID), ID: botUserData.BotUserID})
+		params.QueueForInsert(botUser.Record)
+	} else { // appUserID != ""
+		params.UserWorkerParams = &dal4userus.UserWorkerParams{
+			Started: started,
+			User:    dbo4userus.NewUserEntry(appUserID),
+		}
+		if err = tx.Get(ctx, params.User.Record); err != nil {
+			return
+		}
+		if updates := params.User.Data.AccountsOfUser.AddAccount(appuser.AccountKey{Provider: string(botPlatformID), ID: botUserData.BotUserID}); len(updates) > 0 {
+			params.UserUpdates = append(params.UserUpdates, updates...)
+			params.User.Record.MarkAsChanged()
+		}
 	}
 	telegramUserData.SetAppUserID(params.User.ID)
+
 	if err = telegramUserData.Validate(); err != nil {
 		err = fmt.Errorf("newly created telegram user data is not valid: %w", err)
+		botUser.Record.SetError(err)
 		return
 	}
-	botUser.Record.SetError(nil)
-	params.QueueForInsert(botUser.Record)
-	params.User.Data.AccountsOfUser.AddAccount(appuser.AccountKey{Provider: string(botPlatformID), ID: botUserData.BotUserID})
+	botUser.Record.SetError(dal.ErrRecordNotFound)
 	return
 }
 
@@ -71,14 +88,13 @@ func getOrCreateAppUserRecordFromBotUser(
 ) {
 
 	userToCreate := DataToCreateUser{
-		AuthProvider: string(botUserData.PlatformID),
 		Names: person.NameFields{
 			FirstName: botUserData.FirstName,
 			LastName:  botUserData.LastName,
 		},
 		PhotoURL:     botUserData.PhotoURL,
 		LanguageCode: botUserData.LanguageCode,
-		Account: appuser.AccountKey{
+		AuthAccount: appuser.AccountKey{
 			Provider: string(botUserData.PlatformID),
 			ID:       botUserData.BotUserID,
 		},

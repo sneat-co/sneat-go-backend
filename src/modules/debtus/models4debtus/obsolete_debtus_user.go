@@ -169,7 +169,7 @@ func (v *DebutsAppUserDataOBSOLETE) SetContacts(contacts []DebtusContactBrief) {
 //			continue // Ignore legacy
 //		case "FbUserID":
 //			if v, ok := p.Value.(string); ok && v != "" {
-//				entity.AddAccount(user.Account{
+//				entity.AddAccount(user.AuthAccount{
 //					Provider: "fb",
 //					ContactID:       v,
 //				})
@@ -177,7 +177,7 @@ func (v *DebutsAppUserDataOBSOLETE) SetContacts(contacts []DebtusContactBrief) {
 //			continue
 //		case "FmbUserID":
 //			if v, ok := p.Value.(string); ok && v != "" {
-//				entity.AddAccount(user.Account{
+//				entity.AddAccount(user.AuthAccount{
 //					Provider: "fbm",
 //					ContactID:       v,
 //				})
@@ -185,7 +185,7 @@ func (v *DebutsAppUserDataOBSOLETE) SetContacts(contacts []DebtusContactBrief) {
 //			continue
 //		case "FbmUserID":
 //			if v, ok := p.Value.(string); ok && v != "" {
-//				entity.AddAccount(user.Account{
+//				entity.AddAccount(user.AuthAccount{
 //					Provider: "fbm",
 //					ContactID:       v,
 //				})
@@ -213,7 +213,7 @@ func (v *DebutsAppUserDataOBSOLETE) SetContacts(contacts []DebtusContactBrief) {
 //			continue
 //		case "GoogleUniqueUserID":
 //			if v, ok := p.Value.(string); ok && v != "" {
-//				entity.AddAccount(user.Account{
+//				entity.AddAccount(user.AuthAccount{
 //					Provider: "google",
 //					App:      "debtusbot",
 //					ContactID:       v,

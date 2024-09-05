@@ -5,7 +5,9 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dto4userus"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/apicore/verify"
+	"github.com/strongo/strongoapp/appuser"
 	"net/http"
+	"strings"
 )
 
 // httpInitUserRecord sets user title
@@ -21,7 +23,10 @@ func httpInitUserRecord(w http.ResponseWriter, r *http.Request) {
 	request.RemoteClient = apicore.GetRemoteClientInfo(r)
 	var params facade4auth.CreateUserWorkerParams
 	userToCreate := facade4auth.DataToCreateUser{
-		AuthProvider:    request.AuthProvider,
+		AuthAccount: appuser.AccountKey{
+			Provider: request.AuthProvider,
+			ID:       strings.ToLower(strings.TrimSpace(request.Email)),
+		},
 		Email:           request.Email,
 		EmailIsVerified: request.EmailIsVerified,
 		IanaTimezone:    request.IanaTimezone,

@@ -11,6 +11,7 @@ import (
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/sneat-co/sneat-go-core/sneatauth"
+	"github.com/strongo/strongoapp/appuser"
 	"github.com/strongo/strongoapp/person"
 	"github.com/strongo/strongoapp/with"
 	"strings"
@@ -32,7 +33,6 @@ func CreateUserRecords(ctx context.Context, userCtx facade.UserContext, userToCr
 
 	err = dal4userus.RunUserWorker(ctx, userCtx, false, func(ctx context.Context, tx dal.ReadwriteTransaction, userWorkerParams *dal4userus.UserWorkerParams) (err error) {
 		params = CreateUserWorkerParams{
-			started:          time.Now(),
 			UserWorkerParams: userWorkerParams,
 		}
 		if err = createUserRecordsTxWorker(ctx, tx, userInfo, userToCreate, &params); err != nil {
@@ -130,21 +130,30 @@ func createUserRecord(userToCreate DataToCreateUser, user dbo4userus.UserEntry, 
 		user.Data.Email = userInfo.Email
 		user.Data.EmailVerified = userInfo.EmailVerified
 	}
-	authProvider := userToCreate.AuthProvider
-	if authProvider == "" {
+
+	if userToCreate.AuthAccount.IsEmpty() {
 		if len(userInfo.ProviderUserInfo) == 1 {
-			authProvider = userInfo.ProviderUserInfo[0].ProviderID
-		} else {
-			authProvider = userInfo.ProviderID
+			ui := userInfo.ProviderUserInfo[0]
+			userToCreate.AuthAccount = appuser.AccountKey{
+				Provider: ui.ProviderID,
+			}
+			if ui.Email != "" {
+				userToCreate.AuthAccount.ID = ui.Email
+			} else if ui.PhoneNumber != "" {
+				userToCreate.AuthAccount.ID = ui.PhoneNumber
+			}
 		}
 	}
+
+	_ = user.Data.AddAccount(userToCreate.AuthAccount)
+
 	if user.Data.Email != "" {
 		user.Data.Emails = []dbmodels.PersonEmail{
 			{
 				Type:         "primary",
 				Address:      user.Data.Email,
 				Verified:     user.Data.EmailVerified,
-				AuthProvider: authProvider,
+				AuthProvider: userToCreate.AuthAccount.Provider,
 			},
 		}
 	}

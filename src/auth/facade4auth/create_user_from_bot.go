@@ -34,7 +34,7 @@ func createFirebaseUser(ctx context.Context, userToCreate DataToCreateUser) (fir
 		return
 	}
 	customClaims := map[string]interface{}{
-		"authProvider": userToCreate.Account.Provider,
+		"authProvider": userToCreate.AuthAccount.Provider,
 	}
 	if err = fbAuthClient.SetCustomUserClaims(ctx, firebaseUserRecord.UID, customClaims); err != nil {
 		err = fmt.Errorf("failed to set custom claims: %w", err)

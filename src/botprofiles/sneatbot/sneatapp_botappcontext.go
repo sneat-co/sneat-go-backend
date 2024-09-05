@@ -51,7 +51,7 @@ func (s sneatAppBotDal) CreateAppUserFromBotUser(ctx context.Context,
 	}
 	var params facade4auth.CreateUserWorkerParams
 
-	botUser, params, err = facade4auth.CreateBotUserAndAppUserRecords(ctx, tx, bot.Platform, botUserData, remoteClientInfo)
+	botUser, params, err = facade4auth.CreateBotUserAndAppUserRecords(ctx, tx, appUser.ID, bot.Platform, botUserData, remoteClientInfo)
 	if err != nil {
 		err = fmt.Errorf("failed to create user records: %w", err)
 		return
