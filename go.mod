@@ -31,17 +31,17 @@ go 1.23.0
 
 require (
 	firebase.google.com/go/v4 v4.14.1
-	github.com/bots-go-framework/bots-api-telegram v0.7.0
-	github.com/bots-go-framework/bots-fw v0.38.1
-	github.com/bots-go-framework/bots-fw-store v0.8.1
-	github.com/bots-go-framework/bots-fw-telegram v0.13.0
-	github.com/bots-go-framework/bots-fw-telegram-models v0.3.3
-	github.com/bots-go-framework/bots-fw-telegram-webapp v0.3.0
-	github.com/bots-go-framework/bots-host-gae v0.5.15
+	github.com/bots-go-framework/bots-api-telegram v0.7.1
+	github.com/bots-go-framework/bots-fw v0.38.2
+	github.com/bots-go-framework/bots-fw-store v0.8.2
+	github.com/bots-go-framework/bots-fw-telegram v0.13.1
+	github.com/bots-go-framework/bots-fw-telegram-models v0.3.4
+	github.com/bots-go-framework/bots-fw-telegram-webapp v0.3.1
+	github.com/bots-go-framework/bots-host-gae v0.5.16
 	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85
 	github.com/crediterra/money v0.3.0
-	github.com/dal-go/dalgo v0.13.0
-	github.com/dal-go/mocks4dalgo v0.1.22
+	github.com/dal-go/dalgo v0.13.1
+	github.com/dal-go/mocks4dalgo v0.1.23
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/golang/mock v1.6.0
 	github.com/gorilla/sessions v1.4.0
@@ -67,8 +67,8 @@ require (
 	github.com/strongo/logus v0.2.0
 	github.com/strongo/random v0.0.1
 	github.com/strongo/slice v0.2.0
-	github.com/strongo/strongoapp v0.24.2
-	github.com/strongo/validation v0.0.6
+	github.com/strongo/strongoapp v0.24.3
+	github.com/strongo/validation v0.0.7
 	github.com/yaa110/go-persian-calendar v1.2.1
 	golang.org/x/crypto v0.26.0
 	golang.org/x/net v0.28.0
@@ -87,7 +87,7 @@ require (
 	github.com/AlekSi/pointer v1.2.0 // indirect
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
 	github.com/alexsergivan/transliterator v1.0.1 // indirect
-	github.com/bots-go-framework/bots-go-core v0.0.2 // indirect
+	github.com/bots-go-framework/bots-go-core v0.0.3 // indirect
 	github.com/dal-go/dalgo2firestore v0.2.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/fgprof v0.9.5 // indirect
