@@ -42,3 +42,14 @@ func createFirebaseUser(ctx context.Context, userToCreate DataToCreateUser) (fir
 	}
 	return
 }
+
+func deleteFirebaseUser(ctx context.Context, uid string) (err error) {
+	var fbAuthClient *auth.Client
+	if fbAuthClient, err = facade2firebase.GetFirebaseAuthClient(ctx); err != nil {
+		return
+	}
+	if err = fbAuthClient.DeleteUser(ctx, uid); err != nil {
+		err = fmt.Errorf("failed to delete firebase user: %w", err)
+	}
+	return
+}

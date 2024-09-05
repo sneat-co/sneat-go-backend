@@ -60,6 +60,20 @@ func (s sneatAppBotDal) CreateAppUserFromBotUser(ctx context.Context,
 		WithID: params.User.WithID,
 		Data:   params.User.Data,
 	}
+
+	{ // Insert records except bot and app user records that botsfw will handle
+		keysToExclude := make([]*dal.Key, 0, 2)
+		for _, r := range params.RecordsToInsert() {
+			// For some reason == does not work for botUser.Key
+			if key := r.Key(); key.Equal(appUser.Key) || key.Equal(botUser.Key) {
+				keysToExclude = append(keysToExclude, key)
+			}
+		}
+		if err = params.ApplyChanges(ctx, tx, keysToExclude...); err != nil {
+			err = fmt.Errorf("failed to apply changes: %w", err)
+			return
+		}
+	}
 	return
 }
 

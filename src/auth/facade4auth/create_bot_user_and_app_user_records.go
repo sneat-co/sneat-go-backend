@@ -55,9 +55,7 @@ func CreateBotUserAndAppUserRecords(
 		return
 	}
 	botUser.Record.SetError(nil)
-	if tx != nil {
-		params.QueueForInsert(botUser.Record)
-	}
+	params.QueueForInsert(botUser.Record)
 	params.User.Data.AccountsOfUser.AddAccount(appuser.AccountKey{Provider: string(botPlatformID), ID: botUserData.BotUserID})
 	return
 }
@@ -91,6 +89,14 @@ func getOrCreateAppUserRecordFromBotUser(
 	if firebaseUserRecord, err = createFirebaseUser(ctx, userToCreate); err != nil {
 		return
 	}
+
+	defer func() {
+		if err != nil {
+			if err2 := deleteFirebaseUser(ctx, firebaseUserRecord.UID); err2 != nil {
+				err = fmt.Errorf("failed to delete newly created firebase user: %v: ORIGINAL ERROR: %w", err2, err)
+			}
+		}
+	}()
 
 	providerUserInfo := &sneatauth.AuthProviderUserInfo{
 		DisplayName: userToCreate.Names.GetFullName(),

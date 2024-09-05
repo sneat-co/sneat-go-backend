@@ -33,9 +33,27 @@ func (v *WithRecordChanges) QueueForInsert(records ...dal.Record) {
 	}
 }
 
-func (v *WithRecordChanges) ApplyChanges(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
-	if len(v.recordsToInsert) > 0 {
-		if err = tx.InsertMulti(ctx, v.recordsToInsert); err != nil {
+func excludeRecords(records []dal.Record, excludeKeys []*dal.Key) (result []dal.Record) {
+	if len(excludeKeys) == 0 {
+		return records
+	}
+	result = make([]dal.Record, 0, len(records))
+external:
+	for _, record := range records {
+		for _, excludeKey := range excludeKeys {
+			if record.Key() == excludeKey {
+				continue external
+			}
+		}
+		result = append(result, record)
+	}
+	return
+}
+
+func (v *WithRecordChanges) ApplyChanges(ctx context.Context, tx dal.ReadwriteTransaction, excludeKeys ...*dal.Key) (err error) {
+
+	if records := excludeRecords(v.recordsToInsert, excludeKeys); len(records) > 0 {
+		if err = tx.InsertMulti(ctx, records); err != nil {
 			err = fmt.Errorf("failed to insert records: %w", err)
 			return
 		}
