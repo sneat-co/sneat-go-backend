@@ -11,10 +11,12 @@ import (
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/models4bots"
 	"github.com/sneat-co/sneat-go-backend/src/coretodo"
+	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/sneat-co/sneat-go-core/sneatauth"
+	"github.com/strongo/strongoapp/appuser"
 	"time"
 )
 
@@ -105,7 +107,20 @@ func createBotUserAndAppUserRecordsTx(
 				return
 			}
 		} else {
+			if params.UserWorkerParams == nil {
+				params.UserWorkerParams = &dal4userus.UserWorkerParams{
+					User: dbo4userus.NewUserEntry(appUserID),
+				}
+				if err = tx.Get(ctx, params.User.Record); err != nil {
+					return
+				}
+			}
 			botUser.Data.SetAppUserID(appUserID)
+			params.UserUpdates = append(params.UserUpdates, params.User.Data.AddAccount(appuser.AccountKey{
+				Provider: string(botPlatformID),
+				ID:       botUserID,
+			})...)
+			params.User.Record.MarkAsChanged()
 		}
 	} else if appUserID != "" && botAppUserID != appUserID {
 		err = fmt.Errorf("bot user is already linked to another app user")

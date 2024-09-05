@@ -27,17 +27,17 @@ go 1.23.0
 
 //replace github.com/strongo/app => ../../strongo/app
 //replace github.com/strongo/i18n => ../../strongo/i18n
-replace github.com/strongo/strongoapp => ../../strongo/strongoapp
+//replace github.com/strongo/strongoapp => ../../strongo/strongoapp
 
 require (
 	firebase.google.com/go/v4 v4.14.1
 	github.com/bots-go-framework/bots-api-telegram v0.7.0
 	github.com/bots-go-framework/bots-fw v0.38.1
-	github.com/bots-go-framework/bots-fw-store v0.8.0
+	github.com/bots-go-framework/bots-fw-store v0.8.1
 	github.com/bots-go-framework/bots-fw-telegram v0.13.0
 	github.com/bots-go-framework/bots-fw-telegram-models v0.3.3
 	github.com/bots-go-framework/bots-fw-telegram-webapp v0.3.0
-	github.com/bots-go-framework/bots-host-gae v0.5.14
+	github.com/bots-go-framework/bots-host-gae v0.5.15
 	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85
 	github.com/crediterra/money v0.3.0
 	github.com/dal-go/dalgo v0.13.0
@@ -53,11 +53,11 @@ require (
 	github.com/sanity-io/litter v1.5.5
 	github.com/sendgrid/sendgrid-go v3.16.0+incompatible
 	github.com/shiyanhui/hero v0.0.2
-	github.com/sneat-co/debtstracker-translations v0.0.27
-	github.com/sneat-co/sneat-go-core v0.32.6
+	github.com/sneat-co/debtstracker-translations v0.0.28
+	github.com/sneat-co/sneat-go-core v0.32.7
 	github.com/sneat-co/sneat-go-firebase v0.5.9
 	github.com/stretchr/testify v1.9.0
-	github.com/strongo/app-host-gae v0.1.33
+	github.com/strongo/app-host-gae v0.1.34
 	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.0.1
 	github.com/strongo/facebook v1.8.1
@@ -67,7 +67,7 @@ require (
 	github.com/strongo/logus v0.2.0
 	github.com/strongo/random v0.0.1
 	github.com/strongo/slice v0.2.0
-	github.com/strongo/strongoapp v0.24.1
+	github.com/strongo/strongoapp v0.24.2
 	github.com/strongo/validation v0.0.6
 	github.com/yaa110/go-persian-calendar v1.2.1
 	golang.org/x/crypto v0.26.0
@@ -97,7 +97,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
-	github.com/google/pprof v0.0.0-20240829160300-da1f7e9f2b25 // indirect
+	github.com/google/pprof v0.0.0-20240903155634-a8630aee4ab9 // indirect
 	github.com/google/s2a-go v0.1.8 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.3 // indirect
@@ -116,10 +116,10 @@ require (
 	go.opentelemetry.io/otel v1.29.0 // indirect
 	go.opentelemetry.io/otel/metric v1.29.0 // indirect
 	go.opentelemetry.io/otel/trace v1.29.0 // indirect
-	golang.org/x/oauth2 v0.22.0 // indirect
+	golang.org/x/oauth2 v0.23.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
-	golang.org/x/sys v0.24.0 // indirect
-	golang.org/x/text v0.17.0 // indirect
+	golang.org/x/sys v0.25.0 // indirect
+	golang.org/x/text v0.18.0 // indirect
 	golang.org/x/time v0.6.0 // indirect
 	google.golang.org/api v0.196.0 // indirect
 	google.golang.org/genproto v0.0.0-20240903143218-8af14fe29dc1 // indirect
