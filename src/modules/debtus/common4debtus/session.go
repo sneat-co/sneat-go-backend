@@ -1,30 +1,18 @@
 package common4debtus
 
-import (
-	"github.com/strongo/logus"
-	"google.golang.org/appengine/v2"
-	"net/http"
-
-	"github.com/gorilla/sessions"
-	//"fmt"
-	//"encoding/base64"
-	//"crypto/sha1"
-	//"strconv"
-)
-
-var store = sessions.NewCookieStore([]byte("Very-secret: 8468df92-fe04-432d-9f56-55ca9ffc20a3"))
-
-func GetSession(r *http.Request) (*DTSession, error) {
-	s, err := store.Get(r, "session")
-	if err != nil {
-		logus.Warningf(appengine.NewContext(r), err.Error())
-	}
-	return &DTSession{Session: s}, nil
-}
-
-type DTSession struct {
-	*sessions.Session
-}
+//var store = sessions.NewCookieStore([]byte("Very-secret: 8468df92-fe04-432d-9f56-55ca9ffc20a3"))
+//
+//func GetSession(r *http.Request) (*DTSession, error) {
+//	s, err := store.Get(r, "session")
+//	if err != nil {
+//		logus.Warningf(appengine.NewContext(r), err.Error())
+//	}
+//	return &DTSession{Session: s}, nil
+//}
+//
+//type DTSession struct {
+//	*sessions.Session
+//}
 
 //const (
 //	session_PARAM_USER_ID = "UserID"

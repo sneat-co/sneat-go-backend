@@ -1,6 +1,6 @@
 module github.com/sneat-co/sneat-go-backend
 
-go 1.23.0
+go 1.22.3
 
 //replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
 
@@ -44,7 +44,6 @@ require (
 	github.com/dal-go/mocks4dalgo v0.1.23
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/golang/mock v1.6.0
-	github.com/gorilla/sessions v1.4.0
 	github.com/gosimple/slug v1.14.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/olebedev/when v1.0.0
@@ -53,7 +52,7 @@ require (
 	github.com/sanity-io/litter v1.5.5
 	github.com/sendgrid/sendgrid-go v3.16.0+incompatible
 	github.com/shiyanhui/hero v0.0.2
-	github.com/sneat-co/debtstracker-translations v0.0.28
+	github.com/sneat-co/debtstracker-translations v0.0.29
 	github.com/sneat-co/sneat-go-core v0.32.8
 	github.com/sneat-co/sneat-go-firebase v0.5.10
 	github.com/stretchr/testify v1.9.0
@@ -102,7 +101,6 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.3 // indirect
 	github.com/googleapis/gax-go/v2 v2.13.0 // indirect
-	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
