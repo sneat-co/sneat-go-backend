@@ -54,10 +54,10 @@ require (
 	github.com/sendgrid/sendgrid-go v3.16.0+incompatible
 	github.com/shiyanhui/hero v0.0.2
 	github.com/sneat-co/debtstracker-translations v0.0.28
-	github.com/sneat-co/sneat-go-core v0.32.7
-	github.com/sneat-co/sneat-go-firebase v0.5.9
+	github.com/sneat-co/sneat-go-core v0.32.8
+	github.com/sneat-co/sneat-go-firebase v0.5.10
 	github.com/stretchr/testify v1.9.0
-	github.com/strongo/app-host-gae v0.1.34
+	github.com/strongo/app-host-gae v0.1.35
 	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.0.1
 	github.com/strongo/facebook v1.8.1
@@ -88,7 +88,7 @@ require (
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
 	github.com/alexsergivan/transliterator v1.0.1 // indirect
 	github.com/bots-go-framework/bots-go-core v0.0.3 // indirect
-	github.com/dal-go/dalgo2firestore v0.2.2 // indirect
+	github.com/dal-go/dalgo2firestore v0.2.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/fgprof v0.9.5 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
