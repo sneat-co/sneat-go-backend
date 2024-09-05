@@ -35,9 +35,9 @@ func TestAddTaskRequest_Validate(t *testing.T) {
 			request := validRequest
 			request.SpaceID = " "
 			if err := request.Validate(); err == nil {
-				t.Error("Should return error for empty team, got err == nil")
+				t.Error("Should return error for empty space, got err == nil")
 			} else {
-				validation.MustBeFieldError(t, err, "space")
+				validation.MustBeFieldError(t, err, "spaceID")
 			}
 		})
 		t.Run("members", func(t *testing.T) {

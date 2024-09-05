@@ -20,7 +20,7 @@ func TestCreateOrderRequest_Validate(t *testing.T) {
 		fields      fields
 		expectedErr string
 	}{
-		{name: "empty", fields: fields{}, expectedErr: "validation error: invalid request: bad value for field [space]: missing required field"},
+		{name: "empty", fields: fields{}, expectedErr: "validation error: invalid request: bad value for field [spaceID]: missing required field"},
 		{name: "should_pass", fields: fields{
 			SpaceRequest: dto4spaceus.SpaceRequest{SpaceID: "space1"},
 			Order: dbo4logist.OrderBase{
