@@ -10,7 +10,10 @@ func init() {
 	sneatfb.InitFirebaseForSneat(projectID, "sneat")
 }
 
-func getProjectID() string {
+func getFirebaseProjectID() string {
+	if fbProjID := os.Getenv("FIREBASE_PROJECT_ID"); fbProjID != "" {
+		return fbProjID
+	}
 	for _, v := range os.Environ() {
 		if strings.HasPrefix(v, "GAE_APPLICATION=") {
 			if strings.HasSuffix(v, "sneat-team") {
@@ -22,9 +25,12 @@ func getProjectID() string {
 			if strings.HasSuffix(v, "sneatapp") {
 				return "sneatapp"
 			}
+			if strings.HasSuffix(v, "sneat-eur3-1") {
+				return "sneat-eur3-1"
+			}
 		}
 	}
 	return "demo-local-sneat-app"
 }
 
-var projectID = getProjectID()
+var projectID = getFirebaseProjectID()
