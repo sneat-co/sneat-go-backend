@@ -212,7 +212,7 @@ func (transferDalGae TransferDalGae) LoadTransferIDsByContactID(ctx context.Cont
 
 	transferIDs = make([]string, 0, limit)
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return
 	}
 	var reader dal.Reader
@@ -268,7 +268,7 @@ func (transferDalGae TransferDalGae) LoadLatestTransfers(ctx context.Context, of
 
 func (transferDalGae TransferDalGae) loadTransfers(ctx context.Context, q dal.Query) (transfers []models4debtus.TransferEntry, err error) {
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return
 	}
 	//var reader dal.Reader

@@ -24,7 +24,7 @@ func GetLocale(ctx context.Context, botID string, tgChatIntID int64, userID stri
 	key := dal.NewKeyWithID(botsfwtgmodels.TgChatCollection, chatID)
 	var tgChat = record.NewDataWithID[string, *models4debtus.DebtusTelegramChatData](chatID, key, new(models4debtus.DebtusTelegramChatData))
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return
 	}
 	if err = db.Get(ctx, tgChat.Record); err != nil {

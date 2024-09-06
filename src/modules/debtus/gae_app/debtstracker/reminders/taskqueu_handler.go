@@ -47,7 +47,7 @@ func sendReminder(ctx context.Context, reminderID string) (err error) {
 	}
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return fmt.Errorf("failed to get database: %w", err)
 	}
 
@@ -132,7 +132,7 @@ func sendReminderToUser(ctx context.Context, reminderID string, transfer models4
 	}
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return fmt.Errorf("failed to get database: %w", err)
 	}
 	user := dbo4userus.NewUserEntry(reminder.Data.UserID)

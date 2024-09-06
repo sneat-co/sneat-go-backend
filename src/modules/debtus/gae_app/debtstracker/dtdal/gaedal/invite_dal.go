@@ -30,7 +30,7 @@ func NewInviteDalGae() InviteDalGae {
 
 func (InviteDalGae) GetInvite(ctx context.Context, tx dal.ReadSession, inviteCode string) (invite models4debtus.Invite, err error) {
 	if tx == nil {
-		if tx, err = facade.GetDatabase(ctx); err != nil {
+		if tx, err = facade.GetSneatDB(ctx); err != nil {
 			return
 		}
 	}
@@ -161,7 +161,7 @@ func createInvite(ec strongoapp.ExecutionContext, inviteType models4debtus.Invit
 // ClaimInvite2 claims invite by user - TODO compare with ClaimInvite and get rid of one of them
 func (InviteDalGae) ClaimInvite2(ctx context.Context, inviteCode string, invite models4debtus.Invite, claimedByUserID string, claimedOn, claimedVia string) (err error) {
 	var db dal.DB // Needed for query records outside of transaction
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return
 	}
 	err = facade.RunReadwriteTransaction(ctx, func(tctx context.Context, tx dal.ReadwriteTransaction) error {

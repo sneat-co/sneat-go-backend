@@ -21,7 +21,7 @@ import (
 
 var _bots botsfw.BotSettingsBy
 
-var GetDb = facade.GetDatabase
+var GetDb = facade.GetSneatDB
 
 func telegramBots(environment string) botsfw.BotSettingsBy {
 	if _bots.ByCode != nil {

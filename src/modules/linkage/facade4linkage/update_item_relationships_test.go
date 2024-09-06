@@ -24,7 +24,7 @@ func TestUpdateItemRelationships(t *testing.T) {
 	const collection1ID = "collection_1"
 	const module1ID = "module_1"
 
-	facade.GetDatabase = func(ctx context.Context) (dal.DB, error) {
+	facade.GetSneatDB = func(ctx context.Context) (dal.DB, error) {
 		return nil, nil
 	}
 

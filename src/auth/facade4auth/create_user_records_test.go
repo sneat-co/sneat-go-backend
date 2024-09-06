@@ -56,7 +56,7 @@ func Test_InitUserRecord(t *testing.T) {
 			// SETUP MOCKS BEGINS
 
 			db := mocks4dal.NewMockDatabase(gomock.NewController(t))
-			facade.GetDatabase = func(ctx context.Context) (dal.DB, error) {
+			facade.GetSneatDB = func(ctx context.Context) (dal.DB, error) {
 				return db, nil
 			}
 

@@ -53,7 +53,7 @@ func (h transfersPage) transfersPageHandler(w http.ResponseWriter, r *http.Reque
 	go func() {
 		defer wg.Done()
 		var db dal.ReadSession
-		if db, err = facade.GetDatabase(c); err != nil {
+		if db, err = facade.GetSneatDB(c); err != nil {
 			return
 		}
 		if err = db.GetMulti(c, []dal.Record{debtusContact.Record, debtusSpace.Record}); err != nil {
@@ -65,7 +65,7 @@ func (h transfersPage) transfersPageHandler(w http.ResponseWriter, r *http.Reque
 	go func() {
 		defer wg.Done()
 		var db dal.ReadSession
-		if db, err = facade.GetDatabase(c); err != nil {
+		if db, err = facade.GetSneatDB(c); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			_, _ = fmt.Fprint(w, err)
 			return

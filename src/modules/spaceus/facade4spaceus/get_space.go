@@ -11,7 +11,7 @@ import (
 // GetSpace loads team record
 func GetSpace(ctx context.Context, userCtx facade.UserContext, id string) (space dbo4spaceus.SpaceEntry, err error) {
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return space, err
 	}
 	space, err = GetSpaceByID(ctx, db, id)

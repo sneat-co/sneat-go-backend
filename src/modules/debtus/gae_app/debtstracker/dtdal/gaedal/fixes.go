@@ -101,7 +101,7 @@ func FixTransfers(ctx context.Context) (loadedCount int, fixedCount int, failedC
 	})
 	//query.Limit = 50
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return
 	}
 	var reader dal.Reader

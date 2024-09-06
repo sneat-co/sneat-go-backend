@@ -75,5 +75,5 @@ func (h ApiBotHost) GetHTTPClient(ctx context.Context) *http.Client {
 //}
 
 func (h ApiBotHost) DB(ctx context.Context) (dal.DB, error) {
-	return facade.GetDatabase(ctx)
+	return facade.GetSneatDB(ctx)
 }

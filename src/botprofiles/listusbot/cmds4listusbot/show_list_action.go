@@ -24,7 +24,7 @@ func showListAction(
 	} else {
 		list = dal4listus.NewSpaceListEntry(spaceID, listKey)
 		if tx == nil {
-			if tx, err = facade.GetDatabase(ctx); err != nil {
+			if tx, err = facade.GetSneatDB(ctx); err != nil {
 				return
 			}
 		}

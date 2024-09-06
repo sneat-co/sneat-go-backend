@@ -48,7 +48,7 @@ func listAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) 
 	if spaceID == "" {
 		var user dbo4userus.UserEntry
 		var db dal.DB
-		if db, err = facade.GetDatabase(ctx); err != nil {
+		if db, err = facade.GetSneatDB(ctx); err != nil {
 			return
 		}
 		if user, err = dal4userus.GetUserByID(ctx, db, userID); err != nil {

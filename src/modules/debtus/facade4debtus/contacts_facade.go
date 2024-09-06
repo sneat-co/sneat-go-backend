@@ -377,7 +377,7 @@ func SaveContact(ctx context.Context, contact models4debtus.DebtusSpaceContactEn
 
 func GetDebtusSpaceContactsByIDs(ctx context.Context, tx dal.ReadSession, spaceID string, contactsIDs []string) (debtusContacts []models4debtus.DebtusSpaceContactEntry, err error) {
 	if tx == nil {
-		if tx, err = facade.GetDatabase(ctx); err != nil {
+		if tx, err = facade.GetSneatDB(ctx); err != nil {
 			return
 		}
 	}
@@ -393,7 +393,7 @@ func GetDebtusSpaceContactByID(ctx context.Context, tx dal.ReadSession, spaceID,
 
 func GetDebtusSpaceContact(ctx context.Context, tx dal.ReadSession, contact models4debtus.DebtusSpaceContactEntry) (err error) {
 	if tx == nil {
-		if tx, err = facade.GetDatabase(ctx); err != nil {
+		if tx, err = facade.GetSneatDB(ctx); err != nil {
 			return
 		}
 	}

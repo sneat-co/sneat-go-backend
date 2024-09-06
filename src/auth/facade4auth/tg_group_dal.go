@@ -17,7 +17,7 @@ func NewTgGroupDalGae() TgGroupDalGae {
 func (TgGroupDalGae) GetTgGroupByID(ctx context.Context, tx dal.ReadSession, id int64) (tgGroup models4auth.TgGroup, err error) {
 	tgGroup = models4auth.NewTgGroup(id, nil)
 	if tx == nil {
-		if tx, err = facade.GetDatabase(ctx); err != nil {
+		if tx, err = facade.GetSneatDB(ctx); err != nil {
 			return
 		}
 	}

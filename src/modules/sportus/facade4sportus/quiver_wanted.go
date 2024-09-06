@@ -47,7 +47,7 @@ func validateBrands(ctx context.Context, brands []string, db dal.DB) error {
 // CreateWanted creates wanted records
 func CreateWanted(ctx context.Context, userCtx facade.UserContext, request CreateWantedRequest) (id string, err error) {
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return "", err
 	}
 	if err = validateBrands(ctx, request.Wanted.Brands, db); err != nil {
@@ -80,7 +80,7 @@ func (v *DeleteWantedRequest) Validate() error {
 
 // DeleteWanted deletes wanted records
 func DeleteWanted(ctx context.Context, userCtx facade.UserContext, request DeleteWantedRequest) error {
-	db, err := facade.GetDatabase(ctx)
+	db, err := facade.GetSneatDB(ctx)
 	if err != nil {
 		return err
 	}

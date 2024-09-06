@@ -19,7 +19,7 @@ var _ PasswordResetDal = (*PasswordResetDalGae)(nil)
 func (PasswordResetDalGae) GetPasswordResetByID(ctx context.Context, tx dal.ReadSession, id int) (passwordReset models4auth.PasswordReset, err error) {
 	passwordReset = models4auth.NewPasswordReset(id, nil)
 	if tx == nil {
-		if tx, err = facade.GetDatabase(ctx); err != nil {
+		if tx, err = facade.GetSneatDB(ctx); err != nil {
 			return
 		}
 	}

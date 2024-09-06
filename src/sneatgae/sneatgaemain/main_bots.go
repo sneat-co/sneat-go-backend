@@ -21,7 +21,7 @@ func initBots(httpRouter *httprouter.Router) {
 	if /*!isDevAppServer ||*/ withBotsFlag != nil && *withBotsFlag {
 		log.Println("Initializing bots...")
 
-		botscore.GetDb = facade.GetDatabase
+		botscore.GetDb = facade.GetSneatDB
 		botscore.InitializeBots(botHost, httpRouter) // TODO: should be part of module registration?
 	}
 }

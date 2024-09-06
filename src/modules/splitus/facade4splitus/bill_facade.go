@@ -714,7 +714,7 @@ func RestoreBill(ctx context.Context, billID string, userID string) (bill models
 
 func GetBillByID(ctx context.Context, tx dal.ReadSession, billID string) (bill models4splitus.BillEntry, err error) {
 	if tx == nil {
-		if tx, err = facade.GetDatabase(ctx); err != nil {
+		if tx, err = facade.GetSneatDB(ctx); err != nil {
 			return bill, err
 		}
 	}

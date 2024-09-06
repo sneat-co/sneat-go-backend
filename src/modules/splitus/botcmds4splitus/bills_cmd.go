@@ -38,7 +38,7 @@ func billsAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error)
 		userDebtus := models4debtus.NewDebtusUserEntry(userID)
 
 		var db dal.DB
-		if db, err = facade.GetDatabase(ctx); err != nil {
+		if db, err = facade.GetSneatDB(ctx); err != nil {
 			return
 		}
 		if err = db.Get(ctx, userDebtus.Record); err != nil {

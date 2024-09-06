@@ -28,7 +28,7 @@ func ContactRecords(contacts []ContactEntry) (records []dal.Record) {
 
 func GetContactsByIDs(ctx context.Context, tx dal.ReadSession, spaceID string, contactsIDs []string) (contacts []ContactEntry, err error) {
 	if tx == nil {
-		if tx, err = facade.GetDatabase(ctx); err != nil {
+		if tx, err = facade.GetSneatDB(ctx); err != nil {
 			return
 		}
 	}

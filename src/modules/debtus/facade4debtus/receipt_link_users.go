@@ -34,7 +34,7 @@ func NewReceiptUsersLinker(changes *receiptDbChanges) *ReceiptUsersLinker {
 func (linker *ReceiptUsersLinker) LinkReceiptUsers(ctx context.Context, receiptID, invitedUserID string) (isJustLinked bool, err error) {
 	logus.Debugf(ctx, "ReceiptUsersLinker.LinkReceiptUsers(receiptID=%v, invitedUserID=%v)", receiptID, invitedUserID)
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return false, err
 	}
 	invitedUser := dbo4userus.NewUserEntry(invitedUserID)

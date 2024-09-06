@@ -29,7 +29,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 	user := dbo4userus.NewUserEntry(userID)
 	var db dal.DB
 	var err error
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		logus.Errorf(ctx, "Failed to get database: %v", err)
 		return
 	}
@@ -315,7 +315,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 			if doFixes {
 				//var txCounterparty models.DebtusSpaceContactEntry
 				var db dal.DB
-				if db, err = facade.GetDatabase(ctx); err != nil {
+				if db, err = facade.GetSneatDB(ctx); err != nil {
 					logus.Errorf(ctx, "Failed to get database: %v", err)
 					return
 				}

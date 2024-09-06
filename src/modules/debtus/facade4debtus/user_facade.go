@@ -27,7 +27,7 @@ var ErrEmailAlreadyRegistered = errors.New("email already registered")
 // Deprecated: use facade4userus instead
 func (userFacade) GetUserByIdOBSOLETE(ctx context.Context, tx dal.ReadSession, userID string) (user models4debtus.AppUserOBSOLETE, err error) {
 	if tx == nil {
-		if tx, err = facade.GetDatabase(ctx); err != nil {
+		if tx, err = facade.GetSneatDB(ctx); err != nil {
 			return
 		}
 	}

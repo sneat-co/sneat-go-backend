@@ -28,7 +28,7 @@ func GetUsersByIDs(ctx context.Context, userIDs []string) (users []dbo4userus.Us
 	appUsers := NewUserEntries(userIDs)
 	records := UserRecords(appUsers)
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return
 	}
 	if err = db.GetMulti(ctx, records); err != nil {

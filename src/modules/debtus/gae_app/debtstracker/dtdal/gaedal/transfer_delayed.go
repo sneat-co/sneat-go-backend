@@ -50,7 +50,7 @@ func delayedUpdateTransfersWithCounterparty(ctx context.Context, creatorCounterp
 	}
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return fmt.Errorf("failed to create database: %w", err)
 	}
 	query := dal.From(models4debtus.TransfersCollection).
@@ -107,7 +107,7 @@ func delayedUpdateTransferWithCounterparty(ctx context.Context, spaceID, transfe
 	}
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return err
 	}
 
@@ -241,7 +241,7 @@ func delayedUpdateTransfersWithCreatorName(ctx context.Context, userID string) (
 	logus.Debugf(ctx, "delayedUpdateTransfersWithCreatorName(userID=%s)", userID)
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return err
 	}
 	user := dbo4userus.NewUserEntry(userID)

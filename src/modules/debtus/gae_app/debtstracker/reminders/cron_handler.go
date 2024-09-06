@@ -25,7 +25,7 @@ func CronSendReminders(ctx context.Context, w http.ResponseWriter, r *http.Reque
 		Limit(100).
 		SelectKeysOnly(reflect.Int)
 
-	db, err := facade.GetDatabase(ctx)
+	db, err := facade.GetSneatDB(ctx)
 	if err != nil {
 		logus.Errorf(ctx, "Failed to get database: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)

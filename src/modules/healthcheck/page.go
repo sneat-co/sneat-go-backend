@@ -18,7 +18,7 @@ func httpGetPage(w http.ResponseWriter, r *http.Request) {
 	key := dal.NewKeyWithID("health_checks", "firestore-write")
 	record := dal.NewRecordWithData(key, &data)
 
-	db, err := facade.GetDatabase(ctx)
+	db, err := facade.GetSneatDB(ctx)
 	if err != nil {
 		apicore.ReturnError(ctx, w, r, err)
 	}

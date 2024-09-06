@@ -24,7 +24,7 @@ func TestCreateSpace(t *testing.T) { // TODO: Implement unit tests
 	setupMockDb := func() {
 		mockCtrl := gomock.NewController(t)
 		db := mocks4dal.NewMockDatabase(mockCtrl)
-		facade.GetDatabase = func(ctx context.Context) (dal.DB, error) {
+		facade.GetSneatDB = func(ctx context.Context) (dal.DB, error) {
 			return db, nil
 		}
 
@@ -66,7 +66,7 @@ func TestCreateSpace(t *testing.T) { // TODO: Implement unit tests
 			return worker(ctx, tx)
 		}).AnyTimes()
 
-		facade.GetDatabase = func(ctx context.Context) (dal.DB, error) {
+		facade.GetSneatDB = func(ctx context.Context) (dal.DB, error) {
 			return db, nil
 		}
 	}

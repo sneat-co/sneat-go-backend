@@ -88,7 +88,7 @@ func HandleGetContact(ctx context.Context, w http.ResponseWriter, r *http.Reques
 
 	var db dal.DB
 	var err error
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
 		return

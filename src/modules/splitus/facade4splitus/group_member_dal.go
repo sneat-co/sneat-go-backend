@@ -27,7 +27,7 @@ func (GroupMemberDalGae) CreateGroupMember(ctx context.Context, tx dal.Readwrite
 func (GroupMemberDalGae) GetGroupMemberByID(ctx context.Context, tx dal.ReadSession, groupMemberID int64) (groupMember models4splitus.GroupMember, err error) {
 	groupMember = models4splitus.NewGroupMember(groupMemberID, nil)
 	if tx == nil {
-		if tx, err = facade.GetDatabase(ctx); err != nil {
+		if tx, err = facade.GetSneatDB(ctx); err != nil {
 			return
 		}
 	}

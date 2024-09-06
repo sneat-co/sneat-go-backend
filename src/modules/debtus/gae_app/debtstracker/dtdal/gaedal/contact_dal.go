@@ -111,7 +111,7 @@ func (ContactDalGae) GetLatestContacts(whc botsfw.WebhookContext, tx dal.ReadSes
 		Limit(limit).
 		SelectInto(models4debtus.NewDebtusContactRecord)
 	if tx == nil {
-		if tx, err = facade.GetDatabase(ctx); err != nil {
+		if tx, err = facade.GetSneatDB(ctx); err != nil {
 			return
 		}
 	}

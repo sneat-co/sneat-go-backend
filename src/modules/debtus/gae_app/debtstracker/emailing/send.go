@@ -17,7 +17,7 @@ func CreateEmailRecordAndQueueForSending(ctx context.Context, emailEntity *model
 	var email models4auth.Email
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return
 	}
 	if err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {

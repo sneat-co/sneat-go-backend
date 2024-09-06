@@ -18,7 +18,7 @@ func NewTgUserDalGae() TgUserDalGae {
 
 func (TgUserDalGae) FindByUserName(ctx context.Context, tx dal.ReadSession, userName string) (tgUsers []botsfwtgmodels.TgPlatformUser, err error) {
 	if tx == nil {
-		tx, err = facade.GetDatabase(ctx)
+		tx, err = facade.GetSneatDB(ctx)
 		if err != nil {
 			return
 		}

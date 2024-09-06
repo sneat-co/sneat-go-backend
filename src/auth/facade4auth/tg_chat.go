@@ -33,7 +33,7 @@ func (TgChatDalGae) GetTgChatByID(ctx context.Context, tgBotID string, tgChatID 
 	//tgChat.SetID(tgBotID, tgChatID)
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return
 	}
 	err = db.Get(ctx, tgChat.Record)

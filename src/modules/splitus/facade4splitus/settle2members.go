@@ -26,7 +26,7 @@ func Settle2members(ctx context.Context, spaceID, debtorID, sponsorID string, cu
 		SelectKeysOnly(reflect.String)
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return
 	}
 	var reader dal.Reader

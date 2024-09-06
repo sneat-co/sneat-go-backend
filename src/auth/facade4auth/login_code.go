@@ -22,7 +22,7 @@ func NewLoginCodeDalGae() LoginCodeDalGae {
 func (LoginCodeDalGae) NewLoginCode(ctx context.Context, userID string) (code int, err error) {
 	random := rand.New(rand.NewSource(time.Now().UnixNano()))
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return
 	}
 	for i := 1; i < 20; i++ {

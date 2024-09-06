@@ -52,7 +52,7 @@ func GetSpaceEntryByCallbackUrl(whc botsfw.WebhookContext, callbackUrl *url.URL)
 	if space.ID != "" {
 		ctx := whc.Context()
 		var db dal.DB
-		if db, err = facade.GetDatabase(ctx); err != nil {
+		if db, err = facade.GetSneatDB(ctx); err != nil {
 			return
 		}
 		err = db.Get(ctx, space.Record)

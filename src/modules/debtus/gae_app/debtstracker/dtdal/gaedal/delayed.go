@@ -80,7 +80,7 @@ func GetTelegramChatByUserID(ctx context.Context, userID string) (entityID strin
 		SelectInto(models4debtus.NewDebtusTelegramChatRecord)
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return
 	}
 

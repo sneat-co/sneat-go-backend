@@ -29,7 +29,7 @@ func mergeContactsHandler(w http.ResponseWriter, r *http.Request) {
 	sourceContactIDs := strings.Split(q.Get("sourceContactIDs"), ",")
 	var db dal.DB
 	var err error
-	db, err = facade.GetDatabase(r.Context())
+	db, err = facade.GetSneatDB(r.Context())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))

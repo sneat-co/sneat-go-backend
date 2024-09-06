@@ -174,8 +174,12 @@ github.com/sneat-co/debtstracker-translations v0.0.29 h1:xKJsn38WmaZ+9RIU4SmxsCf
 github.com/sneat-co/debtstracker-translations v0.0.29/go.mod h1:W6Xd67MrOVe8AWYtzhU9iJafquRwALzReZh6MZicodM=
 github.com/sneat-co/sneat-go-core v0.32.8 h1:Tb1DLkeCpwuzX+CZ+6zpBs5ZKtrkvrjnrZGHh3MgXJI=
 github.com/sneat-co/sneat-go-core v0.32.8/go.mod h1:zpq849+ViZZ9gVAvR2BrSuci7eOLD2vsc2GYdvZLGGU=
+github.com/sneat-co/sneat-go-core v0.33.0 h1:DkexQUvVP59h/AEFURm4z5wFb87wZ3/EkxL1wnjtNew=
+github.com/sneat-co/sneat-go-core v0.33.0/go.mod h1:zpq849+ViZZ9gVAvR2BrSuci7eOLD2vsc2GYdvZLGGU=
 github.com/sneat-co/sneat-go-firebase v0.5.10 h1:QMyYeFqoqS0jZZTI98kKxysXuGcppp3RfbBDP6qyQKY=
 github.com/sneat-co/sneat-go-firebase v0.5.10/go.mod h1:v1lLB7nmTZrdqXEDFgl2AY7/ZRG9XhCTfNUS5P9GADw=
+github.com/sneat-co/sneat-go-firebase v0.5.11 h1:+0NnjmRDZkOfugH7OKQ7NEkfJ26ql8tvP37tlms+ALY=
+github.com/sneat-co/sneat-go-firebase v0.5.11/go.mod h1:qhBHsoASfpRETrM+MVAaP+1NEwDpvytJKbmXLPP1FeU=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
 github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=

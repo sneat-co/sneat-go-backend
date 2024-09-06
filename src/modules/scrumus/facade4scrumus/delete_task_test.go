@@ -15,7 +15,7 @@ func TestDeleteTask(t *testing.T) {
 	//var db dal.DB
 	//testdb.NewMockDB(t, db, testdb.WithProfile1())
 
-	facade.GetDatabase = func(ctx context.Context) (dal.DB, error) {
+	facade.GetSneatDB = func(ctx context.Context) (dal.DB, error) {
 		return nil, nil //db
 	}
 

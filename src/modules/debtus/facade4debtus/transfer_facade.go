@@ -73,7 +73,7 @@ func (transferFacade TransfersFacade) CreateTransfer(ctx context.Context, input 
 	var returnToTransferIDs []string
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return
 	}
 
@@ -248,7 +248,7 @@ func (transferFacade TransfersFacade) checkOutstandingTransfersForReturns(ctx co
 	reversedDirection := input.Direction().Reverse()
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return
 	}
 	outstandingTransfers, err = dtdal.Transfer.LoadOutstandingTransfers(ctx, db, now, creatorUserID, creatorContactID, input.Request.Amount.Currency, reversedDirection)
@@ -733,7 +733,7 @@ func (transferFacade TransfersFacade) createTransferWithinTransaction(
 
 func (TransfersFacade) GetTransferByID(ctx context.Context, tx dal.ReadSession, id string) (transfer models4debtus.TransferEntry, err error) {
 	if tx == nil {
-		if tx, err = facade.GetDatabase(ctx); err != nil {
+		if tx, err = facade.GetSneatDB(ctx); err != nil {
 			return
 		}
 	}

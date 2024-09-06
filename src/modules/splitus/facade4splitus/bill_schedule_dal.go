@@ -29,7 +29,7 @@ func (BillScheduleDalGae) GetBillScheduleByID(ctx context.Context, id int64) (mo
 		},
 		Data: data,
 	}
-	db, err := facade.GetDatabase(ctx)
+	db, err := facade.GetSneatDB(ctx)
 	if err != nil {
 		return billSchedule, err
 	}

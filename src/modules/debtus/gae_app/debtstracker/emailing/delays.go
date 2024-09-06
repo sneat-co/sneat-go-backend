@@ -30,7 +30,7 @@ func delayedSendEmail(ctx context.Context, id int64) (err error) {
 	var email models4auth.Email
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return err
 	}
 

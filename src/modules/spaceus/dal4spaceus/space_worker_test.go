@@ -41,7 +41,7 @@ func TestRunModuleSpaceWorker(t *testing.T) {
 		assert.NotNil(t, params.SpaceModuleEntry.Record.Data())
 		return nil
 	}
-	facade.GetDatabase = func(ctx context.Context) (dal.DB, error) {
+	facade.GetSneatDB = func(ctx context.Context) (dal.DB, error) {
 		ctrl := gomock.NewController(t)
 		db := mocks4dal.NewMockDatabase(ctrl)
 		//var db2 dal.DB

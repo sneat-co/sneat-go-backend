@@ -32,7 +32,7 @@ func SaveUserBrowser(ctx context.Context, userID string, userAgent string) (user
 	query := q.Limit(limit).SelectInto(models4auth.NewUserBrowserRecord)
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return
 	}
 

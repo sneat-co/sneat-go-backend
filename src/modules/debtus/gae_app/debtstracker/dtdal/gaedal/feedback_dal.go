@@ -16,7 +16,7 @@ func NewFeedbackDalGae() FeedbackDalGae {
 
 func (FeedbackDalGae) GetFeedbackByID(ctx context.Context, tx dal.ReadSession, feedbackID int64) (feedback models4debtus.Feedback, err error) {
 	if tx == nil {
-		if tx, err = facade.GetDatabase(ctx); err != nil {
+		if tx, err = facade.GetSneatDB(ctx); err != nil {
 			return
 		}
 	}

@@ -45,7 +45,7 @@ func updateItemWithLatestRelationshipsFromRelatedItem(
 	}
 
 	var db dal.DB
-	if db, err = facade.GetDatabase(ctx); err != nil {
+	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return err
 	}
 

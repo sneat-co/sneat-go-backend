@@ -50,7 +50,7 @@ func HandlerGetGroup(ctx context.Context, w http.ResponseWriter, r *http.Request
 	}
 	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, errors.New("not implemented yet"))
 
-	//db, err := facade.GetDatabase(ctx)
+	//db, err := facade.GetSneatDB(ctx)
 	//if err != nil {
 	//	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 	//	return
