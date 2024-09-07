@@ -41,6 +41,12 @@ func SignInWithBot(
 		if botUser, params, isNewUser, err = createBotUserAndAppUserRecordsTx(ctx, tx, botPlatformID, botUserID, newBotUserData, remoteClientInfo); err != nil {
 			return
 		}
+		if params.UserWorkerParams == nil {
+			panic("params.UserWorkerParams == nil after createBotUserAndAppUserRecordsTx()")
+		}
+		if params.UserWorkerParams.User.Record == nil {
+			panic("params.UserWorkerParams.User.Record == nil after createBotUserAndAppUserRecordsTx()")
+		}
 		now := time.Now() // TODO: Should be in sync with one used in createBotUserAndAppUserRecordsTx()
 		if params.User.Record.Exists() {
 			params.UserUpdates = append(params.UserUpdates, params.User.Data.SetLastLoginAt(now))
