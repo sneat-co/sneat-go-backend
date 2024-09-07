@@ -10,6 +10,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/botprofiles/sneatbot"
+	core "github.com/sneat-co/sneat-go-core"
 	"github.com/strongo/i18n"
 	"net/http"
 )
@@ -80,6 +81,11 @@ func newTranslator(ctx context.Context) i18n.Translator {
 }
 
 func telegramBotsWithRouter(context.Context) botsfw.BotSettingsBy {
-	//env := app.Host.GetEnvironment(c, nil) // TODO: request is not being passed, needs to be fixed
-	return telegramBots(botsfw.EnvLocal)
+	var env string
+	if core.IsInProd() {
+		env = botsfw.EnvProduction
+	} else {
+		env = botsfw.EnvLocal
+	}
+	return telegramBots(env)
 }
