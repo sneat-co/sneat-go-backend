@@ -71,7 +71,7 @@ func HandleSignUpWithEmail(ctx context.Context, w http.ResponseWriter, r *http.R
 			api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 			return
 		}
-		api4debtus.ReturnToken(ctx, w, user.ID, r.Referer(), true, false /*user.Data.Email == "alexander.trakhimenok@gmail.com"*/)
+		api4debtus.ReturnToken(ctx, w, user.ID, r.Referer() /*, user.Data.Email == "alexander.trakhimenok@gmail.com"*/)
 	}
 }
 
@@ -103,7 +103,7 @@ func HandleSignInWithEmail(ctx context.Context, w http.ResponseWriter, r *http.R
 		return
 	}
 
-	api4debtus.ReturnToken(ctx, w, userEmail.Data.AppUserID, r.Referer(), false, userEmail.ID == "alexander.trakhimenok@gmail.com")
+	api4debtus.ReturnToken(ctx, w, userEmail.Data.AppUserID, r.Referer() /*, userEmail.ID == "alexander.trakhimenok@gmail.com"*/)
 }
 
 func HandleRequestPasswordReset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
@@ -158,8 +158,6 @@ func HandleChangePasswordAndSignIn(ctx context.Context, w http.ResponseWriter, r
 		return
 	}
 
-	isAdmin := api4debtus.IsAdmin(passwordReset.Data.Email)
-
 	if err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 
 		now := time.Now()
@@ -198,7 +196,7 @@ func HandleChangePasswordAndSignIn(ctx context.Context, w http.ResponseWriter, r
 		return
 	}
 
-	api4debtus.ReturnToken(ctx, w, passwordReset.Data.AppUserID, r.Referer(), false, isAdmin)
+	api4debtus.ReturnToken(ctx, w, passwordReset.Data.AppUserID, r.Referer())
 }
 
 var errInvalidEmailConformationPin = errors.New("email confirmation pin is not valid")
@@ -262,5 +260,5 @@ func HandleConfirmEmailAndSignIn(ctx context.Context, w http.ResponseWriter, r *
 		return
 	}
 
-	api4debtus.ReturnToken(ctx, w, userEmail.Data.AppUserID, r.Referer(), false, api4debtus.IsAdmin(userEmail.ID))
+	api4debtus.ReturnToken(ctx, w, userEmail.Data.AppUserID, r.Referer())
 }

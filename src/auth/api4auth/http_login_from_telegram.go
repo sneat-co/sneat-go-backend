@@ -15,14 +15,13 @@ func signInWithTelegram(ctx context.Context, w http.ResponseWriter, r *http.Requ
 	var (
 		err       error
 		tgBotUser facade4auth.BotUserEntry
-		isNewUser bool
 	)
 	remoteClientInfo := apicore.GetRemoteClientInfo(r)
-	if tgBotUser, _, isNewUser, err = facade4auth.SignInWithTelegram(ctx, botID, initData, remoteClientInfo); err != nil {
+	if tgBotUser, _, err = facade4auth.SignInWithTelegram(ctx, botID, initData, remoteClientInfo); err != nil {
 		apicore.ReturnError(ctx, w, r, fmt.Errorf("failed to sign in with Telegram: %w", err))
 		return
 	}
 
 	appUserID := tgBotUser.Data.GetAppUserID()
-	api4debtus.ReturnToken(ctx, w, appUserID, telegram.PlatformID, isNewUser, false)
+	api4debtus.ReturnToken(ctx, w, appUserID, telegram.PlatformID)
 }

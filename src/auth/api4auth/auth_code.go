@@ -43,7 +43,7 @@ func HandleSignInWithCode(ctx context.Context, w http.ResponseWriter, r *http.Re
 			if authInfo.UserID != "" && userID != authInfo.UserID {
 				logus.Warningf(ctx, "userID:%s != authInfo.AppUserIntID:%s", userID, authInfo.UserID)
 			}
-			api4debtus.ReturnToken(ctx, w, userID, r.Referer(), false, false)
+			api4debtus.ReturnToken(ctx, w, userID, r.Referer())
 			return
 		}
 	}
@@ -77,7 +77,7 @@ func HandleSignInWithPin(ctx context.Context, w http.ResponseWriter, r *http.Req
 			if authInfo.UserID != "" && userID != authInfo.UserID {
 				logus.Warningf(ctx, "userID:%s != authInfo.AppUserIntID:%s", userID, authInfo.UserID)
 			}
-			api4debtus.ReturnToken(ctx, w, userID, r.Referer(), false, false)
+			api4debtus.ReturnToken(ctx, w, userID, r.Referer())
 		}
 	}
 }

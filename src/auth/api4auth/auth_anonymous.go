@@ -19,7 +19,7 @@ func HandleSignUpAnonymously(ctx context.Context, w http.ResponseWriter, r *http
 			api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 			return
 		}
-		api4debtus.ReturnToken(ctx, w, user.ID, "", true, false)
+		api4debtus.ReturnToken(ctx, w, user.ID, "")
 	}
 }
 
@@ -46,7 +46,7 @@ func HandleSignInAnonymous(ctx context.Context, w http.ResponseWriter, r *http.R
 			api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 			return
 		}
-		api4debtus.ReturnToken(ctx, w, userID, r.Referer(), false, false)
+		api4debtus.ReturnToken(ctx, w, userID, r.Referer())
 	} else {
 		api4debtus.ErrorAsJson(ctx, w, http.StatusForbidden, errors.New("User is not anonymous."))
 	}

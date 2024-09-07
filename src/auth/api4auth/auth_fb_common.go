@@ -180,5 +180,5 @@ func authWriteResponseForAuthFailed(ctx context.Context, w http.ResponseWriter, 
 }
 
 func authWriteResponseForUser(ctx context.Context, w http.ResponseWriter, user dbo4userus.UserEntry, issuer string, isNewUser bool) {
-	api4debtus.ReturnToken(ctx, w, user.ID, issuer, isNewUser, user.Data.EmailVerified && api4debtus.IsAdmin(user.Data.Email))
+	api4debtus.ReturnToken(ctx, w, user.ID, issuer)
 }

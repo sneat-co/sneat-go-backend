@@ -78,8 +78,28 @@ func IsAdmin(email string) bool {
 	return email == "alexander.trakhimenok@gmail.com"
 }
 
-func ReturnToken(ctx context.Context, w http.ResponseWriter, userID, issuer string, isNewUser, isAdmin bool) {
-	if isAdmin {
+type TokenClaims struct {
+	isAdmin bool
+}
+
+func (t *TokenClaims) IsAdmin() bool {
+	return t.isAdmin
+}
+
+func IsAdminClaim() func(claim *TokenClaims) {
+	return func(claim *TokenClaims) {
+		claim.isAdmin = true
+	}
+}
+
+type TokenClaim func(claims *TokenClaims)
+
+func ReturnToken(ctx context.Context, w http.ResponseWriter, userID, issuer string, options ...TokenClaim) {
+	claims := TokenClaims{}
+	for _, o := range options {
+		o(&claims)
+	}
+	if claims.isAdmin {
 		apicore.ReturnError(ctx, w, nil, validation.NewBadRequestError(errors.New("issuing admin token is not implemented yet")))
 		return
 	}
@@ -92,9 +112,6 @@ func ReturnToken(ctx context.Context, w http.ResponseWriter, userID, issuer stri
 	//header.Add("Access-Control-Allow-Origin", "*")
 	header.Add("Content-Type", "application/json")
 	_, _ = w.Write([]byte("{"))
-	if isNewUser {
-		_, _ = w.Write([]byte(`"isNewUser":true,`))
-	}
 	_, _ = w.Write([]byte(`"token":"`))
 	_, _ = w.Write([]byte(token))
 	_, _ = w.Write([]byte(`"}`))

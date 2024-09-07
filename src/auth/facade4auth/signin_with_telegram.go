@@ -14,7 +14,6 @@ func SignInWithTelegram(
 ) (
 	botUser BotUserEntry,
 	appUser dbo4userus.UserEntry,
-	isNewUser bool, // TODO: Document why needed or remove
 	err error,
 ) {
 	botUserID := strconv.FormatInt(initData.User.ID, 10)

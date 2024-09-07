@@ -29,7 +29,6 @@ func SignInWithBot(
 ) (
 	botUser BotUserEntry,
 	appUser dbo4userus.UserEntry,
-	isNewUser bool, // TODO: Document why needed or remove
 	err error,
 ) {
 	var db dal.DB
@@ -38,7 +37,7 @@ func SignInWithBot(
 	}
 	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		var params CreateUserWorkerParams
-		if botUser, params, isNewUser, err = createBotUserAndAppUserRecordsTx(ctx, tx, botPlatformID, botUserID, newBotUserData, remoteClientInfo); err != nil {
+		if botUser, params, err = createBotUserAndAppUserRecordsTx(ctx, tx, botPlatformID, botUserID, newBotUserData, remoteClientInfo); err != nil {
 			return
 		}
 		if params.UserWorkerParams == nil {
@@ -87,7 +86,6 @@ func createBotUserAndAppUserRecordsTx(
 ) (
 	botUser BotUserEntry,
 	params CreateUserWorkerParams,
-	isNewUser bool, // TODO: Document why needed or remove
 	err error,
 ) {
 	var appUserID string
@@ -101,34 +99,32 @@ func createBotUserAndAppUserRecordsTx(
 			if botUser, params, err = CreateBotUserAndAppUserRecords(ctx, tx, appUserID, botPlatformID, botUserData, remoteClientInfo); err != nil {
 				return
 			}
-			isNewUser = true
 			return
 		}
 		return
 	} else if botAppUserID := botUser.Data.GetAppUserID(); botAppUserID == "" {
-		botUserData := newBotUserData()
 		if appUserID == "" {
+			botUserData := newBotUserData()
 			if params, err = createAppUserRecordsAndUpdateBotUserRecord(ctx, tx, botUserData, remoteClientInfo, botUser); err != nil {
 				err = fmt.Errorf("failed in createAppUserRecordsAndUpdateBotUserRecord(): %w", err)
 				return
 			}
-		} else {
-			if params.UserWorkerParams == nil {
-				params.UserWorkerParams = &dal4userus.UserWorkerParams{
-					User: dbo4userus.NewUserEntry(appUserID),
-				}
-				if err = tx.Get(ctx, params.User.Record); err != nil {
-					return
-				}
-			}
-			botUser.Data.SetAppUserID(appUserID)
-			params.UserUpdates = append(params.UserUpdates, params.User.Data.AddAccount(appuser.AccountKey{
-				Provider: string(botPlatformID),
-				ID:       botUserID,
-			})...)
-			params.User.Record.MarkAsChanged()
 		}
-	} else if appUserID != "" && botAppUserID != appUserID {
+		if params.UserWorkerParams == nil {
+			params.UserWorkerParams = &dal4userus.UserWorkerParams{
+				User: dbo4userus.NewUserEntry(appUserID),
+			}
+			if err = tx.Get(ctx, params.User.Record); err != nil {
+				return
+			}
+		}
+		botUser.Data.SetAppUserID(appUserID)
+		params.UserUpdates = append(params.UserUpdates, params.User.Data.AddAccount(appuser.AccountKey{
+			Provider: string(botPlatformID),
+			ID:       botUserID,
+		})...)
+		params.User.Record.MarkAsChanged()
+	} else if botAppUserID != appUserID {
 		err = fmt.Errorf("bot user is already linked to another app user")
 		return
 	}
