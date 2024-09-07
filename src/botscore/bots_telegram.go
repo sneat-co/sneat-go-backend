@@ -48,7 +48,7 @@ func telegramBots(environment string) botsfw.BotSettingsBy {
 	case botsfw.EnvProduction:
 		_bots = botsfw.NewBotSettingsBy( // TODO: Get bot tokens from environment variables
 			telegram.NewTelegramBot(environment, sneatbot.GetProfile(errFooterText), "SneatBot", "", "", "", "", i18n.LocaleEnUS, GetDb, getAppUser),
-			telegram.NewTelegramBot(environment, listusbot.GetProfile(errFooterText), "ListusBot", "", "", "", "", i18n.LocaleEnUS, GetDb, getAppUser),
+			telegram.NewTelegramBot(environment, listusbot.GetProfile(errFooterText), "Listus_Bot", "", "", "", "", i18n.LocaleEnUS, GetDb, getAppUser),
 		)
 	case botsfw.EnvLocal:
 		sneatTgDevBots := os.Getenv("SNEAT_TG_DEV_BOTS")
