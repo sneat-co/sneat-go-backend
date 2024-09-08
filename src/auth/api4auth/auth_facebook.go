@@ -26,5 +26,5 @@ func HandleSignedWithFacebook(ctx context.Context, w http.ResponseWriter, r *htt
 		authWriteResponseForAuthFailed(ctx, w, err)
 		return
 	}
-	authWriteResponseForUser(ctx, w, user, "facebook", isNewUser)
+	authWriteResponseForUser(ctx, w, r, user, "facebook", isNewUser)
 }

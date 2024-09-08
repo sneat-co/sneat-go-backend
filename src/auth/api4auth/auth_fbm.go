@@ -43,5 +43,5 @@ func HandleSignInWithFbm(ctx context.Context, w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	authWriteResponseForUser(ctx, w, user, "fbm", isNewUser)
+	authWriteResponseForUser(ctx, w, r, user, "fbm", isNewUser)
 }

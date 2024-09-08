@@ -6,7 +6,6 @@ import (
 	telegram "github.com/bots-go-framework/bots-fw-telegram"
 	"github.com/bots-go-framework/bots-fw-telegram-webapp/twainitdata"
 	"github.com/sneat-co/sneat-go-backend/src/auth/facade4auth"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"net/http"
 )
@@ -23,5 +22,5 @@ func signInWithTelegram(ctx context.Context, w http.ResponseWriter, r *http.Requ
 	}
 
 	appUserID := tgBotUser.Data.GetAppUserID()
-	api4debtus.ReturnToken(ctx, w, appUserID, telegram.PlatformID)
+	ReturnToken(ctx, w, r, appUserID, telegram.PlatformID)
 }

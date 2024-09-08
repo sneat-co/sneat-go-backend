@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-backend/src/auth/models4auth"
 	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	fb "github.com/strongo/facebook"
 	"github.com/strongo/logus"
@@ -179,6 +178,6 @@ func authWriteResponseForAuthFailed(ctx context.Context, w http.ResponseWriter, 
 	_, _ = w.Write([]byte(err.Error()))
 }
 
-func authWriteResponseForUser(ctx context.Context, w http.ResponseWriter, user dbo4userus.UserEntry, issuer string, isNewUser bool) {
-	api4debtus.ReturnToken(ctx, w, user.ID, issuer)
+func authWriteResponseForUser(ctx context.Context, w http.ResponseWriter, r *http.Request, user dbo4userus.UserEntry, issuer string, isNewUser bool) {
+	ReturnToken(ctx, w, r, user.ID, issuer)
 }

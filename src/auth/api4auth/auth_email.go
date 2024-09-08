@@ -71,7 +71,7 @@ func HandleSignUpWithEmail(ctx context.Context, w http.ResponseWriter, r *http.R
 			api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 			return
 		}
-		api4debtus.ReturnToken(ctx, w, user.ID, r.Referer() /*, user.Data.Email == "alexander.trakhimenok@gmail.com"*/)
+		ReturnToken(ctx, w, r, user.ID, r.Referer() /*, user.Data.Email == "alexander.trakhimenok@gmail.com"*/)
 	}
 }
 
@@ -103,7 +103,7 @@ func HandleSignInWithEmail(ctx context.Context, w http.ResponseWriter, r *http.R
 		return
 	}
 
-	api4debtus.ReturnToken(ctx, w, userEmail.Data.AppUserID, r.Referer() /*, userEmail.ID == "alexander.trakhimenok@gmail.com"*/)
+	ReturnToken(ctx, w, r, userEmail.Data.AppUserID, r.Referer() /*, userEmail.ID == "alexander.trakhimenok@gmail.com"*/)
 }
 
 func HandleRequestPasswordReset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
@@ -196,7 +196,7 @@ func HandleChangePasswordAndSignIn(ctx context.Context, w http.ResponseWriter, r
 		return
 	}
 
-	api4debtus.ReturnToken(ctx, w, passwordReset.Data.AppUserID, r.Referer())
+	ReturnToken(ctx, w, r, passwordReset.Data.AppUserID, r.Referer())
 }
 
 var errInvalidEmailConformationPin = errors.New("email confirmation pin is not valid")
@@ -252,7 +252,7 @@ func HandleConfirmEmailAndSignIn(ctx context.Context, w http.ResponseWriter, r *
 		if dal.IsNotFound(err) {
 			api4debtus.ErrorAsJson(ctx, w, http.StatusBadRequest, err)
 			return
-		} else if err == errInvalidEmailConformationPin {
+		} else if errors.Is(err, errInvalidEmailConformationPin) {
 			api4debtus.ErrorAsJson(ctx, w, http.StatusForbidden, err)
 			return
 		}
@@ -260,5 +260,5 @@ func HandleConfirmEmailAndSignIn(ctx context.Context, w http.ResponseWriter, r *
 		return
 	}
 
-	api4debtus.ReturnToken(ctx, w, userEmail.Data.AppUserID, r.Referer())
+	ReturnToken(ctx, w, r, userEmail.Data.AppUserID, r.Referer())
 }

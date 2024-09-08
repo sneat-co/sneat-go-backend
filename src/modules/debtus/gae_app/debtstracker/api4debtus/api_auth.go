@@ -2,14 +2,11 @@ package api4debtus
 
 import (
 	"context"
-	"errors"
 	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
-	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/strongo/logus"
 	"github.com/strongo/strongoapp"
-	"github.com/strongo/validation"
 	"net/http"
 )
 
@@ -72,47 +69,4 @@ func AdminOnly(handler AuthHandler) strongoapp.HttpHandlerWithContext {
 			logus.Errorf(ctx, "Failed to authenticate: %v", err)
 		}
 	}
-}
-
-func IsAdmin(email string) bool {
-	return email == "alexander.trakhimenok@gmail.com"
-}
-
-type TokenClaims struct {
-	isAdmin bool
-}
-
-func (t *TokenClaims) IsAdmin() bool {
-	return t.isAdmin
-}
-
-func IsAdminClaim() func(claim *TokenClaims) {
-	return func(claim *TokenClaims) {
-		claim.isAdmin = true
-	}
-}
-
-type TokenClaim func(claims *TokenClaims)
-
-func ReturnToken(ctx context.Context, w http.ResponseWriter, userID, issuer string, options ...TokenClaim) {
-	claims := TokenClaims{}
-	for _, o := range options {
-		o(&claims)
-	}
-	if claims.isAdmin {
-		apicore.ReturnError(ctx, w, nil, validation.NewBadRequestError(errors.New("issuing admin token is not implemented yet")))
-		return
-	}
-	token, err := token4auth.IssueFirebaseAuthToken(ctx, userID, issuer)
-	if err != nil {
-		apicore.ReturnError(ctx, w, nil, err)
-		return
-	}
-	header := w.Header()
-	//header.Add("Access-Control-Allow-Origin", "*")
-	header.Add("Content-Type", "application/json")
-	_, _ = w.Write([]byte("{"))
-	_, _ = w.Write([]byte(`"token":"`))
-	_, _ = w.Write([]byte(token))
-	_, _ = w.Write([]byte(`"}`))
 }
