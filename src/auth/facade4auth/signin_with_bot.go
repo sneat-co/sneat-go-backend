@@ -124,8 +124,9 @@ func createBotUserAndAppUserRecordsTx(
 			ID:       botUserID,
 		})...)
 		params.User.Record.MarkAsChanged()
-	} else if botAppUserID != appUserID {
-		err = fmt.Errorf("bot user is already linked to another app user")
+	} else if appUserID != "" && botAppUserID != appUserID {
+		//firebaseAuthToken := authToken.Original.(*auth.Token)
+		err = fmt.Errorf("bot user is already linked to another app user: botUserID=%s, botAppUserID=%s, appUserID=%s", botUserID, botAppUserID, appUserID)
 		return
 	}
 	return
