@@ -16,7 +16,7 @@ func AddListusOnlyBotCommands(commandsByType map[botinput.WebhookInputType][]bot
 // AddListusSharedCommands adds listus commands to a Sneat bot
 func AddListusSharedCommands(commandsByType map[botinput.WebhookInputType][]botsfw.Command) {
 	bothelpers.AddCommands(commandsByType, []botsfw.Command{
-		listCommand,
+		listusListCommand,
 		todoCommand,
 		watchCommand,
 		remindCommand,

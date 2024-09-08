@@ -87,6 +87,15 @@ func listAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) 
 			},
 		},
 	}
+	for _, itemText := range strings.Split(text, "\n") {
+		item := dto4listus.CreateListItemRequest{
+			ID: random.ID(5), // TODO: should be generated inside transaction
+			ListItemBase: dbo4listus.ListItemBase{
+				Title: strings.TrimSpace(itemText),
+			},
+		}
+		request.Items = append(request.Items, item)
+	}
 
 	if _, err = facade4listus.CreateListItems(ctx, userCtx, request); err != nil {
 		return m, err

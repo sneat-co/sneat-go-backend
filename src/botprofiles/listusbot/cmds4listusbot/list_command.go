@@ -12,7 +12,7 @@ var listCommandPrefixes = []string{
 	"watch", "/watch",
 }
 
-var listCommand = botsfw.Command{
+var listusListCommand = botsfw.Command{
 	Code:     "list",
 	Commands: []string{"/buy", "/do", "/watch"},
 	Icon:     "🛒",
