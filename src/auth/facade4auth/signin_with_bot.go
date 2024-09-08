@@ -125,9 +125,18 @@ func createBotUserAndAppUserRecordsTx(
 		})...)
 		params.User.Record.MarkAsChanged()
 	} else if appUserID != "" && botAppUserID != appUserID {
-		//firebaseAuthToken := authToken.Original.(*auth.Token)
 		err = fmt.Errorf("bot user is already linked to another app user: botUserID=%s, botAppUserID=%s, appUserID=%s", botUserID, botAppUserID, appUserID)
 		return
+	} else {
+		// Bot user already linked to an app user
+		if params.UserWorkerParams == nil {
+			params.UserWorkerParams = &dal4userus.UserWorkerParams{
+				User: dbo4userus.NewUserEntry(appUserID),
+			}
+		}
+		if err = tx.Get(ctx, params.User.Record); err != nil {
+			return
+		}
 	}
 	return
 }
