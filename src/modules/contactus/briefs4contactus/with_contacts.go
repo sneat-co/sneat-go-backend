@@ -192,7 +192,7 @@ func (v *WithMultiSpaceContacts[T]) AddContact(teamID, contactID string, c T) (u
 
 func (v *WithMultiSpaceContacts[T]) RemoveContact(teamID, contactID string) (updates []dal.Update) {
 	id := dbmodels.NewSpaceItemID(teamID, contactID)
-	contactIDs := slice.RemoveInPlace(string(id), v.ContactIDs)
+	contactIDs := slice.RemoveInPlaceByValue(v.ContactIDs, string(id))
 	if len(contactIDs) != len(v.ContactIDs) {
 		v.ContactIDs = contactIDs
 		updates = append(updates, dal.Update{

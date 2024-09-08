@@ -11,20 +11,18 @@ import (
 )
 
 func updateContactRoles(params *dal4contactus.ContactWorkerParams, roles dto4contactus.SetRolesRequest) (updatedContactFields []string, err error) {
-	var rolesUpdated bool
-	for _, role := range roles.Remove {
-		roles := slice.RemoveInPlace(role, params.Contact.Data.Roles)
-		rolesUpdated = rolesUpdated || len(roles) != len(params.Contact.Data.Roles)
-		params.Contact.Data.Roles = roles
-	}
-
+	var removedCount int
+	var addedCount int
+	params.Contact.Data.Roles, removedCount = slice.RemoveInPlace(params.Contact.Data.Roles, func(v string) bool {
+		return slices.Contains(roles.Remove, v)
+	})
 	for _, role := range roles.Add {
 		if !slices.Contains(params.Contact.Data.Roles, role) {
-			rolesUpdated = true
+			addedCount++
 			params.Contact.Data.Roles = append(params.Contact.Data.Roles, role)
 		}
 	}
-	if rolesUpdated {
+	if removedCount > 0 || addedCount > 0 {
 		updatedContactFields = append(updatedContactFields, "roles")
 		params.ContactUpdates = append(params.ContactUpdates, dal.Update{Field: "roles", Value: params.Contact.Data.Roles})
 		params.SpaceModuleUpdates = append(params.SpaceModuleUpdates,
@@ -37,16 +35,15 @@ func updateContactRoles(params *dal4contactus.ContactWorkerParams, roles dto4con
 	return updatedContactFields, err
 }
 
-func removeContactRoles(
-	params *dal4contactus.ContactWorkerParams,
-) {
+func removeContactRoles(params *dal4contactus.ContactWorkerParams) {
 	contact := params.Contact
 	contactBrief := params.SpaceModuleEntry.Data.GetContactBriefByContactID(contact.ID)
-	if contactBrief != nil && contactBrief.RemoveRole(const4contactus.SpaceMemberRoleMember) {
-		params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, dal.Update{Field: "contacts." + contact.ID + ".roles", Value: contact.Data.Roles})
-	}
-
-	if contact.Data.RolesField.RemoveRole(const4contactus.SpaceMemberRoleMember) {
-		params.ContactUpdates = append(params.ContactUpdates, dal.Update{Field: "roles", Value: contact.Data.Roles})
+	if contactBrief != nil {
+		for _, update := range contactBrief.RemoveRole(const4contactus.SpaceMemberRoleMember) {
+			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, dal.Update{
+				Field: fmt.Sprintf("contacts.%s.roles.%s", contact.ID, update.Field),
+				Value: contact.Data.Roles,
+			})
+		}
 	}
 }

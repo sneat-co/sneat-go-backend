@@ -4,8 +4,11 @@ import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
 	"github.com/sneat-co/sneat-go-core/facade"
+	"github.com/strongo/slice"
+	"slices"
 )
 
 // DeleteListItems deletes list items
@@ -13,35 +16,25 @@ func DeleteListItems(ctx context.Context, userCtx facade.UserContext, request dt
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4listus.RunListWorker(ctx, userCtx, request.ListRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4listus.ListWorkerParams) error {
-		var found int
-	nextItem:
-		for i, item := range params.List.Data.Items {
-			for _, id := range request.ItemIDs {
-				if item.ID == id {
-					found++
-					continue nextItem
-				}
+	return dal4listus.RunListWorker(ctx, userCtx, request.ListRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4listus.ListWorkerParams) (err error) {
+		items, removedCount := slice.RemoveInPlace(params.List.Data.Items, func(item *dbo4listus.ListItemBrief) bool {
+			return slices.Contains(request.ItemIDs, item.ID)
+		})
+		if removedCount > 0 {
+			params.List.Data.Items = items
+			params.List.Data.Count = len(items)
+			params.ListUpdates = []dal.Update{
+				{
+					Field: "items",
+					Value: params.List.Data.Items,
+				},
+				{
+					Field: "count",
+					Value: len(params.List.Data.Items),
+				},
 			}
-			params.List.Data.Items[i-found] = item
+			params.List.Record.MarkAsChanged()
 		}
-		if found > 0 {
-			params.List.Data.Items = params.List.Data.Items[:len(params.List.Data.Items)-found]
-		}
-		params.ListUpdates = []dal.Update{
-			{
-				Field: "items",
-				Value: params.List.Data.Items,
-			},
-			{
-				Field: "count",
-				Value: len(params.List.Data.Items),
-			},
-		}
-		return nil
+		return
 	})
-	if err != nil {
-		return err
-	}
-	return
 }

@@ -8,8 +8,6 @@ import (
 	"net/http"
 )
 
-var deleteListItems = facade4listus.DeleteListItems
-
 // httpDeleteListItems deletes list items
 func httpDeleteListItems(w http.ResponseWriter, r *http.Request) {
 	var request dto4listus.ListItemIDsRequest
@@ -22,6 +20,6 @@ func httpDeleteListItems(w http.ResponseWriter, r *http.Request) {
 		apicore.ReturnError(r.Context(), w, r, err)
 		return
 	}
-	err = deleteListItems(ctx, userContext, request)
+	err = facade4listus.DeleteListItems(ctx, userContext, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusCreated, err, nil)
 }

@@ -39,9 +39,7 @@ func removeSpaceMemberTx(
 	}
 
 	if params.Contact.Record.Exists() {
-		if params.Contact.Data.RemoveRole(const4contactus.SpaceMemberRoleMember) {
-			params.ContactUpdates = append(params.ContactUpdates, dal.Update{Field: "roles", Value: params.Contact.Data.Roles})
-		}
+		params.ContactUpdates = append(params.ContactUpdates, params.Contact.Data.RemoveRole(const4contactus.SpaceMemberRoleMember)...)
 	}
 
 	var memberUserID string
@@ -75,7 +73,7 @@ func removeSpaceMemberTx(
 
 func updateUserRecordOnSpaceMemberRemoved(user *dbo4userus.UserDbo, spaceID string) *dal.Update {
 	delete(user.Spaces, spaceID)
-	user.SpaceIDs = slice.RemoveInPlace(spaceID, user.SpaceIDs)
+	user.SpaceIDs = slice.RemoveInPlaceByValue(user.SpaceIDs, spaceID)
 	return &dal.Update{
 		Field: "spaces",
 		Value: user.Spaces,
@@ -88,7 +86,7 @@ func removeMemberFromSpaceRecord(
 	membersCount int,
 ) {
 	if contactUserID != "" && slices.Contains(params.Space.Data.UserIDs, contactUserID) {
-		params.Space.Data.UserIDs = slice.RemoveInPlace(contactUserID, params.Space.Data.UserIDs)
+		params.Space.Data.UserIDs = slice.RemoveInPlaceByValue(params.Space.Data.UserIDs, contactUserID)
 		params.SpaceUpdates = append(params.SpaceUpdates, dal.Update{Field: "userIDs", Value: params.Space.Data.UserIDs})
 	}
 	//if params.Space.Data.NumberOf[dbo4spaceus.NumberOfMembersFieldName] != membersCount {
@@ -105,7 +103,7 @@ func removeContactBrief(
 			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, params.SpaceModuleEntry.Data.RemoveContact(id))
 			if contactBrief.UserID != "" {
 				contactUserID = contactBrief.UserID
-				userIDs := slice.RemoveInPlace(contactBrief.UserID, params.SpaceModuleEntry.Data.UserIDs)
+				userIDs := slice.RemoveInPlaceByValue(params.SpaceModuleEntry.Data.UserIDs, contactBrief.UserID)
 				if len(userIDs) != len(params.SpaceModuleEntry.Data.UserIDs) {
 					params.SpaceModuleEntry.Data.UserIDs = userIDs
 					params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, dal.Update{Field: "userIDs", Value: userIDs})
