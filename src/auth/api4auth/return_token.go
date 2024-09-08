@@ -3,6 +3,7 @@ package api4auth
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/strongo/validation"
@@ -37,6 +38,7 @@ func ReturnToken(ctx context.Context, w http.ResponseWriter, r *http.Request, us
 	}
 	token, err := token4auth.IssueFirebaseAuthToken(ctx, userID, issuer)
 	if err != nil {
+		err = fmt.Errorf("failed to issue Firebase token: %w", err)
 		apicore.ReturnError(ctx, w, r, err)
 		return
 	}

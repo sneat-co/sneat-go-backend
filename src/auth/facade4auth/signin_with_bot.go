@@ -38,6 +38,7 @@ func SignInWithBot(
 	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		var params CreateUserWorkerParams
 		if botUser, params, err = createBotUserAndAppUserRecordsTx(ctx, tx, botPlatformID, botUserID, newBotUserData, remoteClientInfo); err != nil {
+			err = fmt.Errorf("failed to create bot user and app user records: %w", err)
 			return
 		}
 		if params.UserWorkerParams == nil {
