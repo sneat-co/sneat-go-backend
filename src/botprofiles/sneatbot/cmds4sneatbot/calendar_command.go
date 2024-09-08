@@ -4,6 +4,7 @@ import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
+	"github.com/sneat-co/sneat-go-backend/src/botscore/bothelpers"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/tghelpers"
 	"net/url"
 )
@@ -42,18 +43,19 @@ func calendarAction(_ botsfw.WebhookContext) (m botsfw.MessageFromBot, err error
 	m.Format = botsfw.MessageFormatHTML
 	m.Text = "<b>Family calendar</b>"
 	m.Text += "\n\n<i>Not implemented yet</i>"
+	botWebAppUrl := bothelpers.GetBotWebAppUrl()
 	m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text: "💻 Manage in app",
 				WebApp: &tgbotapi.WebappInfo{
-					Url: "https://local-app.sneat.ws/space/family/h4qax/calendar", // TODO: generate URL
+					Url: botWebAppUrl + "space/family/h4qax/calendar", // TODO: generate URL
 				},
 			},
 			{
 				Text: "➕ Add event",
 				WebApp: &tgbotapi.WebappInfo{
-					Url: "https://local-app.sneat.ws/space/family/h4qax/calendar", // TODO: generate URL
+					Url: botWebAppUrl + "space/family/h4qax/calendar", // TODO: generate URL
 				},
 			},
 		},

@@ -6,6 +6,7 @@ import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/botscore/bothelpers"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
@@ -94,7 +95,7 @@ func showListAction(
 	firstRow = append(firstRow, tgbotapi.InlineKeyboardButton{
 		Text: "💻 Edit list",
 		WebApp: &tgbotapi.WebappInfo{
-			Url: fmt.Sprintf("https://local-app.sneat.ws/space/family/h4qax/list/%s/%s", listKey.ListType(), listKey.ListSubID()),
+			Url: bothelpers.GetBotWebAppUrl() + fmt.Sprintf("space/family/h4qax/list/%s/%s", listKey.ListType(), listKey.ListSubID()),
 		},
 	})
 	m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(

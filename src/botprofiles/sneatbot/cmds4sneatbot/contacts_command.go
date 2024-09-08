@@ -4,6 +4,7 @@ import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
+	"github.com/sneat-co/sneat-go-backend/src/botscore/bothelpers"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/tghelpers"
 	"net/url"
 )
@@ -47,7 +48,7 @@ func contactsAction(_ botsfw.WebhookContext) (m botsfw.MessageFromBot, err error
 			{
 				Text: "💻 Manage in app",
 				WebApp: &tgbotapi.WebappInfo{
-					Url: "https://local-app.sneat.ws/space/family/h4qax/contacts", // TODO: generate URL
+					Url: bothelpers.GetBotWebAppUrl() + "space/family/h4qax/contacts", // TODO: generate URL
 				},
 			},
 			{

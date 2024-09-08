@@ -5,6 +5,7 @@ import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
+	"github.com/sneat-co/sneat-go-backend/src/botscore/bothelpers"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/tghelpers"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
@@ -95,8 +96,11 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 	spaceCallbackParams := "s=" + string(core4spaceus.NewSpaceRef(spaceType, spaceID))
 
 	var spaceUrlPath = spaceRef.UrlPath()
+
+	botWebAppUrl := bothelpers.GetBotWebAppUrl()
+
 	spacePageUrl := func(page string) string {
-		return "https://local-app.sneat.ws/space/" + spaceUrlPath + "/" + page
+		return fmt.Sprintf("%s/space/%s/%s", botWebAppUrl, spaceUrlPath, page)
 	}
 
 	firstRow := []tgbotapi.InlineKeyboardButton{
