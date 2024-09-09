@@ -59,11 +59,15 @@ func CreateOrReuseInviteForMember(ctx context.Context, userCtx facade.UserContex
 	}
 	err = dal4contactus.RunContactusSpaceWorker(ctx, userCtx, request.SpaceRequest,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) (err error) {
-			fromContactID, fromContactBrief := params.SpaceModuleEntry.Data.GetContactBriefByUserID(params.UserID())
+			if err = tx.Get(ctx, params.SpaceModuleEntry.Record); err != nil {
+				return
+			}
+			userID := params.UserID()
+			fromContactID, fromContactBrief := params.SpaceModuleEntry.Data.GetContactBriefByUserID(userID)
 
 			if fromContactBrief == nil {
 				// TODO: Should return specific error so we can return HTTP 401
-				return fmt.Errorf("current userCtx does not belong to the team")
+				return fmt.Errorf("current user does not belong to the space: user={id=%s}, space={id=%s}", userID, params.Space.ID)
 			}
 			var (
 				inviteID       string

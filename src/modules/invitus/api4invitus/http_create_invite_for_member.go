@@ -8,6 +8,7 @@ import (
 	"github.com/sneat-co/sneat-go-core/apicore/verify"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/httpserver"
+	"github.com/strongo/validation"
 	"net/http"
 )
 
@@ -30,10 +31,22 @@ func httpPostCreateOrReuseInviteForMember(w http.ResponseWriter, r *http.Request
 func httpGetOrCreateInviteLink(w http.ResponseWriter, r *http.Request) {
 	var request facade4invitus.InviteMemberRequest
 	q := r.URL.Query()
-	request.SpaceID = q.Get("space")
-	request.To.MemberID = q.Get("member")
+
+	if request.SpaceID = q.Get("space"); request.SpaceID == "" {
+		apicore.ReturnError(r.Context(), w, r, validation.NewErrRequestIsMissingRequiredField("space"))
+		// TODO(deprecate): httpserver.HandleError(nil, validation.NewErrRequestIsMissingRequiredField("space"), "httpGetOrCreateInviteLink", w, r)
+		return
+	}
+	if request.To.MemberID = q.Get("member"); request.To.MemberID == "" {
+		apicore.ReturnError(r.Context(), w, r, validation.NewErrRequestIsMissingRequiredField("member"))
+		return
+	}
+
 	request.To.Channel = "link"
-	ctx, userContext, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
+	ctx, userContext, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.Request(
+		verify.AuthenticationRequired(true),
+		verify.MaximumContentLength(0),
+	))
 	if err != nil {
 		httpserver.HandleError(ctx, err, "VerifyRequestAndCreateUserContext", w, r)
 		return
