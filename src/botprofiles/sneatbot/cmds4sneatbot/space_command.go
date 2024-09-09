@@ -79,13 +79,17 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 
 	var switchSpaceCallbackData string
 	var switchSpaceTitle string
+	var switchSpaceIcon string
+
 	switch spaceType {
 	case core4spaceus.SpaceTypeFamily:
 		spaceIcon = "👪"
+		switchSpaceIcon = "🔒"
 		switchSpaceTitle = "Private"
 		switchSpaceCallbackData = "space?s=" + string(core4spaceus.NewSpaceRef(core4spaceus.SpaceTypePrivate, ""))
 	case core4spaceus.SpaceTypePrivate:
 		spaceIcon = "🔒"
+		switchSpaceIcon = "👪"
 		switchSpaceTitle = "Family"
 		switchSpaceCallbackData = "space?s=" + string(core4spaceus.NewSpaceRef(core4spaceus.SpaceTypeFamily, ""))
 	}
@@ -112,16 +116,14 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 	firstRow := []tgbotapi.InlineKeyboardButton{
 		{
 			Text: "📇 Contacts",
-			//CallbackData: "contacts?" + spaceCallbackParams,
 			WebApp: &tgbotapi.WebappInfo{
 				Url: spacePageUrl("contacts"),
 			},
 		},
 	}
-	if spaceID != "private" {
+	if spaceType != core4spaceus.SpaceTypePrivate {
 		firstRow = append(firstRow, tgbotapi.InlineKeyboardButton{
 			Text: "👪 Members",
-			//CallbackData: "members?" + spaceCallbackParams,
 			WebApp: &tgbotapi.WebappInfo{
 				Url: spacePageUrl("members"),
 			},
@@ -133,21 +135,18 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text: "🚗 Assets",
-				//CallbackData: "assets?" + spaceCallbackParams,
 				WebApp: &tgbotapi.WebappInfo{
 					Url: spacePageUrl("assets"),
 				},
 			},
 			{
 				Text: "💰 Budget",
-				//CallbackData: "budget?" + spaceCallbackParams,
 				WebApp: &tgbotapi.WebappInfo{
 					Url: spacePageUrl("budget"),
 				},
 			},
 			{
 				Text: "💸 Debts",
-				//CallbackData: "debts?" + spaceCallbackParams,
 				WebApp: &tgbotapi.WebappInfo{
 					Url: spacePageUrl("debts"),
 				},
@@ -170,7 +169,6 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text: "🗓️ Calendar",
-				//CallbackData: "calendar?" + spaceCallbackParams,
 				WebApp: &tgbotapi.WebappInfo{
 					Url: spacePageUrl("calendar"),
 				},
@@ -178,14 +176,11 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 			{
 				Text:         "⚙️ Settings",
 				CallbackData: "settings?" + spaceCallbackParams,
-				//WebApp: &tgbotapi.WebappInfo{
-				//	Url: spacePageUrl("settings"),
-				//},
 			},
 		},
 		[]tgbotapi.InlineKeyboardButton{
 			{
-				Text:         fmt.Sprintf("🔀 Switch to \"%s\" space", switchSpaceTitle),
+				Text:         fmt.Sprintf("🔀 Switch to \"%s\" space %s", switchSpaceTitle, switchSpaceIcon),
 				CallbackData: switchSpaceCallbackData,
 			},
 		},
