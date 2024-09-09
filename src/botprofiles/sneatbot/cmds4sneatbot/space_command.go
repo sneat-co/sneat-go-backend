@@ -73,6 +73,7 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 			}
 			spaceID = createSpaceParams.Space.ID
 		}
+		spaceRef = core4spaceus.NewSpaceRef(spaceType, spaceID)
 	}
 	var spaceIcon string
 
@@ -94,6 +95,11 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 	m.Format = botsfw.MessageFormatHTML
 
 	spaceCallbackParams := "s=" + string(core4spaceus.NewSpaceRef(spaceType, spaceID))
+
+	if spaceRef.SpaceID() == "" {
+		err = fmt.Errorf("spaceRef.SpaceID() is empty string")
+		return
+	}
 
 	var spaceUrlPath = spaceRef.UrlPath()
 
