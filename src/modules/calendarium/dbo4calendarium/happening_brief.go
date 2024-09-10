@@ -2,6 +2,7 @@ package dbo4calendarium
 
 import (
 	"fmt"
+	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
@@ -20,17 +21,31 @@ type HappeningBrief struct {
 	dbo4linkage.WithRelated
 }
 
-func (v HappeningBrief) GetSlot(id string) (slot *HappeningSlot) {
+func (v *HappeningBrief) MarkAsCanceled(cancellation Cancellation) (updates []dal.Update) {
+	if v.Status == HappeningStatusCanceled {
+		return nil
+	}
+	v.Status = HappeningStatusCanceled
+	if v.Cancellation == nil {
+		v.Cancellation = &cancellation
+	}
+	return []dal.Update{
+		{Field: "status", Value: v.Status},
+		{Field: "canceled", Value: v.Cancellation},
+	}
+}
+
+func (v *HappeningBrief) GetSlot(id string) (slot *HappeningSlot) {
 	return v.Slots[id]
 }
 
-func (v HappeningBrief) HasSlot(id string) bool {
+func (v *HappeningBrief) HasSlot(id string) bool {
 	_, ok := v.Slots[id]
 	return ok
 }
 
 // Validate returns error if not valid
-func (v HappeningBrief) Validate() error {
+func (v *HappeningBrief) Validate() error {
 	switch v.Type {
 	case HappeningTypeSingle, HappeningTypeRecurring:
 		break

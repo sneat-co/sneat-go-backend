@@ -7,8 +7,8 @@ import (
 	"time"
 )
 
-func CreateCancellation(uid, reason string) *dbo4calendarium.Cancellation {
-	return &dbo4calendarium.Cancellation{
+func CreateCancellation(uid, reason string) dbo4calendarium.Cancellation {
+	return dbo4calendarium.Cancellation{
 		At:     time.Now(),
 		By:     dbmodels.ByUser{UID: uid},
 		Reason: strings.TrimSpace(reason),
