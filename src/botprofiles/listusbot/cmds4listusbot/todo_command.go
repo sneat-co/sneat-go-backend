@@ -113,7 +113,7 @@ func todoAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) 
 		},
 	}
 
-	if _, err = facade4listus.CreateListItems(ctx, userCtx, request); err != nil {
+	if _, _, err = facade4listus.CreateListItems(ctx, userCtx, request); err != nil {
 		return m, err
 	}
 	responseText := fmt.Sprintf("Added to groceries list: %s", text)

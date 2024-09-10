@@ -12,23 +12,36 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/slice"
+	"strings"
 )
 
 // CreateListItems creates list items
-func CreateListItems(ctx context.Context, userCtx facade.UserContext, request dto4listus.CreateListItemsRequest) (response dto4listus.CreateListItemResponse, err error) {
+func CreateListItems(ctx context.Context, userCtx facade.UserContext, request dto4listus.CreateListItemsRequest) (
+	response dto4listus.CreateListItemResponse, list dal4listus.ListEntry, err error,
+) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 	err = dal4spaceus.RunModuleSpaceWorker(ctx, userCtx, request.SpaceID, const4listus.ModuleID, new(dbo4listus.ListusSpaceDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) error {
-			return createListItemTxWorker(ctx, request, tx, params)
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) (err error) {
+			response, list, err = createListItemTxWorker(ctx, tx, request, params)
+			return err
 		})
 	return
 }
 
-func createListItemTxWorker(ctx context.Context, request dto4listus.CreateListItemsRequest, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) (err error) {
+func createListItemTxWorker(
+	ctx context.Context,
+	tx dal.ReadwriteTransaction,
+	request dto4listus.CreateListItemsRequest,
+	params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo],
+) (
+	response dto4listus.CreateListItemResponse,
+	list dal4listus.ListEntry,
+	err error,
+) {
 	if err = params.GetRecords(ctx, tx); err != nil {
-		return err
+		return
 	}
 	//if slice.Index(params.Space.Data.UserIDs, uid) < 0 {
 	//	// TODO: check if user is a member of the team at RunModuleSpaceWorker() level
@@ -36,9 +49,10 @@ func createListItemTxWorker(ctx context.Context, request dto4listus.CreateListIt
 	//}
 
 	listType := request.ListID.ListType()
-	var list = dal4listus.NewSpaceListEntry(request.SpaceID, request.ListID)
+	list = dal4listus.NewSpaceListEntry(request.SpaceID, request.ListID)
 	if err = tx.Get(ctx, list.Record); err != nil && !dal.IsNotFound(err) {
-		return fmt.Errorf("failed to get list record: %w", err)
+		err = fmt.Errorf("failed to get list record: %w", err)
+		return
 	}
 
 	if !list.Record.Exists() {
@@ -49,7 +63,7 @@ func createListItemTxWorker(ctx context.Context, request dto4listus.CreateListIt
 
 		if !isOkToAutoCreateList {
 			err = fmt.Errorf("list not found by listID=%s: %w", request.ListID, err)
-			return err
+			return
 		}
 
 		list.Data.SpaceIDs = []string{request.SpaceID}
@@ -82,9 +96,10 @@ func createListItemTxWorker(ctx context.Context, request dto4listus.CreateListIt
 	}
 
 	for i, item := range request.Items {
-		id, err := generateRandomListItemID(list.Data.Items, item.ID)
-		if err != nil {
-			return fmt.Errorf("failed to generate random id for item #%d: %w", i, err)
+		var id string
+		if id, err = generateRandomListItemID(list.Data.Items, item.ID); err != nil {
+			err = fmt.Errorf("failed to generate random id for item #%d: %w", i, err)
+			return
 		}
 		listItem := dbo4listus.ListItemBrief{
 			ID:           id,
@@ -92,19 +107,25 @@ func createListItemTxWorker(ctx context.Context, request dto4listus.CreateListIt
 		}
 		if listItem.Emoji == "" {
 			listItem.Emoji = deductListItemEmoji(listItem.Title)
+			if listItem.Emoji != "" && strings.HasPrefix(listItem.Title, listItem.Emoji) {
+				listItem.Title = strings.TrimSpace(listItem.Title[len(listItem.Emoji):])
+			}
 		}
 		listItem.CreatedAt = params.Started
 		listItem.CreatedBy = params.UserID()
 		list.Data.Items = append(list.Data.Items, &listItem)
+		response.CreatedItems = append(response.CreatedItems, &listItem)
 	}
 	list.Data.Count = len(list.Data.Items)
 	listBrief.ItemsCount = len(list.Data.Items)
 	if err = list.Data.Validate(); err != nil {
-		return fmt.Errorf("list record is not valid: %w", err)
+		err = fmt.Errorf("list record is not valid: %w", err)
+		return
 	}
 	if list.Record.Exists() {
 		if slice.Index(list.Data.UserIDs, params.UserID()) < 0 {
-			return errors.New("current user does not have access to the list: userID=" + params.UserID())
+			err = errors.New("current user does not have access to the list: userID=" + params.UserID())
+			return
 		}
 		if err = tx.Update(ctx, list.Key, []dal.Update{
 			{
@@ -116,11 +137,13 @@ func createListItemTxWorker(ctx context.Context, request dto4listus.CreateListIt
 				Value: len(list.Data.Items),
 			},
 		}); err != nil {
-			return fmt.Errorf("failed to update list record: %w", err)
+			err = fmt.Errorf("failed to update list record: %w", err)
+			return
 		}
 	} else {
 		if err = tx.Insert(ctx, list.Record); err != nil {
-			return fmt.Errorf("failed to insert list record: %w", err)
+			err = fmt.Errorf("failed to insert list record: %w", err)
+			return
 		}
 	}
 
@@ -134,9 +157,9 @@ func createListItemTxWorker(ctx context.Context, request dto4listus.CreateListIt
 		params.SpaceModuleEntry.Data.CreatedAt = params.Started
 		params.SpaceModuleEntry.Data.CreatedBy = params.UserID()
 		if err = tx.Insert(ctx, params.SpaceModuleEntry.Record); err != nil {
-			return fmt.Errorf("failed to insert team module entry record: %w", err)
+			err = fmt.Errorf("failed to insert team module entry record: %w", err)
+			return
 		}
 	}
-
-	return nil
+	return
 }

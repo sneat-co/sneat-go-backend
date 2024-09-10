@@ -2,9 +2,11 @@ package cmds4listusbot
 
 import (
 	"fmt"
+	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/facade4listus"
@@ -78,29 +80,48 @@ func listAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) 
 				SpaceID: spaceRef.SpaceID(),
 			},
 		},
-		Items: []dto4listus.CreateListItemRequest{
-			{
-				ID: random.ID(5), // TODO: should be generated inside transaction?
-				ListItemBase: dbo4listus.ListItemBase{
-					Title: text,
-				},
-			},
-		},
 	}
 	for _, itemText := range strings.Split(text, "\n") {
 		item := dto4listus.CreateListItemRequest{
 			ID: random.ID(5), // TODO: should be generated inside transaction
 			ListItemBase: dbo4listus.ListItemBase{
-				Title: strings.TrimSpace(itemText),
+				Title: cleanListItemTitle(itemText),
 			},
 		}
-		request.Items = append(request.Items, item)
+		if item.Title != "" {
+			request.Items = append(request.Items, item)
+		}
 	}
 
-	if _, err = facade4listus.CreateListItems(ctx, userCtx, request); err != nil {
+	var response dto4listus.CreateListItemResponse
+	var list dal4listus.ListEntry
+	if response, list, err = facade4listus.CreateListItems(ctx, userCtx, request); err != nil {
 		return m, err
 	}
-	responseText := fmt.Sprintf("Added to groceries list: %s", text)
-	m = whc.NewMessage(responseText)
+
+	itemTexts := make([]string, 0, len(response.CreatedItems))
+	for _, item := range response.CreatedItems {
+		var itemText string
+		if item.Emoji == "" {
+			itemText = "\t• " + item.Title
+		} else {
+			itemText = "\t" + item.Emoji + " " + item.Title
+		}
+		itemTexts = append(itemTexts, itemText)
+	}
+	m = whc.NewMessage("Added to groceries list:\n" + strings.Join(itemTexts, "\n"))
+	m.Format = botsfw.MessageFormatText
+	m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
+		[]tgbotapi.InlineKeyboardButton{
+			{
+				Text:         list.Data.Emoji + " Show full list",
+				CallbackData: getShowListCallbackData(spaceRef, request.ListID, ""),
+			},
+		},
+	)
 	return m, nil
+}
+
+func cleanListItemTitle(title string) string {
+	return strings.Trim(title, "•- \t")
 }

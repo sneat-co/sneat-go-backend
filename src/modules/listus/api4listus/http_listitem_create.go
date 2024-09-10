@@ -16,6 +16,6 @@ func httpPostCreateListItems(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var response dto4listus.CreateListItemResponse
-	response, err = facade4listus.CreateListItems(ctx, userContext, request)
+	response, _, err = facade4listus.CreateListItems(ctx, userContext, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusCreated, err, &response)
 }

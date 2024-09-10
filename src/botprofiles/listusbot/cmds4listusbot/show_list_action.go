@@ -89,7 +89,7 @@ func showListAction(
 	if len(list.Data.Items) > 0 {
 		firstRow = append(firstRow, tgbotapi.InlineKeyboardButton{
 			Text:         "❌ Clear list",
-			CallbackData: fmt.Sprintf("list?k=%s&s=%s&action=clear", listKey, spaceRef),
+			CallbackData: getShowListCallbackData(spaceRef, listKey, "clear"),
 		})
 	}
 	firstRow = append(firstRow, tgbotapi.InlineKeyboardButton{
@@ -105,5 +105,13 @@ func showListAction(
 		//},
 	)
 	m.ResponseChannel = botsfw.BotAPISendMessageOverHTTPS
+	return
+}
+
+func getShowListCallbackData(spaceRef core4spaceus.SpaceRef, listKey dbo4listus.ListKey, action string) (callbackData string) {
+	callbackData = fmt.Sprintf("list?k=%s&s=%s", listKey, spaceRef)
+	if action != "" {
+		callbackData += "&a=" + action
+	}
 	return
 }

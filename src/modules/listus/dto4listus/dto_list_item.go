@@ -46,7 +46,7 @@ func (v CreateListItemRequest) Validate() error {
 
 // CreateListItemResponse DTO
 type CreateListItemResponse struct {
-	ID string `json:"id"`
+	CreatedItems []*dbo4listus.ListItemBrief `json:"items"`
 }
 
 // ListItemIDsRequest DTO
