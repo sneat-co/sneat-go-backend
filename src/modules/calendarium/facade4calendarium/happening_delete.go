@@ -15,18 +15,15 @@ func DeleteHappening(ctx context.Context, userCtx facade.UserContext, request dt
 	if err = request.Validate(); err != nil {
 		return
 	}
-
-	worker := func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
-		return deleteHappeningTx(ctx, tx, request, params)
-	}
-
-	return dal4calendarium.RunHappeningSpaceWorker(ctx, userCtx, request, worker)
+	return dal4calendarium.RunHappeningSpaceWorker(ctx, userCtx, request,
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
+			return deleteHappeningTx(ctx, tx, params, request)
+		},
+	)
 }
 
-func deleteHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, request dto4calendarium.HappeningRequest, params *dal4calendarium.HappeningWorkerParams) (err error) {
-	happening := params.Happening
-
-	if !happening.Record.Exists() || happening.Data.Type == dbo4calendarium.HappeningTypeRecurring {
+func deleteHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.HappeningRequest) (err error) {
+	if !params.Happening.Record.Exists() || params.Happening.Data.Type == dbo4calendarium.HappeningTypeRecurring {
 		if err = tx.Get(ctx, params.SpaceModuleEntry.Record); err != nil {
 			return
 		}
@@ -39,9 +36,8 @@ func deleteHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, request
 			params.SpaceModuleEntry.Record.MarkAsChanged()
 		}
 	}
-
-	if happening.Record.Exists() {
-		if err = tx.Delete(ctx, happening.Key); err != nil {
+	if params.Happening.Record.Exists() {
+		if err = tx.Delete(ctx, params.Happening.Key); err != nil {
 			return fmt.Errorf("faield to delete happening record: %w", err)
 		}
 	}

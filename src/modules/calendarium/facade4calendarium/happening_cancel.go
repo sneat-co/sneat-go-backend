@@ -72,7 +72,7 @@ func cancelRecurringHappeningInstance(
 	}
 	happeningBrief := params.SpaceModuleEntry.Data.GetRecurringHappeningBrief(params.Happening.ID)
 	if happeningBrief == nil {
-		return errors.New("happening brief is not found in team record")
+		return errors.New("happening brief is not found in space record")
 	}
 
 	uid := params.UserID()
@@ -92,6 +92,7 @@ func cancelRecurringHappeningInstance(
 			update.Field = fmt.Sprintf("recurringHappenings.%s.%s", params.Happening.ID, update.Field)
 			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, update)
 		}
+		params.SpaceModuleEntry.Record.MarkAsChanged()
 	} else if err = addCancellationToCalendarDayAdjustments(ctx, tx, request, params, cancellation); err != nil {
 		return fmt.Errorf("failed to add cancellation to calendar day adjustments: %w", err)
 	}

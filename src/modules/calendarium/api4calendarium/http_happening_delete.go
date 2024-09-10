@@ -7,7 +7,6 @@ import (
 	"net/http"
 )
 
-// httpDeleteHappening deletes happening
 func httpDeleteHappening(w http.ResponseWriter, r *http.Request) {
 	var request = getHappeningRequestParamsFromURL(r)
 	ctx, userContext, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)

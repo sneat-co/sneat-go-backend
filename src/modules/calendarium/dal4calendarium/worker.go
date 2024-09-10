@@ -57,6 +57,13 @@ func RunHappeningSpaceWorker(
 		}
 		if len(params.SpaceModuleUpdates) == 0 && params.Happening.Data.Type == dbo4calendarium.HappeningTypeRecurring && (len(params.HappeningUpdates) > 0 || params.Happening.Record.HasChanged()) {
 			recurringHappening := params.SpaceModuleEntry.Data.RecurringHappenings[params.Happening.ID]
+			if recurringHappening == nil {
+				recurringHappening = new(dbo4calendarium.CalendarHappeningBrief)
+				if params.SpaceModuleEntry.Data.RecurringHappenings == nil {
+					params.SpaceModuleEntry.Data.RecurringHappenings = make(map[string]*dbo4calendarium.CalendarHappeningBrief)
+				}
+				params.SpaceModuleEntry.Data.RecurringHappenings[params.Happening.ID] = recurringHappening
+			}
 			recurringHappening.HappeningBrief = params.Happening.Data.HappeningBrief
 			recurringHappening.WithRelated = params.Happening.Data.WithRelated
 			moduleSpaceParams.SpaceModuleUpdates = append(moduleSpaceParams.SpaceModuleUpdates, dal.Update{

@@ -22,17 +22,27 @@ type HappeningBrief struct {
 }
 
 func (v *HappeningBrief) MarkAsCanceled(cancellation Cancellation) (updates []dal.Update) {
-	if v.Status == HappeningStatusCanceled {
-		return nil
+	if v.Status != HappeningStatusCanceled {
+		v.Status = HappeningStatusCanceled
+		updates = append(updates, dal.Update{Field: "status", Value: v.Status})
 	}
-	v.Status = HappeningStatusCanceled
 	if v.Cancellation == nil {
 		v.Cancellation = &cancellation
+		updates = append(updates, dal.Update{Field: "canceled", Value: v.Cancellation})
 	}
-	return []dal.Update{
-		{Field: "status", Value: v.Status},
-		{Field: "canceled", Value: v.Cancellation},
+	return
+}
+
+func (v *HappeningBrief) RemoveCancellation() (updates []dal.Update) {
+	if v.Status == HappeningStatusCanceled {
+		v.Status = HappeningStatusActive
+		updates = append(updates, dal.Update{Field: "status", Value: v.Status})
 	}
+	if v.Cancellation != nil {
+		v.Cancellation = nil
+		updates = append(updates, dal.Update{Field: "canceled", Value: nil})
+	}
+	return updates
 }
 
 func (v *HappeningBrief) GetSlot(id string) (slot *HappeningSlot) {
@@ -63,8 +73,8 @@ func (v *HappeningBrief) Validate() error {
 	if v.Status == HappeningStatusCanceled && v.Cancellation == nil {
 		return validation.NewErrRecordIsMissingRequiredField("canceled")
 	}
-	if v.Cancellation != nil && v.Status != HappeningStatusCanceled {
-		return validation.NewErrBadRecordFieldValue("canceled", "should be populated only for canceled happenings, current status="+v.Status)
+	if v.Cancellation != nil && v.Status != HappeningStatusCanceled && v.Status != HappeningStatusDeleted {
+		return validation.NewErrBadRecordFieldValue("canceled", "can be populated only for canceled or deleted happenings, current status="+v.Status)
 	}
 
 	if err := dbmodels.ValidateTitle(v.Title); err != nil {

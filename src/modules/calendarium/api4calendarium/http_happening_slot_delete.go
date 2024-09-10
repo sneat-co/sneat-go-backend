@@ -8,7 +8,6 @@ import (
 	"net/http"
 )
 
-// httpDeleteHappening deletes happening
 func httpDeleteSlot(w http.ResponseWriter, r *http.Request) {
 	var request = dto4calendarium.DeleteHappeningSlotRequest{
 		HappeningSlotRefRequest: dto4calendarium.HappeningSlotRefRequest{

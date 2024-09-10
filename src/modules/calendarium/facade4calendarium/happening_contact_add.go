@@ -19,11 +19,9 @@ func AddParticipantToHappening(ctx context.Context, userCtx facade.UserContext, 
 		return
 	}
 
-	var worker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
+	if err = dal4calendarium.RunHappeningSpaceWorker(ctx, userCtx, request.HappeningRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
 		return addParticipantToHappeningTxWorker(ctx, tx, params, request)
-	}
-
-	if err = dal4calendarium.RunHappeningSpaceWorker(ctx, userCtx, request.HappeningRequest, worker); err != nil {
+	}); err != nil {
 		return fmt.Errorf("failed to add participant to happening: %w", err)
 	}
 	return nil

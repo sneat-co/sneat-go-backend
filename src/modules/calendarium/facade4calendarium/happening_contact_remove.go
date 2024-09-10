@@ -19,12 +19,10 @@ func RemoveParticipantFromHappening(ctx context.Context, userCtx facade.UserCont
 		return
 	}
 
-	var worker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
+	if err = dal4calendarium.RunHappeningSpaceWorker(ctx, userCtx, request.HappeningRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
 		return removeParticipantFromHappeningTxWorker(ctx, tx, params, request)
-	}
-
-	if err = dal4calendarium.RunHappeningSpaceWorker(ctx, userCtx, request.HappeningRequest, worker); err != nil {
-		return err
+	}); err != nil {
+		return fmt.Errorf("failed to remove participant from happening: %w", err)
 	}
 	return nil
 }
