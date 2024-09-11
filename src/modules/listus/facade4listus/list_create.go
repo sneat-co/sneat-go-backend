@@ -80,7 +80,7 @@ func CreateList(ctx context.Context, userCtx facade.UserContext, request dto4lis
 			if err = listDbo.Validate(); err != nil {
 				return fmt.Errorf("formed listDbo DTO struct is not valid: %w", err)
 			}
-			listKey := dal4listus.NewSpaceListKey(request.SpaceID, listID)
+			listKey := dal4listus.NewListKey(request.SpaceID, listID)
 			listRecord := dal.NewRecordWithData(listKey, &listDbo)
 			if err = tx.Insert(ctx, listRecord); err != nil {
 				return fmt.Errorf("failed to insert listDbo record")

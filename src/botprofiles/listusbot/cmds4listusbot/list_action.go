@@ -17,6 +17,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/random"
+	"net/url"
 	"slices"
 	"strings"
 )
@@ -25,6 +26,21 @@ func listAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) 
 	ctx := whc.Context()
 
 	chatData := whc.ChatData()
+
+	var listKey dbo4listus.ListKey
+
+	awaitingReplyTo := chatData.GetAwaitingReplyTo()
+	if awaitingReplyTo != "" {
+		var awaitingReplyToUrl *url.URL
+		if awaitingReplyToUrl, err = url.Parse(awaitingReplyTo); err != nil {
+			err = fmt.Errorf("failed to parse awaitingReplyTo as URL: %w", err)
+			return
+		}
+		listKey = dbo4listus.ListKey(awaitingReplyToUrl.Query().Get("k"))
+	}
+	if listKey == "" {
+		listKey = dbo4listus.BuyGroceriesListID
+	}
 
 	sneatAppChatData := chatData.(interface{ GetSpaceRef() core4spaceus.SpaceRef })
 
@@ -75,7 +91,7 @@ func listAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) 
 
 	request := dto4listus.CreateListItemsRequest{
 		ListRequest: dto4listus.ListRequest{
-			ListID: dbo4listus.NewListKey(dbo4listus.ListTypeToBuy, "groceries"),
+			ListID: listKey,
 			SpaceRequest: dto4spaceus.SpaceRequest{
 				SpaceID: spaceRef.SpaceID(),
 			},
@@ -96,7 +112,7 @@ func listAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) 
 	var response dto4listus.CreateListItemResponse
 	var list dal4listus.ListEntry
 	if response, list, err = facade4listus.CreateListItems(ctx, userCtx, request); err != nil {
-		return m, err
+		return m, fmt.Errorf("failed to create list items: %w", err)
 	}
 
 	itemTexts := make([]string, 0, len(response.CreatedItems))

@@ -10,11 +10,12 @@ var listCommandPrefixes = []string{
 	"/buy", "buy", "купить",
 	"do", "/do",
 	"watch", "/watch",
+	"read", "/read",
 }
 
 var listusListCommand = botsfw.Command{
 	Code:     "list",
-	Commands: []string{"/buy", "/do", "/watch"},
+	Commands: []string{"/buy", "/do", "/watch", "/read", "/list"},
 	Icon:     "🛒",
 	InputTypes: []botinput.WebhookInputType{
 		botinput.WebhookInputText,

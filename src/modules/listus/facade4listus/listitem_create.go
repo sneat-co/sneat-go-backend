@@ -22,6 +22,9 @@ func CreateListItems(ctx context.Context, userCtx facade.UserContext, request dt
 	}
 	err = dal4listus.RunListWorker(ctx, userCtx, request.ListRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4listus.ListWorkerParams) (err error) {
 		response, list, err = createListItemsTxWorker(ctx, tx, request, params)
+		if err != nil {
+			return fmt.Errorf("failed in createListItemsTxWorker: %w", err)
+		}
 		return err
 	})
 	return
@@ -46,19 +49,11 @@ func createListItemsTxWorker(
 	//}
 
 	listType := request.ListID.ListType()
-	list = dal4listus.NewSpaceListEntry(request.SpaceID, request.ListID)
-	if err = tx.Get(ctx, list.Record); err != nil && !dal.IsNotFound(err) {
-		err = fmt.Errorf("failed to get list record: %w", err)
-		return
-	}
+	list = params.List
 
 	if !list.Record.Exists() {
 
-		isOkToAutoCreateList :=
-			request.ListID == dbo4listus.NewListKey(dbo4listus.ListTypeToBuy, "groceries") ||
-				request.ListID == dbo4listus.NewListKey(dbo4listus.ListTypeToWatch, "movies")
-
-		if !isOkToAutoCreateList {
+		if !dbo4listus.IsStandardList(request.ListID) {
 			err = fmt.Errorf("list not found by listID=%s: %w", request.ListID, err)
 			return
 		}

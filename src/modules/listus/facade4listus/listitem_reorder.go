@@ -22,7 +22,7 @@ func ReorderListItem(ctx context.Context, userCtx facade.UserContext, request dt
 	}
 	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		listID := request.ListID
-		list := dal4listus.NewSpaceListEntry(request.SpaceID, listID)
+		list := dal4listus.NewListEntry(request.SpaceID, listID)
 
 		if err = dal4listus.GetListForUpdate(ctx, tx, list); err != nil {
 			return fmt.Errorf("failed to get a list for reordering of list items: %w", err)

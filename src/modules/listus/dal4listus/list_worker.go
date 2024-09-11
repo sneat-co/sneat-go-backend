@@ -22,10 +22,14 @@ func RunListWorker(ctx context.Context, userCtx facade.UserContext, request dto4
 	err = dal4spaceus.RunModuleSpaceWorker(ctx, userCtx, request.SpaceID, "listus", new(dbo4listus.ListusSpaceDbo), func(ctx context.Context, tx dal.ReadwriteTransaction, spaceWorkerParams *dal4spaceus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) (err error) {
 		params := ListWorkerParams{
 			ModuleSpaceWorkerParams: spaceWorkerParams,
-			List:                    NewSpaceListEntry(request.SpaceID, request.ListID),
+			List:                    NewListEntry(request.SpaceID, request.ListID),
 		}
 		if err = GetListForUpdate(ctx, tx, params.List); err != nil {
-			return err
+			if dal.IsNotFound(err) && dbo4listus.IsStandardList(request.ListID) {
+				// It's OK to miss a standard list record - should be created automatically
+			} else {
+				return err
+			}
 		}
 		if err = worker(ctx, tx, &params); err != nil {
 			return err

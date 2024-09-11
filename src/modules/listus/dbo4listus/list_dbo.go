@@ -25,12 +25,14 @@ const (
 
 	// ListTypeToWatch = "to-watch"
 	ListTypeToWatch ListType = "watch"
+
+	ListTypeToRead ListType = "read"
 )
 
 // IsKnownListType checks if it is a known list type
 func IsKnownListType(v string) bool {
 	switch v {
-	case ListTypeGeneral, ListTypeToBuy, ListTypeToWatch, ListTypeToDo:
+	case ListTypeGeneral, ListTypeToBuy, ListTypeToDo, ListTypeToWatch, ListTypeToRead:
 		return true
 	}
 	return false
@@ -44,6 +46,17 @@ func NewListKey(listType ListType, listID string) ListKey {
 }
 
 type ListKey string
+
+const (
+	BuyGroceriesListID = "buy!groceries"
+	DoTasksListID      = "do!tasks"
+	ReadBooksListID    = "read!books"
+	WatchMoviesListID  = "watch!movies"
+)
+
+func IsStandardList(listKey ListKey) bool {
+	return listKey == BuyGroceriesListID || listKey == DoTasksListID || listKey == ReadBooksListID || listKey == WatchMoviesListID
+}
 
 func (v ListKey) Validate() error {
 	if s := strings.TrimSpace(string(v)); s == "" {

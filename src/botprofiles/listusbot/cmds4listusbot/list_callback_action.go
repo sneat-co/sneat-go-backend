@@ -53,7 +53,7 @@ func listCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bots
 			return
 		}
 	case "", ListActionRefresh, ListActionFull, ListActionClear, ListActionClearCancel:
-		list := dal4listus.NewSpaceListEntry(spaceRef.SpaceID(), listKey)
+		list := dal4listus.NewListEntry(spaceRef.SpaceID(), listKey)
 		var db dal.DB
 		if db, err = facade.GetSneatDB(ctx); err != nil {
 			return
@@ -74,7 +74,8 @@ func listCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bots
 
 	m.ResponseChannel = botsfw.BotAPISendMessageOverResponse
 	chatData := whc.ChatData()
-	chatData.SetAwaitingReplyTo("list")
+	awaitingReplyTo := getShowListCallbackData(spaceRef, listKey, "", "")
+	chatData.SetAwaitingReplyTo(awaitingReplyTo)
 	switch chatData := chatData.(type) {
 	case interface {
 		SetSpaceRef(core4spaceus.SpaceRef)

@@ -22,7 +22,7 @@ func SetListItemsIsDone(ctx context.Context, userCtx facade.UserContext, request
 	}
 	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		listID := request.ListID
-		list := dal4listus.NewSpaceListEntry(request.SpaceID, listID)
+		list := dal4listus.NewListEntry(request.SpaceID, listID)
 
 		if err := dal4listus.GetListForUpdate(ctx, tx, list); err != nil {
 			if dal.IsNotFound(err) {

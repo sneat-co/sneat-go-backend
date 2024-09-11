@@ -11,14 +11,14 @@ import (
 
 type ListEntry = record.DataWithID[string, *dbo4listus.ListDbo]
 
-// NewSpaceListKey creates a new list key
-func NewSpaceListKey(spaceID string, listKey dbo4listus.ListKey) *dal.Key {
+// NewListKey creates a new list key
+func NewListKey(spaceID string, listKey dbo4listus.ListKey) *dal.Key {
 	spaceModuleKey := dbo4spaceus.NewSpaceModuleKey(spaceID, const4listus.ModuleID)
 	return dal.NewKeyWithParentAndID(spaceModuleKey, dbo4listus.ListsCollection, string(listKey))
 }
 
-func NewSpaceListEntry(spaceID string, listKey dbo4listus.ListKey) (list ListEntry) {
-	key := NewSpaceListKey(spaceID, listKey)
+func NewListEntry(spaceID string, listKey dbo4listus.ListKey) (list ListEntry) {
+	key := NewListKey(spaceID, listKey)
 	list.ID = key.ID.(string)
 	list.FullID = fmt.Sprintf("%s/%s", spaceID, listKey) // TODO: Do we need this?
 	list.Key = key

@@ -7,6 +7,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/bothelpers"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/tghelpers"
+	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/facade4spaceus"
@@ -130,6 +131,10 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 		})
 	}
 
+	listCallbackData := func(id string) string {
+		return fmt.Sprintf("list?k=%s&%s", id, spaceCallbackParams)
+	}
+
 	m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
 		firstRow,
 		[]tgbotapi.InlineKeyboardButton{
@@ -155,15 +160,19 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text:         "🛒 Buy",
-				CallbackData: "list?k=buy!groceries&" + spaceCallbackParams,
+				CallbackData: listCallbackData(dbo4listus.BuyGroceriesListID),
 			},
 			{
 				Text:         "🏗️ ToDo",
-				CallbackData: "list?k=do!tasks&" + spaceCallbackParams,
+				CallbackData: listCallbackData(dbo4listus.DoTasksListID),
 			},
 			{
 				Text:         "📽️ Watch",
-				CallbackData: "list?k=watch!movies&" + spaceCallbackParams,
+				CallbackData: listCallbackData(dbo4listus.WatchMoviesListID),
+			},
+			{
+				Text:         "📘 Read",
+				CallbackData: listCallbackData(dbo4listus.ReadBooksListID),
 			},
 		},
 		[]tgbotapi.InlineKeyboardButton{
