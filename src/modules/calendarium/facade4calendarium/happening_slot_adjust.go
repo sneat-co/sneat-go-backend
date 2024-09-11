@@ -23,7 +23,7 @@ func AdjustSlot(ctx context.Context, userCtx facade.UserContext, request dto4cal
 		case dbo4calendarium.HappeningTypeSingle:
 			return errors.New("only recurring happenings can be adjusted, single happenings should be updated")
 		case dbo4calendarium.HappeningTypeRecurring:
-			if err = adjustRecurringSlot(ctx, tx, params.Happening, request); err != nil {
+			if err = adjustRecurringSlot(ctx, tx, params, request); err != nil {
 				return fmt.Errorf("failed to adjust recurring happening: %w", err)
 			}
 			return err
@@ -37,35 +37,39 @@ func AdjustSlot(ctx context.Context, userCtx facade.UserContext, request dto4cal
 	return nil
 }
 
-func adjustRecurringSlot(ctx context.Context, tx dal.ReadwriteTransaction, happening dbo4calendarium.HappeningEntry, request dto4calendarium.HappeningSlotDateRequest) (err error) {
-	//for _, spaceID := range happening.Data.SpaceIDs { // TODO: run in parallel in go routine if > 1
-	if err := adjustSlotInCalendarDay(ctx, tx, request.SpaceID, happening.ID, request); err != nil {
+func adjustRecurringSlot(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.HappeningSlotDateRequest) (err error) {
+	if err = adjustSlotInCalendarDay(ctx, tx, params, request); err != nil {
 		return fmt.Errorf("failed to adjust slot in calendar day record for teamID=%v: %w", request.SpaceID, err)
 	}
-	//}
 	return nil
 }
 
-func adjustSlotInCalendarDay(ctx context.Context, tx dal.ReadwriteTransaction, teamID, happeningID string, request dto4calendarium.HappeningSlotDateRequest) error {
-	calendarDay := dbo4calendarium.NewCalendarDayEntry(teamID, request.Date)
+func adjustSlotInCalendarDay(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.HappeningSlotDateRequest) error {
+	calendarDay := dbo4calendarium.NewCalendarDayEntry(request.SpaceID, request.Date)
 	if err := tx.Get(ctx, calendarDay.Record); err != nil {
 		if !dal.IsNotFound(err) {
 			return fmt.Errorf("failed to get calendar day record: %w", err)
 		}
 	}
-	happeningAdjustment, slotAdjustment := calendarDay.Data.GetAdjustment(happeningID, request.SlotID)
+	happeningAdjustment, slotAdjustment := calendarDay.Data.GetAdjustment(request.HappeningID, request.Slot.ID)
 	if slotAdjustment == nil {
 		if happeningAdjustment == nil {
 			happeningAdjustment = &dbo4calendarium.HappeningAdjustment{}
-			calendarDay.Data.HappeningAdjustments[happeningID] = happeningAdjustment
+			if calendarDay.Data.HappeningAdjustments == nil {
+				calendarDay.Data.HappeningAdjustments = make(map[string]*dbo4calendarium.HappeningAdjustment, 1)
+			}
+			calendarDay.Data.HappeningAdjustments[request.HappeningID] = happeningAdjustment
 		}
 		slotAdjustment = new(dbo4calendarium.SlotAdjustment)
-		happeningAdjustment.Slots[request.SlotID] = slotAdjustment
+		if happeningAdjustment.Slots == nil {
+			happeningAdjustment.Slots = make(map[string]*dbo4calendarium.SlotAdjustment, 1)
+		}
+		happeningAdjustment.Slots[request.Slot.ID] = slotAdjustment
 	}
-	slotAdjustment.Adjustment = &request.Slot
+	slotAdjustment.Adjustment = &request.Slot.HappeningSlot
 	var happeningIDsChanged bool
-	if happeningIDsChanged = slice.Index(calendarDay.Data.HappeningIDs, happeningID) < 0; happeningIDsChanged {
-		calendarDay.Data.HappeningIDs = append(calendarDay.Data.HappeningIDs, happeningID)
+	if happeningIDsChanged = slice.Index(calendarDay.Data.HappeningIDs, request.HappeningID) < 0; happeningIDsChanged {
+		calendarDay.Data.HappeningIDs = append(calendarDay.Data.HappeningIDs, request.HappeningID)
 	}
 
 	if err := calendarDay.Data.Validate(); err != nil {
