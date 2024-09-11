@@ -55,7 +55,10 @@ func RunHappeningSpaceWorker(
 				return fmt.Errorf("failed to update happening record: %w", err)
 			}
 		}
-		if len(params.SpaceModuleUpdates) == 0 && params.Happening.Data.Type == dbo4calendarium.HappeningTypeRecurring && (len(params.HappeningUpdates) > 0 || params.Happening.Record.HasChanged()) {
+		if len(params.SpaceModuleUpdates) == 0 &&
+			params.Happening.Data.Type == dbo4calendarium.HappeningTypeRecurring &&
+			(len(params.HappeningUpdates) > 0 || params.Happening.Record.HasChanged()) &&
+			params.SpaceModuleEntry.Data != nil /* Special case when for example we cancel happening on a specific date */ {
 			recurringHappening := params.SpaceModuleEntry.Data.RecurringHappenings[params.Happening.ID]
 			if recurringHappening == nil {
 				recurringHappening = new(dbo4calendarium.CalendarHappeningBrief)
@@ -70,6 +73,7 @@ func RunHappeningSpaceWorker(
 				Field: "recurringHappenings." + request.HappeningID,
 				Value: params.Happening.Data.HappeningBrief,
 			})
+			moduleSpaceParams.SpaceModuleEntry.Record.MarkAsChanged()
 		}
 		return nil
 	}

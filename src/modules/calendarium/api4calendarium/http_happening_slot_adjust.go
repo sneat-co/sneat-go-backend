@@ -8,8 +8,6 @@ import (
 	"net/http"
 )
 
-var adjustSlot = facade4calendarium.AdjustSlot
-
 func httpAdjustSlot(w http.ResponseWriter, r *http.Request) {
 	var request dto4calendarium.HappeningSlotDateRequest
 	request.HappeningRequest = getHappeningRequestParamsFromURL(r)
@@ -17,6 +15,6 @@ func httpAdjustSlot(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	err = adjustSlot(ctx, userContext, request)
+	err = facade4calendarium.AdjustSlot(ctx, userContext, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusOK, err, nil)
 }

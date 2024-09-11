@@ -67,23 +67,37 @@ func cancelRecurringHappeningInstance(
 	params *dal4calendarium.HappeningWorkerParams,
 	request dto4calendarium.CancelHappeningRequest,
 ) (err error) {
-	if err = tx.Get(ctx, params.SpaceModuleEntry.Record); err != nil {
-		return fmt.Errorf("failed to get team module record: %w", err)
-	}
-	happeningBrief := params.SpaceModuleEntry.Data.GetRecurringHappeningBrief(params.Happening.ID)
-	if happeningBrief == nil {
-		return errors.New("happening brief is not found in space record")
+
+	var calendarDay dbo4calendarium.CalendarDayEntry
+	{ // Load records that might need to be updated
+		var recordsToGet []dal.Record
+
+		if request.Date != "" {
+			calendarDay = dbo4calendarium.NewCalendarDayEntry(request.SpaceID, request.Date)
+			recordsToGet = append(recordsToGet, calendarDay.Record)
+		} else if params.Happening.Data.Type == dbo4calendarium.HappeningTypeRecurring {
+			// We do not update space module entry if it's a single happening or if a specific date is provided
+			recordsToGet = append(recordsToGet, params.SpaceModuleEntry.Record)
+		}
+		if len(recordsToGet) > 0 {
+			if err = tx.GetMulti(ctx, recordsToGet); err != nil {
+				return
+			}
+		}
 	}
 
 	uid := params.UserID()
-
 	cancellation := CreateCancellation(uid, request.Reason)
 
-	if params.HappeningUpdates = params.Happening.Data.MarkAsCanceled(cancellation); len(params.HappeningUpdates) > 0 {
-		params.Happening.Record.MarkAsChanged()
-	}
-
 	if request.Date == "" {
+		happeningBrief := params.SpaceModuleEntry.Data.GetRecurringHappeningBrief(params.Happening.ID)
+		if happeningBrief == nil {
+			return errors.New("happening brief is not found in space record")
+		}
+
+		if params.HappeningUpdates = params.Happening.Data.MarkAsCanceled(cancellation); len(params.HappeningUpdates) > 0 {
+			params.Happening.Record.MarkAsChanged()
+		}
 		updates := happeningBrief.MarkAsCanceled(cancellation)
 		if err = happeningBrief.Validate(); err != nil {
 			return fmt.Errorf("happening brief in team record is not valid: %w", err)
@@ -93,7 +107,7 @@ func cancelRecurringHappeningInstance(
 			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, update)
 		}
 		params.SpaceModuleEntry.Record.MarkAsChanged()
-	} else if err = addCancellationToCalendarDayAdjustments(ctx, tx, request, params, cancellation); err != nil {
+	} else if err = addCancellationToCalendarDayAdjustments(ctx, tx, request, params, cancellation, calendarDay); err != nil {
 		return fmt.Errorf("failed to add cancellation to calendar day adjustments: %w", err)
 	}
 
@@ -106,18 +120,8 @@ func addCancellationToCalendarDayAdjustments(
 	request dto4calendarium.CancelHappeningRequest,
 	params *dal4calendarium.HappeningWorkerParams,
 	cancellation dbo4calendarium.Cancellation,
+	calendarDay dbo4calendarium.CalendarDayEntry,
 ) (err error) {
-	calendarDay := dbo4calendarium.NewCalendarDayEntry(params.Space.ID, request.Date)
-
-	var isNewRecord bool
-	if err := tx.Get(ctx, calendarDay.Record); err != nil {
-		if dal.IsNotFound(err) {
-			isNewRecord = true
-		} else {
-			return fmt.Errorf("failed to get calendar day record by ContactID: %w", err)
-		}
-	}
-
 	var dayUpdates []dal.Update
 	happeningAdjustment, slotAdjustment := calendarDay.Data.GetAdjustment(params.Happening.ID, request.SlotID)
 	if slotAdjustment == nil {
@@ -153,19 +157,19 @@ func addCancellationToCalendarDayAdjustments(
 		slotAdjustment.Cancellation = &cancellation
 	}
 
-	if err := calendarDay.Data.Validate(); err != nil {
+	if err = calendarDay.Data.Validate(); err != nil {
 		return fmt.Errorf("calendar day record is not valid: %w", err)
 	}
 
-	if isNewRecord {
-		if err := tx.Insert(ctx, calendarDay.Record); err != nil {
+	if !calendarDay.Record.Exists() {
+		if err = tx.Insert(ctx, calendarDay.Record); err != nil {
 			return fmt.Errorf("failed to create calendar day record: %w", err)
 		}
 	} else if modified {
 		dayUpdates = append(dayUpdates, dal.Update{
 			Field: "cancellations", Value: calendarDay.Data.HappeningAdjustments,
 		})
-		if err := tx.Update(ctx, calendarDay.Key, dayUpdates); err != nil {
+		if err = tx.Update(ctx, calendarDay.Key, dayUpdates); err != nil {
 			return fmt.Errorf("failed to update calendar day record: %w", err)
 		}
 	}
