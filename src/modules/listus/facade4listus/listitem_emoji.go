@@ -100,6 +100,7 @@ var emojiKeywords = map[string][]string{
 }
 
 func deductListItemEmoji(text string) string {
+	text = strings.ToLower(text)
 	for emoji, keywords := range emojiKeywords {
 		for _, keyword := range keywords {
 			if strings.Contains(text, keyword) {
