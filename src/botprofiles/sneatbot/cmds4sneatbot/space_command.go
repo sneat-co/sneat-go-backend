@@ -189,8 +189,12 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 		},
 		[]tgbotapi.InlineKeyboardButton{
 			{
-				Text:         fmt.Sprintf("🔀 Switch to \"%s\" space %s", switchSpaceTitle, switchSpaceIcon),
+				Text:         fmt.Sprintf("%s Go %s space", switchSpaceIcon, switchSpaceTitle),
 				CallbackData: switchSpaceCallbackData,
+			},
+			{
+				Text:         "🌌 Spaces",
+				CallbackData: "spaces?s=" + string(spaceRef),
 			},
 		},
 	)
