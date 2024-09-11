@@ -14,7 +14,7 @@ func GetSpaceRef(callbackUrl *url.URL) (spaceRef core4spaceus.SpaceRef) {
 
 func BackToSpaceMenuButton(spaceRef core4spaceus.SpaceRef) tgbotapi.InlineKeyboardButton {
 	return tgbotapi.InlineKeyboardButton{
-		Text:         "⬅️ Back to space menu",
+		Text:         "⬅️ Back to space",
 		CallbackData: fmt.Sprintf("space?s=%s", spaceRef),
 	}
 }

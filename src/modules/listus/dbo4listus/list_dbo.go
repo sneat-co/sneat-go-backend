@@ -97,9 +97,9 @@ func (v ListBase) Validate() error {
 	if !IsKnownListType(v.Type) {
 		return validation.NewErrBadRecordFieldValue("type", "unknown value: "+v.Type)
 	}
-	if strings.TrimSpace(v.Title) == "" {
-		return validation.NewErrRecordIsMissingRequiredField("title")
-	}
+	//if strings.TrimSpace(v.Title) == "" {
+	//	return validation.NewErrRecordIsMissingRequiredField("title")
+	//}
 	return nil
 }
 
@@ -142,7 +142,7 @@ func validateListBriefs(lists ListBriefs) error {
 }
 
 // Validate returns error if not valid
-func (v ListBrief) Validate() error {
+func (v *ListBrief) Validate() error {
 	if err := v.ListBase.Validate(); err != nil {
 		return err
 	}
@@ -163,8 +163,22 @@ type ListDbo struct {
 	Count int              `json:"count" firestore:"count"`
 }
 
+func (v *ListDbo) AddListItem(item *ListItemBrief) (addedItem *ListItemBrief) {
+	for _, existingItem := range v.Items {
+		if existingItem.Title == item.Title && existingItem.Emoji == item.Emoji {
+			addedItem = existingItem
+			existingItem.IsDone = false
+			return
+		}
+	}
+	v.Items = append(v.Items, item)
+	v.Count = len(v.Items)
+	addedItem = item
+	return
+}
+
 // Validate returns error if not valid
-func (v ListDbo) Validate() error {
+func (v *ListDbo) Validate() error {
 	if err := v.WithSpaceIDs.Validate(); err != nil {
 		return err
 	}

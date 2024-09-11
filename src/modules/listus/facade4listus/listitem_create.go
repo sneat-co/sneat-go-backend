@@ -5,11 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/listus/const4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/slice"
 	"strings"
@@ -22,19 +20,18 @@ func CreateListItems(ctx context.Context, userCtx facade.UserContext, request dt
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4spaceus.RunModuleSpaceWorker(ctx, userCtx, request.SpaceID, const4listus.ModuleID, new(dbo4listus.ListusSpaceDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) (err error) {
-			response, list, err = createListItemTxWorker(ctx, tx, request, params)
-			return err
-		})
+	err = dal4listus.RunListWorker(ctx, userCtx, request.ListRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4listus.ListWorkerParams) (err error) {
+		response, list, err = createListItemsTxWorker(ctx, tx, request, params)
+		return err
+	})
 	return
 }
 
-func createListItemTxWorker(
+func createListItemsTxWorker(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	request dto4listus.CreateListItemsRequest,
-	params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo],
+	params *dal4listus.ListWorkerParams,
 ) (
 	response dto4listus.CreateListItemResponse,
 	list dal4listus.ListEntry,
@@ -69,7 +66,6 @@ func createListItemTxWorker(
 		list.Data.SpaceIDs = []string{request.SpaceID}
 		list.Data.UserIDs = []string{params.UserID()}
 		list.Data.Type = listType
-		list.Data.Title = string(request.ListID)
 		if list.Data.Emoji == "" {
 			switch request.ListID.ListType() {
 			case dbo4listus.ListTypeToBuy:
@@ -101,7 +97,7 @@ func createListItemTxWorker(
 			err = fmt.Errorf("failed to generate random id for item #%d: %w", i, err)
 			return
 		}
-		listItem := dbo4listus.ListItemBrief{
+		listItem := &dbo4listus.ListItemBrief{
 			ID:           id,
 			ListItemBase: item.ListItemBase,
 		}
@@ -113,8 +109,8 @@ func createListItemTxWorker(
 		}
 		listItem.CreatedAt = params.Started
 		listItem.CreatedBy = params.UserID()
-		list.Data.Items = append(list.Data.Items, &listItem)
-		response.CreatedItems = append(response.CreatedItems, &listItem)
+		listItem = list.Data.AddListItem(listItem)
+		response.CreatedItems = append(response.CreatedItems, listItem)
 	}
 	list.Data.Count = len(list.Data.Items)
 	listBrief.ItemsCount = len(list.Data.Items)

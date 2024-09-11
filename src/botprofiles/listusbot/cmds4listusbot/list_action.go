@@ -115,7 +115,7 @@ func listAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) 
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text:         list.Data.Emoji + " Show full list",
-				CallbackData: getShowListCallbackData(spaceRef, request.ListID, ""),
+				CallbackData: getShowListCallbackData(spaceRef, request.ListID, ListActionFull, ListTabActive),
 			},
 		},
 	)

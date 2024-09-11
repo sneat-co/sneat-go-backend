@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
 type ListWorkerParams struct {
-	dal4spaceus.SpaceWorkerParams
+	*dal4spaceus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]
 	List        ListEntry
 	ListUpdates []dal.Update
 }
@@ -19,22 +19,24 @@ type ListWorkerParams struct {
 type ListWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, listWorkerParams *ListWorkerParams) (err error)
 
 func RunListWorker(ctx context.Context, userCtx facade.UserContext, request dto4listus.ListRequest, worker ListWorker) (err error) {
-	params := ListWorkerParams{
-		SpaceWorkerParams: dal4spaceus.SpaceWorkerParams{
-			Space: dbo4spaceus.NewSpaceEntry(request.SpaceID),
-		},
-		List: NewSpaceListEntry(request.SpaceID, request.ListID),
-	}
-	var db dal.DB
-	if db, err = facade.GetSneatDB(ctx); err != nil {
-		return
-	}
-	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+	err = dal4spaceus.RunModuleSpaceWorker(ctx, userCtx, request.SpaceID, "listus", new(dbo4listus.ListusSpaceDbo), func(ctx context.Context, tx dal.ReadwriteTransaction, spaceWorkerParams *dal4spaceus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) (err error) {
+		params := ListWorkerParams{
+			ModuleSpaceWorkerParams: spaceWorkerParams,
+			List:                    NewSpaceListEntry(request.SpaceID, request.ListID),
+		}
 		if err = GetListForUpdate(ctx, tx, params.List); err != nil {
 			return err
 		}
 		if err = worker(ctx, tx, &params); err != nil {
 			return err
+		}
+		if params.List.Data.Title == params.List.ID && params.List.Record.Exists() {
+			params.List.Data.Title = ""
+			params.ListUpdates = append(params.ListUpdates, dal.Update{
+				Field: "title",
+				Value: "",
+			})
+			params.List.Record.MarkAsChanged()
 		}
 		if updateCount := len(params.ListUpdates); updateCount > 0 {
 			if !params.List.Record.HasChanged() {
@@ -45,6 +47,7 @@ func RunListWorker(ctx context.Context, userCtx facade.UserContext, request dto4
 				return
 			}
 		}
+
 		return
 	})
 	return
