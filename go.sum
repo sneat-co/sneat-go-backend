@@ -202,6 +202,8 @@ github.com/strongo/gotwilio v0.0.0-20160123000810-f024bbefe80f h1:nLD1340Ys0nXjV
 github.com/strongo/gotwilio v0.0.0-20160123000810-f024bbefe80f/go.mod h1:AOBNKIosqbvHdXh8+u8QBWz7xeHz9sjDS0zVJjspzN8=
 github.com/strongo/i18n v0.2.1 h1:SXvX1cseCNIzfRfkkLNdpU0a6AUX5KaB4+JbgYch13k=
 github.com/strongo/i18n v0.2.1/go.mod h1:4jBQ4PJ3Uiri2Y+LHJ5/o1nB1H2ToddRW/yZXSOTUjE=
+github.com/strongo/i18n v0.2.2 h1:158nn6f++Nt7hreIDxxJxuLYTE9Fz3+aFZ0mdAyU4sE=
+github.com/strongo/i18n v0.2.2/go.mod h1:4jBQ4PJ3Uiri2Y+LHJ5/o1nB1H2ToddRW/yZXSOTUjE=
 github.com/strongo/logus v0.2.0 h1:IbLupLW9WMIwjefJF+u9/Ajlaw6ysFuEeKQxOFX5tOE=
 github.com/strongo/logus v0.2.0/go.mod h1:sd8gjJklqGQAg+Q0mlP5MWgzguAuxR25YYFSkfVOPdc=
 github.com/strongo/random v0.0.1 h1:OZHJBb/3uEa7OX8L2Dv2pLnSeewRmXMyTACoeto6O8I=

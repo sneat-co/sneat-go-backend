@@ -22,8 +22,8 @@ func AddSneatSharedCommands(commandsByType map[botinput.WebhookInputType][]botsf
 }
 
 // AddSneatBotCommands registers commands specific only to @SneatBot
-func AddSneatBotCommands(commandsByType map[botinput.WebhookInputType][]botsfw.Command) {
-	bothelpers.AddCommands(commandsByType, []botsfw.Command{
-		startCommand,
-	})
-}
+//func AddSneatBotCommands(commandsByType map[botinput.WebhookInputType][]botsfw.Command) {
+//	bothelpers.AddCommands(commandsByType, []botsfw.Command{
+//		startCommand,
+//	})
+//}

@@ -2,6 +2,7 @@ package cmds4anybot
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botinput"
@@ -29,7 +30,11 @@ func StartBotLink(botID, command string, params ...string) string {
 	return buf.String()
 }
 
-func createStartCommand(startInBotAction StartInBotActionFunc, startInGroupAction botsfw.CommandAction) botsfw.Command {
+func createStartCommand(
+	startInBotAction StartInBotActionFunc,
+	startInGroupAction botsfw.CommandAction,
+	inBotWelcomeMessage WelcomeMessageProvider,
+) botsfw.Command {
 	return botsfw.Command{
 		Code:     "start",
 		Commands: []string{"/start"},
@@ -39,13 +44,16 @@ func createStartCommand(startInBotAction StartInBotActionFunc, startInGroupActio
 			botinput.WebhookInputConversationStarted, // Viber
 		},
 		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-			return startCommandAction(whc, startInBotAction, startInGroupAction)
+			return sharedStartCommandAction(whc, startInBotAction, startInGroupAction, inBotWelcomeMessage)
 		},
 	}
 }
 
-func startCommandAction(
-	whc botsfw.WebhookContext, startInBotAction StartInBotActionFunc, startInGroupAction botsfw.CommandAction,
+func sharedStartCommandAction(
+	whc botsfw.WebhookContext,
+	startInBotAction StartInBotActionFunc,
+	startInGroupAction botsfw.CommandAction,
+	inBotWelcomeMessage WelcomeMessageProvider,
 ) (
 	m botsfw.MessageFromBot, err error,
 ) {
@@ -61,27 +69,48 @@ func startCommandAction(
 		return
 	} else if isInGroup {
 		return startInGroupAction(whc)
-	} else {
-		chatEntity := whc.ChatData()
-		chatEntity.SetAwaitingReplyTo("")
-
-		switch {
-		case startParam == "help_inline":
-			return startInlineHelp(whc)
-		case strings.HasPrefix(startParam, "login-"):
-			loginID, err := common4debtus.DecodeIntID(startParam[len("login-"):])
-			if err != nil {
-				return m, err
-			}
-			return startLoginGac(whc, loginID)
-			//case strings.HasPrefix(textToMatchNoStart, JOIN_BILL_COMMAND):
-			//	return JoinBillCommand.Action(whc)
-		case strings.HasPrefix(startParam, "refbytguser-") && startParam != "refbytguser-YOUR_CHANNEL":
-			facade4anybot.Referer.AddTelegramReferrer(ctx, whc.AppUserID(), strings.TrimPrefix(startParam, "refbytguser-"), whc.GetBotCode())
-		}
-		return startInBotAction(whc, startParams)
 	}
+	chatEntity := whc.ChatData()
+	chatEntity.SetAwaitingReplyTo("")
+
+	switch {
+	case startParam == "help_inline":
+		return startInlineHelp(whc)
+	case strings.HasPrefix(startParam, "login-"):
+		loginID, err := common4debtus.DecodeIntID(startParam[len("login-"):])
+		if err != nil {
+			return m, err
+		}
+		return startLoginGac(whc, loginID)
+		//case strings.HasPrefix(textToMatchNoStart, JOIN_BILL_COMMAND):
+		//	return JoinBillCommand.Action(whc)
+	case strings.HasPrefix(startParam, "refbytguser-") && startParam != "refbytguser-YOUR_CHANNEL":
+		facade4anybot.Referer.AddTelegramReferrer(ctx, whc.AppUserID(), strings.TrimPrefix(startParam, "refbytguser-"), whc.GetBotCode())
+	}
+	//if m.Text, err = inBotWelcomeMessage(whc); err != nil {
+	//	return
+	//} else if m.Text != "" {
+	//	responder := whc.Responder()
+	//	if _, err = responder.SendMessage(ctx, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
+	//		return
+	//	}
+	//}
+	if m, err = onboardingAction(whc); err != nil && !errors.Is(err, ErrOnboardingCompleted) {
+		return
+	} else if m.Text == "" {
+		if m, err = startInBotAction(whc, startParams); err != nil {
+			return
+		}
+	}
+	var welcomeText string
+	if welcomeText, err = inBotWelcomeMessage(whc); err != nil {
+		return
+	} else if welcomeText != "" {
+		m.Text = welcomeText + "\n\n" + m.Text
+	}
+	return
 }
+
 func startLoginGac(whc botsfw.WebhookContext, loginID int) (m botsfw.MessageFromBot, err error) {
 	ctx := whc.Context()
 	var loginPin models4auth.LoginPin
@@ -112,7 +141,8 @@ func GetUser(whc botsfw.WebhookContext) (user dbo4userus.UserEntry, err error) {
 	}
 	user = dbo4userus.NewUserEntry(appUserID)
 	ctx := whc.Context()
-	return user, dal4userus.GetUser(ctx, nil, user)
+	tx := whc.Tx()
+	return user, dal4userus.GetUser(ctx, tx, user)
 }
 
 //var LangKeyboard = tgbotapi.NewInlineKeyboardMarkup(

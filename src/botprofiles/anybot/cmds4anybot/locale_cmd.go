@@ -25,19 +25,51 @@ const (
 
 const onboardingAskLocaleCommandCode = "onboarding-ask-locale"
 
-var localesReplyKeyboard = tgbotapi.NewReplyKeyboard(
-	[]tgbotapi.KeyboardButton{
-		{Text: i18n.LocaleEnUS.TitleWithIcon()},
-		{Text: i18n.LocaleRuRu.TitleWithIcon()},
+//var localesReplyKeyboard = tgbotapi.NewReplyKeyboard(
+//	[]tgbotapi.KeyboardButton{
+//		{Text: i18n.LocaleEnUS.TitleWithIcon()},
+//		{Text: i18n.LocaleRuRu.TitleWithIcon()},
+//	},
+//	[]tgbotapi.KeyboardButton{
+//		{Text: i18n.LocaleEsEs.TitleWithIcon()},
+//		{Text: i18n.LocaleItIt.TitleWithIcon()},
+//	},
+//	[]tgbotapi.KeyboardButton{
+//		{Text: i18n.LocaleDeDe.TitleWithIcon()},
+//		{Text: i18n.LocaleFaIr.TitleWithIcon()},
+//	},
+//)
+
+func localeInlineKeyboardButton(locale i18n.Locale) tgbotapi.InlineKeyboardButton {
+	return tgbotapi.InlineKeyboardButton{
+		Text:         locale.TitleWithIcon(),
+		CallbackData: onboardingAskLocaleCommandCode + "?lng=" + locale.Code5,
+	}
+}
+
+var localesInlineKeyboard = tgbotapi.NewInlineKeyboardMarkup(
+	[]tgbotapi.InlineKeyboardButton{
+		localeInlineKeyboardButton(i18n.LocaleEnUS),
 	},
-	[]tgbotapi.KeyboardButton{
-		{Text: i18n.LocaleEsEs.TitleWithIcon()},
-		{Text: i18n.LocaleItIt.TitleWithIcon()},
+	[]tgbotapi.InlineKeyboardButton{
+		localeInlineKeyboardButton(i18n.LocaleRuRu),
+		localeInlineKeyboardButton(i18n.LocaleUaUa),
 	},
-	[]tgbotapi.KeyboardButton{
-		{Text: i18n.LocaleDeDe.TitleWithIcon()},
-		{Text: i18n.LocaleFaIr.TitleWithIcon()},
+	[]tgbotapi.InlineKeyboardButton{
+		localeInlineKeyboardButton(i18n.LocaleEsEs),
+		localeInlineKeyboardButton(i18n.LocalePtPt),
 	},
+	[]tgbotapi.InlineKeyboardButton{
+		localeInlineKeyboardButton(i18n.LocaleFrFr),
+		localeInlineKeyboardButton(i18n.LocaleItIt),
+	},
+	[]tgbotapi.InlineKeyboardButton{
+		localeInlineKeyboardButton(i18n.LocaleDeDe),
+		localeInlineKeyboardButton(i18n.LocaleFaIr),
+	},
+	//[]tgbotapi.InlineKeyboardButton{
+	//	{Text: "Autodetect", WebApp: &tgbotapi.WebappInfo{Url: "https://sneat.app/telegram-webapp/detect-locale"}},
+	//},
 )
 
 func createOnboardingAskLocaleCommand(setMainMenu SetMainMenuFunc) botsfw.Command {
@@ -46,12 +78,12 @@ func createOnboardingAskLocaleCommand(setMainMenu SetMainMenuFunc) botsfw.Comman
 		InputTypes: []botinput.WebhookInputType{botinput.WebhookInputText, botinput.WebhookInputCallbackQuery},
 		ExactMatch: trans.ChooseLocaleIcon,
 		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-			return OnboardingAskLocaleAction(whc, "", setMainMenu)
+			return onboardingAskLocaleAction(whc, "", setMainMenu)
 		},
 	}
 }
 
-func OnboardingAskLocaleAction(whc botsfw.WebhookContext, messagePrefix string, setMainMenu SetMainMenuFunc) (m botsfw.MessageFromBot, err error) {
+func onboardingAskLocaleAction(whc botsfw.WebhookContext, messagePrefix string, setMainMenu SetMainMenuFunc) (m botsfw.MessageFromBot, err error) {
 	chatEntity := whc.ChatData()
 
 	if chatEntity.IsAwaitingReplyTo(onboardingAskLocaleCommandCode) {
@@ -63,14 +95,14 @@ func OnboardingAskLocaleAction(whc botsfw.WebhookContext, messagePrefix string, 
 		}
 		m = whc.NewMessageByCode(trans.MESSAGE_TEXT_UNKNOWN_LANGUAGE)
 		//localesReplyKeyboard.OneTimeKeyboard = true
-		m.Keyboard = localesReplyKeyboard
+		m.Keyboard = localesInlineKeyboard
 	} else {
 		m.Text = messagePrefix + m.Text
 		chatEntity.SetAwaitingReplyTo(onboardingAskLocaleCommandCode)
 		m = whc.NewMessageByCode(trans.MESSAGE_TEXT_ONBOARDING_ASK_TO_CHOOSE_LANGUAGE, whc.Input().GetSender().GetFirstName())
 		m.Format = botsfw.MessageFormatHTML
 		//localesReplyKeyboard.OneTimeKeyboard = true
-		m.Keyboard = localesReplyKeyboard
+		m.Keyboard = localesInlineKeyboard
 	}
 	return
 }

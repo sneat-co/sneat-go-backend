@@ -14,7 +14,7 @@ func TestAddSharedAddSharedCommands(t *testing.T) {
 		StartInGroupAction: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 			return
 		},
-		InBotWelcomeMessage: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
+		GetWelcomeMessageText: func(whc botsfw.WebhookContext) (text string, err error) {
 			return
 		},
 		HelpCommandAction: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {

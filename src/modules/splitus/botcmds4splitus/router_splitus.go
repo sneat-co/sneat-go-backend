@@ -4,10 +4,8 @@ import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/shared_space"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/strongo/i18n"
 )
@@ -24,29 +22,16 @@ var botParams = cmds4anybot.BotParams{
 	//DelayUpdateBillCardOnUserJoin:    delayUpdateBillCardOnUserJoin,
 	//OnAfterBillCurrencySelected:      getWhoPaidInlineKeyboard,
 	//ShowGroupMembers:                 showGroupMembers,
-	InBotWelcomeMessage: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
+	GetWelcomeMessageText: func(whc botsfw.WebhookContext) (text string, err error) {
 		var user dbo4userus.UserEntry
 		if user, err = cmds4anybot.GetUser(whc); err != nil {
 			return
 		}
-		m.Text = whc.Translate(
+		text = whc.Translate(
 			trans.MESSAGE_TEXT_HI_USERNAME, user.Data.Names.FirstName) + " " + whc.Translate(trans.SPLITUS_TEXT_HI) +
 			"\n\n" + whc.Translate(trans.SPLITUS_TEXT_ABOUT_ME_AND_CO) +
 			"\n\n" + whc.Translate(trans.SPLITUS_TG_COMMANDS)
-		m.Format = botsfw.MessageFormatHTML
-		m.IsEdit = true
 
-		m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
-			[]tgbotapi.InlineKeyboardButton{
-				tgbotapi.NewInlineKeyboardButtonSwitchInlineQuery(
-					whc.CommandText(trans.COMMAND_TEXT_NEW_BILL, emoji.MEMO_ICON),
-					"",
-				),
-			},
-			[]tgbotapi.InlineKeyboardButton{
-				shared_space.NewGroupTelegramInlineButton(whc, 0),
-			},
-		)
 		return
 	},
 	//

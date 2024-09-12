@@ -11,19 +11,19 @@ var onboardingCommand = botsfw.Command{
 	Code:       "onboarding",
 	Commands:   []string{"/onboarding"},
 	InputTypes: []botinput.WebhookInputType{botinput.WebhookInputText, botinput.WebhookInputCallbackQuery},
-	Action:     OnboardingAction,
+	Action:     onboardingAction,
 	//CallbackAction: onboardingCallbackAction,
 }
 
 var ErrOnboardingCompleted = errors.New("onboarding completed")
 
-func OnboardingAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
+func onboardingAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 	var user dbo4userus.UserEntry
 	if user, err = GetUser(whc); err != nil {
 		return
 	}
 	if user.Data.PreferredLocale == "" {
-		m, err = OnboardingAskLocaleAction(whc, "", nil)
+		m, err = onboardingAskLocaleAction(whc, "", nil)
 		return
 	}
 	if user.Data.PrimaryCurrency == "" {

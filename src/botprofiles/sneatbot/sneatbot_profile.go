@@ -23,12 +23,11 @@ func GetProfile(errFooterText func() string) botsfw.BotProfile {
 func createSneatBotProfile(errFooterText func() string) botsfw.BotProfile {
 	router := botsfw.NewWebhookRouter(errFooterText)
 
-	botParams := cmds4anybot.BotParams{}
-
+	botParams := cmds4sneatbot.GetBotParams()
 	cmds4anybot.AddSharedCommands(router, botParams)
 
 	commandsByType := make(map[botinput.WebhookInputType][]botsfw.Command) // TODO: get rid of `commandsByType`
-	cmds4sneatbot.AddSneatBotCommands(commandsByType)
+	//cmds4sneatbot.AddSneatBotCommands(commandsByType)
 	cmds4sneatbot.AddSneatSharedCommands(commandsByType)
 	cmds4listusbot.AddListusSharedCommands(commandsByType)
 	return anybot.NewProfile(ProfileID, &router)

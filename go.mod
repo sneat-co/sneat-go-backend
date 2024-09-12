@@ -62,7 +62,7 @@ require (
 	github.com/strongo/facebook v1.8.1
 	github.com/strongo/gamp v0.0.1
 	github.com/strongo/gotwilio v0.0.0-20160123000810-f024bbefe80f
-	github.com/strongo/i18n v0.2.1
+	github.com/strongo/i18n v0.2.2
 	github.com/strongo/logus v0.2.0
 	github.com/strongo/random v0.0.1
 	github.com/strongo/slice v0.3.0

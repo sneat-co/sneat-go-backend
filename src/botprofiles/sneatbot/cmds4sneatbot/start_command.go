@@ -1,39 +1,34 @@
 package cmds4sneatbot
 
 import (
-	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
 	"strings"
 )
 
-var startCommand = botsfw.Command{
-	Code:     "start",
-	Commands: []string{"/start"},
-	InputTypes: []botinput.WebhookInputType{
-		botinput.WebhookInputText,
-		botinput.WebhookInputCallbackQuery,
-		botinput.WebhookInputInlineQuery,
-	},
-	Action: startAction,
+//var startCommand = botsfw.Command{
+//	Code:     "start",
+//	Commands: []string{"/start"},
+//	InputTypes: []botinput.WebhookInputType{
+//		botinput.WebhookInputText,
+//		botinput.WebhookInputCallbackQuery,
+//		botinput.WebhookInputInlineQuery,
+//	},
+//	Action: sneatBotStartAction,
+//}
+
+func startActionWithStartParams(whc botsfw.WebhookContext, _ []string) (m botsfw.MessageFromBot, err error) {
+	return sneatBotStartAction(whc)
 }
 
-func startAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
+func sneatBotStartAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
+	return spaceAction(whc, core4spaceus.NewSpaceRef(core4spaceus.SpaceTypeFamily, ""))
+}
 
+func sneatBotWelcomeMessage(_ botsfw.WebhookContext) (text string, err error) {
 	msg := make([]string, 0)
-
 	msg = append(msg, "Hello, stranger! I'm a @SneatBot.")
 	msg = append(msg, "I can help you to manage your day-to-day family life.")
 	msg = append(msg, "Or you can create a space to manage your group/team/community.")
-
-	var welcomeMsg botsfw.MessageFromBot
-	welcomeMsg.Text = strings.Join(msg, "\n\n")
-
-	responder := whc.Responder()
-	ctx := whc.Context()
-	if _, err = responder.SendMessage(ctx, welcomeMsg, botsfw.BotAPISendMessageOverHTTPS); err != nil {
-		return
-	}
-	m, err = spaceAction(whc, core4spaceus.NewSpaceRef(core4spaceus.SpaceTypeFamily, ""))
-	return
+	return strings.Join(msg, "\n\n"), err
 }

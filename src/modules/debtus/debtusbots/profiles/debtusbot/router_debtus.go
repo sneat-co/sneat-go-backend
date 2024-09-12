@@ -39,10 +39,8 @@ var botParams = cmds4anybot.BotParams{
 	//		"\n\n"+ whc.Translate(trans.SPLITUS_TEXT_ABOUT_ME_AND_CO),
 	//		botscore.MessageFormatHTML)
 	//},
-	InBotWelcomeMessage: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-		m.Text = "Hi there"
-		m.Format = botsfw.MessageFormatHTML
-		//m.IsEdit = true
+	GetWelcomeMessageText: func(whc botsfw.WebhookContext) (text string, err error) {
+		text = "Hi there"
 		return
 	},
 	//

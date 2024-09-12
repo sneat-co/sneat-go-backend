@@ -9,7 +9,7 @@ func AddSharedCommands(router botsfw.WebhooksRouter, botParams BotParams) {
 	botParams.Validate()
 
 	sharedCommands := []botsfw.Command{
-		createStartCommand(botParams.StartInBotAction, botParams.StartInGroupAction),
+		createStartCommand(botParams.StartInBotAction, botParams.StartInGroupAction, botParams.GetWelcomeMessageText),
 		newStartCallbackCommand(botParams.SetMainMenu), // TODO: Should be part of the start command
 		onboardingCommand,
 		pingCommand,
