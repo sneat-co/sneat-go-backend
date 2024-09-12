@@ -14,7 +14,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/platforms/debtustgbots/tgsharedcommands"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
-	"github.com/strongo/i18n"
 	"github.com/strongo/logus"
 	"net/url"
 	"strings"
@@ -112,18 +111,18 @@ func GetUser(whc botsfw.WebhookContext) (user dbo4userus.UserEntry, err error) {
 	return user, dal4userus.GetUser(ctx, nil, user)
 }
 
-var LangKeyboard = tgbotapi.NewInlineKeyboardMarkup(
-	[]tgbotapi.InlineKeyboardButton{
-		{
-			Text:         i18n.LocaleEnUS.TitleWithIcon(),
-			CallbackData: onStartCallbackCommandCode + "?lang=" + i18n.LocaleCodeEnUS,
-		},
-		{
-			Text:         i18n.LocaleRuRu.TitleWithIcon(),
-			CallbackData: onStartCallbackCommandCode + "?lang=" + i18n.LocalCodeRuRu,
-		},
-	},
-)
+//var LangKeyboard = tgbotapi.NewInlineKeyboardMarkup(
+//	[]tgbotapi.InlineKeyboardButton{
+//		{
+//			Text:         i18n.LocaleEnUS.TitleWithIcon(),
+//			CallbackData: onStartCallbackCommandCode + "?lang=" + i18n.LocaleCodeEnUS,
+//		},
+//		{
+//			Text:         i18n.LocaleRuRu.TitleWithIcon(),
+//			CallbackData: onStartCallbackCommandCode + "?lang=" + i18n.LocalCodeRuRu,
+//		},
+//	},
+//)
 
 const onStartCallbackCommandCode = "on-start-callback"
 
