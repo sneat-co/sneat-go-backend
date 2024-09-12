@@ -1,4 +1,4 @@
-package shared_all
+package cmds4anybot
 
 import (
 	"errors"

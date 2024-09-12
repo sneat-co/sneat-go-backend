@@ -12,7 +12,7 @@ import (
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/shared_all"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/shared_space"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/briefs4splitus"
@@ -53,7 +53,7 @@ var joinBillCommand = botsfw.Command{
 	CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 		_ = whc.AppUserID() // Make sure we have user before transaction starts, TODO: it smells, should be refactored?
 		//
-		return shared_all.TransactionalCallbackAction(billCallbackAction(func(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, callbackUrl *url.URL, bill models4splitus.BillEntry) (m botsfw.MessageFromBot, err error) {
+		return cmds4anybot.TransactionalCallbackAction(billCallbackAction(func(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, callbackUrl *url.URL, bill models4splitus.BillEntry) (m botsfw.MessageFromBot, err error) {
 			ctx := whc.Context()
 			logus.Debugf(ctx, "joinBillCommand.CallbackAction()")
 			memberStatus := callbackUrl.Query().Get("i")

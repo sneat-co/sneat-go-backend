@@ -1,9 +1,10 @@
-package shared_all
+package cmds4anybot
 
 import (
 	"bytes"
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/facade4anybot"
@@ -15,8 +16,9 @@ import (
 const REFERRERS_COMMAND = "referrers"
 
 var ReferrersCommand = botsfw.Command{
-	Code:     REFERRERS_COMMAND,
-	Commands: trans.Commands(trans.COMMAND_TEXT_REFERRERS, emoji.PUBLIC_LOUDSPEAKER),
+	Code:       REFERRERS_COMMAND,
+	InputTypes: []botinput.WebhookInputType{botinput.WebhookInputText},
+	Commands:   trans.Commands(trans.COMMAND_TEXT_REFERRERS, emoji.PUBLIC_LOUDSPEAKER),
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		if m, err = topReferrersMessageText(whc); err != nil {
 			return

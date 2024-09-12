@@ -20,11 +20,13 @@ func GetProfile(errFooterText func() string) botsfw.BotProfile {
 }
 
 func createProfile(errFooterText func() string) botsfw.BotProfile {
-	commandsByType := make(map[botinput.WebhookInputType][]botsfw.Command)
-	cmds4anybot.AddSharedCommands(commandsByType)
+	botParams := cmds4anybot.BotParams{}
+	router := botsfw.NewWebhookRouter(errFooterText)
+	cmds4anybot.AddSharedCommands(router, botParams)
 
+	commandsByType := make(map[botinput.WebhookInputType][]botsfw.Command)
 	cmds4listusbot.AddListusOnlyBotCommands(commandsByType)
 	cmds4listusbot.AddListusSharedCommands(commandsByType)
-	router := botsfw.NewWebhookRouter(commandsByType, errFooterText)
+	router.AddCommandsGroupedByType(commandsByType)
 	return anybot.NewProfile(ProfileID, &router)
 }

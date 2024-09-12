@@ -7,7 +7,7 @@ import (
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/shared_all"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/shared_space"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/briefs4splitus"
@@ -30,7 +30,7 @@ var spaceSplitCommand = shared_space.SpaceCallbackCommand(spaceSplitCommandCode,
 			whc, callbackUrl,
 			"",
 			shared_space.SpaceCallbackCommandData(spaceSplitCommandCode, space.ID),
-			shared_space.SpaceCallbackCommandData(shared_all.SettingsCommandCode, space.ID),
+			shared_space.SpaceCallbackCommandData(cmds4anybot.SettingsCommandCode, space.ID),
 			trans.MESSAGE_TEXT_ASK_HOW_TO_SPLIT_IN_GROP,
 			billMembers,
 			money.Amount{},

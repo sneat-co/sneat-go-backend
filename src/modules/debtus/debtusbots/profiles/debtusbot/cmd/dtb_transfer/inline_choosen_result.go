@@ -7,7 +7,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/inlinekb"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/inlinekeyboards"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 )
@@ -51,7 +51,7 @@ func showReceiptAnnouncement(whc botsfw.WebhookContext, receiptID string, creato
 			),
 		},
 	}
-	kbRows = append(kbRows, inlinekb.GetChooseLangInlineKeyboard(
+	kbRows = append(kbRows, inlinekeyboards.GetChooseLangInlineKeyboard(
 		fmt.Sprintf("%s?id=%s", CHANGE_RECEIPT_LANG_COMMAND, receiptID)+"&locale=%v", // Intentionally &locale separate
 		whc.Locale().Code5,
 	)...)

@@ -1,4 +1,4 @@
-package shared_all
+package cmds4anybot
 
 //const howToCommandCode = "how-to"
 //

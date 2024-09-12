@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/shared_all"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_transfer"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
@@ -31,7 +31,7 @@ func StartInBotAction(whc botsfw.WebhookContext, startParams []string) (m botsfw
 			return startByLinkCode(whc, matched)
 		}
 	default:
-		err = shared_all.ErrUnknownStartParam
+		err = cmds4anybot.ErrUnknownStartParam
 	}
 	return
 }
@@ -63,7 +63,7 @@ func startByLinkCode(whc botsfw.WebhookContext, matches []string) (m botsfw.Mess
 	case "invite":
 		return startInvite(whc, entityCode, operation, localeCode5)
 	default:
-		err = shared_all.ErrUnknownStartParam
+		err = cmds4anybot.ErrUnknownStartParam
 	}
 	return
 }

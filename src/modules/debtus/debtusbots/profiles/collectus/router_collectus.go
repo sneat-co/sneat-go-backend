@@ -2,15 +2,14 @@ package collectus
 
 import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
-	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/shared_all"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 )
 
-var botParams = shared_all.BotParams{
+var botParams = cmds4anybot.BotParams{
 	StartInBotAction: func(whc botsfw.WebhookContext, startParams []string) (m botsfw.MessageFromBot, err error) {
 		m.Text = "StartInBotAction is not implemented yet"
 		return
@@ -28,7 +27,7 @@ var botParams = shared_all.BotParams{
 	},
 	InBotWelcomeMessage: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		var user dbo4userus.UserEntry
-		if user, err = shared_all.GetUser(whc); err != nil {
+		if user, err = cmds4anybot.GetUser(whc); err != nil {
 			return
 		}
 		m.Text = whc.Translate(
@@ -54,10 +53,9 @@ var botParams = shared_all.BotParams{
 }
 
 var Router = botsfw.NewWebhookRouter(
-	map[botinput.WebhookInputType][]botsfw.Command{},
 	func() string { return "Please report any errors to @CollectusGroup" },
 )
 
 func init() {
-	shared_all.AddSharedRoutes(Router, botParams)
+	cmds4anybot.AddSharedCommands(Router, botParams)
 }

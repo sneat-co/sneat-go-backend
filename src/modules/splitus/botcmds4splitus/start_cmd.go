@@ -2,7 +2,7 @@ package botcmds4splitus
 
 import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/shared_all"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
 	"github.com/strongo/logus"
 	"strings"
 )
@@ -65,6 +65,6 @@ func startInBotAction(whc botsfw.WebhookContext, startParams []string) (m botsfw
 			return settleGroupStartAction(whc, startParams[1:])
 		}
 	}
-	err = shared_all.ErrUnknownStartParam
+	err = cmds4anybot.ErrUnknownStartParam
 	return
 }

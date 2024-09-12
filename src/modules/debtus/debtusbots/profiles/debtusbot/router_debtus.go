@@ -3,7 +3,7 @@ package debtusbot
 import (
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/shared_all"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_admin"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_general"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_invite"
@@ -12,7 +12,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_transfer"
 )
 
-var botParams = shared_all.BotParams{
+var botParams = cmds4anybot.BotParams{
 	StartInGroupAction: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		m.Text = "StartInGroupAction is not implemented yet"
 		return
@@ -53,7 +53,7 @@ var botParams = shared_all.BotParams{
 }
 
 func init() {
-	shared_all.AddSharedRoutes(Router, botParams)
+	cmds4anybot.AddSharedCommands(Router, botParams)
 }
 
 var textAndContactCommands = []botsfw.Command{ // TODO: Check for Action || CallbackAction and register accordingly.
@@ -140,11 +140,15 @@ var callbackCommands = []botsfw.Command{
 	dtb_general.FeedbackCommand,
 	dtb_general.CanYouRateCommand,
 	dtb_general.FeedbackTextCommand,
-	shared_all.AddReferrerCommand,
+	cmds4anybot.AddReferrerCommand,
 }
 
 var Router = botsfw.NewWebhookRouter(
-	map[botinput.WebhookInputType][]botsfw.Command{
+	func() string { return "Please report any errors to @DebtsTrackerGroup" },
+)
+
+func init() { // TODO: Move input types inside commands and register as slice
+	commandsByType := map[botinput.WebhookInputType][]botsfw.Command{
 		botinput.WebhookInputText:          textAndContactCommands,
 		botinput.WebhookInputContact:       textAndContactCommands,
 		botinput.WebhookInputCallbackQuery: callbackCommands,
@@ -158,6 +162,6 @@ var Router = botsfw.NewWebhookRouter(
 		botinput.WebhookInputNewChatMembers: {
 			newChatMembersCommand,
 		},
-	},
-	func() string { return "Please report any errors to @DebtsTrackerGroup" },
-)
+	}
+	Router.AddCommandsGroupedByType(commandsByType)
+}

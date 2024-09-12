@@ -1,9 +1,10 @@
-package shared_all
+package cmds4anybot
 
 import (
 	"bytes"
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
@@ -13,12 +14,13 @@ import (
 	"strings"
 )
 
-const HELP_COMMAND = "help"
+const HelpCommandCode = "help"
 
 func createHelpRootCommand(helpCommandAction botsfw.CommandAction) botsfw.Command {
 	return botsfw.Command{
-		Code:     HELP_COMMAND,
-		Commands: []string{"/help", emoji.HELP_ICON},
+		Code:       HelpCommandCode,
+		Commands:   []string{"/help", emoji.HELP_ICON},
+		InputTypes: []botinput.WebhookInputType{botinput.WebhookInputText},
 		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 			switch whc.GetBotSettings().Profile.ID() {
 			case debtusbotconst.DebtusBotProfileID:

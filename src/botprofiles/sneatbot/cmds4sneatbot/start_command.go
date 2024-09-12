@@ -4,6 +4,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
+	"strings"
 )
 
 var startCommand = botsfw.Command{
@@ -19,10 +20,14 @@ var startCommand = botsfw.Command{
 
 func startAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 
+	msg := make([]string, 0)
+
+	msg = append(msg, "Hello, stranger! I'm a @SneatBot.")
+	msg = append(msg, "I can help you to manage your day-to-day family life.")
+	msg = append(msg, "Or you can create a space to manage your group/team/community.")
+
 	var welcomeMsg botsfw.MessageFromBot
-	welcomeMsg.Text = "Hello, stranger!"
-	welcomeMsg.Text += "\n\nI'm a @SneatBot. I can help you to manage your day-to-day family life."
-	welcomeMsg.Text += "\n\nOr you can create a space to manage your group/team/community."
+	welcomeMsg.Text = strings.Join(msg, "\n\n")
 
 	responder := whc.Responder()
 	ctx := whc.Context()

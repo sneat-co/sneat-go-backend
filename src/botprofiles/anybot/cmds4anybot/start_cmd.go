@@ -1,4 +1,4 @@
-package shared_all
+package cmds4anybot
 
 import (
 	"bytes"
@@ -31,9 +31,13 @@ func StartBotLink(botID, command string, params ...string) string {
 
 func createStartCommand(startInBotAction StartInBotActionFunc, startInGroupAction botsfw.CommandAction) botsfw.Command {
 	return botsfw.Command{
-		Code:       "start",
-		Commands:   []string{"/start"},
-		InputTypes: []botinput.WebhookInputType{botinput.WebhookInputText},
+		Code:     "start",
+		Commands: []string{"/start"},
+		InputTypes: []botinput.WebhookInputType{
+			botinput.WebhookInputText,
+			botinput.WebhookInputReferral,            // FBM
+			botinput.WebhookInputConversationStarted, // Viber
+		},
 		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 			return startCommandAction(whc, startInBotAction, startInGroupAction)
 		},
@@ -126,7 +130,7 @@ func GetUser(whc botsfw.WebhookContext) (user dbo4userus.UserEntry, err error) {
 
 const onStartCallbackCommandCode = "on-start-callback"
 
-func onStartCallbackCommand(setMainMenu SetMainMenuFunc) botsfw.Command {
+func newStartCallbackCommand(setMainMenu SetMainMenuFunc) botsfw.Command {
 	return botsfw.NewCallbackCommand(onStartCallbackCommandCode,
 		func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 			lang := callbackUrl.Query().Get("lang")

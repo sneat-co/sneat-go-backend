@@ -1,4 +1,4 @@
-package shared_all
+package cmds4anybot
 
 import (
 	"bytes"
@@ -43,6 +43,7 @@ var localesReplyKeyboard = tgbotapi.NewReplyKeyboard(
 func createOnboardingAskLocaleCommand(setMainMenu SetMainMenuFunc) botsfw.Command {
 	return botsfw.Command{
 		Code:       onboardingAskLocaleCommandCode,
+		InputTypes: []botinput.WebhookInputType{botinput.WebhookInputText, botinput.WebhookInputCallbackQuery},
 		ExactMatch: trans.ChooseLocaleIcon,
 		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 			return OnboardingAskLocaleAction(whc, "", setMainMenu)
@@ -75,7 +76,8 @@ func OnboardingAskLocaleAction(whc botsfw.WebhookContext, messagePrefix string, 
 }
 
 var AskPreferredLocaleFromSettingsCallback = botsfw.Command{
-	Code: SettingsLocaleListCallbackPath,
+	Code:       SettingsLocaleListCallbackPath,
+	InputTypes: []botinput.WebhookInputType{botinput.WebhookInputCallbackQuery},
 	CallbackAction: func(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.MessageFromBot, err error) {
 		callbackData := fmt.Sprintf("%v?mode=settings&code5=", SettingsLocaleSetCallbackPath)
 		keyboard := tgbotapi.NewInlineKeyboardMarkup(
@@ -104,7 +106,7 @@ var AskPreferredLocaleFromSettingsCallback = botsfw.Command{
 	},
 }
 
-func setLocaleCallbackCommand(setMainMenu SetMainMenuFunc) botsfw.Command {
+func newSetLocaleCallbackCommand(setMainMenu SetMainMenuFunc) botsfw.Command {
 	return botsfw.Command{
 		Code: SettingsLocaleSetCallbackPath,
 		CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
@@ -203,13 +205,14 @@ func setPreferredLanguageAction(whc botsfw.WebhookContext, code5, mode string, s
 }
 
 const (
-	moreAboutDrawCommandCode = "more-about-draw"
-	joinDrawCommandCode      = "join-draw"
+	aboutDrawCommandCode = "about-draw"
+	joinDrawCommandCode  = "join-draw"
 )
 
 var aboutDrawCommand = botsfw.Command{
-	Commands: []string{"/draw"},
-	Code:     moreAboutDrawCommandCode,
+	Commands:   []string{"/draw"},
+	Code:       aboutDrawCommandCode,
+	InputTypes: []botinput.WebhookInputType{botinput.WebhookInputText, botinput.WebhookInputCallbackQuery},
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		return aboutDrawAction(whc, nil)
 	},
@@ -218,6 +221,7 @@ var aboutDrawCommand = botsfw.Command{
 
 var joinDrawCommand = botsfw.Command{
 	Code:           joinDrawCommandCode,
+	InputTypes:     []botinput.WebhookInputType{botinput.WebhookInputCallbackQuery},
 	CallbackAction: aboutDrawAction,
 }
 
@@ -242,7 +246,7 @@ func aboutDrawAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.
 			[]tgbotapi.InlineKeyboardButton{
 				{
 					Text:         whc.Translate(trans.COMMAN_TEXT_MORE_ABOUT_DRAW),
-					CallbackData: moreAboutDrawCommandCode,
+					CallbackData: aboutDrawCommandCode,
 				},
 			},
 		)
@@ -252,7 +256,7 @@ func aboutDrawAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.
 		buf.WriteString(whc.Translate(trans.MESSAGE_TEXT_ABOUT_DRAW_MORE))
 		m.Text = buf.String()
 		switch callbackUrl.Path {
-		case moreAboutDrawCommandCode:
+		case aboutDrawCommandCode:
 			m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
 				[]tgbotapi.InlineKeyboardButton{
 					{

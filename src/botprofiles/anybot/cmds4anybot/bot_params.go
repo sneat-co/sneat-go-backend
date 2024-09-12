@@ -1,4 +1,4 @@
-package shared_all
+package cmds4anybot
 
 import "github.com/bots-go-framework/bots-fw/botsfw"
 
@@ -6,7 +6,7 @@ type SetMainMenuFunc = func(whc botsfw.WebhookContext, m *botsfw.MessageFromBot)
 type StartInBotActionFunc = func(whc botsfw.WebhookContext, startParams []string) (m botsfw.MessageFromBot, err error)
 
 // BotParams defines parameters to be defined by a bot to be able to use shared_all package
-// This is supposed to be passed only to AddSharedRoutes and not to be passed down to other functions
+// This is supposed to be passed only to AddSharedCommands and not to be passed down to other functions
 type BotParams struct {
 	StartInBotAction    StartInBotActionFunc
 	StartInGroupAction  botsfw.CommandAction

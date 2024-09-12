@@ -6,7 +6,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/shared_all"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	shared_space2 "github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/shared_space"
@@ -111,7 +111,7 @@ func showGroupMembers(whc botsfw.WebhookContext, contactusSpace dal4contactus.Co
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text:         whc.CommandText(trans.COMMAND_TEXT_SETTING, emoji.SETTINGS_ICON),
-				CallbackData: shared_space2.SpaceCallbackCommandData(shared_all.SettingsCommandCode, contactusSpace.ID),
+				CallbackData: shared_space2.SpaceCallbackCommandData(cmds4anybot.SettingsCommandCode, contactusSpace.ID),
 			},
 		},
 	)

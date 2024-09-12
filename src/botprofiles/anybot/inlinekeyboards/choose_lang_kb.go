@@ -1,4 +1,4 @@
-package inlinekb
+package inlinekeyboards
 
 import (
 	"fmt"

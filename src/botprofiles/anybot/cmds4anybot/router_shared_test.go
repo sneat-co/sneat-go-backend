@@ -1,14 +1,13 @@
-package shared_all
+package cmds4anybot
 
 import (
-	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"testing"
 )
 
-func TestAddSharedRoutes(t *testing.T) {
-	router := botsfw.NewWebhookRouter(map[botinput.WebhookInputType][]botsfw.Command{}, nil)
-	AddSharedRoutes(router, BotParams{
+func TestAddSharedAddSharedCommands(t *testing.T) {
+	router := botsfw.NewWebhookRouter(nil)
+	AddSharedCommands(router, BotParams{
 		StartInBotAction: func(whc botsfw.WebhookContext, startParams []string) (m botsfw.MessageFromBot, err error) {
 			return
 		},

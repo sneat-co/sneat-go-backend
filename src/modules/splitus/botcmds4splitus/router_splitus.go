@@ -6,13 +6,13 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/shared_all"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/shared_space"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/strongo/i18n"
 )
 
-var botParams = shared_all.BotParams{
+var botParams = cmds4anybot.BotParams{
 	StartInGroupAction: startInGroupAction,
 	StartInBotAction:   startInBotAction,
 	HelpCommandAction: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
@@ -26,7 +26,7 @@ var botParams = shared_all.BotParams{
 	//ShowGroupMembers:                 showGroupMembers,
 	InBotWelcomeMessage: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		var user dbo4userus.UserEntry
-		if user, err = shared_all.GetUser(whc); err != nil {
+		if user, err = cmds4anybot.GetUser(whc); err != nil {
 			return
 		}
 		m.Text = whc.Translate(
@@ -56,7 +56,13 @@ var botParams = shared_all.BotParams{
 }
 
 var Router = botsfw.NewWebhookRouter(
-	map[botinput.WebhookInputType][]botsfw.Command{
+	func() string { return "Please report any errors to @SplitusGroup" },
+)
+
+func init() {
+	cmds4anybot.AddSharedCommands(Router, botParams)
+	commandsByType := map[botinput.WebhookInputType][]botsfw.Command{
+		// TODO: Move input types inside commands and register as slice
 		botinput.WebhookInputText: {
 			EditedBillCardHookCommand,
 			billsCommand,
@@ -113,12 +119,8 @@ var Router = botsfw.NewWebhookRouter(
 		botinput.WebhookInputNewChatMembers: {
 			newChatMembersCommand,
 		},
-	},
-	func() string { return "Please report any errors to @SplitusGroup" },
-)
-
-func init() {
-	shared_all.AddSharedRoutes(Router, botParams)
+	}
+	Router.AddCommandsGroupedByType(commandsByType)
 }
 
 func getWhoPaidInlineKeyboard(translator i18n.SingleLocaleTranslator, billID string) *tgbotapi.InlineKeyboardMarkup {

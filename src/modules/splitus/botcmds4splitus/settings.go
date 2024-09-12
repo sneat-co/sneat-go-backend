@@ -8,7 +8,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/shared_all"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/shared_space"
@@ -72,7 +72,7 @@ func SpaceSettingsAction(whc botsfw.WebhookContext, space dbo4spaceus.SpaceEntry
 }
 
 var settingsCommand = func() (settingsCommand botsfw.Command) {
-	settingsCommand = shared_all.SettingsCommandTemplate
+	settingsCommand = cmds4anybot.SettingsCommandTemplate
 	settingsCommand.Action = settingsAction
 	settingsCommand.CallbackAction = func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 		m, err = settingsAction(whc)
@@ -92,7 +92,7 @@ func settingsAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err err
 		})
 		return groupAction(whc)
 	} else {
-		m, _, err = shared_all.SettingsMainTelegram(whc)
+		m, _, err = cmds4anybot.SettingsMainTelegram(whc)
 		return
 	}
 }
