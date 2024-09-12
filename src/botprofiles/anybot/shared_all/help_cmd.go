@@ -15,14 +15,14 @@ import (
 
 const HELP_COMMAND = "help"
 
-func createHelpRootCommand(params BotParams) botsfw.Command {
+func createHelpRootCommand(helpCommandAction botsfw.CommandAction) botsfw.Command {
 	return botsfw.Command{
 		Code:     HELP_COMMAND,
 		Commands: []string{"/help", emoji.HELP_ICON},
 		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 			switch whc.GetBotSettings().Profile.ID() {
 			case debtusbotconst.DebtusBotProfileID:
-				return params.HelpCommandAction(whc)
+				return helpCommandAction(whc)
 			}
 			return helpRootAction(whc, false)
 		},

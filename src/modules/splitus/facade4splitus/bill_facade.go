@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/facade4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/const4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
@@ -103,19 +104,19 @@ func CreateBill(ctx context.Context, tx dal.ReadwriteTransaction, spaceID string
 		panic(fmt.Sprintf("billEntity.SplitMode has unknown value: %v", billEntity.SplitMode))
 	}
 	if billEntity.CreatorUserID == "" {
-		err = fmt.Errorf("%w: billEntity.CreatorUserID == 0", facade4debtus.ErrBadInput)
+		err = fmt.Errorf("%w: billEntity.CreatorUserID == 0", facade4anybot.ErrBadInput)
 		return
 	}
 	if billEntity.SplitMode == "" {
-		err = fmt.Errorf("%w: Missing required property SplitMode", facade4debtus.ErrBadInput)
+		err = fmt.Errorf("%w: Missing required property SplitMode", facade4anybot.ErrBadInput)
 		return
 	}
 	if billEntity.AmountTotal == 0 {
-		err = fmt.Errorf("%w: billEntity.AmountTotal == 0", facade4debtus.ErrBadInput)
+		err = fmt.Errorf("%w: billEntity.AmountTotal == 0", facade4anybot.ErrBadInput)
 		return
 	}
 	if billEntity.AmountTotal < 0 {
-		err = fmt.Errorf("%w: billEntity.AmountTotal < 0: %v", facade4debtus.ErrBadInput, billEntity.AmountTotal)
+		err = fmt.Errorf("%w: billEntity.AmountTotal < 0: %v", facade4anybot.ErrBadInput, billEntity.AmountTotal)
 		return
 	}
 	if billEntity.Status == "" {
@@ -123,7 +124,7 @@ func CreateBill(ctx context.Context, tx dal.ReadwriteTransaction, spaceID string
 		return
 	}
 	if !models4splitus.IsValidBillStatus(billEntity.Status) {
-		err = fmt.Errorf("%w: invalid status: %v, expected one of %v", facade4debtus.ErrBadInput, billEntity.Status, models4splitus.BillStatuses)
+		err = fmt.Errorf("%w: invalid status: %v, expected one of %v", facade4anybot.ErrBadInput, billEntity.Status, models4splitus.BillStatuses)
 		return
 	}
 
@@ -159,10 +160,10 @@ func CreateBill(ctx context.Context, tx dal.ReadwriteTransaction, spaceID string
 			var totalAdjustmentByMembers decimal.Decimal64p2
 			for i, member := range members {
 				if member.Adjustment > billEntity.AmountTotal {
-					err = fmt.Errorf("%w: members[%d].Adjustment > billEntity.AmountTotal", facade4debtus.ErrBadInput, i)
+					err = fmt.Errorf("%w: members[%d].Adjustment > billEntity.AmountTotal", facade4anybot.ErrBadInput, i)
 					return
 				} else if member.Adjustment < 0 && member.Adjustment < -1*billEntity.AmountTotal {
-					err = fmt.Errorf("%w: members[%d].AdjustmentInCents < 0 && AdjustmentInCents < -1*billEntity.AmountTotal", facade4debtus.ErrBadInput, i)
+					err = fmt.Errorf("%w: members[%d].AdjustmentInCents < 0 && AdjustmentInCents < -1*billEntity.AmountTotal", facade4anybot.ErrBadInput, i)
 					return
 				}
 				totalAdjustmentByMembers += member.Adjustment
@@ -192,7 +193,7 @@ func CreateBill(ctx context.Context, tx dal.ReadwriteTransaction, spaceID string
 			// Individual member checks - we can't move this checks down as it should fail first before deviation checks
 			{
 				if member.Owes < 0 {
-					err = fmt.Errorf("%w: members[%d].Owes is negative: %v", facade4debtus.ErrBadInput, i, member.Owes)
+					err = fmt.Errorf("%w: members[%d].Owes is negative: %v", facade4anybot.ErrBadInput, i, member.Owes)
 					return
 				}
 				if member.UserID != billEntity.CreatorUserID {
@@ -259,12 +260,12 @@ func CreateBill(ctx context.Context, tx dal.ReadwriteTransaction, spaceID string
 					expectedAmount := int64(shareAmount) * int64(member.Shares)
 					deviation := expectedAmount - int64(member.Owes)
 					if deviation > 1 || deviation < -1 {
-						return fmt.Errorf("%w: member #%d has amount %v deviated too much (for %v) from expected %v", facade4debtus.ErrBadInput, i, member.Owes, decimal.Decimal64p2(deviation), decimal.Decimal64p2(expectedAmount))
+						return fmt.Errorf("%w: member #%d has amount %v deviated too much (for %v) from expected %v", facade4anybot.ErrBadInput, i, member.Owes, decimal.Decimal64p2(deviation), decimal.Decimal64p2(expectedAmount))
 					}
 				default:
 					deviation := int64(member.Owes - member.Adjustment - equalAmount)
 					if deviation > 1 || deviation < -1 {
-						return fmt.Errorf("%w: member #%d has amount %v deviated too much (for %v) from equal %v", facade4debtus.ErrBadInput, i, member.Owes, decimal.Decimal64p2(deviation), equalAmount)
+						return fmt.Errorf("%w: member #%d has amount %v deviated too much (for %v) from equal %v", facade4anybot.ErrBadInput, i, member.Owes, decimal.Decimal64p2(deviation), equalAmount)
 					}
 				}
 				return nil
@@ -285,7 +286,7 @@ func CreateBill(ctx context.Context, tx dal.ReadwriteTransaction, spaceID string
 				// ensureNoAdjustment()
 			case models4splitus.SplitModeShare:
 				if member.Shares == 0 {
-					err = fmt.Errorf("%w: member %d is missing Shares value", facade4debtus.ErrBadInput, i)
+					err = fmt.Errorf("%w: member %d is missing Shares value", facade4anybot.ErrBadInput, i)
 					return
 				}
 				// ensureNoAdjustment()
@@ -293,30 +294,30 @@ func CreateBill(ctx context.Context, tx dal.ReadwriteTransaction, spaceID string
 		}
 
 		if payersCount > 1 {
-			err = facade4debtus.ErrBillHasTooManyPayers
+			err = ErrBillHasTooManyPayers
 			return
 		}
 
 		if !(billEntity.Status == const4debtus.StatusDraft && totalPaidByMembers == 0) && totalPaidByMembers != billEntity.AmountTotal {
-			err = fmt.Errorf("%w: total paid for all members should be equal to billEntity amount (%d), got %d", facade4debtus.ErrBadInput, billEntity.AmountTotal, totalPaidByMembers)
+			err = fmt.Errorf("%w: total paid for all members should be equal to billEntity amount (%d), got %d", facade4anybot.ErrBadInput, billEntity.AmountTotal, totalPaidByMembers)
 			return
 		}
 		switch billEntity.SplitMode {
 		case models4splitus.SplitModeEqually:
 			if len(amountsCountByValue) > 2+adjustmentsCount {
-				err = fmt.Errorf("%w: len(amountsCountByValue):%d > 2 + adjustmentsCount:%d", facade4debtus.ErrBadInput, amountsCountByValue, adjustmentsCount)
+				err = fmt.Errorf("%w: len(amountsCountByValue):%d > 2 + adjustmentsCount:%d", facade4anybot.ErrBadInput, amountsCountByValue, adjustmentsCount)
 				return
 			}
 		case models4splitus.SplitModePercentage:
 			if totalPercentageByMembers != decimal.NewDecimal64p2FromInt(100) {
-				err = fmt.Errorf("%w: total percentage for all members should be 100%%, got %v%%", facade4debtus.ErrBadInput, totalPercentageByMembers)
+				err = fmt.Errorf("%w: total percentage for all members should be 100%%, got %v%%", facade4anybot.ErrBadInput, totalPercentageByMembers)
 				return
 			}
 		case models4splitus.SplitModeShare:
 			if billEntity.Shares == 0 {
 				billEntity.Shares = totalSharesPerMembers
 			} else if billEntity.Shares != totalSharesPerMembers {
-				err = fmt.Errorf("%w: billEntity.Shares != totalSharesPerMembers", facade4debtus.ErrBadInput)
+				err = fmt.Errorf("%w: billEntity.Shares != totalSharesPerMembers", facade4anybot.ErrBadInput)
 				return
 			}
 		}

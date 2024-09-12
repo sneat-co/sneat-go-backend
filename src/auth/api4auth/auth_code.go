@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-backend/src/auth/models4auth"
 	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/facade4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/strongo/logus"
@@ -63,11 +63,11 @@ func HandleSignInWithPin(ctx context.Context, w http.ResponseWriter, r *http.Req
 		api4debtus.ErrorAsJson(ctx, w, http.StatusBadRequest, errors.New("Parameter 'loginCode' should not be 0."))
 		return
 	} else {
-		if userID, err := facade4debtus.AuthFacade.SignInWithPin(ctx, loginID, int32(loginCode)); err != nil {
+		if userID, err := facade4anybot.AuthFacade.SignInWithPin(ctx, loginID, int32(loginCode)); err != nil {
 			switch err {
-			case facade4debtus.ErrLoginExpired:
+			case facade4anybot.ErrLoginExpired:
 				_, _ = w.Write([]byte("expired"))
-			case facade4debtus.ErrLoginAlreadySigned:
+			case facade4anybot.ErrLoginAlreadySigned:
 				_, _ = w.Write([]byte("claimed"))
 			default:
 				err = fmt.Errorf("failed to claim loginCode: %w", err)

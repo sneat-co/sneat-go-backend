@@ -9,9 +9,9 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/auth/models4auth"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/facade4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/platforms/debtustgbots/tgsharedcommands"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/strongo/i18n"
@@ -22,7 +22,7 @@ import (
 
 func StartBotLink(botID, command string, params ...string) string {
 	var buf bytes.Buffer
-	fmt.Fprintf(&buf, "https://t.me/%v?start=%v", botID, command)
+	_, _ = fmt.Fprintf(&buf, "https://t.me/%v?start=%v", botID, command)
 	for _, p := range params {
 		buf.WriteString("__")
 		buf.WriteString(p)
@@ -30,18 +30,22 @@ func StartBotLink(botID, command string, params ...string) string {
 	return buf.String()
 }
 
-func createStartCommand(botParams BotParams) botsfw.Command {
+func createStartCommand(startInBotAction StartInBotActionFunc, startInGroupAction botsfw.CommandAction) botsfw.Command {
 	return botsfw.Command{
 		Code:       "start",
 		Commands:   []string{"/start"},
 		InputTypes: []botinput.WebhookInputType{botinput.WebhookInputText},
 		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-			return startCommandAction(whc, botParams)
+			return startCommandAction(whc, startInBotAction, startInGroupAction)
 		},
 	}
 }
 
-func startCommandAction(whc botsfw.WebhookContext, botParams BotParams) (m botsfw.MessageFromBot, err error) {
+func startCommandAction(
+	whc botsfw.WebhookContext, startInBotAction StartInBotActionFunc, startInGroupAction botsfw.CommandAction,
+) (
+	m botsfw.MessageFromBot, err error,
+) {
 	whc.Input().LogRequest()
 	ctx := whc.Context()
 	text := whc.Input().(botinput.WebhookTextMessage).Text()
@@ -53,7 +57,7 @@ func startCommandAction(whc botsfw.WebhookContext, botParams BotParams) (m botsf
 	if isInGroup, err = whc.IsInGroup(); err != nil {
 		return
 	} else if isInGroup {
-		return botParams.StartInGroupAction(whc)
+		return startInGroupAction(whc)
 	} else {
 		chatEntity := whc.ChatData()
 		chatEntity.SetAwaitingReplyTo("")
@@ -70,15 +74,15 @@ func startCommandAction(whc botsfw.WebhookContext, botParams BotParams) (m botsf
 			//case strings.HasPrefix(textToMatchNoStart, JOIN_BILL_COMMAND):
 			//	return JoinBillCommand.Action(whc)
 		case strings.HasPrefix(startParam, "refbytguser-") && startParam != "refbytguser-YOUR_CHANNEL":
-			facade4debtus.Referer.AddTelegramReferrer(ctx, whc.AppUserID(), strings.TrimPrefix(startParam, "refbytguser-"), whc.GetBotCode())
+			facade4anybot.Referer.AddTelegramReferrer(ctx, whc.AppUserID(), strings.TrimPrefix(startParam, "refbytguser-"), whc.GetBotCode())
 		}
-		return startInBotAction(whc, startParams, botParams)
+		return startInBotAction(whc, startParams)
 	}
 }
 func startLoginGac(whc botsfw.WebhookContext, loginID int) (m botsfw.MessageFromBot, err error) {
 	ctx := whc.Context()
 	var loginPin models4auth.LoginPin
-	if loginPin, err = facade4debtus.AuthFacade.AssignPinCode(ctx, loginID, whc.AppUserID()); err != nil {
+	if loginPin, err = facade4anybot.AuthFacade.AssignPinCode(ctx, loginID, whc.AppUserID()); err != nil {
 		return
 	}
 	return whc.NewMessageByCode(trans.MESSAGE_TEXT_LOGIN_CODE, models4auth.LoginCodeToString(loginPin.Data.Code)), nil
@@ -123,12 +127,12 @@ var LangKeyboard = tgbotapi.NewInlineKeyboardMarkup(
 
 const onStartCallbackCommandCode = "on-start-callback"
 
-func onStartCallbackCommand(params BotParams) botsfw.Command {
+func onStartCallbackCommand(setMainMenu SetMainMenuFunc) botsfw.Command {
 	return botsfw.NewCallbackCommand(onStartCallbackCommandCode,
 		func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 			lang := callbackUrl.Query().Get("lang")
 			mode := "onboarding" // TODO: should we set mode?
-			return setPreferredLanguageAction(whc, lang, mode, params)
+			return setPreferredLanguageAction(whc, lang, mode, setMainMenu)
 			//ctx := whc.Context()
 			//if lang != "" {
 			//	logus.Debugf(ctx, "Locale: "+lang)

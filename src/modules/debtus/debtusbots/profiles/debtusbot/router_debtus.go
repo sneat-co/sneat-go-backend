@@ -3,16 +3,20 @@ package debtusbot
 import (
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/shared_all"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_admin"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_general"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_invite"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_retention"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_settings"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_transfer"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/shared_all"
 )
 
 var botParams = shared_all.BotParams{
+	StartInGroupAction: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
+		m.Text = "StartInGroupAction is not implemented yet"
+		return
+	},
 	//GetGroupBillCardInlineKeyboard:   getGroupBillCardInlineKeyboard,
 	//GetPrivateBillCardInlineKeyboard: getPrivateBillCardInlineKeyboard,
 	//DelayUpdateBillCardOnUserJoin:    delayUpdateBillCardOnUserJoin,

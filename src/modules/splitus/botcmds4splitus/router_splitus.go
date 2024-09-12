@@ -6,7 +6,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/shared_all"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/shared_all"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/shared_space"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/strongo/i18n"
@@ -15,6 +15,10 @@ import (
 var botParams = shared_all.BotParams{
 	StartInGroupAction: startInGroupAction,
 	StartInBotAction:   startInBotAction,
+	HelpCommandAction: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
+		m.Text = "HelpCommandAction is not implemented yet"
+		return
+	},
 	//GetGroupBillCardInlineKeyboard:   getGroupBillCardInlineKeyboard,
 	//GetPrivateBillCardInlineKeyboard: getPrivateBillCardInlineKeyboard,
 	//DelayUpdateBillCardOnUserJoin:    delayUpdateBillCardOnUserJoin,
@@ -91,7 +95,7 @@ var Router = botsfw.NewWebhookRouter(
 			changeBillTotalCommand,
 			addBillComment,
 			groupMembersCommand,
-			groupSettingsSetCurrencyCommand(botParams),
+			groupSettingsSetCurrencyCommand(),
 			groupsCommand,
 			settingsCommand,
 			groupSettingsChooseCurrencyCommand,

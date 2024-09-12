@@ -4,6 +4,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/facade4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_general"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
@@ -21,7 +22,7 @@ func AcknowledgeReceipt(whc botsfw.WebhookContext, receiptID, operation string) 
 	userCtx := facade.NewUserContext(whc.AppUserID())
 	_, transfer, isCounterpartiesJustConnected, err := facade4debtus.AcknowledgeReceipt(ctx, userCtx, receiptID, operation)
 	if err != nil {
-		if errors.Is(err, facade4debtus.ErrSelfAcknowledgement) {
+		if errors.Is(err, facade4anybot.ErrSelfAcknowledgement) {
 			m = whc.NewMessage(whc.Translate(trans.MESSAGE_TEXT_SELF_ACKNOWLEDGEMENT, html.EscapeString(transfer.Data.Counterparty().ContactName)))
 			return m, nil
 		}

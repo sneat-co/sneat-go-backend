@@ -1,10 +1,11 @@
 package facade4debtus
 
 import (
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/facade4anybot"
 	"github.com/strongo/delaying"
 )
 
 func init() {
 	delaying.Init(delaying.VoidWithLog)
-	InitDelaying(delaying.MustRegisterFunc)
+	facade4anybot.InitDelaying(delaying.MustRegisterFunc)
 }

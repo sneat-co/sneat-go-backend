@@ -9,7 +9,6 @@ import (
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/shared_all"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/shared_space"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
@@ -110,7 +109,7 @@ var groupSettingsChooseCurrencyCommand = shared_space.SpaceCallbackCommand(Group
 	},
 )
 
-func groupSettingsSetCurrencyCommand(params shared_all.BotParams) botsfw.Command {
+func groupSettingsSetCurrencyCommand() botsfw.Command {
 	return botsfw.Command{
 		Code: GroupSettingsSetCurrencyCommandCode,
 		CallbackAction: shared_space.NewSpaceCallbackAction(func(whc botsfw.WebhookContext, callbackUrl *url.URL, space dbo4spaceus.SpaceEntry) (m botsfw.MessageFromBot, err error) {

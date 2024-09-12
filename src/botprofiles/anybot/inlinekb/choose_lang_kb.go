@@ -1,4 +1,4 @@
-package dtb_inline
+package inlinekb
 
 import (
 	"fmt"

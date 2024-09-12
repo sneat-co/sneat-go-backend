@@ -1,4 +1,4 @@
-package facade4debtus
+package facade4anybot
 
 import (
 	"github.com/strongo/delaying"

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/facade4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"strconv"
 	"strings"
 )
@@ -53,7 +53,7 @@ var LoginPinCommand = botsfw.Command{
 		}
 		ctx := whc.Context()
 		//goland:noinspection GoDeprecation
-		if pinCode, err := facade4debtus.AuthFacade.AssignPinCode(ctx, loginID, whc.AppUserID()); err != nil {
+		if pinCode, err := facade4anybot.AuthFacade.AssignPinCode(ctx, loginID, whc.AppUserID()); err != nil {
 			return m, err
 		} else {
 			return whc.NewMessage(fmt.Sprintf("Login PIN code: %v", pinCode)), nil

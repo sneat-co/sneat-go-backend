@@ -6,14 +6,29 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	shared_all2 "github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/shared_all"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/shared_all"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 )
 
-var botParams = shared_all2.BotParams{
+var botParams = shared_all.BotParams{
+	StartInBotAction: func(whc botsfw.WebhookContext, startParams []string) (m botsfw.MessageFromBot, err error) {
+		m.Text = "StartInBotAction is not implemented yet"
+		return
+	},
+	StartInGroupAction: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
+		m.Text = "StartInGroupAction is not implemented yet"
+		return
+	},
+	HelpCommandAction: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
+		m.Text = "HelpCommandAction is not implemented yet"
+		return
+	},
+	SetMainMenu: func(whc botsfw.WebhookContext, m *botsfw.MessageFromBot) {
+		m.Text = "SetMainMenu is not implemented yet"
+	},
 	InBotWelcomeMessage: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		var user dbo4userus.UserEntry
-		if user, err = shared_all2.GetUser(whc); err != nil {
+		if user, err = shared_all.GetUser(whc); err != nil {
 			return
 		}
 		m.Text = whc.Translate(
@@ -44,5 +59,5 @@ var Router = botsfw.NewWebhookRouter(
 )
 
 func init() {
-	shared_all2.AddSharedRoutes(Router, botParams)
+	shared_all.AddSharedRoutes(Router, botParams)
 }

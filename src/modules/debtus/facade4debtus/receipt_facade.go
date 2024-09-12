@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/facade4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
@@ -82,7 +83,7 @@ func AcknowledgeReceipt(ctx context.Context, userCtx facade.UserContext, receipt
 	case dtdal.AckDecline:
 		transferAckStatus = models4debtus.TransferDeclined
 	default:
-		err = ErrInvalidAcknowledgeType
+		err = facade4anybot.ErrInvalidAcknowledgeType
 		return
 	}
 
@@ -110,7 +111,7 @@ func AcknowledgeReceipt(ctx context.Context, userCtx facade.UserContext, receipt
 
 		if transfer.Data.CreatorUserID == currentUserID {
 			logus.Errorf(tctx, "An attempt to claim receipt on self created transfer")
-			err = ErrSelfAcknowledgement
+			err = facade4anybot.ErrSelfAcknowledgement
 			return
 		}
 
@@ -212,7 +213,7 @@ func AcknowledgeReceipt(ctx context.Context, userCtx facade.UserContext, receipt
 	}, dal.TxWithCrossGroup())
 
 	if err != nil {
-		if errors.Is(err, ErrSelfAcknowledgement) {
+		if errors.Is(err, facade4anybot.ErrSelfAcknowledgement) {
 			err = nil
 			return
 		}

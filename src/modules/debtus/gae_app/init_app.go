@@ -3,8 +3,8 @@ package gaeapp
 import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/julienschmidt/httprouter"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/facade4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_transfer"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus/apigaedepended"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus/unsorted"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/apimapping"
@@ -58,7 +58,7 @@ func Init(botHost botsfw.BotHost) {
 func initDelaying() {
 	delaying.Init(apphostgae.MustRegisterDelayedFunc)
 	gaedal.InitDelaying(delaying.MustRegisterFunc)
-	facade4debtus.InitDelaying(delaying.MustRegisterFunc)
+	facade4anybot.InitDelaying(delaying.MustRegisterFunc)
 	facade4splitus.InitDelaying(delaying.MustRegisterFunc)
 	emailing.InitDelaying(delaying.MustRegisterFunc)
 	dtb_transfer.InitDelaying(delaying.MustRegisterFunc)

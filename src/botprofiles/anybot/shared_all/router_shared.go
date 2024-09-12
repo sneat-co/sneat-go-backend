@@ -6,22 +6,23 @@ import (
 )
 
 func AddSharedRoutes(router botsfw.WebhooksRouter, botParams BotParams) {
-	startCommand := createStartCommand(botParams)
-	helpRootCommand := createHelpRootCommand(botParams)
+	botParams.Validate()
+	startCommand := createStartCommand(botParams.StartInBotAction, botParams.StartInGroupAction)
+	helpRootCommand := createHelpRootCommand(botParams.HelpCommandAction)
 	router.AddCommands(botinput.WebhookInputText, []botsfw.Command{
 		startCommand,
 		helpRootCommand,
 		ReferrersCommand,
-		createOnboardingAskLocaleCommand(botParams),
+		createOnboardingAskLocaleCommand(botParams.SetMainMenu),
 		aboutDrawCommand,
 	})
 	router.AddCommands(botinput.WebhookInputCallbackQuery, []botsfw.Command{
-		onStartCallbackCommand(botParams),
+		onStartCallbackCommand(botParams.SetMainMenu),
 		helpRootCommand,
 		joinDrawCommand,
 		aboutDrawCommand,
-		askPreferredLocaleFromSettingsCallback,
-		setLocaleCallbackCommand(botParams),
+		AskPreferredLocaleFromSettingsCallback,
+		setLocaleCallbackCommand(botParams.SetMainMenu),
 	})
 	router.AddCommands(botinput.WebhookInputLeftChatMembers, []botsfw.Command{
 		leftChatCommand,

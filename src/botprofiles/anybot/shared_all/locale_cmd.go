@@ -40,24 +40,24 @@ var localesReplyKeyboard = tgbotapi.NewReplyKeyboard(
 	},
 )
 
-func createOnboardingAskLocaleCommand(botParams BotParams) botsfw.Command {
+func createOnboardingAskLocaleCommand(setMainMenu SetMainMenuFunc) botsfw.Command {
 	return botsfw.Command{
 		Code:       onboardingAskLocaleCommandCode,
 		ExactMatch: trans.ChooseLocaleIcon,
 		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-			return onboardingAskLocaleAction(whc, "", botParams)
+			return OnboardingAskLocaleAction(whc, "", setMainMenu)
 		},
 	}
 }
 
-func onboardingAskLocaleAction(whc botsfw.WebhookContext, messagePrefix string, botParams BotParams) (m botsfw.MessageFromBot, err error) {
+func OnboardingAskLocaleAction(whc botsfw.WebhookContext, messagePrefix string, setMainMenu SetMainMenuFunc) (m botsfw.MessageFromBot, err error) {
 	chatEntity := whc.ChatData()
 
 	if chatEntity.IsAwaitingReplyTo(onboardingAskLocaleCommandCode) {
 		messageText := whc.Input().(botinput.WebhookTextMessage).Text()
 		for _, locale := range trans.SupportedLocales {
 			if locale.TitleWithIcon() == messageText {
-				return setPreferredLanguageAction(whc, locale.Code5, "onboarding", botParams)
+				return setPreferredLanguageAction(whc, locale.Code5, "onboarding", setMainMenu)
 			}
 		}
 		m = whc.NewMessageByCode(trans.MESSAGE_TEXT_UNKNOWN_LANGUAGE)
@@ -74,7 +74,7 @@ func onboardingAskLocaleAction(whc botsfw.WebhookContext, messagePrefix string, 
 	return
 }
 
-var askPreferredLocaleFromSettingsCallback = botsfw.Command{
+var AskPreferredLocaleFromSettingsCallback = botsfw.Command{
 	Code: SettingsLocaleListCallbackPath,
 	CallbackAction: func(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.MessageFromBot, err error) {
 		callbackData := fmt.Sprintf("%v?mode=settings&code5=", SettingsLocaleSetCallbackPath)
@@ -104,16 +104,16 @@ var askPreferredLocaleFromSettingsCallback = botsfw.Command{
 	},
 }
 
-func setLocaleCallbackCommand(botParams BotParams) botsfw.Command {
+func setLocaleCallbackCommand(setMainMenu SetMainMenuFunc) botsfw.Command {
 	return botsfw.Command{
 		Code: SettingsLocaleSetCallbackPath,
 		CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-			return setPreferredLanguageAction(whc, callbackUrl.Query().Get("code5"), callbackUrl.Query().Get("mode"), botParams)
+			return setPreferredLanguageAction(whc, callbackUrl.Query().Get("code5"), callbackUrl.Query().Get("mode"), setMainMenu)
 		},
 	}
 }
 
-func setPreferredLanguageAction(whc botsfw.WebhookContext, code5, mode string, botParams BotParams) (m botsfw.MessageFromBot, err error) {
+func setPreferredLanguageAction(whc botsfw.WebhookContext, code5, mode string, setMainMenu SetMainMenuFunc) (m botsfw.MessageFromBot, err error) {
 	ctx := whc.Context()
 	logus.Debugf(ctx, "setPreferredLanguageAction(code5=%v, mode=%v)", code5, mode)
 
@@ -175,7 +175,7 @@ func setPreferredLanguageAction(whc botsfw.WebhookContext, code5, mode string, b
 	case "onboarding":
 		logus.Debugf(ctx, "whc.Locale().Code5: %v", whc.Locale().Code5)
 		m = whc.NewMessageByCode(trans.MESSAGE_TEXT_YOUR_SELECTED_PREFERRED_LANGUAGE, selectedLocale.NativeTitle)
-		botParams.SetMainMenu(whc, &m)
+		setMainMenu(whc, &m)
 		if _, err = whc.Responder().SendMessage(ctx, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
 			logus.Errorf(ctx, "Failed to notify userEntity about selected language: %v", err)
 			// Not critical, lets continue

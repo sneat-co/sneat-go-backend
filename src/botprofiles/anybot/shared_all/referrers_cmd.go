@@ -6,7 +6,7 @@ import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/facade4anybot"
 	"net/url"
 
 	"github.com/sneat-co/debtstracker-translations/emoji"
@@ -34,7 +34,7 @@ func topReferrersMessageText(whc botsfw.WebhookContext) (m botsfw.MessageFromBot
 	ctx := whc.Context()
 
 	var topTelegramReferrers []string
-	if topTelegramReferrers, err = facade4debtus.Referer.TopTelegramReferrers(ctx, whc.GetBotCode(), 5); err != nil {
+	if topTelegramReferrers, err = facade4anybot.Referer.TopTelegramReferrers(ctx, whc.GetBotCode(), 5); err != nil {
 		return
 	} else if len(topTelegramReferrers) == 0 {
 		topTelegramReferrers = []string{"meduzalive", "varlamov"}
