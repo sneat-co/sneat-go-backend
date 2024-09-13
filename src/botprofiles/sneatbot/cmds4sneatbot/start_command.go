@@ -1,9 +1,10 @@
 package cmds4sneatbot
 
 import (
+	"fmt"
 	"github.com/bots-go-framework/bots-fw/botsfw"
+	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
-	"strings"
 )
 
 //var startCommand = botsfw.Command{
@@ -25,10 +26,23 @@ func sneatBotStartAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, er
 	return spaceAction(whc, core4spaceus.NewSpaceRef(core4spaceus.SpaceTypeFamily, ""))
 }
 
-func sneatBotWelcomeMessage(_ botsfw.WebhookContext) (text string, err error) {
-	msg := make([]string, 0)
-	msg = append(msg, "Hello, stranger! I'm a @SneatBot.")
-	msg = append(msg, "I can help you to manage your day-to-day family life.")
-	msg = append(msg, "Or you can create a space to manage your group/team/community.")
-	return strings.Join(msg, "\n\n"), err
+func sneatBotWelcomeMessage(whc botsfw.WebhookContext) (text string, err error) {
+	text = whc.Translate(trans.SNEATBOT_MSG_TXT_START)
+
+	sender := whc.Input().GetSender()
+
+	name := sender.GetFirstName()
+	if name == "" {
+		if name = sender.GetLastName(); name == "" {
+			if name = sender.GetUserName(); name == "" {
+				if name = whc.GetBotUserID(); name == "" {
+					if name = whc.AppUserID(); name == "" {
+						name = "stranger"
+					}
+				}
+			}
+		}
+	}
+	text = fmt.Sprintf(text, name)
+	return
 }

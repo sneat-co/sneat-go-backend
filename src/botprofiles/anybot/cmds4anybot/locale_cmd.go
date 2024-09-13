@@ -1,7 +1,6 @@
 package cmds4anybot
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
@@ -23,8 +22,6 @@ const (
 	SettingsLocaleSetCallbackPath  = "settings/locale/set"
 )
 
-const onboardingAskLocaleCommandCode = "onboarding-ask-locale"
-
 //var localesReplyKeyboard = tgbotapi.NewReplyKeyboard(
 //	[]tgbotapi.KeyboardButton{
 //		{Text: i18n.LocaleEnUS.TitleWithIcon()},
@@ -40,70 +37,66 @@ const onboardingAskLocaleCommandCode = "onboarding-ask-locale"
 //	},
 //)
 
-func localeInlineKeyboardButton(locale i18n.Locale) tgbotapi.InlineKeyboardButton {
-	return tgbotapi.InlineKeyboardButton{
-		Text:         locale.TitleWithIcon(),
-		CallbackData: onboardingAskLocaleCommandCode + "?lng=" + locale.Code5,
+func getOnboardingLocalesKeyboard(callbackPath string) *tgbotapi.InlineKeyboardMarkup {
+	localeInlineKeyboardButton := func(locale i18n.Locale) tgbotapi.InlineKeyboardButton {
+		return tgbotapi.InlineKeyboardButton{
+			Text:         locale.TitleWithIcon(),
+			CallbackData: callbackPath + "?locale=" + locale.Code5,
+		}
 	}
-}
-
-var localesInlineKeyboard = tgbotapi.NewInlineKeyboardMarkup(
-	[]tgbotapi.InlineKeyboardButton{
-		localeInlineKeyboardButton(i18n.LocaleEnUS),
-	},
-	[]tgbotapi.InlineKeyboardButton{
-		localeInlineKeyboardButton(i18n.LocaleRuRu),
-		localeInlineKeyboardButton(i18n.LocaleUaUa),
-	},
-	[]tgbotapi.InlineKeyboardButton{
-		localeInlineKeyboardButton(i18n.LocaleEsEs),
-		localeInlineKeyboardButton(i18n.LocalePtPt),
-	},
-	[]tgbotapi.InlineKeyboardButton{
-		localeInlineKeyboardButton(i18n.LocaleFrFr),
-		localeInlineKeyboardButton(i18n.LocaleItIt),
-	},
-	[]tgbotapi.InlineKeyboardButton{
-		localeInlineKeyboardButton(i18n.LocaleDeDe),
-		localeInlineKeyboardButton(i18n.LocaleFaIr),
-	},
-	//[]tgbotapi.InlineKeyboardButton{
-	//	{Text: "Autodetect", WebApp: &tgbotapi.WebappInfo{Url: "https://sneat.app/telegram-webapp/detect-locale"}},
-	//},
-)
-
-func createOnboardingAskLocaleCommand(setMainMenu SetMainMenuFunc) botsfw.Command {
-	return botsfw.Command{
-		Code:       onboardingAskLocaleCommandCode,
-		InputTypes: []botinput.WebhookInputType{botinput.WebhookInputText, botinput.WebhookInputCallbackQuery},
-		ExactMatch: trans.ChooseLocaleIcon,
-		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-			return onboardingAskLocaleAction(whc, "", setMainMenu)
+	return tgbotapi.NewInlineKeyboardMarkup(
+		[]tgbotapi.InlineKeyboardButton{
+			localeInlineKeyboardButton(i18n.LocaleEnUK),
 		},
-	}
+		[]tgbotapi.InlineKeyboardButton{
+			localeInlineKeyboardButton(i18n.LocaleRuRu),
+			localeInlineKeyboardButton(i18n.LocaleUaUa),
+		},
+		[]tgbotapi.InlineKeyboardButton{
+			localeInlineKeyboardButton(i18n.LocaleEsEs),
+			localeInlineKeyboardButton(i18n.LocalePtPt),
+		},
+		[]tgbotapi.InlineKeyboardButton{
+			localeInlineKeyboardButton(i18n.LocaleFrFr),
+			localeInlineKeyboardButton(i18n.LocaleItIt),
+		},
+		[]tgbotapi.InlineKeyboardButton{
+			localeInlineKeyboardButton(i18n.LocaleDeDe),
+			localeInlineKeyboardButton(i18n.LocaleFaIr),
+		},
+		[]tgbotapi.InlineKeyboardButton{
+			localeInlineKeyboardButton(i18n.LocaleZhCn),
+			localeInlineKeyboardButton(i18n.LocaleJaJp),
+		},
+		//[]tgbotapi.InlineKeyboardButton{
+		//	{Text: "Autodetect", WebApp: &tgbotapi.WebappInfo{Url: "https://sneat.app/telegram-webapp/detect-locale"}},
+		//},
+	)
 }
 
-func onboardingAskLocaleAction(whc botsfw.WebhookContext, messagePrefix string, setMainMenu SetMainMenuFunc) (m botsfw.MessageFromBot, err error) {
+func onStartAskLocaleCallbackAction(whc botsfw.WebhookContext, localeCode string, setMainMenu SetMainMenuFunc, getWelcomeMessageText WelcomeMessageProvider) (m botsfw.MessageFromBot, err error) {
+	if m, err = setPreferredLocaleAction(whc, localeCode, "onboarding", setMainMenu, getWelcomeMessageText); err != nil {
+		return m, fmt.Errorf("failed to setPreferredLocaleAction(): %w", err)
+	}
+	return
+}
+
+func onStartAskLocaleAction(whc botsfw.WebhookContext, setMainMenu SetMainMenuFunc, getWelcomeText WelcomeMessageProvider) (m botsfw.MessageFromBot, err error) {
 	chatEntity := whc.ChatData()
 
-	if chatEntity.IsAwaitingReplyTo(onboardingAskLocaleCommandCode) {
+	if chatEntity.IsAwaitingReplyTo(StartCommandCode) {
 		messageText := whc.Input().(botinput.WebhookTextMessage).Text()
 		for _, locale := range trans.SupportedLocales {
 			if locale.TitleWithIcon() == messageText {
-				return setPreferredLanguageAction(whc, locale.Code5, "onboarding", setMainMenu)
+				return setPreferredLocaleAction(whc, locale.Code5, "onboarding", setMainMenu, getWelcomeText)
 			}
 		}
 		m = whc.NewMessageByCode(trans.MESSAGE_TEXT_UNKNOWN_LANGUAGE)
-		//localesReplyKeyboard.OneTimeKeyboard = true
-		m.Keyboard = localesInlineKeyboard
 	} else {
-		m.Text = messagePrefix + m.Text
-		chatEntity.SetAwaitingReplyTo(onboardingAskLocaleCommandCode)
-		m = whc.NewMessageByCode(trans.MESSAGE_TEXT_ONBOARDING_ASK_TO_CHOOSE_LANGUAGE, whc.Input().GetSender().GetFirstName())
-		m.Format = botsfw.MessageFormatHTML
-		//localesReplyKeyboard.OneTimeKeyboard = true
-		m.Keyboard = localesInlineKeyboard
+		m = whc.NewMessageByCode(trans.MESSAGE_TEXT_ONBOARDING_ASK_TO_CHOOSE_LANGUAGE)
 	}
+	m.Keyboard = getOnboardingLocalesKeyboard("start")
+	m.Format = botsfw.MessageFormatHTML
 	return
 }
 
@@ -138,18 +131,18 @@ var AskPreferredLocaleFromSettingsCallback = botsfw.Command{
 	},
 }
 
-func newSetLocaleCallbackCommand(setMainMenu SetMainMenuFunc) botsfw.Command {
+func newSetLocaleCallbackCommand(setMainMenu SetMainMenuFunc, getWelcomeMessageText WelcomeMessageProvider) botsfw.Command {
 	return botsfw.Command{
 		Code: SettingsLocaleSetCallbackPath,
 		CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-			return setPreferredLanguageAction(whc, callbackUrl.Query().Get("code5"), callbackUrl.Query().Get("mode"), setMainMenu)
+			return setPreferredLocaleAction(whc, callbackUrl.Query().Get("code5"), callbackUrl.Query().Get("mode"), setMainMenu, getWelcomeMessageText)
 		},
 	}
 }
 
-func setPreferredLanguageAction(whc botsfw.WebhookContext, code5, mode string, setMainMenu SetMainMenuFunc) (m botsfw.MessageFromBot, err error) {
+func setPreferredLocaleAction(whc botsfw.WebhookContext, code5, mode string, setMainMenu SetMainMenuFunc, getWelcomeMessageText WelcomeMessageProvider) (m botsfw.MessageFromBot, err error) {
 	ctx := whc.Context()
-	logus.Debugf(ctx, "setPreferredLanguageAction(code5=%v, mode=%v)", code5, mode)
+	logus.Debugf(ctx, "setPreferredLocaleAction(code5=%v, mode=%v)", code5, mode)
 
 	var (
 		localeChanged  bool
@@ -171,6 +164,7 @@ func setPreferredLanguageAction(whc botsfw.WebhookContext, code5, mode string, s
 						if params.UserUpdates, err = params.User.Data.SetPreferredLocale(locale.Code5); err != nil {
 							return fmt.Errorf("%w: failed to set preferred locale for user", err)
 						}
+						params.User.Record.MarkAsChanged()
 						chatData.SetPreferredLanguage(locale.Code5)
 						chatData.SetAwaitingReplyTo("")
 						//chatKey := botsfwmodels.NewChatKey(whc.GetBotCode(), whc.MustBotChatID())
@@ -209,12 +203,23 @@ func setPreferredLanguageAction(whc botsfw.WebhookContext, code5, mode string, s
 	case "onboarding":
 		logus.Debugf(ctx, "whc.Locale().Code5: %v", whc.Locale().Code5)
 		m = whc.NewMessageByCode(trans.MESSAGE_TEXT_YOUR_SELECTED_PREFERRED_LANGUAGE, selectedLocale.NativeTitle)
-		setMainMenu(whc, &m)
-		if _, err = whc.Responder().SendMessage(ctx, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
-			logus.Errorf(ctx, "Failed to notify userEntity about selected language: %v", err)
-			// Not critical, lets continue
+		if getWelcomeMessageText != nil {
+			var welcomeText string
+			if welcomeText, err = getWelcomeMessageText(whc); err != nil {
+				return
+			}
+			m.Text = welcomeText + "\n\n" + m.Text
+			m.Format = botsfw.MessageFormatHTML
 		}
-		return aboutDrawAction(whc, nil)
+		m.IsEdit = true
+		if setMainMenu != nil {
+			setMainMenu(whc, &m)
+		}
+		//if _, err = whc.Responder().SendMessage(ctx, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
+		//	logus.Errorf(ctx, "Failed to notify userEntity about selected language: %v", err)
+		//	// Not critical, lets continue
+		//}
+		return
 	case "settings":
 		if localeChanged {
 			if m, err = dtb_general.MainMenuAction(whc, whc.Translate(trans.MESSAGE_TEXT_LOCALE_CHANGED, selectedLocale.TitleWithIcon()), false); err != nil {
@@ -233,83 +238,6 @@ func setPreferredLanguageAction(whc botsfw.WebhookContext, code5, mode string, s
 		}
 	default:
 		panic(fmt.Sprintf("Unknown mode: %v", mode))
-	}
-}
-
-const (
-	aboutDrawCommandCode = "about-draw"
-	joinDrawCommandCode  = "join-draw"
-)
-
-var aboutDrawCommand = botsfw.Command{
-	Commands:   []string{"/draw"},
-	Code:       aboutDrawCommandCode,
-	InputTypes: []botinput.WebhookInputType{botinput.WebhookInputText, botinput.WebhookInputCallbackQuery},
-	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-		return aboutDrawAction(whc, nil)
-	},
-	CallbackAction: aboutDrawAction,
-}
-
-var joinDrawCommand = botsfw.Command{
-	Code:           joinDrawCommandCode,
-	InputTypes:     []botinput.WebhookInputType{botinput.WebhookInputCallbackQuery},
-	CallbackAction: aboutDrawAction,
-}
-
-func aboutDrawAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-	ctx := whc.Context()
-	buf := new(bytes.Buffer)
-	sender := whc.Input().GetSender()
-	name := sender.GetFirstName()
-	if name == "" {
-		name = sender.GetUserName()
-		if name == "" {
-			name = sender.GetLastName()
-		}
-	}
-	buf.WriteString(whc.Translate(trans.MESSAGE_TEXT_ABOUT_DRAW_SHORT, name))
-	buf.WriteString("\n\n")
-	m.Format = botsfw.MessageFormatHTML
-	if callbackUrl == nil {
-		buf.WriteString(whc.Translate(trans.MESSAGE_TEXT_ABOUT_DRAW_CALL_TO_ACTION))
-		m.Text = buf.String()
-		m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
-			[]tgbotapi.InlineKeyboardButton{
-				{
-					Text:         whc.Translate(trans.COMMAN_TEXT_MORE_ABOUT_DRAW),
-					CallbackData: aboutDrawCommandCode,
-				},
-			},
-		)
-		return
-	} else {
-		m.IsEdit = true
-		buf.WriteString(whc.Translate(trans.MESSAGE_TEXT_ABOUT_DRAW_MORE))
-		m.Text = buf.String()
-		switch callbackUrl.Path {
-		case aboutDrawCommandCode:
-			m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
-				[]tgbotapi.InlineKeyboardButton{
-					{
-						Text:         whc.Translate(trans.COMMAN_TEXT_I_AM_IN_DRAW),
-						CallbackData: joinDrawCommandCode,
-					},
-				},
-			)
-			return
-		case joinDrawCommandCode:
-			if _, err = whc.Responder().SendMessage(ctx, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
-				logus.Warningf(ctx, "Failed to edit message: %v", err)
-				err = nil // Not critical
-			}
-			m.IsEdit = false
-			m.Text = whc.Translate(trans.MESSAGE_TEXT_JOINED_DRAW)
-			return
-		default:
-			err = fmt.Errorf("unknown callback command: %v", callbackUrl.String())
-			return
-		}
 	}
 }
 

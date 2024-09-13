@@ -109,7 +109,7 @@ func (s sneatAppBotContext) NewAppUserData() appuser.BaseUserData {
 }
 
 func (s sneatAppBotContext) GetTranslator(ctx context.Context) i18n.Translator {
-	return i18n.NewMapTranslator(ctx, trans.TRANS)
+	return i18n.NewMapTranslator(ctx, "en-UK", trans.TRANS)
 }
 
 func (s sneatAppBotContext) NewBotAppUserEntity() botsfwmodels.AppUserData {

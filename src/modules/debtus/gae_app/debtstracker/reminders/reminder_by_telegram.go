@@ -43,7 +43,7 @@ func sendReminderByTelegram(ctx context.Context, transfer models4debtus.Transfer
 	//	return false
 	//}
 
-	translator := i18n.NewSingleMapTranslator(locale, i18n.NewMapTranslator(ctx, trans.TRANS))
+	translator := i18n.NewSingleMapTranslator(locale, i18n.NewMapTranslator(ctx, "en-UK", trans.TRANS))
 
 	env := dtdal.HttpAppHost.GetEnvironment(ctx, nil)
 

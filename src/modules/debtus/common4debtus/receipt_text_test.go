@@ -28,7 +28,7 @@ func TestWriteReceiptText(t *testing.T) {
 
 	//logger := &botscore.MockLogger{T: t}
 
-	translator := i18n.NewSingleMapTranslator(i18n.LocaleEnUS, i18n.NewMapTranslator(c, trans.TRANS))
+	translator := i18n.NewSingleMapTranslator(i18n.LocaleEnUS, i18n.NewMapTranslator(c, "en-UK", trans.TRANS))
 
 	transfer := models4debtus.NewTransfer("123", models4debtus.NewTransferData(
 		"12",

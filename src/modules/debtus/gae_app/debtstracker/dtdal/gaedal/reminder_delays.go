@@ -273,7 +273,7 @@ func discardReminder(ctx context.Context, tx dal.ReadwriteTransaction, reminderI
 }
 
 func GetTranslatorForReminder(ctx context.Context, reminder *models4debtus.ReminderDbo) i18n.SingleLocaleTranslator {
-	return i18n.NewSingleMapTranslator(i18n.GetLocaleByCode5(reminder.Locale), i18n.NewMapTranslator(ctx, trans.TRANS))
+	return i18n.NewSingleMapTranslator(i18n.GetLocaleByCode5(reminder.Locale), i18n.NewMapTranslator(ctx, "en-UK", trans.TRANS))
 }
 
 var ErrDuplicateAttemptToDiscardReminder = errors.New("duplicate attempt to close reminder by same return transfer")

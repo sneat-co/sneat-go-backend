@@ -11,8 +11,8 @@ var ErrUnknownStartParam = errors.New("unknown start parameter")
 //	if m, err = startInBot(whc, startParams); err != nil {
 //		if errors.Is(err, ErrUnknownStartParam) {
 //			if whc.ChatData().GetPreferredLanguage() == "" {
-//				if m, err = onboardingAskLocaleAction(whc, whc.Translate(trans.MESSAGE_TEXT_HI)+"\n\n", setMainMenu); err != nil {
-//					err = fmt.Errorf("failed in onboardingAskLocaleAction(): %w", err)
+//				if m, err = onStartAskLocaleAction(whc, whc.Translate(trans.MESSAGE_TEXT_HI)+"\n\n", setMainMenu); err != nil {
+//					err = fmt.Errorf("failed in onStartAskLocaleAction(): %w", err)
 //					return
 //				}
 //			}

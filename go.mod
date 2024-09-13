@@ -2,6 +2,8 @@ module github.com/sneat-co/sneat-go-backend
 
 go 1.22.3
 
+replace github.com/sneat-co/debtstracker-translations => ../debtstracker-translations
+
 //replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
 
 //replace github.com/sneat-co/sneat-go-firebase => ../sneat-go-firebase
@@ -32,11 +34,12 @@ go 1.22.3
 require (
 	firebase.google.com/go/v4 v4.14.1
 	github.com/bots-go-framework/bots-api-telegram v0.7.1
-	github.com/bots-go-framework/bots-fw v0.39.0
+	github.com/bots-go-framework/bots-fw v0.39.1
 	github.com/bots-go-framework/bots-fw-store v0.8.2
 	github.com/bots-go-framework/bots-fw-telegram v0.13.1
 	github.com/bots-go-framework/bots-fw-telegram-models v0.3.4
 	github.com/bots-go-framework/bots-fw-telegram-webapp v0.3.1
+	github.com/bots-go-framework/bots-go-core v0.0.3
 	github.com/bots-go-framework/bots-host-gae v0.5.16
 	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85
 	github.com/crediterra/money v0.3.0
@@ -62,7 +65,7 @@ require (
 	github.com/strongo/facebook v1.8.1
 	github.com/strongo/gamp v0.0.1
 	github.com/strongo/gotwilio v0.0.0-20160123000810-f024bbefe80f
-	github.com/strongo/i18n v0.2.2
+	github.com/strongo/i18n v0.3.0
 	github.com/strongo/logus v0.2.0
 	github.com/strongo/random v0.0.1
 	github.com/strongo/slice v0.3.0
@@ -86,7 +89,6 @@ require (
 	github.com/AlekSi/pointer v1.2.0 // indirect
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
 	github.com/alexsergivan/transliterator v1.0.1 // indirect
-	github.com/bots-go-framework/bots-go-core v0.0.3 // indirect
 	github.com/dal-go/dalgo2firestore v0.2.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/fgprof v0.9.5 // indirect

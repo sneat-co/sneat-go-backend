@@ -2,7 +2,6 @@ package cmds4anybot
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botinput"
@@ -30,13 +29,15 @@ func StartBotLink(botID, command string, params ...string) string {
 	return buf.String()
 }
 
+const StartCommandCode = "start"
+
 func createStartCommand(
 	startInBotAction StartInBotActionFunc,
 	startInGroupAction botsfw.CommandAction,
-	inBotWelcomeMessage WelcomeMessageProvider,
+	getWelcomeMessageText WelcomeMessageProvider,
 ) botsfw.Command {
 	return botsfw.Command{
-		Code:     "start",
+		Code:     StartCommandCode,
 		Commands: []string{"/start"},
 		InputTypes: []botinput.WebhookInputType{
 			botinput.WebhookInputText,
@@ -44,16 +45,29 @@ func createStartCommand(
 			botinput.WebhookInputConversationStarted, // Viber
 		},
 		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-			return sharedStartCommandAction(whc, startInBotAction, startInGroupAction, inBotWelcomeMessage)
+			return sharedStartCommandAction(whc, startInBotAction, startInGroupAction, getWelcomeMessageText)
+		},
+		CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
+			return sharedStartCommandCallbackAction(whc, callbackUrl, getWelcomeMessageText)
 		},
 	}
+}
+
+func sharedStartCommandCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL, getWelcomeMessageText WelcomeMessageProvider) (m botsfw.MessageFromBot, err error) {
+	q := callbackUrl.Query()
+	if localeCode := q.Get("locale"); localeCode != "" {
+		return onStartAskLocaleCallbackAction(whc, localeCode, nil, getWelcomeMessageText)
+	}
+	m.Text = fmt.Sprintf("Unknown callback parameters: %s", callbackUrl)
+	m.IsEdit = false
+	return
 }
 
 func sharedStartCommandAction(
 	whc botsfw.WebhookContext,
 	startInBotAction StartInBotActionFunc,
 	startInGroupAction botsfw.CommandAction,
-	inBotWelcomeMessage WelcomeMessageProvider,
+	getWelcomeMessage WelcomeMessageProvider,
 ) (
 	m botsfw.MessageFromBot, err error,
 ) {
@@ -87,7 +101,7 @@ func sharedStartCommandAction(
 	case strings.HasPrefix(startParam, "refbytguser-") && startParam != "refbytguser-YOUR_CHANNEL":
 		facade4anybot.Referer.AddTelegramReferrer(ctx, whc.AppUserID(), strings.TrimPrefix(startParam, "refbytguser-"), whc.GetBotCode())
 	}
-	//if m.Text, err = inBotWelcomeMessage(whc); err != nil {
+	//if m.Text, err = getWelcomeMessage(whc); err != nil {
 	//	return
 	//} else if m.Text != "" {
 	//	responder := whc.Responder()
@@ -95,18 +109,27 @@ func sharedStartCommandAction(
 	//		return
 	//	}
 	//}
-	if m, err = onboardingAction(whc); err != nil && !errors.Is(err, ErrOnboardingCompleted) {
+	if m.Text, err = getWelcomeMessage(whc); err != nil {
 		return
-	} else if m.Text == "" {
-		if m, err = startInBotAction(whc, startParams); err != nil {
+	}
+	var user dbo4userus.UserEntry
+	if user, err = GetUser(whc); err != nil {
+		return
+	}
+	if user.Data.PreferredLocale == "" {
+		var localesMsg botsfw.MessageFromBot
+		if localesMsg, err = onStartAskLocaleAction(whc, nil, getWelcomeMessage); err != nil {
 			return
 		}
-	}
-	var welcomeText string
-	if welcomeText, err = inBotWelcomeMessage(whc); err != nil {
+		if localesMsg.Text != "" {
+			m.Text += "\n" + localesMsg.Text
+			m.Keyboard = localesMsg.Keyboard
+			m.Format = botsfw.MessageFormatHTML
+		}
 		return
-	} else if welcomeText != "" {
-		m.Text = welcomeText + "\n\n" + m.Text
+	}
+	if m, err = startInBotAction(whc, startParams); err != nil {
+		return
 	}
 	return
 }
@@ -157,50 +180,3 @@ func GetUser(whc botsfw.WebhookContext) (user dbo4userus.UserEntry, err error) {
 //		},
 //	},
 //)
-
-const onStartCallbackCommandCode = "on-start-callback"
-
-func newStartCallbackCommand(setMainMenu SetMainMenuFunc) botsfw.Command {
-	return botsfw.NewCallbackCommand(onStartCallbackCommandCode,
-		func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-			lang := callbackUrl.Query().Get("lang")
-			mode := "onboarding" // TODO: should we set mode?
-			return setPreferredLanguageAction(whc, lang, mode, setMainMenu)
-			//ctx := whc.Context()
-			//if lang != "" {
-			//	logus.Debugf(ctx, "Locale: "+lang)
-			//
-			//	whc.ChatData().SetPreferredLanguage(lang)
-			//
-			//	appUserID := whc.AppUserID()
-			//	if err = whc.SetLocale(lang); err != nil {
-			//		return
-			//	}
-			//	if appUserID != "" {
-			//		userCtx := facade.NewUserContext(whc.AppUserID())
-			//		if err = dal4userus.RunUserWorker(c, userCtx,
-			//			func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) error {
-			//				if params.UserUpdates, err = params.UserEntry.Data.SetPreferredLocale(lang); err != nil {
-			//					return err
-			//				}
-			//				return nil
-			//			}); err != nil {
-			//			return
-			//		}
-			//	}
-			//	m.Text = fmt.Sprintf("Language set to %s", lang)
-			//}
-
-			//if whc.IsInGroup() {
-			//	var group models.GroupEntry
-			//	if group, err = GetGroup(whc, callbackUrl); err != nil {
-			//		return
-			//	}
-			//	return onStartCallbackInGroup(whc, group, params)
-			//} else {
-			//	return onStartCallbackInBot(whc, params)
-			//}
-			//return
-		},
-	)
-}

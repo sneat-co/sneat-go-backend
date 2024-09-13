@@ -19,7 +19,7 @@ import (
 )
 
 func getTestMocks(t *testing.T, locale i18n.Locale) BalanceMessageBuilder {
-	translator := i18n.NewMapTranslator(context.TODO(), trans.TRANS)
+	translator := i18n.NewMapTranslator(context.TODO(), "en-UK", trans.TRANS)
 	singleLocaleTranslator := i18n.NewSingleMapTranslator(locale, translator)
 	return NewBalanceMessageBuilder(singleLocaleTranslator)
 }
