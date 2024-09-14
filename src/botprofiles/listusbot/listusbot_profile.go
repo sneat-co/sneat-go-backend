@@ -20,7 +20,22 @@ func GetProfile(errFooterText func() string) botsfw.BotProfile {
 }
 
 func createProfile(errFooterText func() string) botsfw.BotProfile {
-	botParams := cmds4anybot.BotParams{}
+	botParams := cmds4anybot.BotParams{
+		StartInBotAction: func(whc botsfw.WebhookContext, startParams []string) (m botsfw.MessageFromBot, err error) {
+			return
+		},
+		StartInGroupAction: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
+			return
+		},
+		GetWelcomeMessageText: func(whc botsfw.WebhookContext) (text string, err error) {
+			return "Welcome to Listus bot", nil
+		},
+		HelpCommandAction: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
+			return
+		},
+		SetMainMenu: func(whc botsfw.WebhookContext, m *botsfw.MessageFromBot) {
+		},
+	}
 	router := botsfw.NewWebhookRouter(errFooterText)
 	cmds4anybot.AddSharedCommands(router, botParams)
 
