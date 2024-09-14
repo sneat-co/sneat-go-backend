@@ -5,6 +5,7 @@ import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
+	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/bothelpers"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/tghelpers"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
@@ -13,6 +14,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/facade4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
+	"github.com/strongo/i18n"
 	"net/url"
 	"strings"
 )
@@ -94,7 +96,8 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 	}
 
 	spaceTitle := strings.ToUpper(string(spaceType)[:1]) + string(spaceType)[1:]
-	m.Text += fmt.Sprintf("Current space: %s <b>%s</b>", spaceIcon, spaceTitle)
+	m.Text += whc.Translate(trans.SPACE_CMD_TEXT, spaceIcon, spaceTitle)
+	m.Text += "\n" + strings.Repeat(".", 100)
 	m.Format = botsfw.MessageFormatHTML
 
 	if spaceRef.SpaceID() == "" {
@@ -102,7 +105,7 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 		return
 	}
 
-	m.Keyboard = spaceInlineKeyboard(spaceRef, switchSpace)
+	m.Keyboard = spaceInlineKeyboard(whc, spaceRef, switchSpace)
 	return
 }
 
@@ -112,7 +115,7 @@ type switchSpaceArgs struct {
 	icon         string
 }
 
-func spaceInlineKeyboard(spaceRef core4spaceus.SpaceRef, switchSpace switchSpaceArgs) *tgbotapi.InlineKeyboardMarkup {
+func spaceInlineKeyboard(translator i18n.SingleLocaleTranslator, spaceRef core4spaceus.SpaceRef, switchSpace switchSpaceArgs) *tgbotapi.InlineKeyboardMarkup {
 	spaceType, spaceID := spaceRef.SpaceType(), spaceRef.SpaceID()
 
 	spaceCallbackParams := "s=" + string(core4spaceus.NewSpaceRef(spaceType, spaceID))
@@ -127,7 +130,7 @@ func spaceInlineKeyboard(spaceRef core4spaceus.SpaceRef, switchSpace switchSpace
 
 	firstRow := []tgbotapi.InlineKeyboardButton{
 		{
-			Text: "📇 Contacts",
+			Text: "📇 " + translator.Translate(trans.SPACE_CMD_BTN_CONTACTS),
 			WebApp: &tgbotapi.WebappInfo{
 				Url: spacePageUrl("contacts"),
 			},
@@ -135,7 +138,7 @@ func spaceInlineKeyboard(spaceRef core4spaceus.SpaceRef, switchSpace switchSpace
 	}
 	if spaceType != core4spaceus.SpaceTypePrivate {
 		firstRow = append(firstRow, tgbotapi.InlineKeyboardButton{
-			Text: "👪 Members",
+			Text: "👪 " + translator.Translate(trans.SPACE_CMD_BTN_MEMBER),
 			WebApp: &tgbotapi.WebappInfo{
 				Url: spacePageUrl("members"),
 			},
@@ -150,19 +153,19 @@ func spaceInlineKeyboard(spaceRef core4spaceus.SpaceRef, switchSpace switchSpace
 		firstRow,
 		[]tgbotapi.InlineKeyboardButton{
 			{
-				Text: "🚗 Assets",
+				Text: "🚗 " + translator.Translate(trans.SPACE_CMD_BTN_ASSETS),
 				WebApp: &tgbotapi.WebappInfo{
 					Url: spacePageUrl("assets"),
 				},
 			},
 			{
-				Text: "💰 Budget",
+				Text: "💰 " + translator.Translate(trans.SPACE_CMD_BTN_BUDGET),
 				WebApp: &tgbotapi.WebappInfo{
 					Url: spacePageUrl("budget"),
 				},
 			},
 			{
-				Text: "💸 Debts",
+				Text: "💸 " + translator.Translate(trans.SPACE_CMD_BTN_DEBTS),
 				WebApp: &tgbotapi.WebappInfo{
 					Url: spacePageUrl("debts"),
 				},
@@ -188,13 +191,13 @@ func spaceInlineKeyboard(spaceRef core4spaceus.SpaceRef, switchSpace switchSpace
 		},
 		[]tgbotapi.InlineKeyboardButton{
 			{
-				Text: "🗓️ Calendar",
+				Text: "🗓️ " + translator.Translate(trans.SPACE_CMD_BTN_CALENDAR),
 				WebApp: &tgbotapi.WebappInfo{
 					Url: spacePageUrl("calendar"),
 				},
 			},
 			{
-				Text:         "⚙️ Settings",
+				Text:         "⚙️ " + translator.Translate(trans.SPACE_CMD_BTN_SETTINGS),
 				CallbackData: "settings?" + spaceCallbackParams,
 			},
 		},
@@ -204,7 +207,7 @@ func spaceInlineKeyboard(spaceRef core4spaceus.SpaceRef, switchSpace switchSpace
 				CallbackData: switchSpace.callbackData,
 			},
 			{
-				Text:         "🌌 Spaces",
+				Text:         "🌌 " + translator.Translate(trans.BTN_SPACES),
 				CallbackData: "spaces?s=" + string(spaceRef),
 			},
 		},

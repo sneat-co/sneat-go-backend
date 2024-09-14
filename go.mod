@@ -2,7 +2,7 @@ module github.com/sneat-co/sneat-go-backend
 
 go 1.22.3
 
-//replace github.com/sneat-co/debtstracker-translations => ../debtstracker-translations
+replace github.com/sneat-co/debtstracker-translations => ../debtstracker-translations
 
 //replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
 
