@@ -40,7 +40,6 @@ func createProfile(errFooterText func() string) botsfw.BotProfile {
 	cmds4anybot.AddSharedCommands(router, botParams)
 
 	commandsByType := make(map[botinput.WebhookInputType][]botsfw.Command)
-	cmds4listusbot.AddListusOnlyBotCommands(commandsByType)
 	cmds4listusbot.AddListusSharedCommands(commandsByType)
 	router.AddCommandsGroupedByType(commandsByType)
 	return anybot.NewProfile(ProfileID, &router)
