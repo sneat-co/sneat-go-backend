@@ -1,16 +1,13 @@
 package cmds4anybot
 
 import (
-	"context"
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
+	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_general"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
-	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/i18n"
 	"github.com/strongo/logus"
 	"net/url"
@@ -172,50 +169,35 @@ func setPreferredLocaleAction(whc botsfw.WebhookContext, code5 string, mode setP
 	logus.Debugf(ctx, "userEntity.PreferredLanguage: %v, chatData.GetPreferredLanguage(): %v, code5: %v", preferredLocale, chatData.GetPreferredLanguage(), code5)
 	if preferredLocale != code5 || chatData.GetPreferredLanguage() != code5 {
 		logus.Debugf(ctx, "PreferredLanguage will be updated for userEntity & chat entities.")
-		for _, locale := range trans.SupportedLocalesByCode5 {
-			if locale.Code5 == code5 {
-				_ = whc.SetLocale(locale.Code5)
+		locale := trans.SupportedLocalesByCode5[code5]
+		if locale.Code5 == "" {
+			logus.Errorf(ctx, "Unknown locale: %v", code5)
+		} else {
+			if err = whc.SetLocale(locale.Code5); err != nil {
+				err = fmt.Errorf("failed to set locale for webhook context: %w", err)
+				return
+			}
 
-				if appUserID := whc.AppUserID(); appUserID != "" {
-					userCtx := facade.NewUserContext(appUserID)
-					if err = dal4userus.RunUserWorker(ctx, userCtx, true, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) (err error) {
-						if params.UserUpdates, err = params.User.Data.SetPreferredLocale(locale.Code5); err != nil {
-							return fmt.Errorf("%w: failed to set preferred locale for user", err)
-						}
-						params.User.Record.MarkAsChanged()
-						chatData.SetPreferredLanguage(locale.Code5)
-						chatData.SetAwaitingReplyTo("")
-						//chatKey := botsfwmodels.NewChatKey(whc.GetBotCode(), whc.MustBotChatID())
-						if err = whc.SaveBotChat(ctx); err != nil {
-							return
-						}
-						return
-					}); err != nil {
-						return
-					}
-					localeChanged = true
-					selectedLocale = locale
-					if whc.GetBotSettings().Env == "prod" {
-						ga := whc.GA()
-						gaEvent := ga.GaEventWithLabel("settings", "locale-changed", strings.ToLower(locale.Code5))
-						if gaErr := ga.Queue(gaEvent); gaErr != nil {
-							logus.Warningf(ctx, "Failed to log event: %v", gaErr)
-						} else {
-							logus.Infof(ctx, "GA event queued: %v", gaEvent)
-						}
+			if appUserID := whc.AppUserID(); appUserID != "" {
+				if err = updateUserAndChatWithLocale(whc, appUserID, locale, chatData); err != nil {
+					return m, fmt.Errorf("failed to update user record with locale: %w", err)
+				}
+				localeChanged = true
+				selectedLocale = locale
+				if whc.GetBotSettings().Env == "prod" {
+					ga := whc.GA()
+					gaEvent := ga.GaEventWithLabel("settings", "locale-changed", strings.ToLower(locale.Code5))
+					if gaErr := ga.Queue(gaEvent); gaErr != nil {
+						logus.Warningf(ctx, "Failed to log event: %v", gaErr)
+					} else {
+						logus.Infof(ctx, "GA event queued: %v", gaEvent)
 					}
 				}
-
-				break
 			}
-		}
-		if !localeChanged {
-			logus.Errorf(ctx, "Unknown locale: %v", code5)
 		}
 	} else {
 		selectedLocale = i18n.GetLocaleByCode5(chatData.GetPreferredLanguage())
 	}
-	//if localeChanged {
 
 	switch mode {
 	case setPreferredLocaleModeStart:
@@ -257,6 +239,34 @@ func setPreferredLocaleAction(whc botsfw.WebhookContext, code5 string, mode setP
 	default:
 		panic(fmt.Sprintf("Unknown mode: %v", mode))
 	}
+}
+
+func updateUserAndChatWithLocale(whc botsfw.WebhookContext, appUserID string, locale i18n.Locale, chatData botsfwmodels.BotChatData) (err error) {
+	ctx := whc.Context()
+	logus.Warningf(ctx, "updateUserAndChatWithLocale() causes deadlock if calling RunUserWorker()")
+	// TODO: DEADLOCK!!!
+	//userCtx := facade.NewUserContext(appUserID)
+	//if err = dal4userus.RunUserWorker(ctx, userCtx, true,
+	//	func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) (err error) {
+	//		if params.UserUpdates, err = params.User.Data.SetPreferredLocale(locale.Code5); err != nil {
+	//			return fmt.Errorf("%w: failed to set preferred locale for user", err)
+	//		}
+	//		params.User.Record.MarkAsChanged()
+	//		//chatKey := botsfwmodels.NewChatKey(whc.GetBotCode(), whc.MustBotChatID())
+	//		return
+	//	},
+	//); err != nil {
+	//	err = fmt.Errorf("failed in RunUserWorker(): %w", err)
+	//	return
+	//}
+
+	chatData.SetPreferredLanguage(locale.Code5)
+	chatData.SetAwaitingReplyTo("")
+	if err = whc.SaveBotChat(); err != nil {
+		err = fmt.Errorf("failed to save chat data: %w", err)
+		return
+	}
+	return
 }
 
 //func LanguageOptions(whc botsfw.WebhookContext, mainMenu bool) tgbotapi.ReplyKeyboardMarkup {

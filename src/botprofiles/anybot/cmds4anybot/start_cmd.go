@@ -48,7 +48,7 @@ func createStartCommand(
 			botinput.WebhookInputConversationStarted, // Viber
 		},
 		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-			return sharedStartCommandAction(whc, startInBotAction, startInGroupAction, getWelcomeMessageText)
+			return sharedStartCommandAction(whc /*startInBotAction,*/, startInGroupAction, getWelcomeMessageText)
 		},
 		CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 			return sharedStartCommandCallbackAction(whc, callbackUrl, getWelcomeMessageText, setMainMenu, startInBotAction)
@@ -81,7 +81,7 @@ func sharedStartCommandCallbackAction(
 
 func sharedStartCommandAction(
 	whc botsfw.WebhookContext,
-	startInBotAction StartInBotActionFunc,
+	//startInBotAction StartInBotActionFunc,
 	startInGroupAction botsfw.CommandAction,
 	getWelcomeMessage WelcomeMessageProvider,
 ) (
@@ -92,7 +92,7 @@ func sharedStartCommandAction(
 	text := whc.Input().(botinput.WebhookTextMessage).Text()
 	logus.Debugf(ctx, "createStartCommand.Action() => text: "+text)
 
-	startParam, startParams := tgsharedcommands.ParseStartCommand(whc)
+	startParam, _ := tgsharedcommands.ParseStartCommand(whc)
 
 	var isInGroup bool
 	if isInGroup, err = whc.IsInGroup(); err != nil {
@@ -128,11 +128,14 @@ func sharedStartCommandAction(
 	if m.Text, err = getWelcomeMessage(whc); err != nil {
 		return
 	}
-	var user dbo4userus.UserEntry
-	if user, err = GetUser(whc); err != nil {
-		return
-	}
-	if user.Data.PreferredLocale == "" {
+	/*
+		var user dbo4userus.UserEntry
+		if user, err = GetUser(whc); err != nil {
+			return
+		}
+		if user.Data.PreferredLocale == ""
+	*/
+	{
 		var localesMsg botsfw.MessageFromBot
 		if localesMsg, err = onStartAskLocaleAction(whc, nil, getWelcomeMessage); err != nil {
 			return
@@ -144,10 +147,10 @@ func sharedStartCommandAction(
 		}
 		return
 	}
-	if m, err = runBotSpecificStartCommand(whc, startInBotAction, startParams, getWelcomeMessage); err != nil {
-		return
-	}
-	return
+	//if m, err = runBotSpecificStartCommand(whc, startInBotAction, startParams, getWelcomeMessage); err != nil {
+	//	return
+	//}
+	//return
 }
 
 func runBotSpecificStartCommand(whc botsfw.WebhookContext, startInBotAction StartInBotActionFunc, startParams []string, getWelcomeMessage WelcomeMessageProvider) (m botsfw.MessageFromBot, err error) {

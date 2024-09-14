@@ -49,9 +49,11 @@ func CreateBotUserAndAppUserRecords(
 
 	if appUserID == "" {
 		if params, err = getOrCreateAppUserRecordFromBotUser(ctx, tx, started, botUserData, remoteClientInfo); err != nil {
+			err = fmt.Errorf("failed in getOrCreateAppUserRecordFromBotUser(): %w", err)
 			return
 		}
 		_ = params.User.Data.AccountsOfUser.AddAccount(appuser.AccountKey{Provider: string(botPlatformID), ID: botUserData.BotUserID})
+		botUser.Record.SetError(nil)
 		params.QueueForInsert(botUser.Record)
 	} else { // appUserID != ""
 		params.UserWorkerParams = &dal4userus.UserWorkerParams{

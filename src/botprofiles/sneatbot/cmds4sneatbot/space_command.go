@@ -78,33 +78,44 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 	}
 	var spaceIcon string
 
-	var switchSpaceCallbackData string
-	var switchSpaceTitle string
-	var switchSpaceIcon string
+	var switchSpace switchSpaceArgs
 
 	switch spaceType {
 	case core4spaceus.SpaceTypeFamily:
 		spaceIcon = "👪"
-		switchSpaceIcon = "🔒"
-		switchSpaceTitle = "Private"
-		switchSpaceCallbackData = "space?s=" + string(core4spaceus.NewSpaceRef(core4spaceus.SpaceTypePrivate, ""))
+		switchSpace.icon = "🔒"
+		switchSpace.title = "Private"
+		switchSpace.callbackData = "space?s=" + string(core4spaceus.NewSpaceRef(core4spaceus.SpaceTypePrivate, ""))
 	case core4spaceus.SpaceTypePrivate:
 		spaceIcon = "🔒"
-		switchSpaceIcon = "👪"
-		switchSpaceTitle = "Family"
-		switchSpaceCallbackData = "space?s=" + string(core4spaceus.NewSpaceRef(core4spaceus.SpaceTypeFamily, ""))
+		switchSpace.icon = "👪"
+		switchSpace.title = "Family"
+		switchSpace.callbackData = "space?s=" + string(core4spaceus.NewSpaceRef(core4spaceus.SpaceTypeFamily, ""))
 	}
 
 	spaceTitle := strings.ToUpper(string(spaceType)[:1]) + string(spaceType)[1:]
 	m.Text += fmt.Sprintf("Current space: %s <b>%s</b>", spaceIcon, spaceTitle)
 	m.Format = botsfw.MessageFormatHTML
 
-	spaceCallbackParams := "s=" + string(core4spaceus.NewSpaceRef(spaceType, spaceID))
-
 	if spaceRef.SpaceID() == "" {
 		err = fmt.Errorf("spaceRef.SpaceID() is empty string")
 		return
 	}
+
+	m.Keyboard = spaceInlineKeyboard(spaceRef, switchSpace)
+	return
+}
+
+type switchSpaceArgs struct {
+	callbackData string
+	title        string
+	icon         string
+}
+
+func spaceInlineKeyboard(spaceRef core4spaceus.SpaceRef, switchSpace switchSpaceArgs) *tgbotapi.InlineKeyboardMarkup {
+	spaceType, spaceID := spaceRef.SpaceType(), spaceRef.SpaceID()
+
+	spaceCallbackParams := "s=" + string(core4spaceus.NewSpaceRef(spaceType, spaceID))
 
 	var spaceUrlPath = spaceRef.UrlPath()
 
@@ -135,7 +146,7 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 		return fmt.Sprintf("list?k=%s&%s", id, spaceCallbackParams)
 	}
 
-	m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
+	return tgbotapi.NewInlineKeyboardMarkup(
 		firstRow,
 		[]tgbotapi.InlineKeyboardButton{
 			{
@@ -189,8 +200,8 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 		},
 		[]tgbotapi.InlineKeyboardButton{
 			{
-				Text:         fmt.Sprintf("%s Go %s space", switchSpaceIcon, switchSpaceTitle),
-				CallbackData: switchSpaceCallbackData,
+				Text:         fmt.Sprintf("%s Go %s space", switchSpace.icon, switchSpace.title),
+				CallbackData: switchSpace.callbackData,
 			},
 			{
 				Text:         "🌌 Spaces",
@@ -198,5 +209,4 @@ func spaceAction(whc botsfw.WebhookContext, spaceRef core4spaceus.SpaceRef) (m b
 			},
 		},
 	)
-	return
 }
