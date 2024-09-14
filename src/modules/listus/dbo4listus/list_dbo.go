@@ -180,7 +180,9 @@ func (v *ListDbo) AddListItem(item *ListItemBrief) (addedItem *ListItemBrief) {
 	for _, existingItem := range v.Items {
 		if existingItem.Title == item.Title && existingItem.Emoji == item.Emoji {
 			addedItem = existingItem
-			existingItem.IsDone = false
+			if existingItem.IsDone() {
+				existingItem.Status = item.Status
+			}
 			return
 		}
 	}

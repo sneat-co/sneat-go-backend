@@ -9,7 +9,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
 	"github.com/sneat-co/sneat-go-core/facade"
-	"github.com/strongo/slice"
 	"strings"
 )
 
@@ -114,11 +113,7 @@ func createListItemsTxWorker(
 		return
 	}
 	if list.Record.Exists() {
-		if slice.Index(list.Data.UserIDs, params.UserID()) < 0 {
-			err = errors.New("current user does not have access to the list: userID=" + params.UserID())
-			return
-		}
-		if err = tx.Update(ctx, list.Key, []dal.Update{
+		updates := []dal.Update{
 			{
 				Field: "items",
 				Value: list.Data.Items,
@@ -127,7 +122,17 @@ func createListItemsTxWorker(
 				Field: "count",
 				Value: len(list.Data.Items),
 			},
-		}); err != nil {
+		}
+		userID := params.UserID()
+		if !list.Data.HasUserID(userID) {
+			if params.Space.Data.HasUserID(params.UserID()) {
+				updates = append(updates, list.Data.AddUserID(userID)...)
+			} else {
+				err = errors.New("current user does not have access to the list: userID=" + params.UserID())
+				return
+			}
+		}
+		if err = tx.Update(ctx, list.Key, updates); err != nil {
 			err = fmt.Errorf("failed to update list record: %w", err)
 			return
 		}

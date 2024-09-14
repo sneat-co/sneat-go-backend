@@ -104,7 +104,8 @@ func getShowListMessage(
 	} else {
 		itemTexts := make([]string, 0, len(list.Data.Items))
 		for _, item := range list.Data.Items {
-			if listTab == ListTabActive && item.IsDone || listTab == ListTabDone && !item.IsDone {
+			isDone := item.IsDone()
+			if listTab == ListTabActive && isDone || listTab == ListTabDone && !isDone {
 				continue
 			}
 			emoji := item.Emoji
@@ -112,7 +113,7 @@ func getShowListMessage(
 				emoji = "•"
 			}
 			itemText := fmt.Sprintf("%s %s", emoji, item.Title)
-			if item.IsDone && listTab == ListTabAll {
+			if isDone && listTab == ListTabAll {
 				itemText += " ✔️"
 			}
 			itemTexts = append(itemTexts, itemText)
@@ -154,7 +155,7 @@ func getShowListClearKeyboard(spaceRef core4spaceus.SpaceRef, listKey dbo4listus
 
 func getListCounts(listItems []*dbo4listus.ListItemBrief) (activeCount, completedCount int) {
 	for _, item := range listItems {
-		if item.IsDone {
+		if item.IsDone() {
 			completedCount++
 		} else {
 			activeCount++

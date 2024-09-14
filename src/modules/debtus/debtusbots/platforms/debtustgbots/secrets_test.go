@@ -18,6 +18,6 @@ func TestGetBotSettingsByLang(t *testing.T) {
 			t.Error(code + " not found in settings, got: " + botSettings.Code)
 		}
 	}
-	verify(debtusbotconst.DebtusBotProfileID, i18n.LocalCodeRuRu, "DebtsTrackerRuBot")
+	verify(debtusbotconst.DebtusBotProfileID, i18n.LocaleCodeRuRU, "DebtsTrackerRuBot")
 	verify(debtusbotconst.DebtusBotProfileID, i18n.LocaleCodeEnUS, "DebtsTrackerBot")
 }

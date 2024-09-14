@@ -16,7 +16,7 @@ import (
 func delayedUpdateSpaceHasDueTransfers(ctx context.Context, userID, spaceID string) (err error) {
 	logus.Infof(ctx, "delayedUpdateSpaceHasDueTransfers(userID=%v)", userID)
 	userCtx := facade.NewUserContext(userID)
-	err = dal4spaceus.RunModuleSpaceWorker(ctx, userCtx, spaceID, const4debtus.ModuleID, new(models4debtus.DebtusSpaceDbo),
+	err = dal4spaceus.RunModuleSpaceWorkerWithUserCtx(ctx, userCtx, spaceID, const4debtus.ModuleID, new(models4debtus.DebtusSpaceDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*models4debtus.DebtusSpaceDbo]) error {
 			if !params.SpaceModuleEntry.Data.HasDueTransfers {
 				params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, params.SpaceModuleEntry.Data.SetHasDueTransfers(true))

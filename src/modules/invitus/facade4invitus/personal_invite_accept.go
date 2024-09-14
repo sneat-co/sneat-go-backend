@@ -176,9 +176,7 @@ func updateSpaceRecord(
 			}
 			//team.Members[i] = m
 			updatePersonDetails(teamMember, requestMember.Data, teamMember, nil)
-			if u, ok := params.SpaceModuleEntry.Data.AddUserID(uid); ok {
-				params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, u)
-			}
+			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, params.SpaceModuleEntry.Data.AddUserID(uid)...)
 			if m.AddRole(const4contactus.SpaceMemberRoleMember) {
 				params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, dal.Update{Field: "contacts." + contactID + ".roles", Value: m.Roles})
 			}

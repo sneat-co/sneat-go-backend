@@ -257,7 +257,7 @@ func onJoinUpdateMemberBriefInSpaceOrAddIfMissing(
 		}
 	}
 
-	_, _ = params.Space.Data.AddUserID(uid)
+	_ = params.Space.Data.AddUserID(uid)
 	//if u, ok := params.Space.Data.AddUserID(uid); ok {
 	//	updates = append(updates, u)
 	//}

@@ -90,7 +90,7 @@ func RunSpaceItemWorker[ModuleDbo SpaceModuleDbo, ItemDbo SpaceItemDbo](
 	spaceItemDbo ItemDbo,
 	worker func(ctx context.Context, tx dal.ReadwriteTransaction, params *SpaceItemWorkerParams[ModuleDbo, ItemDbo]) (err error),
 ) (err error) {
-	return RunModuleSpaceWorker(ctx, userCtx, request.SpaceID, moduleID, spaceModuleData,
+	return RunModuleSpaceWorkerWithUserCtx(ctx, userCtx, request.SpaceID, moduleID, spaceModuleData,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, moduleSpaceWorkerParams *ModuleSpaceWorkerParams[ModuleDbo]) (err error) {
 			teamItemKey := dal.NewKeyWithParentAndID(moduleSpaceWorkerParams.SpaceModuleEntry.Key, spaceItemCollection, request.ID)
 			params := SpaceItemWorkerParams[ModuleDbo, ItemDbo]{

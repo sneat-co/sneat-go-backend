@@ -19,7 +19,7 @@ type ListWorkerParams struct {
 type ListWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, listWorkerParams *ListWorkerParams) (err error)
 
 func RunListWorker(ctx context.Context, userCtx facade.UserContext, request dto4listus.ListRequest, worker ListWorker) (err error) {
-	err = dal4spaceus.RunModuleSpaceWorker(ctx, userCtx, request.SpaceID, "listus", new(dbo4listus.ListusSpaceDbo), func(ctx context.Context, tx dal.ReadwriteTransaction, spaceWorkerParams *dal4spaceus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) (err error) {
+	err = dal4spaceus.RunModuleSpaceWorkerWithUserCtx(ctx, userCtx, request.SpaceID, "listus", new(dbo4listus.ListusSpaceDbo), func(ctx context.Context, tx dal.ReadwriteTransaction, spaceWorkerParams *dal4spaceus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) (err error) {
 		params := ListWorkerParams{
 			ModuleSpaceWorkerParams: spaceWorkerParams,
 			List:                    NewListEntry(request.SpaceID, request.ListID),

@@ -35,15 +35,15 @@ func RunAssetusSpaceWorker(
 	request dto4spaceus.SpaceRequest,
 	worker AssetusModuleWorker,
 ) error {
-	return dal4spaceus.RunModuleSpaceWorker(ctx, userCtx, request.SpaceID, const4contactus.ModuleID, new(dbo4assetus.AssetusSpaceDbo), worker)
+	return dal4spaceus.RunModuleSpaceWorkerWithUserCtx(ctx, userCtx, request.SpaceID, const4contactus.ModuleID, new(dbo4assetus.AssetusSpaceDbo), worker)
 }
 
 func RunAssetusSpaceWorkerTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	userCtx facade.UserContext,
-	request dto4spaceus.SpaceRequest,
+	spaceID string,
 	worker AssetusModuleWorker,
 ) error {
-	return dal4spaceus.RunModuleSpaceWorkerTx(ctx, tx, userCtx, request, const4contactus.ModuleID, new(dbo4assetus.AssetusSpaceDbo), worker)
+	return dal4spaceus.RunModuleSpaceWorkerTx(ctx, tx, userCtx, spaceID, const4contactus.ModuleID, new(dbo4assetus.AssetusSpaceDbo), worker)
 }

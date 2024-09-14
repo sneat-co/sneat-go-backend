@@ -38,7 +38,7 @@ type AssetWorkerParams struct {
 
 func runAssetWorker(ctx context.Context, tx dal.ReadwriteTransaction, userCtx facade.UserContext, request dto4assetus.UpdateAssetRequest, extraData extra.Data) (err error) {
 	// TODO: Replace with future RunTeamModuleItemWorkerTx
-	return dal4spaceus.RunModuleSpaceWorkerTx[*dbo4assetus.AssetusSpaceDbo](ctx, tx, userCtx, request.SpaceRequest, const4assetus.ModuleID, new(dbo4assetus.AssetusSpaceDbo),
+	return dal4spaceus.RunModuleSpaceWorkerTx[*dbo4assetus.AssetusSpaceDbo](ctx, tx, userCtx, request.SpaceID, const4assetus.ModuleID, new(dbo4assetus.AssetusSpaceDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4spaceus.ModuleSpaceWorkerParams[*dbo4assetus.AssetusSpaceDbo]) (err error) {
 			extraType := extra.Type(request.AssetCategory)
 			params := AssetWorkerParams{

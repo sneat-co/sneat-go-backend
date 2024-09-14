@@ -2,7 +2,7 @@ module github.com/sneat-co/sneat-go-backend
 
 go 1.22.3
 
-replace github.com/sneat-co/debtstracker-translations => ../debtstracker-translations
+//replace github.com/sneat-co/debtstracker-translations => ../debtstracker-translations
 
 //replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
 
@@ -34,7 +34,7 @@ replace github.com/sneat-co/debtstracker-translations => ../debtstracker-transla
 require (
 	firebase.google.com/go/v4 v4.14.1
 	github.com/bots-go-framework/bots-api-telegram v0.7.1
-	github.com/bots-go-framework/bots-fw v0.39.1
+	github.com/bots-go-framework/bots-fw v0.39.2
 	github.com/bots-go-framework/bots-fw-store v0.8.2
 	github.com/bots-go-framework/bots-fw-telegram v0.13.1
 	github.com/bots-go-framework/bots-fw-telegram-models v0.3.4
@@ -43,7 +43,7 @@ require (
 	github.com/bots-go-framework/bots-host-gae v0.5.16
 	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85
 	github.com/crediterra/money v0.3.0
-	github.com/dal-go/dalgo v0.13.1
+	github.com/dal-go/dalgo v0.13.2
 	github.com/dal-go/mocks4dalgo v0.1.23
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/golang/mock v1.6.0
@@ -55,8 +55,8 @@ require (
 	github.com/sanity-io/litter v1.5.5
 	github.com/sendgrid/sendgrid-go v3.16.0+incompatible
 	github.com/shiyanhui/hero v0.0.2
-	github.com/sneat-co/debtstracker-translations v0.0.29
-	github.com/sneat-co/sneat-go-core v0.33.1
+	github.com/sneat-co/debtstracker-translations v0.0.30
+	github.com/sneat-co/sneat-go-core v0.34.1
 	github.com/sneat-co/sneat-go-firebase v0.5.11
 	github.com/stretchr/testify v1.9.0
 	github.com/strongo/app-host-gae v0.1.35
@@ -65,7 +65,7 @@ require (
 	github.com/strongo/facebook v1.8.1
 	github.com/strongo/gamp v0.0.1
 	github.com/strongo/gotwilio v0.0.0-20160123000810-f024bbefe80f
-	github.com/strongo/i18n v0.5.0
+	github.com/strongo/i18n v0.6.0
 	github.com/strongo/logus v0.2.0
 	github.com/strongo/random v0.0.1
 	github.com/strongo/slice v0.3.0

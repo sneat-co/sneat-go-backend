@@ -2,13 +2,12 @@ package facade4listus
 
 import (
 	"context"
-	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/modules/listus/const4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
-	"github.com/strongo/validation"
 )
 
 // SetListItemsIsDone marks list item as completed
@@ -16,51 +15,38 @@ func SetListItemsIsDone(ctx context.Context, userCtx facade.UserContext, request
 	if err = request.Validate(); err != nil {
 		return
 	}
-	uid := userCtx.GetUserID()
-	if uid == "" {
-		return validation.NewErrRequestIsMissingRequiredField("userCtx.ContactID()")
-	}
-	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
-		listID := request.ListID
-		list := dal4listus.NewListEntry(request.SpaceID, listID)
-
-		if err := dal4listus.GetListForUpdate(ctx, tx, list); err != nil {
-			if dal.IsNotFound(err) {
-				return nil
+	err = dal4listus.RunListWorker(ctx, userCtx, request.ListRequest,
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4listus.ListWorkerParams) (err error) {
+			if err = params.GetRecords(ctx, tx); err != nil {
+				return
 			}
-			return fmt.Errorf("failed to get a list for update of list items: %w", err)
-		}
-		//listUpdates := make([]dal.Update, 0, len(request.ItemIDs))
-		changed := 0
-		for _, item := range list.Data.Items {
-			for _, id := range request.ItemIDs {
-				logus.Debugf(ctx, "item.InviteID: %s, %s, %s", item.ID, "requestItemID", id)
-				if item.ID == id && item.IsDone != request.IsDone {
-					item.IsDone = request.IsDone
-					changed++
-					//listUpdates = append(listUpdates, )
+			changed := 0
+			for _, item := range params.List.Data.Items {
+				for _, id := range request.ItemIDs {
+					//logus.Debugf(ctx, "items[%d].InviteID: %s, %s, %s", i, item.ID, "requestItemID", id)
+					if item.ID == id {
+						if request.IsDone {
+							item.Status = const4listus.ListItemStatusDone
+						} else if item.IsDone() {
+							item.Status = ""
+						}
+						changed++
+					}
 				}
 			}
-		}
-		logus.Debugf(ctx, "changed: %d", changed)
-		if changed == 0 {
+			logus.Debugf(ctx, "Number of changed items: %d", changed)
+			if changed == 0 {
+				return nil
+			}
+			params.ListUpdates = []dal.Update{
+				{
+					Field: "items",
+					Value: params.List.Data.Items,
+				},
+			}
 			return nil
-		}
-		listUpdates := []dal.Update{
-			{
-				Field: "items",
-				Value: list.Data.Items,
-			},
-		}
-		listKey := list.Record.Key()
-		//logus.Debugf(ctx, "Updating list with listKey=%v, item[0]: %+v; updates[0]: %+v",
-		//	listKey, list.Data.Items[0], listUpdates[0].Value)
-		if err = tx.Update(ctx, listKey, listUpdates); err != nil {
-			return fmt.Errorf("failed to update list record: %w", err)
-		}
-		logus.Debugf(ctx, "Updated list with listKey=%v, field=%s, item[1]: %+v", listKey, listUpdates[0].Field, listUpdates[0].Value)
-		return nil
-	})
+		},
+	)
 	if err != nil {
 		return err
 	}

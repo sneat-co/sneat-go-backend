@@ -6,10 +6,10 @@ import (
 	"github.com/strongo/logus"
 )
 
-const CLEAR_COMMAND = "clear"
+const ClearCommandCode = "clear"
 
 var ClearCommand = botsfw.Command{
-	Code:     CLEAR_COMMAND,
+	Code:     ClearCommandCode,
 	Commands: trans.Commands(trans.COMMAND_CLEAR),
 	//Title:    trans.COMMAND_TEXT_MAIN_MENU_TITLE,
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {

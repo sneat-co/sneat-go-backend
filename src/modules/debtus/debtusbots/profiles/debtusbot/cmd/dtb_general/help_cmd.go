@@ -45,7 +45,7 @@ func HelpCommandAction(whc botsfw.WebhookContext, showFeedbackButton bool) (m bo
 
 func getUserReportUrl(t i18n.SingleLocaleTranslator, submit string) string {
 	switch t.Locale().Code5 {
-	case i18n.LocalCodeRuRu:
+	case i18n.LocaleCodeRuRU:
 		switch submit {
 		case "idea":
 			return "https://goo.gl/dAKHFC"

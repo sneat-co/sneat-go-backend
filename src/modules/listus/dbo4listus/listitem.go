@@ -1,6 +1,7 @@
 package dbo4listus
 
 import (
+	"github.com/sneat-co/sneat-go-backend/src/modules/listus/const4listus"
 	"github.com/strongo/strongoapp/with"
 	"github.com/strongo/validation"
 	"strings"
@@ -8,9 +9,14 @@ import (
 
 // ListItemBase DTO
 type ListItemBase struct {
-	Title  string `json:"title" firestore:"title"`
-	Emoji  string `json:"emoji,omitempty" firestore:"emoji,omitempty"`
-	IsDone bool   `json:"isDone,omitempty" firestore:"isDone,omitempty"`
+	Title string `json:"title" firestore:"title"`
+	Emoji string `json:"emoji,omitempty" firestore:"emoji,omitempty"`
+
+	Status const4listus.ListItemStatus `json:"status,omitempty" firestore:"status,omitempty"`
+}
+
+func (v ListItemBase) IsDone() bool {
+	return v.Status == const4listus.ListItemStatusDone
 }
 
 // Validate returns error if not valid

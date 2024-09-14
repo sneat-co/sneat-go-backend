@@ -22,8 +22,8 @@ func NewSneatAppContextForBotsFW() botsfw.AppContext {
 	return sneatAppBotContext{
 		LocalesProvider: i18n.NewSupportedLocales([]string{
 			i18n.LocaleCodeEnUK,
-			i18n.LocalCodeRuRu,
-			i18n.LocalCodeUaUa,
+			i18n.LocaleCodeRuRU,
+			i18n.LocaleCodeUaUA,
 			i18n.LocaleCodeEsES,
 			i18n.LocaleCodePtPT,
 			i18n.LocaleCodeFrFR,

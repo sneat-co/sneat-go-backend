@@ -24,7 +24,7 @@ func pageContext(r *http.Request, locale i18n.Locale) (translator i18n.SingleLoc
 	c := appengine.NewContext(r)
 
 	switch locale.Code5 {
-	case i18n.LocalCodeRuRu:
+	case i18n.LocaleCodeRuRU:
 		userVoiceID = "47c67b85-d064-4727-b149-bda58cfe6c2d"
 	}
 

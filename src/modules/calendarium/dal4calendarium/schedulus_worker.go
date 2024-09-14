@@ -16,5 +16,5 @@ func RunCalendariumSpaceWorker(
 	request dto4spaceus.SpaceRequest,
 	worker func(ctx context.Context, tx dal.ReadwriteTransaction, params *CalendariumSpaceWorkerParams) (err error),
 ) error {
-	return dal4spaceus.RunModuleSpaceWorker(ctx, userCtx, request.SpaceID, const4calendarium.ModuleID, new(dbo4calendarium.CalendariumSpaceDbo), worker)
+	return dal4spaceus.RunModuleSpaceWorkerWithUserCtx(ctx, userCtx, request.SpaceID, const4calendarium.ModuleID, new(dbo4calendarium.CalendariumSpaceDbo), worker)
 }

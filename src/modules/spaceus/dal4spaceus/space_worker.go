@@ -47,10 +47,10 @@ func (v SpaceWorkerParams) GetRecords(ctx context.Context, tx dal.ReadSession, r
 	if err = tx.GetMulti(ctx, records); err != nil {
 		return err
 	}
-	if !v.Space.Record.Exists() {
-		return errors.New("space record does not exist")
-	}
-	if userID := v.UserID(); userID != "" && v.Space.Record.Exists() {
+	if userID := v.UserID(); userID != "" {
+		if !v.Space.Record.Exists() {
+			return errors.New("space record does not exist")
+		}
 		if !slices.Contains(v.Space.Data.UserIDs, userID) {
 			return fmt.Errorf("%w: space record has no current userID in UserIDs field: %s", facade.ErrUnauthorized, userID)
 		}
@@ -85,11 +85,6 @@ var runSpaceWorker = func(ctx context.Context, userCtx facade.UserContext, space
 	if strings.TrimSpace(spaceID) == "" {
 		return fmt.Errorf("required parameter `spaceID` of runSpaceWorker() is an empty string")
 	}
-	userID := userCtx.GetUserID()
-	if userID == "" {
-		err = facade.ErrUnauthorized
-		return
-	}
 	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		return RunSpaceWorkerTx(ctx, tx, userCtx, spaceID, worker)
 	})
@@ -97,11 +92,29 @@ var runSpaceWorker = func(ctx context.Context, userCtx facade.UserContext, space
 
 func RunSpaceWorkerTx(ctx context.Context, tx dal.ReadwriteTransaction, userCtx facade.UserContext, spaceID string, worker spaceWorker) (err error) {
 	params := NewSpaceWorkerParams(userCtx, spaceID)
-	if err = tx.Get(ctx, params.Space.Record); err != nil {
-		return fmt.Errorf("failed to load space record: %w", err)
+	beforeWorker := func(ctx context.Context) error {
+		if err = tx.Get(ctx, params.Space.Record); err != nil {
+			return fmt.Errorf("failed to load space record: %w", err)
+		}
+		if err = params.Space.Data.Validate(); err != nil {
+			return fmt.Errorf("space record loaded from DB is not valid: %w", err)
+		}
+		return nil
 	}
-	if err = params.Space.Data.Validate(); err != nil {
-		return fmt.Errorf("space record loaded from DB is not valid: %w", err)
+	return runSpaceWorkerTx(ctx, tx, params, beforeWorker, worker)
+}
+
+func runSpaceWorkerTx(
+	ctx context.Context,
+	tx dal.ReadwriteTransaction,
+	params *SpaceWorkerParams,
+	beforeWorker func(ctx context.Context) error,
+	worker spaceWorker,
+) (err error) {
+	if beforeWorker != nil {
+		if err = beforeWorker(ctx); err != nil {
+			return err
+		}
 	}
 	if err = worker(ctx, tx, params); err != nil {
 		return fmt.Errorf("failed to execute space worker: %w", err)
@@ -109,23 +122,30 @@ func RunSpaceWorkerTx(ctx context.Context, tx dal.ReadwriteTransaction, userCtx 
 	if err = applySpaceUpdates(ctx, tx, params); err != nil {
 		return fmt.Errorf("space worker failed to apply space record updates: %w", err)
 	}
-	for _, rec := range params.RecordUpdates {
+	if err = applyRecordUpdates(ctx, tx, params.RecordUpdates); err != nil {
+		return fmt.Errorf("space worker failed to apply record updates: %w", err)
+	}
+	return
+}
+
+func applyRecordUpdates(ctx context.Context, tx dal.ReadwriteTransaction, recordUpdates []coretodo.RecordUpdates) error {
+	for _, rec := range recordUpdates {
 		key := rec.Record.Key()
-		if err = tx.Update(ctx, key, rec.Updates); err != nil {
-			updateFields := make([]string, len(rec.Updates))
+		if err := tx.Update(ctx, key, rec.Updates); err != nil {
+			updateFieldNames := make([]string, len(rec.Updates))
 			for _, u := range rec.Updates {
 				updateField := u.Field
 				if updateField == "" {
 					updateField = strings.Join(u.FieldPath, ".")
 				}
-				updateFields = append(updateFields, updateField)
+				updateFieldNames = append(updateFieldNames, updateField)
 			}
 			return fmt.Errorf(
-				"failed to apply record updates (key=%s, updateFields: %s): %w",
-				key, strings.Join(updateFields, ","), err)
+				"failed to apply record updates (key=%s, updateFieldNames: %s): %w",
+				key, strings.Join(updateFieldNames, ","), err)
 		}
 	}
-	return
+	return nil
 }
 
 func applySpaceUpdates(ctx context.Context, tx dal.ReadwriteTransaction, params *SpaceWorkerParams) (err error) {
@@ -202,7 +222,7 @@ func CreateSpaceItem[D SpaceModuleDbo](
 	if err := spaceRequest.Validate(); err != nil {
 		return err
 	}
-	err = RunModuleSpaceWorker(ctx, userCtx, spaceRequest.SpaceID, moduleID, data,
+	err = RunModuleSpaceWorkerWithUserCtx(ctx, userCtx, spaceRequest.SpaceID, moduleID, data,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *ModuleSpaceWorkerParams[D]) (err error) {
 			if err := worker(ctx, tx, params); err != nil {
 				return fmt.Errorf("failed to execute space worker passed to CreateSpaceItem: %w", err)

@@ -31,7 +31,7 @@ func TestRunModuleSpaceWorker(t *testing.T) {
 	request := dto4spaceus.SpaceRequest{SpaceID: "space1"}
 	const moduleID = "test_module"
 	assertTxWorker := func(ctx context.Context, tx dal.ReadwriteTransaction, params *ModuleSpaceWorkerParams[*fooModuleSpaceData]) (err error) {
-		if err = params.GetRecords(ctx, tx); err != nil {
+		if err = params.GetRecords(ctx, tx, params.Space.Record); err != nil {
 			return err
 		}
 		assert.NotNil(t, params)
@@ -48,34 +48,48 @@ func TestRunModuleSpaceWorker(t *testing.T) {
 		//db2.RunReadwriteTransaction()
 		db.EXPECT().RunReadwriteTransaction(ctx, gomock.Any()).DoAndReturn(func(ctx context.Context, worker dal.RWTxWorker, options ...dal.TransactionOption) error {
 			tx := mocks4dal.NewMockReadwriteTransaction(ctrl)
-			tx.EXPECT().Get(ctx, gomock.Any()).DoAndReturn(func(ctx context.Context, record dal.Record) error {
-				switch key := record.Key(); key.Collection() {
-				case "spaces":
-					record.SetError(nil)
-					spaceDbo := record.Data().(*dbo4spaceus.SpaceDbo)
-					spaceDbo.CreatedAt = time.Now()
-					spaceDbo.CreatedBy = "test"
-					spaceDbo.IncreaseVersion(spaceDbo.CreatedAt, spaceDbo.CreatedBy)
-					spaceDbo.Type = core4spaceus.SpaceTypeFamily
-					spaceDbo.CountryID = "UK"
-					spaceDbo.Status = dbmodels.StatusActive
-					spaceDbo.UserIDs = []string{user.ID}
-				case "modules":
-					record.SetError(nil)
-				default:
-					err := fmt.Errorf("unexpected Get(key=%+v)", key)
-					record.SetError(err)
-					return err
-				}
-				return nil
-			})
+			//tx.EXPECT().Get(ctx, gomock.Any()).DoAndReturn(func(ctx context.Context, record dal.Record) error {
+			//	switch key := record.Key(); key.Collection() {
+			//	case "spaces":
+			//		record.SetError(nil)
+			//		spaceDbo := record.Data().(*dbo4spaceus.SpaceDbo)
+			//		spaceDbo.CreatedAt = time.Now()
+			//		spaceDbo.CreatedBy = "test"
+			//		spaceDbo.IncreaseVersion(spaceDbo.CreatedAt, spaceDbo.CreatedBy)
+			//		spaceDbo.Type = core4spaceus.SpaceTypeFamily
+			//		spaceDbo.CountryID = "UK"
+			//		spaceDbo.Status = dbmodels.StatusActive
+			//		spaceDbo.UserIDs = []string{user.ID}
+			//	case "modules":
+			//		record.SetError(nil)
+			//	default:
+			//		err := fmt.Errorf("unexpected Get(key=%+v)", key)
+			//		record.SetError(err)
+			//		return err
+			//	}
+			//	return nil
+			//})
+			spaceGetCounter := 0
 			tx.EXPECT().GetMulti(ctx, gomock.Any()).DoAndReturn(func(ctx context.Context, records []dal.Record) error {
 				for _, record := range records {
 					switch key := record.Key(); key.Collection() {
 					case "spaces":
-						if err := record.Error(); err == nil {
-							t.Error(fmt.Errorf("duplicate call to get space record"))
+						if key.ID != "space1" {
+							t.Errorf("unexpected space ID: %v", key.ID)
 						}
+						spaceGetCounter++
+						if spaceGetCounter > 1 {
+							return fmt.Errorf("duplicate call to get space record")
+						}
+						record.SetError(nil)
+						spaceDbo := record.Data().(*dbo4spaceus.SpaceDbo)
+						spaceDbo.CreatedAt = time.Now()
+						spaceDbo.CreatedBy = "test"
+						spaceDbo.IncreaseVersion(spaceDbo.CreatedAt, spaceDbo.CreatedBy)
+						spaceDbo.Type = core4spaceus.SpaceTypeFamily
+						spaceDbo.CountryID = "UK"
+						spaceDbo.Status = dbmodels.StatusActive
+						spaceDbo.UserIDs = []string{user.ID}
 					case "modules":
 						record.SetError(nil)
 					default:
@@ -89,7 +103,7 @@ func TestRunModuleSpaceWorker(t *testing.T) {
 		})
 		return db, nil
 	}
-	err := RunModuleSpaceWorker(ctx, user, request.SpaceID, moduleID, new(fooModuleSpaceData), assertTxWorker)
+	err := RunModuleSpaceWorkerWithUserCtx(ctx, user, request.SpaceID, moduleID, new(fooModuleSpaceData), assertTxWorker)
 	assert.Nil(t, err)
 	//type args[ModuleDbo SpaceModuleDbo] struct {
 	//	ctx      context.Context
@@ -108,8 +122,8 @@ func TestRunModuleSpaceWorker(t *testing.T) {
 	//}
 	//for _, tt := range tests {
 	//	t.Run(tt.name, func(t *testing.T) {
-	//		if err := RunModuleSpaceWorker(tt.args.ctx, tt.args.user, tt.args.request, tt.args.moduleID, tt.args.worker); (err != nil) != tt.wantErr {
-	//			t.Errorf("RunModuleSpaceWorker() error = %v, wantErr %v", err, tt.wantErr)
+	//		if err := RunModuleSpaceWorkerWithUserCtx(tt.args.ctx, tt.args.user, tt.args.request, tt.args.moduleID, tt.args.worker); (err != nil) != tt.wantErr {
+	//			t.Errorf("RunModuleSpaceWorkerWithUserCtx() error = %v, wantErr %v", err, tt.wantErr)
 	//		}
 	//	})
 	//}
@@ -118,7 +132,7 @@ func TestRunModuleSpaceWorker(t *testing.T) {
 func TestRunModuleSpaceWorkerTx(t *testing.T) {
 	ctx := context.Background()
 	user := &facade.AuthUserContext{ID: "user1"}
-	request := dto4spaceus.SpaceRequest{SpaceID: "space1"}
+	spaceID := "space1"
 	const moduleID = "test_module"
 	//assertTxWorker := func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *ModuleSpaceWorkerParams[*fooModuleSpaceData]) (err error) {
 	//	assert.NotNil(t, teamWorkerParams)
@@ -129,6 +143,6 @@ func TestRunModuleSpaceWorkerTx(t *testing.T) {
 	//	return nil
 	//}
 	assert.Panics(t, func() {
-		_ = RunModuleSpaceWorkerTx(ctx, nil, user, request, moduleID, new(fooModuleSpaceData), nil)
+		_ = RunModuleSpaceWorkerTx(ctx, nil, user, spaceID, moduleID, new(fooModuleSpaceData), nil)
 	})
 }

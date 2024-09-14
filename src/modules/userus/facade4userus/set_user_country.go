@@ -6,7 +6,6 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/strongoapp/with"
@@ -56,8 +55,7 @@ func txSetUserCountry(ctx context.Context, tx dal.ReadwriteTransaction, userCtx 
 			spaceBrief.CountryID = request.CountryID
 			params.UserUpdates = append(params.UserUpdates, dal.Update{Field: fmt.Sprintf("spaces.%s.countryID", spaceID), Value: request.CountryID})
 		}
-		spaceRequest := dto4spaceus.SpaceRequest{SpaceID: spaceID}
-		if err = dal4contactus.RunContactusSpaceWorkerNoUpdate(ctx, tx, userCtx, spaceRequest,
+		if err = dal4contactus.RunContactusSpaceWorkerNoUpdate(ctx, tx, userCtx, spaceID,
 			func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) (err error) {
 				if err = params.GetRecords(ctx, tx, params.Space.Record); err != nil {
 					return

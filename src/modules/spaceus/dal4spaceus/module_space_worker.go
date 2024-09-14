@@ -28,42 +28,25 @@ func (v *ModuleSpaceWorkerParams[D]) GetRecords(ctx context.Context, tx dal.Read
 	return v.SpaceWorkerParams.GetRecords(ctx, tx, append(records, v.SpaceModuleEntry.Record)...)
 }
 
-type ModuleDbo interface {
+type SpaceModuleDbo = interface {
 	Validate() error
-}
-
-type SpaceModuleDbo = ModuleDbo
-
-func RunModuleSpaceWorkerTx[D SpaceModuleDbo](
-	ctx context.Context,
-	tx dal.ReadwriteTransaction,
-	userCtx facade.UserContext,
-	request dto4spaceus.SpaceRequest,
-	moduleID string,
-	data D,
-	worker func(ctx context.Context, tx dal.ReadwriteTransaction, spaceWorkerParams *ModuleSpaceWorkerParams[D]) (err error),
-) (err error) {
-	if worker == nil {
-		panic("worker is nil")
-	}
-	spaceWorkerParams := NewSpaceWorkerParams(userCtx, request.SpaceID)
-	params := NewSpaceModuleWorkerParams(moduleID, spaceWorkerParams, data)
-	return runModuleSpaceWorkerReadwriteTx(ctx, tx, params, worker)
 }
 
 func RunModuleSpaceWorkerNoUpdates[D SpaceModuleDbo](
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	userCtx facade.UserContext,
-	request dto4spaceus.SpaceRequest,
-	moduleID string,
+	spaceID, moduleID string,
 	data D,
 	worker func(ctx context.Context, tx dal.ReadwriteTransaction, spaceWorkerParams *ModuleSpaceWorkerParams[D]) (err error),
 ) (err error) {
+	if err = validateRunModuleSpaceWorkerArgs[D](spaceID, moduleID, data); err != nil {
+		return err
+	}
 	if worker == nil {
 		panic("worker is nil")
 	}
-	spaceWorkerParams := NewSpaceWorkerParams(userCtx, request.SpaceID)
+	spaceWorkerParams := NewSpaceWorkerParams(userCtx, spaceID)
 	params := NewSpaceModuleWorkerParams(moduleID, spaceWorkerParams, data)
 	return worker(ctx, tx, params)
 }
@@ -89,7 +72,7 @@ func runModuleSpaceWorkerReadonlyTx[D SpaceModuleDbo](
 	worker func(ctx context.Context, tx dal.ReadTransaction, spaceWorkerParams *ModuleSpaceWorkerParams[D]) (err error),
 ) (err error) {
 	if err = worker(ctx, tx, params); err != nil {
-		return fmt.Errorf("failed to execute module space worker: %w", err)
+		return fmt.Errorf("failed to execute module space worker inside runModuleSpaceWorkerReadonlyTx: %w", err)
 	}
 	return nil
 }
@@ -100,8 +83,11 @@ func runModuleSpaceWorkerReadwriteTx[D SpaceModuleDbo](
 	params *ModuleSpaceWorkerParams[D],
 	worker func(ctx context.Context, tx dal.ReadwriteTransaction, spaceWorkerParams *ModuleSpaceWorkerParams[D]) (err error),
 ) (err error) {
+	if worker == nil {
+		panic("worker is nil")
+	}
 	if err = worker(ctx, tx, params); err != nil {
-		return fmt.Errorf("failed to execute module space worker: %w", err)
+		return fmt.Errorf("failed to execute module space worker inside runModuleSpaceWorkerReadwriteTx: %w", err)
 	}
 	if err = applySpaceUpdates(ctx, tx, params.SpaceWorkerParams); err != nil {
 		return fmt.Errorf("space module worker failed to apply space record updates: %w", err)
@@ -128,20 +114,54 @@ func RunReadonlyModuleSpaceWorker[D SpaceModuleDbo](
 	})
 }
 
-func RunModuleSpaceWorker[D SpaceModuleDbo](
+func RunModuleSpaceWorkerWithUserCtx[D SpaceModuleDbo](
 	ctx context.Context,
 	userCtx facade.UserContext,
-	spaceID string,
-	moduleID string,
+	spaceID, moduleID string,
 	data D,
 	worker func(ctx context.Context, tx dal.ReadwriteTransaction, spaceWorkerParams *ModuleSpaceWorkerParams[D]) (err error),
 ) (err error) {
-	return RunSpaceWorkerWithUserContext(ctx, userCtx, spaceID,
-		func(ctx context.Context, tx dal.ReadwriteTransaction, spaceWorkerParams *SpaceWorkerParams) (err error) {
-			params := NewSpaceModuleWorkerParams(moduleID, spaceWorkerParams, data)
-			if err = runModuleSpaceWorkerReadwriteTx(ctx, tx, params, worker); err != nil {
-				return fmt.Errorf("failed to execute module space worker: %w", err)
-			}
-			return
+	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
+		spaceWorkerParams := NewSpaceWorkerParams(userCtx, spaceID)
+		moduleWorkerParams := NewSpaceModuleWorkerParams(moduleID, spaceWorkerParams, data)
+		return runSpaceWorkerTx(ctx, tx, spaceWorkerParams, nil, func(ctx context.Context, tx dal.ReadwriteTransaction, spaceWorkerParams *SpaceWorkerParams) (err error) {
+			return runModuleSpaceWorkerReadwriteTx(ctx, tx, moduleWorkerParams, worker)
 		})
+	})
+	//return RunSpaceWorkerWithUserContext(ctx, userCtx, spaceID,
+	//	func(ctx context.Context, tx dal.ReadwriteTransaction, spaceWorkerParams *SpaceWorkerParams) (err error) {
+	//		params := NewSpaceModuleWorkerParams(moduleID, spaceWorkerParams, data)
+	//		return runModuleSpaceWorkerReadwriteTx(ctx, tx, params, worker)
+	//	},
+	//)
+}
+
+func RunModuleSpaceWorkerTx[D SpaceModuleDbo](
+	ctx context.Context,
+	tx dal.ReadwriteTransaction,
+	userCtx facade.UserContext,
+	spaceID, moduleID string,
+	data D,
+	worker func(ctx context.Context, tx dal.ReadwriteTransaction, spaceWorkerParams *ModuleSpaceWorkerParams[D]) (err error),
+) (err error) {
+	if err = validateRunModuleSpaceWorkerArgs[D](spaceID, moduleID, data); err != nil {
+		return err
+	}
+	spaceWorkerParams := NewSpaceWorkerParams(userCtx, spaceID)
+	params := NewSpaceModuleWorkerParams(moduleID, spaceWorkerParams, data)
+	return runModuleSpaceWorkerReadwriteTx(ctx, tx, params, worker)
+}
+
+func validateRunModuleSpaceWorkerArgs[D SpaceModuleDbo](spaceID, moduleID string, data D) error {
+	var d any
+	if d = data; d == nil {
+		panic("data is nil")
+	}
+	if moduleID == "" {
+		panic("moduleID is empty")
+	}
+	if spaceID == "" {
+		return fmt.Errorf("spaceID is empty")
+	}
+	return nil
 }

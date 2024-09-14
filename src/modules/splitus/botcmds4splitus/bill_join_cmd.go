@@ -137,7 +137,7 @@ func joinBillAction(whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, bill
 	if bill.Data.Currency == "" {
 		guessCurrency := func() money.CurrencyCode {
 			switch whc.Locale().Code5 {
-			case i18n.LocalCodeRuRu:
+			case i18n.LocaleCodeRuRU:
 				return money.CurrencyRUB
 			case i18n.LocaleCodeFrFR, i18n.LocaleCodeDeDE, i18n.LocaleCodeItIT, i18n.LocaleCodePtPT:
 				return money.CurrencyEUR
