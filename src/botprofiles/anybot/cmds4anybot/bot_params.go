@@ -10,9 +10,9 @@ type WelcomeMessageProvider = func(whc botsfw.WebhookContext) (text string, err 
 // BotParams defines parameters to be defined by a bot to be able to use shared_all package
 // This is supposed to be passed only to AddSharedCommands and not to be passed down to other functions
 type BotParams struct {
+	GetWelcomeMessageText WelcomeMessageProvider
 	StartInBotAction      StartInBotActionFunc
 	StartInGroupAction    botsfw.CommandAction
-	GetWelcomeMessageText WelcomeMessageProvider
 	HelpCommandAction     botsfw.CommandAction
 	SetMainMenu           SetMainMenuFunc
 

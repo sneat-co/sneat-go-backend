@@ -15,9 +15,7 @@ import (
 )
 
 const (
-	LocalesListCallbackPath        = "locales"
-	SettingsLocaleListCallbackPath = "settings/" + LocalesListCallbackPath
-	SettingsLocaleSetCallbackPath  = "settings/locale/set"
+	UserSettingsCommandCode = "user-settings"
 )
 
 //var localesReplyKeyboard = tgbotapi.NewReplyKeyboard(
@@ -81,14 +79,14 @@ func getOnboardingLocalesKeyboard(callbackPath string) *tgbotapi.InlineKeyboardM
 	)
 }
 
-func onStartAskLocaleAction(whc botsfw.WebhookContext, setMainMenu SetMainMenuFunc, getWelcomeText WelcomeMessageProvider) (m botsfw.MessageFromBot, err error) {
+func onStartAskLocaleAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 	chatEntity := whc.ChatData()
 
 	if chatEntity.IsAwaitingReplyTo(StartCommandCode) {
 		messageText := whc.Input().(botinput.WebhookTextMessage).Text()
 		for _, locale := range trans.SupportedLocales {
 			if locale.TitleWithIcon() == messageText {
-				return setPreferredLocaleAction(whc, locale.Code5, setPreferredLocaleModeStart, setMainMenu, getWelcomeText)
+				return setPreferredLocaleAction(whc, locale.Code5, setPreferredLocaleModeStart)
 			}
 		}
 		m = whc.NewMessageByCode(trans.MESSAGE_TEXT_UNKNOWN_LANGUAGE)
@@ -103,11 +101,13 @@ func onStartAskLocaleAction(whc botsfw.WebhookContext, setMainMenu SetMainMenuFu
 	return
 }
 
-var AskPreferredLocaleFromSettingsCallback = botsfw.Command{
-	Code:       SettingsLocaleListCallbackPath,
-	InputTypes: []botinput.WebhookInputType{botinput.WebhookInputCallbackQuery},
+var UserSettingsLocaleCommand = botsfw.Command{
+	Code: UserSettingsCommandCode,
+	InputTypes: []botinput.WebhookInputType{
+		botinput.WebhookInputCallbackQuery,
+	},
 	CallbackAction: func(whc botsfw.WebhookContext, _ *url.URL) (m botsfw.MessageFromBot, err error) {
-		callbackData := fmt.Sprintf("%v?mode=settings&code5=", SettingsLocaleSetCallbackPath)
+		callbackData := UserSettingsCommandCode + "?mode=settings&code5="
 		keyboard := tgbotapi.NewInlineKeyboardMarkup(
 			[]tgbotapi.InlineKeyboardButton{
 				{Text: i18n.LocaleEnUS.TitleWithIcon(), CallbackData: callbackData + i18n.LocaleEnUS.Code5},
@@ -134,20 +134,6 @@ var AskPreferredLocaleFromSettingsCallback = botsfw.Command{
 	},
 }
 
-func newSetLocaleCallbackCommand(setMainMenu SetMainMenuFunc, getWelcomeMessageText WelcomeMessageProvider) botsfw.Command {
-	return botsfw.Command{
-		Code: SettingsLocaleSetCallbackPath,
-		CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-			return setPreferredLocaleAction(whc,
-				callbackUrl.Query().Get("code5"),
-				setPreferredLocaleMode(callbackUrl.Query().Get("mode")),
-				setMainMenu,
-				getWelcomeMessageText,
-			)
-		},
-	}
-}
-
 type setPreferredLocaleMode string
 
 const (
@@ -155,7 +141,13 @@ const (
 	setPreferredLocaleModeSettings = "settings"
 )
 
-func setPreferredLocaleAction(whc botsfw.WebhookContext, code5 string, mode setPreferredLocaleMode, setMainMenu SetMainMenuFunc, getWelcomeMessageText WelcomeMessageProvider) (m botsfw.MessageFromBot, err error) {
+func setPreferredLocaleAction(
+	whc botsfw.WebhookContext,
+	code5 string,
+	mode setPreferredLocaleMode, // TODO: is it obsolete?
+) (
+	m botsfw.MessageFromBot, err error,
+) {
 	ctx := whc.Context()
 	logus.Debugf(ctx, "setPreferredLocaleAction(code5=%v, mode=%v)", code5, mode)
 
@@ -203,22 +195,6 @@ func setPreferredLocaleAction(whc botsfw.WebhookContext, code5 string, mode setP
 	case setPreferredLocaleModeStart:
 		logus.Debugf(ctx, "whc.Locale().Code5: %v", whc.Locale().Code5)
 		m = whc.NewMessageByCode(trans.MESSAGE_TEXT_YOUR_SELECTED_PREFERRED_LANGUAGE, selectedLocale.NativeTitle)
-		if getWelcomeMessageText != nil {
-			var welcomeText string
-			if welcomeText, err = getWelcomeMessageText(whc); err != nil {
-				return
-			}
-			m.Text = welcomeText + "\n\n" + m.Text
-			m.Format = botsfw.MessageFormatHTML
-		}
-		m.IsEdit = true
-		if setMainMenu != nil {
-			setMainMenu(whc, &m)
-		}
-		//if _, err = whc.Responder().SendMessage(ctx, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
-		//	logus.Errorf(ctx, "Failed to notify userEntity about selected language: %v", err)
-		//	// Not critical, lets continue
-		//}
 		return
 	case setPreferredLocaleModeSettings:
 		if localeChanged {
@@ -262,10 +238,10 @@ func updateUserAndChatWithLocale(whc botsfw.WebhookContext, appUserID string, lo
 
 	chatData.SetPreferredLanguage(locale.Code5)
 	chatData.SetAwaitingReplyTo("")
-	if err = whc.SaveBotChat(); err != nil {
-		err = fmt.Errorf("failed to save chat data: %w", err)
-		return
-	}
+	//if err = whc.SaveBotChat(); err != nil {
+	//	err = fmt.Errorf("failed to save chat data: %w", err)
+	//	return
+	//}
 	return
 }
 

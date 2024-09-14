@@ -18,7 +18,6 @@ func AddSneatSharedCommands(commandsByType map[botinput.WebhookInputType][]botsf
 			assetsCommand,
 			budgetCommand,
 			debtsCommand,
-			spaceSettingsCommand,
 			calendarCommand,
 		},
 	)

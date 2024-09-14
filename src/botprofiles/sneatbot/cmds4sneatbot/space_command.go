@@ -6,6 +6,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/bothelpers"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/tghelpers"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
@@ -173,19 +174,19 @@ func spaceInlineKeyboard(translator i18n.SingleLocaleTranslator, spaceRef core4s
 		},
 		[]tgbotapi.InlineKeyboardButton{
 			{
-				Text:         "🛒 Buy",
+				Text:         "🛒 " + translator.Translate(trans.LIST_CMD_BUY),
 				CallbackData: listCallbackData(dbo4listus.BuyGroceriesListID),
 			},
 			{
-				Text:         "🏗️ ToDo",
+				Text:         "🏗️ " + translator.Translate(trans.LIST_CMD_TODO),
 				CallbackData: listCallbackData(dbo4listus.DoTasksListID),
 			},
 			{
-				Text:         "📽️ Watch",
+				Text:         "📽️ " + translator.Translate(trans.LIST_CMD_WATCH),
 				CallbackData: listCallbackData(dbo4listus.WatchMoviesListID),
 			},
 			{
-				Text:         "📘 Read",
+				Text:         "📘 " + translator.Translate(trans.LIST_CMD_READ),
 				CallbackData: listCallbackData(dbo4listus.ReadBooksListID),
 			},
 		},
@@ -198,7 +199,7 @@ func spaceInlineKeyboard(translator i18n.SingleLocaleTranslator, spaceRef core4s
 			},
 			{
 				Text:         "⚙️ " + translator.Translate(trans.SPACE_CMD_BTN_SETTINGS),
-				CallbackData: "settings?" + spaceCallbackParams,
+				CallbackData: cmds4anybot.SpaceSettingsCommandCode + "?" + spaceCallbackParams,
 			},
 		},
 		[]tgbotapi.InlineKeyboardButton{

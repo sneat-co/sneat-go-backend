@@ -7,7 +7,8 @@ import (
 
 func GetBotParams() cmds4anybot.BotParams {
 	return cmds4anybot.BotParams{
-		StartInBotAction: startActionWithStartParams,
+		GetWelcomeMessageText: sneatBotWelcomeMessage,
+		StartInBotAction:      startActionWithStartParams,
 		StartInGroupAction: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 			m.Text = "Start in group is not implemented yet for @SneatBot"
 			return
@@ -16,7 +17,6 @@ func GetBotParams() cmds4anybot.BotParams {
 			m.Text = "Help is not implemented yet for @SneatBot"
 			return
 		},
-		GetWelcomeMessageText: sneatBotWelcomeMessage,
 		SetMainMenu: func(whc botsfw.WebhookContext, m *botsfw.MessageFromBot) {
 			m.Keyboard = cmds4anybot.StartMessageInlineKeyboard(whc)
 		},

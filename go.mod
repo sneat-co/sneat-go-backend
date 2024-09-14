@@ -55,7 +55,7 @@ require (
 	github.com/sanity-io/litter v1.5.5
 	github.com/sendgrid/sendgrid-go v3.16.0+incompatible
 	github.com/shiyanhui/hero v0.0.2
-	github.com/sneat-co/debtstracker-translations v0.0.31
+	github.com/sneat-co/debtstracker-translations v0.2.0
 	github.com/sneat-co/sneat-go-core v0.34.1
 	github.com/sneat-co/sneat-go-firebase v0.5.14
 	github.com/stretchr/testify v1.9.0

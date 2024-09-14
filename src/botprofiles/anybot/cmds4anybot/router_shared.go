@@ -15,13 +15,13 @@ func AddSharedCommands(router botsfw.WebhooksRouter, botParams BotParams) {
 			botParams.GetWelcomeMessageText,
 			botParams.SetMainMenu,
 		),
+		spaceSettingsCommand,
 		pingCommand,
 		counterCommand,
 		contactMessageCommand,
 		createHelpRootCommand(botParams.HelpCommandAction),
 		ReferrersCommand,
-		AskPreferredLocaleFromSettingsCallback,
-		newSetLocaleCallbackCommand(botParams.SetMainMenu, botParams.GetWelcomeMessageText),
+		UserSettingsLocaleCommand,
 		leftChatCommand,
 	}
 

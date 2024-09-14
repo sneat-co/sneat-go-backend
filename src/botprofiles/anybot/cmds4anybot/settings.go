@@ -24,7 +24,7 @@ func StartMessageInlineKeyboard(whc botsfw.WebhookContext) *tgbotapi.InlineKeybo
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text:         "Language: " + whc.Locale().TitleWithIcon(),
-				CallbackData: SettingsCommandCode + "/" + LocalesListCallbackPath,
+				CallbackData: UserSettingsCommandCode,
 			},
 			{
 				Text:         "Currency",
@@ -63,7 +63,7 @@ func SettingsMainTelegram(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, k
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text:         whc.CommandText(trans.COMMAND_TEXT_LANGUAGE, emoji.EARTH_ICON),
-				CallbackData: SettingsLocaleListCallbackPath,
+				CallbackData: UserSettingsCommandCode,
 			},
 		},
 	)

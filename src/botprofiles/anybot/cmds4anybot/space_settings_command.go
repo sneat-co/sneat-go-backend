@@ -1,4 +1,4 @@
-package cmds4sneatbot
+package cmds4anybot
 
 import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
@@ -9,13 +9,13 @@ import (
 	"net/url"
 )
 
-const spaceSettingsCommandCode = "spaceSettings"
+const SpaceSettingsCommandCode = "spaceSettings"
 
 var spaceSettingsCommand = botsfw.Command{
-	Code: spaceSettingsCommandCode,
-	//Commands: []string{"/settings"},
+	Code:     SpaceSettingsCommandCode,
+	Commands: []string{"/spaceSettings"},
 	InputTypes: []botinput.WebhookInputType{
-		//botinput.WebhookInputText,
+		botinput.WebhookInputText,
 		botinput.WebhookInputCallbackQuery,
 	},
 	CallbackAction: settingsCallbackAction,
