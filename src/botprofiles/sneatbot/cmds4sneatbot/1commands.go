@@ -8,17 +8,29 @@ import (
 
 // AddSneatSharedCommands registers commands shared by all Sneat bots
 func AddSneatSharedCommands(commandsByType map[botinput.WebhookInputType][]botsfw.Command) {
-	bothelpers.AddCommands(commandsByType, []botsfw.Command{
-		spacesCommand,
-		spaceCommand,
-		membersCommand,
-		contactsCommand,
-		assetsCommand,
-		budgetCommand,
-		debtsCommand,
-		settingsCommand,
-		calendarCommand,
-	})
+	bothelpers.AddCommands(
+		commandsByType,
+		[]botsfw.Command{
+			spacesCommand,
+			spaceCommand,
+			membersCommand,
+			contactsCommand,
+			assetsCommand,
+			budgetCommand,
+			debtsCommand,
+			spaceSettingsCommand,
+			calendarCommand,
+		},
+	)
+}
+
+func AddSneatBotOnlyCommands(commandsByType map[botinput.WebhookInputType][]botsfw.Command) {
+	bothelpers.AddCommands(
+		commandsByType,
+		[]botsfw.Command{
+			settingsCommand,
+		},
+	)
 }
 
 // AddSneatBotCommands registers commands specific only to @SneatBot

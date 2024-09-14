@@ -1,7 +1,6 @@
 package cmds4sneatbot
 
 import (
-	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
 )
@@ -19,14 +18,7 @@ func GetBotParams() cmds4anybot.BotParams {
 		},
 		GetWelcomeMessageText: sneatBotWelcomeMessage,
 		SetMainMenu: func(whc botsfw.WebhookContext, m *botsfw.MessageFromBot) {
-			m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
-				[]tgbotapi.InlineKeyboardButton{
-					{
-						Text:         "Menu not implemented",
-						CallbackData: "main-menu-not-implemented",
-					},
-				},
-			)
+			m.Keyboard = cmds4anybot.StartMessageInlineKeyboard(whc)
 		},
 	}
 }

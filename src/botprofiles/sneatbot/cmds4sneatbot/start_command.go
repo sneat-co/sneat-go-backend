@@ -19,10 +19,6 @@ import (
 //}
 
 func startActionWithStartParams(whc botsfw.WebhookContext, _ []string) (m botsfw.MessageFromBot, err error) {
-	return sneatBotStartAction(whc)
-}
-
-func sneatBotStartAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 	return spaceAction(whc, core4spaceus.NewSpaceRef(core4spaceus.SpaceTypeFamily, ""))
 }
 

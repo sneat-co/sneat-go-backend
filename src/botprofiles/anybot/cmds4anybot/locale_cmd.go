@@ -18,7 +18,8 @@ import (
 )
 
 const (
-	SettingsLocaleListCallbackPath = "settings/locale/list"
+	LocalesListCallbackPath        = "locales"
+	SettingsLocaleListCallbackPath = "settings/" + LocalesListCallbackPath
 	SettingsLocaleSetCallbackPath  = "settings/locale/set"
 )
 
@@ -54,31 +55,33 @@ func getOnboardingLocalesKeyboard(callbackPath string) *tgbotapi.InlineKeyboardM
 		},
 		[]tgbotapi.InlineKeyboardButton{
 			localeInlineKeyboardButton(i18n.LocaleEsEs),
+			localeInlineKeyboardButton(i18n.LocaleDeDe),
+		},
+		[]tgbotapi.InlineKeyboardButton{
 			localeInlineKeyboardButton(i18n.LocalePtPt),
+			localeInlineKeyboardButton(i18n.LocalePtBr),
 		},
 		[]tgbotapi.InlineKeyboardButton{
 			localeInlineKeyboardButton(i18n.LocaleFrFr),
 			localeInlineKeyboardButton(i18n.LocaleItIt),
 		},
 		[]tgbotapi.InlineKeyboardButton{
-			localeInlineKeyboardButton(i18n.LocaleDeDe),
 			localeInlineKeyboardButton(i18n.LocaleFaIr),
+			localeInlineKeyboardButton(i18n.LocaleTrTr),
+		},
+		[]tgbotapi.InlineKeyboardButton{
+			localeInlineKeyboardButton(i18n.LocalePlPl),
+			localeInlineKeyboardButton(i18n.LocaleIdID),
 		},
 		[]tgbotapi.InlineKeyboardButton{
 			localeInlineKeyboardButton(i18n.LocaleZhCn),
 			localeInlineKeyboardButton(i18n.LocaleJaJp),
+			localeInlineKeyboardButton(i18n.LocaleKoKo),
 		},
 		//[]tgbotapi.InlineKeyboardButton{
 		//	{Text: "Autodetect", WebApp: &tgbotapi.WebappInfo{Url: "https://sneat.app/telegram-webapp/detect-locale"}},
 		//},
 	)
-}
-
-func onStartAskLocaleCallbackAction(whc botsfw.WebhookContext, localeCode string, setMainMenu SetMainMenuFunc, getWelcomeMessageText WelcomeMessageProvider) (m botsfw.MessageFromBot, err error) {
-	if m, err = setPreferredLocaleAction(whc, localeCode, "onboarding", setMainMenu, getWelcomeMessageText); err != nil {
-		return m, fmt.Errorf("failed to setPreferredLocaleAction(): %w", err)
-	}
-	return
 }
 
 func onStartAskLocaleAction(whc botsfw.WebhookContext, setMainMenu SetMainMenuFunc, getWelcomeText WelcomeMessageProvider) (m botsfw.MessageFromBot, err error) {
@@ -88,12 +91,15 @@ func onStartAskLocaleAction(whc botsfw.WebhookContext, setMainMenu SetMainMenuFu
 		messageText := whc.Input().(botinput.WebhookTextMessage).Text()
 		for _, locale := range trans.SupportedLocales {
 			if locale.TitleWithIcon() == messageText {
-				return setPreferredLocaleAction(whc, locale.Code5, "onboarding", setMainMenu, getWelcomeText)
+				return setPreferredLocaleAction(whc, locale.Code5, setPreferredLocaleModeStart, setMainMenu, getWelcomeText)
 			}
 		}
 		m = whc.NewMessageByCode(trans.MESSAGE_TEXT_UNKNOWN_LANGUAGE)
 	} else {
-		m = whc.NewMessageByCode(trans.MESSAGE_TEXT_ONBOARDING_ASK_TO_CHOOSE_LANGUAGE)
+		m.Text = fmt.Sprintf("<b>%s</b>", whc.Translate(trans.MESSAGE_TEXT_ONBOARDING_ASK_TO_CHOOSE_LANGUAGE))
+		if whc.Locale().Code5 != i18n.LocaleCodeEnUK && whc.Locale().Code5 != i18n.LocaleCodeEnUS {
+			m.Text += " (What is your preferred language?)"
+		}
 	}
 	m.Keyboard = getOnboardingLocalesKeyboard("start")
 	m.Format = botsfw.MessageFormatHTML
@@ -135,12 +141,24 @@ func newSetLocaleCallbackCommand(setMainMenu SetMainMenuFunc, getWelcomeMessageT
 	return botsfw.Command{
 		Code: SettingsLocaleSetCallbackPath,
 		CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-			return setPreferredLocaleAction(whc, callbackUrl.Query().Get("code5"), callbackUrl.Query().Get("mode"), setMainMenu, getWelcomeMessageText)
+			return setPreferredLocaleAction(whc,
+				callbackUrl.Query().Get("code5"),
+				setPreferredLocaleMode(callbackUrl.Query().Get("mode")),
+				setMainMenu,
+				getWelcomeMessageText,
+			)
 		},
 	}
 }
 
-func setPreferredLocaleAction(whc botsfw.WebhookContext, code5, mode string, setMainMenu SetMainMenuFunc, getWelcomeMessageText WelcomeMessageProvider) (m botsfw.MessageFromBot, err error) {
+type setPreferredLocaleMode string
+
+const (
+	setPreferredLocaleModeStart    = "start"
+	setPreferredLocaleModeSettings = "settings"
+)
+
+func setPreferredLocaleAction(whc botsfw.WebhookContext, code5 string, mode setPreferredLocaleMode, setMainMenu SetMainMenuFunc, getWelcomeMessageText WelcomeMessageProvider) (m botsfw.MessageFromBot, err error) {
 	ctx := whc.Context()
 	logus.Debugf(ctx, "setPreferredLocaleAction(code5=%v, mode=%v)", code5, mode)
 
@@ -200,7 +218,7 @@ func setPreferredLocaleAction(whc botsfw.WebhookContext, code5, mode string, set
 	//if localeChanged {
 
 	switch mode {
-	case "onboarding":
+	case setPreferredLocaleModeStart:
 		logus.Debugf(ctx, "whc.Locale().Code5: %v", whc.Locale().Code5)
 		m = whc.NewMessageByCode(trans.MESSAGE_TEXT_YOUR_SELECTED_PREFERRED_LANGUAGE, selectedLocale.NativeTitle)
 		if getWelcomeMessageText != nil {
@@ -220,7 +238,7 @@ func setPreferredLocaleAction(whc botsfw.WebhookContext, code5, mode string, set
 		//	// Not critical, lets continue
 		//}
 		return
-	case "settings":
+	case setPreferredLocaleModeSettings:
 		if localeChanged {
 			if m, err = dtb_general.MainMenuAction(whc, whc.Translate(trans.MESSAGE_TEXT_LOCALE_CHANGED, selectedLocale.TitleWithIcon()), false); err != nil {
 				return

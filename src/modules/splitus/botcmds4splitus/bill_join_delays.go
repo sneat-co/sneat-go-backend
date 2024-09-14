@@ -49,7 +49,7 @@ func delayedUpdateBillTgChartCard(ctx context.Context, billID string, tgChatMess
 	} else {
 		ids := strings.Split(tgChatMessageID, "@")
 		inlineMessageID, botCode, localeCode5 := ids[0], ids[1], ids[2]
-		translator := i18n.NewSingleMapTranslator(i18n.GetLocaleByCode5(localeCode5), i18n.NewMapTranslator(ctx, "en-UK", trans.TRANS))
+		translator := i18n.NewSingleMapTranslator(i18n.GetLocaleByCode5(localeCode5), i18n.NewMapTranslator(ctx, i18n.LocaleCodeEnUK, trans.TRANS))
 
 		editMessage := tgbotapi.NewEditMessageText(0, 0, inlineMessageID, "")
 		editMessage.ParseMode = "HTML"

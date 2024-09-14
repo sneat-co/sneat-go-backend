@@ -7,6 +7,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/auth/models4auth"
 	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/facade4anybot"
@@ -35,6 +36,8 @@ func createStartCommand(
 	startInBotAction StartInBotActionFunc,
 	startInGroupAction botsfw.CommandAction,
 	getWelcomeMessageText WelcomeMessageProvider,
+	setMainMenu SetMainMenuFunc,
+
 ) botsfw.Command {
 	return botsfw.Command{
 		Code:     StartCommandCode,
@@ -48,15 +51,28 @@ func createStartCommand(
 			return sharedStartCommandAction(whc, startInBotAction, startInGroupAction, getWelcomeMessageText)
 		},
 		CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-			return sharedStartCommandCallbackAction(whc, callbackUrl, getWelcomeMessageText)
+			return sharedStartCommandCallbackAction(whc, callbackUrl, getWelcomeMessageText, setMainMenu, startInBotAction)
 		},
 	}
 }
 
-func sharedStartCommandCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL, getWelcomeMessageText WelcomeMessageProvider) (m botsfw.MessageFromBot, err error) {
+func sharedStartCommandCallbackAction(
+	whc botsfw.WebhookContext,
+	callbackUrl *url.URL,
+	getWelcomeMessageText WelcomeMessageProvider,
+	setMainMenu SetMainMenuFunc,
+	startInBotAction StartInBotActionFunc,
+) (m botsfw.MessageFromBot, err error) {
 	q := callbackUrl.Query()
 	if localeCode := q.Get("locale"); localeCode != "" {
-		return onStartAskLocaleCallbackAction(whc, localeCode, nil, getWelcomeMessageText)
+		// TODO: Need refactoring - duplicate welcome message rendering in setPreferredLocaleAction() & runBotSpecificStartCommand()
+		if m, err = runBotSpecificStartCommand(whc, startInBotAction, []string{}, getWelcomeMessageText); err != nil {
+			return
+		}
+		if m, err = setPreferredLocaleAction(whc, localeCode, setPreferredLocaleModeStart, setMainMenu, getWelcomeMessageText); err != nil {
+			return m, fmt.Errorf("failed to setPreferredLocaleAction(): %w", err)
+		}
+		return
 	}
 	m.Text = fmt.Sprintf("Unknown callback parameters: %s", callbackUrl)
 	m.IsEdit = false
@@ -121,16 +137,46 @@ func sharedStartCommandAction(
 		if localesMsg, err = onStartAskLocaleAction(whc, nil, getWelcomeMessage); err != nil {
 			return
 		}
-		if localesMsg.Text != "" {
+		if localesMsg.Text = strings.TrimSpace(localesMsg.Text); localesMsg.Text != "" {
 			m.Text += "\n" + localesMsg.Text
 			m.Keyboard = localesMsg.Keyboard
 			m.Format = botsfw.MessageFormatHTML
 		}
 		return
 	}
+	if m, err = runBotSpecificStartCommand(whc, startInBotAction, startParams, getWelcomeMessage); err != nil {
+		return
+	}
+	return
+}
+
+func runBotSpecificStartCommand(whc botsfw.WebhookContext, startInBotAction StartInBotActionFunc, startParams []string, getWelcomeMessage WelcomeMessageProvider) (m botsfw.MessageFromBot, err error) {
 	if m, err = startInBotAction(whc, startParams); err != nil {
 		return
 	}
+	responder := whc.Responder()
+	ctx := whc.Context()
+	if _, err = responder.SendMessage(ctx, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
+		return
+	}
+
+	if m.Text, err = getWelcomeMessage(whc); err != nil {
+		return
+	}
+	m.Format = botsfw.MessageFormatHTML
+	m.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
+		[]tgbotapi.InlineKeyboardButton{
+			{
+				Text:         "🛠 Settings",
+				CallbackData: SettingsCommandCode,
+			},
+			{
+				Text:         whc.CommandText(trans.COMMAND_TEXT_LANGUAGE, emoji.EARTH_ICON),
+				CallbackData: SettingsLocaleListCallbackPath,
+			},
+		},
+	)
+
 	return
 }
 

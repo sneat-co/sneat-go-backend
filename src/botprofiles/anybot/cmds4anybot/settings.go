@@ -12,14 +12,36 @@ import (
 
 const SettingsCommandCode = "settings"
 
+func StartMessageInlineKeyboard(whc botsfw.WebhookContext) *tgbotapi.InlineKeyboardMarkup {
+
+	return tgbotapi.NewInlineKeyboardMarkup(
+		[]tgbotapi.InlineKeyboardButton{
+			{
+				Text:         emoji.SETTINGS_ICON + " Settings",
+				CallbackData: SettingsCommandCode,
+			},
+		},
+		[]tgbotapi.InlineKeyboardButton{
+			{
+				Text:         "Language: " + whc.Locale().TitleWithIcon(),
+				CallbackData: SettingsCommandCode + "/" + LocalesListCallbackPath,
+			},
+			{
+				Text:         "Currency",
+				CallbackData: SettingsCommandCode + "/currency",
+			},
+		},
+	)
+}
+
 var SettingsCommandTemplate = botsfw.Command{
 	Code: SettingsCommandCode,
-	Commands: trans.Commands(
-		trans.COMMAND_TEXT_SETTING,
-		trans.COMMAND_SETTINGS,
-		emoji.SETTINGS_ICON,
-	),
-	Icon: emoji.SETTINGS_ICON,
+	InputTypes: []botinput.WebhookInputType{
+		botinput.WebhookInputText,
+		botinput.WebhookInputCallbackQuery,
+	},
+	Commands: []string{"/settings"},
+	Icon:     emoji.SETTINGS_ICON,
 }
 
 func SettingsMainAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {

@@ -1,25 +1,23 @@
 package dtb_transfer
 
 import (
+	"context"
+	"fmt"
 	"github.com/crediterra/money"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
+	"github.com/strongo/decimal"
 	"github.com/strongo/i18n"
 	"github.com/strongo/strongoapp"
 	"github.com/strongo/strongoapp/person"
-
-	"fmt"
 	"regexp"
 	"testing"
-
-	"context"
-	"github.com/strongo/decimal"
 )
 
-func getTestMocks(t *testing.T, locale i18n.Locale) BalanceMessageBuilder {
-	translator := i18n.NewMapTranslator(context.TODO(), "en-UK", trans.TRANS)
+func getTestMocks(_ *testing.T, locale i18n.Locale) BalanceMessageBuilder {
+	translator := i18n.NewMapTranslator(context.TODO(), i18n.LocaleCodeEnUK, trans.TRANS)
 	singleLocaleTranslator := i18n.NewSingleMapTranslator(locale, translator)
 	return NewBalanceMessageBuilder(singleLocaleTranslator)
 }

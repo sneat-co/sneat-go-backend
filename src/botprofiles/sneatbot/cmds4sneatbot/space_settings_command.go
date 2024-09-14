@@ -9,11 +9,13 @@ import (
 	"net/url"
 )
 
-var settingsCommand = botsfw.Command{
-	Code:     "settings",
-	Commands: []string{"/settings"},
+const spaceSettingsCommandCode = "spaceSettings"
+
+var spaceSettingsCommand = botsfw.Command{
+	Code: spaceSettingsCommandCode,
+	//Commands: []string{"/settings"},
 	InputTypes: []botinput.WebhookInputType{
-		botinput.WebhookInputText,
+		//botinput.WebhookInputText,
 		botinput.WebhookInputCallbackQuery,
 	},
 	CallbackAction: settingsCallbackAction,

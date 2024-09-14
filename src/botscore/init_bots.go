@@ -77,7 +77,7 @@ func InitializeBots(botHost botsfw.BotHost, httpRouter *httprouter.Router) {
 }
 
 func newTranslator(ctx context.Context) i18n.Translator {
-	return i18n.NewMapTranslator(ctx, "en-UK", trans.TRANS)
+	return i18n.NewMapTranslator(ctx, i18n.LocaleCodeEnUK, trans.TRANS)
 }
 
 func telegramBotsWithRouter(context.Context) botsfw.BotSettingsBy {

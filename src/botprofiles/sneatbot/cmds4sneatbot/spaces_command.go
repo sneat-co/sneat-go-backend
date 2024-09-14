@@ -11,9 +11,12 @@ import (
 )
 
 var spacesCommand = botsfw.Command{
-	Code:           "spaces",
-	Commands:       []string{"/spaces"},
-	InputTypes:     []botinput.WebhookInputType{botinput.WebhookInputText, botinput.WebhookInputCallbackQuery},
+	Code:     "spaces",
+	Commands: []string{"/spaces"},
+	InputTypes: []botinput.WebhookInputType{
+		botinput.WebhookInputText,
+		botinput.WebhookInputCallbackQuery,
+	},
 	Action:         spacesAction,
 	CallbackAction: spacesCallbackAction,
 }

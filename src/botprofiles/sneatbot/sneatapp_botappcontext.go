@@ -20,7 +20,21 @@ var _ botsfw.AppContext = (*sneatAppBotContext)(nil)
 
 func NewSneatAppContextForBotsFW() botsfw.AppContext {
 	return sneatAppBotContext{
-		LocalesProvider: i18n.NewSupportedLocales([]string{i18n.LocaleCodeEnUS, i18n.LocalCodeRuRu}),
+		LocalesProvider: i18n.NewSupportedLocales([]string{
+			i18n.LocaleCodeEnUK,
+			i18n.LocalCodeRuRu,
+			i18n.LocalCodeUaUa,
+			i18n.LocaleCodeEsES,
+			i18n.LocaleCodePtPT,
+			i18n.LocaleCodeFrFR,
+			i18n.LocaleCodeItIT,
+			i18n.LocaleCodeDeDE,
+			i18n.LocaleCodeFaIR,
+			i18n.LocaleCodeZhCN,
+			i18n.LocaleCodeJaJP,
+			i18n.LocaleCodeKoKO,
+			i18n.LocaleCodePtPT,
+		}),
 	}
 }
 
@@ -109,7 +123,7 @@ func (s sneatAppBotContext) NewAppUserData() appuser.BaseUserData {
 }
 
 func (s sneatAppBotContext) GetTranslator(ctx context.Context) i18n.Translator {
-	return i18n.NewMapTranslator(ctx, "en-UK", trans.TRANS)
+	return i18n.NewMapTranslator(ctx, i18n.LocaleCodeEnUK, trans.TRANS)
 }
 
 func (s sneatAppBotContext) NewBotAppUserEntity() botsfwmodels.AppUserData {
