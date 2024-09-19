@@ -34,17 +34,17 @@ go 1.22.3
 require (
 	firebase.google.com/go/v4 v4.14.1
 	github.com/bots-go-framework/bots-api-telegram v0.7.1
-	github.com/bots-go-framework/bots-fw v0.40.0
+	github.com/bots-go-framework/bots-fw v0.40.1
 	github.com/bots-go-framework/bots-fw-store v0.8.2
-	github.com/bots-go-framework/bots-fw-telegram v0.13.2
-	github.com/bots-go-framework/bots-fw-telegram-models v0.3.5
+	github.com/bots-go-framework/bots-fw-telegram v0.13.4
+	github.com/bots-go-framework/bots-fw-telegram-models v0.3.6
 	github.com/bots-go-framework/bots-fw-telegram-webapp v0.3.1
 	github.com/bots-go-framework/bots-go-core v0.0.3
-	github.com/bots-go-framework/bots-host-gae v0.5.16
+	github.com/bots-go-framework/bots-host-gae v0.5.17
 	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85
 	github.com/crediterra/money v0.3.0
 	github.com/dal-go/dalgo v0.13.2
-	github.com/dal-go/mocks4dalgo v0.1.23
+	github.com/dal-go/mocks4dalgo v0.1.24
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/golang/mock v1.6.0
 	github.com/gosimple/slug v1.14.0
@@ -55,11 +55,11 @@ require (
 	github.com/sanity-io/litter v1.5.5
 	github.com/sendgrid/sendgrid-go v3.16.0+incompatible
 	github.com/shiyanhui/hero v0.0.2
-	github.com/sneat-co/debtstracker-translations v0.2.0
-	github.com/sneat-co/sneat-go-core v0.34.1
-	github.com/sneat-co/sneat-go-firebase v0.5.14
+	github.com/sneat-co/debtstracker-translations v0.2.1
+	github.com/sneat-co/sneat-go-core v0.34.2
+	github.com/sneat-co/sneat-go-firebase v0.5.16
 	github.com/stretchr/testify v1.9.0
-	github.com/strongo/app-host-gae v0.1.36
+	github.com/strongo/app-host-gae v0.1.37
 	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.0.1
 	github.com/strongo/facebook v1.8.1
@@ -69,7 +69,7 @@ require (
 	github.com/strongo/logus v0.2.0
 	github.com/strongo/random v0.0.1
 	github.com/strongo/slice v0.3.0
-	github.com/strongo/strongoapp v0.25.0
+	github.com/strongo/strongoapp v0.25.1
 	github.com/strongo/validation v0.0.7
 	github.com/yaa110/go-persian-calendar v1.2.1
 	golang.org/x/crypto v0.27.0
@@ -89,7 +89,7 @@ require (
 	github.com/AlekSi/pointer v1.2.0 // indirect
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
 	github.com/alexsergivan/transliterator v1.0.1 // indirect
-	github.com/dal-go/dalgo2firestore v0.2.4 // indirect
+	github.com/dal-go/dalgo2firestore v0.2.5 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/fgprof v0.9.5 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
