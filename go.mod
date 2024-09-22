@@ -57,7 +57,7 @@ require (
 	github.com/shiyanhui/hero v0.0.2
 	github.com/sneat-co/debtstracker-translations v0.2.1
 	github.com/sneat-co/sneat-go-core v0.34.2
-	github.com/sneat-co/sneat-go-firebase v0.5.16
+	github.com/sneat-co/sneat-go-firebase v0.5.17
 	github.com/stretchr/testify v1.9.0
 	github.com/strongo/app-host-gae v0.1.37
 	github.com/strongo/decimal v0.1.1
@@ -89,7 +89,7 @@ require (
 	github.com/AlekSi/pointer v1.2.0 // indirect
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
 	github.com/alexsergivan/transliterator v1.0.1 // indirect
-	github.com/dal-go/dalgo2firestore v0.2.5 // indirect
+	github.com/dal-go/dalgo2firestore v0.2.6 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/fgprof v0.9.5 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
@@ -121,11 +121,11 @@ require (
 	golang.org/x/sys v0.25.0 // indirect
 	golang.org/x/text v0.18.0 // indirect
 	golang.org/x/time v0.6.0 // indirect
-	google.golang.org/api v0.197.0 // indirect
+	google.golang.org/api v0.198.0 // indirect
 	google.golang.org/genproto v0.0.0-20240903143218-8af14fe29dc1 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240903143218-8af14fe29dc1 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240903143218-8af14fe29dc1 // indirect
-	google.golang.org/grpc v1.66.2 // indirect
+	google.golang.org/grpc v1.67.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
