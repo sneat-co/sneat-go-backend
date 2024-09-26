@@ -1,17 +1,16 @@
 package gaedal
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"github.com/sneat-co/sneat-go-backend/src/core/queues"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	apphostgae "github.com/strongo/app-host-gae"
 	"github.com/strongo/delaying"
+	"google.golang.org/appengine/v2/taskqueue"
 	"net/url"
 	"time"
-
-	"context"
-	"errors"
-	"google.golang.org/appengine/v2/taskqueue"
 )
 
 func _validateSetReminderIsSentMessageIDs(messageIntID int64, messageStrID string, sentAt time.Time) error {

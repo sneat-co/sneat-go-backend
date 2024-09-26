@@ -2,18 +2,17 @@ package redirects
 
 import (
 	"fmt"
+	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	pages2 "github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/website/pages"
 	"github.com/strongo/i18n"
 	"github.com/strongo/logus"
 	"google.golang.org/appengine/v2"
+	"google.golang.org/appengine/v2/datastore"
 	"html/template"
 	"net/http"
 	"strings"
-
-	"github.com/julienschmidt/httprouter"
-	"google.golang.org/appengine/v2/datastore"
 )
 
 var receiptOpenGraphPageTmpl *template.Template

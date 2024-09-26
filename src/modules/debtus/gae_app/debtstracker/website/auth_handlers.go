@@ -2,6 +2,7 @@ package website
 
 import (
 	"github.com/dal-go/dalgo/dal"
+	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/strongo/logus"
@@ -9,8 +10,6 @@ import (
 	"net/http"
 	"strings"
 	"time"
-
-	"github.com/julienschmidt/httprouter"
 )
 
 func LoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {

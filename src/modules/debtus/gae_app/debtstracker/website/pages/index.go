@@ -1,15 +1,14 @@
 package pages
 
 import (
+	"context"
+	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/strongo/logus"
 	"google.golang.org/appengine/v2"
 	"html/template"
 	"net/http"
 	"strings"
-
-	"context"
-	"github.com/julienschmidt/httprouter"
 )
 
 const TEMPLATES_PATH = "templates/" //"github.com/sneat-co/sneat-go-backend/debtusbot/gae_app/debtusbot/pages/templates/"

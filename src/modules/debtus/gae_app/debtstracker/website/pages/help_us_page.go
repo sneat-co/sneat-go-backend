@@ -2,12 +2,11 @@ package pages
 
 import (
 	"github.com/julienschmidt/httprouter"
+	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_general"
 	"google.golang.org/appengine/v2"
 	"html/template"
 	"net/http"
-
-	"github.com/sneat-co/debtstracker-translations/trans"
 )
 
 var helpUsPageTmpl *template.Template

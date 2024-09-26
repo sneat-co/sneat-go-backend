@@ -1,12 +1,11 @@
 package pages
 
 import (
+	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"google.golang.org/appengine/v2"
 	"html/template"
 	"net/http"
-
-	"github.com/julienschmidt/httprouter"
 )
 
 var adsPageTmpl *template.Template

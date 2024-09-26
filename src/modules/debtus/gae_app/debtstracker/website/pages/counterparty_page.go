@@ -2,13 +2,12 @@ package pages
 
 import (
 	"fmt"
+	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/strongo/logus"
+	"golang.org/x/net/html"
 	"google.golang.org/appengine/v2"
 	"net/http"
-
-	"github.com/julienschmidt/httprouter"
-	"golang.org/x/net/html"
 )
 
 func CounterpartyPage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
