@@ -57,8 +57,6 @@ github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85 h1:DhDOfMUB
 github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85/go.mod h1:G8FV2IlQjC168M2ZNvih9I+8pInny334pxTzcR+QhWw=
 github.com/crediterra/money v0.3.0 h1:dHWEZhkMGGxkHTAbGQOaeg8eYbL8qJSCgcqdOTbNg20=
 github.com/crediterra/money v0.3.0/go.mod h1:0BT7dzPk4Wv+Wi8J6sxlFbCknYioLWVVQM4ciMJh6TI=
-github.com/dal-go/dalgo v0.13.2 h1:q1NKsfn9vX90ugMyFp+yNVUyS4ykD/sjXpXibyx1Fb8=
-github.com/dal-go/dalgo v0.13.2/go.mod h1:tErF10bqQiNrwJQ5qwL3kwoaUa6dDq4z3X3pdChr3Ms=
 github.com/dal-go/dalgo v0.14.0 h1:XhEmNfbCtV5ISxzFBE/Bk7W8OpWePYRmlvlJ/8Jk+dQ=
 github.com/dal-go/dalgo v0.14.0/go.mod h1:tErF10bqQiNrwJQ5qwL3kwoaUa6dDq4z3X3pdChr3Ms=
 github.com/dal-go/dalgo2firestore v0.2.6 h1:Pn840/96SxIVadlL3EOrSiPzU2JDqzgtYMPUwLqtYRY=
