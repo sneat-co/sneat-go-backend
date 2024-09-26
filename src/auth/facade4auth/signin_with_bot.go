@@ -10,7 +10,6 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/models4bots"
-	"github.com/sneat-co/sneat-go-backend/src/coretodo"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -50,7 +49,7 @@ func SignInWithBot(
 		now := time.Now() // TODO: Should be in sync with one used in createBotUserAndAppUserRecordsTx()
 		if params.User.Record.Exists() {
 			params.UserUpdates = append(params.UserUpdates, params.User.Data.SetLastLoginAt(now))
-			params.RecordsToUpdate = append(params.RecordsToUpdate, coretodo.RecordUpdates{
+			params.RecordsToUpdate = append(params.RecordsToUpdate, &record.Updates{
 				Record:  params.User.Record,
 				Updates: params.UserUpdates,
 			})
@@ -58,7 +57,7 @@ func SignInWithBot(
 			params.QueueForInsert(params.User.Record)
 		}
 		if botUser.Record.Exists() {
-			params.RecordsToUpdate = append(params.RecordsToUpdate, coretodo.RecordUpdates{
+			params.RecordsToUpdate = append(params.RecordsToUpdate, &record.Updates{
 				Record: botUser.Record,
 				Updates: []dal.Update{ // TODO: Should be populated inside of createBotUserAndAppUserRecordsTx()?
 					{Field: "appUserID", Value: params.User.ID},

@@ -43,7 +43,7 @@ require (
 	github.com/bots-go-framework/bots-host-gae v0.5.17
 	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85
 	github.com/crediterra/money v0.3.0
-	github.com/dal-go/dalgo v0.13.2
+	github.com/dal-go/dalgo v0.14.0
 	github.com/dal-go/mocks4dalgo v0.1.24
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/golang/mock v1.6.0

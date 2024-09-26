@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coretodo"
+	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -31,7 +31,7 @@ type SpaceWorkerParams struct {
 	//
 	Space         dbo4spaceus.SpaceEntry
 	SpaceUpdates  []dal.Update
-	RecordUpdates []coretodo.RecordUpdates
+	RecordUpdates []record.Updates
 }
 
 func (v SpaceWorkerParams) UserID() string {
@@ -128,7 +128,7 @@ func runSpaceWorkerTx(
 	return
 }
 
-func applyRecordUpdates(ctx context.Context, tx dal.ReadwriteTransaction, recordUpdates []coretodo.RecordUpdates) error {
+func applyRecordUpdates(ctx context.Context, tx dal.ReadwriteTransaction, recordUpdates []record.Updates) error {
 	for _, rec := range recordUpdates {
 		key := rec.Record.Key()
 		if err := tx.Update(ctx, key, rec.Updates); err != nil {

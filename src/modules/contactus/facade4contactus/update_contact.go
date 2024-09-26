@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coretodo"
+	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dto4contactus"
@@ -107,7 +107,7 @@ func updateContactTxWorker(
 			Space:      request.SpaceID,
 			ItemID:     request.ContactID,
 		}
-		var recordsUpdates []coretodo.RecordUpdates
+		var recordsUpdates []record.Updates
 		recordsUpdates, err = facade4linkage.UpdateRelatedField(ctx, tx,
 			itemRef, request.UpdateRelatedFieldRequest, &dbo4linkage.WithRelatedAndIDsAndUserID{
 				WithUserID:        dbmodels.WithUserID{UserID: params.Contact.Data.UserID},

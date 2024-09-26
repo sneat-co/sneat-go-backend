@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/record"
 	"github.com/gosimple/slug"
-	"github.com/sneat-co/sneat-go-backend/src/coretodo"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
@@ -31,7 +31,7 @@ type CreateSpaceParams struct {
 	Space          dbo4spaceus.SpaceEntry
 	ContactusSpace dal4contactus.ContactusSpaceEntry
 	Member         dal4contactus.ContactEntry
-	*coretodo.WithRecordChanges
+	*record.WithRecordChanges
 }
 
 // CreateSpace creates SpaceIDs record
@@ -49,7 +49,7 @@ func CreateSpace(
 	err = dal4userus.RunUserWorker(ctx, userCtx, true, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4userus.UserWorkerParams) (err error) {
 		createSpaceParams = CreateSpaceParams{
 			User:              params.User,
-			WithRecordChanges: new(coretodo.WithRecordChanges),
+			WithRecordChanges: new(record.WithRecordChanges),
 		}
 		now := time.Now()
 		if err = CreateSpaceTxWorker(ctx, tx, now, request, &createSpaceParams); err != nil {

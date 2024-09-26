@@ -87,7 +87,7 @@ func createOrUpdateUserRecord(userInfo *sneatauth.AuthUserInfo, userToCreate Dat
 	} else if err = updateUserRecordWithInitData(userToCreate, params.UserWorkerParams); err != nil {
 		err = fmt.Errorf("failed to update user record data: %w", err)
 		// It might be too earlier to add updates to RecordsToUpdate?
-		//params.RecordsToUpdate = append(params.RecordsToUpdate, coretodo.RecordUpdates{Record: params.User.Record, Updates: params.UserUpdates})
+		//params.RecordsToUpdate = append(params.RecordsToUpdate, record.Updates{Record: params.User.Record, Updates: params.UserUpdates})
 		return
 	}
 	return

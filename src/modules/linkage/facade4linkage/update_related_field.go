@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coretodo"
+	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dto4linkage"
 	"github.com/strongo/validation"
@@ -17,7 +17,7 @@ func UpdateRelatedField(
 	request dto4linkage.UpdateRelatedFieldRequest,
 	item *dbo4linkage.WithRelatedAndIDsAndUserID,
 	addUpdates func(updates []dal.Update),
-) (recordsUpdates []coretodo.RecordUpdates, err error) {
+) (recordsUpdates []record.Updates, err error) {
 	var setRelatedResult SetRelatedResult
 
 	for i, itemRolesCommand := range request.Related {

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
-	"github.com/sneat-co/sneat-go-backend/src/coretodo"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
@@ -17,7 +16,7 @@ func updateRelatedItem(
 	tx dal.ReadwriteTransaction,
 	objectRef dbo4linkage.SpaceModuleItemRef,
 	relateds []*dbo4linkage.RelationshipItemRolesCommand,
-) (recordsUpdates []coretodo.RecordUpdates, err error) {
+) (recordsUpdates []record.Updates, err error) {
 	itemKey := dbo4spaceus.NewSpaceModuleItemKeyFromItemRef(objectRef)
 	itemDbo := new(dbo4linkage.WithRelatedAndIDsAndUserID)
 	itemDbo.WithRelatedAndIDs = new(dbo4linkage.WithRelatedAndIDs)
