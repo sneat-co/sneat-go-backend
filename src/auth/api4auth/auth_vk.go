@@ -1,21 +1,9 @@
 package api4auth
 
 import (
+	"context"
 	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
 	"net/http"
-
-	"context"
-	//"github.com/sneat-co/sneat-go-backend/debtusbot/gae_app/debtusbot/dtdal/gaedal"
-	//"google.golang.org/appengine/v2/datastore"
-	//"errors"
-	//"github.com/sneat-co/sneat-go-backend/debtusbot/gae_app/debtusbot/auth"
-	//"strconv"
-	//"github.com/sneat-co/sneat-go-backend/debtusbot/gae_app/debtusbot/dtdal"
-	//"github.com/strongo/nds"
-	//"github.com/strongo/vk"
-	//"strings"
-	//"fmt"
-	//"github.com/sneat-co/sneat-go-backend/debtusbot/gae_app/debtusbot/models"
 )
 
 //const VK_USER_ALEXT = 7631716
