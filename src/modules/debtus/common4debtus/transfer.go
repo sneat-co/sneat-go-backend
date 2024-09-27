@@ -92,7 +92,7 @@ func GetNewDebtPageUrl(whc botsfw.WebhookContext, direction models4debtus.Transf
 	ctx := whc.Context()
 	appUserID := whc.AppUserID()
 	botIssuer := token4auth.GetBotIssuer(botPlatform, botID)
-	token, _ := token4auth.IssueFirebaseAuthToken(ctx, appUserID, botIssuer)
+	token, _ := token4auth.IssueAuthToken(ctx, appUserID, botIssuer)
 	host := GetWebsiteHost(botID)
 	// utmParams := NewUtmParams(whc, utmCampaign)
 	return fmt.Sprintf(

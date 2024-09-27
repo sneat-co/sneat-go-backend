@@ -19,9 +19,9 @@ func IssueTokenLegacy(userID string, issuer string) string {
 	panic("legacy code")
 	//switch userID {
 	//case "":
-	//	panic("IssueFirebaseAuthToken(userID - empty)")
+	//	panic("IssueAuthToken(userID - empty)")
 	//case "0":
-	//	panic("IssueFirebaseAuthToken(userID == 0)")
+	//	panic("IssueAuthToken(userID == 0)")
 	//}
 	//
 	//// Create a new token object, specifying signing method and the claims
@@ -46,9 +46,9 @@ func IssueTokenLegacy(userID string, issuer string) string {
 	//if issuer != "" {
 	//	if len(issuer) > 100 {
 	//		if len(issuer) <= 1000 {
-	//			panic("IssueFirebaseAuthToken() => len(issuer) > 20, issuer: " + issuer)
+	//			panic("IssueAuthToken() => len(issuer) > 20, issuer: " + issuer)
 	//		} else {
-	//			panic("IssueFirebaseAuthToken() => len(issuer) > 20, issuer[:1000]: " + issuer[:1000])
+	//			panic("IssueAuthToken() => len(issuer) > 20, issuer[:1000]: " + issuer[:1000])
 	//		}
 	//
 	//	}

@@ -2,7 +2,6 @@ package facade4auth
 
 import (
 	"context"
-	"firebase.google.com/go/v4/auth"
 	"fmt"
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
 	"github.com/bots-go-framework/bots-fw-telegram"
@@ -10,6 +9,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfwconst"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
+	"github.com/sneat-co/sneat-go-backend/src/auth/dto4auth"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/models4bots"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
@@ -89,7 +89,7 @@ func getOrCreateAppUserRecordFromBotUser(
 	params CreateUserWorkerParams, err error,
 ) {
 
-	userToCreate := DataToCreateUser{
+	userToCreate := dto4auth.DataToCreateUser{
 		Names: person.NameFields{
 			FirstName: botUserData.FirstName,
 			LastName:  botUserData.LastName,
@@ -103,14 +103,13 @@ func getOrCreateAppUserRecordFromBotUser(
 		RemoteClient: remoteClientInfo,
 	}
 
-	var firebaseUserRecord *auth.UserRecord
-	if firebaseUserRecord, err = createFirebaseUser(ctx, userToCreate); err != nil {
+	var uid string
+	if uid, err = CreateUserInAuth(ctx, userToCreate); err != nil {
 		return
 	}
-
 	defer func() {
 		if err != nil {
-			if err2 := deleteFirebaseUser(ctx, firebaseUserRecord.UID); err2 != nil {
+			if err2 := DeleteUserFromAuth(ctx, uid); err2 != nil {
 				err = fmt.Errorf("failed to delete newly created firebase user: %v: ORIGINAL ERROR: %w", err2, err)
 			}
 		}
@@ -129,7 +128,7 @@ func getOrCreateAppUserRecordFromBotUser(
 	params = CreateUserWorkerParams{
 		UserWorkerParams: &dal4userus.UserWorkerParams{
 			Started: started,
-			User:    dbo4userus.NewUserEntry(firebaseUserRecord.UID),
+			User:    dbo4userus.NewUserEntry(uid),
 		},
 	}
 	if err = tx.Get(ctx, params.User.Record); err != nil && !dal.IsNotFound(err) {
@@ -140,3 +139,6 @@ func getOrCreateAppUserRecordFromBotUser(
 	}
 	return
 }
+
+var CreateUserInAuth func(ctx context.Context, userToCreate dto4auth.DataToCreateUser) (uid string, err error)
+var DeleteUserFromAuth func(ctx context.Context, uid string) (err error)

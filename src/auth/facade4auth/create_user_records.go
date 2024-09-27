@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/auth/dto4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
@@ -19,7 +20,7 @@ import (
 )
 
 // CreateUserRecords sets user title
-func CreateUserRecords(ctx context.Context, userCtx facade.UserContext, userToCreate DataToCreateUser) (params CreateUserWorkerParams, err error) {
+func CreateUserRecords(ctx context.Context, userCtx facade.UserContext, userToCreate dto4auth.DataToCreateUser) (params CreateUserWorkerParams, err error) {
 	if err = userToCreate.Validate(); err != nil {
 		err = fmt.Errorf("%w: %v", facade.ErrBadRequest, err)
 		return
@@ -52,7 +53,7 @@ func CreateUserRecords(ctx context.Context, userCtx facade.UserContext, userToCr
 func createUserRecordsTxWorker(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	userInfo *sneatauth.AuthUserInfo, userToCreate DataToCreateUser, // TODO: Does this 2 duplicate each other?
+	userInfo *sneatauth.AuthUserInfo, userToCreate dto4auth.DataToCreateUser, // TODO: Does this 2 duplicate each other?
 	params *CreateUserWorkerParams,
 ) (err error) {
 	if params == nil {
@@ -73,7 +74,7 @@ func createUserRecordsTxWorker(
 	return
 }
 
-func createOrUpdateUserRecord(userInfo *sneatauth.AuthUserInfo, userToCreate DataToCreateUser, params *CreateUserWorkerParams) (err error) {
+func createOrUpdateUserRecord(userInfo *sneatauth.AuthUserInfo, userToCreate dto4auth.DataToCreateUser, params *CreateUserWorkerParams) (err error) {
 	if params == nil {
 		panic("params is nil")
 	}
@@ -93,7 +94,7 @@ func createOrUpdateUserRecord(userInfo *sneatauth.AuthUserInfo, userToCreate Dat
 	return
 }
 
-func createUserRecord(userToCreate DataToCreateUser, user dbo4userus.UserEntry, userInfo *sneatauth.AuthUserInfo) error {
+func createUserRecord(userToCreate dto4auth.DataToCreateUser, user dbo4userus.UserEntry, userInfo *sneatauth.AuthUserInfo) error {
 	if userInfo == nil {
 		panic("userInfo is nil")
 	}
@@ -172,7 +173,7 @@ func createUserRecord(userToCreate DataToCreateUser, user dbo4userus.UserEntry, 
 	return nil
 }
 
-func updateUserRecordWithInitData(userToCreate DataToCreateUser, params *dal4userus.UserWorkerParams) error {
+func updateUserRecordWithInitData(userToCreate dto4auth.DataToCreateUser, params *dal4userus.UserWorkerParams) error {
 	if name := userToCreate.Names; !name.IsEmpty() {
 		if name.FullName == "" {
 			name.FullName = name.GetFullName()

@@ -1,6 +1,7 @@
 package api4userus
 
 import (
+	"github.com/sneat-co/sneat-go-backend/src/auth/dto4auth"
 	"github.com/sneat-co/sneat-go-backend/src/auth/facade4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dto4userus"
 	"github.com/sneat-co/sneat-go-core/apicore"
@@ -22,7 +23,7 @@ func httpInitUserRecord(w http.ResponseWriter, r *http.Request) {
 	}
 	request.RemoteClient = apicore.GetRemoteClientInfo(r)
 	var params facade4auth.CreateUserWorkerParams
-	userToCreate := facade4auth.DataToCreateUser{
+	userToCreate := dto4auth.DataToCreateUser{
 		AuthAccount: appuser.AccountKey{
 			Provider: request.AuthProvider,
 			ID:       strings.ToLower(strings.TrimSpace(request.Email)),

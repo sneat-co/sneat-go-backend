@@ -36,7 +36,7 @@ func ReturnToken(ctx context.Context, w http.ResponseWriter, r *http.Request, us
 		apicore.ReturnError(ctx, w, r, validation.NewBadRequestError(errors.New("issuing admin token is not implemented yet")))
 		return
 	}
-	token, err := token4auth.IssueFirebaseAuthToken(ctx, userID, issuer)
+	token, err := token4auth.IssueAuthToken(ctx, userID, issuer)
 	if err != nil {
 		err = fmt.Errorf("failed to issue Firebase token: %w", err)
 		apicore.ReturnError(ctx, w, r, err)

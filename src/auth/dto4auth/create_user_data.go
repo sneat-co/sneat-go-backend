@@ -1,4 +1,4 @@
-package facade4auth
+package dto4auth
 
 import (
 	"fmt"

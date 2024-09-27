@@ -66,7 +66,7 @@ func (l Linker) url(path, query, hash string) string {
 		buffer.WriteString("&")
 	}
 	//isAdmin := false // TODO: How to get isAdmin?
-	//token, _ := token4auth.IssueFirebaseAuthToken(ctx, l.userID, l.issuer)
+	//token, _ := token4auth.IssueAuthToken(ctx, l.userID, l.issuer)
 	buffer.WriteString("lang=" + l.locale)
 	buffer.WriteString("&secret=TODO")
 	return buffer.String()

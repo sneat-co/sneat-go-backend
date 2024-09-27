@@ -5,6 +5,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/mocks4dalgo/mocks4dal"
 	"github.com/golang/mock/gomock"
+	"github.com/sneat-co/sneat-go-backend/src/auth/dto4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
@@ -19,7 +20,7 @@ func Test_InitUserRecord(t *testing.T) {
 	ctx := context.Background()
 	type args struct {
 		user         facade.UserContext
-		userToCreate DataToCreateUser
+		userToCreate dto4auth.DataToCreateUser
 	}
 	tests := []struct {
 		name     string
@@ -31,7 +32,7 @@ func Test_InitUserRecord(t *testing.T) {
 			name: "should_create_user_record",
 			args: args{
 				user: facade.NewUserContext("test_user_1"),
-				userToCreate: DataToCreateUser{
+				userToCreate: dto4auth.DataToCreateUser{
 					AuthAccount: appuser.AccountKey{
 						Provider: "password",
 						ID:       "u1@example.com",
