@@ -7,7 +7,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/strongo/logus"
-	"google.golang.org/appengine/v2"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -16,7 +15,7 @@ import (
 )
 
 func redirectToWebApp(w http.ResponseWriter, r *http.Request, authRequired bool, path string, p2p map[string]string, optionalParams []string) {
-	c := appengine.NewContext(r)
+	c := r.Context()
 	query := r.URL.Query()
 
 	authInfo, _, err := token4auth.Authenticate(w, r, authRequired)

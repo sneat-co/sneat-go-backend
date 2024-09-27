@@ -2,6 +2,7 @@ package maintainance
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
@@ -10,8 +11,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
-	"google.golang.org/appengine/v2"
-	"google.golang.org/appengine/v2/datastore"
 	"net/http"
 	"strings"
 	"sync"
@@ -36,7 +35,7 @@ func mergeContactsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := appengine.NewContext(r)
+	ctx := r.Context()
 	userCtx := facade.NewUserContext("")
 	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		return mergeContacts(ctx, userCtx, tx, spaceID, targetContactID, sourceContactIDs...)
@@ -202,7 +201,7 @@ func mergeContactTransfers(ctx context.Context, tx dal.ReadwriteTransaction, wg 
 	)
 	for {
 		if record, err = transfers.Next(); err != nil {
-			if err == datastore.Done {
+			if errors.Is(err, dal.ErrNoMoreRecords) {
 				err = nil
 				break
 			}

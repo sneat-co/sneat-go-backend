@@ -6,14 +6,13 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/strongo/logus"
-	"google.golang.org/appengine/v2"
 	"net/http"
 	"strings"
 	"time"
 )
 
 func LoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	c := appengine.NewContext(r)
+	c := r.Context()
 
 	q := r.URL.Query()
 	userID := q.Get("user")

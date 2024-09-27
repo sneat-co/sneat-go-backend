@@ -2,8 +2,6 @@ package common4debtus
 
 import (
 	"context"
-	"fmt"
-	"google.golang.org/appengine/v2"
 	"time"
 )
 
@@ -20,12 +18,13 @@ import (
 //}
 
 func SignStrWithExpiry(ctx context.Context, v string, expires time.Time) string {
-	expiryBytes := make([]byte, 8)
-	endian.PutUint64(expiryBytes, uint64(expires.Unix()))
-	toSign := append([]byte(v), expiryBytes...)
-	_, signature, err := appengine.SignBytes(ctx, toSign)
-	if err != nil {
-		panic(err.Error())
-	}
-	return fmt.Sprintf("%s:%s", base64UrlEncoder.EncodeToString(expiryBytes), base64UrlEncoder.EncodeToString(signature))
+	panic("TODO: implement SignStrWithExpiry")
+	//expiryBytes := make([]byte, 8)
+	//endian.PutUint64(expiryBytes, uint64(expires.Unix()))
+	//toSign := append([]byte(v), expiryBytes...)
+	//_, signature, err := appengine.SignBytes(ctx, toSign)
+	//if err != nil {
+	//	panic(err.Error())
+	//}
+	//return fmt.Sprintf("%s:%s", base64UrlEncoder.EncodeToString(expiryBytes), base64UrlEncoder.EncodeToString(signature))
 }

@@ -9,8 +9,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-core/facade"
-	"google.golang.org/appengine/v2"
-	"google.golang.org/appengine/v2/datastore"
 	"net/http"
 	"sync"
 )
@@ -19,7 +17,7 @@ type contactPage struct {
 }
 
 func (h contactPage) contactPageHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	c := appengine.NewContext(r)
+	c := r.Context()
 
 	contactID := r.URL.Query().Get("id")
 	if contactID == "" {
@@ -105,7 +103,8 @@ func (contactPage) verifyTransfers(ctx context.Context, contactID string) (
 		//var key *datastore.Key
 		var record dal.Record
 		if record, err = reader.Next(); err != nil {
-			if err == datastore.Done {
+
+			if errors.Is(err, dal.ErrNoMoreRecords) {
 				break
 			}
 			panic(err)

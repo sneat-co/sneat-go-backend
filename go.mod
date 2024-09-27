@@ -74,7 +74,6 @@ require (
 	github.com/yaa110/go-persian-calendar v1.2.1
 	golang.org/x/crypto v0.27.0
 	golang.org/x/net v0.29.0
-	google.golang.org/appengine/v2 v2.0.6
 )
 
 require (
@@ -122,6 +121,7 @@ require (
 	golang.org/x/text v0.18.0 // indirect
 	golang.org/x/time v0.6.0 // indirect
 	google.golang.org/api v0.199.0 // indirect
+	google.golang.org/appengine/v2 v2.0.6 // indirect
 	google.golang.org/genproto v0.0.0-20240924160255-9d4c2d233b61 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240924160255-9d4c2d233b61 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240924160255-9d4c2d233b61 // indirect

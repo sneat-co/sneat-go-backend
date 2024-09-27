@@ -5,64 +5,63 @@ import (
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/strongo/logus"
-	"google.golang.org/appengine/v2"
 	"net/http"
 	"strings"
-	"time"
 )
 
-func getTokenSecret() []byte { // TODO: implement getting token that is good for Firebase auth
-	return []byte("very-secret-abc")
-}
+//func getTokenSecret() []byte { // TODO: implement getting token that is good for Firebase auth
+//	return []byte("very-secret-abc")
+//}
 
 const SecretPrefix = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." // TODO: Document purpose / intended usage
 
 func IssueTokenLegacy(userID string, issuer string) string {
-	switch userID {
-	case "":
-		panic("IssueFirebaseAuthToken(userID - empty)")
-	case "0":
-		panic("IssueFirebaseAuthToken(userID == 0)")
-	}
-
-	// Create a new token object, specifying signing method and the claims
-	// you would like it to contain.
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"foo": "bar",
-		"nbf": time.Date(2015, 10, 10, 12, 0, 0, 0, time.UTC).Unix(),
-	})
-
-	// Sign and get the complete encoded token as a string using the secret
-	secret := getTokenSecret()
-	tokenString, err := token.SignedString(secret)
-	if err != nil {
-		panic(fmt.Sprintf("faield to sign: %v", err))
-	}
-	//claims.SetIssuedAt(time.Now())
-	//claims.SetSubject(strconv.FormatInt(userID, 10))
-	//if isAdmin {
-	//	claims.Set("admin", true)
+	panic("legacy code")
+	//switch userID {
+	//case "":
+	//	panic("IssueFirebaseAuthToken(userID - empty)")
+	//case "0":
+	//	panic("IssueFirebaseAuthToken(userID == 0)")
 	//}
-
-	if issuer != "" {
-		if len(issuer) > 100 {
-			if len(issuer) <= 1000 {
-				panic("IssueFirebaseAuthToken() => len(issuer) > 20, issuer: " + issuer)
-			} else {
-				panic("IssueFirebaseAuthToken() => len(issuer) > 20, issuer[:1000]: " + issuer[:1000])
-			}
-
-		}
-		//claims.SetIssuer(issuer)
-	}
-
-	//token := jws.NewJWT(claims, crypto.SigningMethodHS256)
-	//signature, err := token.Serialize(secret)
+	//
+	//// Create a new token object, specifying signing method and the claims
+	//// you would like it to contain.
+	//token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+	//	"foo": "bar",
+	//	"nbf": time.Date(2015, 10, 10, 12, 0, 0, 0, time.UTC).Unix(),
+	//})
+	//
+	//// Sign and get the complete encoded token as a string using the secret
+	//secret := getTokenSecret()
+	//tokenString, err := token.SignedString(secret)
 	//if err != nil {
-	//	panic(err.Error())
+	//	panic(fmt.Sprintf("faield to sign: %v", err))
 	//}
-	return tokenString[len(SecretPrefix):]
-	//return string(signature[len(SECRET_PREFIX):])
+	////claims.SetIssuedAt(time.Now())
+	////claims.SetSubject(strconv.FormatInt(userID, 10))
+	////if isAdmin {
+	////	claims.Set("admin", true)
+	////}
+	//
+	//if issuer != "" {
+	//	if len(issuer) > 100 {
+	//		if len(issuer) <= 1000 {
+	//			panic("IssueFirebaseAuthToken() => len(issuer) > 20, issuer: " + issuer)
+	//		} else {
+	//			panic("IssueFirebaseAuthToken() => len(issuer) > 20, issuer[:1000]: " + issuer[:1000])
+	//		}
+	//
+	//	}
+	//	//claims.SetIssuer(issuer)
+	//}
+	//
+	////token := jws.NewJWT(claims, crypto.SigningMethodHS256)
+	////signature, err := token.Serialize(secret)
+	////if err != nil {
+	////	panic(err.Error())
+	////}
+	//return tokenString[len(SecretPrefix):]
+	////return string(signature[len(SECRET_PREFIX):])
 }
 
 type AuthInfo struct {
@@ -74,7 +73,7 @@ type AuthInfo struct {
 var ErrNoToken = errors.New("No authorization token")
 
 func Authenticate(w http.ResponseWriter, r *http.Request, required bool) (authInfo AuthInfo, token *jwt.Token, err error) {
-	c := appengine.NewContext(r)
+	c := r.Context()
 	s := r.URL.Query().Get("secret")
 	if s == "" {
 		if a := r.Header.Get("Authorization"); strings.HasPrefix(a, "Bearer ") {
@@ -99,7 +98,7 @@ func Authenticate(w http.ResponseWriter, r *http.Request, required bool) (authIn
 		s = SecretPrefix + s
 	}
 
-	logus.Debugf(appengine.NewContext(r), "JWT token: [%v]", s)
+	logus.Debugf(r.Context(), "JWT token: [%v]", s)
 
 	if token, err = jwt.Parse(s, func(token *jwt.Token) (interface{}, error) {
 		return nil, nil

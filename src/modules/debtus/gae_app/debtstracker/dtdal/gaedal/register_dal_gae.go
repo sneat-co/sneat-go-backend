@@ -8,7 +8,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-core/facade"
 	apphostgae "github.com/strongo/app-host-gae"
-	"google.golang.org/appengine/v2"
 	"net/http"
 )
 
@@ -63,7 +62,7 @@ type ApiBotHost struct {
 }
 
 func (h ApiBotHost) Context(r *http.Request) context.Context {
-	return appengine.NewContext(r)
+	return r.Context()
 }
 
 func (h ApiBotHost) GetHTTPClient(ctx context.Context) *http.Client {

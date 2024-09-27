@@ -7,7 +7,6 @@ import (
 	"github.com/sneat-co/sneat-go-core/httpserver"
 	"github.com/sneat-co/sneat-go-core/security"
 	"github.com/strongo/logus"
-	"google.golang.org/appengine/v2"
 	"net/http"
 	"runtime/debug"
 	"time"
@@ -76,7 +75,7 @@ var noWrapper = func(handler http.Handler) http.Handler {
 }
 
 func isDevServer(r *http.Request) bool {
-	return appengine.IsDevAppServer() || r.Host == "localhost" || r.Host == "local-api.sneat.ws"
+	return r.Host == "localhost" || r.Host == "local-api.sneat.ws"
 }
 
 func wrapHTTPHandler(handler http.HandlerFunc, wrapHandler HandlerWrapper) http.HandlerFunc {

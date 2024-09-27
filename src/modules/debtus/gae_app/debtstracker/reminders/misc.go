@@ -7,7 +7,6 @@ import (
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/strongo/logus"
-	"google.golang.org/appengine/v2"
 	"net/http"
 )
 
@@ -39,7 +38,7 @@ func InviteFriend(w http.ResponseWriter, r *http.Request) {
 	fromName := r.Form["from_name"][0]
 
 	if err := SendEmail(
-		appengine.NewContext(r),
+		r.Context(),
 		fromName,
 		"Check this app",
 		"<p>See this phone app - <a href=https://debtus.app/#utm_medium=email&utm_campaign=invite-from-app>https://debtus.app/</a> - runs on iOS, Android & Windows Phone.</p>"+

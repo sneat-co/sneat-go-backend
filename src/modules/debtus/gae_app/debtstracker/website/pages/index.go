@@ -5,7 +5,6 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/strongo/logus"
-	"google.golang.org/appengine/v2"
 	"html/template"
 	"net/http"
 	"strings"
@@ -44,7 +43,7 @@ var countryToLocale = map[string]string{
 var supportedLocales = []string{"ru", "es", "it", "fr", "fa", "de", "pl", "pt", "ko", "jp", "zh"}
 
 func IndexRootPage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	c := appengine.NewContext(r)
+	c := r.Context()
 	logus.Debugf(c, "IndexRootPage")
 
 	if r.URL.Path != "/" { // This handler should work just for a root path.
@@ -108,7 +107,7 @@ func IndexPage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		w.Header().Add("Location", strings.Replace(r.URL.RequestURI(), path, path+"/", 1))
 		return
 	}
-	indexPage(appengine.NewContext(r), w, r)
+	indexPage(r.Context(), w, r)
 }
 
 func indexPage(ctx context.Context, w http.ResponseWriter, r *http.Request) {

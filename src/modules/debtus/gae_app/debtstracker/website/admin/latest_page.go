@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal/gaedal"
-	"google.golang.org/appengine/v2"
 	"net/http"
 )
 
@@ -59,7 +58,7 @@ func LatestPage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func FixTransfersHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	c := appengine.NewContext(r)
+	c := r.Context()
 	loadedCount, fixedCount, failedCount, err := gaedal.FixTransfers(c)
 	stats := fmt.Sprintf("\nLoaded: %v, Fixed: %v, Failed: %v", loadedCount, fixedCount, failedCount)
 	if err != nil {

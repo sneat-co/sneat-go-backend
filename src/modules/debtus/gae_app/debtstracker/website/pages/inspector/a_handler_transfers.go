@@ -10,8 +10,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/decimal"
-	"google.golang.org/appengine/v2"
-	"google.golang.org/appengine/v2/datastore"
 	"net/http"
 	"sync"
 	"time"
@@ -21,7 +19,7 @@ type transfersPage struct {
 }
 
 func (h transfersPage) transfersPageHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	c := appengine.NewContext(r)
+	c := r.Context()
 
 	now := time.Now()
 
@@ -125,7 +123,8 @@ func (h transfersPage) processTransfers(ctx context.Context, tx dal.ReadSession,
 	for {
 		var record dal.Record
 		if record, err = reader.Next(); err != nil {
-			if err == datastore.Done {
+
+			if errors.Is(err, dal.ErrNoMoreRecords) {
 				err = nil
 				break
 			}

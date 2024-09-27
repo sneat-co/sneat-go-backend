@@ -4,7 +4,6 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_general"
-	"google.golang.org/appengine/v2"
 	"html/template"
 	"net/http"
 )
@@ -12,7 +11,7 @@ import (
 var helpUsPageTmpl *template.Template
 
 func HelpUsPage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	locale, err := getLocale(appengine.NewContext(r), w, r)
+	locale, err := getLocale(r.Context(), w, r)
 	if err != nil {
 		return
 	}

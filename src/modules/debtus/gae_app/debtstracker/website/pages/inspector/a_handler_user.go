@@ -2,17 +2,14 @@ package inspector
 
 import (
 	"context"
+	"errors"
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/julienschmidt/httprouter"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
-	"github.com/strongo/decimal"
 	"github.com/strongo/logus"
-	"google.golang.org/appengine/v2"
-	"google.golang.org/appengine/v2/datastore"
 	"net/http"
 	"sync"
 	"time"
@@ -69,50 +66,51 @@ func (bs balancesByCurrency) SetBalance(setter func(bs balancesByCurrency)) {
 func validateTransfers(ctx context.Context, userID string, userBalances balances) (
 	byContactWithoutInterest map[string]transfersInfo, err error,
 ) {
-	query := datastore.NewQuery(models4debtus.TransfersCollection).Filter("BothUserIDs=", userID)
-
-	byContactWithoutInterest = make(map[string]transfersInfo)
-
-	iterator := query.Run(ctx)
-
-	for {
-		transferEntity := new(models4debtus.TransferData)
-		if _, err = iterator.Next(transferEntity); err != nil {
-			if err == datastore.Done {
-				break
-			}
-			panic(err)
-		}
-		userBalances.withoutInterest.Lock()
-		row := userBalances.withoutInterest.byCurrency[transferEntity.Currency]
-		contactID := transferEntity.To().ContactID
-		var direction decimal.Decimal64p2
-		switch {
-
-		}
-		switch userID {
-		case transferEntity.From().UserID:
-			direction = 1
-		case transferEntity.To().UserID:
-			direction = -1
-		default:
-			direction = 0
-		}
-		row.transfers += direction * transferEntity.AmountInCents
-		if contactTransfersInfo, ok := byContactWithoutInterest[contactID]; ok {
-			contactTransfersInfo.count += 1
-			contactTransfersInfo.balance[transferEntity.Currency] += direction * transferEntity.AmountInCents
-			byContactWithoutInterest[contactID] = contactTransfersInfo
-		} else {
-			byContactWithoutInterest[contactID] = transfersInfo{
-				count:   1,
-				balance: money.Balance{transferEntity.Currency: direction * transferEntity.AmountInCents},
-			}
-		}
-		userBalances.withoutInterest.byCurrency[transferEntity.Currency] = row
-		userBalances.withoutInterest.Unlock()
-	}
-	return
+	return nil, errors.New("TODO: implement me")
+	//query := datastore.NewQuery(models4debtus.TransfersCollection).Filter("BothUserIDs=", userID)
+	//
+	//byContactWithoutInterest = make(map[string]transfersInfo)
+	//
+	//iterator := query.Run(ctx)
+	//
+	//for {
+	//	transferEntity := new(models4debtus.TransferData)
+	//	if _, err = iterator.Next(transferEntity); err != nil {
+	//		if err == datastore.Done {
+	//			break
+	//		}
+	//		panic(err)
+	//	}
+	//	userBalances.withoutInterest.Lock()
+	//	row := userBalances.withoutInterest.byCurrency[transferEntity.Currency]
+	//	contactID := transferEntity.To().ContactID
+	//	var direction decimal.Decimal64p2
+	//	switch {
+	//
+	//	}
+	//	switch userID {
+	//	case transferEntity.From().UserID:
+	//		direction = 1
+	//	case transferEntity.To().UserID:
+	//		direction = -1
+	//	default:
+	//		direction = 0
+	//	}
+	//	row.transfers += direction * transferEntity.AmountInCents
+	//	if contactTransfersInfo, ok := byContactWithoutInterest[contactID]; ok {
+	//		contactTransfersInfo.count += 1
+	//		contactTransfersInfo.balance[transferEntity.Currency] += direction * transferEntity.AmountInCents
+	//		byContactWithoutInterest[contactID] = contactTransfersInfo
+	//	} else {
+	//		byContactWithoutInterest[contactID] = transfersInfo{
+	//			count:   1,
+	//			balance: money.Balance{transferEntity.Currency: direction * transferEntity.AmountInCents},
+	//		}
+	//	}
+	//	userBalances.withoutInterest.byCurrency[transferEntity.Currency] = row
+	//	userBalances.withoutInterest.Unlock()
+	//}
+	//return
 }
 
 func validateContacts(ctx context.Context,
@@ -169,6 +167,7 @@ func validateContacts(ctx context.Context,
 		var contact models4debtus.DebtusSpaceContactEntry
 		if contact, err = facade4debtus.GetDebtusSpaceContactByID(ctx, nil, debtusSpace.ID, contactID); err != nil {
 			if dal.IsNotFound(err) {
+				contactInfosNotFoundInDb = make(map[string]*models4debtus.DebtusContactBrief)
 				contactInfosNotFoundInDb[contactID] = contactBrief
 			} else {
 				panic(err)
@@ -185,66 +184,70 @@ func validateContacts(ctx context.Context,
 				goto foundInDebtusSpace
 			}
 		}
+		if contactsMissingInJson == nil {
+			contactsMissingInJson = make(map[string]contactWithBalances)
+		}
 		contactsMissingInJson[contactID] = contact
 	foundInDebtusSpace:
 	}
 
-	query := datastore.NewQuery(const4contactus.ContactsCollection).Filter("UserID=", debtusSpace.ID).KeysOnly()
+	panic("TODO: implement me")
+	//query := datastore.NewQuery(const4contactus.ContactsCollection).Filter("UserID=", debtusSpace.ID).KeysOnly()
+	//
+	//iterator := query.Run(ctx)
 
-	iterator := query.Run(ctx)
+	//for {
+	//	var key *datastore.Key
+	//	if key, err = iterator.Next(nil); err != nil {
+	//		if err == datastore.Done {
+	//			break
+	//		}
+	//		panic(err)
+	//	}
+	//	if contactInfo, ok := contactInfos[key.StringID()]; ok {
+	//		matchedContacts[key.StringID()] = contactInfo
+	//	} else {
+	//		var contact models4debtus.DebtusSpaceContactEntry
+	//		if contact, err = facade4debtus.GetDebtusSpaceContactByID(ctx, nil, debtusSpace.ID, key.StringID()); err != nil {
+	//			return
+	//		}
+	//		if contactInfo, err = updateBalance(contact); err != nil {
+	//			return
+	//		}
+	//		contactInfos[contact.ID] = contactInfo
+	//		contactsMissingInJson[contact.ID] = contactInfo
+	//	}
+	//}
 
-	for {
-		var key *datastore.Key
-		if key, err = iterator.Next(nil); err != nil {
-			if err == datastore.Done {
-				break
-			}
-			panic(err)
-		}
-		if contactInfo, ok := contactInfos[key.StringID()]; ok {
-			matchedContacts[key.StringID()] = contactInfo
-		} else {
-			var contact models4debtus.DebtusSpaceContactEntry
-			if contact, err = facade4debtus.GetDebtusSpaceContactByID(ctx, nil, debtusSpace.ID, key.StringID()); err != nil {
-				return
-			}
-			if contactInfo, err = updateBalance(contact); err != nil {
-				return
-			}
-			contactInfos[contact.ID] = contactInfo
-			contactsMissingInJson[contact.ID] = contactInfo
-		}
-	}
-
-	defer func() {
-		logus.Debugf(ctx, "contactInfos: %v", contactInfos)
-		logus.Debugf(ctx, "contactsMissingInJson: %v", contactsMissingInJson)
-		logus.Debugf(ctx, "contactsMissedByQuery: %v", contactsMissedByQuery)
-		logus.Debugf(ctx, "matchedContacts: %v", matchedContacts)
-	}()
-
-	logus.Debugf(ctx, "contactsTotalWithoutInterest: %v", contactsTotalWithoutInterest)
-	logus.Debugf(ctx, "contactsTotalWithInterest: %v", contactsTotalWithInterest)
-
-	userBalances.withoutInterest.SetBalance(func(balances balancesByCurrency) {
-		for currency, value := range contactsTotalWithoutInterest {
-			row := balances.byCurrency[currency]
-			row.contacts += value
-			balances.byCurrency[currency] = row
-		}
-	})
-	userBalances.withInterest.SetBalance(func(balances balancesByCurrency) {
-		for currency, value := range contactsTotalWithInterest {
-			row := balances.byCurrency[currency]
-			row.contacts += value
-			balances.byCurrency[currency] = row
-		}
-	})
-	return
+	//defer func() {
+	//	logus.Debugf(ctx, "contactInfos: %v", contactInfos)
+	//	logus.Debugf(ctx, "contactsMissingInJson: %v", contactsMissingInJson)
+	//	logus.Debugf(ctx, "contactsMissedByQuery: %v", contactsMissedByQuery)
+	//	logus.Debugf(ctx, "matchedContacts: %v", matchedContacts)
+	//}()
+	//
+	//logus.Debugf(ctx, "contactsTotalWithoutInterest: %v", contactsTotalWithoutInterest)
+	//logus.Debugf(ctx, "contactsTotalWithInterest: %v", contactsTotalWithInterest)
+	//
+	//userBalances.withoutInterest.SetBalance(func(balances balancesByCurrency) {
+	//	for currency, value := range contactsTotalWithoutInterest {
+	//		row := balances.byCurrency[currency]
+	//		row.contacts += value
+	//		balances.byCurrency[currency] = row
+	//	}
+	//})
+	//userBalances.withInterest.SetBalance(func(balances balancesByCurrency) {
+	//	for currency, value := range contactsTotalWithInterest {
+	//		row := balances.byCurrency[currency]
+	//		row.contacts += value
+	//		balances.byCurrency[currency] = row
+	//	}
+	//})
+	//return
 }
 
 func userPage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	c := appengine.NewContext(r)
+	c := r.Context()
 
 	userID := r.URL.Query().Get("id")
 	if userID == "" {

@@ -2,14 +2,13 @@ package redirects
 
 import (
 	"fmt"
+	"github.com/dal-go/dalgo/dal"
 	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	pages2 "github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/website/pages"
 	"github.com/strongo/i18n"
 	"github.com/strongo/logus"
-	"google.golang.org/appengine/v2"
-	"google.golang.org/appengine/v2/datastore"
 	"html/template"
 	"net/http"
 	"strings"
@@ -18,7 +17,7 @@ import (
 var receiptOpenGraphPageTmpl *template.Template
 
 func ReceiptRedirect(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	c := appengine.NewContext(r)
+	c := r.Context()
 	query := r.URL.Query()
 	receiptCode := query.Get("id")
 	if receiptCode == "" {
@@ -26,20 +25,15 @@ func ReceiptRedirect(w http.ResponseWriter, r *http.Request, _ httprouter.Params
 		return
 	}
 	receiptID := receiptCode
-	if receiptID == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
 	var err error
 	logus.Debugf(c, "Receipt ContactID: %v", receiptID)
 	_, err = dtdal.Receipt.GetReceiptByID(c, nil, receiptID)
-	switch err {
-	case nil: //pass
-	case datastore.ErrNoSuchEntity:
-		logus.Debugf(c, "Receipt not found by ContactID")
-		http.NotFound(w, r)
-		return
-	default:
+	if err != nil {
+		if dal.IsNotFound(err) {
+			logus.Debugf(c, "Receipt not found by ContactID")
+			http.NotFound(w, r)
+			return
+		}
 		w.WriteHeader(http.StatusInternalServerError)
 		logus.Errorf(c, err.Error())
 		_, _ = w.Write([]byte(err.Error()))

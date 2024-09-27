@@ -3,11 +3,9 @@ package reminders
 import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/core/queues"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal/gaedal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-core/facade"
-	apphostgae "github.com/strongo/app-host-gae"
 	"github.com/strongo/logus"
 	"net/http"
 	"reflect"
@@ -51,12 +49,13 @@ func CronSendReminders(ctx context.Context, w http.ResponseWriter, r *http.Reque
 	logus.Debugf(ctx, "Loaded %d reminder(s)", len(reminderIDs))
 
 	for _, reminderID := range reminderIDs {
-		task := gaedal.CreateSendReminderTask(ctx, reminderID)
-		task.Name = fmt.Sprintf("r_%s_%s", reminderID, time.Now().Format("200601021504"))
-		if _, err := apphostgae.AddTaskToQueue(ctx, task, queues.QueueReminders); err != nil {
-			logus.Errorf(ctx, "Failed to add delayed task for reminder %s", reminderID)
-			return
-		}
+		/*task,*/ err = gaedal.CreateSendReminderTask(ctx, reminderID)
+		panic(fmt.Errorf("TODO: implement CreateSendReminderTask: %w", err))
+		//task.Name = fmt.Sprintf("r_%s_%s", reminderID, time.Now().Format("200601021504"))
+		//if _, err := apphostgae.AddTaskToQueue(ctx, task, queues.QueueReminders); err != nil {
+		//	logus.Errorf(ctx, "Failed to add delayed task for reminder %s", reminderID)
+		//	return
+		//}
 	}
 
 	w.WriteHeader(http.StatusOK)

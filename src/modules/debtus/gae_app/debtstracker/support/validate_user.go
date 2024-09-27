@@ -11,14 +11,13 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
-	"google.golang.org/appengine/v2"
 	"net/http"
 	"reflect"
 	"time"
 )
 
 func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := appengine.NewContext(r)
+	ctx := r.Context()
 	doFixes := r.URL.Query().Get("fix") == "all"
 	spaceID := r.URL.Query().Get("spaceID")
 	userID := r.URL.Query().Get("id")

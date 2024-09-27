@@ -11,7 +11,6 @@ import (
 	"github.com/strongo/i18n"
 	"github.com/strongo/logus"
 	"github.com/strongo/strongoapp"
-	"google.golang.org/appengine/v2"
 	"html/template"
 	"net/http"
 	"strings"
@@ -21,7 +20,7 @@ import (
 
 func pageContext(r *http.Request, locale i18n.Locale) (translator i18n.SingleLocaleTranslator, data map[string]interface{}) {
 	userVoiceID := "6ed87444-76e3-43ee-8b6e-fd28d345e79c" // English
-	c := appengine.NewContext(r)
+	c := r.Context()
 
 	switch locale.Code5 {
 	case i18n.LocaleCodeRuRU:

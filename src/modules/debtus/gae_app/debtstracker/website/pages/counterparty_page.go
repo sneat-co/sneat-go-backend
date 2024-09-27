@@ -6,12 +6,11 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/strongo/logus"
 	"golang.org/x/net/html"
-	"google.golang.org/appengine/v2"
 	"net/http"
 )
 
 func CounterpartyPage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	c := appengine.NewContext(r)
+	c := r.Context()
 	logus.Infof(c, "CounterpartyPage: %v", r.Method)
 	spaceID := r.URL.Query().Get("space")
 	counterpartyID := r.URL.Query().Get("id")

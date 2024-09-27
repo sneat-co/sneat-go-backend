@@ -6,10 +6,7 @@ import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-backend/src/core/queues"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
-	apphostgae "github.com/strongo/app-host-gae"
 	"github.com/strongo/delaying"
-	"google.golang.org/appengine/v2/taskqueue"
-	"net/url"
 	"time"
 )
 
@@ -45,23 +42,25 @@ func delayedSetReminderIsSent(ctx context.Context, reminderID string, sentAt tim
 	return dtdal.Reminder.SetReminderIsSent(ctx, reminderID, sentAt, messageIntID, messageStrID, locale, errDetails)
 }
 
-func CreateSendReminderTask(_ context.Context, reminderID string) *taskqueue.Task {
-	if reminderID == "" {
-		panic("reminderID == 0")
-	}
-	t := taskqueue.NewPOSTTask("/task-queue/send-reminder", url.Values{"id": []string{reminderID}})
-	return t
+func CreateSendReminderTask(_ context.Context, reminderID string) (err error) {
+	return errors.New("TODO: implement CreateSendReminderTask")
+	//if reminderID == "" {
+	//	panic("reminderID == 0")
+	//}
+	//t := taskqueue.NewPOSTTask("/task-queue/send-reminder", url.Values{"id": []string{reminderID}})
+	//return t
 }
 
 func QueueSendReminder(ctx context.Context, reminderID string, dueIn time.Duration) error {
 	if dueIn < 3*time.Hour {
-		task := CreateSendReminderTask(ctx, reminderID)
-		if dueIn > time.Duration(0) {
-			task.Delay = dueIn + (3 * time.Second)
-		}
-		if _, err := apphostgae.AddTaskToQueue(ctx, task, queues.QueueReminders); err != nil {
-			return fmt.Errorf("failed to add task(name='%v', delay=%v) to '%v' queue: %w", task.Name, task.Delay, queues.QueueReminders, err)
-		}
+		/*task,*/ err := CreateSendReminderTask(ctx, reminderID)
+		return err
+		//if dueIn > time.Duration(0) {
+		//	task.Delay = dueIn + (3 * time.Second)
+		//}
+		//if _, err := apphostgae.AddTaskToQueue(ctx, task, queues.QueueReminders); err != nil {
+		//	return fmt.Errorf("failed to add task(name='%v', delay=%v) to '%v' queue: %w", task.Name, task.Delay, queues.QueueReminders, err)
+		//}
 	}
 	return nil
 }

@@ -13,7 +13,6 @@ import (
 	"github.com/strongo/i18n"
 	"github.com/strongo/logus"
 	"github.com/strongo/strongoapp"
-	"google.golang.org/appengine/v2"
 	"net/http"
 	"strconv"
 	//"github.com/sneat-co/sneat-go-backend/debtusbot/gae_app/debtusbot/api4debtus"
@@ -46,7 +45,7 @@ func InitWebsite(router router) {
 }
 
 func CreateInvitePage(w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
-	c := appengine.NewContext(r)
+	c := r.Context()
 	logus.Infof(c, "CreateInvitePage()")
 	//panic("Not implemented")
 	userID := authInfo.UserID

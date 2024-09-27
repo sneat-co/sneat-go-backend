@@ -5,7 +5,7 @@ import (
 )
 
 func InitDelaying(mustRegisterFunc func(key string, i any) delaying.Function) {
-	delayerSetUserReferrer = mustRegisterFunc("delayedSetUserReferrer", delayedSetUserReferrer)
+	//delayerSetUserReferrer = mustRegisterFunc("delayedSetUserReferrer", delayedSetUserReferrer)
 }
 
-var delayerSetUserReferrer delaying.Function
+//var delayerSetUserReferrer delaying.Function

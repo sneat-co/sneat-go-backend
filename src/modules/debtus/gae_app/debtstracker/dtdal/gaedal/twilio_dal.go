@@ -2,7 +2,6 @@ package gaedal
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
@@ -10,11 +9,8 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
-	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/gotwilio"
 	"github.com/strongo/logus"
-	"google.golang.org/appengine/v2"
-	"strconv"
 )
 
 type TwilioDalGae struct {
@@ -50,54 +46,55 @@ func (TwilioDalGae) SaveTwilioSms(
 	tgChatID int64,
 	smsStatusMessageID int,
 ) (twilioSms models4debtus.TwilioSms, err error) {
-	var twilioSmsEntity models4debtus.TwilioSmsData
+	//var twilioSmsEntity models4debtus.TwilioSmsData
 	if err = facade.RunReadwriteTransaction(ctx, func(tctx context.Context, tx dal.ReadwriteTransaction) error {
 		user := dbo4userus.NewUserEntry(userID)
 		twilioSms = models4debtus.NewTwilioSms(smsResponse.Sid, nil)
 		counterparty := transfer.Data.Counterparty()
 		//counterpartyDebtusContact := models4debtus.NewDebtusSpaceContactEntry(counterparty.SpaceRef, counterparty.ContactID, nil)
 		counterpartyContact := dal4contactus.NewContactEntry(counterparty.SpaceID, counterparty.ContactID)
-		if err := tx.GetMulti(tctx, []dal.Record{user.Record, twilioSms.Record, transfer.Record, counterpartyContact.Record}); err != nil {
-			var multiError appengine.MultiError
-			if errors.As(err, &multiError) {
-				if errors.Is(multiError[1], dal.ErrNoMoreRecords) {
-					twilioSmsEntity = models4debtus.NewTwilioSmsFromSmsResponse(userID, smsResponse)
-					twilioSmsEntity.CreatorTgChatID = tgChatID
-					twilioSmsEntity.CreatorTgSmsStatusMessageID = smsStatusMessageID
-
-					user.Data.SmsCount += 1
-					transfer.Data.SmsCount += 1
-
-					user.Data.SmsCost += float64(twilioSmsEntity.Price)
-					transfer.Data.SmsCost += float64(twilioSmsEntity.Price)
-
-					recordsToPut := []dal.Record{
-						user.Record,
-						twilioSms.Record,
-						transfer.Record,
-					}
-					var phoneFound bool
-					for _, counterpartyPhone := range counterpartyContact.Data.Phones {
-						if phoneFound = counterpartyPhone.Number == strconv.FormatInt(phoneContact.PhoneNumber, 10); phoneFound {
-							break
-						}
-					}
-					if !phoneFound {
-						counterpartyContact.Data.Phones = append(counterpartyContact.Data.Phones, dbmodels.PersonPhone{
-							Number:   strconv.FormatInt(phoneContact.PhoneNumber, 10),
-							Verified: false,
-						})
-						recordsToPut = append(recordsToPut, counterpartyContact.Record)
-					}
-					if err = tx.SetMulti(tctx, recordsToPut); err != nil {
-						logus.Errorf(ctx, "Failed to save Twilio SMS")
-						return err
-					}
-					return err
-				} else if multiError[1] == nil {
-					logus.Warningf(ctx, "Twillio SMS already saved to DB (1)")
-				}
-			}
+		if err = tx.GetMulti(tctx, []dal.Record{user.Record, twilioSms.Record, transfer.Record, counterpartyContact.Record}); err != nil {
+			panic("failed to get records: TODO: implement error handling")
+			//var multiError appengine.MultiError
+			//if errors.As(err, &multiError) {
+			//	if errors.Is(multiError[1], dal.ErrNoMoreRecords) {
+			//		twilioSmsEntity = models4debtus.NewTwilioSmsFromSmsResponse(userID, smsResponse)
+			//		twilioSmsEntity.CreatorTgChatID = tgChatID
+			//		twilioSmsEntity.CreatorTgSmsStatusMessageID = smsStatusMessageID
+			//
+			//		user.Data.SmsCount += 1
+			//		transfer.Data.SmsCount += 1
+			//
+			//		user.Data.SmsCost += float64(twilioSmsEntity.Price)
+			//		transfer.Data.SmsCost += float64(twilioSmsEntity.Price)
+			//
+			//		recordsToPut := []dal.Record{
+			//			user.Record,
+			//			twilioSms.Record,
+			//			transfer.Record,
+			//		}
+			//		var phoneFound bool
+			//		for _, counterpartyPhone := range counterpartyContact.Data.Phones {
+			//			if phoneFound = counterpartyPhone.Number == strconv.FormatInt(phoneContact.PhoneNumber, 10); phoneFound {
+			//				break
+			//			}
+			//		}
+			//		if !phoneFound {
+			//			counterpartyContact.Data.Phones = append(counterpartyContact.Data.Phones, dbmodels.PersonPhone{
+			//				Number:   strconv.FormatInt(phoneContact.PhoneNumber, 10),
+			//				Verified: false,
+			//			})
+			//			recordsToPut = append(recordsToPut, counterpartyContact.Record)
+			//		}
+			//		if err = tx.SetMulti(tctx, recordsToPut); err != nil {
+			//			logus.Errorf(ctx, "Failed to save Twilio SMS")
+			//			return err
+			//		}
+			//		return err
+			//	} else if multiError[1] == nil {
+			//		logus.Warningf(ctx, "Twillio SMS already saved to DB (1)")
+			//	}
+			//}
 		} else {
 			logus.Warningf(ctx, "Twillio SMS already saved to DB (2)")
 		}
