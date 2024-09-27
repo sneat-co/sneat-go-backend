@@ -2,8 +2,8 @@ package facade4auth
 
 import (
 	"context"
-	"github.com/sneat-co/sneat-go-backend/src/auth/dto4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
+	"github.com/sneat-co/sneat-go-core/dto4auth"
 )
 
 type AuthClient interface {

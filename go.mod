@@ -42,7 +42,7 @@ require (
 	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85
 	github.com/crediterra/money v0.3.0
 	github.com/dal-go/dalgo v0.14.0
-	github.com/dal-go/mocks4dalgo v0.1.24
+	github.com/dal-go/mocks4dalgo v0.1.25
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/golang/mock v1.6.0
 	github.com/gosimple/slug v1.14.0
@@ -53,7 +53,7 @@ require (
 	github.com/sendgrid/sendgrid-go v3.16.0+incompatible
 	github.com/shiyanhui/hero v0.0.2
 	github.com/sneat-co/debtstracker-translations v0.2.1
-	github.com/sneat-co/sneat-go-core v0.34.2
+	github.com/sneat-co/sneat-go-core v0.35.0
 	github.com/stretchr/testify v1.9.0
 	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.0.1
