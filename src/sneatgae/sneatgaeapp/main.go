@@ -29,7 +29,14 @@ func CreateHttpRouter() *httprouter.Router {
 	return initHTTPRouter(globalOptionsHandler)
 }
 
-func Start(reportPanic func(err any), wrapHandler HandlerWrapper, httpRouter *httprouter.Router, emailClient emails.Client, extraModule ...module.Module) {
+// Start to be called from main.go and will start an HTTP server using http.ListenAndServe
+func Start(
+	reportPanic func(err any),
+	wrapHandler HandlerWrapper,
+	httpRouter *httprouter.Router,
+	emailClient emails.Client,
+	extraModule ...module.Module,
+) {
 	if reportPanic != nil {
 		ReportPanic = reportPanic
 	}
