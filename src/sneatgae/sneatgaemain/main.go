@@ -5,7 +5,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/sneatgae/sneatgaeapp"
 	"github.com/sneat-co/sneat-go-core/emails/email2writer"
 	"github.com/sneat-co/sneat-go-core/security"
-	apphostgae "github.com/strongo/app-host-gae"
 	"github.com/strongo/delaying"
 	"github.com/strongo/logus"
 	"io"
@@ -35,9 +34,7 @@ func main() { // TODO: document why we need this wrapper
 
 	serveStaticFiles(httpRouter)
 
-	initBots(httpRouter)
-
-	delaying.Init(apphostgae.MustRegisterDelayedFunc)
+	delaying.Init(delaying.VoidWithLog)
 
 	sneatgaeapp.Start(nil, nil, httpRouter, emailClient)
 }

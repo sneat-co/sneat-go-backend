@@ -7,7 +7,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-core/facade"
-	apphostgae "github.com/strongo/app-host-gae"
 	"net/http"
 )
 
@@ -47,7 +46,7 @@ func RegisterDal() {
 		return http.DefaultClient
 		//return urlfetch.Client(ctx)
 	}
-	dtdal.HttpAppHost = apphostgae.NewHttpAppHostGAE()
+	//dtdal.HttpAppHost = apphostgae.NewHttpAppHostGAE()
 
 	//dtdal.HandleWithContext = func(handler strongoapp.HttpHandlerWithContext) func(w http.ResponseWriter, r *http.Request) {
 	//	return func(w http.ResponseWriter, r *http.Request) {

@@ -19,7 +19,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/website"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/botcmds4splitus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/facade4splitus"
-	apphostgae "github.com/strongo/app-host-gae"
 	"github.com/strongo/delaying"
 	"net/http"
 )
@@ -56,7 +55,7 @@ func Init(botHost botsfw.BotHost) {
 }
 
 func initDelaying() {
-	delaying.Init(apphostgae.MustRegisterDelayedFunc)
+	delaying.Init(delaying.VoidWithLog)
 	gaedal.InitDelaying(delaying.MustRegisterFunc)
 	facade4anybot.InitDelaying(delaying.MustRegisterFunc)
 	facade4splitus.InitDelaying(delaying.MustRegisterFunc)
