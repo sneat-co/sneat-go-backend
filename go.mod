@@ -48,7 +48,6 @@ require (
 	github.com/gosimple/slug v1.14.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/olebedev/when v1.0.0
-	github.com/pkg/profile v1.7.0
 	github.com/pquerna/ffjson v0.0.0-20190930134022-aa0246cd15f7
 	github.com/sanity-io/litter v1.5.5
 	github.com/sendgrid/sendgrid-go v3.16.0+incompatible
@@ -76,8 +75,6 @@ require (
 	github.com/AlekSi/pointer v1.2.0 // indirect
 	github.com/alexsergivan/transliterator v1.0.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/felixge/fgprof v0.9.5 // indirect
-	github.com/google/pprof v0.0.0-20240925223930-fa3061bff0bc // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
