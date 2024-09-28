@@ -53,7 +53,7 @@ require (
 	github.com/sendgrid/sendgrid-go v3.16.0+incompatible
 	github.com/shiyanhui/hero v0.0.2
 	github.com/sneat-co/debtstracker-translations v0.2.1
-	github.com/sneat-co/sneat-go-core v0.35.0
+	github.com/sneat-co/sneat-go-core v0.36.0
 	github.com/stretchr/testify v1.9.0
 	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.0.1
