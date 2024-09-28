@@ -2,8 +2,8 @@ package dto4logist
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dto4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dto4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/strongoapp/with"
 )

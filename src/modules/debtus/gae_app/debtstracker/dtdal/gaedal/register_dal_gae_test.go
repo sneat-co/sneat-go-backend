@@ -1,7 +1,7 @@
 package gaedal
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/auth/facade4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/facade4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"testing"
 )

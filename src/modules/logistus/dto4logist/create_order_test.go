@@ -1,9 +1,9 @@
 package dto4logist
 
 import (
-	//"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
+	//"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

@@ -3,10 +3,10 @@ package dal4calendarium
 import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/const4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 

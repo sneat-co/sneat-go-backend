@@ -3,11 +3,11 @@ package unsorted
 import (
 	"context"
 	"errors"
-	"github.com/sneat-co/sneat-go-backend/src/modules/auth/token4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/facade4splitus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/models4splitus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/strongo/logus"
 	"net/http"
 	"strings"

@@ -2,8 +2,8 @@ package dbo4meetingus
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/briefs4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-core"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/slice"

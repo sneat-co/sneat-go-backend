@@ -6,7 +6,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/tghelpers"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/core4spaceus"
 	"net/url"
 )
 

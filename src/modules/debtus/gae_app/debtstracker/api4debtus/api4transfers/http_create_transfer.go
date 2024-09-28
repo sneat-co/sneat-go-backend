@@ -2,12 +2,12 @@ package api4transfers
 
 import (
 	"context"
-	"github.com/sneat-co/sneat-go-backend/src/modules/auth/token4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus/dto4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/apicore/verify"
 	"github.com/sneat-co/sneat-go-core/facade"

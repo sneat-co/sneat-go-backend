@@ -2,11 +2,11 @@ package facade4debtus
 
 import (
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtmocks"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"testing"
 

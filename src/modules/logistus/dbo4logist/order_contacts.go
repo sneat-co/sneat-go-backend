@@ -3,7 +3,7 @@ package dbo4logist
 import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/briefs4contactus"
 	"github.com/strongo/slice"
 	"github.com/strongo/strongoapp/with"
 	"github.com/strongo/validation"

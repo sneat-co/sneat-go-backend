@@ -5,7 +5,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/sneat-go-backend/src/modules/auth/token4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/strongo/i18n"
 	"io"

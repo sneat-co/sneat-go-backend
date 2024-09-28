@@ -5,7 +5,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/mocks4dalgo/mocks4dal"
 	"github.com/golang/mock/gomock"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dbo4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dbo4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"

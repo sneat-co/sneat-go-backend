@@ -9,7 +9,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 )

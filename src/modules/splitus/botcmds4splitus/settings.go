@@ -9,10 +9,10 @@ import (
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/const4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/shared_space"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/models4splitus"
 	"net/url"
 )

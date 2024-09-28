@@ -1,8 +1,8 @@
 package dto4assetus
 
 import (
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 )
 
 type CreateAssetRequest struct {

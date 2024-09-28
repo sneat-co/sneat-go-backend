@@ -3,7 +3,7 @@ package dto4debtus
 //go:generate ffjson $GOFILE
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dto4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dto4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"time"
 

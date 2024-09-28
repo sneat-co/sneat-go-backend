@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/dbo4meetingus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )

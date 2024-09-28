@@ -6,11 +6,11 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/tghelpers"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/core4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"net/url"
 )

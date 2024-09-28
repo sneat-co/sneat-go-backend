@@ -7,8 +7,8 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/core4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
 	"github.com/strongo/i18n"
 )
 

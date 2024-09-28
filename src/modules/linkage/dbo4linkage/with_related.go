@@ -3,7 +3,7 @@ package dbo4linkage
 import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/const4contactus"
 	"github.com/strongo/validation"
 	"slices"
 	"strings"

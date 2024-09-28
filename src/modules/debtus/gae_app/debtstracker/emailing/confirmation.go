@@ -2,8 +2,8 @@ package emailing
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/auth/models4auth"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/models4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
 
 	"context"
 )

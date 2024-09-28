@@ -2,8 +2,8 @@ package facade4splitus
 
 import (
 	"context"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/const4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/const4splitus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/const4userus"
 	"github.com/strongo/delaying"
 )
 

@@ -3,9 +3,9 @@ package dal4assetus
 import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	core "github.com/sneat-co/sneat-go-core"
 )
 

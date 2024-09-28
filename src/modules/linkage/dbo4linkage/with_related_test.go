@@ -2,7 +2,7 @@ package dbo4linkage
 
 import (
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/const4contactus"
 	"reflect"
 	"slices"
 	"testing"

@@ -4,7 +4,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
 )
 
 var botParams = cmds4anybot.BotParams{

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/const4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/strongo/logus"
 )
 

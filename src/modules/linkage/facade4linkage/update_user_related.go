@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 )
 
 func updateUserRelated(

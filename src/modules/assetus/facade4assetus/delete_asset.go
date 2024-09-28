@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dal4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 

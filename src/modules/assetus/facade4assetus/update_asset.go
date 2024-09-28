@@ -6,10 +6,10 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/core/extra"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dto4assetus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 

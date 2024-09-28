@@ -3,11 +3,11 @@ package dal4assetus
 import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/const4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/const4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 

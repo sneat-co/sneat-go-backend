@@ -3,7 +3,7 @@ package gaedal
 import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/auth/models4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/models4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 )
 

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/auth/token4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
 	"github.com/strongo/i18n"
 	"io"
 )

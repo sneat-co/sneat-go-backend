@@ -1,8 +1,8 @@
 package api4invitus
 
 import (
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/facade4invitus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/apicore/verify"
 	"net/http"

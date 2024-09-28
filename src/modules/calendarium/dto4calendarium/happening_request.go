@@ -1,8 +1,8 @@
 package dto4calendarium
 
 import (
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/strongo/validation"
 	"strings"
 )

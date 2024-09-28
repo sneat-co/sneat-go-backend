@@ -6,7 +6,7 @@ import (
 	"github.com/bots-go-framework/bots-fw-telegram-models/botsfwtgmodels"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
 )
 
 func newBotChatData() botsfwmodels.BotChatData {

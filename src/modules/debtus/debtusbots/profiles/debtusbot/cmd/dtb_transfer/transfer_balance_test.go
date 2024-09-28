@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/crediterra/money"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/strongo/decimal"

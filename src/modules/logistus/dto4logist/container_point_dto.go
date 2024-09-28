@@ -2,8 +2,8 @@ package dto4logist
 
 import (
 	"fmt"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
 )

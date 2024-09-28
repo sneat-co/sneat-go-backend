@@ -2,8 +2,8 @@ package unsorted
 
 import (
 	"encoding/json"
-	"github.com/sneat-co/sneat-go-backend/src/modules/auth/token4auth"
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dto4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dto4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus/dto4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtmocks"

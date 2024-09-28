@@ -2,8 +2,8 @@ package facade4scrumus
 
 import (
 	"context"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"testing"
 	"time"

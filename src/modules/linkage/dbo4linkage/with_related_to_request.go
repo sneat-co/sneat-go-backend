@@ -1,6 +1,6 @@
 package dbo4linkage
 
-//import "github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dto4spaceus"
+//import "github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
 //
 //type RelatedToRequest struct {
 //	dto4spaceus.SpaceRequest

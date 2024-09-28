@@ -2,7 +2,7 @@ package dbo4invitus
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/core4spaceus"
 	"github.com/sneat-co/sneat-go-core"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/sneat-co/sneat-go-core/models/dbprofile"

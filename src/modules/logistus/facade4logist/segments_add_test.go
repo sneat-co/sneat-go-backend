@@ -2,11 +2,11 @@ package facade4logist
 
 import (
 	"context"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/mocks4logist"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dal4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

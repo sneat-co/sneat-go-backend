@@ -3,7 +3,7 @@ package tghelpers
 import (
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/core4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/core4spaceus"
 	"net/url"
 )
 

@@ -1,7 +1,7 @@
 package mocks4logist
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/briefs4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	dbmodels2 "github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/stretchr/testify/assert"

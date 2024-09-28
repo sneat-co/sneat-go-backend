@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/const4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
 )

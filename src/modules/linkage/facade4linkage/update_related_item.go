@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dbo4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/strongo/validation"
 )
 

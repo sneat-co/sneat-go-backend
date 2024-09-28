@@ -3,11 +3,11 @@ package reminders
 import (
 	"context"
 	"fmt"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/emailing"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/emails"
 	"github.com/strongo/i18n"
 	"github.com/strongo/logus"

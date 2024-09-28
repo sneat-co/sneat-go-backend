@@ -1,7 +1,7 @@
 package dbo4scrumus
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/spaceus/dbo4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dbo4spaceus"
 )
 
 // ScrumSettings record

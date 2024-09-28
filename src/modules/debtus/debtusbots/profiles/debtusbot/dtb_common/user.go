@@ -2,7 +2,7 @@ package dtb_common
 
 import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
 )
 
 func GetUser(whc botsfw.WebhookContext) (user dbo4userus.UserEntry, err error) {
