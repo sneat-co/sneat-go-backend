@@ -22,7 +22,7 @@ func (v CreateHappeningRequest) Validate() error {
 		return validation.NewErrRequestIsMissingRequiredField("happening")
 	}
 	if err := v.Happening.Validate(); err != nil {
-		return validation.NewErrBadRequestFieldValue("dto4debtus", err.Error())
+		return validation.NewErrBadRequestFieldValue("happening", err.Error())
 	}
 	return nil
 }
@@ -30,13 +30,16 @@ func (v CreateHappeningRequest) Validate() error {
 // CreateHappeningResponse DTO
 type CreateHappeningResponse struct {
 	ID  string                       `json:"id"`
-	Dto dbo4calendarium.HappeningDbo `json:"dto4debtus"`
+	Dbo dbo4calendarium.HappeningDbo `json:"dbo"`
 }
 
 // Validate returns error if not valid
 func (v CreateHappeningResponse) Validate() error {
 	if v.ID == "" {
 		return validation.NewErrRecordIsMissingRequiredField("id")
+	}
+	if err := v.Dbo.Validate(); err != nil {
+		return validation.NewErrBadRecordFieldValue("dbo", err.Error())
 	}
 	return nil
 }

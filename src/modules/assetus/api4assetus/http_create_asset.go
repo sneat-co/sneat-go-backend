@@ -33,10 +33,10 @@ func httpPostCreateAsset(w http.ResponseWriter, r *http.Request) {
 				return nil, fmt.Errorf("failed to create asset: %w", err)
 			}
 			if asset.ID == "" {
-				return nil, errors.New("asset created by facade4debtus does not have an ContactID")
+				return nil, errors.New("created asset does not have an ID")
 			}
 			if err = asset.Data.Validate(); err != nil {
-				err = fmt.Errorf("asset created by facade4debtus is not valid: %w", err)
+				err = fmt.Errorf("created asset is not valid: %w", err)
 				return asset, err
 			}
 			return asset, nil

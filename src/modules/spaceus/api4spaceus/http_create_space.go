@@ -21,7 +21,7 @@ func httpPostCreateSpace(w http.ResponseWriter, r *http.Request) {
 			}
 			var apiResponse dto4spaceus.CreateSpaceResponse
 			apiResponse.Space.ID = result.Space.ID
-			apiResponse.Space.Dto = *result.Space.Data
+			apiResponse.Space.Dbo = *result.Space.Data
 			return apiResponse, err
 		})
 }

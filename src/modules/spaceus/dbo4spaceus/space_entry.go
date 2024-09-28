@@ -13,7 +13,7 @@ func NewSpaceEntry(id string) (team SpaceEntry) {
 
 func NewSpaceEntryWithDbo(id string, dbo *SpaceDbo) (space SpaceEntry) {
 	if dbo == nil {
-		panic("required parameter dto4debtus is nil")
+		panic("required parameter dbo is nil")
 	}
 	space = record.NewDataWithID(id, NewSpaceKey(id), dbo)
 	space.ID = id
