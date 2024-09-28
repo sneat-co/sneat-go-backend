@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
+	"github.com/sneat-co/sneat-go-backend/src/modules/auth/token4auth"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/strongo/validation"
 	"net/http"

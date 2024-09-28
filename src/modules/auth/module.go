@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/auth/api4auth"
-	"github.com/sneat-co/sneat-go-backend/src/auth/const4auth"
+	"github.com/sneat-co/sneat-go-backend/src/modules/auth/api4auth"
+	"github.com/sneat-co/sneat-go-backend/src/modules/auth/const4auth"
 	"github.com/sneat-co/sneat-go-core/module"
 )
 

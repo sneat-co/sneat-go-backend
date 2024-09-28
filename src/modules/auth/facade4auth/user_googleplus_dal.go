@@ -3,7 +3,7 @@ package facade4auth
 import (
 	"context"
 	"errors"
-	"github.com/sneat-co/sneat-go-backend/src/auth/models4auth"
+	"github.com/sneat-co/sneat-go-backend/src/modules/auth/models4auth"
 )
 
 //func newUserGooglePlusKey(id string) *dal.Key {

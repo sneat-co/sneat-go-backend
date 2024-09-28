@@ -1,8 +1,8 @@
 package modules
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus"

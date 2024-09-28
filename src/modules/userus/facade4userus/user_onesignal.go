@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/auth/models4auth"
+	"github.com/sneat-co/sneat-go-backend/src/modules/auth/models4auth"
 )
 
 func SaveUserOneSignal(_ context.Context, userID string, oneSignalUserID string) (userOneSignal models4auth.UserOneSignal, err error) {

@@ -1,7 +1,7 @@
 package api4auth
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/auth/facade4auth"
+	"github.com/sneat-co/sneat-go-backend/src/modules/auth/facade4auth"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/apicore/verify"
 	"github.com/sneat-co/sneat-go-core/httpserver"

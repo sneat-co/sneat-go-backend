@@ -5,7 +5,7 @@ import (
 	"fmt"
 	telegram "github.com/bots-go-framework/bots-fw-telegram"
 	"github.com/bots-go-framework/bots-fw-telegram-webapp/twainitdata"
-	"github.com/sneat-co/sneat-go-backend/src/auth/facade4auth"
+	"github.com/sneat-co/sneat-go-backend/src/modules/auth/facade4auth"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"net/http"
 )

@@ -9,7 +9,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/auth/facade4auth"
+	"github.com/sneat-co/sneat-go-backend/src/modules/auth/facade4auth"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/i18n"
 	"github.com/strongo/strongoapp/appuser"

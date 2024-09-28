@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/auth/models4auth"
+	"github.com/sneat-co/sneat-go-backend/src/modules/auth/models4auth"
 )
 
 func NewUserFacebookKey(ctx context.Context, fbAppOrPageID, fbUserOrPageScopeID string) *dal.Key {

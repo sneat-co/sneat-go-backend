@@ -3,8 +3,8 @@ package emailing
 import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/auth/models4auth"
 	"github.com/sneat-co/sneat-go-backend/src/core/queues"
+	"github.com/sneat-co/sneat-go-backend/src/modules/auth/models4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/sneat-co/sneat-go-core/emails"
 	"github.com/sneat-co/sneat-go-core/facade"

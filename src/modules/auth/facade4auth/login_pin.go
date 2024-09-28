@@ -3,7 +3,7 @@ package facade4auth
 import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/auth/models4auth"
+	"github.com/sneat-co/sneat-go-backend/src/modules/auth/models4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"strings"

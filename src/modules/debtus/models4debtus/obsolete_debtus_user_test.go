@@ -2,7 +2,7 @@ package models4debtus
 
 import (
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/auth/models4auth"
+	"github.com/sneat-co/sneat-go-backend/src/modules/auth/models4auth"
 	"github.com/strongo/strongoapp/appuser"
 	"testing"
 	"time"

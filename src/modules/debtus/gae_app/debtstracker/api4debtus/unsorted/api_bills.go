@@ -7,7 +7,7 @@ import (
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/pquerna/ffjson/ffjson"
-	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
+	"github.com/sneat-co/sneat-go-backend/src/modules/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus/dto4debtus"

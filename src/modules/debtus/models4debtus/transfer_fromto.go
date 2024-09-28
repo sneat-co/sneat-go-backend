@@ -8,7 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/pquerna/ffjson/ffjson"
-	"github.com/sneat-co/sneat-go-backend/src/auth/models4auth"
+	"github.com/sneat-co/sneat-go-backend/src/modules/auth/models4auth"
 )
 
 type TransferCounterpartyInfo struct {

@@ -2,7 +2,7 @@ package api4debtus
 
 import (
 	"context"
-	"github.com/sneat-co/sneat-go-backend/src/auth/token4auth"
+	"github.com/sneat-co/sneat-go-backend/src/modules/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/userus/dbo4userus"
 	"github.com/strongo/logus"
