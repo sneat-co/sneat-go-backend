@@ -1,11 +1,16 @@
 package assetus
 
 import (
-	"github.com/sneat-co/sneat-go-core/tests"
+	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
+	"github.com/sneat-co/sneat-go-core/module"
 	"testing"
 )
 
 func TestModule(t *testing.T) {
 	m := Module()
-	tests.VerifyModule(t, m, false)
+	module.AssertModule(t, m, module.Expected{
+		ModuleID:      const4assetus.ModuleID,
+		HandlersCount: 3,
+		DelayersCount: 0,
+	})
 }
