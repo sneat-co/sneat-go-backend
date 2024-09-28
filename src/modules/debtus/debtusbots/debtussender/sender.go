@@ -1,6 +1,7 @@
 package debtussender
 
 import (
+	"errors"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw-telegram"
 	"github.com/bots-go-framework/bots-fw/botsfw"
@@ -12,7 +13,8 @@ func SendRefreshOrNothingChanged(whc botsfw.WebhookContext, m botsfw.MessageFrom
 	ctx := whc.Context()
 	if _, err = whc.Responder().SendMessage(ctx, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
 		logus.Debugf(ctx, "error type: %T", err)
-		if apiResponse, ok := err.(tgbotapi.APIResponse); ok && apiResponse.ErrorCode == 400 {
+		var apiResponse tgbotapi.APIResponse
+		if errors.As(err, &apiResponse) && apiResponse.ErrorCode == 400 {
 			m.BotMessage = telegram.CallbackAnswer(tgbotapi.NewCallback("", whc.Translate(trans.ALERT_TEXT_NOTHING_CHANGED)))
 			err = nil
 		}

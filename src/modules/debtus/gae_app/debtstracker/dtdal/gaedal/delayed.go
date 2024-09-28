@@ -387,7 +387,8 @@ func delayedSendReceiptToCounterpartyByTelegram(ctx context.Context, receiptID s
 			if tgChat.Data.DtForbiddenLast.IsZero() {
 				if err = sendReceiptToTelegramChat(ctx, receipt, transfer, tgChat); err != nil {
 					//failedToSend = true
-					if _, forbidden := err.(tgbotapi.ErrAPIForbidden); forbidden || strings.Contains(err.Error(), "Bad Request: chat not found") {
+					var errAPIForbidden tgbotapi.ErrAPIForbidden
+					if errors.As(err, &errAPIForbidden) || strings.Contains(err.Error(), "Bad Request: chat not found") {
 						//chatsForbidden = true
 						logus.Infof(ctx, "Telegram chat not found or disabled (%v): %v", tgChat.ID, err)
 						panic("not implemented - commented out as needs to be refactored")

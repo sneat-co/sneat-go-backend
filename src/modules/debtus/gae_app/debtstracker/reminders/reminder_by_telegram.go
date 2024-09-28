@@ -2,6 +2,7 @@ package reminders
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw-telegram"
@@ -87,16 +88,14 @@ func sendReminderByTelegram(ctx context.Context, transfer models4debtus.Transfer
 			messageConfig.ParseMode = "HTML"
 			message, err := tgBotApi.Send(messageConfig)
 			if err != nil {
-				if _, isForbidden := err.(tgbotapi.ErrAPIForbidden); isForbidden { // TODO: Mark chat as deleted?
+				var errAPIForbidden tgbotapi.ErrAPIForbidden
+				if errors.As(err, &errAPIForbidden) { // TODO: Mark chat as deleted?
 					logus.Infof(ctx, "Telegram bot API returned status 'forbidden' - either issue with token or chat deleted by user")
 					if err2 := DelaySetChatIsForbidden(ctx, botSettings.Code, tgChatID, time.Now()); err2 != nil {
 						logus.Errorf(ctx, "Failed to delay to set chat as forbidden: %v", err2)
 					}
 					channelDisabledByUser = true
 					return nil // Do not pass error up
-				} else {
-					logus.Debugf(ctx, "messageConfig.Text: %v", messageConfig.Text)
-					return fmt.Errorf("Failed in call to Telegram API: %w", err)
 				}
 			}
 			sent = true
