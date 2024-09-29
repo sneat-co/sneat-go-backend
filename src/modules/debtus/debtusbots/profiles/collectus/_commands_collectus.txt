@@ -1,4 +1,0 @@
-groups - List of groups
-fundraisings - Ongoing fundraisings
-help - Learn how to use the bot & ask questions
-

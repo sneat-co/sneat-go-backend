@@ -1,19 +1,14 @@
 package facade4splitus
 
 import (
-	// "github.com/sneat-co/sneat-go-backend/debtusbot/gae_app/debtusbot/dtdal"
-	// "github.com/sneat-co/sneat-go-backend/debtusbot/gae_app/debtusbot/dtdal/dalmocks"
+	"context"
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtmocks"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/briefs4splitus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/models4splitus"
-
-	// "errors"
+	"github.com/sneat-co/sneat-mod-debtus-go/debtus/gae_app/debtstracker/dtmocks"
+	"github.com/strongo/decimal"
 	"strings"
 	"testing"
-
-	"context"
-	"github.com/strongo/decimal"
 )
 
 func TestCreateBillPanicOnNilContext(t *testing.T) {

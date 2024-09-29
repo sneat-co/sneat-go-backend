@@ -1,1 +1,0 @@
-{"event":"conversation_started","timestamp":1479104813140,"message_token":4978836135530926683,"type":"open","user":{"id":"LebOFObuWbak2jfTrnoBLg==","name":"Alexander Trakhimenok","avatar":"https://share.viber.com/download_photo?dlid=0-03-04-5fb7a405dd3795a18033d43a0b36dc87249c9a00fd2f1f534b5267aca62d4cef%26fltp=jpg%26imsz=0000","language":"en","country":"IE"}}

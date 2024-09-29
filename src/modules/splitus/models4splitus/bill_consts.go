@@ -2,7 +2,7 @@ package models4splitus
 
 import (
 	"errors"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/const4debtus"
+	"github.com/sneat-co/sneat-mod-debtus-go/debtus/const4debtus"
 )
 
 type SplitMode string

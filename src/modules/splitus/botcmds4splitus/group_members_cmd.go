@@ -9,7 +9,7 @@ import (
 	"github.com/sneat-co/sneat-core-modules/anybot/cmds4anybot"
 	"github.com/sneat-co/sneat-core-modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
-	shared_space2 "github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/shared_space"
+	"github.com/sneat-co/sneat-mod-debtus-go/debtus/debtusbots/profiles/shared_space"
 	"github.com/strongo/i18n"
 	"net/url"
 
@@ -30,7 +30,7 @@ var groupMembersCommand = botsfw.Command{
 
 		ctx := whc.Context()
 
-		spaceID := shared_space2.GetSpaceIdFromCallbackUrl(callbackUrl)
+		spaceID := shared_space.GetSpaceIdFromCallbackUrl(callbackUrl)
 		contactusSpace := dal4contactus.NewContactusSpaceEntry(spaceID)
 
 		var db dal.DB
@@ -105,13 +105,13 @@ func showGroupMembers(whc botsfw.WebhookContext, contactusSpace dal4contactus.Co
 		[]tgbotapi.InlineKeyboardButton{
 			tgbotapi.NewInlineKeyboardButtonSwitchInlineQuery(
 				emoji.CONTACTS_ICON+" "+whc.Translate(trans.COMMAND_TEXT_INVITE_MEMBER),
-				shared_space2.SpaceCallbackCommandData(joinSpaceCommandCode, contactusSpace.ID),
+				shared_space.SpaceCallbackCommandData(joinSpaceCommandCode, contactusSpace.ID),
 			),
 		},
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text:         whc.CommandText(trans.COMMAND_TEXT_SETTING, emoji.SETTINGS_ICON),
-				CallbackData: shared_space2.SpaceCallbackCommandData(cmds4anybot.SettingsCommandCode, contactusSpace.ID),
+				CallbackData: shared_space.SpaceCallbackCommandData(cmds4anybot.SettingsCommandCode, contactusSpace.ID),
 			},
 		},
 	)

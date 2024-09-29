@@ -1,4 +1,0 @@
-cron:
-- description: Sends reminders
-  url: /cron/send-reminders
-  schedule: every 60 minutes

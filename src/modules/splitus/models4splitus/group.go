@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/const4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/briefs4splitus"
+	"github.com/sneat-co/sneat-mod-debtus-go/debtus/const4debtus"
 	"github.com/strongo/validation"
 	"strings"
 

@@ -5,9 +5,9 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/const4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/briefs4splitus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/const4splitus"
+	"github.com/sneat-co/sneat-mod-debtus-go/debtus/const4debtus"
 	"github.com/strongo/random"
 )
 

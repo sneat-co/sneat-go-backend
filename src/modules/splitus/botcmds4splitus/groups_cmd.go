@@ -5,7 +5,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/debtussender"
+	"github.com/sneat-co/sneat-mod-debtus-go/debtus/debtusbots/debtussender"
 	"github.com/strongo/logus"
 	"net/url"
 )
