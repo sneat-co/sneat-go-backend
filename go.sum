@@ -10,8 +10,8 @@ github.com/bots-go-framework/bots-fw-store v0.8.2 h1:Ss2ZRFoBeNgEy1TWzRIoVdERMoA
 github.com/bots-go-framework/bots-fw-store v0.8.2/go.mod h1:ZxeNr86seS59kKyf9zol15vdZEcH+1CjjzHOFokGrVI=
 github.com/bots-go-framework/bots-fw-telegram v0.13.5 h1:Ygst+0oxf7dlGQuevE5YjJX+yoqeuCiRyCwhHKkTwrQ=
 github.com/bots-go-framework/bots-fw-telegram v0.13.5/go.mod h1:8b4LaIhQVO3iCaKEJGKSeDRW5ngHR/FFvp+075PRjR4=
-github.com/bots-go-framework/bots-fw-telegram-models v0.3.6 h1:52xN830PivHgRtpKiWTunXU62zfI6rj5DfVaVoLDMbs=
-github.com/bots-go-framework/bots-fw-telegram-models v0.3.6/go.mod h1:OUhxcMkO8VSDOeJLjmGe2jjHiRHr8TsTYi7R+pT1zqU=
+github.com/bots-go-framework/bots-fw-telegram-models v0.3.7 h1:vT8HUFEjJ0gCzfuIwtpOlI2xklV5M5tYsk7EIYDwOLI=
+github.com/bots-go-framework/bots-fw-telegram-models v0.3.7/go.mod h1:2VLh0jRUWm1bWi/ph0+Hly9CHidON7lNPVCjF4Mu5as=
 github.com/bots-go-framework/bots-fw-telegram-webapp v0.3.1 h1:rJo6iIgMerNEyd6xqKoogljf7Gdts4IKSlXspRayQ+Y=
 github.com/bots-go-framework/bots-fw-telegram-webapp v0.3.1/go.mod h1:YL4jmrX7CH5a6n40fV8yUBYtnydJVGgNBHNqRoFiu9o=
 github.com/bots-go-framework/bots-go-core v0.0.3 h1:z3A7DLUgxbHWxvTCGnkHP9WHpTT9xxROEypoqAfvYIQ=
@@ -57,8 +57,12 @@ github.com/sanity-io/litter v1.5.5 h1:iE+sBxPBzoK6uaEP5Lt3fHNgpKcHXc/A2HGETy0uJQ
 github.com/sanity-io/litter v1.5.5/go.mod h1:9gzJgR2i4ZpjZHsKvUXIRQVk7P+yM3e+jAF7bU2UI5U=
 github.com/sneat-co/debtstracker-translations v0.2.2 h1:eP0MnEoLUjF+WHJDej+QS3CFogNWItuO6Qoco5wb+7k=
 github.com/sneat-co/debtstracker-translations v0.2.2/go.mod h1:nUq1eqKUdF6K3s2HUGM8djHEFhDe6/tyic1pOtohPtE=
-github.com/sneat-co/sneat-go-core v0.37.0 h1:mMRIIdAcAArvoB+3wfiWkoUibgFde8TxVUbzWADqVJ8=
-github.com/sneat-co/sneat-go-core v0.37.0/go.mod h1:Pb1XxUSvrJzWxvEsKxZpZLey6pM63rbVrrorKJBws78=
+github.com/sneat-co/sneat-core-modules v0.15.0 h1:xyfw8bS4zQxusZOd2p1rN3Hu7ZDzcZtaXtPp7Ic5/0Q=
+github.com/sneat-co/sneat-core-modules v0.15.0/go.mod h1:upJMklt5/P0faXx8OruQuaHXfNtSEgQ0tv5Ot5hw6ac=
+github.com/sneat-co/sneat-go-core v0.37.1 h1:2jtBpP1x4/Q3KjPobbACmiXbjykYs+zGakd06sdjU3U=
+github.com/sneat-co/sneat-go-core v0.37.1/go.mod h1:bc53byrXRGzIEueAVVEmwhNMiS4uwBe/Uh4pESB1ABI=
+github.com/sneat-co/sneat-mod-debtus-go v0.1.0 h1:O7xK7RWVVWZ/9NWYCPTdGWUbpVxjKsqfJe+RPyJk5S0=
+github.com/sneat-co/sneat-mod-debtus-go v0.1.0/go.mod h1:jX66F/DeEscMXVNBL7XkUIF1lwaqfBhBdbuvdycCLBI=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v0.0.0-20161117074351-18a02ba4a312/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5cxcmMvtA=
