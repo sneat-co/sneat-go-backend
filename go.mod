@@ -36,7 +36,7 @@ require (
 	github.com/olebedev/when v1.0.0
 	github.com/pquerna/ffjson v0.0.0-20190930134022-aa0246cd15f7
 	github.com/sneat-co/debtstracker-translations v0.2.2
-	github.com/sneat-co/sneat-core-modules v0.0.0
+	github.com/sneat-co/sneat-core-modules v0.12.4
 	github.com/sneat-co/sneat-go-core v0.37.0
 	github.com/sneat-co/sneat-mod-debtus-go v0.0.1
 	github.com/stretchr/testify v1.9.0

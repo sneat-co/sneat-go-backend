@@ -10,6 +10,7 @@ import (
 	"github.com/sneat-co/sneat-core-modules/userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium"
+	"github.com/sneat-co/sneat-go-backend/src/modules/deedus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus"
@@ -34,5 +35,6 @@ func Modules() []module.Module {
 		sportus.Module(),
 		generic.Module(),
 		debtus.Module(),
+		deedus.Module(),
 	}
 }
