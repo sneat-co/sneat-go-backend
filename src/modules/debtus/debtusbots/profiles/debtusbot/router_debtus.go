@@ -3,7 +3,7 @@ package debtusbot
 import (
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
+	cmds4anybot2 "github.com/sneat-co/sneat-go-backend/src/coremodules/anybot/cmds4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_admin"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_general"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_invite"
@@ -12,7 +12,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_transfer"
 )
 
-var botParams = cmds4anybot.BotParams{
+var botParams = cmds4anybot2.BotParams{
 	StartInGroupAction: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		m.Text = "StartInGroupAction is not implemented yet"
 		return
@@ -51,7 +51,7 @@ var botParams = cmds4anybot.BotParams{
 }
 
 func init() {
-	cmds4anybot.AddSharedCommands(Router, botParams)
+	cmds4anybot2.AddSharedCommands(Router, botParams)
 }
 
 var textAndContactCommands = []botsfw.Command{ // TODO: Check for Action || CallbackAction and register accordingly.
@@ -138,7 +138,7 @@ var callbackCommands = []botsfw.Command{
 	dtb_general.FeedbackCommand,
 	dtb_general.CanYouRateCommand,
 	dtb_general.FeedbackTextCommand,
-	cmds4anybot.AddReferrerCommand,
+	cmds4anybot2.AddReferrerCommand,
 }
 
 var Router = botsfw.NewWebhookRouter(

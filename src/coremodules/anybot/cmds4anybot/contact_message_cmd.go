@@ -5,7 +5,7 @@ import (
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/anybot"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dto4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/facade4contactus"

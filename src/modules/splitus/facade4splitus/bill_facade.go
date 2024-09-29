@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/facade4anybot"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/anybot/facade4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/const4debtus"

@@ -9,7 +9,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/facade4anybot"
+	facade4anybot2 "github.com/sneat-co/sneat-go-backend/src/coremodules/anybot/facade4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/models4auth"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
@@ -125,7 +125,7 @@ func sharedStartCommandAction(
 		//case strings.HasPrefix(textToMatchNoStart, JOIN_BILL_COMMAND):
 		//	return JoinBillCommand.Action(whc)
 	case strings.HasPrefix(startParam, "refbytguser-") && startParam != "refbytguser-YOUR_CHANNEL":
-		facade4anybot.Referer.AddTelegramReferrer(ctx, whc.AppUserID(), strings.TrimPrefix(startParam, "refbytguser-"), whc.GetBotCode())
+		facade4anybot2.Referer.AddTelegramReferrer(ctx, whc.AppUserID(), strings.TrimPrefix(startParam, "refbytguser-"), whc.GetBotCode())
 	}
 	//if m.Text, err = getWelcomeMessage(whc); err != nil {
 	//	return
@@ -194,7 +194,7 @@ func runBotSpecificStartCommand(whc botsfw.WebhookContext, startInBotAction Star
 func startLoginGac(whc botsfw.WebhookContext, loginID int) (m botsfw.MessageFromBot, err error) {
 	ctx := whc.Context()
 	var loginPin models4auth.LoginPin
-	if loginPin, err = facade4anybot.AuthFacade.AssignPinCode(ctx, loginID, whc.AppUserID()); err != nil {
+	if loginPin, err = facade4anybot2.AuthFacade.AssignPinCode(ctx, loginID, whc.AppUserID()); err != nil {
 		return
 	}
 	return whc.NewMessageByCode(trans.MESSAGE_TEXT_LOGIN_CODE, models4auth.LoginCodeToString(loginPin.Data.Code)), nil

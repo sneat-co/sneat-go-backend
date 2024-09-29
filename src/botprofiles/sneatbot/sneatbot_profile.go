@@ -3,10 +3,10 @@ package sneatbot
 import (
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/listusbot/cmds4listusbot"
 	"github.com/sneat-co/sneat-go-backend/src/botprofiles/sneatbot/cmds4sneatbot"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/anybot"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/anybot/cmds4anybot"
+	"github.com/sneat-co/sneat-go-backend/src/modules/listus/listusbot/cmds4listusbot"
 )
 
 const ProfileID = "sneat_bot"

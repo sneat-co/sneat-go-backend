@@ -12,7 +12,7 @@ import (
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/anybot/cmds4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/shared_space"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/briefs4splitus"

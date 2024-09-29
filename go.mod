@@ -2,6 +2,8 @@ module github.com/sneat-co/sneat-go-backend
 
 go 1.22.3
 
+replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
+
 //replace github.com/sneat-co/debtstracker-translations => ../debtstracker-translations
 
 //replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
@@ -54,6 +56,7 @@ require (
 	github.com/shiyanhui/hero v0.0.2
 	github.com/sneat-co/debtstracker-translations v0.2.2
 	github.com/sneat-co/sneat-go-core v0.37.0
+	github.com/sneat-co/sneat-core-modules v0.0.0
 	github.com/stretchr/testify v1.9.0
 	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.0.1

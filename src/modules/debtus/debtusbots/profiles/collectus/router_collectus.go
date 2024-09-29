@@ -3,11 +3,11 @@ package collectus
 import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
+	cmds4anybot2 "github.com/sneat-co/sneat-go-backend/src/coremodules/anybot/cmds4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
 )
 
-var botParams = cmds4anybot.BotParams{
+var botParams = cmds4anybot2.BotParams{
 	StartInBotAction: func(whc botsfw.WebhookContext, startParams []string) (m botsfw.MessageFromBot, err error) {
 		m.Text = "StartInBotAction is not implemented yet"
 		return
@@ -25,7 +25,7 @@ var botParams = cmds4anybot.BotParams{
 	},
 	GetWelcomeMessageText: func(whc botsfw.WebhookContext) (text string, err error) {
 		var user dbo4userus.UserEntry
-		if user, err = cmds4anybot.GetUser(whc); err != nil {
+		if user, err = cmds4anybot2.GetUser(whc); err != nil {
 			return
 		}
 		text = whc.Translate(
@@ -53,5 +53,5 @@ var Router = botsfw.NewWebhookRouter(
 )
 
 func init() {
-	cmds4anybot.AddSharedCommands(Router, botParams)
+	cmds4anybot2.AddSharedCommands(Router, botParams)
 }

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/facade4anybot"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/anybot/facade4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"

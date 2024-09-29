@@ -2,11 +2,11 @@ package cmds4sneatbot
 
 import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
+	cmds4anybot2 "github.com/sneat-co/sneat-go-backend/src/coremodules/anybot/cmds4anybot"
 )
 
-func GetBotParams() cmds4anybot.BotParams {
-	return cmds4anybot.BotParams{
+func GetBotParams() cmds4anybot2.BotParams {
+	return cmds4anybot2.BotParams{
 		GetWelcomeMessageText: sneatBotWelcomeMessage,
 		StartInBotAction:      startActionWithStartParams,
 		StartInGroupAction: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
@@ -18,7 +18,7 @@ func GetBotParams() cmds4anybot.BotParams {
 			return
 		},
 		SetMainMenu: func(whc botsfw.WebhookContext, m *botsfw.MessageFromBot) {
-			m.Keyboard = cmds4anybot.StartMessageInlineKeyboard(whc)
+			m.Keyboard = cmds4anybot2.StartMessageInlineKeyboard(whc)
 		},
 	}
 }

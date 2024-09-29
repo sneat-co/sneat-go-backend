@@ -5,7 +5,6 @@ import (
 	"github.com/bots-go-framework/bots-api-telegram/tgbotapi"
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/listusbot/dal4listusbot"
 	"github.com/sneat-co/sneat-go-backend/src/botscore/tghelpers"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/core4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
@@ -14,15 +13,16 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/facade4listus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/listus/listusbot/dal4listusbot"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"net/url"
 	"strings"
 )
 
-var watchCommand = botsfw.Command{
-	Code:     "watch",
-	Commands: []string{"/watch"},
-	Icon:     "📽",
+var todoCommand = botsfw.Command{
+	Code:     "todo",
+	Commands: []string{"/todo"},
+	Icon:     "🛒",
 	InputTypes: []botinput.WebhookInputType{
 		botinput.WebhookInputText,
 		botinput.WebhookInputCallbackQuery,
@@ -31,22 +31,22 @@ var watchCommand = botsfw.Command{
 		input := context.Input()
 		if input.InputType() == botinput.WebhookInputText {
 			text := strings.ToLower(strings.TrimSpace(input.(botinput.WebhookTextMessage).Text()))
-			return strings.HasPrefix(text, "watch ") || strings.HasPrefix(text, "купить ")
+			return strings.HasPrefix(text, "todo ") || strings.HasPrefix(text, "купить ")
 		}
 		return false
 	},
-	Action:         watchAction,
-	CallbackAction: watchCallbackAction,
+	Action:         todoAction,
+	CallbackAction: todoCallbackAction,
 }
 
-func watchCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
+func todoCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
 	m.Format = botsfw.MessageFormatHTML
-	m.Text = "📽 <b>To Watch</b>"
+	m.Text = "🛒 <b>Tasks ToDo</b>"
 	if callbackUrl.Query().Get("action") == "clear" {
 		m.Text += "\n\n<i>List is empty.</i>"
 	} else {
-		m.Text += "\n\n🎞️ Movie"
-		m.Text += "\n\n📺 TV"
+		m.Text += "\n\n🏊 Swim 100m"
+		m.Text += "\n\n🏃 Run half-marathon"
 	}
 	m.Text += "\n\nSent text to add it to the \"To-Buy\" list."
 	if m, err = whc.NewEditMessage(m.Text, m.Format); err != nil {
@@ -57,7 +57,7 @@ func watchCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 		[]tgbotapi.InlineKeyboardButton{
 			{
 				Text:         "Clear list",
-				CallbackData: "watch?action=clear",
+				CallbackData: "todo?action=clear",
 			},
 		},
 		[]tgbotapi.InlineKeyboardButton{
@@ -68,7 +68,7 @@ func watchCallbackAction(whc botsfw.WebhookContext, callbackUrl *url.URL) (m bot
 	return
 }
 
-func watchAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
+func todoAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 	ctx := whc.Context()
 
 	chatData := whc.ChatData()

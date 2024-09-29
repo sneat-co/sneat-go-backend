@@ -2,7 +2,7 @@ package botcmds4splitus
 
 import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/anybot/cmds4anybot"
 	"github.com/strongo/logus"
 	"strings"
 )

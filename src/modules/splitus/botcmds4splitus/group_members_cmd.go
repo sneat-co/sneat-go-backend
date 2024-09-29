@@ -6,7 +6,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/anybot/cmds4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
 	shared_space2 "github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/shared_space"

@@ -8,7 +8,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/botprofiles/anybot/cmds4anybot"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/anybot/cmds4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dbo4spaceus"
