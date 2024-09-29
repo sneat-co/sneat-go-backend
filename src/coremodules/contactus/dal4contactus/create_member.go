@@ -2,8 +2,8 @@ package dal4contactus
 
 import (
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dto4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )

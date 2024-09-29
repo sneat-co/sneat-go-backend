@@ -2,7 +2,7 @@ package api4auth
 
 import (
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/strongo/logus"
 	"net/http"
 
@@ -18,19 +18,19 @@ func HandleSignInWithFbm(ctx context.Context, w http.ResponseWriter, r *http.Req
 	fbAppID := r.PostFormValue("fbAppID")
 
 	if fbAppID == "" {
-		api4debtus.BadRequestMessage(ctx, w, "Missing fbAppID")
+		common4all.BadRequestMessage(ctx, w, "Missing fbAppID")
 		return
 	}
 	if threadID == "" {
-		api4debtus.BadRequestMessage(ctx, w, "Missing tid")
+		common4all.BadRequestMessage(ctx, w, "Missing tid")
 		return
 	}
 	if threadType == "" {
-		api4debtus.BadRequestMessage(ctx, w, "Missing thread_type")
+		common4all.BadRequestMessage(ctx, w, "Missing thread_type")
 		return
 	}
 	if pageScopedID == "" {
-		api4debtus.BadRequestMessage(ctx, w, "Missing psid")
+		common4all.BadRequestMessage(ctx, w, "Missing psid")
 		return
 	}
 

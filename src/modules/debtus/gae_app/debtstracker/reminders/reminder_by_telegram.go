@@ -9,6 +9,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/core/queues"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/platforms/debtustgbots"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/dtb_common"
@@ -59,10 +60,10 @@ func sendReminderByTelegram(ctx context.Context, transfer models4debtus.Transfer
 			translator.Translate(trans.MESSAGE_TEXT_REMINDER_ASK_IF_RETURNED),
 		)
 
-		utm := common4debtus.UtmParams{
+		utm := common4all.UtmParams{
 			Source:   "TODO",
 			Medium:   telegram.PlatformID,
-			Campaign: common4debtus.UTM_CAMPAIGN_REMINDER,
+			Campaign: common4all.UTM_CAMPAIGN_REMINDER,
 		}
 		messageText += common4debtus.TextReceiptForTransfer(ctx, translator, transfer, reminder.Data.UserID, common4debtus.ShowReceiptToAutodetect, utm)
 

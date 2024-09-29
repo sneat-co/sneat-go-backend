@@ -6,14 +6,14 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/core/queues"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/facade4auth"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/unsorted4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus/dto4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/delaying"
@@ -30,21 +30,21 @@ func HandleAdminFindUser(ctx context.Context, w http.ResponseWriter, r *http.Req
 		if err := dal4userus.GetUser(ctx, nil, appUser); err != nil {
 			logus.Errorf(ctx, fmt.Errorf("failed to get user by userID=%s: %w", userID, err).Error())
 		} else {
-			api4debtus.JsonToResponse(ctx, w, []dto4debtus.ApiUserDto{{ID: userID, Name: appUser.Data.GetFullName()}})
+			common4all.JsonToResponse(ctx, w, []dto4debtus.ApiUserDto{{ID: userID, Name: appUser.Data.GetFullName()}})
 		}
 		return
 	} else {
 		tgUserText := r.URL.Query().Get("tgUser")
 
 		if tgUserText == "" {
-			api4debtus.BadRequestMessage(ctx, w, "tgUser is empty string")
+			common4all.BadRequestMessage(ctx, w, "tgUser is empty string")
 			return
 		}
 
-		tgUsers, err := facade4auth.TgUser.FindByUserName(ctx, nil, tgUserText)
+		tgUsers, err := unsorted4auth.TgUser.FindByUserName(ctx, nil, tgUserText)
 
 		if err != nil {
-			api4debtus.InternalError(ctx, w, err)
+			common4all.InternalError(ctx, w, err)
 			return
 		}
 
@@ -57,22 +57,22 @@ func HandleAdminFindUser(ctx context.Context, w http.ResponseWriter, r *http.Req
 			}
 		}
 
-		api4debtus.JsonToResponse(ctx, w, users)
+		common4all.JsonToResponse(ctx, w, users)
 	}
 }
 
 func HandleAdminMergeUserContacts(ctx context.Context, w http.ResponseWriter, r *http.Request, _ token4auth.AuthInfo) {
-	keepID := api4debtus.GetStrID(ctx, w, r, "keepID")
+	keepID := common4all.GetStrID(ctx, w, r, "keepID")
 	if keepID == "" {
 		return
 	}
-	deleteID := api4debtus.GetStrID(ctx, w, r, "deleteID")
+	deleteID := common4all.GetStrID(ctx, w, r, "deleteID")
 	if deleteID == "" {
 		return
 	}
-	spaceID := api4debtus.GetStrID(ctx, w, r, "spaceID")
+	spaceID := common4all.GetStrID(ctx, w, r, "spaceID")
 	if spaceID == "" {
-		api4debtus.BadRequestError(ctx, w, validation.NewErrRequestIsMissingRequiredField("spaceID"))
+		common4all.BadRequestError(ctx, w, validation.NewErrRequestIsMissingRequiredField("spaceID"))
 		return
 	}
 
@@ -117,7 +117,7 @@ func HandleAdminMergeUserContacts(ctx context.Context, w http.ResponseWriter, r 
 		}
 		return nil
 	}); err != nil {
-		api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
+		common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 		return
 	}
 }

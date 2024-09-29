@@ -17,8 +17,9 @@ func GetBotParams() cmds4anybot2.BotParams {
 			m.Text = "Help is not implemented yet for @SneatBot"
 			return
 		},
-		SetMainMenu: func(whc botsfw.WebhookContext, m *botsfw.MessageFromBot) {
-			m.Keyboard = cmds4anybot2.StartMessageInlineKeyboard(whc)
+		SetMainMenu: func(whc botsfw.WebhookContext, messageText string, showHint bool) (m botsfw.MessageFromBot, err error) {
+			m.Text = "SneatBot main menu"
+			return
 		},
 	}
 }

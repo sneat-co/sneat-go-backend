@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dto4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/const4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus/dto4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -63,7 +63,7 @@ func HandleCreateCounterparty(ctx context.Context, w http.ResponseWriter, r *htt
 	})
 
 	if err != nil {
-		api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
+		common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 		return
 	}
 	_, _ = w.Write([]byte(debtusContact.ID))
@@ -180,7 +180,7 @@ func contactToResponse(
 	//	}
 	//}
 
-	api4debtus.JsonToResponse(ctx, w, counterpartyJson)
+	common4all.JsonToResponse(ctx, w, counterpartyJson)
 }
 
 //type CounterpartyTransfer struct {
@@ -202,7 +202,7 @@ func HandleDeleteContact(ctx context.Context, w http.ResponseWriter, r *http.Req
 	logus.Debugf(ctx, "contactID: %v", contactID)
 	userCtx := facade.NewUserContext("")
 	if err := facade4debtus.DeleteContact(ctx, userCtx, spaceID, contactID); err != nil {
-		api4debtus.InternalError(ctx, w, err)
+		common4all.InternalError(ctx, w, err)
 		return
 	}
 	logus.Infof(ctx, "DebtusSpaceContactEntry deleted: %v", contactID)
@@ -221,7 +221,7 @@ func HandleArchiveCounterparty(ctx context.Context, w http.ResponseWriter, r *ht
 	}
 	userCtx := facade.NewUserContext("")
 	if contact, debtusContact, err := facade4debtus.ChangeContactStatus(ctx, userCtx, spaceID, contactID, const4debtus.StatusArchived); err != nil {
-		api4debtus.InternalError(ctx, w, err)
+		common4all.InternalError(ctx, w, err)
 		return
 	} else {
 		contactToResponse(ctx, w, authInfo, contact, debtusContact)
@@ -242,7 +242,7 @@ func HandleActivateCounterparty(ctx context.Context, w http.ResponseWriter, r *h
 		return
 	}
 	if contact, debtusContact, err := facade4debtus.ChangeContactStatus(ctx, userCtx, spaceID, contactID, const4debtus.StatusActive); err != nil {
-		api4debtus.InternalError(ctx, w, err)
+		common4all.InternalError(ctx, w, err)
 		return
 	} else {
 		contactToResponse(ctx, w, authInfo, contact, debtusContact)
@@ -270,7 +270,7 @@ func HandleUpdateCounterparty(ctx context.Context, w http.ResponseWriter, r *htt
 	}
 
 	if debtusContact, err := facade4debtus.UpdateContact(ctx, spaceID, counterpartyID, values); err != nil {
-		api4debtus.InternalError(ctx, w, err)
+		common4all.InternalError(ctx, w, err)
 		return
 	} else {
 		contact := dal4contactus.NewContactEntry(spaceID, debtusContact.ID)

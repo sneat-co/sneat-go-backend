@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/models4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/unsorted4auth"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
 	"strings"
@@ -13,7 +14,7 @@ import (
 	"errors"
 )
 
-var _ LoginPinDal = (*LoginPinDalGae)(nil)
+var _ unsorted4auth.LoginPinDal = (*LoginPinDalGae)(nil)
 
 type LoginPinDalGae struct {
 }

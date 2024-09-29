@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"net/http"
 )
 
 func HandleAdminLatestUsers(ctx context.Context, w http.ResponseWriter, _ *http.Request, _ token4auth.AuthInfo) {
-	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, errors.New("not implemented yet"))
+	common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, errors.New("not implemented yet"))
 	//users, err := dtdal.Admin.LatestUsers(ctx)
 	//if err != nil {
 	//	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)

@@ -29,6 +29,8 @@ type SneatAppTgChatDbo struct {
 	SneatAppTgData
 }
 
+type SneatAppTgChatEntry = record.DataWithID[string, *SneatAppTgChatDbo]
+
 type SneatAppTgUserDbo struct {
 	botsfwtgmodels.TgPlatformUserBaseDbo
 	SneatAppTgData

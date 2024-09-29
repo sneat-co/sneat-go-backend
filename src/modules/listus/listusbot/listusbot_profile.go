@@ -33,7 +33,9 @@ func createProfile(errFooterText func() string) botsfw.BotProfile {
 		HelpCommandAction: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 			return
 		},
-		SetMainMenu: func(whc botsfw.WebhookContext, m *botsfw.MessageFromBot) {
+		SetMainMenu: func(whc botsfw.WebhookContext, messageText string, showHint bool) (m botsfw.MessageFromBot, err error) {
+			m.Text = "Listus main menu"
+			return
 		},
 	}
 	router := botsfw.NewWebhookRouter(errFooterText)

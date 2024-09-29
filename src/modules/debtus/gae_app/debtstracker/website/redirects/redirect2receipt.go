@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/julienschmidt/httprouter"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	pages2 "github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/website/pages"
 	"github.com/strongo/i18n"
@@ -59,6 +59,6 @@ func ReceiptRedirect(w http.ResponseWriter, r *http.Request, _ httprouter.Params
 			"Description": "Receipt description goes here",
 		}, 9)
 	} else {
-		redirectToWebApp(w, r, false, common4debtus.Deeplink.AppHashPathToReceipt(receiptID), map[string]string{}, []string{})
+		redirectToWebApp(w, r, false, common4all.Deeplink.AppHashPathToReceipt(receiptID), map[string]string{}, []string{})
 	}
 }

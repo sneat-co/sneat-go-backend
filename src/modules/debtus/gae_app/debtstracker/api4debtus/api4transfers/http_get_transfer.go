@@ -3,8 +3,8 @@ package api4transfers
 import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus/unsorted"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -12,11 +12,11 @@ import (
 )
 
 func HandleGetTransfer(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	if transferID := api4debtus.GetStrID(ctx, w, r, "id"); transferID == "" {
+	if transferID := common4all.GetStrID(ctx, w, r, "id"); transferID == "" {
 		return
 	} else {
 		transfer, err := facade4debtus.Transfers.GetTransferByID(ctx, nil, transferID)
-		if api4debtus.HasError(ctx, w, err, models4debtus.TransfersCollection, transferID, http.StatusBadRequest) {
+		if common4all.HasError(ctx, w, err, models4debtus.TransfersCollection, transferID, http.StatusBadRequest) {
 			return
 		}
 
@@ -36,7 +36,7 @@ func HandleGetTransfer(ctx context.Context, w http.ResponseWriter, r *http.Reque
 
 		record := unsorted.NewReceiptTransferDto(ctx, transfer)
 
-		api4debtus.JsonToResponse(ctx, w, &record)
+		common4all.JsonToResponse(ctx, w, &record)
 	}
 }
 

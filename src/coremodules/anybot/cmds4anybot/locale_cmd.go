@@ -7,7 +7,6 @@ import (
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_general"
 	"github.com/strongo/i18n"
 	"github.com/strongo/logus"
 	"net/url"
@@ -79,14 +78,14 @@ func getOnboardingLocalesKeyboard(callbackPath string) *tgbotapi.InlineKeyboardM
 	)
 }
 
-func onStartAskLocaleAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
+func onStartAskLocaleAction(whc botsfw.WebhookContext, mainMenuAction SetMainMenuFunc) (m botsfw.MessageFromBot, err error) {
 	chatEntity := whc.ChatData()
 
 	if chatEntity.IsAwaitingReplyTo(StartCommandCode) {
 		messageText := whc.Input().(botinput.WebhookTextMessage).Text()
 		for _, locale := range trans.SupportedLocales {
 			if locale.TitleWithIcon() == messageText {
-				return setPreferredLocaleAction(whc, locale.Code5, setPreferredLocaleModeStart)
+				return setPreferredLocaleAction(whc, locale.Code5, setPreferredLocaleModeStart, mainMenuAction)
 			}
 		}
 		m = whc.NewMessageByCode(trans.MESSAGE_TEXT_UNKNOWN_LANGUAGE)
@@ -121,7 +120,7 @@ var UserSettingsLocaleCommand = botsfw.Command{
 				{Text: i18n.LocaleDeDe.TitleWithIcon(), CallbackData: callbackData + i18n.LocaleDeDe.Code5},
 				{Text: i18n.LocaleFaIr.TitleWithIcon(), CallbackData: callbackData + i18n.LocaleFaIr.Code5},
 			},
-		) //dtb_general.LanguageOptions(whc, false)
+		)
 		logus.Debugf(whc.Context(), "AskPreferredLanguage(): locale: %v", whc.Locale().Code5)
 		keyboard.InlineKeyboard = append(keyboard.InlineKeyboard, []tgbotapi.InlineKeyboardButton{
 			{Text: whc.Translate(trans.COMMAND_TEXT_SETTING), CallbackData: SettingsCommandCode},
@@ -145,6 +144,7 @@ func setPreferredLocaleAction(
 	whc botsfw.WebhookContext,
 	code5 string,
 	mode setPreferredLocaleMode, // TODO: is it obsolete?
+	mainMenuAction SetMainMenuFunc,
 ) (
 	m botsfw.MessageFromBot, err error,
 ) {
@@ -198,17 +198,13 @@ func setPreferredLocaleAction(
 		return
 	case setPreferredLocaleModeSettings:
 		if localeChanged {
-			if m, err = dtb_general.MainMenuAction(whc, whc.Translate(trans.MESSAGE_TEXT_LOCALE_CHANGED, selectedLocale.TitleWithIcon()), false); err != nil {
+			if m, err = mainMenuAction(whc, whc.Translate(trans.MESSAGE_TEXT_LOCALE_CHANGED, selectedLocale.TitleWithIcon()), false); err != nil {
 				return
 			}
 			if _, err = whc.Responder().SendMessage(ctx, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
 				return m, err
 			}
 			return SettingsMainAction(whc)
-			//if _, err = whc.Responder().SendMessage(ctx, m, botsfw.BotAPISendMessageOverHTTPS); err != nil {
-			//	return m, err
-			//}
-			//return dtb_general.MainMenuAction(whc, )
 		} else {
 			return SettingsMainAction(whc)
 		}

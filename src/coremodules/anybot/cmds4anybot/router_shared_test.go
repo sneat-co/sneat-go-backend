@@ -20,8 +20,8 @@ func TestAddSharedAddSharedCommands(t *testing.T) {
 		HelpCommandAction: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 			return
 		},
-		SetMainMenu: func(whc botsfw.WebhookContext, m *botsfw.MessageFromBot) {
-
+		SetMainMenu: func(whc botsfw.WebhookContext, messageText string, showHint bool) (m botsfw.MessageFromBot, err error) {
+			return
 		},
 	})
 }

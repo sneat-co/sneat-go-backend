@@ -7,9 +7,9 @@ import (
 	"github.com/bots-go-framework/bots-fw-telegram-models/botsfwtgmodels"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/anybot"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/i18n"
 	"github.com/strongo/logus"
@@ -22,7 +22,7 @@ func GetLocale(ctx context.Context, botID string, tgChatIntID int64, userID stri
 	//tgChatBaseData := botsfwtgmodels.NewTelegramChatBaseData()
 	//chatID, new(models.DebtusTelegramChatData)
 	key := dal.NewKeyWithID(botsfwtgmodels.TgChatCollection, chatID)
-	var tgChat = record.NewDataWithID[string, *models4debtus.DebtusTelegramChatData](chatID, key, new(models4debtus.DebtusTelegramChatData))
+	var tgChat = record.NewDataWithID[string, *anybot.SneatAppTgChatDbo](chatID, key, new(anybot.SneatAppTgChatDbo))
 	var db dal.DB
 	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return
@@ -39,10 +39,10 @@ func GetLocale(ctx context.Context, botID string, tgChatIntID int64, userID stri
 			return
 		}
 	}
-	tgChatPreferredLanguage := tgChat.Data.BaseChatData().PreferredLanguage
+	tgChatPreferredLanguage := tgChat.Data.BaseTgChatData().PreferredLanguage
 	if tgChatPreferredLanguage == "" {
-		if userID == "" && tgChat.Data.BaseChatData().AppUserID != "" {
-			userID = tgChat.Data.BaseChatData().AppUserID
+		if userID == "" && tgChat.Data.AppUserID != "" {
+			userID = tgChat.Data.BaseTgChatData().AppUserID
 		}
 		if userID != "" {
 			var user dbo4userus.UserEntry

@@ -6,10 +6,10 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/api4auth"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/facade4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal/gaedal"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
@@ -52,13 +52,13 @@ func HandleUserInfo(ctx context.Context, w http.ResponseWriter, r *http.Request)
 
 func HandleSaveVisitorData(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
-		api4debtus.ErrorAsJson(ctx, w, http.StatusBadRequest, err)
+		common4all.ErrorAsJson(ctx, w, http.StatusBadRequest, err)
 		return
 	}
 	gaClientId := r.FormValue("gaClientId")
 	if gaClientId == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		api4debtus.ErrorAsJson(ctx, w, http.StatusBadRequest, errors.New("missing required parameter gaClientId"))
+		common4all.ErrorAsJson(ctx, w, http.StatusBadRequest, errors.New("missing required parameter gaClientId"))
 		return
 	}
 
@@ -66,13 +66,13 @@ func HandleSaveVisitorData(ctx context.Context, w http.ResponseWriter, r *http.R
 	ipAddress := strings.SplitN(r.RemoteAddr, ":", 1)[0]
 
 	if _, err := facade4userus.SaveGaClient(ctx, gaClientId, userAgent, ipAddress); err != nil {
-		api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
+		common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 		return
 	}
 }
 
 func HandleMe(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo, user dbo4userus.UserEntry) {
-	api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, errors.New("not implemented"))
+	common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, errors.New("not implemented"))
 	//meDto := dto4debtus.UserMeDto{
 	//	UserID:   authInfo.UserID,
 	//	FullName: user.Data.GetFullName(),
@@ -106,12 +106,12 @@ func SetUserName(ctx context.Context, w http.ResponseWriter, r *http.Request, au
 	body, err := io.ReadAll(r.Body)
 
 	if err != nil {
-		api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
+		common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 		return
 	}
 
 	if len(body) == 0 {
-		api4debtus.ErrorAsJson(ctx, w, http.StatusBadRequest, fmt.Errorf("%w: UserEntry name is required", api4auth.ErrBadRequest))
+		common4all.ErrorAsJson(ctx, w, http.StatusBadRequest, fmt.Errorf("%w: UserEntry name is required", api4auth.ErrBadRequest))
 		return
 	}
 
@@ -129,7 +129,7 @@ func SetUserName(ctx context.Context, w http.ResponseWriter, r *http.Request, au
 	})
 
 	if err != nil {
-		api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
+		common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 		return
 	}
 }

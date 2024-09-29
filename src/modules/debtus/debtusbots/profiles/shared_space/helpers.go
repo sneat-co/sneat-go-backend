@@ -10,8 +10,8 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/anybot"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dbo4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/models4splitus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
@@ -62,7 +62,7 @@ func GetSpaceEntryByCallbackUrl(whc botsfw.WebhookContext, callbackUrl *url.URL)
 	// TODO: document who we can get space callback without space ContactID
 
 	tgChat := whc.Input().(telegram.TgWebhookInput).TgUpdate().Chat()
-	var tgChatEntity *models4debtus.DebtusTelegramChatData
+	var tgChatEntity *anybot.SneatAppTgChatDbo
 	if tgChatEntity, err = getTgChatEntity(whc); err != nil {
 		return
 	}
@@ -75,7 +75,7 @@ func GetSpaceEntryByCallbackUrl(whc botsfw.WebhookContext, callbackUrl *url.URL)
 }
 
 func GetUserGroupID(whc botsfw.WebhookContext) (groupID string, err error) {
-	var tgChatEntity *models4debtus.DebtusTelegramChatData
+	var tgChatEntity *anybot.SneatAppTgChatDbo
 	if tgChatEntity, err = getTgChatEntity(whc); err != nil || tgChatEntity == nil {
 		return
 	}
@@ -85,7 +85,7 @@ func GetUserGroupID(whc botsfw.WebhookContext) (groupID string, err error) {
 	return
 }
 
-func createSpaceForTelegramGroup(ctx context.Context, whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, chatData *models4debtus.DebtusTelegramChatData, tgChat *tgbotapi.Chat) (space dbo4spaceus.SpaceEntry, err error) {
+func createSpaceForTelegramGroup(ctx context.Context, whc botsfw.WebhookContext, tx dal.ReadwriteTransaction, chatData *anybot.SneatAppTgChatDbo, tgChat *tgbotapi.Chat) (space dbo4spaceus.SpaceEntry, err error) {
 	logus.Debugf(ctx, "createSpaceForTelegramGroup()")
 	err = errors.New("creation of space from not implemented yet")
 	//var user *models4debtus.DebutsAppUserDataOBSOLETE
@@ -166,7 +166,7 @@ func createSpaceForTelegramGroup(ctx context.Context, whc botsfw.WebhookContext,
 	return
 }
 
-func getTgChatEntity(whc botsfw.WebhookContext) (tgChatEntity *models4debtus.DebtusTelegramChatData, err error) {
+func getTgChatEntity(whc botsfw.WebhookContext) (tgChatEntity *anybot.SneatAppTgChatDbo, err error) {
 	chatEntity := whc.ChatData()
 	if chatEntity == nil {
 		whc.Input().LogRequest()
@@ -174,7 +174,7 @@ func getTgChatEntity(whc botsfw.WebhookContext) (tgChatEntity *models4debtus.Deb
 		return
 	}
 	var ok bool
-	if tgChatEntity, ok = chatEntity.(*models4debtus.DebtusTelegramChatData); !ok {
+	if tgChatEntity, ok = chatEntity.(*anybot.SneatAppTgChatDbo); !ok {
 		logus.Debugf(whc.Context(), "whc.ChatData() is not TgChatEntityBase")
 		return
 	}

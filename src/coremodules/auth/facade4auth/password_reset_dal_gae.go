@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/models4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/unsorted4auth"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
@@ -14,7 +15,7 @@ func NewPasswordResetDalGae() PasswordResetDalGae {
 type PasswordResetDalGae struct {
 }
 
-var _ PasswordResetDal = (*PasswordResetDalGae)(nil)
+var _ unsorted4auth.PasswordResetDal = (*PasswordResetDalGae)(nil)
 
 func (PasswordResetDalGae) GetPasswordResetByID(ctx context.Context, tx dal.ReadSession, id int) (passwordReset models4auth.PasswordReset, err error) {
 	passwordReset = models4auth.NewPasswordReset(id, nil)

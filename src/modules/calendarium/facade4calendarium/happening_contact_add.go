@@ -6,10 +6,10 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dbo4contactus"
+	dbo4linkage2 "github.com/sneat-co/sneat-go-backend/src/coremodules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
-	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )
@@ -50,12 +50,12 @@ func addParticipantToHappeningTxWorker(ctx context.Context, tx dal.ReadwriteTran
 	}
 	contactFullRef := dbo4contactus.NewContactFullRef(request.SpaceID, request.Contact.ID)
 	var updates []dal.Update
-	if updates, err = dbo4linkage.AddRelationshipAndID(
+	if updates, err = dbo4linkage2.AddRelationshipAndID(
 		&params.Happening.Data.WithRelated,
 		&params.Happening.Data.WithRelatedIDs,
 		contactFullRef,
-		dbo4linkage.RelationshipItemRolesCommand{
-			Add: &dbo4linkage.RolesCommand{
+		dbo4linkage2.RelationshipItemRolesCommand{
+			Add: &dbo4linkage2.RolesCommand{
 				RolesOfItem: []string{"participant"},
 			},
 		},
@@ -85,12 +85,12 @@ func addContactToHappeningBriefInSpaceDbo(
 			WithRelated:    happening.Data.WithRelated,
 		}
 	}
-	contactRef := dbo4linkage.NewSpaceModuleItemRef(spaceID, const4contactus.ModuleID, const4contactus.ContactsCollection, contactID)
+	contactRef := dbo4linkage2.NewSpaceModuleItemRef(spaceID, const4contactus.ModuleID, const4contactus.ContactsCollection, contactID)
 
 	updates, err = happeningBriefPointer.AddRelationship(
 		contactRef,
-		dbo4linkage.RelationshipItemRolesCommand{
-			Add: &dbo4linkage.RolesCommand{
+		dbo4linkage2.RelationshipItemRolesCommand{
+			Add: &dbo4linkage2.RolesCommand{
 				RolesOfItem: []string{"participant"},
 			},
 		})

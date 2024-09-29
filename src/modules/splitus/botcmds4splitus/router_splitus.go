@@ -37,7 +37,10 @@ var botParams = cmds4anybot2.BotParams{
 	//
 	//
 	//
-	SetMainMenu: setMainMenu,
+	SetMainMenu: func(whc botsfw.WebhookContext, messageText string, showHint bool) (m botsfw.MessageFromBot, err error) {
+		setMainMenu(whc, &m)
+		return
+	},
 }
 
 var Router = botsfw.NewWebhookRouter(

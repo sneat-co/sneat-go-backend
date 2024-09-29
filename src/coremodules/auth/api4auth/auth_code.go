@@ -7,9 +7,8 @@ import (
 	facade4anybot2 "github.com/sneat-co/sneat-go-backend/src/coremodules/anybot/facade4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/models4auth"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/unsorted4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/strongo/logus"
 	"net/http"
 	"strconv"
@@ -19,17 +18,17 @@ import (
 func HandleSignInWithCode(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	code := r.PostFormValue("code")
 	if code == "" {
-		api4debtus.BadRequestMessage(ctx, w, "Missing required attribute: code")
+		common4all.BadRequestMessage(ctx, w, "Missing required attribute: code")
 		return
 	}
 	if loginCode, err := strconv.Atoi(code); err != nil {
-		api4debtus.BadRequestMessage(ctx, w, "Parameter code is not an integer")
+		common4all.BadRequestMessage(ctx, w, "Parameter code is not an integer")
 		return
 	} else if loginCode == 0 {
-		api4debtus.ErrorAsJson(ctx, w, http.StatusBadRequest, errors.New("Login code should not be 0."))
+		common4all.ErrorAsJson(ctx, w, http.StatusBadRequest, errors.New("Login code should not be 0."))
 		return
 	} else {
-		if userID, err := dtdal.LoginCode.ClaimLoginCode(ctx, loginCode); err != nil {
+		if userID, err := unsorted4auth.LoginCode.ClaimLoginCode(ctx, loginCode); err != nil {
 			switch err {
 			case models4auth.ErrLoginCodeExpired:
 				_, _ = w.Write([]byte("expired"))
@@ -37,7 +36,7 @@ func HandleSignInWithCode(ctx context.Context, w http.ResponseWriter, r *http.Re
 				_, _ = w.Write([]byte("claimed"))
 			default:
 				err = fmt.Errorf("failed to claim code: %w", err)
-				api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
+				common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 			}
 		} else {
 			if authInfo.UserID != "" && userID != authInfo.UserID {
@@ -50,17 +49,17 @@ func HandleSignInWithCode(ctx context.Context, w http.ResponseWriter, r *http.Re
 }
 
 func HandleSignInWithPin(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
-	loginID, err := common4debtus.DecodeIntID(r.PostFormValue("loginID"))
+	loginID, err := common4all.DecodeIntID(r.PostFormValue("loginID"))
 	if err != nil {
-		api4debtus.BadRequestError(ctx, w, fmt.Errorf("parameter 'loginID' is not an integer: %w", err))
+		common4all.BadRequestError(ctx, w, fmt.Errorf("parameter 'loginID' is not an integer: %w", err))
 		return
 	}
 
 	if loginCode, err := strconv.ParseInt(r.PostFormValue("loginPin"), 10, 32); err != nil {
-		api4debtus.BadRequestMessage(ctx, w, "Parameter 'loginCode' is not an integer")
+		common4all.BadRequestMessage(ctx, w, "Parameter 'loginCode' is not an integer")
 		return
 	} else if loginCode == 0 {
-		api4debtus.ErrorAsJson(ctx, w, http.StatusBadRequest, errors.New("Parameter 'loginCode' should not be 0."))
+		common4all.ErrorAsJson(ctx, w, http.StatusBadRequest, errors.New("Parameter 'loginCode' should not be 0."))
 		return
 	} else {
 		if userID, err := facade4anybot2.AuthFacade.SignInWithPin(ctx, loginID, int32(loginCode)); err != nil {
@@ -71,7 +70,7 @@ func HandleSignInWithPin(ctx context.Context, w http.ResponseWriter, r *http.Req
 				_, _ = w.Write([]byte("claimed"))
 			default:
 				err = fmt.Errorf("failed to claim loginCode: %w", err)
-				api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
+				common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 			}
 		} else {
 			if authInfo.UserID != "" && userID != authInfo.UserID {

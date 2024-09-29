@@ -2,7 +2,7 @@ package dbo4calendarium
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
 	"strconv"

@@ -1,6 +1,8 @@
 package dbo4contactus
 
-import "github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
+import (
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/linkage/dbo4linkage"
+)
 
 // ContactusUserDbo holds contactus specific data for a specific user
 type ContactusUserDbo struct {

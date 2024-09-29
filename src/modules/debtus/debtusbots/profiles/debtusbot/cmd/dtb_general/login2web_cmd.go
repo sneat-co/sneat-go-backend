@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"strings"
 )
 
@@ -15,7 +15,7 @@ var Login2WebCommand = botsfw.Command{
 	Commands: []string{"/login"},
 	Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
 		mt := whc.Translate(trans.MESSAGE_TEXT_LOGIN_TO_WEB_APP)
-		linker := common4debtus.NewLinkerFromWhc(whc)
+		linker := common4all.NewLinkerFromWhc(whc)
 		mt = strings.Replace(mt, "<a>", fmt.Sprintf(`<a href="%v">`, linker.ToMainScreen(whc)), 1)
 		m = whc.NewMessage(mt)
 		m.Format = botsfw.MessageFormatHTML

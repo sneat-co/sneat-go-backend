@@ -2,7 +2,7 @@ package dbo4calendarium
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/strongoapp/with"
 	"github.com/strongo/validation"

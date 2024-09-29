@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/unsorted4auth"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -25,7 +26,7 @@ func NewUserDalGae() UserDalGae {
 	return UserDalGae{}
 }
 
-var _ UserDal = (*UserDalGae)(nil)
+var _ unsorted4auth.UserDal = (*UserDalGae)(nil)
 
 func (userDal UserDalGae) GetUserByStrID(ctx context.Context, userID string) (user dbo4userus.UserEntry, err error) {
 	user = dbo4userus.NewUserEntry(userID)

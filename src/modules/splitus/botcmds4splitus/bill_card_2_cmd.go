@@ -8,7 +8,7 @@ import (
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/facade4splitus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/models4splitus"
 	"github.com/strongo/i18n"
@@ -137,7 +137,7 @@ func writeBillMembersList(
 		if member.Paid == bill.Data.AmountTotal {
 			buffer.WriteString("<b>")
 		}
-		if err = common4debtus.HtmlTemplates.RenderTemplate(ctx, buffer, translator, trans.MESSAGE_TEXT_BILL_CARD_MEMBER_TITLE, templateParams); err != nil {
+		if err = common4all.HtmlTemplates.RenderTemplate(ctx, buffer, translator, trans.MESSAGE_TEXT_BILL_CARD_MEMBER_TITLE, templateParams); err != nil {
 			logus.Errorf(ctx, "Failed to render template")
 			return
 		}
@@ -162,7 +162,7 @@ func writeBillMembersList(
 
 		logus.Debugf(ctx, "Will render template")
 		buffer.WriteString(" ")
-		if err = common4debtus.HtmlTemplates.RenderTemplate(ctx, buffer, translator, templateName, templateParams); err != nil {
+		if err = common4all.HtmlTemplates.RenderTemplate(ctx, buffer, translator, templateName, templateParams); err != nil {
 			logus.Errorf(ctx, "Failed to render template")
 			return
 		}

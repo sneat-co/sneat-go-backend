@@ -2,7 +2,7 @@ package dto4contactus
 
 import (
 	"errors"
-	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dto4linkage"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/linkage/dto4linkage"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
 	"strings"

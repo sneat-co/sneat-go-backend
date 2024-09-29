@@ -4,11 +4,10 @@ import (
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/const4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/models4splitus"
 )
 
-type DebtusUserDbo struct {
+type DebtusUserDbo struct { // TODO: Move back into debtus module
 	money.Balanced
 	WithTransferCounts
 	WithHasDueTransfers
@@ -18,5 +17,5 @@ type DebtusUserDbo struct {
 type DebtusUserEntry = record.DataWithID[string, *DebtusUserDbo]
 
 func NewDebtusUserEntry(userID string) DebtusUserEntry {
-	return dal4userus.NewUserModuleEntry(userID, const4debtus.ModuleID, new(DebtusUserDbo))
+	return dal4userus.NewUserModuleEntry(userID, "debtus", new(DebtusUserDbo))
 }

@@ -7,7 +7,6 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/facade4auth"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/models4auth"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dto4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
@@ -83,12 +82,6 @@ type ReminderDal interface {
 	SetReminderIsSentInTransaction(ctx context.Context, tx dal.ReadwriteTransaction, reminder models4debtus.Reminder, sentAt time.Time, messageIntID int64, messageStrID, locale, errDetails string) (err error)
 	GetActiveReminderIDsByTransferID(ctx context.Context, tx dal.ReadSession, transferID int) ([]int, error)
 	GetSentReminderIDsByTransferID(ctx context.Context, tx dal.ReadSession, transferID int) ([]int, error)
-}
-
-type EmailDal interface {
-	InsertEmail(ctx context.Context, tx dal.ReadwriteTransaction, entity *models4auth.EmailData) (models4auth.Email, error)
-	UpdateEmail(ctx context.Context, tx dal.ReadwriteTransaction, email models4auth.Email) error
-	GetEmailByID(ctx context.Context, tx dal.ReadSession, id int64) (models4auth.Email, error)
 }
 
 type FeedbackDal interface {
@@ -173,19 +166,15 @@ var (
 	DB      dal.DB
 	Contact ContactDal
 
-	UserGoogle facade4auth.UserGoogleDal
-
 	Feedback FeedbackDal
 	//Bill      BillDal
-	Receipt   ReceiptDal
-	Reminder  ReminderDal
-	TgGroup   TgGroupDal
-	Transfer  TransferDal
-	LoginPin  facade4auth.LoginPinDal
-	LoginCode facade4auth.LoginCodeDal
-	Twilio    TwilioDal
-	Invite    InviteDal
-	Admin     AdminDal
+	Receipt  ReceiptDal
+	Reminder ReminderDal
+	TgGroup  TgGroupDal
+	Transfer TransferDal
+	Twilio   TwilioDal
+	Invite   InviteDal
+	Admin    AdminDal
 
 	HttpClient  func(ctx context.Context) *http.Client
 	BotHost     botsfw.BotHost

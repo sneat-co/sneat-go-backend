@@ -10,10 +10,10 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dbo4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dto4contactus"
+	dbo4linkage2 "github.com/sneat-co/sneat-go-backend/src/coremodules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/core4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/strongoapp/person"
@@ -85,7 +85,7 @@ func CreateContactTx(
 			if len(relatedItems) > 0 {
 				var isRelatedByUserID bool
 				for _, relatedItem := range relatedItems {
-					isRelatedByUserID = dbo4linkage.HasRelatedItem(relatedItems, dbo4linkage.RelatedItemKey{SpaceID: params.Space.ID, ItemID: params.UserID()})
+					isRelatedByUserID = dbo4linkage2.HasRelatedItem(relatedItems, dbo4linkage2.RelatedItemKey{SpaceID: params.Space.ID, ItemID: params.UserID()})
 					if !isRelatedByUserID {
 						contactID := relatedItem.Keys[0].ItemID
 						if contactBrief := params.SpaceModuleEntry.Data.GetContactBriefByContactID(contactID); contactBrief == nil {
@@ -113,7 +113,7 @@ func CreateContactTx(
 					}
 				}
 				if isRelatedByUserID {
-					userRelatedItem := dbo4linkage.GetRelatedItemByKey(relatedItems, dbo4linkage.RelatedItemKey{SpaceID: params.Space.ID, ItemID: params.UserID()})
+					userRelatedItem := dbo4linkage2.GetRelatedItemByKey(relatedItems, dbo4linkage2.RelatedItemKey{SpaceID: params.Space.ID, ItemID: params.UserID()})
 					userRelatedItem.Keys[0].ItemID = userContactID
 				}
 			}
@@ -209,7 +209,7 @@ func CreateContactTx(
 
 	contact = dal4contactus.NewContactEntryWithData(request.SpaceID, contactID, contactDbo)
 
-	_ = dbo4linkage.UpdateRelatedIDs(&contact.Data.WithRelated, &contact.Data.WithRelatedIDs)
+	_ = dbo4linkage2.UpdateRelatedIDs(&contact.Data.WithRelated, &contact.Data.WithRelatedIDs)
 	if err = contact.Data.Validate(); err != nil {
 		return contact, fmt.Errorf("contact record is not valid: %w", err)
 	}
@@ -228,7 +228,7 @@ func updateRelationshipsInRelatedItems(ctx context.Context, tx dal.ReadTransacti
 	userID, userContactID, spaceID, contactID string,
 	contactusSpaceEntry dal4contactus.ContactusSpaceEntry,
 	contactDbo *dbo4contactus.ContactDbo,
-	related dbo4linkage.RelatedByModuleID,
+	related dbo4linkage2.RelatedByModuleID,
 ) (err error) {
 	if userContactID == "" { // Why we get it 2nd time? Previous is up in stack in CreateContactTx()
 		if userContactID, err = dal4userus.GetUserSpaceContactID(ctx, tx, userID, contactusSpaceEntry); err != nil {
@@ -244,7 +244,7 @@ func updateRelationshipsInRelatedItems(ctx context.Context, tx dal.ReadTransacti
 		for collection, relatedByItemID := range relatedByCollection {
 			for _, relatedItem := range relatedByItemID {
 				for _, key := range relatedItem.Keys {
-					itemRef := dbo4linkage.SpaceModuleItemRef{
+					itemRef := dbo4linkage2.SpaceModuleItemRef{
 						Space:      spaceID,
 						Module:     moduleID,
 						Collection: collection,

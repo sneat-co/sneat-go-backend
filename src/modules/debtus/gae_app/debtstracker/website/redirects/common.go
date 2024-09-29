@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/strongo/logus"
 	"net/http"
 	"net/url"
@@ -58,7 +58,7 @@ func redirectToWebApp(w http.ResponseWriter, r *http.Request, authRequired bool,
 		} else {
 			pv = url.QueryEscape(pv)
 			if pn == "id" && pn2 == "receipt" { // TODO: Dirty hack! Please fix!!!
-				receiptID, err := common4debtus.DecodeID(pv)
+				receiptID, err := common4all.DecodeID(pv)
 				if err != nil {
 					logus.Debugf(c, "Failed to decode receipt ContactID: %v", err)
 					w.WriteHeader(http.StatusBadRequest)

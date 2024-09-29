@@ -2,7 +2,7 @@ package cmds4anybot
 
 import "github.com/bots-go-framework/bots-fw/botsfw"
 
-type SetMainMenuFunc = func(whc botsfw.WebhookContext, m *botsfw.MessageFromBot)
+type SetMainMenuFunc = func(whc botsfw.WebhookContext, messageText string, showHint bool) (m botsfw.MessageFromBot, err error)
 type StartInBotActionFunc = func(whc botsfw.WebhookContext, startParams []string) (m botsfw.MessageFromBot, err error)
 
 type WelcomeMessageProvider = func(whc botsfw.WebhookContext) (text string, err error)
@@ -14,6 +14,7 @@ type BotParams struct {
 	StartInBotAction      StartInBotActionFunc
 	StartInGroupAction    botsfw.CommandAction
 	HelpCommandAction     botsfw.CommandAction
+	HelpCallbackAction    botsfw.CallbackAction
 	SetMainMenu           SetMainMenuFunc
 
 	//GetGroupBillCardInlineKeyboard   func(translator i18n.SingleLocaleTranslator, bill models.Bill) *tgbotapi.InlineKeyboardMarkup

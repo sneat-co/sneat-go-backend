@@ -9,6 +9,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/core/queues"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
@@ -235,10 +236,10 @@ func discardReminder(ctx context.Context, tx dal.ReadwriteTransaction, reminderI
 
 		translator := GetTranslatorForReminder(ctx, reminder.Data)
 
-		utmParams := common4debtus.UtmParams{
+		utmParams := common4all.UtmParams{
 			Source:   "TODO", // TODO: Get bot ContactID
 			Medium:   telegram.PlatformID,
-			Campaign: common4debtus.UTM_CAMPAIGN_RECEIPT_DISCARD,
+			Campaign: common4all.UTM_CAMPAIGN_RECEIPT_DISCARD,
 		}
 
 		receiptMessageText := common4debtus.TextReceiptForTransfer(

@@ -5,9 +5,9 @@ import (
 	"github.com/bots-go-framework/bots-fw-telegram-models/botsfwtgmodels"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/anybot"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"strconv"
 	"sync"
@@ -22,11 +22,11 @@ func NewTgChatDalGae() TgChatDalGae {
 	return TgChatDalGae{}
 }
 
-func (TgChatDalGae) GetTgChatByID(ctx context.Context, tgBotID string, tgChatID int64) (tgChat models4debtus.DebtusTelegramChat, err error) {
+func (TgChatDalGae) GetTgChatByID(ctx context.Context, tgBotID string, tgChatID int64) (tgChat anybot.SneatAppTgChatEntry, err error) {
 	tgChatFullID := fmt.Sprintf("%s:%d", tgBotID, tgChatID)
 	key := dal.NewKeyWithID(botsfwtgmodels.TgChatCollection, tgChatFullID)
-	data := new(models4debtus.DebtusTelegramChatData)
-	tgChat = models4debtus.DebtusTelegramChat{
+	data := new(anybot.SneatAppTgChatDbo)
+	tgChat = anybot.SneatAppTgChatEntry{
 		WithID: record.NewWithID(tgChatFullID, key, data),
 		Data:   data,
 	}
@@ -46,12 +46,12 @@ func (TgChatDalGae) /* TODO: rename properly! */ DoSomething(
 	sendToTelegram func(tgChat botsfwtgmodels.TgChatData) error,
 ) (err error) {
 	var isSentToTelegram bool // Needed in case of failed to save to DB and is auto-retry
-	debtusTgChatData := &models4debtus.DebtusTelegramChatData{}
+	tgChatData := new(anybot.SneatAppTgChatDbo)
 
 	id := strconv.FormatInt(tgChatID, 10)
-	debtusTgChat := models4debtus.DebtusTelegramChat{
-		WithID: record.NewWithID(id, dal.NewKeyWithID(botsfwtgmodels.TgChatCollection, id), debtusTgChatData),
-		Data:   debtusTgChatData,
+	debtusTgChat := anybot.SneatAppTgChatEntry{
+		WithID: record.NewWithID(id, dal.NewKeyWithID(botsfwtgmodels.TgChatCollection, id), tgChatData),
+		Data:   tgChatData,
 	}
 
 	if err = facade.RunReadwriteTransaction(ctx, func(tctx context.Context, tx dal.ReadwriteTransaction) (err error) {

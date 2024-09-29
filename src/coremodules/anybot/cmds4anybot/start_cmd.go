@@ -9,12 +9,12 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	facade4anybot2 "github.com/sneat-co/sneat-go-backend/src/coremodules/anybot/facade4anybot"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/anybot/facade4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/models4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/tgsharedcommands"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/platforms/debtustgbots/tgsharedcommands"
 	"github.com/strongo/logus"
 	"net/url"
 	"strings"
@@ -38,7 +38,7 @@ func createStartCommand(
 	startInBotAction StartInBotActionFunc,
 	startInGroupAction botsfw.CommandAction,
 	getWelcomeMessageText WelcomeMessageProvider,
-	setMainMenu SetMainMenuFunc,
+	mainMenuAction SetMainMenuFunc,
 ) botsfw.Command {
 	return botsfw.Command{
 		Code:     StartCommandCode,
@@ -49,10 +49,10 @@ func createStartCommand(
 			botinput.WebhookInputConversationStarted, // Viber
 		},
 		Action: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
-			return sharedStartCommandAction(whc /*startInBotAction,*/, startInGroupAction)
+			return sharedStartCommandAction(whc /*startInBotAction,*/, startInGroupAction, mainMenuAction)
 		},
 		CallbackAction: func(whc botsfw.WebhookContext, callbackUrl *url.URL) (m botsfw.MessageFromBot, err error) {
-			return sharedStartCommandCallbackAction(whc, callbackUrl, getWelcomeMessageText, startInBotAction)
+			return sharedStartCommandCallbackAction(whc, callbackUrl, getWelcomeMessageText, startInBotAction, mainMenuAction)
 		},
 	}
 }
@@ -62,12 +62,13 @@ func sharedStartCommandCallbackAction(
 	callbackUrl *url.URL,
 	getWelcomeMessageText WelcomeMessageProvider,
 	startInBotAction StartInBotActionFunc,
+	mainMenuAction SetMainMenuFunc,
 ) (
 	m botsfw.MessageFromBot, err error,
 ) {
 	q := callbackUrl.Query()
 	if localeCode := q.Get("locale"); localeCode != "" {
-		if m, err = setPreferredLocaleAction(whc, localeCode, setPreferredLocaleModeStart); err != nil {
+		if m, err = setPreferredLocaleAction(whc, localeCode, setPreferredLocaleModeStart, mainMenuAction); err != nil {
 			return m, fmt.Errorf("failed to setPreferredLocaleAction(): %w", err)
 		}
 		m.IsEdit = true
@@ -94,6 +95,7 @@ func sharedStartCommandAction(
 	whc botsfw.WebhookContext,
 	//startInBotAction StartInBotActionFunc,
 	startInGroupAction botsfw.CommandAction,
+	mainMenuAction SetMainMenuFunc,
 ) (
 	m botsfw.MessageFromBot, err error,
 ) {
@@ -117,7 +119,7 @@ func sharedStartCommandAction(
 	case startParam == "help_inline":
 		return startInlineHelp(whc)
 	case strings.HasPrefix(startParam, "login-"):
-		loginID, err := common4debtus.DecodeIntID(startParam[len("login-"):])
+		loginID, err := common4all.DecodeIntID(startParam[len("login-"):])
 		if err != nil {
 			return m, err
 		}
@@ -125,7 +127,7 @@ func sharedStartCommandAction(
 		//case strings.HasPrefix(textToMatchNoStart, JOIN_BILL_COMMAND):
 		//	return JoinBillCommand.Action(whc)
 	case strings.HasPrefix(startParam, "refbytguser-") && startParam != "refbytguser-YOUR_CHANNEL":
-		facade4anybot2.Referer.AddTelegramReferrer(ctx, whc.AppUserID(), strings.TrimPrefix(startParam, "refbytguser-"), whc.GetBotCode())
+		facade4anybot.Referer.AddTelegramReferrer(ctx, whc.AppUserID(), strings.TrimPrefix(startParam, "refbytguser-"), whc.GetBotCode())
 	}
 	//if m.Text, err = getWelcomeMessage(whc); err != nil {
 	//	return
@@ -144,7 +146,7 @@ func sharedStartCommandAction(
 	*/
 	{
 		var localesMsg botsfw.MessageFromBot
-		if localesMsg, err = onStartAskLocaleAction(whc); err != nil {
+		if localesMsg, err = onStartAskLocaleAction(whc, mainMenuAction); err != nil {
 			return
 		}
 		if localesMsg.Text = strings.TrimSpace(localesMsg.Text); localesMsg.Text != "" {
@@ -194,7 +196,7 @@ func runBotSpecificStartCommand(whc botsfw.WebhookContext, startInBotAction Star
 func startLoginGac(whc botsfw.WebhookContext, loginID int) (m botsfw.MessageFromBot, err error) {
 	ctx := whc.Context()
 	var loginPin models4auth.LoginPin
-	if loginPin, err = facade4anybot2.AuthFacade.AssignPinCode(ctx, loginID, whc.AppUserID()); err != nil {
+	if loginPin, err = facade4anybot.AuthFacade.AssignPinCode(ctx, loginID, whc.AppUserID()); err != nil {
 		return
 	}
 	return whc.NewMessageByCode(trans.MESSAGE_TEXT_LOGIN_CODE, models4auth.LoginCodeToString(loginPin.Data.Code)), nil

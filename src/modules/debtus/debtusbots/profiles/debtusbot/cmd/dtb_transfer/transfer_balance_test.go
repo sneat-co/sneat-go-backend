@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/crediterra/money"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/briefs4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/strongo/decimal"
 	"github.com/strongo/i18n"
@@ -26,8 +26,8 @@ func enMock(t *testing.T) BalanceMessageBuilder { return getTestMocks(t, i18n.Lo
 func ruMock(t *testing.T) BalanceMessageBuilder { return getTestMocks(t, i18n.LocaleRuRu) }
 
 var (
-	ruLinker = common4debtus.NewLinker(strongoapp.LocalHostEnv, "123", i18n.LocaleRuRu.Code5, "unit-Test")
-	enLinker = common4debtus.NewLinker(strongoapp.LocalHostEnv, "123", i18n.LocaleEnUS.Code5, "unit-Test")
+	ruLinker = common4all.NewLinker(strongoapp.LocalHostEnv, "123", i18n.LocaleRuRu.Code5, "unit-Test")
+	enLinker = common4all.NewLinker(strongoapp.LocalHostEnv, "123", i18n.LocaleEnUS.Code5, "unit-Test")
 )
 
 //type testBalanceDataProvider struct {

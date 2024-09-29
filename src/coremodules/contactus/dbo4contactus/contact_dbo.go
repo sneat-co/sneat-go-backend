@@ -3,8 +3,8 @@ package dbo4contactus
 import (
 	"fmt"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/briefs4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/invitus/dbo4invitus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/invitus/dbo4invitus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/linkage/dbo4linkage"
 	"github.com/strongo/strongoapp/with"
 )
 

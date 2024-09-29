@@ -2,7 +2,7 @@ package api4auth
 
 import (
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/strongo/logus"
 	"net/http"
 
@@ -14,11 +14,11 @@ func HandleSignedWithFacebook(ctx context.Context, w http.ResponseWriter, r *htt
 	fbUserID := r.PostFormValue("fbUserID")
 	fbAppID := r.PostFormValue("fbAppID")
 	if fbUserID == "" {
-		api4debtus.BadRequestMessage(ctx, w, "fbUserID is missed")
+		common4all.BadRequestMessage(ctx, w, "fbUserID is missed")
 		return
 	}
 	if fbAppID == "" {
-		api4debtus.BadRequestMessage(ctx, w, "fbAppID is missed")
+		common4all.BadRequestMessage(ctx, w, "fbAppID is missed")
 		return
 	}
 	user, isNewUser, _, _, _, err := signInFbUser(ctx, fbAppID, fbUserID, r, authInfo)

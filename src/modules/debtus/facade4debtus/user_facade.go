@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/facade4auth"
+	"github.com/sneat-co/sneat-go-backend/src/core/sneaterrors"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/models4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/unsorted4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
@@ -21,8 +23,6 @@ type userFacade struct {
 }
 
 var User = userFacade{}
-
-var ErrEmailAlreadyRegistered = errors.New("email already registered")
 
 // Deprecated: use facade4userus instead
 func (userFacade) GetUserByIdOBSOLETE(ctx context.Context, tx dal.ReadSession, userID string) (user models4debtus.AppUserOBSOLETE, err error) {
@@ -56,8 +56,8 @@ func (uf userFacade) CreateUserByEmail(
 	err error,
 ) {
 	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
-		if userEmail, err = facade4auth.UserEmail.GetUserEmailByID(ctx, tx, email); err == nil {
-			return ErrEmailAlreadyRegistered
+		if userEmail, err = unsorted4auth.UserEmail.GetUserEmailByID(ctx, tx, email); err == nil {
+			return sneaterrors.ErrEmailAlreadyRegistered
 		} else if !dal.IsNotFound(err) {
 			return
 		}
@@ -67,10 +67,10 @@ func (uf userFacade) CreateUserByEmail(
 			userEmail.ID = strings.ToLower(strings.TrimSpace(email))
 		}
 
-		userData := facade4auth.CreateUserEntity(facade4auth.CreateUserData{
-			ScreenName: name,
-		})
-		userData.AddAccount(userEmail.UserAccount())
+		//userData := unsorted4auth.CreateUserEntity(unsorted4auth.CreateUserData{
+		//	ScreenName: name,
+		//})
+		//userData.AddAccount(userEmail.UserAccount())
 
 		err = errors.New("not implemented")
 		return
@@ -96,8 +96,8 @@ func (uf userFacade) GetOrCreateEmailUser(
 	ctx context.Context,
 	email string,
 	isConfirmed bool,
-	createUserData *facade4auth.CreateUserData,
-	clientInfo models4debtus.ClientInfo,
+	createUserData *unsorted4auth.CreateUserData,
+	clientInfo common4all.ClientInfo,
 ) (
 	userEmail models4auth.UserEmailEntry,
 	isNewUser bool,
@@ -107,7 +107,7 @@ func (uf userFacade) GetOrCreateEmailUser(
 	var appUser dbo4userus.UserEntry
 
 	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
-		if userEmail, err = facade4auth.UserEmail.GetUserEmailByID(ctx, tx, email); err == nil {
+		if userEmail, err = unsorted4auth.UserEmail.GetUserEmailByID(ctx, tx, email); err == nil {
 			return // UserEntry found
 		} else if !dal.IsNotFound(err) { //
 			return // Internal error
@@ -128,7 +128,7 @@ func (uf userFacade) GetOrCreateEmailUser(
 		}
 		userEmail.Data.CreatedAt = now
 
-		if err = facade4auth.UserEmail.SaveUserEmail(ctx, tx, userEmail); err != nil {
+		if err = unsorted4auth.UserEmail.SaveUserEmail(ctx, tx, userEmail); err != nil {
 			return err
 		}
 		return nil

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"github.com/crediterra/money"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/strongo/i18n"
 	"regexp"
@@ -46,7 +47,7 @@ func TestWriteReceiptText(t *testing.T) {
 
 	receiptTextBuilder := newReceiptTextBuilder(translator, transfer, ShowReceiptToCounterparty)
 
-	utmParams := UtmParams{
+	utmParams := common4all.UtmParams{
 		Source:   "BotIdUnitTest",
 		Medium:   telegram.PlatformID,
 		Campaign: "unit-test-campaign",

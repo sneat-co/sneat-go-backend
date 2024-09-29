@@ -9,10 +9,10 @@ import (
 	"net/url"
 )
 
-const MAIN_MENU_COMMAND = "main-menu"
+const MainMenuCommandCode = "main-menu"
 
 var MainMenuCommand = botsfw.Command{
-	Code:     MAIN_MENU_COMMAND,
+	Code:     MainMenuCommandCode,
 	Icon:     emoji.MAIN_MENU_ICON,
 	Commands: trans.Commands(trans.COMMAND_MENU, emoji.MAIN_MENU_ICON),
 	Title:    trans.COMMAND_TEXT_MAIN_MENU_TITLE,

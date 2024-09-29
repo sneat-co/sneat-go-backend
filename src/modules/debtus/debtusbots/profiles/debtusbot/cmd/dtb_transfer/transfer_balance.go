@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/crediterra/money"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
@@ -38,7 +39,7 @@ func (t simpleTranslator) Translate(key string) string {
 
 func (m BalanceMessageBuilder) ByContact(
 	ctx context.Context,
-	linker common4debtus.Linker,
+	linker common4all.Linker,
 	contactBriefs map[string]*briefs4contactus.ContactBrief,
 	debtusContactBriefs map[string]*models4debtus.DebtusContactBrief,
 ) string {

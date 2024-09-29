@@ -3,10 +3,10 @@ package reminders
 import (
 	"context"
 	"fmt"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/emailing"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/emailing"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-core/emails"
 	"github.com/strongo/i18n"
@@ -18,7 +18,7 @@ func sendReminderByEmail(ctx context.Context, reminder models4debtus.Reminder, e
 	logus.Debugf(ctx, "sendReminderByEmail(reminder.ContactID=%v, emailTo=%v)", reminder.ID, emailTo)
 
 	emailMessage := emails.Email{
-		From: common4debtus.FROM_REMINDER,
+		From: common4all.FROM_REMINDER,
 		To: []string{
 			emailTo, // Required
 		},

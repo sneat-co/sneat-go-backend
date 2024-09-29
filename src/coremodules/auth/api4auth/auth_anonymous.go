@@ -4,19 +4,19 @@ import (
 	"context"
 	"errors"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/facade4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/unsorted4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/facade4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
 	"net/http"
 )
 
 func HandleSignUpAnonymously(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	if user, err := facade4auth.User.CreateAnonymousUser(ctx); err != nil {
-		api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
+	if user, err := unsorted4auth.User.CreateAnonymousUser(ctx); err != nil {
+		common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 	} else {
 		if _, err = facade4userus.SaveUserBrowser(ctx, user.ID, r.UserAgent()); err != nil {
-			api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
+			common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 			return
 		}
 		ReturnToken(ctx, w, r, user.ID, "")
@@ -26,7 +26,7 @@ func HandleSignUpAnonymously(ctx context.Context, w http.ResponseWriter, r *http
 func HandleSignInAnonymous(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	userID := r.PostFormValue("user")
 	if userID == "" {
-		api4debtus.ErrorAsJson(ctx, w, http.StatusBadRequest, errors.New("required parameter user is empty"))
+		common4all.ErrorAsJson(ctx, w, http.StatusBadRequest, errors.New("required parameter user is empty"))
 		return
 	}
 
@@ -34,21 +34,21 @@ func HandleSignInAnonymous(ctx context.Context, w http.ResponseWriter, r *http.R
 
 	if err != nil {
 		if dal.IsNotFound(err) {
-			api4debtus.ErrorAsJson(ctx, w, http.StatusBadRequest, err)
+			common4all.ErrorAsJson(ctx, w, http.StatusBadRequest, err)
 		} else {
-			api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
+			common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 		}
 		return
 	}
 
 	if userEntity.Data.IsAnonymous {
 		if _, err = facade4userus.SaveUserBrowser(ctx, userID, r.UserAgent()); err != nil {
-			api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
+			common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 			return
 		}
 		ReturnToken(ctx, w, r, userID, r.Referer())
 	} else {
-		api4debtus.ErrorAsJson(ctx, w, http.StatusForbidden, errors.New("User is not anonymous."))
+		common4all.ErrorAsJson(ctx, w, http.StatusForbidden, errors.New("User is not anonymous."))
 	}
 }
 

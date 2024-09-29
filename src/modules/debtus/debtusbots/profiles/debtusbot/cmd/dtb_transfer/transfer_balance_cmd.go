@@ -7,6 +7,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
@@ -79,7 +80,7 @@ func balanceAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err erro
 				return m, fmt.Errorf("integrity issue: UserEntry{ContactID=%s} has non zero balance and no contacts", whc.AppUserID())
 			}
 			buffer.WriteString(fmt.Sprintf("<b>%v</b>", whc.Translate(trans.MESSAGE_TEXT_BALANCE_HEADER)) + common4debtus.HORIZONTAL_LINE)
-			linker := common4debtus.NewLinkerFromWhc(whc)
+			linker := common4all.NewLinkerFromWhc(whc)
 			buffer.WriteString(balanceMessageBuilder.ByContact(ctx, linker, contactusSpace.Data.Contacts, debtusSpace.Data.Contacts))
 
 			var thereAreFewDebtsForSingleCurrency = func() bool {

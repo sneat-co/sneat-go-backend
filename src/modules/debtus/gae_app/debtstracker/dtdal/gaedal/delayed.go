@@ -11,10 +11,11 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/emoji"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/facade4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/anybot"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/unsorted4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/const4debtus"
 	tgbots2 "github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/platforms/debtustgbots"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
@@ -92,7 +93,7 @@ func GetTelegramChatByUserID(ctx context.Context, userID string) (entityID strin
 	switch len(tgChatRecords) {
 	case tgChatQuery.Limit():
 		entityID = fmt.Sprintf("%v", tgChatRecords[0].Key().ID)
-		tgChatBase := tgChatRecords[0].Data().(models4debtus.DebtusTelegramChatData).TgChatBaseData
+		tgChatBase := tgChatRecords[0].Data().(anybot.SneatAppTgChatDbo).TgChatBaseData
 		chat = &tgChatBase
 		return
 	case 0:
@@ -358,7 +359,7 @@ func delayedSendReceiptToCounterpartyByTelegram(ctx context.Context, receiptID s
 		}
 
 		var (
-			tgChat         models4debtus.DebtusTelegramChat
+			tgChat         anybot.SneatAppTgChatEntry
 			failedToSend   bool
 			chatsForbidden bool
 		)
@@ -380,7 +381,7 @@ func delayedSendReceiptToCounterpartyByTelegram(ctx context.Context, receiptID s
 				logus.Errorf(ctx, "invalid Telegram chat ContactID - not an integer: %v", telegramAccount.String())
 				continue
 			}
-			if tgChat, err = facade4auth.TgChat.GetTgChatByID(ctx, telegramAccount.App, tgChatID); err != nil {
+			if tgChat, err = unsorted4auth.TgChat.GetTgChatByID(ctx, telegramAccount.App, tgChatID); err != nil {
 				logus.Errorf(ctx, "failed to load user's Telegram chat entity: %v", err)
 				continue
 			}
@@ -436,7 +437,7 @@ func delayedSendReceiptToCounterpartyByTelegram(ctx context.Context, receiptID s
 	return err
 }
 
-func sendReceiptToTelegramChat(ctx context.Context, receipt models4debtus.ReceiptEntry, transfer models4debtus.TransferEntry, tgChat models4debtus.DebtusTelegramChat) (err error) {
+func sendReceiptToTelegramChat(ctx context.Context, receipt models4debtus.ReceiptEntry, transfer models4debtus.TransferEntry, tgChat anybot.SneatAppTgChatEntry) (err error) {
 	var messageToTranslate string
 	switch transfer.Data.Direction() {
 	case models4debtus.TransferDirectionUser2Counterparty:
@@ -460,7 +461,7 @@ func sendReceiptToTelegramChat(ctx context.Context, receipt models4debtus.Receip
 		return err
 	}
 
-	messageText, err := common4debtus.TextTemplates.RenderTemplate(ctx, translator, messageToTranslate, templateData)
+	messageText, err := common4all.TextTemplates.RenderTemplate(ctx, translator, messageToTranslate, templateData)
 	if err != nil {
 		return err
 	}

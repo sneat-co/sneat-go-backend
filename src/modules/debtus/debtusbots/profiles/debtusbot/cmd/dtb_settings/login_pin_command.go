@@ -6,7 +6,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/anybot/facade4anybot"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"strconv"
 	"strings"
 )
@@ -42,7 +42,7 @@ var LoginPinCommand = botsfw.Command{
 					return m, err
 				}
 			case strings.HasPrefix(p, "lang-"):
-				lang = common4debtus.Locale2to5(p[len("lang-"):])
+				lang = common4all.Locale2to5(p[len("lang-"):])
 				if err = whc.SetLocale(lang); err != nil {
 					return m, err
 				}

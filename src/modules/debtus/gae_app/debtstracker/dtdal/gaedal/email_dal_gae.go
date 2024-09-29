@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/models4auth"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 )
 
 type EmailDalGae struct {
@@ -14,7 +14,7 @@ func NewEmailDalGae() EmailDalGae {
 	return EmailDalGae{}
 }
 
-var _ dtdal.EmailDal = (*EmailDalGae)(nil)
+var _ common4all.EmailDal = (*EmailDalGae)(nil)
 
 func (EmailDalGae) InsertEmail(ctx context.Context, tx dal.ReadwriteTransaction, data *models4auth.EmailData) (email models4auth.Email, err error) {
 	email = models4auth.NewEmail(0, data)

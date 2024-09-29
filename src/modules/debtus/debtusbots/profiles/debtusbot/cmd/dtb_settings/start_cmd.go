@@ -5,8 +5,8 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/anybot/cmds4anybot"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/delays4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_transfer"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
@@ -47,7 +47,7 @@ func startByLinkCode(whc botsfw.WebhookContext, matches []string) (m botsfw.Mess
 	//gaClientId := matches[8]
 	if localeCode5 != "" {
 		if len(localeCode5) == 2 {
-			localeCode5 = common4debtus.Locale2to5(localeCode5)
+			localeCode5 = common4all.Locale2to5(localeCode5)
 		}
 		if err = whc.SetLocale(localeCode5); err != nil {
 			return

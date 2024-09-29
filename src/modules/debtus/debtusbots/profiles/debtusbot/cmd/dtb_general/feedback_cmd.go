@@ -95,7 +95,7 @@ var FeedbackCommand = botsfw.Command{
 			//mainMenuButton := []tgbotapi.InlineKeyboardButton{
 			//	{
 			//		Text: whc.CommandText(trans.COMMAND_TEXT_MAIN_MENU_TITLE, emoji.MAIN_MENU_ICON),
-			//		CallbackData: MAIN_MENU_COMMAND,
+			//		CallbackData: MainMenuCommandCode,
 			//	},
 			//}
 
@@ -271,7 +271,7 @@ var CanYouRateCommand = botsfw.Command{
 						{Text: whc.Translate(trans.COMMAND_TEXT_WRITE_FEEDBACK, emoji.MEMO_ICON), CallbackData: FEEDBACK_TEXT_COMMAND},
 					},
 					[]tgbotapi.InlineKeyboardButton{
-						{Text: emoji.MAIN_MENU_ICON + " " + whc.Translate(trans.COMMAND_TEXT_MAIN_MENU_TITLE), CallbackData: MAIN_MENU_COMMAND},
+						{Text: emoji.MAIN_MENU_ICON + " " + whc.Translate(trans.COMMAND_TEXT_MAIN_MENU_TITLE), CallbackData: MainMenuCommandCode},
 					},
 				)
 			default:

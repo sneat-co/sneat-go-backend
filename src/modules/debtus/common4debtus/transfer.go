@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/strongo/i18n"
 	"io"
@@ -38,13 +39,13 @@ func getUrlForUser(ctx context.Context, userID int64, locale i18n.Locale, page, 
 	return url + fmt.Sprintf("&lang=%v&secret=%v", locale.SiteCode(), token)
 }
 
-func GetTransferUrlForUser(ctx context.Context, transferID string, userID string, locale i18n.Locale, utmParams UtmParams) string {
+func GetTransferUrlForUser(ctx context.Context, transferID string, userID string, locale i18n.Locale, utmParams common4all.UtmParams) string {
 	var buffer bytes.Buffer
 	WriteTransferUrlForUser(ctx, &buffer, transferID, userID, locale, utmParams)
 	return buffer.String()
 }
 
-func WriteTransferUrlForUser(ctx context.Context, writer io.Writer, transferID string, userID string, locale i18n.Locale, utmParams UtmParams) {
+func WriteTransferUrlForUser(ctx context.Context, writer io.Writer, transferID string, userID string, locale i18n.Locale, utmParams common4all.UtmParams) {
 	host := GetWebsiteHost(utmParams.Source)
 	_, _ = writer.Write([]byte(fmt.Sprintf(
 		"https://%v/transfer?id=%v&lang=%v",
@@ -82,7 +83,7 @@ func GetWebsiteHost(createdOnID string) string {
 	}
 }
 
-func GetPathAndQueryForInvite(inviteCode string, utmParams UtmParams) string {
+func GetPathAndQueryForInvite(inviteCode string, utmParams common4all.UtmParams) string {
 	return fmt.Sprintf("ack?invite=%v#%v", template.URLQueryEscaper(inviteCode), utmParams)
 }
 

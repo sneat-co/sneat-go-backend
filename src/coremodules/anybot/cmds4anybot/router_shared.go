@@ -19,7 +19,7 @@ func AddSharedCommands(router botsfw.WebhooksRouter, botParams BotParams) {
 		pingCommand,
 		counterCommand,
 		contactMessageCommand,
-		createHelpRootCommand(botParams.HelpCommandAction),
+		createHelpRootCommand(botParams.HelpCommandAction, botParams.HelpCallbackAction),
 		ReferrersCommand,
 		UserSettingsLocaleCommand,
 		leftChatCommand,

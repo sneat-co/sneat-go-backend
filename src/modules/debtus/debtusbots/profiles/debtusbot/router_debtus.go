@@ -47,7 +47,10 @@ var botParams = cmds4anybot2.BotParams{
 	//
 	//
 	StartInBotAction: dtb_settings.StartInBotAction,
-	SetMainMenu:      dtb_general.SetMainMenuKeyboard,
+	SetMainMenu: func(whc botsfw.WebhookContext, messageText string, showHint bool) (m botsfw.MessageFromBot, err error) {
+		dtb_general.SetMainMenuKeyboard(whc, &m)
+		return
+	},
 }
 
 func init() {

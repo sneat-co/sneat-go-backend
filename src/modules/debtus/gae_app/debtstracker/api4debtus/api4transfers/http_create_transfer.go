@@ -3,10 +3,10 @@ package api4transfers
 import (
 	"context"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus/dto4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/apicore/verify"
@@ -25,7 +25,7 @@ func HandleCreateTransfer(ctx context.Context, w http.ResponseWriter, r *http.Re
 				return nil, err
 			}
 
-			newTransfer := facade4debtus.NewTransferInput(api4debtus.GetEnvironment(r),
+			newTransfer := facade4debtus.NewTransferInput(common4all.GetEnvironment(r),
 				transferSourceSetToAPI{appPlatform: "api4debtus", createdOnID: r.Host},
 				appUser,
 				request,

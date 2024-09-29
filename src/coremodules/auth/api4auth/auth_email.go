@@ -5,112 +5,107 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/facade4auth"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/models4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/unsorted4auth"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus"
-	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/emailing"
 	"github.com/sneat-co/sneat-go-core/facade"
-	"github.com/strongo/logus"
 	"github.com/strongo/strongoapp/appuser"
 	"net/http"
-	"regexp"
 	"strconv"
-	"strings"
 	"time"
 )
 
-var (
-	reEmail         = regexp.MustCompile(`.+@.+\.\w+`)
-	ErrInvalidEmail = errors.New("Invalid email")
-)
+//var (
+//	reEmail         = regexp.MustCompile(`.+@.+\.\w+`)
+//	ErrInvalidEmail = errors.New("Invalid email")
+//)
 
-func validateEmail(email string) error {
-	if !reEmail.MatchString(email) {
-		return ErrInvalidEmail
-	}
-	return nil
-}
+//func validateEmail(email string) error {
+//	if !reEmail.MatchString(email) {
+//		return ErrInvalidEmail
+//	}
+//	return nil
+//}
 
-func HandleSignUpWithEmail(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	email := strings.TrimSpace(r.PostFormValue("email"))
-	userName := strings.TrimSpace(r.PostFormValue("name"))
-
-	if email == "" {
-		api4debtus.BadRequestMessage(ctx, w, "Missing required value: email")
-		return
-	}
-
-	if err := validateEmail(email); err != nil {
-		api4debtus.ErrorAsJson(ctx, w, http.StatusBadRequest, err)
-		return
-	}
-
-	if _, err := facade4auth.UserEmail.GetUserEmailByID(ctx, nil, email); err != nil {
-		if !dal.IsNotFound(err) {
-			api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
-			return
-		} else {
-			api4debtus.ErrorAsJson(ctx, w, http.StatusConflict, facade4debtus.ErrEmailAlreadyRegistered)
-			return
-		}
-	}
-
-	if user, userEmail, err := facade4debtus.User.CreateUserByEmail(ctx, email, userName); err != nil {
-		if errors.Is(err, facade4debtus.ErrEmailAlreadyRegistered) {
-			api4debtus.ErrorAsJson(ctx, w, http.StatusConflict, err)
-			return
-		} else {
-			api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
-			return
-		}
-	} else {
-		if err = emailing.CreateConfirmationEmailAndQueueForSending(ctx, user, userEmail); err != nil {
-			api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
-			return
-		}
-		ReturnToken(ctx, w, r, user.ID, r.Referer() /*, user.Data.Email == "alexander.trakhimenok@gmail.com"*/)
-	}
-}
-
-func HandleSignInWithEmail(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	email := strings.TrimSpace(r.PostFormValue("email"))
-	password := strings.TrimSpace(r.PostFormValue("password"))
-	//logus.Debugf(ctx, "Email: %s", email)
-	if email == "" || password == "" {
-		api4debtus.ErrorAsJson(ctx, w, http.StatusBadRequest, errors.New("Missing required value"))
-		return
-	}
-
-	if err := validateEmail(email); err != nil {
-		api4debtus.JsonToResponse(ctx, w, map[string]string{"error": err.Error()})
-		return
-	}
-
-	userEmail, err := facade4auth.UserEmail.GetUserEmailByID(ctx, nil, email)
-	if err != nil {
-		if dal.IsNotFound(err) {
-			api4debtus.ErrorAsJson(ctx, w, http.StatusForbidden, errors.New("unknown email"))
-		} else {
-			api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
-		}
-		return
-	} else if err = userEmail.Data.CheckPassword(password); err != nil {
-		logus.Debugf(ctx, "Invalid password: %v", err)
-		api4debtus.ErrorAsJson(ctx, w, http.StatusForbidden, errors.New("invalid password"))
-		return
-	}
-
-	ReturnToken(ctx, w, r, userEmail.Data.AppUserID, r.Referer() /*, userEmail.ID == "alexander.trakhimenok@gmail.com"*/)
-}
+//func HandleSignUpWithEmail(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+//	email := strings.TrimSpace(r.PostFormValue("email"))
+//	userName := strings.TrimSpace(r.PostFormValue("name"))
+//
+//	if email == "" {
+//		common4all.BadRequestMessage(ctx, w, "Missing required value: email")
+//		return
+//	}
+//
+//	if err := validateEmail(email); err != nil {
+//		common4all.ErrorAsJson(ctx, w, http.StatusBadRequest, err)
+//		return
+//	}
+//
+//	if _, err := unsorted4auth.UserEmail.GetUserEmailByID(ctx, nil, email); err != nil {
+//		if !dal.IsNotFound(err) {
+//			common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
+//			return
+//		} else {
+//			common4all.ErrorAsJson(ctx, w, http.StatusConflict, sneaterrors.ErrEmailAlreadyRegistered)
+//			return
+//		}
+//	}
+//
+//	if user, userEmail, err := facade4debtus.User.CreateUserByEmail(ctx, email, userName); err != nil {
+//		if errors.Is(err, sneaterrors.ErrEmailAlreadyRegistered) {
+//			common4all.ErrorAsJson(ctx, w, http.StatusConflict, err)
+//			return
+//		} else {
+//			common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
+//			return
+//		}
+//	} else {
+//		if err = emailing.CreateConfirmationEmailAndQueueForSending(ctx, user, userEmail); err != nil {
+//			common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
+//			return
+//		}
+//		ReturnToken(ctx, w, r, user.ID, r.Referer() /*, user.Data.Email == "alexander.trakhimenok@gmail.com"*/)
+//	}
+//}
+//
+//func HandleSignInWithEmail(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+//	email := strings.TrimSpace(r.PostFormValue("email"))
+//	password := strings.TrimSpace(r.PostFormValue("password"))
+//	//logus.Debugf(ctx, "Email: %s", email)
+//	if email == "" || password == "" {
+//		common4all.ErrorAsJson(ctx, w, http.StatusBadRequest, errors.New("Missing required value"))
+//		return
+//	}
+//
+//	if err := validateEmail(email); err != nil {
+//		common4all.JsonToResponse(ctx, w, map[string]string{"error": err.Error()})
+//		return
+//	}
+//
+//	userEmail, err := unsorted4auth.UserEmail.GetUserEmailByID(ctx, nil, email)
+//	if err != nil {
+//		if dal.IsNotFound(err) {
+//			common4all.ErrorAsJson(ctx, w, http.StatusForbidden, errors.New("unknown email"))
+//		} else {
+//			common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
+//		}
+//		return
+//	} else if err = userEmail.Data.CheckPassword(password); err != nil {
+//		logus.Debugf(ctx, "Invalid password: %v", err)
+//		common4all.ErrorAsJson(ctx, w, http.StatusForbidden, errors.New("invalid password"))
+//		return
+//	}
+//
+//	ReturnToken(ctx, w, r, userEmail.Data.AppUserID, r.Referer() /*, userEmail.ID == "alexander.trakhimenok@gmail.com"*/)
+//}
 
 func HandleRequestPasswordReset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	email := r.PostFormValue("email")
-	userEmail, err := facade4auth.UserEmail.GetUserEmailByID(ctx, nil, email)
+	userEmail, err := unsorted4auth.UserEmail.GetUserEmailByID(ctx, nil, email)
 	if dal.IsNotFound(err) {
-		api4debtus.ErrorAsJson(ctx, w, http.StatusForbidden, errors.New("Unknown email"))
+		common4all.ErrorAsJson(ctx, w, http.StatusForbidden, errors.New("Unknown email"))
 		return
 	}
 
@@ -123,11 +118,11 @@ func HandleRequestPasswordReset(ctx context.Context, w http.ResponseWriter, r *h
 	}
 
 	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
-		_, err = facade4auth.PasswordReset.CreatePasswordResetByID(ctx, tx, &pwdResetEntity)
+		_, err = unsorted4auth.PasswordReset.CreatePasswordResetByID(ctx, tx, &pwdResetEntity)
 		return err
 	})
 	if err != nil {
-		api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
+		common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 		return
 	}
 }
@@ -139,22 +134,22 @@ func HandleChangePasswordAndSignIn(ctx context.Context, w http.ResponseWriter, r
 	)
 
 	if passwordReset.ID, err = strconv.Atoi(r.PostFormValue("pin")); err != nil {
-		api4debtus.ErrorAsJson(ctx, w, http.StatusBadRequest, err)
+		common4all.ErrorAsJson(ctx, w, http.StatusBadRequest, err)
 		return
 	}
 
 	pwd := r.PostFormValue("pwd")
 	if pwd == "" {
-		api4debtus.ErrorAsJson(ctx, w, http.StatusBadRequest, errors.New("Empty password"))
+		common4all.ErrorAsJson(ctx, w, http.StatusBadRequest, errors.New("Empty password"))
 		return
 	}
 
-	if passwordReset, err = facade4auth.PasswordReset.GetPasswordResetByID(ctx, nil, passwordReset.ID); err != nil {
+	if passwordReset, err = unsorted4auth.PasswordReset.GetPasswordResetByID(ctx, nil, passwordReset.ID); err != nil {
 		if dal.IsNotFound(err) {
-			api4debtus.ErrorAsJson(ctx, w, http.StatusForbidden, errors.New("Unknown pin"))
+			common4all.ErrorAsJson(ctx, w, http.StatusForbidden, errors.New("Unknown pin"))
 			return
 		}
-		api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
+		common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -192,7 +187,7 @@ func HandleChangePasswordAndSignIn(ctx context.Context, w http.ResponseWriter, r
 		}
 		return err
 	}); err != nil {
-		api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
+		common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -211,18 +206,18 @@ func HandleConfirmEmailAndSignIn(ctx context.Context, w http.ResponseWriter, r *
 	userEmail.ID, pin = r.PostFormValue("email"), r.PostFormValue("pin")
 
 	if userEmail.ID == "" {
-		api4debtus.ErrorAsJson(ctx, w, http.StatusBadRequest, errors.New("Empty email"))
+		common4all.ErrorAsJson(ctx, w, http.StatusBadRequest, errors.New("Empty email"))
 		return
 	}
 	if pin == "" {
-		api4debtus.ErrorAsJson(ctx, w, http.StatusBadRequest, errors.New("Empty pin"))
+		common4all.ErrorAsJson(ctx, w, http.StatusBadRequest, errors.New("Empty pin"))
 		return
 	}
 
 	if err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		now := time.Now()
 
-		if userEmail, err = facade4auth.UserEmail.GetUserEmailByID(ctx, tx, userEmail.ID); err != nil {
+		if userEmail, err = unsorted4auth.UserEmail.GetUserEmailByID(ctx, tx, userEmail.ID); err != nil {
 			return err
 		}
 
@@ -250,13 +245,13 @@ func HandleConfirmEmailAndSignIn(ctx context.Context, w http.ResponseWriter, r *
 		return err
 	}); err != nil {
 		if dal.IsNotFound(err) {
-			api4debtus.ErrorAsJson(ctx, w, http.StatusBadRequest, err)
+			common4all.ErrorAsJson(ctx, w, http.StatusBadRequest, err)
 			return
 		} else if errors.Is(err, errInvalidEmailConformationPin) {
-			api4debtus.ErrorAsJson(ctx, w, http.StatusForbidden, err)
+			common4all.ErrorAsJson(ctx, w, http.StatusForbidden, err)
 			return
 		}
-		api4debtus.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
+		common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 		return
 	}
 

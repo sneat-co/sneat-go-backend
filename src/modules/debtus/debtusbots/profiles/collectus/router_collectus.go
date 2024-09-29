@@ -20,8 +20,9 @@ var botParams = cmds4anybot2.BotParams{
 		m.Text = "HelpCommandAction is not implemented yet"
 		return
 	},
-	SetMainMenu: func(whc botsfw.WebhookContext, m *botsfw.MessageFromBot) {
-		m.Text = "SetMainMenu is not implemented yet"
+	SetMainMenu: func(whc botsfw.WebhookContext, messageText string, showHint bool) (m botsfw.MessageFromBot, err error) {
+		m.Text = "Collectus main menu"
+		return
 	},
 	GetWelcomeMessageText: func(whc botsfw.WebhookContext) (text string, err error) {
 		var user dbo4userus.UserEntry
