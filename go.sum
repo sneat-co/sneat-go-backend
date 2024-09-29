@@ -16,7 +16,6 @@ github.com/bots-go-framework/bots-fw-telegram-webapp v0.3.1 h1:rJo6iIgMerNEyd6xq
 github.com/bots-go-framework/bots-fw-telegram-webapp v0.3.1/go.mod h1:YL4jmrX7CH5a6n40fV8yUBYtnydJVGgNBHNqRoFiu9o=
 github.com/bots-go-framework/bots-go-core v0.0.3 h1:z3A7DLUgxbHWxvTCGnkHP9WHpTT9xxROEypoqAfvYIQ=
 github.com/bots-go-framework/bots-go-core v0.0.3/go.mod h1:XCn9z4TI8sbgwyus+VDzw7iMY2QCPWEAvl23GMDjeEU=
-github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85 h1:DhDOfMUBIn76rBNxBE/cGrO69Xup+a0i9cEW1Dip5L0=
 github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85/go.mod h1:G8FV2IlQjC168M2ZNvih9I+8pInny334pxTzcR+QhWw=
 github.com/crediterra/money v0.3.0 h1:dHWEZhkMGGxkHTAbGQOaeg8eYbL8qJSCgcqdOTbNg20=
