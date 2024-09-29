@@ -5,12 +5,12 @@ import (
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	cmds4anybot2 "github.com/sneat-co/sneat-go-backend/src/coremodules/anybot/cmds4anybot"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
+	"github.com/sneat-co/sneat-core-modules/anybot/cmds4anybot"
+	"github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 	"github.com/strongo/i18n"
 )
 
-var botParams = cmds4anybot2.BotParams{
+var botParams = cmds4anybot.BotParams{
 	StartInGroupAction: startInGroupAction,
 	StartInBotAction:   startInBotAction,
 	HelpCommandAction: func(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) {
@@ -24,7 +24,7 @@ var botParams = cmds4anybot2.BotParams{
 	//ShowGroupMembers:                 showGroupMembers,
 	GetWelcomeMessageText: func(whc botsfw.WebhookContext) (text string, err error) {
 		var user dbo4userus.UserEntry
-		if user, err = cmds4anybot2.GetUser(whc); err != nil {
+		if user, err = cmds4anybot.GetUser(whc); err != nil {
 			return
 		}
 		text = whc.Translate(
@@ -48,7 +48,7 @@ var Router = botsfw.NewWebhookRouter(
 )
 
 func init() {
-	cmds4anybot2.AddSharedCommands(Router, botParams)
+	cmds4anybot.AddSharedCommands(Router, botParams)
 	commandsByType := map[botinput.WebhookInputType][]botsfw.Command{
 		// TODO: Move input types inside commands and register as slice
 		botinput.WebhookInputText: {

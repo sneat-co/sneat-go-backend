@@ -1,13 +1,13 @@
 package modules
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/generic"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/invitus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/linkage"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus"
+	"github.com/sneat-co/sneat-core-modules/auth"
+	"github.com/sneat-co/sneat-core-modules/contactus"
+	"github.com/sneat-co/sneat-core-modules/generic"
+	"github.com/sneat-co/sneat-core-modules/invitus"
+	"github.com/sneat-co/sneat-core-modules/linkage"
+	"github.com/sneat-co/sneat-core-modules/spaceus"
+	"github.com/sneat-co/sneat-core-modules/userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus"

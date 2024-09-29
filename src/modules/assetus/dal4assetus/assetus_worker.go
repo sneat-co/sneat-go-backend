@@ -3,19 +3,19 @@ package dal4assetus
 import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/const4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dal4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
+	"github.com/sneat-co/sneat-core-modules/contactus/const4contactus"
+	dal4spaceus2 "github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
-type AssetusSpaceWorkerParams = dal4spaceus.ModuleSpaceWorkerParams[*dbo4assetus.AssetusSpaceDbo]
+type AssetusSpaceWorkerParams = dal4spaceus2.ModuleSpaceWorkerParams[*dbo4assetus.AssetusSpaceDbo]
 
 func NewAssetusSpaceWorkerParams(userCtx facade.UserContext, spaceID string) *AssetusSpaceWorkerParams {
-	spaceWorkerParams := dal4spaceus.NewSpaceWorkerParams(userCtx, spaceID)
-	return dal4spaceus.NewSpaceModuleWorkerParams(const4assetus.ModuleID, spaceWorkerParams, new(dbo4assetus.AssetusSpaceDbo))
+	spaceWorkerParams := dal4spaceus2.NewSpaceWorkerParams(userCtx, spaceID)
+	return dal4spaceus2.NewSpaceModuleWorkerParams(const4assetus.ModuleID, spaceWorkerParams, new(dbo4assetus.AssetusSpaceDbo))
 }
 
 func RunReadonlyAssetusSpaceWorker(
@@ -24,7 +24,7 @@ func RunReadonlyAssetusSpaceWorker(
 	request dto4spaceus.SpaceRequest,
 	worker func(ctx context.Context, tx dal.ReadTransaction, params *AssetusSpaceWorkerParams) (err error),
 ) error {
-	return dal4spaceus.RunReadonlyModuleSpaceWorker(ctx, userCtx, request, const4assetus.ModuleID, new(dbo4assetus.AssetusSpaceDbo), worker)
+	return dal4spaceus2.RunReadonlyModuleSpaceWorker(ctx, userCtx, request, const4assetus.ModuleID, new(dbo4assetus.AssetusSpaceDbo), worker)
 }
 
 type AssetusModuleWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *AssetusSpaceWorkerParams) (err error)
@@ -35,7 +35,7 @@ func RunAssetusSpaceWorker(
 	request dto4spaceus.SpaceRequest,
 	worker AssetusModuleWorker,
 ) error {
-	return dal4spaceus.RunModuleSpaceWorkerWithUserCtx(ctx, userCtx, request.SpaceID, const4contactus.ModuleID, new(dbo4assetus.AssetusSpaceDbo), worker)
+	return dal4spaceus2.RunModuleSpaceWorkerWithUserCtx(ctx, userCtx, request.SpaceID, const4contactus.ModuleID, new(dbo4assetus.AssetusSpaceDbo), worker)
 }
 
 func RunAssetusSpaceWorkerTx(
@@ -45,5 +45,5 @@ func RunAssetusSpaceWorkerTx(
 	spaceID string,
 	worker AssetusModuleWorker,
 ) error {
-	return dal4spaceus.RunModuleSpaceWorkerTx(ctx, tx, userCtx, spaceID, const4contactus.ModuleID, new(dbo4assetus.AssetusSpaceDbo), worker)
+	return dal4spaceus2.RunModuleSpaceWorkerTx(ctx, tx, userCtx, spaceID, const4contactus.ModuleID, new(dbo4assetus.AssetusSpaceDbo), worker)
 }

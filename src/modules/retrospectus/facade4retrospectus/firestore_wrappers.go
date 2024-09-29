@@ -3,7 +3,7 @@ package facade4retrospectus
 import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
 )
 

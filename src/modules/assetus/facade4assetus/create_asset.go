@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dal4spaceus"
+	dal4spaceus2 "github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/briefs4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dal4assetus"
@@ -26,9 +26,9 @@ func CreateAsset(ctx context.Context, userCtx facade.UserContext, request dto4as
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4spaceus.CreateSpaceItem(ctx, userCtx,
+	err = dal4spaceus2.CreateSpaceItem(ctx, userCtx,
 		request.SpaceRequest, const4assetus.ModuleID, new(dbo4assetus.AssetusSpaceDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4assetus.AssetusSpaceDbo]) (err error) {
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus2.ModuleSpaceWorkerParams[*dbo4assetus.AssetusSpaceDbo]) (err error) {
 			if err = params.GetRecords(ctx, tx); err != nil {
 				return err
 			}
@@ -43,7 +43,7 @@ func createAssetTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	request dto4assetus.CreateAssetRequest,
-	params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4assetus.AssetusSpaceDbo],
+	params *dal4spaceus2.ModuleSpaceWorkerParams[*dbo4assetus.AssetusSpaceDbo],
 ) (
 	response CreateAssetResponse, err error,
 ) {

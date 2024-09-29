@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
+	dal4contactus2 "github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -53,10 +53,10 @@ func mergeContacts(ctx context.Context, userCtx facade.UserContext, tx dal.Readw
 		panic("len(sourceContactIDs) == 0")
 	}
 
-	contactusSpace := dal4contactus.NewContactusSpaceEntry(spaceID)
+	contactusSpace := dal4contactus2.NewContactusSpaceEntry(spaceID)
 	debtusSpace := models4debtus.NewDebtusSpaceEntry(spaceID)
 
-	targetContact := dal4contactus.NewContactEntry(spaceID, targetContactID)
+	targetContact := dal4contactus2.NewContactEntry(spaceID, targetContactID)
 
 	var targetDebtusContact models4debtus.DebtusSpaceContactEntry
 
@@ -74,7 +74,7 @@ func mergeContacts(ctx context.Context, userCtx facade.UserContext, tx dal.Readw
 		}
 	}
 
-	if err = dal4contactus.GetContactusSpace(ctx, tx, contactusSpace); err != nil {
+	if err = dal4contactus2.GetContactusSpace(ctx, tx, contactusSpace); err != nil {
 		return
 	}
 
@@ -83,8 +83,8 @@ func mergeContacts(ctx context.Context, userCtx facade.UserContext, tx dal.Readw
 			err = fmt.Errorf("sourceContactID == targetContactID: %v", sourceContactID)
 			return
 		}
-		sourceContact := dal4contactus.NewContactEntry(spaceID, sourceContactID)
-		if err = dal4contactus.GetContact(ctx, tx, sourceContact); err != nil {
+		sourceContact := dal4contactus2.NewContactEntry(spaceID, sourceContactID)
+		if err = dal4contactus2.GetContact(ctx, tx, sourceContact); err != nil {
 			if dal.IsNotFound(err) {
 				continue
 			}
@@ -117,7 +117,7 @@ func mergeContacts(ctx context.Context, userCtx facade.UserContext, tx dal.Readw
 	}
 
 	if err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
-		if err = dal4contactus.GetContactusSpace(ctx, tx, contactusSpace); err != nil {
+		if err = dal4contactus2.GetContactusSpace(ctx, tx, contactusSpace); err != nil {
 			return
 		}
 		debtusContacts := make(map[string]*models4debtus.DebtusContactBrief)

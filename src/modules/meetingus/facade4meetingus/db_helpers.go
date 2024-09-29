@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dbo4spaceus"
+	dal4contactus2 "github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/dbo4meetingus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
@@ -13,7 +13,7 @@ import (
 
 // WorkerParams parameters
 type WorkerParams struct {
-	*dal4contactus.ContactusSpaceWorkerParams
+	*dal4contactus2.ContactusSpaceWorkerParams
 	Meeting WorkerMeeting
 }
 
@@ -71,7 +71,7 @@ func RunMeetingWorker(ctx context.Context, userCtx facade.UserContext, request R
 
 // GetMeetingAndSpace retrieve api4meetingus and team records
 var GetMeetingAndSpace = func(ctx context.Context, tx dal.ReadwriteTransaction, userCtx facade.UserContext, teamID, meetingID string, recordFactory RecordFactory) (params WorkerParams, err error) {
-	params.ContactusSpaceWorkerParams = dal4contactus.NewContactusSpaceWorkerParams(userCtx, teamID)
+	params.ContactusSpaceWorkerParams = dal4contactus2.NewContactusSpaceWorkerParams(userCtx, teamID)
 	// Create team parameter
 	// Create api4meetingus parameter
 	meetingKey := dal.NewKeyWithParentAndID(params.Space.Key, recordFactory.Collection(), meetingID)
@@ -118,7 +118,7 @@ var GetMeetingAndSpace = func(ctx context.Context, tx dal.ReadwriteTransaction, 
 	if !params.Meeting.Record.Exists() {
 		meeting := params.Meeting.Data()
 		team := params.Space.Data
-		contactusSpace := dal4contactus.NewContactusSpaceEntry(params.Space.ID)
+		contactusSpace := dal4contactus2.NewContactusSpaceEntry(params.Space.ID)
 		if err := tx.Get(ctx, contactusSpace.Record); err != nil {
 			return params, fmt.Errorf("failed to get contactus team record: %w", err)
 		}

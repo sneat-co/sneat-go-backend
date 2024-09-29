@@ -3,8 +3,8 @@ package listusbot
 import (
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/anybot"
-	cmds4anybot2 "github.com/sneat-co/sneat-go-backend/src/coremodules/anybot/cmds4anybot"
+	"github.com/sneat-co/sneat-core-modules/anybot"
+	"github.com/sneat-co/sneat-core-modules/anybot/cmds4anybot"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/listusbot/cmds4listusbot"
 )
 
@@ -20,7 +20,7 @@ func GetProfile(errFooterText func() string) botsfw.BotProfile {
 }
 
 func createProfile(errFooterText func() string) botsfw.BotProfile {
-	botParams := cmds4anybot2.BotParams{
+	botParams := cmds4anybot.BotParams{
 		StartInBotAction: func(whc botsfw.WebhookContext, startParams []string) (m botsfw.MessageFromBot, err error) {
 			return
 		},
@@ -39,7 +39,7 @@ func createProfile(errFooterText func() string) botsfw.BotProfile {
 		},
 	}
 	router := botsfw.NewWebhookRouter(errFooterText)
-	cmds4anybot2.AddSharedCommands(router, botParams)
+	cmds4anybot.AddSharedCommands(router, botParams)
 
 	commandsByType := make(map[botinput.WebhookInputType][]botsfw.Command)
 	cmds4listusbot.AddListusSharedCommands(commandsByType)

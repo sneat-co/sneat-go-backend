@@ -1,7 +1,7 @@
 package dto4listus
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
+	"github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"

@@ -8,9 +8,9 @@ import (
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sanity-io/litter"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
+	dal4contactus2 "github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-core-modules/userus/dal4userus"
+	"github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -104,7 +104,7 @@ func (transferFacade TransfersFacade) CreateTransfer(ctx context.Context, input 
 	//	}
 	//}
 
-	creatorContactusSpace := dal4contactus.NewContactusSpaceEntry(input.Request.SpaceID)
+	creatorContactusSpace := dal4contactus2.NewContactusSpaceEntry(input.Request.SpaceID)
 	if err = db.Get(ctx, creatorContactusSpace.Record); err != nil {
 		if !dal.IsNotFound(err) {
 			err = fmt.Errorf("failed to get creatorContactusSpace: %w", err)
@@ -124,7 +124,7 @@ func (transferFacade TransfersFacade) CreateTransfer(ctx context.Context, input 
 		if creatorContactID == "" {
 			panic(fmt.Errorf("3d party api4transfers are not implemented yet: %w", err))
 		}
-		var creatorContact dal4contactus.ContactEntry
+		var creatorContact dal4contactus2.ContactEntry
 		var creatorDebtusContact models4debtus.DebtusSpaceContactEntry
 
 		verifyUserDebtusContact := func() (contactBriefFound bool) {
@@ -157,7 +157,7 @@ func (transferFacade TransfersFacade) CreateTransfer(ctx context.Context, input 
 		}
 
 		// If Contact not found in user's JSON try to recover from DB record
-		if creatorContact, err = dal4contactus.GetContactByID(ctx, nil, input.Request.SpaceID, creatorContactID); err != nil {
+		if creatorContact, err = dal4contactus2.GetContactByID(ctx, nil, input.Request.SpaceID, creatorContactID); err != nil {
 			return
 		}
 
@@ -370,12 +370,12 @@ func (transferFacade TransfersFacade) createTransferWithinTransaction(
 	// Check if counterparties are linked and if yes load the missing DebtusSpaceContactEntry
 	{
 
-		link := func(sideName, countersideName string, side, counterparty *models4debtus.TransferCounterpartyInfo, sideContact dal4contactus.ContactEntry, sideDebtusContact models4debtus.DebtusSpaceContactEntry,
-		) (counterpartyContact dal4contactus.ContactEntry, counterpartyDebtusContact models4debtus.DebtusSpaceContactEntry, err error) {
+		link := func(sideName, countersideName string, side, counterparty *models4debtus.TransferCounterpartyInfo, sideContact dal4contactus2.ContactEntry, sideDebtusContact models4debtus.DebtusSpaceContactEntry,
+		) (counterpartyContact dal4contactus2.ContactEntry, counterpartyDebtusContact models4debtus.DebtusSpaceContactEntry, err error) {
 			logus.Debugf(ctx, "link(%v=%v, %v=%v, %vContact=%v)", sideName, side, countersideName, counterparty, sideName, sideContact)
 			if side.ContactID != "" && sideDebtusContact.Data.CounterpartyContactID != "" && counterparty.ContactID == "" {
 				var spaceID string
-				if counterpartyContact, err = dal4contactus.GetContactByID(ctx, tx, spaceID, sideDebtusContact.Data.CounterpartyContactID); err != nil {
+				if counterpartyContact, err = dal4contactus2.GetContactByID(ctx, tx, spaceID, sideDebtusContact.Data.CounterpartyContactID); err != nil {
 					err = fmt.Errorf("failed to get counterparty by 'fromCounterparty.CounterpartyContactID': %w", err)
 					return
 				}
@@ -391,7 +391,7 @@ func (transferFacade TransfersFacade) createTransferWithinTransaction(
 			return
 		}
 
-		var linkedContact dal4contactus.ContactEntry // TODO: This smells. TODO: explain why smells or remove comment
+		var linkedContact dal4contactus2.ContactEntry // TODO: This smells. TODO: explain why smells or remove comment
 		if linkedContact, _, err = link("from", "to", from, to, fromContact, output.From.DebtusContact); err != nil {
 			return
 		} else if linkedContact.Data != nil {
@@ -595,7 +595,7 @@ func (transferFacade TransfersFacade) createTransferWithinTransaction(
 		fixUserName(input.From, output.From.User)
 		fixUserName(input.To, output.To.User)
 
-		fixContactName := func(counterparty *models4debtus.TransferCounterpartyInfo, contact dal4contactus.ContactEntry) {
+		fixContactName := func(counterparty *models4debtus.TransferCounterpartyInfo, contact dal4contactus2.ContactEntry) {
 			if counterparty.ContactID != "" && counterparty.ContactName == "" {
 				counterparty.ContactName = contact.Data.Names.GetFullName()
 			}

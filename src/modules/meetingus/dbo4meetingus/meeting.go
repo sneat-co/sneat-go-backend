@@ -2,8 +2,8 @@ package dbo4meetingus
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/briefs4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/const4contactus"
+	briefs4contactus2 "github.com/sneat-co/sneat-core-modules/contactus/briefs4contactus"
+	"github.com/sneat-co/sneat-core-modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-core"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/slice"
@@ -29,7 +29,7 @@ func (v *Excluded) Validate() error {
 
 // MeetingMemberBrief record
 type MeetingMemberBrief struct {
-	briefs4contactus.ContactBrief
+	briefs4contactus2.ContactBrief
 	Excluded *Excluded `json:"excluded,omitempty" firestore:"excluded,omitempty"`
 }
 
@@ -63,7 +63,7 @@ var _ MeetingInstance = (*Meeting)(nil)
 // Meeting record
 type Meeting struct {
 	dbmodels.WithUserIDs
-	briefs4contactus.WithMultiSpaceContacts[*MeetingMemberBrief]
+	briefs4contactus2.WithMultiSpaceContacts[*MeetingMemberBrief]
 	Version  int        `json:"v" firestore:"v"`
 	Started  *time.Time `json:"started,omitempty" firestore:"started,omitempty"`
 	Finished *time.Time `json:"finished,omitempty" firestore:"finished,omitempty"`

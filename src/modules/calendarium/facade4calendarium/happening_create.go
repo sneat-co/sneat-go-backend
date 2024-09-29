@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/linkage/dbo4linkage"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dal4spaceus"
+	dal4contactus2 "github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-core-modules/linkage/dbo4linkage"
+	dal4spaceus2 "github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/const4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
@@ -53,10 +53,10 @@ func CreateHappening(
 			}
 		}
 	}
-	err = dal4spaceus.CreateSpaceItem(ctx, userCtx, request.SpaceRequest,
+	err = dal4spaceus2.CreateSpaceItem(ctx, userCtx, request.SpaceRequest,
 		const4calendarium.ModuleID,
 		new(dbo4calendarium.CalendariumSpaceDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo]) (err error) {
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus2.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo]) (err error) {
 			response, err = createHappeningTx(ctx, tx, happeningDto, params)
 			return
 		},
@@ -69,12 +69,12 @@ func createHappeningTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	happeningDto *dbo4calendarium.HappeningDbo,
-	params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo],
+	params *dal4spaceus2.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo],
 ) (
 	response dto4calendarium.CreateHappeningResponse, err error,
 ) {
 	happeningDto.CreatedAt = params.Started
-	contactusSpace := dal4contactus.NewContactusSpaceEntry(params.Space.ID)
+	contactusSpace := dal4contactus2.NewContactusSpaceEntry(params.Space.ID)
 	if err = params.GetRecords(ctx, tx, contactusSpace.Record); err != nil {
 		return response, err
 	}
@@ -100,7 +100,7 @@ func createHappeningTx(
 		}
 	}
 
-	contactsBySpaceID := make(map[string][]dal4contactus.ContactEntry)
+	contactsBySpaceID := make(map[string][]dal4contactus2.ContactEntry)
 
 	//for participantID := range happeningDto.Participants {
 	//	participantKey := dbmodels.SpaceItemID(participantID)
@@ -140,7 +140,7 @@ func createHappeningTx(
 
 	var happeningID string
 	var happeningKey *dal.Key
-	if happeningID, happeningKey, err = dal4spaceus.GenerateNewSpaceModuleItemKey(
+	if happeningID, happeningKey, err = dal4spaceus2.GenerateNewSpaceModuleItemKey(
 		ctx, tx, params.Space.ID, moduleID, happeningsCollection, 5, 10); err != nil {
 		return response, err
 	}

@@ -3,9 +3,9 @@ package redirects
 import (
 	"bytes"
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
+	"github.com/sneat-co/sneat-core-modules/auth/token4auth"
+	"github.com/sneat-co/sneat-core-modules/common4all"
+	"github.com/sneat-co/sneat-core-modules/userus/dal4userus"
 	"github.com/strongo/logus"
 	"net/http"
 	"net/url"

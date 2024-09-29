@@ -3,7 +3,7 @@ package unsorted
 import (
 	"github.com/bots-go-framework/bots-fw-store/botsfwmodels"
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
+	"github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/strongo/logus"
 	"net/http"

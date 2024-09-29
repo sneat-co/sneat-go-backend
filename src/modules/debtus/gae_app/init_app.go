@@ -3,8 +3,8 @@ package gaeapp
 import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/julienschmidt/httprouter"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/anybot/facade4anybot"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/emailing"
+	"github.com/sneat-co/sneat-core-modules/anybot/facade4anybot"
+	"github.com/sneat-co/sneat-core-modules/emailing"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_transfer"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus/apigaedepended"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/api4debtus/unsorted"

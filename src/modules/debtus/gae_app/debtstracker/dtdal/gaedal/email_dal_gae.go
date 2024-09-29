@@ -3,8 +3,8 @@ package gaedal
 import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/models4auth"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
+	"github.com/sneat-co/sneat-core-modules/auth/models4auth"
+	"github.com/sneat-co/sneat-core-modules/common4all"
 )
 
 type EmailDalGae struct {

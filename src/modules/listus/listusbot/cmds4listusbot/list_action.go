@@ -6,11 +6,11 @@ import (
 	"github.com/bots-go-framework/bots-fw/botinput"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/core4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/facade4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
+	"github.com/sneat-co/sneat-core-modules/spaceus/core4spaceus"
+	dto4spaceus2 "github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
+	"github.com/sneat-co/sneat-core-modules/spaceus/facade4spaceus"
+	"github.com/sneat-co/sneat-core-modules/userus/dal4userus"
+	"github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
@@ -76,7 +76,7 @@ func listAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) 
 		if spaceID == "" {
 			if spaceType == core4spaceus.SpaceTypeFamily {
 				var result facade4spaceus.CreateSpaceParams
-				if result, err = facade4spaceus.CreateSpace(ctx, userCtx, dto4spaceus.CreateSpaceRequest{Type: spaceType}); err != nil {
+				if result, err = facade4spaceus.CreateSpace(ctx, userCtx, dto4spaceus2.CreateSpaceRequest{Type: spaceType}); err != nil {
 					err = fmt.Errorf("failed to create missing family space: %w", err)
 					return
 				}
@@ -92,7 +92,7 @@ func listAction(whc botsfw.WebhookContext) (m botsfw.MessageFromBot, err error) 
 	request := dto4listus.CreateListItemsRequest{
 		ListRequest: dto4listus.ListRequest{
 			ListID: listKey,
-			SpaceRequest: dto4spaceus.SpaceRequest{
+			SpaceRequest: dto4spaceus2.SpaceRequest{
 				SpaceID: spaceRef.SpaceID(),
 			},
 		},

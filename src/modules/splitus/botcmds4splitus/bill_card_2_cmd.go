@@ -8,7 +8,7 @@ import (
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
+	"github.com/sneat-co/sneat-core-modules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/facade4splitus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/models4splitus"
 	"github.com/strongo/i18n"

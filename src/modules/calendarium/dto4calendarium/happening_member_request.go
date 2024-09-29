@@ -1,7 +1,7 @@
 package dto4calendarium
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/linkage/dbo4linkage"
+	"github.com/sneat-co/sneat-core-modules/linkage/dbo4linkage"
 )
 
 type HappeningContactRequest struct {

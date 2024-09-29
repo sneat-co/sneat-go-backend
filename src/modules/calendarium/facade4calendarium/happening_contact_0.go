@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
 )

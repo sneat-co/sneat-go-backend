@@ -1,7 +1,7 @@
 package extras4assetus
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/core/extra"
+	"github.com/sneat-co/sneat-core-modules/core/extra"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/briefs4assetus"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"

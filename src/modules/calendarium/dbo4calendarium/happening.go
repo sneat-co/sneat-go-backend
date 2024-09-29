@@ -2,7 +2,7 @@ package dbo4calendarium
 
 import (
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dbo4spaceus"
+	"github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/const4calendarium"
 )
 

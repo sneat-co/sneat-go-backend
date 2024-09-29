@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/const4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
+	"github.com/sneat-co/sneat-core-modules/contactus/const4contactus"
+	dbo4userus2 "github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
@@ -25,7 +25,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 		logus.Errorf(ctx, "UserEntry ContactID is empty")
 		return
 	}
-	user := dbo4userus.NewUserEntry(userID)
+	user := dbo4userus2.NewUserEntry(userID)
 	var db dal.DB
 	var err error
 	if db, err = facade.GetSneatDB(ctx); err != nil {
@@ -42,7 +42,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	query := dal.From(const4contactus.ContactsCollection).WhereField("UserID", dal.Equal, userID).SelectInto(func() dal.Record {
-		return dal.NewRecordWithIncompleteKey(dbo4userus.UsersCollection, reflect.Int64, new(dbo4userus.UserDbo))
+		return dal.NewRecordWithIncompleteKey(dbo4userus2.UsersCollection, reflect.Int64, new(dbo4userus2.UserDbo))
 	})
 	userCounterpartyRecords, err := db.QueryAllRecords(ctx, query)
 	if err != nil {
@@ -164,7 +164,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	if len(transferRecords) > 0 && debtusUser.Data.LastTransferID == "" {
 		if doFixes {
-			var txUser dbo4userus.UserEntry
+			var txUser dbo4userus2.UserEntry
 			err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 				if err = tx.Get(ctx, debtusUser.Record); err != nil {
 					return err
@@ -272,7 +272,7 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 			logus.Debugf(ctx, "Pass fix=all to fix user balance")
 		} else {
 			err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
-				txUser := dbo4userus.NewUserEntry(userID)
+				txUser := dbo4userus2.NewUserEntry(userID)
 				spaceID := txUser.Data.GetFamilySpaceID()
 				debtusSpace := models4debtus.NewDebtusSpaceEntry(spaceID)
 				if err := tx.Get(ctx, txUser.Record); err != nil {

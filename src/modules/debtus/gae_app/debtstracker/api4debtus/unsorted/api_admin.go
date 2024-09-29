@@ -5,13 +5,13 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/core/queues"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/unsorted4auth"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
+	"github.com/sneat-co/sneat-core-modules/auth/token4auth"
+	"github.com/sneat-co/sneat-core-modules/auth/unsorted4auth"
+	common4all2 "github.com/sneat-co/sneat-core-modules/common4all"
+	dal4contactus2 "github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-core-modules/core/queues"
+	"github.com/sneat-co/sneat-core-modules/userus/dal4userus"
+	"github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus/dto4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
@@ -30,21 +30,21 @@ func HandleAdminFindUser(ctx context.Context, w http.ResponseWriter, r *http.Req
 		if err := dal4userus.GetUser(ctx, nil, appUser); err != nil {
 			logus.Errorf(ctx, fmt.Errorf("failed to get user by userID=%s: %w", userID, err).Error())
 		} else {
-			common4all.JsonToResponse(ctx, w, []dto4debtus.ApiUserDto{{ID: userID, Name: appUser.Data.GetFullName()}})
+			common4all2.JsonToResponse(ctx, w, []dto4debtus.ApiUserDto{{ID: userID, Name: appUser.Data.GetFullName()}})
 		}
 		return
 	} else {
 		tgUserText := r.URL.Query().Get("tgUser")
 
 		if tgUserText == "" {
-			common4all.BadRequestMessage(ctx, w, "tgUser is empty string")
+			common4all2.BadRequestMessage(ctx, w, "tgUser is empty string")
 			return
 		}
 
 		tgUsers, err := unsorted4auth.TgUser.FindByUserName(ctx, nil, tgUserText)
 
 		if err != nil {
-			common4all.InternalError(ctx, w, err)
+			common4all2.InternalError(ctx, w, err)
 			return
 		}
 
@@ -57,22 +57,22 @@ func HandleAdminFindUser(ctx context.Context, w http.ResponseWriter, r *http.Req
 			}
 		}
 
-		common4all.JsonToResponse(ctx, w, users)
+		common4all2.JsonToResponse(ctx, w, users)
 	}
 }
 
 func HandleAdminMergeUserContacts(ctx context.Context, w http.ResponseWriter, r *http.Request, _ token4auth.AuthInfo) {
-	keepID := common4all.GetStrID(ctx, w, r, "keepID")
+	keepID := common4all2.GetStrID(ctx, w, r, "keepID")
 	if keepID == "" {
 		return
 	}
-	deleteID := common4all.GetStrID(ctx, w, r, "deleteID")
+	deleteID := common4all2.GetStrID(ctx, w, r, "deleteID")
 	if deleteID == "" {
 		return
 	}
-	spaceID := common4all.GetStrID(ctx, w, r, "spaceID")
+	spaceID := common4all2.GetStrID(ctx, w, r, "spaceID")
 	if spaceID == "" {
-		common4all.BadRequestError(ctx, w, validation.NewErrRequestIsMissingRequiredField("spaceID"))
+		common4all2.BadRequestError(ctx, w, validation.NewErrRequestIsMissingRequiredField("spaceID"))
 		return
 	}
 
@@ -80,7 +80,7 @@ func HandleAdminMergeUserContacts(ctx context.Context, w http.ResponseWriter, r 
 
 	if err := facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 
-		contacts, err := dal4contactus.GetContactsByIDs(ctx, tx, spaceID, []string{keepID, deleteID})
+		contacts, err := dal4contactus2.GetContactsByIDs(ctx, tx, spaceID, []string{keepID, deleteID})
 		if err != nil {
 			return err
 		}
@@ -95,9 +95,9 @@ func HandleAdminMergeUserContacts(ctx context.Context, w http.ResponseWriter, r 
 		if contactToDelete.Data.UserID != "" && contactToKeep.Data.UserID == "" {
 			return errors.New("contactToDelete.CounterpartyUserID != 0 && contactToKeep.CounterpartyUserID == 0")
 		}
-		contactusSpace := dal4contactus.NewContactusSpaceEntry(spaceID)
+		contactusSpace := dal4contactus2.NewContactusSpaceEntry(spaceID)
 
-		if err = dal4contactus.GetContactusSpace(ctx, tx, contactusSpace); err != nil {
+		if err = dal4contactus2.GetContactusSpace(ctx, tx, contactusSpace); err != nil {
 			return err
 		}
 
@@ -117,7 +117,7 @@ func HandleAdminMergeUserContacts(ctx context.Context, w http.ResponseWriter, r 
 		}
 		return nil
 	}); err != nil {
-		common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
+		common4all2.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 		return
 	}
 }

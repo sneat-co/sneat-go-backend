@@ -7,11 +7,11 @@ import (
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sanity-io/litter"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/delays4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dto4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
+	dal4contactus2 "github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-core-modules/contactus/delays4contactus"
+	"github.com/sneat-co/sneat-core-modules/contactus/dto4contactus"
+	"github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
+	"github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -23,7 +23,7 @@ import (
 func ChangeContactStatus(
 	ctx context.Context, userCtx facade.UserContext, spaceID, contactID string, newStatus models4debtus.DebtusContactStatus,
 ) (
-	contact dal4contactus.ContactEntry,
+	contact dal4contactus2.ContactEntry,
 	debtusContact models4debtus.DebtusSpaceContactEntry,
 	err error,
 ) {
@@ -31,8 +31,8 @@ func ChangeContactStatus(
 	spaceRequest := dto4spaceus.SpaceRequest{
 		SpaceID: spaceID,
 	}
-	err = dal4contactus.RunContactusSpaceWorker(ctx, userCtx, spaceRequest,
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) error {
+	err = dal4contactus2.RunContactusSpaceWorker(ctx, userCtx, spaceRequest,
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus2.ContactusSpaceWorkerParams) error {
 			if debtusContact, err = GetDebtusSpaceContactByID(ctx, tx, spaceID, contactID); err != nil {
 				return err
 			}
@@ -177,7 +177,7 @@ func createContactWithinTransaction(
 type createContactDbChanges struct {
 	dal.Changes
 	user           dbo4userus.UserEntry
-	contactusSpace dal4contactus.ContactusSpaceEntry
+	contactusSpace dal4contactus2.ContactusSpaceEntry
 	debtusSpace    models4debtus.DebtusSpaceEntry
 	creator        ParticipantEntries
 	counterparty   ParticipantEntries
@@ -186,8 +186,8 @@ type createContactDbChanges struct {
 func CreateContact(
 	ctx context.Context, tx dal.ReadwriteTransaction, userID, spaceID string, contactDetails dto4contactus.ContactDetails,
 ) (
-	contact dal4contactus.ContactEntry,
-	contactusSpace dal4contactus.ContactusSpaceEntry,
+	contact dal4contactus2.ContactEntry,
+	contactusSpace dal4contactus2.ContactusSpaceEntry,
 	debtusContact models4debtus.DebtusSpaceContactEntry,
 	err error,
 ) {
@@ -202,11 +202,11 @@ func CreateContact(
 
 	switch len(contactIDs) {
 	case 0:
-		err = dal4contactus.RunContactusSpaceWorker(ctx, userCtx, spaceRequest, func(tctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) (err error) {
+		err = dal4contactus2.RunContactusSpaceWorker(ctx, userCtx, spaceRequest, func(tctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus2.ContactusSpaceWorkerParams) (err error) {
 			changes := &createContactDbChanges{
 				//user:                user,
 				debtusSpace:    models4debtus.NewDebtusSpaceEntry(spaceID),
-				contactusSpace: dal4contactus.NewContactusSpaceEntry(spaceID),
+				contactusSpace: dal4contactus2.NewContactusSpaceEntry(spaceID),
 				counterparty:   ParticipantEntries{},
 			}
 			if err = createContactWithinTransaction(tctx, tx, changes, spaceRequest.SpaceID, "", contactDetails); err != nil {

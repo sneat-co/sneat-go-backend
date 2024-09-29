@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dbo4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
+	"github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
+	dbo4userus2 "github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dal4retrospectus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -17,11 +17,11 @@ func FixCounts(ctx context.Context, userCtx facade.UserContext, request FixCount
 	uid := userCtx.GetUserID()
 	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		now := time.Now()
-		userRef := dbo4userus.NewUserKey(uid)
+		userRef := dbo4userus2.NewUserKey(uid)
 		team := dbo4spaceus.NewSpaceEntry(request.SpaceID)
 		var retroSpace dal4retrospectus.RetroSpaceEntry
 		retroSpace, err = dal4retrospectus.GetRetroSpaceEntry(ctx, tx, request.SpaceID)
-		user := new(dbo4userus.UserDbo)
+		user := new(dbo4userus2.UserDbo)
 		userRecord := dal.NewRecordWithData(userRef, user)
 
 		if err := tx.GetMulti(ctx, []dal.Record{userRecord, team.Record}); err != nil {

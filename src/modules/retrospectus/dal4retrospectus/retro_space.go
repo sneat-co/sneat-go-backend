@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dbo4spaceus"
+	dbo4spaceus2 "github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
 )
 
@@ -13,8 +13,8 @@ const RetrospectusModuleID = "retrospectus"
 type RetroSpaceEntry = record.DataWithID[string, *dbo4retrospectus.RetroSpaceDbo]
 
 func NewRetroSpaceKey(id string) *dal.Key {
-	key := dbo4spaceus.NewSpaceKey(id)
-	return dal.NewKeyWithParentAndID(key, dbo4spaceus.SpaceModulesCollection, RetrospectusModuleID)
+	key := dbo4spaceus2.NewSpaceKey(id)
+	return dal.NewKeyWithParentAndID(key, dbo4spaceus2.SpaceModulesCollection, RetrospectusModuleID)
 }
 
 func NewRetroSpaceEntry(id string) RetroSpaceEntry {

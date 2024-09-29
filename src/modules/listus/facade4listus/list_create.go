@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dal4spaceus"
+	dal4spaceus2 "github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/const4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
@@ -23,8 +23,8 @@ func CreateList(ctx context.Context, userCtx facade.UserContext, request dto4lis
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4spaceus.CreateSpaceItem(ctx, userCtx, request.SpaceRequest, const4listus.ModuleID, new(dbo4listus.ListusSpaceDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) (err error) {
+	err = dal4spaceus2.CreateSpaceItem(ctx, userCtx, request.SpaceRequest, const4listus.ModuleID, new(dbo4listus.ListusSpaceDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus2.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) (err error) {
 
 			for id, brief := range params.SpaceModuleEntry.Data.Lists {
 				if brief.Title == request.Title {

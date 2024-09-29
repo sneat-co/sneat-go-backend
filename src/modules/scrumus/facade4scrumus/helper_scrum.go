@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dbo4spaceus"
+	"github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dal4scrumus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus"

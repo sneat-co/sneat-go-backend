@@ -2,7 +2,7 @@ package dto4logist
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
+	"github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"

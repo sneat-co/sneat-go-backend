@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/anybot/facade4anybot"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
+	"github.com/sneat-co/sneat-core-modules/anybot/facade4anybot"
+	dal4contactus2 "github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -17,8 +17,8 @@ import (
 
 type userLinkingParty struct {
 	spaceID        string
-	contact        dal4contactus.ContactEntry
-	contactusSpace dal4contactus.ContactusSpaceEntry
+	contact        dal4contactus2.ContactEntry
+	contactusSpace dal4contactus2.ContactusSpaceEntry
 	debtusSpace    models4debtus.DebtusSpaceEntry
 	debtusContact  models4debtus.DebtusSpaceContactEntry
 	debtusUser     models4debtus.DebtusUserEntry // TODO: DO we need this?
@@ -87,13 +87,13 @@ func AcknowledgeReceipt(ctx context.Context, userCtx facade.UserContext, receipt
 		return
 	}
 
-	var invitedContact dal4contactus.ContactEntry
+	var invitedContact dal4contactus2.ContactEntry
 
 	err = facade.RunReadwriteTransaction(ctx, func(tctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 
 		var inviterUser, invitedUser dbo4userus.UserEntry
 		var inviterDebtusUser, invitedDebtusUser models4debtus.DebtusUserEntry
-		var inviterContact dal4contactus.ContactEntry
+		var inviterContact dal4contactus2.ContactEntry
 
 		receipt, transfer, inviterUser, inviterDebtusUser, invitedUser, invitedDebtusUser, err = getReceiptTransferAndUsers(tctx, tx, receiptID, currentUserID)
 		if err != nil {
@@ -124,14 +124,14 @@ func AcknowledgeReceipt(ctx context.Context, userCtx facade.UserContext, receipt
 			usersLinkingDbChanges: &usersLinkingDbChanges{
 				inviter: &userLinkingParty{
 					contact:        inviterContact,
-					contactusSpace: dal4contactus.NewContactusSpaceEntry(inviterSpaceID),
+					contactusSpace: dal4contactus2.NewContactusSpaceEntry(inviterSpaceID),
 					debtusSpace:    models4debtus.NewDebtusSpaceEntry(inviterSpaceID),
 					debtusContact:  models4debtus.NewDebtusSpaceContactEntry(inviterSpaceID, inviterUser.ID, nil),
 					debtusUser:     inviterDebtusUser,
 				},
 				invited: &userLinkingParty{
 					contact:        invitedContact,
-					contactusSpace: dal4contactus.NewContactusSpaceEntry(invitedSpaceID),
+					contactusSpace: dal4contactus2.NewContactusSpaceEntry(invitedSpaceID),
 					debtusSpace:    invitedDebtusSpace,
 					debtusContact:  models4debtus.NewDebtusSpaceContactEntry(invitedSpaceID, invitedUser.ID, nil),
 					debtusUser:     invitedDebtusUser,

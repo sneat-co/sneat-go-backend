@@ -1,9 +1,9 @@
 package unsorted
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
+	"github.com/sneat-co/sneat-core-modules/auth/token4auth"
+	"github.com/sneat-co/sneat-core-modules/common4all"
+	"github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 	"net/http"
 
 	"context"

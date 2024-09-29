@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
+	dal4contactus2 "github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-core-modules/userus/dal4userus"
+	"github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/const4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
@@ -111,8 +111,8 @@ func delayedUpdateTransferWithCounterparty(ctx context.Context, spaceID, transfe
 		return err
 	}
 
-	counterpartyCounterpartyContact := dal4contactus.NewContactEntry(spaceID, counterpartyCounterpartyID)
-	if err = dal4contactus.GetContact(ctx, db, counterpartyCounterpartyContact); err != nil {
+	counterpartyCounterpartyContact := dal4contactus2.NewContactEntry(spaceID, counterpartyCounterpartyID)
+	if err = dal4contactus2.GetContact(ctx, db, counterpartyCounterpartyContact); err != nil {
 		logus.Errorf(ctx, err.Error())
 		if dal.IsNotFound(err) {
 			return nil

@@ -2,7 +2,7 @@ package shared_space
 
 import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dbo4spaceus"
+	"github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/models4splitus"
 	"net/url"
 )

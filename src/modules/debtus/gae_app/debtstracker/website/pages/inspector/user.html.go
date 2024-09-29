@@ -4,7 +4,7 @@
 package inspector
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
+	"github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"io"
 	"time"

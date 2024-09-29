@@ -2,7 +2,7 @@ package unsorted
 
 import (
 	"context"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
+	"github.com/sneat-co/sneat-core-modules/auth/token4auth"
 	"net/http"
 )
 

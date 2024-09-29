@@ -3,9 +3,9 @@ package unsorted
 import (
 	"context"
 	"errors"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
+	"github.com/sneat-co/sneat-core-modules/auth/token4auth"
+	common4all2 "github.com/sneat-co/sneat-core-modules/common4all"
+	"github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/facade4splitus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/models4splitus"
 	"github.com/strongo/logus"
@@ -32,12 +32,12 @@ func HandlerCreateGroup(ctx context.Context, w http.ResponseWriter, r *http.Requ
 
 	group, _, err := facade4splitus.CreateGroup(ctx, &groupEntity, "", nil, nil)
 	if err != nil {
-		common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
+		common4all2.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 		return
 	}
 	logus.Infof(ctx, "GroupEntry created, ContactID: %v", group.ID)
 	if err = groupToResponse(ctx, w, group, user); err != nil {
-		common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
+		common4all2.ErrorAsJson(ctx, w, http.StatusInternalServerError, err)
 		return
 	}
 }
@@ -45,10 +45,10 @@ func HandlerCreateGroup(ctx context.Context, w http.ResponseWriter, r *http.Requ
 func HandlerGetGroup(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo, user dbo4userus.UserEntry) {
 	groupID := r.URL.Query().Get("id")
 	if groupID == "" {
-		common4all.BadRequestError(ctx, w, errors.New("missing id parameter: id"))
+		common4all2.BadRequestError(ctx, w, errors.New("missing id parameter: id"))
 		return
 	}
-	common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, errors.New("not implemented yet"))
+	common4all2.ErrorAsJson(ctx, w, http.StatusInternalServerError, errors.New("not implemented yet"))
 
 	//db, err := facade.GetSneatDB(ctx)
 	//if err != nil {
@@ -70,7 +70,7 @@ func groupToResponse(_ context.Context, w http.ResponseWriter, group models4spli
 	if jsons, err := groupsToJson([]models4splitus.GroupEntry{group}, user); err != nil {
 		return err
 	} else {
-		common4all.MarkResponseAsJson(w.Header())
+		common4all2.MarkResponseAsJson(w.Header())
 		_, _ = w.Write(jsons[0])
 		return nil
 	}
@@ -130,7 +130,7 @@ func groupsToJson(_ []models4splitus.GroupEntry, _ dbo4userus.UserEntry) (result
 }
 
 func HandleJoinGroups(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
-	common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, errors.New("not implemented yet"))
+	common4all2.ErrorAsJson(ctx, w, http.StatusInternalServerError, errors.New("not implemented yet"))
 	//defer r.Body.Close()
 	//
 	//var groupIDs []string
@@ -219,7 +219,7 @@ func HandlerDeleteGroup(_ context.Context, w http.ResponseWriter, r *http.Reques
 
 func HandlerUpdateGroup(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo) {
 	logus.Debugf(ctx, "HandlerUpdateGroup()")
-	common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, errors.New("not implemented yet"))
+	common4all2.ErrorAsJson(ctx, w, http.StatusInternalServerError, errors.New("not implemented yet"))
 	//var (
 	//	group models4splitus.GroupEntry
 	//	err   error
@@ -287,7 +287,7 @@ func HandlerUpdateGroup(ctx context.Context, w http.ResponseWriter, r *http.Requ
 
 func HandlerSetContactsToGroup(ctx context.Context, w http.ResponseWriter, r *http.Request, authInfo token4auth.AuthInfo, user dbo4userus.UserEntry) {
 	logus.Debugf(ctx, "HandlerSetContactsToGroup()")
-	common4all.ErrorAsJson(ctx, w, http.StatusInternalServerError, errors.New("HandlerSetContactsToGroup() not implemented yet"))
+	common4all2.ErrorAsJson(ctx, w, http.StatusInternalServerError, errors.New("HandlerSetContactsToGroup() not implemented yet"))
 	//var (
 	//	groupID string
 	//	group   models4splitus.GroupEntry

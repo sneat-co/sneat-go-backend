@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
-	"github.com/sneat-co/sneat-go-backend/src/core/extra"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dal4spaceus"
+	extra2 "github.com/sneat-co/sneat-core-modules/core/extra"
+	"github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dto4assetus"
@@ -26,7 +26,7 @@ func UpdateAssetTx(ctx context.Context, tx dal.ReadwriteTransaction, userCtx fac
 	if err = request.Validate(); err != nil {
 		return
 	}
-	extraData := extra.NewExtraData(extra.Type(request.AssetCategory))
+	extraData := extra2.NewExtraData(extra2.Type(request.AssetCategory))
 	return runAssetWorker(ctx, tx, userCtx, request, extraData)
 }
 
@@ -36,11 +36,11 @@ type AssetWorkerParams struct {
 	AssetUpdates []dal.Update
 }
 
-func runAssetWorker(ctx context.Context, tx dal.ReadwriteTransaction, userCtx facade.UserContext, request dto4assetus.UpdateAssetRequest, extraData extra.Data) (err error) {
+func runAssetWorker(ctx context.Context, tx dal.ReadwriteTransaction, userCtx facade.UserContext, request dto4assetus.UpdateAssetRequest, extraData extra2.Data) (err error) {
 	// TODO: Replace with future RunTeamModuleItemWorkerTx
 	return dal4spaceus.RunModuleSpaceWorkerTx[*dbo4assetus.AssetusSpaceDbo](ctx, tx, userCtx, request.SpaceID, const4assetus.ModuleID, new(dbo4assetus.AssetusSpaceDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4spaceus.ModuleSpaceWorkerParams[*dbo4assetus.AssetusSpaceDbo]) (err error) {
-			extraType := extra.Type(request.AssetCategory)
+			extraType := extra2.Type(request.AssetCategory)
 			params := AssetWorkerParams{
 				Asset:                   NewAsset("", extraType, extraData),
 				ModuleSpaceWorkerParams: teamWorkerParams,

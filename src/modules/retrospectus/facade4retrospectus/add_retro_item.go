@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
+	dal4userus2 "github.com/sneat-co/sneat-core-modules/userus/dal4userus"
+	"github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -103,7 +103,7 @@ func addRetroItemToUserRetro(ctx context.Context, userCtx facade.UserContext, re
 	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		started := time.Now()
 
-		if err = dal4userus.GetUser(ctx, tx, user); err != nil {
+		if err = dal4userus2.GetUser(ctx, tx, user); err != nil {
 			return err
 		}
 
@@ -141,7 +141,7 @@ func addRetroItemToUserRetro(ctx context.Context, userCtx facade.UserContext, re
 				Value: dal.ArrayUnion(item),
 			},
 		}
-		if err = dal4userus.TxUpdateUser(ctx, tx, started, user.Key, updates); err != nil {
+		if err = dal4userus2.TxUpdateUser(ctx, tx, started, user.Key, updates); err != nil {
 			return fmt.Errorf("failed to update retrospective record: %w", err)
 		}
 		response = AddRetroItemResponse{
@@ -160,7 +160,7 @@ func addRetroItemToSpaceRetro(ctx context.Context, userCtx facade.UserContext, r
 
 	user := dbo4userus.NewUserEntry(uid)
 
-	if err = dal4userus.GetUser(ctx, nil, user); err != nil {
+	if err = dal4userus2.GetUser(ctx, nil, user); err != nil {
 		err = fmt.Errorf("failed to get user record: %w", err)
 		return
 	}

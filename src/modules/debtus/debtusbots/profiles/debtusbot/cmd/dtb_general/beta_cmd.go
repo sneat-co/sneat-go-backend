@@ -3,7 +3,7 @@ package dtb_general
 import (
 	"fmt"
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
+	"github.com/sneat-co/sneat-core-modules/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 )
 

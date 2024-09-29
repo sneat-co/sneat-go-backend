@@ -1,7 +1,7 @@
 package gaedal
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/unsorted4auth"
+	unsorted4auth2 "github.com/sneat-co/sneat-core-modules/auth/unsorted4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"testing"
 )
@@ -14,16 +14,16 @@ func TestRegisterDal(t *testing.T) {
 	dtdal.Twilio = nil
 	dtdal.HttpClient = nil
 	dtdal.Invite = nil
-	unsorted4auth.LoginCode = nil
-	unsorted4auth.LoginPin = nil
+	unsorted4auth2.LoginCode = nil
+	unsorted4auth2.LoginPin = nil
 	//dtdal.Bill = nil
 	dtdal.Receipt = nil
 	dtdal.Reminder = nil
-	unsorted4auth.TgUser = nil
+	unsorted4auth2.TgUser = nil
 	dtdal.Transfer = nil
-	unsorted4auth.User = nil
-	unsorted4auth.UserGooglePlus = nil
-	unsorted4auth.UserFacebook = nil
+	unsorted4auth2.User = nil
+	unsorted4auth2.UserGooglePlus = nil
+	unsorted4auth2.UserFacebook = nil
 
 	// Execute
 	RegisterDal()
@@ -58,7 +58,7 @@ func TestRegisterDal(t *testing.T) {
 	//if dtdal.Group == nil {
 	//	t.Error("dtdal.Invite == nil")
 	//}
-	if unsorted4auth.TgUser == nil {
+	if unsorted4auth2.TgUser == nil {
 		t.Error("dtdal.TgUser == nil")
 	}
 	if dtdal.Transfer == nil {
@@ -67,7 +67,7 @@ func TestRegisterDal(t *testing.T) {
 	if dtdal.Twilio == nil {
 		t.Error("dtdal.Twilio == nil")
 	}
-	if unsorted4auth.User == nil {
+	if unsorted4auth2.User == nil {
 		t.Error("dtdal.User == nil")
 	}
 	//if facade4auth.UserBrowser == nil {
@@ -76,10 +76,10 @@ func TestRegisterDal(t *testing.T) {
 	//if facade4auth.UserGaClient == nil {
 	//	t.Error("dtdal.UserGaClient == nil")
 	//}
-	if unsorted4auth.UserGooglePlus == nil {
+	if unsorted4auth2.UserGooglePlus == nil {
 		t.Error("dtdal.UserGooglePlus == nil")
 	}
-	if unsorted4auth.UserFacebook == nil {
+	if unsorted4auth2.UserFacebook == nil {
 		t.Error("dtdal.UserFacebook == nil")
 	}
 	//if facade4auth.UserOneSignal == nil {

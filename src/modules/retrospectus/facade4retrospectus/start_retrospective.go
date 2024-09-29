@@ -5,11 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/const4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dbo4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
+	"github.com/sneat-co/sneat-core-modules/contactus/const4contactus"
+	"github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
+	dbo4spaceus2 "github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
+	"github.com/sneat-co/sneat-core-modules/userus/dal4userus"
+	dbo4userus2 "github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/dbo4meetingus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dal4retrospectus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
@@ -58,7 +58,7 @@ func StartRetrospective(ctx context.Context, userCtx facade.UserContext, request
 				if activeRetroID == "" {
 					request.MeetingID = params.Started.Format("2006-01-02")
 
-					retroSpace.Data.Active = &dbo4spaceus.SpaceMeetingInfo{
+					retroSpace.Data.Active = &dbo4spaceus2.SpaceMeetingInfo{
 						ID:      request.MeetingID,
 						Started: &params.Started,
 					}
@@ -70,7 +70,7 @@ func StartRetrospective(ctx context.Context, userCtx facade.UserContext, request
 			} else if activeRetrospective := retroSpace.Data.ActiveRetro(); activeRetrospective.ID == request.MeetingID {
 				return nil
 			} else if activeRetrospective.ID == "" {
-				retroSpace.Data.Active = &dbo4spaceus.SpaceMeetingInfo{
+				retroSpace.Data.Active = &dbo4spaceus2.SpaceMeetingInfo{
 					ID:      request.MeetingID,
 					Started: &params.Started,
 				}
@@ -211,18 +211,18 @@ type userRetroItems struct {
 	byType dbo4retrospectus.RetroItemsByType
 }
 
-func getUsersWithRetroItems(ctx context.Context, tx dal.ReadwriteTransaction, team dbo4spaceus.SpaceEntry, retroSpace dal4retrospectus.RetroSpaceEntry) (usersWithRetroItemByUserID map[string]userRetroItems, err error) {
+func getUsersWithRetroItems(ctx context.Context, tx dal.ReadwriteTransaction, team dbo4spaceus2.SpaceEntry, retroSpace dal4retrospectus.RetroSpaceEntry) (usersWithRetroItemByUserID map[string]userRetroItems, err error) {
 	teamUsersCount := len(team.Data.UserIDs)
 	usersWithRetroItemByUserID = make(map[string]userRetroItems, teamUsersCount)
 	userIDs := make([]string, 0, teamUsersCount)
 	for userID := range retroSpace.Data.UpcomingRetro.ItemsByUserAndType {
 		userIDs = append(userIDs, userID)
 	}
-	userKeys := dbo4userus.NewUserKeys(userIDs)
+	userKeys := dbo4userus2.NewUserKeys(userIDs)
 	var usersRecords []dal.Record // []*dbo4userus.UserDbo
-	users := make([]*dbo4userus.UserDbo, len(userKeys))
+	users := make([]*dbo4userus2.UserDbo, len(userKeys))
 	for i, userKey := range userKeys {
-		users[i] = new(dbo4userus.UserDbo)
+		users[i] = new(dbo4userus2.UserDbo)
 		usersRecords[i] = dal.NewRecordWithData(userKey, users)
 	}
 	err = dal4userus.TxGetUsers(ctx, tx, usersRecords)

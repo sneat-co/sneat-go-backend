@@ -3,9 +3,9 @@ package gaedal
 import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/facade4auth"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/unsorted4auth"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
+	facade4auth2 "github.com/sneat-co/sneat-core-modules/auth/facade4auth"
+	unsorted4auth2 "github.com/sneat-co/sneat-core-modules/auth/unsorted4auth"
+	"github.com/sneat-co/sneat-core-modules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"net/http"
@@ -19,26 +19,26 @@ func RegisterDal() {
 	dtdal.Contact = NewContactDalGae()
 	dtdal.Transfer = NewTransferDalGae()
 	//dtdal.Reward = NewRewardDalGae()
-	unsorted4auth.User = facade4auth.NewUserDalGae()
+	unsorted4auth2.User = facade4auth2.NewUserDalGae()
 	//dtdal.Bill = facade4splitus.newBillDalGae()
 	//dtdal.Split = splitDalGae{}
-	dtdal.TgGroup = facade4auth.NewTgGroupDalGae()
+	dtdal.TgGroup = facade4auth2.NewTgGroupDalGae()
 	//dtdal.BillSchedule = NewBillScheduleDalGae()
 	dtdal.Receipt = NewReceiptDalGae()
 	dtdal.Reminder = NewReminderDalGae()
-	unsorted4auth.UserGoogle = facade4auth.NewUserGoogleDalGae()
-	unsorted4auth.PasswordReset = facade4auth.NewPasswordResetDalGae()
+	unsorted4auth2.UserGoogle = facade4auth2.NewUserGoogleDalGae()
+	unsorted4auth2.PasswordReset = facade4auth2.NewPasswordResetDalGae()
 	common4all.Email = NewEmailDalGae()
-	unsorted4auth.UserGooglePlus = facade4auth.NewUserGooglePlusDalGae()
-	unsorted4auth.UserEmail = facade4auth.NewUserEmailGaeDal()
-	unsorted4auth.UserFacebook = facade4auth.NewUserFacebookDalGae()
-	unsorted4auth.LoginPin = facade4auth.NewLoginPinDalGae()
-	unsorted4auth.LoginCode = facade4auth.NewLoginCodeDalGae()
+	unsorted4auth2.UserGooglePlus = facade4auth2.NewUserGooglePlusDalGae()
+	unsorted4auth2.UserEmail = facade4auth2.NewUserEmailGaeDal()
+	unsorted4auth2.UserFacebook = facade4auth2.NewUserFacebookDalGae()
+	unsorted4auth2.LoginPin = facade4auth2.NewLoginPinDalGae()
+	unsorted4auth2.LoginCode = facade4auth2.NewLoginCodeDalGae()
 	dtdal.Twilio = NewTwilioDalGae()
 	dtdal.Invite = NewInviteDalGae()
 	dtdal.Admin = NewAdminDalGae()
-	unsorted4auth.TgChat = facade4auth.NewTgChatDalGae()
-	unsorted4auth.TgUser = facade4auth.NewTgUserDalGae()
+	unsorted4auth2.TgChat = facade4auth2.NewTgChatDalGae()
+	unsorted4auth2.TgUser = facade4auth2.NewTgUserDalGae()
 	//dtdal.Group = facade4splitus.NewGroupDalGae()
 	dtdal.Feedback = NewFeedbackDalGae()
 	//dtdal.UserVk = NewUserVkDalGae()

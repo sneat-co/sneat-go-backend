@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/julienschmidt/httprouter"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
+	"github.com/sneat-co/sneat-core-modules/auth/token4auth"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/website/admin"
 	pages2 "github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/website/pages"

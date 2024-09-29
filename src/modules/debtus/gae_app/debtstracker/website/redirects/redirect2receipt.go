@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/julienschmidt/httprouter"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
+	"github.com/sneat-co/sneat-core-modules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	pages2 "github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/website/pages"
 	"github.com/strongo/i18n"

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/const4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-core-modules/contactus/const4contactus"
+	dal4contactus2 "github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/const4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
@@ -138,8 +138,8 @@ func (ContactDalGae) GetLatestContacts(whc botsfw.WebhookContext, tx dal.ReadSes
 }
 
 func (contactDalGae ContactDalGae) GetContactIDsByTitle(ctx context.Context, tx dal.ReadSession, spaceID, userID string, title string, caseSensitive bool) (contactIDs []string, err error) {
-	contactusSpace := dal4contactus.NewContactusSpaceEntry(spaceID)
-	if err = dal4contactus.GetContactusSpace(ctx, tx, contactusSpace); err != nil {
+	contactusSpace := dal4contactus2.NewContactusSpaceEntry(spaceID)
+	if err = dal4contactus2.GetContactusSpace(ctx, tx, contactusSpace); err != nil {
 		return
 	}
 	if caseSensitive {

@@ -10,13 +10,13 @@ import (
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/briefs4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dbo4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
+	"github.com/sneat-co/sneat-core-modules/common4all"
+	briefs4contactus2 "github.com/sneat-co/sneat-core-modules/contactus/briefs4contactus"
+	"github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-core-modules/contactus/dbo4contactus"
+	"github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
+	"github.com/sneat-co/sneat-core-modules/userus/dal4userus"
+	"github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_general"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
@@ -408,12 +408,12 @@ func listCounterpartiesAsButtons(
 	var showAllContactsText = whc.Translate(trans.COMMAND_TEXT_SHOW_ALL_CONTACTS)
 
 	buttons := [][]string{}
-	var counterparties2buttons = func(contactBriefs map[string]*briefs4contactus.ContactBrief, isShowingAll bool) {
+	var counterparties2buttons = func(contactBriefs map[string]*briefs4contactus2.ContactBrief, isShowingAll bool) {
 		for _, contact := range contactBriefs {
 			buttons = append(buttons, []string{contact.Title})
 		}
 		var controlButtons []string
-		if totalContactsCount := contactusSpaceDbo.TotalContactsCountByStatus[briefs4contactus.ContactStatusActive]; !isShowingAll && (totalContactsCount == 0 || len(contactBriefs) < totalContactsCount) {
+		if totalContactsCount := contactusSpaceDbo.TotalContactsCountByStatus[briefs4contactus2.ContactStatusActive]; !isShowingAll && (totalContactsCount == 0 || len(contactBriefs) < totalContactsCount) {
 			controlButtons = append(controlButtons, showAllContactsText)
 		}
 		if newCounterpartyCommand.Code != "" {
@@ -428,9 +428,9 @@ func listCounterpartiesAsButtons(
 	} else {
 		switch len(debtusSpaceDbo.Balance) {
 		case 0: // Space has no active debts
-			if contactusSpaceDbo.TotalContactsCountByStatus[briefs4contactus.ContactStatusActive] > 0 {
+			if contactusSpaceDbo.TotalContactsCountByStatus[briefs4contactus2.ContactStatusActive] > 0 {
 				counterparties := debtusSpaceDbo.LatestCounterparties(counterpartyButtonsLimit)
-				contacts := make(map[string]*briefs4contactus.ContactBrief, len(counterparties))
+				contacts := make(map[string]*briefs4contactus2.ContactBrief, len(counterparties))
 				for _, counterparty := range counterparties {
 					contacts[counterparty.ContactID] = contactusSpaceDbo.Contacts[counterparty.ContactID]
 				}
@@ -440,7 +440,7 @@ func listCounterpartiesAsButtons(
 			}
 		default: // UserEntry have active debts (balance is not 0).
 
-			contactsToShow := make(map[string]*briefs4contactus.ContactBrief)
+			contactsToShow := make(map[string]*briefs4contactus2.ContactBrief)
 			if len(contactsToShow) <= counterpartyButtonsLimit {
 				latestCounterparties := debtusSpaceDbo.LatestCounterparties(counterpartyButtonsLimit)
 				for _, latestCounterparty := range latestCounterparties {

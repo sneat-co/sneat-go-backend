@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/briefs4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/const4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dbo4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
+	briefs4contactus2 "github.com/sneat-co/sneat-core-modules/contactus/briefs4contactus"
+	"github.com/sneat-co/sneat-core-modules/contactus/const4contactus"
+	"github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
+	"github.com/sneat-co/sneat-core-modules/contactus/dbo4contactus"
+	"github.com/sneat-co/sneat-core-modules/userus/dal4userus"
+	"github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/general"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
@@ -211,8 +211,8 @@ func (InviteDalGae) ClaimInvite2(ctx context.Context, inviteCode string, invite 
 				}
 
 				counterparty := dal4contactus.NewContactEntryWithData("", "", &dbo4contactus.ContactDbo{
-					ContactBase: briefs4contactus.ContactBase{
-						ContactBrief: briefs4contactus.ContactBrief{
+					ContactBase: briefs4contactus2.ContactBase{
+						ContactBrief: briefs4contactus2.ContactBrief{
 							Names: inviterUser.Data.Names,
 						},
 					},

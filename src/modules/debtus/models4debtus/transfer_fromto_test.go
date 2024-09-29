@@ -1,7 +1,7 @@
 package models4debtus
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/models4auth"
+	"github.com/sneat-co/sneat-core-modules/auth/models4auth"
 	"testing"
 )
 

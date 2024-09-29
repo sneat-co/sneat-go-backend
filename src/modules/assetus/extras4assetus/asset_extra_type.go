@@ -1,17 +1,17 @@
 package extras4assetus
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/core/extra"
+	extra2 "github.com/sneat-co/sneat-core-modules/core/extra"
 )
 
 const (
-	AssetExtraTypeVehicle  extra.Type = "vehicle"
-	AssetExtraTypeDwelling extra.Type = "dwelling"
-	AssetExtraTypeDocument extra.Type = "document"
+	AssetExtraTypeVehicle  extra2.Type = "vehicle"
+	AssetExtraTypeDwelling extra2.Type = "dwelling"
+	AssetExtraTypeDocument extra2.Type = "document"
 )
 
 func init() {
-	extra.RegisterFactory(AssetExtraTypeVehicle, func() extra.Data { return &AssetVehicleExtra{} })
-	extra.RegisterFactory(AssetExtraTypeDwelling, func() extra.Data { return &AssetDwellingExtra{} })
-	extra.RegisterFactory(AssetExtraTypeDocument, func() extra.Data { return &AssetDocumentExtra{} })
+	extra2.RegisterFactory(AssetExtraTypeVehicle, func() extra2.Data { return &AssetVehicleExtra{} })
+	extra2.RegisterFactory(AssetExtraTypeDwelling, func() extra2.Data { return &AssetDwellingExtra{} })
+	extra2.RegisterFactory(AssetExtraTypeDocument, func() extra2.Data { return &AssetDocumentExtra{} })
 }

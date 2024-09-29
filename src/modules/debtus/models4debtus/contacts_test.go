@@ -1,7 +1,7 @@
 package models4debtus
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dto4contactus"
+	"github.com/sneat-co/sneat-core-modules/contactus/dto4contactus"
 	"github.com/strongo/strongoapp/person"
 	"testing"
 )

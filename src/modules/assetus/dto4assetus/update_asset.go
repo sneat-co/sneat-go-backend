@@ -1,7 +1,7 @@
 package dto4assetus
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/core/extra"
+	"github.com/sneat-co/sneat-core-modules/core/extra"
 )
 
 type UpdateAssetRequest struct {

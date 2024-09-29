@@ -8,7 +8,7 @@ import (
 	"github.com/bots-go-framework/bots-fw/botsfw"
 	"github.com/crediterra/money"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
+	"github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/briefs4splitus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/facade4splitus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/splitus/models4splitus"

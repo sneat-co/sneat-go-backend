@@ -5,8 +5,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/bots-go-framework/bots-fw/botsfw"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/auth/token4auth"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
+	token4auth2 "github.com/sneat-co/sneat-core-modules/auth/token4auth"
+	"github.com/sneat-co/sneat-core-modules/common4all"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/strongo/i18n"
 	"io"
@@ -25,7 +25,7 @@ func GetHistoryUrlForUser(ctx context.Context, userID int64, locale i18n.Locale,
 }
 
 func getUrlForUser(ctx context.Context, userID int64, locale i18n.Locale, page, createdOnPlatform, createdOnID string) string {
-	token, _ := token4auth.IssueBotToken(ctx, strconv.FormatInt(userID, 10), createdOnPlatform, createdOnID)
+	token, _ := token4auth2.IssueBotToken(ctx, strconv.FormatInt(userID, 10), createdOnPlatform, createdOnID)
 	host := GetWebsiteHost(createdOnID)
 	url := fmt.Sprintf("https://%v/app/#", host)
 	switch page {
@@ -55,7 +55,7 @@ func WriteTransferUrlForUser(ctx context.Context, writer io.Writer, transferID s
 		_, _ = writer.Write([]byte(fmt.Sprintf("&%v", utmParams.ShortString())))
 	}
 	if userID != "" {
-		token, err := token4auth.IssueBotToken(ctx, userID, utmParams.Medium, utmParams.Source)
+		token, err := token4auth2.IssueBotToken(ctx, userID, utmParams.Medium, utmParams.Source)
 		if err != nil {
 			_, _ = writer.Write([]byte(fmt.Sprintf("&secret=ERROR:%v", err.Error())))
 		}
@@ -64,7 +64,7 @@ func WriteTransferUrlForUser(ctx context.Context, writer io.Writer, transferID s
 }
 
 func GetChooseCurrencyUrlForUser(ctx context.Context, userID string, locale i18n.Locale, createdOnPlatform, createdOnID, contextData string) string {
-	token, _ := token4auth.IssueBotToken(ctx, userID, createdOnPlatform, createdOnID)
+	token, _ := token4auth2.IssueBotToken(ctx, userID, createdOnPlatform, createdOnID)
 	host := GetWebsiteHost(createdOnID)
 	return fmt.Sprintf(
 		"https://%v/app/#/choose-currency?lang=%v&%v&secret=%v",
@@ -92,8 +92,8 @@ func GetNewDebtPageUrl(whc botsfw.WebhookContext, direction models4debtus.Transf
 	botPlatform := whc.BotPlatform().ID()
 	ctx := whc.Context()
 	appUserID := whc.AppUserID()
-	botIssuer := token4auth.GetBotIssuer(botPlatform, botID)
-	token, _ := token4auth.IssueAuthToken(ctx, appUserID, botIssuer)
+	botIssuer := token4auth2.GetBotIssuer(botPlatform, botID)
+	token, _ := token4auth2.IssueAuthToken(ctx, appUserID, botIssuer)
 	host := GetWebsiteHost(botID)
 	// utmParams := NewUtmParams(whc, utmCampaign)
 	return fmt.Sprintf(

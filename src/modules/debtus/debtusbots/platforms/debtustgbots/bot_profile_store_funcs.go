@@ -6,7 +6,7 @@ import (
 	"github.com/bots-go-framework/bots-fw-telegram-models/botsfwtgmodels"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
+	dbo4userus2 "github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 )
 
 func newBotChatData() botsfwmodels.BotChatData {
@@ -18,12 +18,12 @@ func newBotUserData() botsfwmodels.PlatformUserData {
 }
 
 func newAppUserData() botsfwmodels.AppUserData {
-	return new(dbo4userus.UserDbo)
+	return new(dbo4userus2.UserDbo)
 }
 
 func getAppUserByID(_ context.Context, tx dal.ReadSession, botID, appUserID string) (appUser record.DataWithID[string, botsfwmodels.AppUserData], err error) {
 	appUserData := newAppUserData()
-	key := dbo4userus.NewUserKey(appUserID)
+	key := dbo4userus2.NewUserKey(appUserID)
 	appUser = record.NewDataWithID(appUserID, key, appUserData)
 	return appUser, nil
 }

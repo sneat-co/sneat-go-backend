@@ -2,7 +2,7 @@ package api4retrospectus
 
 import (
 	"context"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
+	"github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/facade4retrospectus"
 	"github.com/sneat-co/sneat-go-core/apicore/httpmock"

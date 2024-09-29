@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/briefs4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dbo4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dto4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/facade4contactus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dal4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dbo4spaceus"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
+	"github.com/sneat-co/sneat-core-modules/contactus/briefs4contactus"
+	dal4contactus2 "github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
+	dbo4contactus2 "github.com/sneat-co/sneat-core-modules/contactus/dbo4contactus"
+	dto4contactus2 "github.com/sneat-co/sneat-core-modules/contactus/dto4contactus"
+	facade4contactus2 "github.com/sneat-co/sneat-core-modules/contactus/facade4contactus"
+	"github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
+	"github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/const4logistus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
@@ -60,19 +60,19 @@ func setLogistSpaceSettingsTx(
 	} else if err = logistSpace.Data.Validate(); err != nil {
 		return fmt.Errorf("loaded logistus team recod is not valid: %w", err)
 	}
-	var teamContact dal4contactus.ContactEntry
-	if teamContact, err = dal4contactus.GetContactByID(ctx, tx, logistSpace.ID, request.SpaceID); err != nil {
+	var teamContact dal4contactus2.ContactEntry
+	if teamContact, err = dal4contactus2.GetContactByID(ctx, tx, logistSpace.ID, request.SpaceID); err != nil {
 		if !dal.IsNotFound(err) {
 			return fmt.Errorf("failed to get contact record: %w", err)
 		}
 	}
 	if dal.IsNotFound(err) {
-		createContactRequest := dto4contactus.CreateContactRequest{
+		createContactRequest := dto4contactus2.CreateContactRequest{
 			Status:       "active",
 			ContactID:    request.SpaceID,
 			Type:         briefs4contactus.ContactTypeCompany,
 			SpaceRequest: request.SpaceRequest,
-			Company: &dto4contactus.CreateCompanyRequest{
+			Company: &dto4contactus2.CreateCompanyRequest{
 				Title:     workerParams.Space.Data.Title,
 				VATNumber: request.VATNumber,
 				Address:   &request.Address,
@@ -82,25 +82,25 @@ func setLogistSpaceSettingsTx(
 			createContactRequest.Roles = append(createContactRequest.Roles, string(role))
 		}
 
-		contactusWorkerParams := &dal4spaceus.ModuleSpaceWorkerParams[*dbo4contactus.ContactusSpaceDbo]{
+		contactusWorkerParams := &dal4spaceus.ModuleSpaceWorkerParams[*dbo4contactus2.ContactusSpaceDbo]{
 			SpaceWorkerParams: workerParams.SpaceWorkerParams,
-			SpaceModuleEntry:  dal4contactus.NewContactusSpaceEntry(request.SpaceID),
+			SpaceModuleEntry:  dal4contactus2.NewContactusSpaceEntry(request.SpaceID),
 		}
 
-		if teamContact, err = facade4contactus.CreateContactTx(ctx, tx, false, createContactRequest, contactusWorkerParams); err != nil {
+		if teamContact, err = facade4contactus2.CreateContactTx(ctx, tx, false, createContactRequest, contactusWorkerParams); err != nil {
 			// Intentionally do not use original error to prevent wrongly returner HTTP status BadRequest=400
 			return fmt.Errorf("failed to create team contact record: %v", err.Error())
 		}
 	} else if contactUpdates := updateContact(teamContact.Data, request); len(contactUpdates) > 0 {
-		request := dto4contactus.UpdateContactRequest{
-			ContactRequest: dto4contactus.ContactRequest{
+		request := dto4contactus2.UpdateContactRequest{
+			ContactRequest: dto4contactus2.ContactRequest{
 				ContactID:    teamContact.ID,
 				SpaceRequest: dto4spaceus.SpaceRequest{SpaceID: request.SpaceID},
 			},
 			VatNumber: &request.VATNumber,
 		}
-		var contactWorkerParams *dal4contactus.ContactWorkerParams
-		if err = facade4contactus.UpdateContactTx(ctx, tx, request, contactWorkerParams); err != nil {
+		var contactWorkerParams *dal4contactus2.ContactWorkerParams
+		if err = facade4contactus2.UpdateContactTx(ctx, tx, request, contactWorkerParams); err != nil {
 			return fmt.Errorf("failed to update team contact record: %w", err)
 		}
 	}
@@ -122,7 +122,7 @@ func setLogistSpaceSettingsTx(
 	return nil
 }
 
-func updateLogistSpace(logistSpaceDbo *dbo4logist.LogistSpaceDbo, spaceDbo *dbo4spaceus.SpaceDbo, teamContact dal4contactus.ContactEntry, request dto4logist.SetLogistSpaceSettingsRequest) (updates []dal.Update) {
+func updateLogistSpace(logistSpaceDbo *dbo4logist.LogistSpaceDbo, spaceDbo *dbo4spaceus.SpaceDbo, teamContact dal4contactus2.ContactEntry, request dto4logist.SetLogistSpaceSettingsRequest) (updates []dal.Update) {
 	if logistSpaceDbo.ContactID != teamContact.ID {
 		logistSpaceDbo.ContactID = teamContact.ID
 		updates = append(updates, dal.Update{Field: "contactID", Value: teamContact.ID})
@@ -142,7 +142,7 @@ func updateLogistSpace(logistSpaceDbo *dbo4logist.LogistSpaceDbo, spaceDbo *dbo4
 	return updates
 }
 
-func updateContact(contactDto *dbo4contactus.ContactDbo, request dto4logist.SetLogistSpaceSettingsRequest) (updates []dal.Update) {
+func updateContact(contactDto *dbo4contactus2.ContactDbo, request dto4logist.SetLogistSpaceSettingsRequest) (updates []dal.Update) {
 	if contactDto.VATNumber != request.VATNumber {
 		contactDto.VATNumber = request.VATNumber
 		updates = append(updates, dal.Update{Field: "vatNumber", Value: request.VATNumber})

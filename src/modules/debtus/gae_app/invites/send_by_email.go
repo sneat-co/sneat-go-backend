@@ -5,8 +5,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/sneat-co/debtstracker-translations/trans"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/common4all"
-	"github.com/sneat-co/sneat-go-backend/src/coremodules/emailing"
+	common4all2 "github.com/sneat-co/sneat-core-modules/common4all"
+	"github.com/sneat-co/sneat-core-modules/emailing"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/models4debtus"
 	"github.com/sneat-co/sneat-go-core/emails"
@@ -43,10 +43,10 @@ func SendInviteByEmail(ec strongoapp.ExecutionContext, translator i18n.SingleLoc
 		FromName:   fromName,
 		InviteCode: inviteCode,
 		TgBot:      telegramBotID,
-		Utm: common4all.UtmParams{
+		Utm: common4all2.UtmParams{
 			Source:   utmSource,
 			Medium:   string(models4debtus.InviteByEmail),
-			Campaign: common4all.UTM_CAMPAIGN_ONBOARDING_INVITE,
+			Campaign: common4all2.UTM_CAMPAIGN_ONBOARDING_INVITE,
 		}.String(),
 	}
 
@@ -91,12 +91,12 @@ func SendReceiptByEmail(ctx context.Context, translator i18n.SingleLocaleTransla
 		template.HTML(""),
 	}
 
-	subject, err := common4all.TextTemplates.RenderTemplate(ctx, translator, trans.EMAIL_RECEIPT_SUBJ, templateParams)
+	subject, err := common4all2.TextTemplates.RenderTemplate(ctx, translator, trans.EMAIL_RECEIPT_SUBJ, templateParams)
 	if err != nil {
 		return "", err
 	}
 
-	bodyText, err := common4all.TextTemplates.RenderTemplate(ctx, translator, trans.EMAIL_RECEIPT_BODY_TEXT, templateParams)
+	bodyText, err := common4all2.TextTemplates.RenderTemplate(ctx, translator, trans.EMAIL_RECEIPT_BODY_TEXT, templateParams)
 	if err != nil {
 		return "", err
 	}
@@ -105,7 +105,7 @@ func SendReceiptByEmail(ctx context.Context, translator i18n.SingleLocaleTransla
 	//displayUrl := strings.Split(string(templateParams.ReceiptURL), "#")[0]
 	templateParams.ReceiptURL = template.HTML(fmt.Sprintf(`<a href="%v">%v</a>`, receiptURL, receiptURL))
 	var bodyHtml bytes.Buffer
-	if err = common4all.HtmlTemplates.RenderTemplate(ctx, &bodyHtml, translator, trans.EMAIL_RECEIPT_BODY_HTML, templateParams); err != nil {
+	if err = common4all2.HtmlTemplates.RenderTemplate(ctx, &bodyHtml, translator, trans.EMAIL_RECEIPT_BODY_HTML, templateParams); err != nil {
 		return "", err
 	}
 
