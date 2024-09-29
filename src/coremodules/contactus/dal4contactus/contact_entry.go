@@ -7,13 +7,13 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dbo4contactus"
 )
 
-type ContactEntry = record.DataWithID[string, *models4contactus.ContactDbo]
+type ContactEntry = record.DataWithID[string, *dbo4contactus.ContactDbo]
 
 func NewContactEntry(spaceID, contactID string) ContactEntry {
-	return NewContactEntryWithData(spaceID, contactID, new(models4contactus.ContactDbo))
+	return NewContactEntryWithData(spaceID, contactID, new(dbo4contactus.ContactDbo))
 }
 
-func NewContactEntryWithData(spaceID, contactID string, data *models4contactus.ContactDbo) (contact ContactEntry) {
+func NewContactEntryWithData(spaceID, contactID string, data *dbo4contactus.ContactDbo) (contact ContactEntry) {
 	key := NewContactKey(spaceID, contactID)
 	contact.ID = contactID
 	contact.FullID = spaceID + ":" + contactID

@@ -1,4 +1,4 @@
-package models4contactus
+package dbo4contactus
 
 import (
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/briefs4contactus"

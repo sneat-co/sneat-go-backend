@@ -41,7 +41,7 @@ func TestNewContactusSpaceModuleEntryWithData(t *testing.T) {
 		})
 	})
 	t.Run("not_nil_data", func(t *testing.T) {
-		data := new(models4contactus.ContactusSpaceDbo)
+		data := new(dbo4contactus.ContactusSpaceDbo)
 		entry := NewContactusSpaceEntryWithData("space1", data)
 		assert.NotNil(t, entry.Data)
 		assert.Same(t, data, entry.Data)

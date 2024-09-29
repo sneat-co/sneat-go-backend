@@ -106,4 +106,4 @@ func (v CreateContactRequest) Validate() error {
 }
 
 // CreateContactResponse DTO
-type CreateContactResponse = dbmodels.DtoWithID[*models4contactus.ContactDbo]
+type CreateContactResponse = dbmodels.DtoWithID[*dbo4contactus.ContactDbo]

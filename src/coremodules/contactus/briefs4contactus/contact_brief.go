@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-// ContactBrief needed as ContactBase is used in models4contactus.ContactDto and in dto4contactus.CreatePersonRequest
+// ContactBrief needed as ContactBase is used in dbo4contactus.ContactDto and in dto4contactus.CreatePersonRequest
 // Status is not part of ContactBrief as we keep in briefs only active contacts
 type ContactBrief struct {
 	dbmodels.WithUserID
@@ -25,7 +25,7 @@ type ContactBrief struct {
 	Gender     dbmodels.Gender    `json:"gender,omitempty" firestore:"gender,omitempty"`
 	Names      *person.NameFields `json:"names,omitempty" firestore:"names,omitempty"`
 	Title      string             `json:"title,omitempty" firestore:"title,omitempty"`
-	ShortTitle string             `json:"shortTitle,omitempty" firestore:"shortTitle,omitempty"` // Not supposed to be used in models4contactus.ContactDto
+	ShortTitle string             `json:"shortTitle,omitempty" firestore:"shortTitle,omitempty"` // Not supposed to be used in dbo4contactus.ContactDto
 	ParentID   string             `json:"parentID" firestore:"parentID"`                         // Intentionally not adding `omitempty` so we can search root contacts only
 
 	// Number of active invites to join a team

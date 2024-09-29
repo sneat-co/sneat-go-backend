@@ -48,7 +48,7 @@ func removeParticipantFromHappeningTxWorker(ctx context.Context, tx dal.Readwrit
 			validation.NewErrBadRecordFieldValue("type",
 				fmt.Sprintf("unknown value: [%v]", params.Happening.Data.Type)))
 	}
-	contactFullRef := models4contactus.NewContactFullRef(contactShortRef.SpaceID(), contactShortRef.ItemID())
+	contactFullRef := dbo4contactus.NewContactFullRef(contactShortRef.SpaceID(), contactShortRef.ItemID())
 	params.HappeningUpdates = append(
 		params.HappeningUpdates,
 		dbo4linkage.RemoveRelatedAndID(
@@ -70,7 +70,7 @@ func removeContactFromHappeningBriefInContactusSpaceDbo(
 	if calendarHappeningBrief == nil {
 		return nil, err
 	}
-	contactFullRef := models4contactus.NewContactFullRef(contactShortRef.SpaceID(), contactShortRef.ItemID())
+	contactFullRef := dbo4contactus.NewContactFullRef(contactShortRef.SpaceID(), contactShortRef.ItemID())
 	updates = calendarHappeningBrief.WithRelated.RemoveRelatedItem(contactFullRef)
 	if len(updates) > 0 {
 		for i := range updates {

@@ -10,11 +10,11 @@ import (
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
-type ContactusSpaceWorkerParams = dal4spaceus.ModuleSpaceWorkerParams[*models4contactus.ContactusSpaceDbo]
+type ContactusSpaceWorkerParams = dal4spaceus.ModuleSpaceWorkerParams[*dbo4contactus.ContactusSpaceDbo]
 
 func NewContactusSpaceWorkerParams(userCtx facade.UserContext, spaceID string) *ContactusSpaceWorkerParams {
 	teamWorkerParams := dal4spaceus.NewSpaceWorkerParams(userCtx, spaceID)
-	return dal4spaceus.NewSpaceModuleWorkerParams(const4contactus.ModuleID, teamWorkerParams, new(models4contactus.ContactusSpaceDbo))
+	return dal4spaceus.NewSpaceModuleWorkerParams(const4contactus.ModuleID, teamWorkerParams, new(dbo4contactus.ContactusSpaceDbo))
 }
 
 func RunReadonlyContactusSpaceWorker(
@@ -23,7 +23,7 @@ func RunReadonlyContactusSpaceWorker(
 	request dto4spaceus.SpaceRequest,
 	worker func(ctx context.Context, tx dal.ReadTransaction, params *ContactusSpaceWorkerParams) (err error),
 ) error {
-	return dal4spaceus.RunReadonlyModuleSpaceWorker(ctx, userCtx, request, const4contactus.ModuleID, new(models4contactus.ContactusSpaceDbo), worker)
+	return dal4spaceus.RunReadonlyModuleSpaceWorker(ctx, userCtx, request, const4contactus.ModuleID, new(dbo4contactus.ContactusSpaceDbo), worker)
 }
 
 type ContactusModuleWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *ContactusSpaceWorkerParams) (err error)
@@ -34,7 +34,7 @@ func RunContactusSpaceWorker(
 	request dto4spaceus.SpaceRequest,
 	worker ContactusModuleWorker,
 ) error {
-	return dal4spaceus.RunModuleSpaceWorkerWithUserCtx(ctx, userCtx, request.SpaceID, const4contactus.ModuleID, new(models4contactus.ContactusSpaceDbo), worker)
+	return dal4spaceus.RunModuleSpaceWorkerWithUserCtx(ctx, userCtx, request.SpaceID, const4contactus.ModuleID, new(dbo4contactus.ContactusSpaceDbo), worker)
 }
 
 func RunContactusSpaceWorkerTx(
@@ -44,7 +44,7 @@ func RunContactusSpaceWorkerTx(
 	spaceID string,
 	worker ContactusModuleWorker,
 ) error {
-	return dal4spaceus.RunModuleSpaceWorkerTx(ctx, tx, userCtx, spaceID, const4contactus.ModuleID, new(models4contactus.ContactusSpaceDbo), worker)
+	return dal4spaceus.RunModuleSpaceWorkerTx(ctx, tx, userCtx, spaceID, const4contactus.ModuleID, new(dbo4contactus.ContactusSpaceDbo), worker)
 }
 
 func RunContactusSpaceWorkerNoUpdate(
@@ -54,5 +54,5 @@ func RunContactusSpaceWorkerNoUpdate(
 	spaceID string,
 	worker ContactusModuleWorker,
 ) error {
-	return dal4spaceus.RunModuleSpaceWorkerNoUpdates(ctx, tx, userCtx, spaceID, const4contactus.ModuleID, new(models4contactus.ContactusSpaceDbo), worker)
+	return dal4spaceus.RunModuleSpaceWorkerNoUpdates(ctx, tx, userCtx, spaceID, const4contactus.ModuleID, new(dbo4contactus.ContactusSpaceDbo), worker)
 }

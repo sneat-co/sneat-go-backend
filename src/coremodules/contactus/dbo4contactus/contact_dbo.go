@@ -1,4 +1,4 @@
-package models4contactus
+package dbo4contactus
 
 import (
 	"fmt"

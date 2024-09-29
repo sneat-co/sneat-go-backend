@@ -7,7 +7,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
-	models4contactus "github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dbo4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dbo4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
@@ -210,7 +210,7 @@ func (InviteDalGae) ClaimInvite2(ctx context.Context, inviteCode string, invite 
 					return fmt.Errorf("ailed to get invite creator user: %w", err)
 				}
 
-				counterparty := dal4contactus.NewContactEntryWithData("", "", &models4contactus.ContactDbo{
+				counterparty := dal4contactus.NewContactEntryWithData("", "", &dbo4contactus.ContactDbo{
 					ContactBase: briefs4contactus.ContactBase{
 						ContactBrief: briefs4contactus.ContactBrief{
 							Names: inviterUser.Data.Names,

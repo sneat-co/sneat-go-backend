@@ -34,8 +34,8 @@ func CreateContact(
 		return response, fmt.Errorf("invalid CreateContactRequest: %w", err)
 	}
 
-	err = dal4spaceus.CreateSpaceItem(ctx, userCtx, request.SpaceRequest, const4contactus.ModuleID, new(models4contactus.ContactusSpaceDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*models4contactus.ContactusSpaceDbo]) (err error) {
+	err = dal4spaceus.CreateSpaceItem(ctx, userCtx, request.SpaceRequest, const4contactus.ModuleID, new(dbo4contactus.ContactusSpaceDbo),
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4contactus.ContactusSpaceDbo]) (err error) {
 			var contact dal4contactus.ContactEntry
 			if contact, err = CreateContactTx(ctx, tx, userCanBeNonSpaceMember, request, params); err != nil {
 				return err
@@ -62,7 +62,7 @@ func CreateContactTx(
 	tx dal.ReadwriteTransaction,
 	userCanBeNonSpaceMember bool,
 	request dto4contactus.CreateContactRequest,
-	params *dal4spaceus.ModuleSpaceWorkerParams[*models4contactus.ContactusSpaceDbo],
+	params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4contactus.ContactusSpaceDbo],
 ) (
 	contact dal4contactus.ContactEntry,
 	err error,
@@ -130,7 +130,7 @@ func CreateContactTx(
 		}
 	}
 
-	contactDbo := new(models4contactus.ContactDbo)
+	contactDbo := new(dbo4contactus.ContactDbo)
 	contactDbo.CreatedAt = params.Started
 	contactDbo.CreatedBy = params.UserID()
 	contactDbo.Status = "active"
@@ -227,7 +227,7 @@ func CreateContactTx(
 func updateRelationshipsInRelatedItems(ctx context.Context, tx dal.ReadTransaction,
 	userID, userContactID, spaceID, contactID string,
 	contactusSpaceEntry dal4contactus.ContactusSpaceEntry,
-	contactDbo *models4contactus.ContactDbo,
+	contactDbo *dbo4contactus.ContactDbo,
 	related dbo4linkage.RelatedByModuleID,
 ) (err error) {
 	if userContactID == "" { // Why we get it 2nd time? Previous is up in stack in CreateContactTx()

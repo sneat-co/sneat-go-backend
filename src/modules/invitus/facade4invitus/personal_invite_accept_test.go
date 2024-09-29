@@ -298,7 +298,7 @@ func Test_updateSpaceRecord(t *testing.T) {
 						Title: "Family",
 					},
 				}),
-				contactusSpace: dal4contactus.NewContactusSpaceEntryWithData("testteamid", &models4contactus.ContactusSpaceDbo{
+				contactusSpace: dal4contactus.NewContactusSpaceEntryWithData("testteamid", &dbo4contactus.ContactusSpaceDbo{
 					WithSingleSpaceContactsWithoutContactIDs: briefs4contactus.WithSingleSpaceContactsWithoutContactIDs[*briefs4contactus.ContactBrief]{
 						WithContactsBase: briefs4contactus.WithContactsBase[*briefs4contactus.ContactBrief]{
 							WithContactBriefs: briefs4contactus.WithContactBriefs[*briefs4contactus.ContactBrief]{

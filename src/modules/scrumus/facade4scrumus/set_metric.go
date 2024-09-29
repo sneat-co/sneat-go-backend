@@ -68,7 +68,7 @@ type setMetricParams struct {
 	spaceMetric *dbo4spaceus.SpaceMetric
 }
 
-func setPersonalMetric(p setMetricParams, contactusSpace *models4contactus.ContactusSpaceDbo) (scrumUpdates []dal.Update, err error) {
+func setPersonalMetric(p setMetricParams, contactusSpace *dbo4contactus.ContactusSpaceDbo) (scrumUpdates []dal.Update, err error) {
 	var status *dbo4scrumus.MemberStatus
 	var teamMember *briefs4contactus.ContactBrief
 	var teamMemberContactID string

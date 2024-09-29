@@ -2,8 +2,8 @@
 
 ## [Models](./models) - database models
 
-- [ContactDto](./models4contactus/contact_dto.go) - contact record data model
-- [ContactusSpaceDto](./models4contactus/contactus_space_dto.go) - contactus module team data record
+- [ContactDbo](./dbo4contactus/contact_dbo.go) - contact record data model
+- [ContactusSpaceDbo](./dbo4contactus/contactus_space_dbo.go) - contactus module team data record
 
 ## HTTP Endpoints
 

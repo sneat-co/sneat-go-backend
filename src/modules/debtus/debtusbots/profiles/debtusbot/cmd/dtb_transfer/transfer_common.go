@@ -12,12 +12,12 @@ import (
 	"github.com/sneat-co/debtstracker-translations/trans"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
-	models4contactus "github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dbo4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dbo4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dal4userus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/common4debtus"
-	dtb_general2 "github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_general"
+	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/debtusbots/profiles/debtusbot/cmd/dtb_general"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/facade4debtus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/analytics"
 	"github.com/sneat-co/sneat-go-backend/src/modules/debtus/gae_app/debtstracker/dtdal"
@@ -376,7 +376,7 @@ const counterpartyButtonsLimit = 4
 
 func listCounterpartiesAsButtons(
 	whc botsfw.WebhookContext,
-	contactusSpaceDbo models4contactus.ContactusSpaceDbo,
+	contactusSpaceDbo dbo4contactus.ContactusSpaceDbo,
 	debtusSpaceDbo models4debtus.DebtusSpaceDbo,
 	messageText string,
 	newCounterpartyCommand botsfw.Command,
@@ -500,7 +500,7 @@ func TransferWizardCompletedCommand(code string) botsfw.Command {
 			ctx := whc.Context()
 
 			if chatEntity := whc.ChatData(); strings.Contains(chatEntity.GetAwaitingReplyTo(), "counterparty=0") {
-				return dtb_general2.MainMenuAction(whc, trans.MESSGE_TEXT_DEBT_ERROR_FIXED_START_OVER, false)
+				return dtb_general.MainMenuAction(whc, trans.MESSGE_TEXT_DEBT_ERROR_FIXED_START_OVER, false)
 			}
 
 			logus.Infof(ctx, "TransferWizardCompletedCommand(code=%v).Action()", code)
@@ -611,7 +611,7 @@ func CreateTransferFromBot(
 	pleaseWaitMessageConfig := whc.NewMessage(emoji.HOURGLASS_ICON + " " + whc.Translate(trans.MESSAGE_TEXT_TRANSFER_IS_CREATING))
 	pleaseWaitMessageConfig.Keyboard = tgbotapi.NewInlineKeyboardMarkup(
 		[]tgbotapi.InlineKeyboardButton{
-			tgbotapi.NewInlineKeyboardButtonData(whc.Translate(trans.COMMAND_TEXT_PLEASE_WAIT), dtb_general2.PLEASE_WAIT_COMMAND),
+			tgbotapi.NewInlineKeyboardButtonData(whc.Translate(trans.COMMAND_TEXT_PLEASE_WAIT), dtb_general.PLEASE_WAIT_COMMAND),
 		},
 	)
 
@@ -754,7 +754,7 @@ func CreateTransferFromBot(
 		}
 	}
 
-	return dtb_general2.MainMenuAction(whc, "", false)
+	return dtb_general.MainMenuAction(whc, "", false)
 }
 
 func sendReceiptByTelegramButton(transferID string, translator i18n.SingleLocaleTranslator) tgbotapi.InlineKeyboardButton {

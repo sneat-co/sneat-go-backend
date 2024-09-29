@@ -82,7 +82,7 @@ func setLogistSpaceSettingsTx(
 			createContactRequest.Roles = append(createContactRequest.Roles, string(role))
 		}
 
-		contactusWorkerParams := &dal4spaceus.ModuleSpaceWorkerParams[*models4contactus.ContactusSpaceDbo]{
+		contactusWorkerParams := &dal4spaceus.ModuleSpaceWorkerParams[*dbo4contactus.ContactusSpaceDbo]{
 			SpaceWorkerParams: workerParams.SpaceWorkerParams,
 			SpaceModuleEntry:  dal4contactus.NewContactusSpaceEntry(request.SpaceID),
 		}
@@ -142,7 +142,7 @@ func updateLogistSpace(logistSpaceDbo *dbo4logist.LogistSpaceDbo, spaceDbo *dbo4
 	return updates
 }
 
-func updateContact(contactDto *models4contactus.ContactDbo, request dto4logist.SetLogistSpaceSettingsRequest) (updates []dal.Update) {
+func updateContact(contactDto *dbo4contactus.ContactDbo, request dto4logist.SetLogistSpaceSettingsRequest) (updates []dal.Update) {
 	if contactDto.VATNumber != request.VATNumber {
 		contactDto.VATNumber = request.VATNumber
 		updates = append(updates, dal.Update{Field: "vatNumber", Value: request.VATNumber})

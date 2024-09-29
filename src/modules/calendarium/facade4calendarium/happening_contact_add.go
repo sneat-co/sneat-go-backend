@@ -48,7 +48,7 @@ func addParticipantToHappeningTxWorker(ctx context.Context, tx dal.ReadwriteTran
 			validation.NewErrBadRecordFieldValue("type",
 				fmt.Sprintf("unknown value: [%v]", params.Happening.Data.Type)))
 	}
-	contactFullRef := models4contactus.NewContactFullRef(request.SpaceID, request.Contact.ID)
+	contactFullRef := dbo4contactus.NewContactFullRef(request.SpaceID, request.Contact.ID)
 	var updates []dal.Update
 	if updates, err = dbo4linkage.AddRelationshipAndID(
 		&params.Happening.Data.WithRelated,

@@ -15,5 +15,5 @@ func NewContactKey(teamID, contactID string) *dal.Key {
 		panic(fmt.Errorf("contactID should be alphanumeric, got: [%s]", contactID))
 	}
 	teamModuleKey := dbo4spaceus.NewSpaceModuleKey(teamID, const4contactus.ModuleID)
-	return dal.NewKeyWithParentAndID(teamModuleKey, models4contactus.SpaceContactsCollection, contactID)
+	return dal.NewKeyWithParentAndID(teamModuleKey, dbo4contactus.SpaceContactsCollection, contactID)
 }

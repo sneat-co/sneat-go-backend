@@ -5,7 +5,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dal4contactus"
-	models4contactus "github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dbo4contactus"
+	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dbo4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/contactus/dto4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/coremodules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/linkage/dbo4linkage"
@@ -91,7 +91,7 @@ func TestHttpAddMember(t *testing.T) {
 			t.Fatalf("Expected teamID=%s, got: %s", teamID, request.SpaceID)
 		}
 		response.ID = "abc1"
-		response.Data = &models4contactus.ContactDbo{
+		response.Data = &dbo4contactus.ContactDbo{
 			ContactBase: briefs4contactus.ContactBase{
 				ContactBrief: briefs4contactus.ContactBrief{
 					Type:  briefs4contactus.ContactTypeCompany,
@@ -109,7 +109,7 @@ func TestHttpAddMember(t *testing.T) {
 				//},
 			},
 		}
-		response.Data = &models4contactus.ContactDbo{
+		response.Data = &dbo4contactus.ContactDbo{
 			ContactBase: response.Data.ContactBase,
 		}
 		return
