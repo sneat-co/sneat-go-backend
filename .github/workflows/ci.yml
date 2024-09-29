@@ -30,7 +30,7 @@ jobs:
     uses: strongo/go-ci-action/.github/workflows/workflow.yml@main
 
     secrets:
-      # This token is used to retrieve private repositories & bump version ${{ secrets.GH_ACCESS_TOKEN }}
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #      gh_token: ${{ secrets.GITHUB_TOKEN }}
+      gh_token: ${{ secrets.GH_PAT_READ_REPOS_CONTENT }}
     with:
       GOPRIVATE: 'github.com/sneat-co'
