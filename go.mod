@@ -37,7 +37,6 @@ require (
 	github.com/sneat-co/debtstracker-translations v0.2.2
 	github.com/sneat-co/sneat-core-modules v0.15.0
 	github.com/sneat-co/sneat-go-core v0.37.1
-	github.com/sneat-co/sneat-mod-debtus-go v0.1.0
 	github.com/stretchr/testify v1.9.0
 	github.com/strongo/delaying v0.0.1
 	github.com/strongo/i18n v0.6.1
@@ -53,7 +52,6 @@ require (
 	github.com/alexsergivan/transliterator v1.0.1 // indirect
 	github.com/bots-go-framework/bots-fw-telegram-models v0.3.7 // indirect
 	github.com/bots-go-framework/bots-fw-telegram-webapp v0.3.1 // indirect
-	github.com/crediterra/go-interest v0.0.0-20180510115340-54da66993b85 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
 	github.com/gosimple/slug v1.14.0 // indirect
@@ -61,11 +59,9 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/pquerna/ffjson v0.0.0-20190930134022-aa0246cd15f7 // indirect
-	github.com/sanity-io/litter v1.5.5 // indirect
 	github.com/strongo/decimal v0.1.1 // indirect
 	github.com/strongo/facebook v1.8.1 // indirect
 	github.com/strongo/gamp v0.0.1 // indirect
-	github.com/strongo/gotwilio v0.0.0-20160123000810-f024bbefe80f // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 	golang.org/x/crypto v0.27.0 // indirect
 	golang.org/x/net v0.29.0 // indirect
