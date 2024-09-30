@@ -31,6 +31,6 @@ jobs:
 
     secrets:
       #      gh_token: ${{ secrets.GITHUB_TOKEN }}
-      gh_token: ${{ secrets.GH_PAT_READ_REPOS_CONTENT }}
+      gh_token: ${{ secrets.GH_PAT_READWRITE_REPOS }}
     with:
       GOPRIVATE: 'github.com/sneat-co'
