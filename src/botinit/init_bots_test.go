@@ -1,4 +1,4 @@
-package botscore
+package botinit
 
 import (
 	"fmt"
