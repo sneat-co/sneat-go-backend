@@ -1,11 +1,9 @@
-package main
+package backend
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/sneatgae/sneatgaeapp"
 	"testing"
 )
 
-func TestServeStaticFiles(m *testing.T) {
-	httpRouter := sneatgaeapp.CreateHttpRouter()
-	serveStaticFiles(httpRouter)
+func TestNothing(_ *testing.T) {
+	// Do nothing
 }

@@ -18,7 +18,7 @@ on:
       - '.github/workflows/**.yml'
       - 'src/**'
       - 'scripts/**'
-      - 'firebase/**'
+      - '../../../sneat-go-server/firebase/**'
       - 'go.*'
       - '*.go'
 
