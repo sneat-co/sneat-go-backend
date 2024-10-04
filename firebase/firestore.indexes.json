@@ -1,0 +1,86 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "happenings",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "teamIDs",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "dateMin",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "happenings",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "teamIDs",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "dateMax",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "happenings",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "teamDates",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "happenings",
+      "fieldPath": "title",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "teams",
+      "fieldPath": "title",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "team_assets",
+      "fieldPath": "title",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "team_contacts",
+      "fieldPath": "title",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "team_members",
+      "fieldPath": "title",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users",
+      "fieldPath": "title",
+      "indexes": []
+    }
+  ]
+}

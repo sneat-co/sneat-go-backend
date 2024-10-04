@@ -1,4 +1,4 @@
-package sneatteamgo
+package main
 
 import "testing"
 import "os/exec"

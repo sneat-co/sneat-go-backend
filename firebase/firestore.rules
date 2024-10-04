@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+    function isGrantedToUser() {
+        return resource == null ||
+               resource.data == null ||
+              (request.auth != null && request.auth.uid != null && ("userIDs" in resource.data) == true && request.auth.uid in resource.data.userIDs)
+              ;
+    }
+
+    function isSpaceItemGrantedToUser(database, space) {
+        return isGrantedToUser() ||
+              (request.auth != null && request.auth.uid != null && request.auth.uid in get(/databases/$(database)/documents/spaces/$(space)).data.userIDs)
+              ;
+    }
+
+    function isGrantedToSpaceUser(database) {
+        return isGrantedToUser() ||
+              (request.auth != null && request.auth.uid != null && "spaceIDs" in resource.data && resource.data.spaceIDs.hasAny(get(/databases/$(database)/documents/users/$(request.auth.uid)).data.spaceIDs))
+              ;
+    }
+
+    //    match /{document=**} { allow read: if true; allow write: if true; }
+    match /databases/{database}/documents {
+
+        match /spaces/{space}/{document=**} {
+            allow list, read: if isSpaceItemGrantedToUser(database, space);
+        }
+
+        match /users/{user}/{document=**} {
+            allow read: if request.auth != null && request.auth.uid == user;
+        }
+
+        match /datatug_projects/{project} {
+            allow read: if request.auth != null
+                           && request.auth.uid != null
+                           && resource.data != null
+                           && request.auth.uid in resource.data.userIDs;
+        }
+
+        match /datatug_projects/{project}/{document=**} {
+            allow read: if isGrantedToUser();
+        }
+
+        match /health_checks/{health_check} {
+            allow read: if request.auth != null;
+        }
+
+        match /{document=**} {
+            allow list, read: if isGrantedToSpaceUser(database);
+        }
+    }
+}

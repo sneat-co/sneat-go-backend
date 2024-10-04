@@ -1,7 +1,11 @@
-package sneatteamgo
+package main
 
-import "testing"
+import (
+	"github.com/sneat-co/sneat-go-backend/src/sneatgae/sneatgaeapp"
+	"testing"
+)
 
-func TestMain(m *testing.M) {
-	// Do nothing
+func TestServeStaticFiles(m *testing.T) {
+	httpRouter := sneatgaeapp.CreateHttpRouter()
+	serveStaticFiles(httpRouter)
 }
