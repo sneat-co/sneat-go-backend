@@ -35,7 +35,7 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/olebedev/when v1.0.0
 	github.com/sneat-co/debtstracker-translations v0.2.2
-	github.com/sneat-co/sneat-core-modules v0.15.1
+	github.com/sneat-co/sneat-core-modules v0.15.2
 	github.com/sneat-co/sneat-go-core v0.37.1
 	github.com/stretchr/testify v1.9.0
 	github.com/strongo/delaying v0.0.1
@@ -63,7 +63,7 @@ require (
 	github.com/strongo/facebook v1.8.1 // indirect
 	github.com/strongo/gamp v0.0.1 // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
-	golang.org/x/crypto v0.27.0 // indirect
-	golang.org/x/net v0.29.0 // indirect
+	golang.org/x/crypto v0.28.0 // indirect
+	golang.org/x/net v0.30.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
