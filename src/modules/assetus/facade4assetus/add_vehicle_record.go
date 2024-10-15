@@ -13,13 +13,13 @@ type CreateVehicleRecordResponse struct {
 	ID string `json:"id"`
 }
 
-func AddVehicleRecord(ctx context.Context, user facade.User, request dto4assetus.AddVehicleRecordRequest) (response CreateVehicleRecordResponse, err error) {
+func AddVehicleRecord(ctx context.Context, user facade.UserContext, request dto4assetus.AddVehicleRecordRequest) (response CreateVehicleRecordResponse, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4assetus.RunAssetusTeamWorker(ctx, user,
-		request.TeamRequest,
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4assetus.AssetusTeamWorkerParams) (err error) {
+	err = dal4assetus.RunAssetusSpaceWorker(ctx, user,
+		request.SpaceRequest,
+		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4assetus.AssetusSpaceWorkerParams) (err error) {
 			response, err = addVehicleRecordTx(ctx, tx, user, request, params)
 			return err
 		},
@@ -31,9 +31,9 @@ func AddVehicleRecord(ctx context.Context, user facade.User, request dto4assetus
 func addVehicleRecordTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	user facade.User,
+	user facade.UserContext,
 	request dto4assetus.AddVehicleRecordRequest,
-	params *dal4assetus.AssetusTeamWorkerParams,
+	params *dal4assetus.AssetusSpaceWorkerParams,
 	// params *dal4teamus.ModuleTeamWorkerParams[*dal4assetus.Mileage],
 ) (
 	response CreateVehicleRecordResponse, err error,
