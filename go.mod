@@ -36,8 +36,9 @@ require (
 	github.com/olebedev/when v1.0.0
 	github.com/sneat-co/debtstracker-translations v0.2.2
 	github.com/sneat-co/sneat-core-modules v0.15.3
-	github.com/sneat-co/sneat-go-core v0.37.1
+	github.com/sneat-co/sneat-go-core v0.37.2
 	github.com/stretchr/testify v1.9.0
+	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.1.0
 	github.com/strongo/i18n v0.6.1
 	github.com/strongo/logus v0.2.0
@@ -59,7 +60,6 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/pquerna/ffjson v0.0.0-20190930134022-aa0246cd15f7 // indirect
-	github.com/strongo/decimal v0.1.1 // indirect
 	github.com/strongo/facebook v1.8.1 // indirect
 	github.com/strongo/gamp v0.0.1 // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
