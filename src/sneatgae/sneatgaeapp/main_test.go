@@ -23,9 +23,7 @@ func Test_start(t *testing.T) {
 		return os.Stdout, nil
 	})
 
-	delaying.Init(func(key string, i any) delaying.Function {
-		return nil
-	})
+	delaying.InitNoopLogging()
 
 	Start(nil, nil, httpRouter, emailClient)
 }

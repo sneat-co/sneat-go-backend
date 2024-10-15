@@ -35,10 +35,10 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/olebedev/when v1.0.0
 	github.com/sneat-co/debtstracker-translations v0.2.2
-	github.com/sneat-co/sneat-core-modules v0.15.2
+	github.com/sneat-co/sneat-core-modules v0.15.3
 	github.com/sneat-co/sneat-go-core v0.37.1
 	github.com/stretchr/testify v1.9.0
-	github.com/strongo/delaying v0.0.1
+	github.com/strongo/delaying v0.1.0
 	github.com/strongo/i18n v0.6.1
 	github.com/strongo/logus v0.2.0
 	github.com/strongo/random v0.0.1

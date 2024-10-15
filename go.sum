@@ -53,6 +53,8 @@ github.com/sneat-co/debtstracker-translations v0.2.2 h1:eP0MnEoLUjF+WHJDej+QS3CF
 github.com/sneat-co/debtstracker-translations v0.2.2/go.mod h1:nUq1eqKUdF6K3s2HUGM8djHEFhDe6/tyic1pOtohPtE=
 github.com/sneat-co/sneat-core-modules v0.15.2 h1:/6p+EK3HvsiImZF+1leVp01H+su3z8LdkArVIybqN+4=
 github.com/sneat-co/sneat-core-modules v0.15.2/go.mod h1:gBkhOD6yk+LP0bCCzUkz8CU99wjiTklQhEE3R/Apx9I=
+github.com/sneat-co/sneat-core-modules v0.15.3 h1:WNrkobb1E2y8p/A/iXuQe/9oHbR/TMbZhZyTZvQN/OQ=
+github.com/sneat-co/sneat-core-modules v0.15.3/go.mod h1:eeKp4daLkUb3Gfw0WgnT8ylQYBXVOc7uKi78w6votUk=
 github.com/sneat-co/sneat-go-core v0.37.1 h1:2jtBpP1x4/Q3KjPobbACmiXbjykYs+zGakd06sdjU3U=
 github.com/sneat-co/sneat-go-core v0.37.1/go.mod h1:bc53byrXRGzIEueAVVEmwhNMiS4uwBe/Uh4pESB1ABI=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
@@ -63,6 +65,8 @@ github.com/strongo/decimal v0.1.1 h1:k7HY/0NmG6Ne5YPV7XybII+AT7O4AShl6HZpLiNZsb4
 github.com/strongo/decimal v0.1.1/go.mod h1:uKFgetJbR2uT026stdbK54ELXTH9h0vZOPPOp7DAODk=
 github.com/strongo/delaying v0.0.1 h1:avN7p5oKcowaDeEbGJLB4QHgttK6y9OtGwFN0UkEDi8=
 github.com/strongo/delaying v0.0.1/go.mod h1:nQ3n4876SKTIR0FUrig6huZgI/mWHAOeGMVHkGs76tk=
+github.com/strongo/delaying v0.1.0 h1:w4dpqwrwOxP5YlTJeZmzzIrIUM9rVXiPNv53opL0AaE=
+github.com/strongo/delaying v0.1.0/go.mod h1:6PnWp2IL3UDo7tQyFVIOxBiIiHSj0eVZ6VfrleGNjzA=
 github.com/strongo/facebook v1.8.1 h1:1kR0YdkeuP3YS3t6fns57boPiarMZq92/M4S5PeUhMs=
 github.com/strongo/facebook v1.8.1/go.mod h1:dRSmmClIUzv5MRzeVvgVsnkBbqOdbCq3QkvAhx161/k=
 github.com/strongo/gamp v0.0.1 h1:b6vzHUzNvbPOhzPtIja1NqKf8GQqrJWjs2gninQPZac=
