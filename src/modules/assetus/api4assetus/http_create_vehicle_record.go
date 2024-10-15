@@ -16,7 +16,7 @@ func httpPostCreateVehicleRecord(w http.ResponseWriter, r *http.Request) {
 		request dto4assetus.AddVehicleRecordRequest
 	)
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.DefaultJsonWithAuthRequired, http.StatusOK,
-		func(ctx context.Context, userCtx facade.User) (interface{}, error) {
+		func(ctx context.Context, userCtx facade.UserContext) (interface{}, error) {
 			return facade4assetus.AddVehicleRecord(ctx, userCtx, request)
 		},
 	)
