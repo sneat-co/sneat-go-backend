@@ -55,6 +55,8 @@ github.com/sneat-co/sneat-core-modules v0.15.2 h1:/6p+EK3HvsiImZF+1leVp01H+su3z8
 github.com/sneat-co/sneat-core-modules v0.15.2/go.mod h1:gBkhOD6yk+LP0bCCzUkz8CU99wjiTklQhEE3R/Apx9I=
 github.com/sneat-co/sneat-core-modules v0.15.3 h1:WNrkobb1E2y8p/A/iXuQe/9oHbR/TMbZhZyTZvQN/OQ=
 github.com/sneat-co/sneat-core-modules v0.15.3/go.mod h1:eeKp4daLkUb3Gfw0WgnT8ylQYBXVOc7uKi78w6votUk=
+github.com/sneat-co/sneat-core-modules v0.15.4 h1:ffBtCPnCVHTh6E4IOI4CMVCiOhqXl9+CFq1rY95AIGs=
+github.com/sneat-co/sneat-core-modules v0.15.4/go.mod h1:OAJ/F3+ce44UhGCOXE8FHjHM/ran8MwCM09s6hqKpRk=
 github.com/sneat-co/sneat-go-core v0.37.1 h1:2jtBpP1x4/Q3KjPobbACmiXbjykYs+zGakd06sdjU3U=
 github.com/sneat-co/sneat-go-core v0.37.1/go.mod h1:bc53byrXRGzIEueAVVEmwhNMiS4uwBe/Uh4pESB1ABI=
 github.com/sneat-co/sneat-go-core v0.37.2 h1:U+oCjqMlyzh8J++ytN/q6gSIYvgmJhMJGg2AR6Qmwek=
