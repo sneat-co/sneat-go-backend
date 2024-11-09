@@ -63,7 +63,7 @@ require (
 	github.com/strongo/facebook v1.8.1 // indirect
 	github.com/strongo/gamp v0.0.1 // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
-	golang.org/x/crypto v0.28.0 // indirect
-	golang.org/x/net v0.30.0 // indirect
+	golang.org/x/crypto v0.29.0 // indirect
+	golang.org/x/net v0.31.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
