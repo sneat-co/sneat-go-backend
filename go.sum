@@ -53,6 +53,8 @@ github.com/sneat-co/debtstracker-translations v0.2.2 h1:eP0MnEoLUjF+WHJDej+QS3CF
 github.com/sneat-co/debtstracker-translations v0.2.2/go.mod h1:nUq1eqKUdF6K3s2HUGM8djHEFhDe6/tyic1pOtohPtE=
 github.com/sneat-co/sneat-core-modules v0.15.4 h1:ffBtCPnCVHTh6E4IOI4CMVCiOhqXl9+CFq1rY95AIGs=
 github.com/sneat-co/sneat-core-modules v0.15.4/go.mod h1:OAJ/F3+ce44UhGCOXE8FHjHM/ran8MwCM09s6hqKpRk=
+github.com/sneat-co/sneat-core-modules v0.15.8 h1:8JP2blOLnf5ueDGIoJt6LPVF46kKa2vdyUTWO/J9BQs=
+github.com/sneat-co/sneat-core-modules v0.15.8/go.mod h1:lHOjmPFRDQ2mb99ebPbwHpyHTR+XlQhcJRL3Owi8Sb8=
 github.com/sneat-co/sneat-go-core v0.37.2 h1:U+oCjqMlyzh8J++ytN/q6gSIYvgmJhMJGg2AR6Qmwek=
 github.com/sneat-co/sneat-go-core v0.37.2/go.mod h1:DfF3OeaHDpDL+R77jIzzoKpixA0dOibAC+RlH/VOS8Y=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=

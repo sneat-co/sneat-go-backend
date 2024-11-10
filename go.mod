@@ -34,7 +34,7 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/olebedev/when v1.0.0
 	github.com/sneat-co/debtstracker-translations v0.2.2
-	github.com/sneat-co/sneat-core-modules v0.15.4
+	github.com/sneat-co/sneat-core-modules v0.15.8
 	github.com/sneat-co/sneat-go-core v0.37.2
 	github.com/stretchr/testify v1.9.0
 	github.com/strongo/decimal v0.1.1
