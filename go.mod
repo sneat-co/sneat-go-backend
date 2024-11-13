@@ -32,7 +32,7 @@ require (
 	github.com/dal-go/mocks4dalgo v0.1.25
 	github.com/golang/mock v1.6.0
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/olebedev/when v1.0.0
+	github.com/olebedev/when v1.1.0
 	github.com/sneat-co/debtstracker-translations v0.2.2
 	github.com/sneat-co/sneat-core-modules v0.15.8
 	github.com/sneat-co/sneat-go-core v0.37.2
