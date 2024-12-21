@@ -77,6 +77,8 @@ github.com/sneat-co/sneat-core-modules v0.15.10 h1:bskPOZIeImo3ghDCzr0ZZMTXyNJqk
 github.com/sneat-co/sneat-core-modules v0.15.10/go.mod h1:Cda5emlifsCRN4Gl136Pp1EXlo3DcpD2tH+jX6yhYD0=
 github.com/sneat-co/sneat-core-modules v0.15.11 h1:ip9KEqArYWJkyc0jmHj3d9rlWybQQ7dAxzE18JMxqVc=
 github.com/sneat-co/sneat-core-modules v0.15.11/go.mod h1:wRai0EovN+1K6HRUb/lhj4UCJs+cAkF0yzslmMzQ5ec=
+github.com/sneat-co/sneat-core-modules v0.15.12 h1:Xv1TX6f65/WQIQPIVLU1BYUNPkw2PbPDjG1hTtEZyVw=
+github.com/sneat-co/sneat-core-modules v0.15.12/go.mod h1:CmLaJ6kb9hSUaFvksnBHV5Xu2VKsgM+F/t7K3GNKNXI=
 github.com/sneat-co/sneat-go-core v0.37.2 h1:U+oCjqMlyzh8J++ytN/q6gSIYvgmJhMJGg2AR6Qmwek=
 github.com/sneat-co/sneat-go-core v0.37.2/go.mod h1:DfF3OeaHDpDL+R77jIzzoKpixA0dOibAC+RlH/VOS8Y=
 github.com/sneat-co/sneat-go-core v0.37.4 h1:DihMq1MtBUQ23gvO21dNmWzYVo/ygoNxXGbtF3ed7Tw=
@@ -130,6 +132,8 @@ golang.org/x/net v0.31.0 h1:68CPQngjLL0r2AlUKiSxtQFKvzRVbnzLwMUn5SzcLHo=
 golang.org/x/net v0.31.0/go.mod h1:P4fl1q7dY2hnZFxEk4pPSkDHF+QqjitcnDjUQyMM+pM=
 golang.org/x/net v0.32.0 h1:ZqPmj8Kzc+Y6e0+skZsuACbx+wzMgo5MQsJh9Qd6aYI=
 golang.org/x/net v0.32.0/go.mod h1:CwU0IoeOlnQQWJ6ioyFrfRuomB8GKF6KbYXZVyeXNfs=
+golang.org/x/net v0.33.0 h1:74SYHlV8BIgHIFC/LrYkOGIwL19eTYXQ5wc6TBuO36I=
+golang.org/x/net v0.33.0/go.mod h1:HXLR5J+9DxmrqMwG9qjGCxZ+zKXxBru04zlTvWlWuN4=
 golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 golang.org/x/sync v0.0.0-20210220032951-036812b2e83c/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
