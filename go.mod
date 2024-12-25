@@ -34,7 +34,7 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/olebedev/when v1.1.0
 	github.com/sneat-co/debtstracker-translations v0.2.4
-	github.com/sneat-co/sneat-core-modules v0.15.12
+	github.com/sneat-co/sneat-core-modules v0.15.13
 	github.com/sneat-co/sneat-go-core v0.37.4
 	github.com/stretchr/testify v1.10.0
 	github.com/strongo/decimal v0.1.1
@@ -54,7 +54,7 @@ require (
 	github.com/bots-go-framework/bots-fw-telegram-webapp v0.3.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
-	github.com/gosimple/slug v1.14.0 // indirect
+	github.com/gosimple/slug v1.15.0 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
