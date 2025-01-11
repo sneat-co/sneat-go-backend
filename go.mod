@@ -35,7 +35,7 @@ require (
 	github.com/olebedev/when v1.1.0
 	github.com/sneat-co/debtstracker-translations v0.2.4
 	github.com/sneat-co/sneat-core-modules v0.15.14
-	github.com/sneat-co/sneat-go-core v0.37.4
+	github.com/sneat-co/sneat-go-core v0.38.0
 	github.com/stretchr/testify v1.10.0
 	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.1.0

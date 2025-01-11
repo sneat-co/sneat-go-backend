@@ -55,9 +55,9 @@ func allowedOrigin(r *http.Request, w http.ResponseWriter) (string, bool) {
 	if origin == "" {
 		return "", true
 	}
-	if !security.IsSupportedOrigin(origin) {
+	if err := security.VerifyOrigin(origin); err != nil {
 		w.WriteHeader(http.StatusForbidden)
-		m := "Unsupported origin: " + origin
+		m := "Unsupported origin: " + err.Error()
 		logus.Warningf(r.Context(), "globalOptionsHandler(%s): %s\n", r.URL.String(), m)
 		_, _ = fmt.Println(w, m)
 		return origin, false
