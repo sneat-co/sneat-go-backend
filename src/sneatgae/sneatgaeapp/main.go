@@ -21,6 +21,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/sneatgae/sneatgaeapp/pages"
 	"github.com/sneat-co/sneat-go-core/emails"
 	"github.com/sneat-co/sneat-go-core/module"
+	"github.com/sneat-co/sneat-go-core/monitoring"
 	"github.com/strongo/delaying"
 	"net/http"
 )
@@ -31,7 +32,7 @@ func CreateHttpRouter() *httprouter.Router {
 
 // Start to be called from main.go and will start an HTTP server using http.ListenAndServe
 func Start(
-	reportPanic func(err any),
+	reportPanic monitoring.PanicCapturer,
 	wrapHandler HandlerWrapper,
 	httpRouter *httprouter.Router,
 	emailClient emails.Client,

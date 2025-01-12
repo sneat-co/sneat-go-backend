@@ -10,6 +10,8 @@ github.com/bots-go-framework/bots-fw v0.40.2 h1:UZKnhnrNa1InRJVV20XSdZqZ6C1DTZNu
 github.com/bots-go-framework/bots-fw v0.40.2/go.mod h1:C9nvU/h8k2gBfB/bCoCax8g3iDclrdH1g+YSafPyWDk=
 github.com/bots-go-framework/bots-fw v0.40.4 h1:+PtLDbWUvr2J9xUnKtUTxAQl0Ka25ZjBxL2KYQ+m200=
 github.com/bots-go-framework/bots-fw v0.40.4/go.mod h1:KeNhMTMTiCymF8OeCADxTljQa8igCmSSqL2gqnr6W+A=
+github.com/bots-go-framework/bots-fw v0.40.5 h1:tS2Ce7AH7zF+Tg8sVStZUY5eoOgrydm3JaiJhn/X628=
+github.com/bots-go-framework/bots-fw v0.40.5/go.mod h1:7TiFmFyqY4z922OLEkmYetcCNJ2adj+6iqEwb0b4zKI=
 github.com/bots-go-framework/bots-fw-store v0.8.2 h1:Ss2ZRFoBeNgEy1TWzRIoVdERMoAv1kp9GlJvq3EbiHo=
 github.com/bots-go-framework/bots-fw-store v0.8.2/go.mod h1:ZxeNr86seS59kKyf9zol15vdZEcH+1CjjzHOFokGrVI=
 github.com/bots-go-framework/bots-fw-telegram v0.13.6 h1:htzjpl8xB9alg82IPu8gv2NXny1noRTLS6/ZP67YZTA=
@@ -87,6 +89,8 @@ github.com/sneat-co/sneat-core-modules v0.15.13 h1:5IWTalw48fs9aRp5vePClsPzjutXw
 github.com/sneat-co/sneat-core-modules v0.15.13/go.mod h1:X60+zNaDlbAskrYV1l0/Ij580p4w9b9ngq9RMAMtoIM=
 github.com/sneat-co/sneat-core-modules v0.15.14 h1:G0T8/nLIXJGoKWDS47toJk+omaO8C3PId1JvXe/9nt0=
 github.com/sneat-co/sneat-core-modules v0.15.14/go.mod h1:mZndTQGpS4ELAJGp7gm8LwVoZSkrTseimMHtIPmrfro=
+github.com/sneat-co/sneat-core-modules v0.15.15 h1:Fue5XxCtyt3lDNPzfPxqFO8osEAKTPlK6bFpMznfvOs=
+github.com/sneat-co/sneat-core-modules v0.15.15/go.mod h1:mZndTQGpS4ELAJGp7gm8LwVoZSkrTseimMHtIPmrfro=
 github.com/sneat-co/sneat-go-core v0.37.2 h1:U+oCjqMlyzh8J++ytN/q6gSIYvgmJhMJGg2AR6Qmwek=
 github.com/sneat-co/sneat-go-core v0.37.2/go.mod h1:DfF3OeaHDpDL+R77jIzzoKpixA0dOibAC+RlH/VOS8Y=
 github.com/sneat-co/sneat-go-core v0.37.4 h1:DihMq1MtBUQ23gvO21dNmWzYVo/ygoNxXGbtF3ed7Tw=
@@ -95,6 +99,10 @@ github.com/sneat-co/sneat-go-core v0.38.0 h1:sgnLeUNMaYWgnZZH2bwj6lQPLm1NbmZGXSF
 github.com/sneat-co/sneat-go-core v0.38.0/go.mod h1:e3fJ3mVQv9jBnn3+rUR5vc1TNLbsWMmRDhCOcbl9Yts=
 github.com/sneat-co/sneat-go-core v0.38.1 h1:rb3rOZVYGbw+AOx8H53y0lZVdaGW8P5sFB21ZV7i0us=
 github.com/sneat-co/sneat-go-core v0.38.1/go.mod h1:e3fJ3mVQv9jBnn3+rUR5vc1TNLbsWMmRDhCOcbl9Yts=
+github.com/sneat-co/sneat-go-core v0.39.0 h1:UYepVlNNsfiUZZxmSftrmdF72x2OVYFjewZdBsEn0y4=
+github.com/sneat-co/sneat-go-core v0.39.0/go.mod h1:e3fJ3mVQv9jBnn3+rUR5vc1TNLbsWMmRDhCOcbl9Yts=
+github.com/sneat-co/sneat-go-core v0.40.0 h1:LE9kWO+zpJR3XYiJr0x+ZBqDQjGw7OeaZWZtbulqIPM=
+github.com/sneat-co/sneat-go-core v0.40.0/go.mod h1:e3fJ3mVQv9jBnn3+rUR5vc1TNLbsWMmRDhCOcbl9Yts=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5cxcmMvtA=
 github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsTg=
@@ -113,6 +121,8 @@ github.com/strongo/i18n v0.6.1 h1:hNtpU97R5xYavf6n2wfRFWGZHjRZ2lHmube0t2+FHFE=
 github.com/strongo/i18n v0.6.1/go.mod h1:4jBQ4PJ3Uiri2Y+LHJ5/o1nB1H2ToddRW/yZXSOTUjE=
 github.com/strongo/logus v0.2.0 h1:IbLupLW9WMIwjefJF+u9/Ajlaw6ysFuEeKQxOFX5tOE=
 github.com/strongo/logus v0.2.0/go.mod h1:sd8gjJklqGQAg+Q0mlP5MWgzguAuxR25YYFSkfVOPdc=
+github.com/strongo/logus v0.2.1 h1:ZzAtdSg6PPF1Y43WbNWl7MH1XYl7kvKMxyxv/lpbadI=
+github.com/strongo/logus v0.2.1/go.mod h1:sd8gjJklqGQAg+Q0mlP5MWgzguAuxR25YYFSkfVOPdc=
 github.com/strongo/random v0.0.1 h1:OZHJBb/3uEa7OX8L2Dv2pLnSeewRmXMyTACoeto6O8I=
 github.com/strongo/random v0.0.1/go.mod h1:/pSI+SjBNLBkjljNtVdYr6ERddA+LqSa87o0/s+9iuU=
 github.com/strongo/slice v0.3.0 h1:ucuI4z0nrZst6kXSTs3GhC7nbXiwyn09EiXQ+9AldrU=

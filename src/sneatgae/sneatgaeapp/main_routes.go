@@ -1,10 +1,12 @@
 package sneatgaeapp
 
 import (
+	"context"
 	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/sneat-go-core/capturer"
 	"github.com/sneat-co/sneat-go-core/httpserver"
+	"github.com/sneat-co/sneat-go-core/monitoring"
 	"github.com/sneat-co/sneat-go-core/security"
 	"github.com/strongo/logus"
 	"net/http"
@@ -65,7 +67,12 @@ func allowedOrigin(r *http.Request, w http.ResponseWriter) (string, bool) {
 	return origin, true
 }
 
-var ReportPanic = func(err any) {
+var ReportPanic monitoring.PanicCapturer
+
+func init() {
+	ReportPanic = func(ctx context.Context, v any) monitoring.Event {
+		return monitoring.Event{}
+	}
 }
 
 type HandlerWrapper = func(handler http.Handler) http.Handler
@@ -101,7 +108,8 @@ func wrapHTTPHandler(handler http.HandlerFunc, wrapHandler HandlerWrapper) http.
 			if err != nil {
 				stack := string(debug.Stack())
 				handlePanic(w, r, err, stack)
-				ReportPanic(err)
+				ctx := r.Context()
+				ReportPanic(ctx, err)
 				fmt.Println("PANIC:", err, "\nSTACKTRACE from panic:\n"+stack)
 				w.WriteHeader(http.StatusInternalServerError)
 				httpserver.AccessControlAllowOrigin(w, r)
