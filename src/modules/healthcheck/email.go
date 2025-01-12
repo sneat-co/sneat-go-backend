@@ -8,7 +8,7 @@ import (
 )
 
 // httpGetTestEmail sends a test email
-func httpGetTestEmail(w http.ResponseWriter, _ *http.Request) {
+func httpGetTestEmail(w http.ResponseWriter, r *http.Request) {
 	message := emails.Email{
 		From:    "DailyScrum.app@sneat.team",
 		To:      []string{"alexander.trakhimenok@gmail.com"},
@@ -17,7 +17,8 @@ func httpGetTestEmail(w http.ResponseWriter, _ *http.Request) {
 		HTML:    "Howdy, is it <b>time to sleep</b>?",
 		ReplyTo: nil,
 	}
-	output, err := emails.Send(message)
+	ctx := r.Context()
+	output, err := emails.Send(ctx, message)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = fmt.Fprintf(w, "Failed to send email: %v", err.Error())

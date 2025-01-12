@@ -22,8 +22,8 @@ go 1.22.3
 //replace github.com/strongo/strongoapp => ../../strongo/strongoapp
 
 require (
-	github.com/bots-go-framework/bots-api-telegram v0.7.2
-	github.com/bots-go-framework/bots-fw v0.40.5
+	github.com/bots-go-framework/bots-api-telegram v0.7.3
+	github.com/bots-go-framework/bots-fw v0.40.6
 	github.com/bots-go-framework/bots-fw-store v0.8.2
 	github.com/bots-go-framework/bots-fw-telegram v0.13.8
 	github.com/bots-go-framework/bots-go-core v0.0.3
@@ -34,8 +34,8 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/olebedev/when v1.1.0
 	github.com/sneat-co/debtstracker-translations v0.2.4
-	github.com/sneat-co/sneat-core-modules v0.15.15
-	github.com/sneat-co/sneat-go-core v0.40.0
+	github.com/sneat-co/sneat-core-modules v0.15.16
+	github.com/sneat-co/sneat-go-core v0.41.0
 	github.com/stretchr/testify v1.10.0
 	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.1.0
