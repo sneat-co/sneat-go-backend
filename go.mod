@@ -25,17 +25,17 @@ require (
 	github.com/bots-go-framework/bots-api-telegram v0.7.3
 	github.com/bots-go-framework/bots-fw v0.40.6
 	github.com/bots-go-framework/bots-fw-store v0.8.2
-	github.com/bots-go-framework/bots-fw-telegram v0.13.8
+	github.com/bots-go-framework/bots-fw-telegram v0.13.9
 	github.com/bots-go-framework/bots-go-core v0.0.3
 	github.com/crediterra/money v0.3.0
 	github.com/dal-go/dalgo v0.14.2
-	github.com/dal-go/mocks4dalgo v0.1.27
+	github.com/dal-go/mocks4dalgo v0.1.28
 	github.com/golang/mock v1.6.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/olebedev/when v1.1.0
-	github.com/sneat-co/debtstracker-translations v0.2.4
-	github.com/sneat-co/sneat-core-modules v0.15.16
-	github.com/sneat-co/sneat-go-core v0.41.0
+	github.com/sneat-co/debtstracker-translations v0.2.5
+	github.com/sneat-co/sneat-core-modules v0.15.17
+	github.com/sneat-co/sneat-go-core v0.41.1
 	github.com/stretchr/testify v1.10.0
 	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.1.0
@@ -43,7 +43,7 @@ require (
 	github.com/strongo/logus v0.2.1
 	github.com/strongo/random v0.0.1
 	github.com/strongo/slice v0.3.1
-	github.com/strongo/strongoapp v0.25.4
+	github.com/strongo/strongoapp v0.25.5
 	github.com/strongo/validation v0.0.7
 )
 
