@@ -25,7 +25,7 @@ require (
 	github.com/bots-go-framework/bots-api-telegram v0.7.3
 	github.com/bots-go-framework/bots-fw v0.40.6
 	github.com/bots-go-framework/bots-fw-store v0.8.2
-	github.com/bots-go-framework/bots-fw-telegram v0.13.9
+	github.com/bots-go-framework/bots-fw-telegram v0.13.10
 	github.com/bots-go-framework/bots-go-core v0.0.3
 	github.com/crediterra/money v0.3.0
 	github.com/dal-go/dalgo v0.14.2
@@ -34,7 +34,7 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/olebedev/when v1.1.0
 	github.com/sneat-co/debtstracker-translations v0.2.5
-	github.com/sneat-co/sneat-core-modules v0.15.17
+	github.com/sneat-co/sneat-core-modules v0.15.18
 	github.com/sneat-co/sneat-go-core v0.41.1
 	github.com/stretchr/testify v1.10.0
 	github.com/strongo/decimal v0.1.1
@@ -50,7 +50,7 @@ require (
 require (
 	github.com/AlekSi/pointer v1.2.0 // indirect
 	github.com/alexsergivan/transliterator v1.0.1 // indirect
-	github.com/bots-go-framework/bots-fw-telegram-models v0.3.8 // indirect
+	github.com/bots-go-framework/bots-fw-telegram-models v0.3.9 // indirect
 	github.com/bots-go-framework/bots-fw-telegram-webapp v0.3.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect

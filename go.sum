@@ -12,8 +12,12 @@ github.com/bots-go-framework/bots-fw-telegram v0.13.8 h1:GEgTXOcbs+RJEynUoYG66j8
 github.com/bots-go-framework/bots-fw-telegram v0.13.8/go.mod h1:DCLg0xXUJC6d+uj5XGLMIUFNz++7a7SSZ3Ri1ZijER8=
 github.com/bots-go-framework/bots-fw-telegram v0.13.9 h1:ZUoPxBwaRw2u6O2OgRYuIfaoX0U2Tewc/UQJVCVicOI=
 github.com/bots-go-framework/bots-fw-telegram v0.13.9/go.mod h1:6GJpjHZ3gyfraMUu57kRuENBZE9IHWKR9ztywGQGs8A=
+github.com/bots-go-framework/bots-fw-telegram v0.13.10 h1:QkbijXLmKet+6LoPNlYL1YShOFkrgk8bskjgtkOyMmw=
+github.com/bots-go-framework/bots-fw-telegram v0.13.10/go.mod h1:rxVIjsIhhQaK/nEvwsHuK3gxH6+wjX0QDATqwD23ufM=
 github.com/bots-go-framework/bots-fw-telegram-models v0.3.8 h1:BeyoBAp/D1T1q4gsRTfll2B9qj36LNektJ+/SHMdqmM=
 github.com/bots-go-framework/bots-fw-telegram-models v0.3.8/go.mod h1:sM6X2PI21CofxPD5NJrScZT7pFE20VSsGacOeDWXSrA=
+github.com/bots-go-framework/bots-fw-telegram-models v0.3.9 h1:JKr0um6N1AEGEqmXTt3/0Chpb3nSa8jsDW6VUFRdOsw=
+github.com/bots-go-framework/bots-fw-telegram-models v0.3.9/go.mod h1:z/AIwD4Myx8MQ3Ag0uODcw+biot49CY8RVJc2DmNbQU=
 github.com/bots-go-framework/bots-fw-telegram-webapp v0.3.1 h1:rJo6iIgMerNEyd6xqKoogljf7Gdts4IKSlXspRayQ+Y=
 github.com/bots-go-framework/bots-fw-telegram-webapp v0.3.1/go.mod h1:YL4jmrX7CH5a6n40fV8yUBYtnydJVGgNBHNqRoFiu9o=
 github.com/bots-go-framework/bots-go-core v0.0.3 h1:z3A7DLUgxbHWxvTCGnkHP9WHpTT9xxROEypoqAfvYIQ=
@@ -61,6 +65,8 @@ github.com/sneat-co/sneat-core-modules v0.15.16 h1:HsBh+ygAU+X9e51RJWF1CUCpjH+MU
 github.com/sneat-co/sneat-core-modules v0.15.16/go.mod h1:Uth4I4pSMH7g6+zXUwNUYZR6IQ06chiu7TQTplJLEcQ=
 github.com/sneat-co/sneat-core-modules v0.15.17 h1:P3Ur0P3Cja6JQPg8K7lFAcihOjHSL64BowVJB3DhFXc=
 github.com/sneat-co/sneat-core-modules v0.15.17/go.mod h1:Nrv4lmzoz++bzkRCj81KdjqruNA2K6Evh0TPod2QHd4=
+github.com/sneat-co/sneat-core-modules v0.15.18 h1:N7sI+ISKhVv7SmihnU61LtFq+fjjSga08ObBRuGoOGY=
+github.com/sneat-co/sneat-core-modules v0.15.18/go.mod h1:59QfwVkgnB6GXH5ryNAkfdxKUczPaJax8XlBOOwwslI=
 github.com/sneat-co/sneat-go-core v0.41.0 h1:bD0hkbh6aRWDptHEdHgCi0XOpf1j4Y9CY0I6edSheo4=
 github.com/sneat-co/sneat-go-core v0.41.0/go.mod h1:e3fJ3mVQv9jBnn3+rUR5vc1TNLbsWMmRDhCOcbl9Yts=
 github.com/sneat-co/sneat-go-core v0.41.1 h1:h1+/nKB2fN/O529+7cpmGz/YPDzVPCHBDr3jYrsxgUI=
