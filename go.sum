@@ -2,6 +2,8 @@ github.com/alexsergivan/transliterator v1.0.1 h1:vON2ilWCHjq+S5Y4obhLGhHK4Y1VIhs
 github.com/alexsergivan/transliterator v1.0.1/go.mod h1:0IrumukulURJ4PD0z6UcdJKP2job1DYDhnHAP5y+5pE=
 github.com/bots-go-framework/bots-fw-store v0.8.2 h1:Ss2ZRFoBeNgEy1TWzRIoVdERMoAv1kp9GlJvq3EbiHo=
 github.com/bots-go-framework/bots-fw-store v0.8.2/go.mod h1:ZxeNr86seS59kKyf9zol15vdZEcH+1CjjzHOFokGrVI=
+github.com/bots-go-framework/bots-fw-store v0.9.0 h1:GDeTB7O4ePWiHAYanG8E4Eb3yB++bDGCQD15X7cabPA=
+github.com/bots-go-framework/bots-fw-store v0.9.0/go.mod h1:ZxeNr86seS59kKyf9zol15vdZEcH+1CjjzHOFokGrVI=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/crediterra/money v0.3.0 h1:dHWEZhkMGGxkHTAbGQOaeg8eYbL8qJSCgcqdOTbNg20=
 github.com/crediterra/money v0.3.0/go.mod h1:0BT7dzPk4Wv+Wi8J6sxlFbCknYioLWVVQM4ciMJh6TI=
@@ -30,6 +32,8 @@ github.com/rogpeppe/go-internal v1.13.1 h1:KvO1DLK/DRN07sQ1LQKScxyZJuNnedQ5/wKSR
 github.com/rogpeppe/go-internal v1.13.1/go.mod h1:uMEvuHeurkdAXX61udpOXGD/AzZDWNMNyH2VO9fmH0o=
 github.com/sneat-co/sneat-core-modules v0.18.0 h1:ZCb1bya/j92qaRJH09Zfbyh2nVE2z/oQoAXFGakE2/8=
 github.com/sneat-co/sneat-core-modules v0.18.0/go.mod h1:hnsGS2sRtRC085CvogRSnQ739FDII+vzd/7GigViGFk=
+github.com/sneat-co/sneat-core-modules v0.18.2 h1:H7ik3JhTLCt6OPHTEm8x91i0YprA7k9YGjmaW/GeIW0=
+github.com/sneat-co/sneat-core-modules v0.18.2/go.mod h1:bfpPtk02c+ROZS6+N/9SsDlnYxUJbrS4GQ8eDDFHHp8=
 github.com/sneat-co/sneat-go-core v0.42.0 h1:Nku8RWyAPu24xoKlIyPPgZyQ5KlgvcNST79imyoRDks=
 github.com/sneat-co/sneat-go-core v0.42.0/go.mod h1:pDLlPtg0h12jk04+61nkFKuaqDlNHXqjX4lBZF0B4/g=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=

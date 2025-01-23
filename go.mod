@@ -27,7 +27,7 @@ require (
 	github.com/dal-go/mocks4dalgo v0.1.28
 	github.com/golang/mock v1.6.0
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/sneat-co/sneat-core-modules v0.18.0
+	github.com/sneat-co/sneat-core-modules v0.18.2
 	github.com/sneat-co/sneat-go-core v0.42.0
 	github.com/stretchr/testify v1.10.0
 	github.com/strongo/decimal v0.1.1
@@ -41,7 +41,7 @@ require (
 
 require (
 	github.com/alexsergivan/transliterator v1.0.1 // indirect
-	github.com/bots-go-framework/bots-fw-store v0.8.2 // indirect
+	github.com/bots-go-framework/bots-fw-store v0.9.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gosimple/slug v1.15.0 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
