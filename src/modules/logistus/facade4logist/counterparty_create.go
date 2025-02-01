@@ -2,6 +2,7 @@ package facade4logist
 
 import (
 	"context"
+	"github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-core-modules/contactus/dto4contactus"
 	"github.com/sneat-co/sneat-core-modules/contactus/facade4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
@@ -24,5 +25,11 @@ func CreateCounterparty(
 		SpaceRequest: request.SpaceRequest,
 		Company:      &request.Company,
 	}
-	return facade4contactus.CreateContact(ctx, userCtx, false, createContactRequest)
+	var contact dal4contactus.ContactEntry
+	if contact, err = facade4contactus.CreateContact(ctx, userCtx, false, createContactRequest); err != nil {
+		return
+	}
+	response.ID = contact.ID
+	response.Data = contact.Data
+	return
 }
