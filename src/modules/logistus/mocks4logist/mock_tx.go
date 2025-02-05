@@ -3,19 +3,19 @@ package mocks4logist
 import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
-	"github.com/dal-go/mocks4dalgo/mocks4dal"
-	"github.com/golang/mock/gomock"
+	"github.com/dal-go/mocks4dalgo/mock_dal"
 	"github.com/sneat-co/sneat-core-modules/contactus/dbo4contactus"
 	"github.com/sneat-co/sneat-core-modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
+	"go.uber.org/mock/gomock"
 	"testing"
 	"time"
 )
 
-func MockTx(t *testing.T) (tx *mocks4dal.MockReadwriteTransaction) {
+func MockTx(t *testing.T) (tx *mock_dal.MockReadwriteTransaction) {
 	mockCtrl := gomock.NewController(t)
-	tx = mocks4dal.NewMockReadwriteTransaction(mockCtrl)
+	tx = mock_dal.NewMockReadwriteTransaction(mockCtrl)
 	tx.EXPECT().
 		Get(gomock.Any(), gomock.Any()).
 		DoAndReturn(func(ctx context.Context, record dal.Record) error {
