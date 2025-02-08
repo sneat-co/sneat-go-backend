@@ -20,6 +20,6 @@ func httpDeleteListItems(w http.ResponseWriter, r *http.Request) {
 		apicore.ReturnError(r.Context(), w, r, err)
 		return
 	}
-	err = facade4listus.DeleteListItems(ctx, userContext, request)
+	_, _, err = facade4listus.DeleteListItems(ctx, userContext, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusCreated, err, nil)
 }

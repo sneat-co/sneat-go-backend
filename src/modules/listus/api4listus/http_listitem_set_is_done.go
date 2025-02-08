@@ -22,6 +22,6 @@ func httpPostSetListItemsIsDone(w http.ResponseWriter, r *http.Request) {
 		apicore.ReturnError(r.Context(), w, r, err)
 		return
 	}
-	err = setListItemsIsDone(ctx, userContext, request)
+	_, _, err = setListItemsIsDone(ctx, userContext, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusNoContent, err, nil)
 }
