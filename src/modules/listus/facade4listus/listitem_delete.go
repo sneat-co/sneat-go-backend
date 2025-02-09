@@ -18,27 +18,47 @@ func DeleteListItems(ctx context.Context, userCtx facade.UserContext, request dt
 	}
 	err = dal4listus.RunListWorker(ctx, userCtx, request.ListRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4listus.ListWorkerParams) (err error) {
 		list = params.List
-		items, removedCount := slice.RemoveInPlace(params.List.Data.Items, func(item *dbo4listus.ListItemBrief) bool {
-			if slices.Contains(request.ItemIDs, item.ID) {
-				deletedItems = append(deletedItems, item)
-				return true
+		isInRecentItems := func(item *dbo4listus.ListItemBrief) bool {
+			for _, recentItem := range list.Data.RecentItems {
+				if recentItem.ID == item.ID || recentItem.Title == item.Title && recentItem.Emoji == item.Emoji {
+					return true
+				}
 			}
 			return false
+		}
+		removeAll := len(request.ItemIDs) == 1 && request.ItemIDs[0] == "*"
+		var recentItems []*dbo4listus.ListItemBrief
+		items, removedCount := slice.RemoveInPlace(params.List.Data.Items, func(item *dbo4listus.ListItemBrief) (remove bool) {
+			if remove = removeAll || slices.Contains(request.ItemIDs, item.ID); remove {
+				deletedItems = append(deletedItems, item)
+				if !isInRecentItems(item) {
+					recentItems = append(recentItems, item)
+				}
+			}
+			return
 		})
 		if removedCount > 0 {
+			params.List.Record.MarkAsChanged()
 			params.List.Data.Items = items
 			params.List.Data.Count = len(items)
-			params.ListUpdates = []dal.Update{
-				{
-					Field: "items",
-					Value: params.List.Data.Items,
-				},
-				{
-					Field: "count",
-					Value: len(params.List.Data.Items),
-				},
+			params.ListUpdates = append(params.ListUpdates,
+				dal.Update{Field: "items", Value: params.List.Data.Items},
+				dal.Update{Field: "count", Value: len(params.List.Data.Items)},
+			)
+			if len(recentItems) > 0 {
+				slices.Reverse(recentItems)
+				prevRecentItems := list.Data.RecentItems
+				list.Data.RecentItems = recentItems
+				for _, prevRecentItem := range prevRecentItems {
+					if len(list.Data.RecentItems) >= 100 {
+						break
+					}
+					list.Data.RecentItems = append(list.Data.RecentItems, prevRecentItem)
+				}
+
+				// This should be after we set the params.ListUpdates
+				params.ListUpdates = append(params.ListUpdates, dal.Update{Field: "recentItems", Value: list.Data.RecentItems})
 			}
-			params.List.Record.MarkAsChanged()
 		}
 		return
 	})

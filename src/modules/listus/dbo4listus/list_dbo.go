@@ -63,12 +63,13 @@ func (v ListKey) Validate() error {
 		return validation.NewValidationError("list key is empty string")
 	} else if s != string(v) {
 		return validation.NewValidationError("list key has leading or trailing spaces")
-	}
-	if i := strings.Index(string(v), ListIDSeparator); i < 0 {
+	} else if i := strings.Index(s, ListIDSeparator); i < 0 {
 		return validation.NewValidationError(fmt.Sprintf("list key does not contain required separator '%s'", ListIDSeparator))
-	} else if strings.TrimSpace(string(v[:i])) == "" {
+	} else if separatorsCount := strings.Count(s, ListIDSeparator); separatorsCount > 1 {
+		return validation.NewValidationError(fmt.Sprintf("list key expected to have only 1 '%s' spearator, contains %d separators: %s", ListIDSeparator, separatorsCount, v))
+	} else if strings.TrimSpace(s[:i]) == "" {
 		return validation.NewValidationError("list type is empty")
-	} else if strings.TrimSpace(string(v[i+1:])) == "" {
+	} else if strings.TrimSpace(s[i+1:]) == "" {
 		return validation.NewValidationError("list sub ID is empty")
 	}
 	if listType := v.ListType(); !IsKnownListType(listType) {
@@ -172,8 +173,10 @@ type ListDbo struct {
 	dbmodels.WithUserIDs
 	dbmodels.WithSpaceIDs
 
-	Items []*ListItemBrief `json:"items,omitempty" firestore:"items,omitempty"`
-	Count int              `json:"count" firestore:"count"`
+	Items       []*ListItemBrief `json:"items,omitempty" firestore:"items,omitempty"`
+	RecentItems []*ListItemBrief `json:"recentItems,omitempty" firestore:"recentItems,omitempty"`
+
+	Count int `json:"count" firestore:"count"`
 }
 
 func (v *ListDbo) AddListItem(item *ListItemBrief) (addedItem *ListItemBrief) {
