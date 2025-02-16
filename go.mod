@@ -26,8 +26,8 @@ require (
 	github.com/dal-go/dalgo v0.16.1
 	github.com/dal-go/mocks4dalgo v0.2.0
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/sneat-co/sneat-core-modules v0.23.7
-	github.com/sneat-co/sneat-go-core v0.45.5
+	github.com/sneat-co/sneat-core-modules v0.24.6
+	github.com/sneat-co/sneat-go-core v0.45.6
 	github.com/stretchr/testify v1.10.0
 	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.1.0
@@ -48,6 +48,6 @@ require (
 	github.com/kr/text v0.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/crypto v0.33.0 // indirect
-	golang.org/x/net v0.34.0 // indirect
+	golang.org/x/net v0.35.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
