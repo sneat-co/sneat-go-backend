@@ -2,7 +2,7 @@ package dbo4logist
 
 import (
 	"fmt"
-	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-core-modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-core/validate"
@@ -210,15 +210,11 @@ func (v WithSegments) GetSegmentByKey(k ContainerSegmentKey) *ContainerSegment {
 }
 
 // Updates returns updates for order segments.
-func (v WithSegments) Updates() []dal.Update {
+func (v WithSegments) Updates() []update.Update {
 	if len(v.Segments) == 0 {
-		return []dal.Update{
-			{Field: "segments", Value: dal.DeleteField},
-		}
+		return []update.Update{update.ByFieldName("segments", update.DeleteField)}
 	}
-	return []dal.Update{
-		{Field: "segments", Value: v.Segments},
-	}
+	return []update.Update{update.ByFieldName("segments", v.Segments)}
 }
 
 // Validate returns nil if all segments are valid, otherwise returns the first error.

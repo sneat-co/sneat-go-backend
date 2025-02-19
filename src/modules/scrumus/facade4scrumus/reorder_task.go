@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -55,15 +56,9 @@ func ReorderTask(ctx context.Context, userCtx facade.UserContext, request Reorde
 			return errors.New("reordering on already changed list is not implemented yet")
 		}
 
-		return tx.Update(ctx, params.Meeting.Key, []dal.Update{
-			{
-				Field: "v",
-				Value: dal.Increment(1),
-			},
-			{
-				Field: fmt.Sprintf("statuses.%s.byType.%s", request.ContactID, request.Type),
-				Value: tasks,
-			},
+		return tx.Update(ctx, params.Meeting.Key, []update.Update{
+			update.ByFieldName("v", dal.Increment(1)),
+			update.ByFieldName(fmt.Sprintf("statuses.%s.byType.%s", request.ContactID, request.Type), tasks),
 		})
 	})
 }

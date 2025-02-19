@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
@@ -37,7 +38,7 @@ type OrderWorkerParams struct {
 	SpaceWorkerParams *dal4spaceus.SpaceWorkerParams
 	Order             dbo4logist.Order
 	Changed           OrderChanges
-	// OrderUpdates     []dal.Update
+	// OrderUpdates     []update.Update
 }
 
 // RunOrderWorker executes an order worker with transaction
@@ -60,9 +61,9 @@ var RunOrderWorker = func(ctx context.Context, userCtx facade.UserContext, reque
 		if err := worker(ctx, tx, &params); err != nil {
 			return fmt.Errorf("failed in order worker: %w", err)
 		}
-		var orderUpdates []dal.Update
+		var orderUpdates []update.Update
 		if params.Changed.Status {
-			orderUpdates = append(orderUpdates, dal.Update{Field: "status", Value: order.Dto.Status})
+			orderUpdates = append(orderUpdates, update.ByFieldName("status", order.Dto.Status))
 		}
 		if params.Changed.ContainerPoints {
 			orderUpdates = append(orderUpdates, order.Dto.WithContainerPoints.Updates()...)

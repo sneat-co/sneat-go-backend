@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -61,10 +62,8 @@ requestPrices:
 	}
 
 	if params.Happening.Record.HasChanged() {
-		params.HappeningUpdates = append(params.HappeningUpdates, dal.Update{
-			Field: "prices",
-			Value: happeningDbo.Prices,
-		})
+		params.HappeningUpdates = append(params.HappeningUpdates,
+			update.ByFieldName("prices", happeningDbo.Prices))
 	}
 
 	return nil

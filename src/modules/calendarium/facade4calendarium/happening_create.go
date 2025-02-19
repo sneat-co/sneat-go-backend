@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	dal4contactus2 "github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-core-modules/linkage/dbo4linkage"
 	dal4spaceus2 "github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
@@ -164,10 +165,8 @@ func createHappeningTx(
 		params.SpaceModuleEntry.Data.RecurringHappenings[happeningID] = &dbo4calendarium.CalendarHappeningBrief{
 			HappeningBrief: happeningDto.HappeningBrief,
 		}
-		params.SpaceModuleUpdates = append(params.SpaceUpdates, dal.Update{
-			Field: "recurringHappenings." + happeningID,
-			Value: &happeningDto.HappeningBrief,
-		})
+		params.SpaceModuleUpdates = append(params.SpaceUpdates,
+			update.ByFieldName("recurringHappenings."+happeningID, &happeningDto.HappeningBrief))
 	}
 	return
 }

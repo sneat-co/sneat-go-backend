@@ -2,7 +2,7 @@ package dbo4logist
 
 import (
 	"fmt"
-	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/random"
 	"github.com/strongo/slice"
@@ -225,13 +225,9 @@ func (v WithOrderContainers) Validate() error {
 }
 
 // Updates returns updates for the order containers
-func (v WithOrderContainers) Updates() []dal.Update {
+func (v WithOrderContainers) Updates() []update.Update {
 	if len(v.Containers) == 0 {
-		return []dal.Update{
-			{Field: "containers", Value: dal.DeleteField},
-		}
+		return []update.Update{update.ByFieldName("containers", update.DeleteField)}
 	}
-	return []dal.Update{
-		{Field: "containers", Value: v.Containers},
-	}
+	return []update.Update{update.ByFieldName("containers", v.Containers)}
 }

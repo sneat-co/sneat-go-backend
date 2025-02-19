@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
@@ -29,10 +30,8 @@ func deleteHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, params 
 		}
 		if happeningBrief := params.SpaceModuleEntry.Data.GetRecurringHappeningBrief(request.HappeningID); happeningBrief != nil {
 			delete(params.SpaceModuleEntry.Data.RecurringHappenings, request.HappeningID)
-			params.SpaceModuleUpdates = append(params.SpaceUpdates, dal.Update{
-				Field: "recurringHappenings." + request.HappeningID,
-				Value: dal.DeleteField,
-			})
+			params.SpaceModuleUpdates = append(params.SpaceUpdates,
+				update.ByFieldName("recurringHappenings."+request.HappeningID, update.DeleteField))
 			params.SpaceModuleEntry.Record.MarkAsChanged()
 		}
 	}

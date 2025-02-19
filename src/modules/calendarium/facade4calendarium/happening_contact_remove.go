@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-core-modules/contactus/dbo4contactus"
 	"github.com/sneat-co/sneat-core-modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
@@ -37,7 +38,7 @@ func removeParticipantFromHappeningTxWorker(ctx context.Context, tx dal.Readwrit
 	case dbo4calendarium.HappeningTypeSingle:
 		break // nothing to do
 	case dbo4calendarium.HappeningTypeRecurring:
-		var updates []dal.Update
+		var updates []update.Update
 		if updates, err = removeContactFromHappeningBriefInContactusSpaceDbo(params.SpaceModuleEntry, params.Happening, contactShortRef); err != nil {
 			return fmt.Errorf("failed to remove member from happening brief in space DBO: %w", err)
 		}
@@ -65,7 +66,7 @@ func removeContactFromHappeningBriefInContactusSpaceDbo(
 	calendariumSpace dal4calendarium.CalendariumSpaceEntry,
 	happening dbo4calendarium.HappeningEntry,
 	contactShortRef dbmodels.SpaceItemID,
-) (updates []dal.Update, err error) {
+) (updates []update.Update, err error) {
 	calendarHappeningBrief := calendariumSpace.Data.GetRecurringHappeningBrief(happening.ID)
 	if calendarHappeningBrief == nil {
 		return nil, err
@@ -73,8 +74,11 @@ func removeContactFromHappeningBriefInContactusSpaceDbo(
 	contactFullRef := dbo4contactus.NewContactFullRef(contactShortRef.SpaceID(), contactShortRef.ItemID())
 	updates = calendarHappeningBrief.WithRelated.RemoveRelatedItem(contactFullRef)
 	if len(updates) > 0 {
-		for i := range updates {
-			updates[i].Field = fmt.Sprintf("recurringHappenings.%s.%s", happening.ID, updates[i].Field)
+		for i, u := range updates {
+			updates[i] = update.ByFieldName(
+				fmt.Sprintf("recurringHappenings.%s.%s", happening.ID, u.FieldName()),
+				u.Value(),
+			)
 		}
 	}
 	return updates, nil

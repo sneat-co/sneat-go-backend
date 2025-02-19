@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-core-modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
 	dbo4spaceus2 "github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
@@ -119,14 +120,14 @@ func StartRetrospective(ctx context.Context, userCtx facade.UserContext, request
 			}
 
 			if teamChanged { // All reads should be before any write in transaction
-				if err = txUpdateSpace(ctx, tx, params.Started, team, []dal.Update{
-					{Field: "activeMeetings.retrospective", Value: request.MeetingID},
+				if err = txUpdateSpace(ctx, tx, params.Started, team, []update.Update{
+					update.ByFieldName("activeMeetings.retrospective", request.MeetingID),
 				}); err != nil {
 					return err
 				}
 			}
 
-			var retrospectiveUpdates []dal.Update
+			var retrospectiveUpdates []update.Update
 
 			if isNewRetrospective {
 				retrospective = &dbo4retrospectus.Retrospective{
@@ -161,10 +162,10 @@ func StartRetrospective(ctx context.Context, userCtx facade.UserContext, request
 				retrospective.StartedBy = &byUser
 				retrospective.Stage = dbo4retrospectus.StageFeedback
 
-				retrospectiveUpdates = []dal.Update{
-					{Field: "stage", Value: retrospective.Stage},
-					{Field: "timer", Value: retrospective.Timer},
-					{Field: "startedBy", Value: retrospective.StartedBy},
+				retrospectiveUpdates = []update.Update{
+					update.ByFieldName("stage", retrospective.Stage),
+					update.ByFieldName("timer", retrospective.Timer),
+					update.ByFieldName("startedBy", retrospective.StartedBy),
 				}
 			}
 
@@ -181,10 +182,10 @@ func StartRetrospective(ctx context.Context, userCtx facade.UserContext, request
 					for itemType, items := range userRetroItems.byType {
 						itemsCount := len(items)
 						retroUserCounts[itemType] = itemsCount
-						retrospectiveUpdates = append(retrospectiveUpdates, dal.Update{
-							Field: fmt.Sprintf("countsByMemberAndType.%v.%v", memberID, itemType),
-							Value: itemsCount,
-						})
+						retrospectiveUpdates = append(retrospectiveUpdates, update.ByFieldName(
+							fmt.Sprintf("countsByMemberAndType.%v.%v", memberID, itemType),
+							itemsCount,
+						))
 					}
 				}
 			}

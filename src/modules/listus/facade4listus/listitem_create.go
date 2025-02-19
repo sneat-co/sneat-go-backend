@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
@@ -113,15 +114,9 @@ func createListItemsTxWorker(
 		return
 	}
 	if list.Record.Exists() {
-		updates := []dal.Update{
-			{
-				Field: "items",
-				Value: list.Data.Items,
-			},
-			{
-				Field: "count",
-				Value: len(list.Data.Items),
-			},
+		updates := []update.Update{
+			update.ByFieldName("items", list.Data.Items),
+			update.ByFieldName("count", list.Data.Count),
 		}
 		userID := params.UserID()
 		if !list.Data.HasUserID(userID) {
@@ -144,10 +139,8 @@ func createListItemsTxWorker(
 	}
 
 	if params.SpaceModuleEntry.Record.Exists() {
-		params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, dal.Update{
-			Field: "lists." + string(request.ListID),
-			Value: listBrief,
-		})
+		params.SpaceModuleUpdates = append(params.SpaceModuleUpdates,
+			update.ByFieldName("lists."+string(request.ListID), listBrief))
 		params.SpaceModuleEntry.Record.MarkAsChanged()
 	} else {
 		params.SpaceModuleEntry.Data.CreatedAt = params.Started

@@ -1,7 +1,7 @@
 package dbo4assetus
 
 import (
-	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/briefs4assetus"
 	"github.com/strongo/validation"
 )
@@ -31,7 +31,7 @@ func (v *WithAssetSpaces) Validate() error {
 }
 
 // AddAsset adds an asset to a team
-func (v *WithAssetSpaces) AddAsset(spaceID string, asset AssetEntry) (updates []dal.Update, err error) {
+func (v *WithAssetSpaces) AddAsset(spaceID string, asset AssetEntry) (updates []update.Update, err error) {
 	if v.Spaces == nil {
 		v.Spaces = make(map[string]*AssetusSpaceBrief)
 	}
@@ -51,8 +51,7 @@ func (v *WithAssetSpaces) AddAsset(spaceID string, asset AssetEntry) (updates []
 		return
 	}
 	for i, u := range updates {
-		u.Field = "spaces." + spaceID + "." + u.Field
-		updates[i] = u
+		updates[i] = update.ByFieldName("spaces."+spaceID+"."+u.FieldName(), u.Value)
 	}
 	return
 }

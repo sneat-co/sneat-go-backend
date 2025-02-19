@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-core-modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
@@ -24,14 +25,14 @@ func StartRetroReview(ctx context.Context, userCtx facade.UserContext, request R
 			now := time.Now()
 			retrospective.TimeLastAction = &now
 
-			var teamRetroUpdates []dal.Update
+			var teamRetroUpdates []update.Update
 			if teamRetroUpdates, err = moveRetroItemsFromUsers(ctx, tx, params); err != nil {
 				return err
 			}
 
 			teamRetroUpdates = append(teamRetroUpdates,
-				dal.Update{Field: "stage", Value: retrospective.Stage},
-				dal.Update{Field: "timeLastAction", Value: retrospective.TimeLastAction},
+				update.ByFieldName("stage", retrospective.Stage),
+				update.ByFieldName("timeLastAction", retrospective.TimeLastAction),
 			)
 
 			//retrospetiveKey := dal.NewKeyWithID("api4meetingus", ret)
@@ -46,7 +47,7 @@ func StartRetroReview(ctx context.Context, userCtx facade.UserContext, request R
 	return
 }
 
-func moveRetroItemsFromUsers(ctx context.Context, tx dal.ReadwriteTransaction, params facade4meetingus.WorkerParams) (teamRetrosUpdates []dal.Update, err error) {
+func moveRetroItemsFromUsers(ctx context.Context, tx dal.ReadwriteTransaction, params facade4meetingus.WorkerParams) (teamRetrosUpdates []update.Update, err error) {
 	retrospective := params.Meeting.Record.Data().(*dbo4retrospectus.Retrospective)
 
 	//wg := sync.WaitGroup{}
@@ -94,16 +95,16 @@ func moveRetroItemsFromUsers(ctx context.Context, tx dal.ReadwriteTransaction, p
 			userCounts[retroItem.Type]++
 			retroItems = append(retroItems, retroItem)
 		}
-		if err = txUpdate(ctx, tx, userRetroRecords[i].Key(), []dal.Update{
-			{Field: "items", Value: dal.DeleteField},
-			{Field: "countsByMemberAndType", Value: dal.DeleteField},
+		if err = txUpdate(ctx, tx, userRetroRecords[i].Key(), []update.Update{
+			update.ByFieldName("items", update.DeleteField),
+			update.ByFieldName("countsByMemberAndType", update.DeleteField),
 		}); err != nil {
 			return
 		}
 	}
 	if len(retroItems) > 0 {
-		teamRetrosUpdates = []dal.Update{
-			{Field: "items", Value: dal.ArrayUnion(retroItems...)},
+		teamRetrosUpdates = []update.Update{
+			update.ByFieldName("items", dal.ArrayUnion(retroItems...)),
 		}
 	}
 	return

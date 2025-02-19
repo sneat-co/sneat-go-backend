@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
@@ -13,7 +14,7 @@ import (
 type ListWorkerParams struct {
 	*dal4spaceus.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]
 	List        ListEntry
-	ListUpdates []dal.Update
+	ListUpdates []update.Update
 }
 
 type ListWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, listWorkerParams *ListWorkerParams) (err error)
@@ -36,10 +37,7 @@ func RunListWorker(ctx context.Context, userCtx facade.UserContext, request dto4
 		}
 		if params.List.Data.Title == params.List.ID && params.List.Record.Exists() {
 			params.List.Data.Title = ""
-			params.ListUpdates = append(params.ListUpdates, dal.Update{
-				Field: "title",
-				Value: "",
-			})
+			params.ListUpdates = append(params.ListUpdates, update.ByFieldName("title", update.DeleteField))
 			params.List.Record.MarkAsChanged()
 		}
 		if updateCount := len(params.ListUpdates); updateCount > 0 {

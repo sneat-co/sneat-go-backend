@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/const4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
@@ -25,9 +26,9 @@ func DeleteList(ctx context.Context, userCtx facade.UserContext, request dto4lis
 		func(teamModuleDbo *dbo4listus.ListusSpaceDbo) int {
 			return len(teamModuleDbo.Lists)
 		},
-		func(teamModuleDbo *dbo4listus.ListusSpaceDbo, id string) ([]dal.Update, error) {
+		func(teamModuleDbo *dbo4listus.ListusSpaceDbo, id string) ([]update.Update, error) {
 			delete(teamModuleDbo.Lists, id)
-			return []dal.Update{{Field: "lists." + id, Value: dal.DeleteField}}, teamModuleDbo.Validate()
+			return []update.Update{update.ByFieldName("lists."+id, update.DeleteField)}, teamModuleDbo.Validate()
 		},
 	)
 	spaceItemRequest := dal4spaceus.SpaceItemRequest{

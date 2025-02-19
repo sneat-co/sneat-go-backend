@@ -3,6 +3,7 @@ package facade4listus
 import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
@@ -42,8 +43,8 @@ func DeleteListItems(ctx context.Context, userCtx facade.UserContext, request dt
 			params.List.Data.Items = items
 			params.List.Data.Count = len(items)
 			params.ListUpdates = append(params.ListUpdates,
-				dal.Update{Field: "items", Value: params.List.Data.Items},
-				dal.Update{Field: "count", Value: len(params.List.Data.Items)},
+				update.ByFieldName("items", params.List.Data.Items),
+				update.ByFieldName("count", len(params.List.Data.Items)),
 			)
 			if len(recentItems) > 0 {
 				slices.Reverse(recentItems)
@@ -57,7 +58,7 @@ func DeleteListItems(ctx context.Context, userCtx facade.UserContext, request dt
 				}
 
 				// This should be after we set the params.ListUpdates
-				params.ListUpdates = append(params.ListUpdates, dal.Update{Field: "recentItems", Value: list.Data.RecentItems})
+				params.ListUpdates = append(params.ListUpdates, update.ByFieldName("recentItems", list.Data.RecentItems))
 			}
 		}
 		return

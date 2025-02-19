@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
@@ -41,12 +42,7 @@ func putSlotTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *d
 		slot := &request.Slot.HappeningSlot
 		params.Happening.Record.MarkAsChanged()
 		params.Happening.Data.Slots[request.Slot.ID] = slot
-		params.HappeningUpdates = []dal.Update{
-			{
-				Field: "slots." + request.Slot.ID,
-				Value: slot,
-			},
-		}
+		params.HappeningUpdates = []update.Update{update.ByFieldName("slots."+request.Slot.ID, slot)}
 	}
 
 	if params.Happening.Data.Type == dbo4calendarium.HappeningTypeRecurring {
@@ -72,10 +68,10 @@ func putSlotTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *d
 				return fmt.Errorf("happening brief is not valid after update: %w", err)
 			}
 			params.SpaceModuleEntry.Record.MarkAsChanged()
-			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, dal.Update{
-				Field: "recurringHappenings." + params.Happening.ID + ".slots",
-				Value: happeningBrief.Slots,
-			})
+			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, update.ByFieldName(
+				"recurringHappenings."+params.Happening.ID+".slots",
+				happeningBrief.Slots,
+			))
 		}
 	}
 	return

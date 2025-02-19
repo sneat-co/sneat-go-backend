@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
@@ -77,13 +78,12 @@ func adjustSlotInCalendarDay(ctx context.Context, tx dal.ReadwriteTransaction, p
 	}
 
 	if calendarDay.Record.Exists() {
-		updates := []dal.Update{
-			{Field: "happeningAdjustments", Value: calendarDay.Data.HappeningAdjustments},
+		updates := []update.Update{
+			update.ByFieldName("happeningAdjustments", calendarDay.Data.HappeningAdjustments),
 		}
 		if happeningIDsChanged {
-			updates = append(updates, dal.Update{
-				Field: "happeningIDs", Value: calendarDay.Data.HappeningIDs,
-			})
+			updates = append(updates,
+				update.ByFieldName("happeningIDs", calendarDay.Data.HappeningIDs))
 		}
 		if err := tx.Update(ctx, calendarDay.Key, updates); err != nil {
 			return fmt.Errorf("failed to update calendar day record with happening slotAdjustment: %w", err)

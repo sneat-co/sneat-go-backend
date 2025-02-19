@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-core-modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-core-modules/contactus/dbo4contactus"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
@@ -32,7 +33,7 @@ func SetMetric(ctx context.Context, userCtx facade.UserContext, request SetMetri
 			if teamMetric == nil {
 				return fmt.Errorf("unknown metric: %s", request.Metric)
 			}
-			var scrumUpdates []dal.Update
+			var scrumUpdates []update.Update
 			p := setMetricParams{
 				uid:         uid,
 				request:     request,
@@ -68,7 +69,7 @@ type setMetricParams struct {
 	spaceMetric *dbo4spaceus.SpaceMetric
 }
 
-func setPersonalMetric(p setMetricParams, contactusSpace *dbo4contactus.ContactusSpaceDbo) (scrumUpdates []dal.Update, err error) {
+func setPersonalMetric(p setMetricParams, contactusSpace *dbo4contactus.ContactusSpaceDbo) (scrumUpdates []update.Update, err error) {
 	var status *dbo4scrumus.MemberStatus
 	var teamMember *briefs4contactus.ContactBrief
 	var teamMemberContactID string
@@ -100,27 +101,21 @@ UpdateMember:
 	var changed bool
 	changed, status.Metrics, scrumUpdates, err = setMetric(p, status.Metrics)
 	if changed {
-		scrumUpdates = append(scrumUpdates, dal.Update{
-			Field: "statuses",
-			Value: p.scrum.Statuses,
-		})
+		scrumUpdates = append(scrumUpdates, update.ByFieldName("statuses", p.scrum.Statuses))
 	}
 	return
 }
 
-func setSpaceMetric(p setMetricParams) (scrumUpdates []dal.Update, err error) {
+func setSpaceMetric(p setMetricParams) (scrumUpdates []update.Update, err error) {
 	var changed bool
 	changed, p.scrum.SpaceMetrics, scrumUpdates, err = setMetric(p, p.scrum.SpaceMetrics)
 	if changed {
-		scrumUpdates = append(scrumUpdates, dal.Update{
-			Field: "metrics",
-			Value: p.scrum.Metrics,
-		})
+		scrumUpdates = append(scrumUpdates, update.ByFieldName("metrics", p.scrum.Metrics))
 	}
 	return
 }
 
-func setMetric(p setMetricParams, metrics []*dbo4scrumus.MetricRecord) (changed bool, updatedMetrics []*dbo4scrumus.MetricRecord, scrumUpdates []dal.Update, err error) {
+func setMetric(p setMetricParams, metrics []*dbo4scrumus.MetricRecord) (changed bool, updatedMetrics []*dbo4scrumus.MetricRecord, scrumUpdates []update.Update, err error) {
 	var metric *dbo4scrumus.MetricRecord
 	isExistingRecord := true
 
@@ -170,10 +165,7 @@ UpdateMetric:
 	changed = true
 	if !isExistingRecord {
 		p.scrum.Metrics = append(p.scrum.Metrics, p.spaceMetric)
-		scrumUpdates = []dal.Update{{
-			Field: "spaceMetrics",
-			Value: metrics,
-		}}
+		scrumUpdates = []update.Update{update.ByFieldName("spaceMetrics", metrics)}
 	}
 	return
 }

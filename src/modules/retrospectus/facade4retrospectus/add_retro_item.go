@@ -4,7 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
-	dal4userus2 "github.com/sneat-co/sneat-core-modules/userus/dal4userus"
+	"github.com/dal-go/dalgo/update"
+	"github.com/sneat-co/sneat-core-modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
@@ -103,7 +104,7 @@ func addRetroItemToUserRetro(ctx context.Context, userCtx facade.UserContext, re
 	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		started := time.Now()
 
-		if err = dal4userus2.GetUser(ctx, tx, user); err != nil {
+		if err = dal4userus.GetUser(ctx, tx, user); err != nil {
 			return err
 		}
 
@@ -135,13 +136,13 @@ func addRetroItemToUserRetro(ctx context.Context, userCtx facade.UserContext, re
 		//	return fmt.Errorf("failed to update team record: %w", err)
 		//}
 
-		updates := []dal.Update{
-			{
-				Field: fmt.Sprintf("api4meetingus.%v.retroItems.%v", request.SpaceID, request.Type),
-				Value: dal.ArrayUnion(item),
-			},
+		updates := []update.Update{
+			update.ByFieldName(
+				fmt.Sprintf("api4meetingus.%v.retroItems.%v", request.SpaceID, request.Type),
+				dal.ArrayUnion(item),
+			),
 		}
-		if err = dal4userus2.TxUpdateUser(ctx, tx, started, user.Key, updates); err != nil {
+		if err = dal4userus.TxUpdateUser(ctx, tx, started, user.Key, updates); err != nil {
 			return fmt.Errorf("failed to update retrospective record: %w", err)
 		}
 		response = AddRetroItemResponse{
@@ -160,7 +161,7 @@ func addRetroItemToSpaceRetro(ctx context.Context, userCtx facade.UserContext, r
 
 	user := dbo4userus.NewUserEntry(uid)
 
-	if err = dal4userus2.GetUser(ctx, nil, user); err != nil {
+	if err = dal4userus.GetUser(ctx, nil, user); err != nil {
 		err = fmt.Errorf("failed to get user record: %w", err)
 		return
 	}
@@ -217,19 +218,13 @@ func addRetroItemToSpaceRetro(ctx context.Context, userCtx facade.UserContext, r
 				return fmt.Errorf("failed to create retrospective record: %w", err)
 			}
 		} else {
-			updates := []dal.Update{
-				{
-					Field: "lastAction",
-					Value: response.TimeCreated,
-				},
-				{
-					Field: "items",
-					Value: dal.ArrayUnion(item),
-				},
-				{
-					Field: fmt.Sprintf("countsByMemberAndType.%v.%v", uid, request.Type),
-					Value: dal.Increment(1),
-				},
+			updates := []update.Update{
+				update.ByFieldName("lastAction", response.TimeCreated),
+				update.ByFieldName("items", dal.ArrayUnion(item)),
+				update.ByFieldName(
+					fmt.Sprintf("countsByMemberAndType.%v.%v", uid, request.Type),
+					dal.Increment(1),
+				),
 			}
 			if err = txUpdate(ctx, transaction, retrospectiveKey, updates); err != nil {
 				return fmt.Errorf("failed to update retrospective record: %w", err)

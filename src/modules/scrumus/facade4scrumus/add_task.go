@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -23,7 +24,7 @@ var addTaskInTransaction = func(
 	params.Meeting.Record.SetError(nil)
 	scrum := params.Meeting.Record.Data().(*dbo4scrumus.Scrum)
 
-	scrumUpdates := make([]dal.Update, 0, 6)
+	scrumUpdates := make([]update.Update, 0, 6)
 
 	status := scrum.GetOrCreateStatus(request.ContactID)
 	//status.Member.Title = ""
@@ -64,30 +65,21 @@ var addTaskInTransaction = func(
 	tasks = append(tasks, &dbo4scrumus.Task{ID: request.Task, Title: request.Title})
 	if params.Meeting.Record.Exists() {
 		scrumUpdates = append(scrumUpdates,
-			dal.Update{
-				Field: "v",
-				Value: dal.Increment(1),
-			},
-			dal.Update{
-				Field: fmt.Sprintf("statuses.%s.byType.%s", request.ContactID, request.Type),
-				Value: tasks,
-			},
-			dal.Update{
-				Field: fmt.Sprintf("statuses.%s.members", request.ContactID),
-				Value: status.Member,
-			},
+			update.ByFieldName("v", dal.Increment(1)),
+			update.ByFieldName(
+				fmt.Sprintf("statuses.%s.byType.%s", request.ContactID, request.Type),
+				tasks,
+			),
+			update.ByFieldName(
+				fmt.Sprintf("statuses.%s.members", request.ContactID),
+				status.Member,
+			),
 		)
 		if request.Type == "risk" {
-			scrumUpdates = append(scrumUpdates, dal.Update{
-				Field: "risksCount",
-				Value: dal.Increment(1),
-			})
+			scrumUpdates = append(scrumUpdates, update.ByFieldName("risksCount", dal.Increment(1)))
 		}
 		if request.Type == "qna" {
-			scrumUpdates = append(scrumUpdates, dal.Update{
-				Field: "questionsCount",
-				Value: dal.Increment(1),
-			})
+			scrumUpdates = append(scrumUpdates, update.ByFieldName("questionsCount", dal.Increment(1)))
 		}
 		if err = tx.Update(ctx, params.Meeting.Key, scrumUpdates); err != nil {
 			return nil, fmt.Errorf("failed to update scrum record: %v", err)

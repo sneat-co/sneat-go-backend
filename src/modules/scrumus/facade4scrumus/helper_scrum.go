@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dal4scrumus"
@@ -24,7 +25,7 @@ func UpdateLastScrumIDIfNeeded(
 	params facade4meetingus.WorkerParams,
 ) (err error) {
 
-	scrumSpaceUpdates := make([]dal.Update, 0, 1)
+	scrumSpaceUpdates := make([]update.Update, 0, 1)
 	scrumID := params.Meeting.GetID()
 	scrum := params.Meeting.Record.Data().(*dbo4scrumus.Scrum)
 
@@ -48,7 +49,7 @@ func UpdateLastScrumIDIfNeeded(
 			if err = prevScrum.Validate(); err != nil {
 				return
 			}
-			prevScrumUpdates := []dal.Update{{Field: "scrumIds.next", Value: scrumID}}
+			prevScrumUpdates := []update.Update{update.ByFieldName("scrumIds.next", scrumID)}
 			if err = tx.Update(ctx, prevScrumKey, prevScrumUpdates); err != nil {
 				return
 			}
@@ -61,10 +62,7 @@ func UpdateLastScrumIDIfNeeded(
 			Started:  scrum.Started,
 			Finished: scrum.Finished,
 		}
-		scrumSpaceUpdates = append(scrumSpaceUpdates, dal.Update{
-			Field: "last",
-			Value: scrumSpace.Data.Last,
-		})
+		scrumSpaceUpdates = append(scrumSpaceUpdates, update.ByFieldName("last", scrumSpace.Data.Last))
 	}
 	if len(scrumSpaceUpdates) > 0 {
 		if err = scrumSpace.Data.Validate(); err != nil {

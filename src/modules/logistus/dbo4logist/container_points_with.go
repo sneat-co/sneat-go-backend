@@ -2,7 +2,7 @@ package dbo4logist
 
 import (
 	"fmt"
-	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/strongo/validation"
 )
 
@@ -12,15 +12,12 @@ type WithContainerPoints struct {
 }
 
 // Updates populates update instructions for DAL
-func (v *WithContainerPoints) Updates() []dal.Update {
+func (v *WithContainerPoints) Updates() []update.Update {
+	var value any = v.ContainerPoints
 	if len(v.ContainerPoints) == 0 {
-		return []dal.Update{
-			{Field: "containerPoints", Value: dal.DeleteField},
-		}
+		value = update.DeleteField
 	}
-	return []dal.Update{
-		{Field: "containerPoints", Value: v.ContainerPoints},
-	}
+	return []update.Update{update.ByFieldName("containerPoints", value)}
 }
 
 // Validate returns an error if the WithContainerPoints is invalid.

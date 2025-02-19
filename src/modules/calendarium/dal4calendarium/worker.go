@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
@@ -16,7 +17,7 @@ type CalendariumSpaceWorkerParams = dal4spaceus.ModuleSpaceWorkerParams[*dbo4cal
 type HappeningWorkerParams struct {
 	*CalendariumSpaceWorkerParams
 	Happening        dbo4calendarium.HappeningEntry
-	HappeningUpdates []dal.Update
+	HappeningUpdates []update.Update
 }
 
 type HappeningWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *HappeningWorkerParams) (err error)
@@ -69,10 +70,8 @@ func RunHappeningSpaceWorker(
 			}
 			recurringHappening.HappeningBrief = params.Happening.Data.HappeningBrief
 			recurringHappening.WithRelated = params.Happening.Data.WithRelated
-			moduleSpaceParams.SpaceModuleUpdates = append(moduleSpaceParams.SpaceModuleUpdates, dal.Update{
-				Field: "recurringHappenings." + request.HappeningID,
-				Value: params.Happening.Data.HappeningBrief,
-			})
+			moduleSpaceParams.SpaceModuleUpdates = append(moduleSpaceParams.SpaceModuleUpdates,
+				update.ByFieldName("recurringHappenings."+request.HappeningID, params.Happening.Data.HappeningBrief))
 			moduleSpaceParams.SpaceModuleEntry.Record.MarkAsChanged()
 		}
 		return nil

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
@@ -71,11 +72,11 @@ func ThumbUp(ctx context.Context, userCtx facade.UserContext, request ThumbUpReq
 					return nil
 				}
 			}
-			return tx.Update(ctx, params.Meeting.Key, []dal.Update{
-				{
-					Field: fmt.Sprintf("statuses.%s.byType.%s", request.ContactID, request.Type),
-					Value: params.tasks,
-				},
+			return tx.Update(ctx, params.Meeting.Key, []update.Update{
+				update.ByFieldName(
+					fmt.Sprintf("statuses.%s.byType.%s", request.ContactID, request.Type),
+					params.tasks,
+				),
 			})
 		})
 }

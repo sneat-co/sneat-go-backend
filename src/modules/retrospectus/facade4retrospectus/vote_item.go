@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -46,13 +47,12 @@ func VoteItem(ctx context.Context, userCtx facade.UserContext, request VoteItemR
 			if points == request.Points {
 				return nil
 			}
-			updates := []dal.Update{{
-				Field: fmt.Sprintf("%v.votesByUser.%v", itemNode.GetUpdatePath(nodesByID), uid),
-			}}
+			var updates []update.Update
+			fieldName := fmt.Sprintf("%v.votesByUser.%v", itemNode.GetUpdatePath(nodesByID), uid)
 			if request.Points == 0 {
-				updates[0].Value = dal.DeleteField
+				updates = append(updates, update.ByFieldName(fieldName, update.DeleteField))
 			} else {
-				updates[0].Value = request.Points
+				updates = append(updates, update.ByFieldName(fieldName, request.Points))
 			}
 			item.VotesByUser[uid] = request.Points
 			if err = txUpdateRetrospective(ctx, tx, params.Meeting.Key, retrospective, updates); err != nil {

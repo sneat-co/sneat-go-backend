@@ -2,7 +2,7 @@ package dbo4logist
 
 import (
 	"fmt"
-	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-core-modules/contactus/briefs4contactus"
 	"github.com/strongo/slice"
 	"github.com/strongo/strongoapp/with"
@@ -46,10 +46,8 @@ func (v WithOrderContacts) Validate() error {
 }
 
 // Updates returns updates for WithCounterparties
-func (v WithOrderContacts) Updates() []dal.Update {
-	return []dal.Update{
-		{Field: "contacts", Value: v.Contacts},
-	}
+func (v WithOrderContacts) Updates() []update.Update {
+	return []update.Update{update.ByFieldName("contacts", v.Contacts)}
 }
 
 // GetContactByID returns contact by ContactID

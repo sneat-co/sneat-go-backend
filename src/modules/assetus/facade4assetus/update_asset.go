@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
+	"github.com/dal-go/dalgo/update"
 	extra2 "github.com/sneat-co/sneat-core-modules/core/extra"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
@@ -33,7 +34,7 @@ func UpdateAssetTx(ctx context.Context, tx dal.ReadwriteTransaction, userCtx fac
 type AssetWorkerParams struct {
 	*dal4spaceus.ModuleSpaceWorkerParams[*dbo4assetus.AssetusSpaceDbo]
 	Asset        record.DataWithID[string, *dbo4assetus.AssetDbo]
-	AssetUpdates []dal.Update
+	AssetUpdates []update.Update
 }
 
 func runAssetWorker(ctx context.Context, tx dal.ReadwriteTransaction, userCtx facade.UserContext, request dto4assetus.UpdateAssetRequest, extraData extra2.Data) (err error) {

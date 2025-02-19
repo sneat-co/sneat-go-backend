@@ -2,7 +2,7 @@ package dbo4calendarium
 
 import (
 	"fmt"
-	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-core-modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
@@ -21,26 +21,26 @@ type HappeningBrief struct {
 	dbo4linkage.WithRelated
 }
 
-func (v *HappeningBrief) MarkAsCanceled(cancellation Cancellation) (updates []dal.Update) {
+func (v *HappeningBrief) MarkAsCanceled(cancellation Cancellation) (updates []update.Update) {
 	if v.Status != HappeningStatusCanceled {
 		v.Status = HappeningStatusCanceled
-		updates = append(updates, dal.Update{Field: "status", Value: v.Status})
+		updates = append(updates, update.ByFieldName("status", v.Status))
 	}
 	if v.Cancellation == nil {
 		v.Cancellation = &cancellation
-		updates = append(updates, dal.Update{Field: "canceled", Value: v.Cancellation})
+		updates = append(updates, update.ByFieldName("canceled", v.Cancellation))
 	}
 	return
 }
 
-func (v *HappeningBrief) RemoveCancellation() (updates []dal.Update) {
+func (v *HappeningBrief) RemoveCancellation() (updates []update.Update) {
 	if v.Status == HappeningStatusCanceled {
 		v.Status = HappeningStatusActive
-		updates = append(updates, dal.Update{Field: "status", Value: v.Status})
+		updates = append(updates, update.ByFieldName("status", v.Status))
 	}
 	if v.Cancellation != nil {
 		v.Cancellation = nil
-		updates = append(updates, dal.Update{Field: "canceled", Value: nil})
+		updates = append(updates, update.ByFieldName("canceled", update.DeleteField))
 	}
 	return updates
 }

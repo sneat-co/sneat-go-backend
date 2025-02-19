@@ -3,6 +3,7 @@ package facade4calendarium
 import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
@@ -33,10 +34,8 @@ func deleteHappeningPricesTx(ctx context.Context, tx dal.ReadwriteTransaction, _
 	}
 	if len(prices) < len(happeningDbo.Prices) {
 		happeningDbo.Prices = prices
-		params.HappeningUpdates = append(params.HappeningUpdates, dal.Update{
-			Field: "prices",
-			Value: happeningDbo.Prices,
-		})
+		params.HappeningUpdates = append(params.HappeningUpdates,
+			update.ByFieldName("prices", happeningDbo.Prices))
 		params.Happening.Record.MarkAsChanged()
 	}
 	return nil

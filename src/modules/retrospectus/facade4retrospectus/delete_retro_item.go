@@ -58,7 +58,7 @@ func deleteUserRetroItem(ctx context.Context, _ facade.UserContext, _ RetroItemR
 		//			return fmt.Errorf("failed to update team record: %w", err)
 		//		}
 		//	}
-		//	if err = txUpdate(ctx, tx, userKey, []dal.Update{
+		//	if err = txUpdate(ctx, tx, userKey, []update.Update{
 		//		{Field: fmt.Sprintf("????.%v.retroItems.%v", request.Space, request.Role), Value: items},
 		//	}); err != nil {
 		//		return fmt.Errorf("failed to update user record after deleting retro item: %w", err)

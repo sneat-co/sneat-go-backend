@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dal4assetus"
@@ -21,9 +22,9 @@ func DeleteAsset(ctx context.Context, userCtx facade.UserContext, request dal4sp
 	}
 	briefsAdapter := dal4spaceus.NewMapBriefsAdapter[*dbo4assetus.AssetusSpaceDbo](
 		getBriefsCount,
-		func(teamModuleDbo *dbo4assetus.AssetusSpaceDbo, id string) ([]dal.Update, error) {
+		func(teamModuleDbo *dbo4assetus.AssetusSpaceDbo, id string) ([]update.Update, error) {
 			delete(teamModuleDbo.Assets, id)
-			return []dal.Update{{Field: "assets." + id, Value: dal.DeleteField}}, teamModuleDbo.Validate()
+			return []update.Update{update.ByFieldName("assets."+id, update.DeleteField)}, teamModuleDbo.Validate()
 		},
 	)
 

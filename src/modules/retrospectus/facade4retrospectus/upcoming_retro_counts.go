@@ -25,12 +25,12 @@ package facade4retrospectus
 //	if !teamRecord.Exists() {
 //		return dal.NewErrNotFoundByKey(teamKey, dal.ErrRecordNotFound)
 //	}
-//	teamUpdates := make([]dal.Update, 0, 1)
+//	teamUpdates := make([]update.Update, 0, 1)
 //	path := fmt.Sprintf("upcomingRetro.itemsByUserAndType.%v", uid)
 //	if len(itemsByType) == 0 {
 //		upcomingRetro := team.Data.UpcomingRetro
 //		if upcomingRetro != nil && upcomingRetro.ItemsByUserAndType != nil {
-//			teamUpdates = append(teamUpdates, dal.Update{Field: path, Value: dal.DeleteField})
+//			teamUpdates = append(teamUpdates, update.Update{Field: path, Value: update.DeleteField})
 //			delete(upcomingRetro.ItemsByUserAndType, uid)
 //		}
 //	} else {
@@ -41,7 +41,7 @@ package facade4retrospectus
 //			}
 //			if count := len(items); count > 0 {
 //				currentUserCounts[itemType] = count
-//				teamUpdates = append(teamUpdates, dal.Update{Field: fmt.Sprintf("%v.%v", path, itemType), Value: count})
+//				teamUpdates = append(teamUpdates, update.Update{Field: fmt.Sprintf("%v.%v", path, itemType), Value: count})
 //			}
 //		}
 //
@@ -49,7 +49,7 @@ package facade4retrospectus
 //			if existingCounts, teamHasUserCounts := team.Data.UpcomingRetro.ItemsByUserAndType[uid]; teamHasUserCounts {
 //				for itemType := range existingCounts {
 //					if _, exist := currentUserCounts[itemType]; !exist {
-//						teamUpdates = append(teamUpdates, dal.Update{Field: fmt.Sprintf("%v.%v", path, itemType), Value: dal.DeleteField})
+//						teamUpdates = append(teamUpdates, update.Update{Field: fmt.Sprintf("%v.%v", path, itemType), Value: update.DeleteField})
 //					}
 //				}
 //			}

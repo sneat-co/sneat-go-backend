@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/dbo4meetingus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
@@ -148,9 +149,7 @@ func ToggleTimer(ctx context.Context, userCtx facade.UserContext, params ToggleP
 			// This should be before updating or creating scrum record as it fetches other recs and will fail otherwise
 
 			if workerParams.Meeting.Record.Exists() {
-				err = tx.Update(ctx, workerParams.Meeting.Key, []dal.Update{
-					{Field: "timer", Value: timer},
-				})
+				err = tx.Update(ctx, workerParams.Meeting.Key, []update.Update{update.ByFieldName("timer", timer)})
 				if err != nil {
 					return fmt.Errorf("failed to update api4meetingus record: %w", err)
 				}

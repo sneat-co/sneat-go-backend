@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
@@ -68,8 +69,8 @@ func createOrderTxWorker(
 	}
 
 	if logistSpace.Record.Exists() {
-		logistSpaceUpdates := []dal.Update{
-			{Field: "orderCounters.all.lastNumber", Value: counter.LastNumber},
+		logistSpaceUpdates := []update.Update{
+			update.ByFieldName("orderCounters.all.lastNumber", counter.LastNumber),
 		}
 		if err := tx.Update(ctx, logistSpace.Key, logistSpaceUpdates); err != nil {
 			return nil, fmt.Errorf("failed to update logistus team record: %w", err)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
@@ -78,24 +79,20 @@ func removeSlotFromHappeningDbo(
 		if params.Happening.Data.Slots[request.SlotID] != nil {
 			if len(params.Happening.Data.Slots) == 1 {
 				params.Happening.Data.Status = dbo4calendarium.HappeningStatusDeleted
-				params.HappeningUpdates = append(params.HappeningUpdates, dal.Update{
-					Field: "status", Value: params.Happening.Data.Status,
-				})
+
+				params.HappeningUpdates = append(params.HappeningUpdates,
+					update.ByFieldName("status", params.Happening.Data.Status))
 			} else {
-				params.HappeningUpdates = append(params.HappeningUpdates, dal.Update{
-					Field: "slots." + request.SlotID,
-					Value: dal.DeleteField,
-				})
+				params.HappeningUpdates = append(params.HappeningUpdates,
+					update.ByFieldName("slots."+request.SlotID, update.DeleteField))
 			}
 			params.Happening.Record.MarkAsChanged()
 		}
 	} else {
 		slot := params.Happening.Data.GetSlot(request.SlotID)
 		if changed := removeWeekday(slot, request.Weekday); changed {
-			params.HappeningUpdates = append(params.HappeningUpdates, dal.Update{
-				Field: "slots",
-				Value: params.Happening.Data.Slots,
-			})
+			params.HappeningUpdates = append(params.HappeningUpdates,
+				update.ByFieldName("slots", params.Happening.Data.Slots))
 			params.Happening.Record.MarkAsChanged()
 		}
 	}
@@ -114,18 +111,20 @@ func removeSlotFromHappeningBriefInSpaceRecord(
 			if len(brief.Slots) == 1 {
 				if brief.Status != dbo4calendarium.HappeningStatusDeleted {
 					brief.Status = dbo4calendarium.HappeningStatusDeleted
-					params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, dal.Update{
-						Field: fmt.Sprintf("recurringHappenings.%s.status", params.Happening.ID),
-						Value: params.Happening.Data.Status,
-					})
+
+					params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, update.ByFieldName(
+						fmt.Sprintf("recurringHappenings.%s.status", params.Happening.ID),
+						params.Happening.Data.Status,
+					))
 					params.SpaceModuleEntry.Record.MarkAsChanged()
 				}
 			} else {
 				delete(brief.Slots, request.SlotID)
-				params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, dal.Update{
-					Field: fmt.Sprintf("recurringHappenings.%s.slots.%s", params.Happening.ID, request.SlotID),
-					Value: dal.DeleteField,
-				})
+
+				params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, update.ByFieldName(
+					fmt.Sprintf("recurringHappenings.%s.slots.%s", params.Happening.ID, request.SlotID),
+					update.DeleteField,
+				))
 				params.SpaceModuleEntry.Record.MarkAsChanged()
 			}
 		}

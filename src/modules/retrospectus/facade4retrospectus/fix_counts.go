@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
 	dbo4userus2 "github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dal4retrospectus"
@@ -33,16 +34,16 @@ func FixCounts(ctx context.Context, userCtx facade.UserContext, request FixCount
 			}
 		}
 		teamInfo := user.GetUserSpaceInfoByID(request.SpaceID)
-		updates := make([]dal.Update, 0, 1)
+		updates := make([]update.Update, 0, 1)
 		if teamInfo == nil {
 			if _, ok := retroSpace.Data.UpcomingRetro.ItemsByUserAndType[uid]; ok {
 				delete(retroSpace.Data.UpcomingRetro.ItemsByUserAndType, uid)
 				if len(retroSpace.Data.UpcomingRetro.ItemsByUserAndType) == 0 {
 					retroSpace.Data.UpcomingRetro = nil
-					updates = append(updates, dal.Update{Field: "upcomingRetro", Value: dal.DeleteField})
+					updates = append(updates, update.ByFieldName("upcomingRetro", update.DeleteField))
 				} else {
 					path := fmt.Sprintf("upcomingRetro.itemsByUserAndType.%v", uid)
-					updates = append(updates, dal.Update{Field: path, Value: dal.DeleteField})
+					updates = append(updates, update.ByFieldName(path, update.DeleteField))
 				}
 			}
 		} else {
@@ -52,16 +53,16 @@ func FixCounts(ctx context.Context, userCtx facade.UserContext, request FixCount
 			//		path := fmt.Sprintf("upcomingRetro.itemsByUserAndType.%v.%v", uid, itemType)
 			//		if count == 0 {
 			//			delete(team.Data.UpcomingRetro.ItemsByUserAndType[uid], itemType)
-			//			updates = append(updates, dal.Update{Field: path, Value: dal.DeleteField})
+			//			updates = append(updates, update.Update{Field: path, Value: update.DeleteField})
 			//		} else {
 			//			team.Data.UpcomingRetro.ItemsByUserAndType[uid][itemType] = count
-			//			updates = append(updates, dal.Update{Field: path, Value: count})
+			//			updates = append(updates, update.Update{Field: path, Value: count})
 			//		}
 			//	}
 			//}
 			if len(retroSpace.Data.UpcomingRetro.ItemsByUserAndType[uid]) == 0 {
 				delete(retroSpace.Data.UpcomingRetro.ItemsByUserAndType, uid)
-				updates = []dal.Update{{Field: "upcomingRetro", Value: dal.DeleteField}}
+				updates = []update.Update{update.ByFieldName("upcomingRetro", update.DeleteField)}
 			}
 		}
 		if len(updates) > 0 {

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
@@ -102,9 +103,10 @@ func cancelRecurringHappeningInstance(
 		if err = happeningBrief.Validate(); err != nil {
 			return fmt.Errorf("happening brief in team record is not valid: %w", err)
 		}
-		for _, update := range updates {
-			update.Field = fmt.Sprintf("recurringHappenings.%s.%s", params.Happening.ID, update.Field)
-			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, update)
+		for _, u := range updates {
+			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates,
+				update.ByFieldName(fmt.Sprintf("recurringHappenings.%s.%s", params.Happening.ID, u.FieldName()), u.Value()),
+			)
 		}
 		params.SpaceModuleEntry.Record.MarkAsChanged()
 	} else if err = addCancellationToCalendarDayAdjustments(ctx, tx, request, params, cancellation, calendarDay); err != nil {
@@ -122,7 +124,7 @@ func addCancellationToCalendarDayAdjustments(
 	cancellation dbo4calendarium.Cancellation,
 	calendarDay dbo4calendarium.CalendarDayEntry,
 ) (err error) {
-	var dayUpdates []dal.Update
+	var dayUpdates []update.Update
 	happeningAdjustment, slotAdjustment := calendarDay.Data.GetAdjustment(params.Happening.ID, request.SlotID)
 	if slotAdjustment == nil {
 		slot := params.Happening.Data.GetSlot(request.SlotID)
@@ -147,9 +149,7 @@ func addCancellationToCalendarDayAdjustments(
 	}
 	if !slices.Contains(calendarDay.Data.HappeningIDs, params.Happening.ID) {
 		calendarDay.Data.HappeningIDs = append(calendarDay.Data.HappeningIDs, params.Happening.ID)
-		dayUpdates = append(dayUpdates, dal.Update{
-			Field: "happeningIDs", Value: calendarDay.Data.HappeningIDs,
-		})
+		dayUpdates = append(dayUpdates, update.ByFieldName("happeningIDs", calendarDay.Data.HappeningIDs))
 	}
 	var modified bool
 	if slotAdjustment.Cancellation == nil || *slotAdjustment.Cancellation != cancellation {
@@ -166,9 +166,7 @@ func addCancellationToCalendarDayAdjustments(
 			return fmt.Errorf("failed to create calendar day record: %w", err)
 		}
 	} else if modified {
-		dayUpdates = append(dayUpdates, dal.Update{
-			Field: "cancellations", Value: calendarDay.Data.HappeningAdjustments,
-		})
+		dayUpdates = append(dayUpdates, update.ByFieldName("cancellations", calendarDay.Data.HappeningAdjustments))
 		if err = tx.Update(ctx, calendarDay.Key, dayUpdates); err != nil {
 			return fmt.Errorf("failed to update calendar day record: %w", err)
 		}

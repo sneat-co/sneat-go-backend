@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
@@ -27,7 +28,7 @@ func ReorderListItem(ctx context.Context, userCtx facade.UserContext, request dt
 		if err = dal4listus.GetListForUpdate(ctx, tx, list); err != nil {
 			return fmt.Errorf("failed to get a list for reordering of list items: %w", err)
 		}
-		//listUpdates := make([]dal.Update, 0, len(request.ItemIDs))
+		//listUpdates := make([]update.Update, 0, len(request.ItemIDs))
 		itemsToMove := make([]*dbo4listus.ListItemBrief, 0, len(request.ItemIDs))
 		otherItems := make([]*dbo4listus.ListItemBrief, 0, len(list.Data.Items)-len(request.ItemIDs))
 
@@ -61,12 +62,7 @@ func ReorderListItem(ctx context.Context, userCtx facade.UserContext, request dt
 			items = append(items, otherItems[i])
 		}
 		list.Data.Items = items
-		listUpdates := []dal.Update{
-			{
-				Field: "items",
-				Value: list.Data.Items,
-			},
-		}
+		listUpdates := []update.Update{update.ByFieldName("items", list.Data.Items)}
 		listKey := list.Record.Key()
 		//logus.Debugf("Updating list with listKey=%v, item[1]: %+v; updates[0]: %+v",
 		//	listKey, list.Data.Items[1], listUpdates[0].Value)

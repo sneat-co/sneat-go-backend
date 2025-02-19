@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-core-modules/contactus/briefs4contactus"
 	dal4contactus2 "github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
 	dbo4contactus2 "github.com/sneat-co/sneat-core-modules/contactus/dbo4contactus"
@@ -46,10 +47,8 @@ func setLogistSpaceSettingsTx(
 ) (err error) {
 	if workerParams.Space.Data.CountryID != request.Address.CountryID {
 		workerParams.Space.Data.CountryID = request.Address.CountryID
-		workerParams.SpaceUpdates = append(workerParams.SpaceUpdates, dal.Update{
-			Field: "countryID",
-			Value: request.Address.CountryID,
-		})
+		workerParams.SpaceUpdates = append(workerParams.SpaceUpdates,
+			update.ByFieldName("countryID", request.Address.CountryID))
 	}
 
 	logistSpace := dbo4logist.NewLogistSpaceEntry(request.SpaceID)
@@ -122,34 +121,34 @@ func setLogistSpaceSettingsTx(
 	return nil
 }
 
-func updateLogistSpace(logistSpaceDbo *dbo4logist.LogistSpaceDbo, spaceDbo *dbo4spaceus.SpaceDbo, teamContact dal4contactus2.ContactEntry, request dto4logist.SetLogistSpaceSettingsRequest) (updates []dal.Update) {
+func updateLogistSpace(logistSpaceDbo *dbo4logist.LogistSpaceDbo, spaceDbo *dbo4spaceus.SpaceDbo, teamContact dal4contactus2.ContactEntry, request dto4logist.SetLogistSpaceSettingsRequest) (updates []update.Update) {
 	if logistSpaceDbo.ContactID != teamContact.ID {
 		logistSpaceDbo.ContactID = teamContact.ID
-		updates = append(updates, dal.Update{Field: "contactID", Value: teamContact.ID})
+		updates = append(updates, update.ByFieldName("contactID", teamContact.ID))
 	}
 	if request.OrderNumberPrefix != "" {
 		logistSpaceDbo.OrderNumberPrefix = request.OrderNumberPrefix
-		updates = append(updates, dal.Update{Field: "orderNumberPrefix", Value: request.OrderNumberPrefix})
+		updates = append(updates, update.ByFieldName("orderNumberPrefix", request.OrderNumberPrefix))
 	}
 	if dbo4logist.RolesChanged(logistSpaceDbo.Roles, request.Roles) {
 		logistSpaceDbo.Roles = dbo4logist.ConvertLogistSpaceRolesToStringSlice(request.Roles)
-		updates = append(updates, dal.Update{Field: "roles", Value: request.Roles})
+		updates = append(updates, update.ByFieldName("roles", request.Roles))
 	}
 	if !slice.SameUniqueValues(logistSpaceDbo.UserIDs, spaceDbo.UserIDs) {
 		logistSpaceDbo.UserIDs = spaceDbo.UserIDs
-		updates = append(updates, dal.Update{Field: "userIDs", Value: spaceDbo.UserIDs})
+		updates = append(updates, update.ByFieldName("userIDs", spaceDbo.UserIDs))
 	}
 	return updates
 }
 
-func updateContact(contactDto *dbo4contactus2.ContactDbo, request dto4logist.SetLogistSpaceSettingsRequest) (updates []dal.Update) {
+func updateContact(contactDto *dbo4contactus2.ContactDbo, request dto4logist.SetLogistSpaceSettingsRequest) (updates []update.Update) {
 	if contactDto.VATNumber != request.VATNumber {
 		contactDto.VATNumber = request.VATNumber
-		updates = append(updates, dal.Update{Field: "vatNumber", Value: request.VATNumber})
+		updates = append(updates, update.ByFieldName("vatNumber", request.VATNumber))
 	}
 	if dbo4logist.RolesChanged(contactDto.Roles, request.Roles) {
 		contactDto.Roles = dbo4logist.ConvertLogistSpaceRolesToStringSlice(request.Roles)
-		updates = append(updates, dal.Update{Field: "roles", Value: request.Roles})
+		updates = append(updates, update.ByFieldName("roles", request.Roles))
 	}
 	return
 }

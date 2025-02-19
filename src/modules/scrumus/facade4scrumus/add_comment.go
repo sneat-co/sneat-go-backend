@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-core-modules/userus/dal4userus"
 	"github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus"
@@ -71,11 +72,11 @@ func AddComment(ctx context.Context, userCtx facade.UserContext, request AddComm
 			}
 
 			params.task.Comments = append(params.task.Comments, comment)
-			return tx.Update(ctx, params.Meeting.Key, []dal.Update{
-				{
-					Field: fmt.Sprintf("statuses.%s.byType.%s", request.TaskRequest.ContactID, request.TaskRequest.Type),
-					Value: params.tasks,
-				},
+			return tx.Update(ctx, params.Meeting.Key, []update.Update{
+				update.ByFieldName(
+					fmt.Sprintf("statuses.%s.byType.%s", request.TaskRequest.ContactID, request.TaskRequest.Type),
+					params.tasks,
+				),
 			})
 		})
 	return comment, err

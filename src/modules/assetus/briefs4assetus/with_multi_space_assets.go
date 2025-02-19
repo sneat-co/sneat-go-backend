@@ -1,7 +1,7 @@
 package briefs4assetus
 
 import (
-	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
 )
@@ -16,12 +16,12 @@ type WithAssets struct {
 	Assets map[string]*AssetBrief `json:"assets,omitempty" firestore:"assets,omitempty"`
 }
 
-func (v *WithAssets) AddAssetBrief(assetID string, assetBrief AssetBrief) (updates []dal.Update, err error) {
+func (v *WithAssets) AddAssetBrief(assetID string, assetBrief AssetBrief) (updates []update.Update, err error) {
 	if v.Assets == nil {
 		v.Assets = make(map[string]*AssetBrief, 1)
 	}
 	v.Assets[assetID] = &assetBrief
-	updates = append(updates, dal.Update{Field: "assets." + assetID, Value: assetBrief})
+	updates = append(updates, update.ByFieldName("assets."+assetID, assetBrief))
 	return
 }
 

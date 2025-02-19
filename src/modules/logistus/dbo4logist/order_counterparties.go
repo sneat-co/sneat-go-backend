@@ -2,7 +2,7 @@ package dbo4logist
 
 import (
 	"fmt"
-	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/strongo/slice"
 	"github.com/strongo/validation"
 )
@@ -118,8 +118,6 @@ func (v WithCounterparties) GetCounterpartyByContactID(contactID string) (i int,
 }
 
 // Updates returns updates for WithCounterparties
-func (v WithCounterparties) Updates() []dal.Update {
-	return []dal.Update{
-		{Field: "counterparties", Value: v.Counterparties},
-	}
+func (v WithCounterparties) Updates() []update.Update {
+	return []update.Update{update.ByFieldName("counterparties", v.Counterparties)}
 }

@@ -2,7 +2,7 @@ package dbo4logist
 
 import (
 	"fmt"
-	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
 )
@@ -115,16 +115,12 @@ type WithShippingPoints struct {
 	ShippingPoints []*OrderShippingPoint `json:"shippingPoints,omitempty" firestore:"shippingPoints,omitempty"`
 }
 
-func (v *WithShippingPoints) Updates() []dal.Update {
+func (v *WithShippingPoints) Updates() []update.Update {
 	const field = "shippingPoints"
 	if len(v.ShippingPoints) == 0 {
-		return []dal.Update{
-			{Field: field, Value: dal.DeleteField},
-		}
+		return []update.Update{update.ByFieldName(field, update.DeleteField)}
 	}
-	return []dal.Update{
-		{Field: field, Value: v.ShippingPoints},
-	}
+	return []update.Update{update.ByFieldName(field, v.ShippingPoints)}
 }
 
 func (v *WithShippingPoints) validateOrder(orderDto OrderDbo) error {

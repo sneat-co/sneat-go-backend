@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-core-modules/userus/dbo4userus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -36,11 +37,8 @@ func MoveRetroItem(ctx context.Context, userCtx facade.UserContext, request Move
 		if err = dbo4retrospectus.MoveRetroItem(retrospective.Items, request.Item, request.From, request.To); err != nil {
 			return err
 		}
-		if err = txUpdateRetrospective(ctx, tx, retrospectiveKey, retrospective, []dal.Update{
-			{
-				Field: "items",
-				Value: retrospective.Items,
-			},
+		if err = txUpdateRetrospective(ctx, tx, retrospectiveKey, retrospective, []update.Update{
+			update.ByFieldName("items", retrospective.Items),
 		}); err != nil {
 			return err
 		}

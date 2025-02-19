@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
@@ -67,9 +68,10 @@ func removeCancellationFromHappeningBriefInSpaceModuleEntry(params *dal4calendar
 	}
 
 	if updates := happeningBrief.RemoveCancellation(); len(updates) > 0 {
-		for _, update := range updates {
-			update.Field = "recurringHappenings." + params.Happening.ID + "." + update.Field
-			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, update)
+		for _, u := range updates {
+			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates,
+				update.ByFieldName("recurringHappenings."+params.Happening.ID+"."+u.FieldName(), u.Value()),
+			)
 		}
 		params.SpaceModuleEntry.Record.MarkAsChanged()
 	}

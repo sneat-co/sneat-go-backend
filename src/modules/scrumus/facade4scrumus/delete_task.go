@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
@@ -31,34 +32,22 @@ func DeleteTask(ctx context.Context, userCtx facade.UserContext, request DeleteT
 			}
 			var updateValue interface{}
 			if len(tasks) == 0 {
-				updateValue = dal.DeleteField
+				updateValue = update.DeleteField
 			} else {
 				if err = dbo4scrumus.ValidateTasks(tasks); err != nil {
 					return err
 				}
 				updateValue = tasks
 			}
-			updates := []dal.Update{
-				{
-					Field: "v",
-					Value: dal.Increment(1),
-				},
-				{
-					Field: fmt.Sprintf("statuses.%s.byType.%s", request.ContactID, request.Type),
-					Value: updateValue,
-				},
+			updates := []update.Update{
+				update.ByFieldName("v", dal.Increment(1)),
+				update.ByFieldName(fmt.Sprintf("statuses.%s.byType.%s", request.ContactID, request.Type), updateValue),
 			}
 			if request.Type == "risk" {
-				updates = append(updates, dal.Update{
-					Field: "risksCount",
-					Value: dal.Increment(-1),
-				})
+				updates = append(updates, update.ByFieldName("risksCount", dal.Increment(-1)))
 			}
 			if request.Type == "qna" {
-				updates = append(updates, dal.Update{
-					Field: "questionsCount",
-					Value: dal.Increment(-1),
-				})
+				updates = append(updates, update.ByFieldName("questionsCount", dal.Increment(-1)))
 			}
 			return tx.Update(ctx, params.Meeting.Key, updates)
 		})

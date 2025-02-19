@@ -3,6 +3,7 @@ package facade4listus
 import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/const4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
@@ -48,12 +49,7 @@ func SetListItemsIsDone(ctx context.Context, userCtx facade.UserContext, request
 				return nil
 			}
 			params.List.Record.MarkAsChanged()
-			params.ListUpdates = []dal.Update{
-				{
-					Field: "items",
-					Value: params.List.Data.Items,
-				},
-			}
+			params.ListUpdates = []update.Update{update.ByFieldName("items", params.List.Data.Items)}
 			return nil
 		},
 	)

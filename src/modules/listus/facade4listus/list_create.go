@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	dal4spaceus2 "github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/const4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
@@ -100,10 +101,7 @@ func CreateList(ctx context.Context, userCtx facade.UserContext, request dto4lis
 					return fmt.Errorf("failed to insert team module entry record: %w", err)
 				}
 			} else {
-				params.SpaceUpdates = append(params.SpaceUpdates, dal.Update{
-					Field: "lists." + listType,
-					Value: listBrief,
-				})
+				params.SpaceUpdates = append(params.SpaceUpdates, update.ByFieldName("lists."+listType, listBrief))
 			}
 			return err
 		},

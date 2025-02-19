@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/update"
 	dal4spaceus2 "github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/briefs4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
@@ -71,7 +72,7 @@ func createAssetTx(
 		return
 	}
 
-	var assetusSpaceModuleUpdates []dal.Update
+	var assetusSpaceModuleUpdates []update.Update
 	if assetusSpaceModuleUpdates, err = params.SpaceModuleEntry.Data.AddAssetBrief(asset.ID, assetBrief); err != nil {
 		return
 	}
