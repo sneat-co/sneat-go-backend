@@ -11,7 +11,7 @@ import (
 )
 
 func TestInitFirebase(t *testing.T) {
-	initFirebase()
+	logFirebaseEmulatorVars()
 }
 
 func Test_start(t *testing.T) {

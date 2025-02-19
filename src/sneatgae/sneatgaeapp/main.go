@@ -70,7 +70,7 @@ func initHtmlPageHandlers(handle module.HTTPHandleFunc) {
 }
 
 func initInfrastructure(emailClient emails.Client) {
-	initFirebase() // Connection to Firebase
+	logFirebaseEmulatorVars() // Connection to Firebase
 	emails.Init(emailClient)
 }
 
