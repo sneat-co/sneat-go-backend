@@ -9,6 +9,7 @@ import (
 	"github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
+	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/facade"
 	dbmodels2 "github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/slice"
@@ -104,7 +105,7 @@ func fillOrderDtoFromRequest(orderDto *dbo4logist.OrderDbo, request dto4logist.C
 	orderDto.Status = "active"
 	orderDto.UserIDs = params.Space.Data.UserIDs
 	orderDto.SpaceID = params.Space.ID
-	orderDto.SpaceIDs = []string{params.Space.ID}
+	orderDto.SpaceIDs = []coretypes.SpaceID{params.Space.ID}
 	modified := dbmodels2.Modified{
 		By: userID,
 		At: time.Now(),
@@ -151,7 +152,7 @@ func fillOrderDtoFromRequest(orderDto *dbo4logist.OrderDbo, request dto4logist.C
 	}
 }
 
-func addContactsFromCounterparties(ctx context.Context, tx dal.ReadTransaction, spaceID string, order *dbo4logist.OrderDbo) error {
+func addContactsFromCounterparties(ctx context.Context, tx dal.ReadTransaction, spaceID coretypes.SpaceID, order *dbo4logist.OrderDbo) error {
 	if len(order.Counterparties) == 0 {
 		panic("at least 1 counterparty should be added to a new order")
 	}

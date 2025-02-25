@@ -11,6 +11,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
+	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )
@@ -76,7 +77,7 @@ func addContactToHappeningBriefInSpaceDbo(
 	happening dbo4calendarium.HappeningEntry,
 	contactID string,
 ) (updates []update.Update, err error) {
-	spaceID := calendariumSpace.Key.Parent().ID.(string)
+	spaceID := calendariumSpace.Key.Parent().ID.(coretypes.SpaceID)
 	happeningBriefPointer := calendariumSpace.Data.GetRecurringHappeningBrief(happening.ID)
 	var happeningBrief dbo4calendarium.HappeningBrief
 	if happeningBriefPointer == nil {

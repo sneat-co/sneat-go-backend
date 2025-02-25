@@ -9,6 +9,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
+	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"strings"
 )
@@ -58,7 +59,7 @@ func createListItemsTxWorker(
 			return
 		}
 
-		list.Data.SpaceIDs = []string{request.SpaceID}
+		list.Data.SpaceIDs = []coretypes.SpaceID{request.SpaceID}
 		list.Data.UserIDs = []string{params.UserID()}
 		list.Data.Type = listType
 		if list.Data.Emoji == "" {

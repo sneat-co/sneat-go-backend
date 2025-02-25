@@ -11,6 +11,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dal4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dto4assetus"
+	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/random"
@@ -51,7 +52,9 @@ func createAssetTx(
 	asset := dal4assetus.NewAssetEntry(request.SpaceRequest.SpaceID, random.ID(8)) // TODO: use DALgo random ContactID generator
 	asset.Data.AssetBaseDbo = request.Asset
 	asset.Data.UserIDs = []string{params.UserID()}
-	asset.Data.SpaceIDs = []string{request.SpaceRequest.SpaceID}
+	asset.Data.SpaceIDs = []coretypes.SpaceID{
+		request.SpaceRequest.SpaceID,
+	}
 	//asset.Data.ContactIDs = []string{"*"}
 	asset.Data.WithModified = dbmodels.NewWithModified(params.Started, params.UserID())
 

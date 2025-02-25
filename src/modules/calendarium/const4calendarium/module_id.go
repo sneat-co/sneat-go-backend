@@ -1,3 +1,5 @@
 package const4calendarium
 
-const ModuleID = "calendarium"
+import "github.com/sneat-co/sneat-go-core/coretypes"
+
+const ModuleID coretypes.ModuleID = "calendarium"

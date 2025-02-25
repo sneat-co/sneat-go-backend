@@ -7,6 +7,7 @@ import (
 	"github.com/dal-go/dalgo/record"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/const4calendarium"
+	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
 )
@@ -61,28 +62,28 @@ func (v CalendarDayDbo) Validate() error {
 type CalendarDayEntry = record.DataWithID[string, *CalendarDayDbo]
 
 // NewCalendarDayKey returns key for a record in teams/{teamID}/calendarium/days collection with ContactID=YYYY-MM-DD
-func NewCalendarDayKey(teamID, date string) *dal.Key {
-	return dbo4spaceus.NewSpaceModuleItemKey(teamID, const4calendarium.ModuleID, DaysCollection, date)
+func NewCalendarDayKey(spaceID coretypes.SpaceID, date string) *dal.Key {
+	return dbo4spaceus.NewSpaceModuleItemKey(spaceID, const4calendarium.ModuleID, DaysCollection, date)
 }
 
 // NewCalendarDayEntry creates a new instance of CalendarDayEntry
-func NewCalendarDayEntry(teamID, date string) CalendarDayEntry {
-	if teamID == "" {
-		panic(errors.New("required parameter 'teamID' is empty string"))
+func NewCalendarDayEntry(spaceID coretypes.SpaceID, date string) CalendarDayEntry {
+	if spaceID == "" {
+		panic(errors.New("required parameter 'spaceID' is empty string"))
 	}
 	if _, err := validate.DateString(date); err != nil {
 		panic(err)
 	}
 	dto := new(CalendarDayDbo)
-	return NewCalendarDayEntryWithDbo(teamID, date, dto)
+	return NewCalendarDayEntryWithDbo(spaceID, date, dto)
 }
 
 // NewCalendarDayEntryWithDbo creates a new instance of CalendarDayEntry with provided CalendarDayDbo
-func NewCalendarDayEntryWithDbo(teamID, date string, dbo *CalendarDayDbo) (calendarDay CalendarDayEntry) {
+func NewCalendarDayEntryWithDbo(spaceID coretypes.SpaceID, date string, dbo *CalendarDayDbo) (calendarDay CalendarDayEntry) {
 	if dbo == nil {
 		panic("dbo is nil")
 	}
-	key := NewCalendarDayKey(teamID, date)
+	key := NewCalendarDayKey(spaceID, date)
 	calendarDay.ID = date
 	calendarDay.Key = key
 	calendarDay.Data = dbo

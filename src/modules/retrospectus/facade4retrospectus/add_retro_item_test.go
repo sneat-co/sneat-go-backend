@@ -6,6 +6,7 @@ import (
 	"github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
+	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"testing"
 )
@@ -19,7 +20,7 @@ func TestAddRetroItem(t *testing.T) {
 	userContext := facade.NewUserContext("user1")
 	t.Run("should_succeed", func(t *testing.T) {
 		t.Run("upcoming_retrospective", func(t *testing.T) {
-			newSpaceKey = func(id string) *dal.Key {
+			newSpaceKey = func(id coretypes.SpaceID) *dal.Key {
 				return dal.NewKeyWithID(dbo4spaceus.SpacesCollection, id)
 			}
 

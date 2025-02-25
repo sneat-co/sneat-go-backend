@@ -3,6 +3,7 @@ package mocks4logist
 import (
 	"github.com/sneat-co/sneat-core-modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
+	"github.com/sneat-co/sneat-go-core/coretypes"
 	dbmodels2 "github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/stretchr/testify/assert"
 	"github.com/strongo/strongoapp/with"
@@ -420,7 +421,7 @@ func ValidEmptyOrder(t *testing.T) (order *dbo4logist.OrderDbo) {
 			SpaceID: "space-1",
 		},
 		WithSpaceIDs: dbmodels2.WithSpaceIDs{
-			SpaceIDs: []string{"space-1", "space-2"},
+			SpaceIDs: []coretypes.SpaceID{"space-1", "space-2"},
 		},
 		WithUserIDs: dbmodels2.WithUserIDs{
 			UserIDs: []string{"user-1", "user-2"},

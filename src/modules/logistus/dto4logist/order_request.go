@@ -2,14 +2,15 @@ package dto4logist
 
 import (
 	"github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
+	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/strongo/validation"
 	"strings"
 )
 
 // NewOrderRequest creates new OrderRequest
-func NewOrderRequest(teamID, orderID string) OrderRequest {
+func NewOrderRequest(spaceID coretypes.SpaceID, orderID string) OrderRequest {
 	return OrderRequest{
-		SpaceRequest: dto4spaceus.NewSpaceRequest(teamID),
+		SpaceRequest: dto4spaceus.NewSpaceRequest(spaceID),
 		OrderID:      orderID,
 	}
 }

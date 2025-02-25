@@ -7,6 +7,7 @@ import (
 	dal4contactus2 "github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/dbo4meetingus"
+	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )
@@ -70,8 +71,8 @@ func RunMeetingWorker(ctx context.Context, userCtx facade.UserContext, request R
 }
 
 // GetMeetingAndSpace retrieve api4meetingus and team records
-var GetMeetingAndSpace = func(ctx context.Context, tx dal.ReadwriteTransaction, userCtx facade.UserContext, teamID, meetingID string, recordFactory RecordFactory) (params WorkerParams, err error) {
-	params.ContactusSpaceWorkerParams = dal4contactus2.NewContactusSpaceWorkerParams(userCtx, teamID)
+var GetMeetingAndSpace = func(ctx context.Context, tx dal.ReadwriteTransaction, userCtx facade.UserContext, spaceID coretypes.SpaceID, meetingID string, recordFactory RecordFactory) (params WorkerParams, err error) {
+	params.ContactusSpaceWorkerParams = dal4contactus2.NewContactusSpaceWorkerParams(userCtx, spaceID)
 	// Create team parameter
 	// Create api4meetingus parameter
 	meetingKey := dal.NewKeyWithParentAndID(params.Space.Key, recordFactory.Collection(), meetingID)
@@ -125,7 +126,7 @@ var GetMeetingAndSpace = func(ctx context.Context, tx dal.ReadwriteTransaction, 
 		meeting.UserIDs = team.UserIDs
 		for contactID, teamMember := range contactusSpace.Data.Contacts {
 			if teamMember.IsSpaceMember() {
-				meeting.AddContact(teamID, contactID, &dbo4meetingus.MeetingMemberBrief{ContactBrief: *teamMember})
+				meeting.AddContact(spaceID, contactID, &dbo4meetingus.MeetingMemberBrief{ContactBrief: *teamMember})
 			}
 		}
 	}

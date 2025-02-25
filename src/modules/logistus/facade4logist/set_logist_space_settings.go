@@ -60,7 +60,7 @@ func setLogistSpaceSettingsTx(
 		return fmt.Errorf("loaded logistus team recod is not valid: %w", err)
 	}
 	var teamContact dal4contactus2.ContactEntry
-	if teamContact, err = dal4contactus2.GetContactByID(ctx, tx, logistSpace.ID, request.SpaceID); err != nil {
+	if teamContact, err = dal4contactus2.GetContactByID(ctx, tx, request.SpaceID, string(request.SpaceID)); err != nil {
 		if !dal.IsNotFound(err) {
 			return fmt.Errorf("failed to get contact record: %w", err)
 		}
@@ -68,7 +68,7 @@ func setLogistSpaceSettingsTx(
 	if dal.IsNotFound(err) {
 		createContactRequest := dto4contactus2.CreateContactRequest{
 			Status:       "active",
-			ContactID:    request.SpaceID,
+			ContactID:    string(request.SpaceID),
 			Type:         briefs4contactus.ContactTypeCompany,
 			SpaceRequest: request.SpaceRequest,
 			Company: &dto4contactus2.CreateCompanyRequest{

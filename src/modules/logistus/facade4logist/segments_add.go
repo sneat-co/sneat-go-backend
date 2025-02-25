@@ -7,6 +7,7 @@ import (
 	"github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
+	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
 )
@@ -236,7 +237,7 @@ func addOrUpdateShippingPoints(
 func addShippingPointsToOrderIfNeeded(
 	ctx context.Context,
 	tx dal.ReadTransaction,
-	spaceID string,
+	spaceID coretypes.SpaceID,
 	orderDto *dbo4logist.OrderDbo,
 	segment *dbo4logist.ContainerSegment,
 ) (fromShippingPoint, toShippingPoint *dbo4logist.OrderShippingPoint, err error) {
@@ -263,7 +264,7 @@ func addShippingPointsToOrderIfNeeded(
 func addShippingPointToOrderIfNeeded(
 	ctx context.Context,
 	tx dal.ReadTransaction,
-	spaceID string,
+	spaceID coretypes.SpaceID,
 	orderDto *dbo4logist.OrderDbo,
 	end string,
 	segmentCounterparty dbo4logist.SegmentCounterparty,
@@ -349,7 +350,7 @@ func addShippingPointToOrderIfNeeded(
 func addCounterpartyToOrderIfNeeded(
 	ctx context.Context,
 	tx dal.ReadTransaction,
-	spaceID string,
+	spaceID coretypes.SpaceID,
 	order *dbo4logist.OrderDbo,
 	endpointType string, // Either "from", "to" or "by"
 	segmentEndpoint dto4logist.AddSegmentEndpoint,

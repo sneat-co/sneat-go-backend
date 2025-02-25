@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
+	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"testing"
 )
@@ -49,7 +50,7 @@ func TestStartRetrospective(t *testing.T) {
 	const space1 = "space1"
 	var validDurations = RetroDurations{Feedback: 2, Review: 5}
 
-	var newRequest = func(id, spaceID string, durations RetroDurations) StartRetrospectiveRequest {
+	var newRequest = func(id string, spaceID coretypes.SpaceID, durations RetroDurations) StartRetrospectiveRequest {
 		return StartRetrospectiveRequest{
 			RetroRequest: RetroRequest{
 				MeetingID: id,

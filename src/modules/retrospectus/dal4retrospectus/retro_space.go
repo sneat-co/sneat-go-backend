@@ -6,23 +6,24 @@ import (
 	"github.com/dal-go/dalgo/record"
 	dbo4spaceus2 "github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus"
+	"github.com/sneat-co/sneat-go-core/coretypes"
 )
 
-const RetrospectusModuleID = "retrospectus"
+const RetrospectusModuleID coretypes.ModuleID = "retrospectus"
 
-type RetroSpaceEntry = record.DataWithID[string, *dbo4retrospectus.RetroSpaceDbo]
+type RetroSpaceEntry = record.DataWithID[coretypes.ModuleID, *dbo4retrospectus.RetroSpaceDbo]
 
-func NewRetroSpaceKey(id string) *dal.Key {
+func NewRetroSpaceKey(id coretypes.SpaceID) *dal.Key {
 	key := dbo4spaceus2.NewSpaceKey(id)
 	return dal.NewKeyWithParentAndID(key, dbo4spaceus2.SpaceModulesCollection, RetrospectusModuleID)
 }
 
-func NewRetroSpaceEntry(id string) RetroSpaceEntry {
-	key := NewRetroSpaceKey(id)
-	return record.NewDataWithID(id, key, new(dbo4retrospectus.RetroSpaceDbo))
+func NewRetroSpaceEntry(spaceID coretypes.SpaceID) RetroSpaceEntry {
+	key := NewRetroSpaceKey(spaceID)
+	return record.NewDataWithID(RetrospectusModuleID, key, new(dbo4retrospectus.RetroSpaceDbo))
 }
 
-func GetRetroSpaceEntry(ctx context.Context, tx dal.ReadTransaction, id string) (RetroSpaceEntry, error) {
-	v := NewRetroSpaceEntry(id)
+func GetRetroSpaceEntry(ctx context.Context, tx dal.ReadTransaction, spaceID coretypes.SpaceID) (RetroSpaceEntry, error) {
+	v := NewRetroSpaceEntry(spaceID)
 	return v, tx.Get(ctx, v.Record)
 }

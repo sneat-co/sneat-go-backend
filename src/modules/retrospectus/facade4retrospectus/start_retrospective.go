@@ -22,7 +22,7 @@ import (
 func StartRetrospective(ctx context.Context, userCtx facade.UserContext, request StartRetrospectiveRequest) (response *RetrospectiveResponse, isNewRetrospective bool, err error) {
 	uid := userCtx.GetUserID()
 
-	teamKey := newSpaceKey(request.SpaceID)
+	spaceKey := newSpaceKey(request.SpaceID)
 
 	retrospective := new(dbo4retrospectus.Retrospective)
 
@@ -87,7 +87,7 @@ func StartRetrospective(ctx context.Context, userCtx facade.UserContext, request
 				Status: dbo4meetingus.TimerStatusActive,
 			}
 
-			retrospectiveKey := dbo4retrospectus.NewRetrospectiveKey(request.MeetingID, teamKey)
+			retrospectiveKey := dbo4retrospectus.NewRetrospectiveKey(request.MeetingID, spaceKey)
 			retrospectiveRecord := dal.NewRecordWithData(retrospectiveKey, retrospective)
 			if err = tx.Get(ctx, retrospectiveRecord); err != nil {
 				if dal.IsNotFound(err) {

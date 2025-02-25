@@ -4,13 +4,14 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/const4calendarium"
+	"github.com/sneat-co/sneat-go-core/coretypes"
 )
 
 //const SingleHappeningsCollection = "single_happenings"
 
 // NewHappeningKey creates a new happening key
-func NewHappeningKey(teamID, happeningID string) *dal.Key {
-	return dbo4spaceus.NewSpaceModuleItemKey(teamID, const4calendarium.ModuleID, const4calendarium.HappeningsCollection, happeningID)
+func NewHappeningKey(spaceID coretypes.SpaceID, happeningID string) *dal.Key {
+	return dbo4spaceus.NewSpaceModuleItemKey(spaceID, const4calendarium.ModuleID, const4calendarium.HappeningsCollection, happeningID)
 }
 
 // HappeningType is either "recurring" or "single"
@@ -40,13 +41,13 @@ func IsKnownHappeningStatus(status string) bool {
 	return false
 }
 
-func NewHappeningEntry(teamID, happeningID string) (v HappeningEntry) {
-	return NewHappeningEntryWithDbo(teamID, happeningID, new(HappeningDbo))
+func NewHappeningEntry(spaceID coretypes.SpaceID, happeningID string) (v HappeningEntry) {
+	return NewHappeningEntryWithDbo(spaceID, happeningID, new(HappeningDbo))
 }
 
-func NewHappeningEntryWithDbo(teamID, happeningID string, dto *HappeningDbo) (v HappeningEntry) {
+func NewHappeningEntryWithDbo(spaceID coretypes.SpaceID, happeningID string, dto *HappeningDbo) (v HappeningEntry) {
 	v.ID = happeningID
-	v.Key = NewHappeningKey(teamID, happeningID)
+	v.Key = NewHappeningKey(spaceID, happeningID)
 	v.Data = dto
 	v.Record = dal.NewRecordWithData(v.Key, dto)
 	return

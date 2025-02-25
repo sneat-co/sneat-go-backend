@@ -7,6 +7,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/facade4assetus"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/apicore/verify"
+	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"net/http"
 )
@@ -14,7 +15,7 @@ import (
 func httpDeleteAsset(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	var request dal4spaceus.SpaceItemRequest
-	request.SpaceID = q.Get("space")
+	request.SpaceID = coretypes.SpaceID(q.Get("space"))
 	request.ID = q.Get("id")
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.NoContentAuthRequired, http.StatusNoContent,
 		func(ctx context.Context, userCtx facade.UserContext) (interface{}, error) {

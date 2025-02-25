@@ -6,6 +6,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/facade4scrumus"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/apicore/verify"
+	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/httpserver"
 	"net/http"
 )
@@ -23,7 +24,7 @@ func httpDeleteTask(w http.ResponseWriter, r *http.Request) {
 	request := facade4scrumus.DeleteTaskRequest{
 		Request: facade4meetingus.Request{
 			SpaceRequest: dto4spaceus.SpaceRequest{
-				SpaceID: query.Get("space"),
+				SpaceID: coretypes.SpaceID(query.Get("space")),
 			},
 			MeetingID: query.Get("date"),
 		},

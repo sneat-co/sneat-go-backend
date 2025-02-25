@@ -2,14 +2,12 @@ module github.com/sneat-co/sneat-go-backend
 
 go 1.23.0
 
-toolchain go1.24.0
+toolchain go1.23.6
 
 //replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
-//
-//replace go mod tidy => ../sneat-mod-debtus-go
+//replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
 
 //replace github.com/sneat-co/debtstracker-translations => ../debtstracker-translations
-//replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
 //replace github.com/sneat-co/sneat-go-modules => ../sneat-go-modules
 //replace github.com/bots-go-framework/bots-fw => ../../bots-go-framework/bots-fw
 //replace github.com/bots-go-framework/bots-fw-telegram => ../../bots-go-framework/bots-fw-telegram
@@ -25,11 +23,11 @@ toolchain go1.24.0
 
 require (
 	github.com/crediterra/money v0.3.0
-	github.com/dal-go/dalgo v0.18.0
+	github.com/dal-go/dalgo v0.18.1
 	github.com/dal-go/mocks4dalgo v0.2.2
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/sneat-co/sneat-core-modules v0.24.17
-	github.com/sneat-co/sneat-go-core v0.45.7
+	github.com/sneat-co/sneat-core-modules v0.24.18
+	github.com/sneat-co/sneat-go-core v0.46.0
 	github.com/stretchr/testify v1.10.0
 	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.1.0
@@ -49,7 +47,7 @@ require (
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	golang.org/x/crypto v0.34.0 // indirect
+	golang.org/x/crypto v0.35.0 // indirect
 	golang.org/x/net v0.35.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

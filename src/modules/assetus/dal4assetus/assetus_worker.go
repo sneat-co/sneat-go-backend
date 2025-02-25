@@ -8,12 +8,13 @@ import (
 	"github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
+	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
 type AssetusSpaceWorkerParams = dal4spaceus2.ModuleSpaceWorkerParams[*dbo4assetus.AssetusSpaceDbo]
 
-func NewAssetusSpaceWorkerParams(userCtx facade.UserContext, spaceID string) *AssetusSpaceWorkerParams {
+func NewAssetusSpaceWorkerParams(userCtx facade.UserContext, spaceID coretypes.SpaceID) *AssetusSpaceWorkerParams {
 	spaceWorkerParams := dal4spaceus2.NewSpaceWorkerParams(userCtx, spaceID)
 	return dal4spaceus2.NewSpaceModuleWorkerParams(const4assetus.ModuleID, spaceWorkerParams, new(dbo4assetus.AssetusSpaceDbo))
 }
@@ -42,7 +43,7 @@ func RunAssetusSpaceWorkerTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	userCtx facade.UserContext,
-	spaceID string,
+	spaceID coretypes.SpaceID,
 	worker AssetusModuleWorker,
 ) error {
 	return dal4spaceus2.RunModuleSpaceWorkerTx(ctx, tx, userCtx, spaceID, const4contactus.ModuleID, new(dbo4assetus.AssetusSpaceDbo), worker)

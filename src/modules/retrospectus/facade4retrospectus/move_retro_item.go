@@ -15,7 +15,7 @@ func MoveRetroItem(ctx context.Context, userCtx facade.UserContext, request Move
 	uid := userCtx.GetUserID()
 	var retrospectiveKey *dal.Key
 	if request.MeetingID == UpcomingRetrospectiveID {
-		retrospectiveKey = dbo4retrospectus.NewRetrospectiveKey(request.SpaceID, dbo4userus.NewUserKey(uid))
+		retrospectiveKey = dbo4retrospectus.NewRetrospectiveKey(string(request.SpaceID), dbo4userus.NewUserKey(uid))
 	} else {
 		retrospectiveKey = dbo4retrospectus.NewRetrospectiveKey(request.MeetingID, newSpaceKey(request.SpaceID))
 	}

@@ -10,6 +10,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
+	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/random"
@@ -71,7 +72,7 @@ func CreateList(ctx context.Context, userCtx facade.UserContext, request dto4lis
 					},
 				},
 				WithSpaceIDs: dbmodels.WithSpaceIDs{
-					SpaceIDs: []string{request.SpaceID},
+					SpaceIDs: []coretypes.SpaceID{request.SpaceID},
 				},
 				ListBase: dbo4listus.ListBase{
 					Type:  request.Type,

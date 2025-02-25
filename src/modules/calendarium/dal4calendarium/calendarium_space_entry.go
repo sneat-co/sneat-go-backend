@@ -7,20 +7,21 @@ import (
 	"github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/const4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
+	"github.com/sneat-co/sneat-go-core/coretypes"
 )
 
-type CalendariumSpaceEntry = record.DataWithID[string, *dbo4calendarium.CalendariumSpaceDbo]
+type CalendariumSpaceEntry = record.DataWithID[coretypes.ModuleID, *dbo4calendarium.CalendariumSpaceDbo]
 
-func NewCalendariumSpaceKey(spaceID string) *dal.Key {
+func NewCalendariumSpaceKey(spaceID coretypes.SpaceID) *dal.Key {
 	return dbo4spaceus.NewSpaceModuleKey(spaceID, const4calendarium.ModuleID)
 }
 
-func NewCalendariumSpaceEntry(spaceID string) CalendariumSpaceEntry {
+func NewCalendariumSpaceEntry(spaceID coretypes.SpaceID) CalendariumSpaceEntry {
 	key := NewCalendariumSpaceKey(spaceID)
-	return record.NewDataWithID(spaceID, key, new(dbo4calendarium.CalendariumSpaceDbo))
+	return record.NewDataWithID(const4calendarium.ModuleID, key, new(dbo4calendarium.CalendariumSpaceDbo))
 }
 
-func GetCalendariumSpace(ctx context.Context, tx dal.ReadwriteTransaction, spaceID string) (CalendariumSpaceEntry, error) {
+func GetCalendariumSpace(ctx context.Context, tx dal.ReadwriteTransaction, spaceID coretypes.SpaceID) (CalendariumSpaceEntry, error) {
 	v := NewCalendariumSpaceEntry(spaceID)
 	return v, tx.Get(ctx, v.Record)
 }
