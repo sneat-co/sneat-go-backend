@@ -2,7 +2,7 @@ module github.com/sneat-co/sneat-go-backend
 
 go 1.23.0
 
-toolchain go1.23.6
+toolchain go1.24.0
 
 //replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
 //replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
