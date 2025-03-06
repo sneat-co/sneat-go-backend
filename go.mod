@@ -2,7 +2,7 @@ module github.com/sneat-co/sneat-go-backend
 
 go 1.23.0
 
-toolchain go1.24.0
+toolchain go1.24.1
 
 //replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
 //replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
@@ -26,15 +26,15 @@ require (
 	github.com/dal-go/dalgo v0.18.1
 	github.com/dal-go/mocks4dalgo v0.2.3
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/sneat-co/sneat-core-modules v0.24.24
-	github.com/sneat-co/sneat-go-core v0.47.1
+	github.com/sneat-co/sneat-core-modules v0.24.26
+	github.com/sneat-co/sneat-go-core v0.47.4
 	github.com/stretchr/testify v1.10.0
 	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.1.0
 	github.com/strongo/logus v0.2.1
 	github.com/strongo/random v0.0.1
 	github.com/strongo/slice v0.3.1
-	github.com/strongo/strongoapp v0.26.3
+	github.com/strongo/strongoapp v0.26.6
 	github.com/strongo/validation v0.0.7
 	go.uber.org/mock v0.5.0
 )
