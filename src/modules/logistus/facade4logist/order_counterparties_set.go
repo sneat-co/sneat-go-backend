@@ -16,13 +16,13 @@ import (
 
 // SetOrderCounterparties sets order Contacts
 func SetOrderCounterparties(
-	ctx context.Context,
-	userCtx facade.UserContext,
+	ctx facade.ContextWithUser,
 	request dto4logist.SetOrderCounterpartiesRequest,
 ) (orderCounterparties []*dbo4logist.OrderCounterparty, err error) {
 	//for i := range request.Contacts {
 	//	request.Contacts[i].Instructions = strings.TrimSpace(request.Contacts[i].Instructions)
 	//}
+	userCtx := ctx.User()
 	err = RunOrderWorker(ctx, userCtx, request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) (err error) {
 		orderCounterparties, err = setOrderCounterpartyTxWorker(ctx, userCtx.GetUserID(), tx, params, request)
 		return

@@ -12,7 +12,7 @@ import (
 func httpDeleteListItems(w http.ResponseWriter, r *http.Request) {
 	var request dto4listus.ListItemIDsRequest
 	request.ListRequest = getListRequestParamsFromURL(r)
-	ctx, userContext, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
+	ctx, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
 	if err != nil {
 		return
 	}
@@ -20,6 +20,6 @@ func httpDeleteListItems(w http.ResponseWriter, r *http.Request) {
 		apicore.ReturnError(r.Context(), w, r, err)
 		return
 	}
-	_, _, err = facade4listus.DeleteListItems(ctx, userContext, request)
+	_, _, err = facade4listus.DeleteListItems(ctx, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusCreated, err, nil)
 }

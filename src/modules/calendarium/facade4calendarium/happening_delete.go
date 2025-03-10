@@ -12,11 +12,11 @@ import (
 )
 
 // DeleteHappening deletes happening
-func DeleteHappening(ctx context.Context, userCtx facade.UserContext, request dto4calendarium.HappeningRequest) (err error) {
+func DeleteHappening(ctx facade.ContextWithUser, request dto4calendarium.HappeningRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
-	return dal4calendarium.RunHappeningSpaceWorker(ctx, userCtx, request,
+	return dal4calendarium.RunHappeningSpaceWorker(ctx, ctx.User(), request,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
 			return deleteHappeningTx(ctx, tx, params, request)
 		},

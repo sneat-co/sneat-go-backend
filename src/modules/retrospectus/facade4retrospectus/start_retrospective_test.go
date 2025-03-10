@@ -17,8 +17,7 @@ func TestStartRetrospective(t *testing.T) {
 	//	return &firestore.DocumentRef{InviteID: id, Path: "api4meetingus"}
 	//}
 
-	userContext := facade.NewUserContext("user1")
-	ctx := context.Background()
+	ctx := facade.NewContextWithUser(context.Background(), "user1")
 
 	type expects struct {
 		isNew bool
@@ -26,7 +25,7 @@ func TestStartRetrospective(t *testing.T) {
 
 	test := func(t *testing.T, request StartRetrospectiveRequest, expected expects) {
 		// SUT call
-		response, isNew, err := StartRetrospective(ctx, userContext, request)
+		response, isNew, err := StartRetrospective(ctx, request)
 
 		if err != nil {
 			t.Fatalf("Unexptected error: %v", err)
@@ -64,7 +63,7 @@ func TestStartRetrospective(t *testing.T) {
 
 	t.Run("should_fail", func(t *testing.T) {
 		t.Run("space_not_found", func(t *testing.T) {
-			if _, _, err := StartRetrospective(ctx, userContext, newRequest(validRetroID, "invalidteamid", validDurations)); err == nil {
+			if _, _, err := StartRetrospective(ctx, newRequest(validRetroID, "invalidteamid", validDurations)); err == nil {
 				t.Fatal("expected to get error")
 			}
 		})

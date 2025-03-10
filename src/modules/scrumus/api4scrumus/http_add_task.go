@@ -11,7 +11,7 @@ var addTask = facade4scrumus.AddTask
 
 // httpPostAddTask adds a task
 func httpPostAddTask(w http.ResponseWriter, r *http.Request) {
-	ctx, userContext, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
+	ctx, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
 	if err != nil {
 		return
 	}
@@ -19,6 +19,6 @@ func httpPostAddTask(w http.ResponseWriter, r *http.Request) {
 	if err = apicore.DecodeRequestBody(w, r, &request); err != nil {
 		return
 	}
-	response, err := addTask(ctx, userContext, request)
+	response, err := addTask(ctx, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusCreated, err, response)
 }

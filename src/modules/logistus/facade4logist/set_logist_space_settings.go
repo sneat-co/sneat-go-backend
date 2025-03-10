@@ -22,14 +22,13 @@ import (
 
 // SetLogistSpaceSettings sets team settings for logistus module
 func SetLogistSpaceSettings(
-	ctx context.Context,
-	userCtx facade.UserContext,
+	ctx facade.ContextWithUser,
 	request dto4logist.SetLogistSpaceSettingsRequest,
 ) error {
 	if err := request.Validate(); err != nil {
 		return err
 	}
-	return dal4spaceus.RunModuleSpaceWorkerWithUserCtx(ctx, userCtx, request.SpaceID,
+	return dal4spaceus.RunModuleSpaceWorkerWithUserCtx(ctx, ctx.User(), request.SpaceID,
 		const4logistus.ModuleID,
 		new(dbo4logist.LogistSpaceDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, teamWorkerParams *dal4spaceus.ModuleSpaceWorkerParams[*dbo4logist.LogistSpaceDbo]) (err error) {

@@ -11,10 +11,10 @@ import (
 // httpPostCreateHappening creates recurring happening
 func httpPostCreateHappening(w http.ResponseWriter, r *http.Request) {
 	var request dto4calendarium.CreateHappeningRequest
-	ctx, userContext, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
+	ctx, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
 	if err != nil {
 		return
 	}
-	response, err := facade4calendarium.CreateHappening(ctx, userContext, request)
+	response, err := facade4calendarium.CreateHappening(ctx, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusCreated, err, &response)
 }

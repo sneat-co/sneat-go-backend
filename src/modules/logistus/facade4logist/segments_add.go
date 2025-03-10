@@ -13,11 +13,11 @@ import (
 )
 
 // AddSegments adds segments to an order
-func AddSegments(ctx context.Context, userCtx facade.UserContext, request dto4logist.AddSegmentsRequest) error {
+func AddSegments(ctx facade.ContextWithUser, request dto4logist.AddSegmentsRequest) error {
 	if err := request.Validate(); err != nil {
 		return err
 	}
-	return RunOrderWorker(ctx, userCtx, request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) error {
+	return RunOrderWorker(ctx, ctx.User(), request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) error {
 		return addSegmentsTx(ctx, tx, params, request)
 	})
 }

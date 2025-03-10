@@ -11,7 +11,7 @@ var voteItem = facade4retrospectus.VoteItem
 
 // httpPostVoteItem is an API endpoint that cast a vote for a retrospective item
 func httpPostVoteItem(w http.ResponseWriter, r *http.Request) {
-	ctx, userContext, err := verifyRequest(w, r, verify.DefaultJsonWithAuthRequired)
+	ctx, err := verifyRequest(w, r, verify.DefaultJsonWithAuthRequired)
 	if err != nil {
 		return
 	}
@@ -19,6 +19,6 @@ func httpPostVoteItem(w http.ResponseWriter, r *http.Request) {
 	if err = apicore.DecodeRequestBody(w, r, &request); err != nil {
 		return
 	}
-	err = voteItem(ctx, userContext, request)
+	err = voteItem(ctx, request)
 	apicore.ReturnStatus(ctx, w, r, http.StatusNoContent, err)
 }

@@ -19,7 +19,7 @@ const (
 	UpdateSlot PutMode = "UpdateSlot"
 )
 
-func PutSlot(ctx context.Context, userCtx facade.UserContext, putMode PutMode, request dto4calendarium.HappeningSlotRequest) (err error) {
+func PutSlot(ctx facade.ContextWithUser, putMode PutMode, request dto4calendarium.HappeningSlotRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return validation.NewBadRequestError(err)
 	}
@@ -28,7 +28,7 @@ func PutSlot(ctx context.Context, userCtx facade.UserContext, putMode PutMode, r
 		return putSlotTxWorker(ctx, tx, params, putMode, request)
 	}
 
-	return dal4calendarium.RunHappeningSpaceWorker(ctx, userCtx, request.HappeningRequest, worker)
+	return dal4calendarium.RunHappeningSpaceWorker(ctx, ctx.User(), request.HappeningRequest, worker)
 }
 
 func putSlotTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams, putMode PutMode, request dto4calendarium.HappeningSlotRequest) (err error) {

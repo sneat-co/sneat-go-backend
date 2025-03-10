@@ -9,8 +9,8 @@ import (
 )
 
 // UpdateContainerPoint updates container point in an order
-func UpdateContainerPoint(ctx context.Context, userCtx facade.UserContext, request dto4logist.UpdateContainerPointRequest) error {
-	return RunOrderWorker(ctx, userCtx, request.OrderRequest,
+func UpdateContainerPoint(ctx facade.ContextWithUser, request dto4logist.UpdateContainerPointRequest) error {
+	return RunOrderWorker(ctx, ctx.User(), request.OrderRequest,
 		func(_ context.Context, _ dal.ReadwriteTransaction, params *OrderWorkerParams) error {
 			return txUpdateContainerPoint(params, request)
 		},

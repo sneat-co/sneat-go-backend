@@ -11,7 +11,7 @@ var moveRetroItem = facade4retrospectus.MoveRetroItem
 
 // httpPostMoveRetroItem is an API endpoint that changes position of retrospective item
 func httpPostMoveRetroItem(w http.ResponseWriter, r *http.Request) {
-	ctx, userContext, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
+	ctx, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
 	if err != nil {
 		return
 	}
@@ -19,6 +19,6 @@ func httpPostMoveRetroItem(w http.ResponseWriter, r *http.Request) {
 	if err = apicore.DecodeRequestBody(w, r, &request); err != nil {
 		return
 	}
-	err = moveRetroItem(ctx, userContext, request)
+	err = moveRetroItem(ctx, request)
 	apicore.IfNoErrorReturnOK(ctx, w, r, err)
 }

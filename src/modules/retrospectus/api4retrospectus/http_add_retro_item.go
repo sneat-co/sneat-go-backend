@@ -11,7 +11,7 @@ var addRetroItem = facade4retrospectus.AddRetroItem
 
 // httpPostAddRetroItem adds an item to a retrospective
 func httpPostAddRetroItem(w http.ResponseWriter, r *http.Request) {
-	ctx, userContext, err := verifyAuthorizedJSONRequest(w, r, verify.MinJSONRequestSize, 10*verify.KB)
+	ctx, err := verifyAuthorizedJSONRequest(w, r, verify.MinJSONRequestSize, 10*verify.KB)
 	if err != nil {
 		return
 	}
@@ -19,6 +19,6 @@ func httpPostAddRetroItem(w http.ResponseWriter, r *http.Request) {
 	if err := apicore.DecodeRequestBody(w, r, &request); err != nil {
 		return
 	}
-	response, err := addRetroItem(ctx, userContext, request)
+	response, err := addRetroItem(ctx, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusCreated, err, response)
 }

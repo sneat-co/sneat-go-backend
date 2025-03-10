@@ -15,13 +15,13 @@ import (
 )
 
 // CreateListItems creates list items
-func CreateListItems(ctx context.Context, userCtx facade.UserContext, request dto4listus.CreateListItemsRequest) (
+func CreateListItems(ctx facade.ContextWithUser, request dto4listus.CreateListItemsRequest) (
 	response dto4listus.CreateListItemResponse, list dal4listus.ListEntry, err error,
 ) {
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4listus.RunListWorker(ctx, userCtx, request.ListRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4listus.ListWorkerParams) (err error) {
+	err = dal4listus.RunListWorker(ctx, ctx.User(), request.ListRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4listus.ListWorkerParams) (err error) {
 		response, list, err = createListItemsTxWorker(ctx, tx, request, params)
 		if err != nil {
 			return fmt.Errorf("failed in createListItemsTxWorker: %w", err)

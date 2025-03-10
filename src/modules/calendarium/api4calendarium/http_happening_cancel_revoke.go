@@ -13,10 +13,10 @@ func httpRevokeHappeningCancellation(w http.ResponseWriter, r *http.Request) {
 	request := dto4calendarium.CancelHappeningRequest{
 		HappeningRequest: happeningRequest,
 	}
-	ctx, userContext, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
+	ctx, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
 	if err != nil {
 		return
 	}
-	err = facade4calendarium.RevokeHappeningCancellation(ctx, userContext, request)
+	err = facade4calendarium.RevokeHappeningCancellation(ctx, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusNoContent, err, nil)
 }

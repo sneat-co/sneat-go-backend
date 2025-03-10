@@ -13,11 +13,11 @@ import (
 )
 
 // SetListItemsIsDone marks list item as completed
-func SetListItemsIsDone(ctx context.Context, userCtx facade.UserContext, request dto4listus.ListItemsSetIsDoneRequest) (changedListItems []*dbo4listus.ListItemBrief, list dal4listus.ListEntry, err error) {
+func SetListItemsIsDone(ctx facade.ContextWithUser, request dto4listus.ListItemsSetIsDoneRequest) (changedListItems []*dbo4listus.ListItemBrief, list dal4listus.ListEntry, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4listus.RunListWorker(ctx, userCtx, request.ListRequest,
+	err = dal4listus.RunListWorker(ctx, ctx.User(), request.ListRequest,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4listus.ListWorkerParams) (err error) {
 			if err = params.GetRecords(ctx, tx); err != nil {
 				return

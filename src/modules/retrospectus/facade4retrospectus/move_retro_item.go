@@ -11,7 +11,8 @@ import (
 )
 
 // MoveRetroItem moves item
-func MoveRetroItem(ctx context.Context, userCtx facade.UserContext, request MoveRetroItemRequest) (err error) {
+func MoveRetroItem(ctx facade.ContextWithUser, request MoveRetroItemRequest) (err error) {
+	userCtx := ctx.User()
 	uid := userCtx.GetUserID()
 	var retrospectiveKey *dal.Key
 	if request.MeetingID == UpcomingRetrospectiveID {

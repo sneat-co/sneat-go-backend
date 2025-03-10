@@ -37,9 +37,9 @@ func TestAddRetroItem(t *testing.T) {
 				Title: "Good # 1",
 			}
 
-			ctx := context.Background()
+			ctx := facade.NewContextWithUser(context.Background(), userContext.GetUserID())
 
-			_, _ = AddRetroItem(ctx, userContext, request)
+			_, _ = AddRetroItem(ctx, request)
 			//if _, _ = AddRetroItem(ctx, userContext, request); false {
 			// TODO: t.Fatalf("failed to add retro item: %v", err)
 			//}

@@ -13,14 +13,15 @@ type CreateVehicleRecordResponse struct {
 	ID string `json:"id"`
 }
 
-func AddVehicleRecord(ctx context.Context, user facade.UserContext, request dto4assetus.AddVehicleRecordRequest) (response CreateVehicleRecordResponse, err error) {
+func AddVehicleRecord(ctx facade.ContextWithUser, request dto4assetus.AddVehicleRecordRequest) (response CreateVehicleRecordResponse, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4assetus.RunAssetusSpaceWorker(ctx, user,
+	userCtx := ctx.User()
+	err = dal4assetus.RunAssetusSpaceWorker(ctx, userCtx,
 		request.SpaceRequest,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4assetus.AssetusSpaceWorkerParams) (err error) {
-			response, err = addVehicleRecordTx(ctx, tx, user, request, params)
+			response, err = addVehicleRecordTx(ctx, tx, userCtx, request, params)
 			return err
 		},
 	)

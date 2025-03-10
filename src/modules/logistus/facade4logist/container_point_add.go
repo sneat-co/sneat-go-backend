@@ -8,8 +8,8 @@ import (
 )
 
 // AddContainerPoints adds container point to an order
-func AddContainerPoints(ctx context.Context, userCtx facade.UserContext, request dto4logist.AddContainerPointsRequest) error {
-	return RunOrderWorker(ctx, userCtx, request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) (err error) {
+func AddContainerPoints(ctx facade.ContextWithUser, request dto4logist.AddContainerPointsRequest) error {
+	return RunOrderWorker(ctx, ctx.User(), request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) (err error) {
 		return txAddContainerPoints(request, params)
 	})
 }

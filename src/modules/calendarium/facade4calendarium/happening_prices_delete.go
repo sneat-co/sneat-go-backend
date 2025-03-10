@@ -11,7 +11,8 @@ import (
 	"slices"
 )
 
-func DeleteHappeningPrices(ctx context.Context, userCtx facade.UserContext, request dto4calendarium.DeleteHappeningPricesRequest) (err error) {
+func DeleteHappeningPrices(ctx facade.ContextWithUser, request dto4calendarium.DeleteHappeningPricesRequest) (err error) {
+	userCtx := ctx.User()
 	var deleteHappeningPricesWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
 		return deleteHappeningPricesTx(ctx, tx, userCtx, params, request)
 	}

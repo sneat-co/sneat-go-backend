@@ -13,13 +13,13 @@ import (
 )
 
 // RevokeHappeningCancellation marks happening as canceled
-func RevokeHappeningCancellation(ctx context.Context, userCtx facade.UserContext, request dto4calendarium.CancelHappeningRequest) (err error) {
+func RevokeHappeningCancellation(ctx facade.ContextWithUser, request dto4calendarium.CancelHappeningRequest) (err error) {
 	logus.Debugf(ctx, "RevokeHappeningCancellation() %+v", request)
 	if err = request.Validate(); err != nil {
 		return err
 	}
 
-	err = dal4calendarium.RunHappeningSpaceWorker(ctx, userCtx, request.HappeningRequest,
+	err = dal4calendarium.RunHappeningSpaceWorker(ctx, ctx.User(), request.HappeningRequest,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
 
 			var calendarDay dbo4calendarium.CalendarDayEntry

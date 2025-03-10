@@ -19,7 +19,7 @@ import (
 
 // CreateHappening creates a recurring happening
 func CreateHappening(
-	ctx context.Context, userCtx facade.UserContext, request dto4calendarium.CreateHappeningRequest,
+	ctx facade.ContextWithUser, request dto4calendarium.CreateHappeningRequest,
 ) (
 	response dto4calendarium.CreateHappeningResponse, err error,
 ) {
@@ -35,7 +35,7 @@ func CreateHappening(
 		HappeningBrief: *request.Happening,
 		CreatedFields: with.CreatedFields{
 			CreatedByField: with.CreatedByField{
-				CreatedBy: userCtx.GetUserID(),
+				CreatedBy: ctx.User().GetUserID(),
 			},
 		},
 		//WithTeamDates: dbmodels.WithSpaceDates{
@@ -54,7 +54,7 @@ func CreateHappening(
 			}
 		}
 	}
-	err = dal4spaceus2.CreateSpaceItem(ctx, userCtx, request.SpaceRequest,
+	err = dal4spaceus2.CreateSpaceItem(ctx, ctx.User(), request.SpaceRequest,
 		const4calendarium.ModuleID,
 		new(dbo4calendarium.CalendariumSpaceDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus2.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo]) (err error) {

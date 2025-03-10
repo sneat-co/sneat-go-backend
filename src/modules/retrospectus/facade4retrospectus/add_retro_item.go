@@ -64,17 +64,17 @@ func (v *AddRetroItemRequest) Validate() error {
 }
 
 // AddRetroItem adds item to retrospective
-func AddRetroItem(ctx context.Context, userCtx facade.UserContext, request AddRetroItemRequest) (response AddRetroItemResponse, err error) {
+func AddRetroItem(ctx facade.ContextWithUser, request AddRetroItemRequest) (response AddRetroItemResponse, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 	if request.MeetingID == UpcomingRetrospectiveID {
-		response, err = addRetroItemToUserRetro(ctx, userCtx, request)
+		response, err = addRetroItemToUserRetro(ctx, request)
 		if err != nil {
 			err = fmt.Errorf("failed to add item to future retrospective: %w", err)
 		}
 	} else {
-		response, err = addRetroItemToSpaceRetro(ctx, userCtx, request)
+		response, err = addRetroItemToSpaceRetro(ctx, request)
 		if err != nil {
 			err = fmt.Errorf("failed to add item to specific retrospective: %w", err)
 		}
@@ -96,7 +96,8 @@ UniqueID:
 	return append(items, item)
 }
 
-func addRetroItemToUserRetro(ctx context.Context, userCtx facade.UserContext, request AddRetroItemRequest) (response AddRetroItemResponse, err error) {
+func addRetroItemToUserRetro(ctx facade.ContextWithUser, request AddRetroItemRequest) (response AddRetroItemResponse, err error) {
+	userCtx := ctx.User()
 	uid := userCtx.GetUserID()
 
 	user := dbo4userus.NewUserEntry(uid)
@@ -155,7 +156,8 @@ func addRetroItemToUserRetro(ctx context.Context, userCtx facade.UserContext, re
 	return
 }
 
-func addRetroItemToSpaceRetro(ctx context.Context, userCtx facade.UserContext, request AddRetroItemRequest) (response AddRetroItemResponse, err error) {
+func addRetroItemToSpaceRetro(ctx facade.ContextWithUser, request AddRetroItemRequest) (response AddRetroItemResponse, err error) {
+	userCtx := ctx.User()
 	uid := userCtx.GetUserID()
 	retrospectiveKey := getSpaceRetroDocKey(request.SpaceID, request.MeetingID)
 

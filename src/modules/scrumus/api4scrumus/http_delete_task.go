@@ -15,7 +15,7 @@ var deleteTask = facade4scrumus.DeleteTask
 
 // httpDeleteTask is an API endpoint that delete a task
 func httpDeleteTask(w http.ResponseWriter, r *http.Request) {
-	ctx, userContext, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
+	ctx, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
 	if err != nil {
 		httpserver.HandleError(ctx, err, "httpDeleteTask", w, r)
 		return
@@ -37,6 +37,6 @@ func httpDeleteTask(w http.ResponseWriter, r *http.Request) {
 		httpserver.HandleError(ctx, err, "httpDeleteTask", w, r)
 		return
 	}
-	err = deleteTask(ctx, userContext, request)
+	err = deleteTask(ctx, request)
 	apicore.IfNoErrorReturnOK(ctx, w, r, err)
 }

@@ -11,7 +11,7 @@ var thumbUp = facade4scrumus.ThumbUp
 
 // httpPostThumbUp add a thumb up
 func httpPostThumbUp(w http.ResponseWriter, r *http.Request) {
-	ctx, userContext, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
+	ctx, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
 	if err != nil {
 		return
 	}
@@ -19,6 +19,6 @@ func httpPostThumbUp(w http.ResponseWriter, r *http.Request) {
 	if err = apicore.DecodeRequestBody(w, r, &request); err != nil {
 		return
 	}
-	err = thumbUp(ctx, userContext, request)
+	err = thumbUp(ctx, request)
 	apicore.IfNoErrorReturnOK(ctx, w, r, err)
 }

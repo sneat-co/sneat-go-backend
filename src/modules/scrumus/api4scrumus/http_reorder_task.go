@@ -11,7 +11,7 @@ var reorderTask = facade4scrumus.ReorderTask
 
 // httpPostReorderTask is an API endpoints that reorders tasks
 func httpPostReorderTask(w http.ResponseWriter, r *http.Request) {
-	ctx, userContext, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
+	ctx, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
 	if err != nil {
 		return
 	}
@@ -19,6 +19,6 @@ func httpPostReorderTask(w http.ResponseWriter, r *http.Request) {
 	if err = apicore.DecodeRequestBody(w, r, &request); err != nil {
 		return
 	}
-	err = reorderTask(ctx, userContext, request)
+	err = reorderTask(ctx, request)
 	apicore.IfNoErrorReturnOK(ctx, w, r, err)
 }

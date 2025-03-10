@@ -14,10 +14,10 @@ func httpDeleteSlot(w http.ResponseWriter, r *http.Request) {
 			HappeningRequest: getHappeningRequestParamsFromURL(r),
 		},
 	}
-	ctx, userContext, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
+	ctx, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
 	if err != nil {
 		return
 	}
-	err = facade4calendarium.DeleteSlot(ctx, userContext, request)
+	err = facade4calendarium.DeleteSlot(ctx, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusCreated, err, nil)
 }

@@ -15,14 +15,13 @@ import (
 
 // AddOrderShippingPoint adds shipping point to an order
 func AddOrderShippingPoint(
-	ctx context.Context,
-	userCtx facade.UserContext,
+	ctx facade.ContextWithUser,
 	request dto4logist.AddOrderShippingPointRequest,
 ) (
 	response dto4logist.OrderResponse,
 	err error,
 ) {
-	err = RunOrderWorker(ctx, userCtx, request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) (err error) {
+	err = RunOrderWorker(ctx, ctx.User(), request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) (err error) {
 		_, err = addOrderShippingPointTx(ctx, tx, request, params)
 		response.OrderDto = params.Order.Dto
 		return

@@ -11,7 +11,8 @@ import (
 	"github.com/strongo/random"
 )
 
-func SetHappeningPrices(ctx context.Context, userCtx facade.UserContext, request dto4calendarium.HappeningPricesRequest) (err error) {
+func SetHappeningPrices(ctx facade.ContextWithUser, request dto4calendarium.HappeningPricesRequest) (err error) {
+	userCtx := ctx.User()
 	var setHappeningPricesWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
 		return setHappeningPricesTx(ctx, tx, userCtx, params, request)
 	}

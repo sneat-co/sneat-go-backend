@@ -12,10 +12,10 @@ var deleteList = facade4listus.DeleteList
 // httpDeleteList deletes a list
 func httpDeleteList(w http.ResponseWriter, r *http.Request) {
 	var request = getListRequestParamsFromURL(r)
-	ctx, userContext, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
+	ctx, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
 	if err != nil {
 		return
 	}
-	err = deleteList(ctx, userContext, request)
+	err = deleteList(ctx, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusCreated, err, nil)
 }

@@ -11,7 +11,7 @@ var startRetrospective = facade4retrospectus.StartRetrospective
 
 // httpPostStartRetrospective an API endpoint that starts retrospective
 func httpPostStartRetrospective(w http.ResponseWriter, r *http.Request) {
-	ctx, userContext, err := verifyRequest(w, r, verify.DefaultJsonWithAuthRequired)
+	ctx, err := verifyRequest(w, r, verify.DefaultJsonWithAuthRequired)
 	if err != nil {
 		return
 	}
@@ -19,7 +19,7 @@ func httpPostStartRetrospective(w http.ResponseWriter, r *http.Request) {
 	if err := apicore.DecodeRequestBody(w, r, &request); err != nil {
 		return
 	}
-	response, isNew, err := startRetrospective(ctx, userContext, request)
+	response, isNew, err := startRetrospective(ctx, request)
 	var statusCode int
 	if isNew {
 		statusCode = http.StatusCreated

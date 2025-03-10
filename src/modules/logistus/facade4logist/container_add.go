@@ -11,8 +11,8 @@ import (
 )
 
 // AddContainers adds containers to an order
-func AddContainers(ctx context.Context, userCtx facade.UserContext, request dto4logist.AddContainersRequest) error {
-	return RunOrderWorker(ctx, userCtx, request.OrderRequest, func(_ context.Context, _ dal.ReadwriteTransaction, params *OrderWorkerParams) error {
+func AddContainers(ctx facade.ContextWithUser, request dto4logist.AddContainersRequest) error {
+	return RunOrderWorker(ctx, ctx.User(), request.OrderRequest, func(_ context.Context, _ dal.ReadwriteTransaction, params *OrderWorkerParams) error {
 		return addContainersTx(params, request)
 	})
 }

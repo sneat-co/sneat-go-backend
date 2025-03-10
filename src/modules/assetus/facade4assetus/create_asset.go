@@ -24,11 +24,11 @@ type CreateAssetResponse struct {
 }
 
 // CreateAsset creates an asset
-func CreateAsset(ctx context.Context, userCtx facade.UserContext, request dto4assetus.CreateAssetRequest) (response CreateAssetResponse, err error) {
+func CreateAsset(ctx facade.ContextWithUser, request dto4assetus.CreateAssetRequest) (response CreateAssetResponse, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4spaceus2.CreateSpaceItem(ctx, userCtx,
+	err = dal4spaceus2.CreateSpaceItem(ctx, ctx.User(),
 		request.SpaceRequest, const4assetus.ModuleID, new(dbo4assetus.AssetusSpaceDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus2.ModuleSpaceWorkerParams[*dbo4assetus.AssetusSpaceDbo]) (err error) {
 			if err = params.GetRecords(ctx, tx); err != nil {

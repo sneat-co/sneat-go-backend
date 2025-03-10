@@ -11,7 +11,7 @@ var deleteRetroItem = facade4retrospectus.DeleteRetroItem
 
 // httpPostDeleteRetroItem is an API endpoint that removes an items from a retrospective
 func httpPostDeleteRetroItem(w http.ResponseWriter, r *http.Request) {
-	ctx, userContext, err := verifyAuthorizedJSONRequest(w, r, verify.MinJSONRequestSize, 10*verify.KB)
+	ctx, err := verifyAuthorizedJSONRequest(w, r, verify.MinJSONRequestSize, 10*verify.KB)
 	if err != nil {
 		return
 	}
@@ -19,6 +19,6 @@ func httpPostDeleteRetroItem(w http.ResponseWriter, r *http.Request) {
 	if err := apicore.DecodeRequestBody(w, r, &request); err != nil {
 		return
 	}
-	err = deleteRetroItem(ctx, userContext, request)
+	err = deleteRetroItem(ctx, request)
 	apicore.IfNoErrorReturnOK(ctx, w, r, err)
 }

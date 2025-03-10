@@ -11,7 +11,7 @@ var setMetric = facade4scrumus.SetMetric
 
 // httpPostSetMetric is an API endpoint that sets metric value
 func httpPostSetMetric(w http.ResponseWriter, r *http.Request) {
-	ctx, userContext, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
+	ctx, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
 	if err != nil {
 		return
 	}
@@ -19,6 +19,6 @@ func httpPostSetMetric(w http.ResponseWriter, r *http.Request) {
 	if err = apicore.DecodeRequestBody(w, r, &request); err != nil {
 		return
 	}
-	response, err := setMetric(ctx, userContext, request)
+	response, err := setMetric(ctx, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusCreated, err, response)
 }

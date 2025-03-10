@@ -18,7 +18,7 @@ func fastSliceRemove(s []string, i int) []string {
 }
 
 // ThumbUp adds thumb up
-func ThumbUp(ctx context.Context, userCtx facade.UserContext, request ThumbUpRequest) (err error) {
+func ThumbUp(ctx facade.ContextWithUser, request ThumbUpRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
@@ -28,6 +28,7 @@ func ThumbUp(ctx context.Context, userCtx facade.UserContext, request ThumbUpReq
 	//	return nil
 	//})
 
+	userCtx := ctx.User()
 	uid := userCtx.GetUserID()
 
 	return runTaskWorker(ctx, userCtx, request.TaskRequest,

@@ -1,7 +1,6 @@
 package api4retrospectus
 
 import (
-	"context"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/facade4retrospectus"
@@ -15,7 +14,7 @@ import (
 
 func TestAddRetroItem(t *testing.T) {
 	called := 0
-	addRetroItem = func(_ context.Context, _ facade.UserContext, request facade4retrospectus.AddRetroItemRequest) (response facade4retrospectus.AddRetroItemResponse, err error) {
+	addRetroItem = func(_ facade.ContextWithUser, request facade4retrospectus.AddRetroItemRequest) (response facade4retrospectus.AddRetroItemResponse, err error) {
 		called++
 		return response, err
 	}
@@ -33,8 +32,8 @@ func TestAddRetroItem(t *testing.T) {
 	})
 	w := httptest.NewRecorder()
 
-	verifyRequest = func(w http.ResponseWriter, r *http.Request, options verify.RequestOptions) (ctx context.Context, userCtx facade.UserContext, err error) {
-		return r.Context(), nil, nil
+	verifyRequest = func(w http.ResponseWriter, r *http.Request, options verify.RequestOptions) (ctx facade.ContextWithUser, err error) {
+		return facade.NewContextWithUser(r.Context(), ""), nil
 	}
 
 	handler := http.HandlerFunc(httpPostAddRetroItem)

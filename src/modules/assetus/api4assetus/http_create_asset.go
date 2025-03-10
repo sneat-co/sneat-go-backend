@@ -1,7 +1,6 @@
 package api4assetus
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -27,8 +26,8 @@ func httpPostCreateAsset(w http.ResponseWriter, r *http.Request) {
 	}
 
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.DefaultJsonWithAuthRequired, http.StatusCreated,
-		func(ctx context.Context, userCtx facade.UserContext) (interface{}, error) {
-			asset, err := facade4assetus.CreateAsset(ctx, userCtx, request)
+		func(ctx facade.ContextWithUser) (interface{}, error) {
+			asset, err := facade4assetus.CreateAsset(ctx, request)
 			if err != nil {
 				return nil, fmt.Errorf("failed to create asset: %w", err)
 			}

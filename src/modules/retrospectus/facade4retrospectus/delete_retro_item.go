@@ -7,11 +7,12 @@ import (
 )
 
 // DeleteRetroItem deletes item from retrospective
-func DeleteRetroItem(ctx context.Context, userCtx facade.UserContext, request RetroItemRequest) (err error) {
+func DeleteRetroItem(ctx facade.ContextWithUser, request RetroItemRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 
+	userCtx := ctx.User()
 	if request.MeetingID == UpcomingRetrospectiveID {
 		return deleteUserRetroItem(ctx, userCtx, request)
 	}

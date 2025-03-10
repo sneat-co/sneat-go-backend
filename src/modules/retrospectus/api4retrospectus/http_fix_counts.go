@@ -11,7 +11,7 @@ var fixCounts = facade4retrospectus.FixCounts
 
 // httpPostFixCounts is an API endpoint that triggers fixing of counters in a retrospective
 func httpPostFixCounts(w http.ResponseWriter, r *http.Request) {
-	ctx, userContext, err := verifyRequest(w, r, verify.DefaultJsonWithAuthRequired)
+	ctx, err := verifyRequest(w, r, verify.DefaultJsonWithAuthRequired)
 	if err != nil {
 		return
 	}
@@ -19,6 +19,6 @@ func httpPostFixCounts(w http.ResponseWriter, r *http.Request) {
 	if err := apicore.DecodeRequestBody(w, r, &request); err != nil {
 		return
 	}
-	err = fixCounts(ctx, userContext, request)
+	err = fixCounts(ctx, request)
 	apicore.IfNoErrorReturnOK(ctx, w, r, err)
 }

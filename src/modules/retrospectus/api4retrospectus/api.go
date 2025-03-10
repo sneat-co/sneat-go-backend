@@ -1,7 +1,6 @@
 package api4retrospectus
 
 import (
-	"context"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/apicore/verify"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -19,7 +18,7 @@ var verifyRequest = apicore.VerifyRequestAndCreateUserContext /* func(
 func verifyAuthorizedJSONRequest(
 	w http.ResponseWriter, r *http.Request,
 	minSize, maxSize int64,
-) (ctx context.Context, userCtx facade.UserContext, err error) {
+) (ctx facade.ContextWithUser, err error) {
 	o := verify.Request(
 		verify.AuthenticationRequired(true),
 		verify.MinimumContentLength(minSize),

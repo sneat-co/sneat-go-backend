@@ -14,7 +14,7 @@ var setListItemsIsDone = facade4listus.SetListItemsIsDone
 func httpPostSetListItemsIsDone(w http.ResponseWriter, r *http.Request) {
 	var request dto4listus.ListItemsSetIsDoneRequest
 	request.ListRequest = getListRequestParamsFromURL(r)
-	ctx, userContext, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
+	ctx, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
 	if err != nil {
 		return
 	}
@@ -22,6 +22,6 @@ func httpPostSetListItemsIsDone(w http.ResponseWriter, r *http.Request) {
 		apicore.ReturnError(r.Context(), w, r, err)
 		return
 	}
-	_, _, err = setListItemsIsDone(ctx, userContext, request)
+	_, _, err = setListItemsIsDone(ctx, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusNoContent, err, nil)
 }

@@ -9,8 +9,8 @@ import (
 )
 
 // DeleteShippingPoint deletes shipping point from an order
-func DeleteShippingPoint(ctx context.Context, userCtx facade.UserContext, request dto4logist.OrderShippingPointRequest) error {
-	return RunOrderWorker(ctx, userCtx, request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) error {
+func DeleteShippingPoint(ctx facade.ContextWithUser, request dto4logist.OrderShippingPointRequest) error {
+	return RunOrderWorker(ctx, ctx.User(), request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) error {
 		return txDeleteShippingPoint(ctx, tx, params, request)
 	})
 }

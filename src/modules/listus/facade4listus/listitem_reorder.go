@@ -13,10 +13,11 @@ import (
 )
 
 // ReorderListItem reorders list items
-func ReorderListItem(ctx context.Context, userCtx facade.UserContext, request dto4listus.ReorderListItemsRequest) (err error) {
+func ReorderListItem(ctx facade.ContextWithUser, request dto4listus.ReorderListItemsRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
+	userCtx := ctx.User()
 	uid := userCtx.GetUserID()
 	if uid == "" {
 		return validation.NewErrRequestIsMissingRequiredField("userCtx.ContactID()")

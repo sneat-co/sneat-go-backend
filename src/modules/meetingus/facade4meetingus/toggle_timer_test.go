@@ -29,8 +29,6 @@ func TestToggleTimer(t *testing.T) { // TODO(help-wanted): add more test cases
 	//var db dal.DB
 	//testdb.NewMockDB(t, db, testdb.WithProfile1())
 
-	userContext := facade.NewUserContext("user1")
-
 	const (
 		space1ID = "space1"
 	)
@@ -60,8 +58,8 @@ func TestToggleTimer(t *testing.T) { // TODO(help-wanted): add more test cases
 			}
 		}
 
-		ctx := context.Background()
-		response, err := ToggleTimer(ctx, userContext, ToggleParams{Params: Params{recordFactory{}, nil}, Request: request})
+		ctx := facade.NewContextWithUser(context.Background(), "user1")
+		response, err := ToggleTimer(ctx, ToggleParams{Params: Params{recordFactory{}, nil}, Request: request})
 		if err != nil {
 			t.Fatal(err)
 		}

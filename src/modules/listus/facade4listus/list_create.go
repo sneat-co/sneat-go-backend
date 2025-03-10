@@ -20,11 +20,12 @@ import (
 )
 
 // CreateList creates a new list
-func CreateList(ctx context.Context, userCtx facade.UserContext, request dto4listus.CreateListRequest) (response dto4listus.CreateListResponse, err error) {
+func CreateList(ctx facade.ContextWithUser, request dto4listus.CreateListRequest) (response dto4listus.CreateListResponse, err error) {
 	request.Title = strings.TrimSpace(request.Title)
 	if err = request.Validate(); err != nil {
 		return
 	}
+	userCtx := ctx.User()
 	err = dal4spaceus2.CreateSpaceItem(ctx, userCtx, request.SpaceRequest, const4listus.ModuleID, new(dbo4listus.ListusSpaceDbo),
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus2.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) (err error) {
 

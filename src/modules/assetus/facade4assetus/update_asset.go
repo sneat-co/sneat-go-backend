@@ -14,10 +14,11 @@ import (
 	"github.com/sneat-co/sneat-go-core/facade"
 )
 
-func UpdateAsset(ctx context.Context, userCtx facade.UserContext, request dto4assetus.UpdateAssetRequest) (err error) {
+func UpdateAsset(ctx facade.ContextWithUser, request dto4assetus.UpdateAssetRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
+	userCtx := ctx.User()
 	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) (err error) {
 		return UpdateAssetTx(ctx, tx, userCtx, request)
 	})

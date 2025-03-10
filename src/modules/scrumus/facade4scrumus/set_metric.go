@@ -15,11 +15,12 @@ import (
 )
 
 // SetMetric sets metric
-func SetMetric(ctx context.Context, userCtx facade.UserContext, request SetMetricRequest) (response *SetMetricRequest, err error) {
+func SetMetric(ctx facade.ContextWithUser, request SetMetricRequest) (response *SetMetricRequest, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 
+	userCtx := ctx.User()
 	uid := userCtx.GetUserID()
 	err = runScrumWorker(ctx, userCtx, request.Request,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params facade4meetingus.WorkerParams) (err error) {

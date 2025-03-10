@@ -15,8 +15,8 @@ import (
 )
 
 // SetContainerEndpointFields sets dates for a container point
-func SetContainerEndpointFields(ctx context.Context, userCtx facade.UserContext, request dto4logist.SetContainerEndpointFieldsRequest) error {
-	return RunOrderWorker(ctx, userCtx, request.OrderRequest,
+func SetContainerEndpointFields(ctx facade.ContextWithUser, request dto4logist.SetContainerEndpointFieldsRequest) error {
+	return RunOrderWorker(ctx, ctx.User(), request.OrderRequest,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) error {
 			return txSetContainerEndpointFields(ctx, tx, params, request)
 		},

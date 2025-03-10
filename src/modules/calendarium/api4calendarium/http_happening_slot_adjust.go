@@ -11,10 +11,10 @@ import (
 func httpAdjustSlot(w http.ResponseWriter, r *http.Request) {
 	var request dto4calendarium.HappeningSlotDateRequest
 	request.HappeningRequest = getHappeningRequestParamsFromURL(r)
-	ctx, userContext, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
+	ctx, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
 	if err != nil {
 		return
 	}
-	err = facade4calendarium.AdjustSlot(ctx, userContext, request)
+	err = facade4calendarium.AdjustSlot(ctx, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusNoContent, err, nil)
 }

@@ -16,12 +16,12 @@ import (
 )
 
 // CancelHappening cancel a happening or it's slot or a single occurrence at specific date
-func CancelHappening(ctx context.Context, userCtx facade.UserContext, request dto4calendarium.CancelHappeningRequest) (err error) {
+func CancelHappening(ctx facade.ContextWithUser, request dto4calendarium.CancelHappeningRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 
-	err = dal4calendarium.RunHappeningSpaceWorker(ctx, userCtx, request.HappeningRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
+	err = dal4calendarium.RunHappeningSpaceWorker(ctx, ctx.User(), request.HappeningRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
 		switch params.Happening.Data.Type {
 		case "":
 			return fmt.Errorf("happening record has no type: %w", validation.NewErrRecordIsMissingRequiredField("type"))

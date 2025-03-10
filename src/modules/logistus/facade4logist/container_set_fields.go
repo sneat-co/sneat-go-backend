@@ -10,8 +10,8 @@ import (
 )
 
 // SetContainerFields sets container number in an order
-func SetContainerFields(ctx context.Context, userCtx facade.UserContext, request dto4logist.SetContainerFieldsRequest) error {
-	return RunOrderWorker(ctx, userCtx, request.OrderRequest,
+func SetContainerFields(ctx facade.ContextWithUser, request dto4logist.SetContainerFieldsRequest) error {
+	return RunOrderWorker(ctx, ctx.User(), request.OrderRequest,
 		func(_ context.Context, _ dal.ReadwriteTransaction, params *OrderWorkerParams) error {
 			return txSetContainerFields(params, request)
 		},

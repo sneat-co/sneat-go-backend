@@ -1,7 +1,6 @@
 package api4assetus
 
 import (
-	"context"
 	"fmt"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/facade4assetus"
@@ -18,8 +17,8 @@ func httpDeleteAsset(w http.ResponseWriter, r *http.Request) {
 	request.SpaceID = coretypes.SpaceID(q.Get("space"))
 	request.ID = q.Get("id")
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.NoContentAuthRequired, http.StatusNoContent,
-		func(ctx context.Context, userCtx facade.UserContext) (interface{}, error) {
-			if err := facade4assetus.DeleteAsset(ctx, userCtx, request); err != nil {
+		func(ctx facade.ContextWithUser) (interface{}, error) {
+			if err := facade4assetus.DeleteAsset(ctx, request); err != nil {
 				return nil, fmt.Errorf("failed to delete asset: %w", err)
 			}
 			return nil, nil

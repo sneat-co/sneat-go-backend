@@ -11,7 +11,7 @@ var addComment = facade4scrumus.AddComment
 
 // httpPostAddComment adds a comment
 func httpPostAddComment(w http.ResponseWriter, r *http.Request) {
-	ctx, userContext, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
+	ctx, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
 	if err != nil {
 		return
 	}
@@ -19,6 +19,6 @@ func httpPostAddComment(w http.ResponseWriter, r *http.Request) {
 	if err = apicore.DecodeRequestBody(w, r, &request); err != nil {
 		return
 	}
-	comment, err := addComment(ctx, userContext, request)
+	comment, err := addComment(ctx, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusCreated, err, comment)
 }

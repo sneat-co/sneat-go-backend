@@ -16,12 +16,12 @@ import (
 	"github.com/strongo/validation"
 )
 
-func AddParticipantToHappening(ctx context.Context, userCtx facade.UserContext, request dto4calendarium.HappeningContactRequest) (err error) {
+func AddParticipantToHappening(ctx facade.ContextWithUser, request dto4calendarium.HappeningContactRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 
-	if err = dal4calendarium.RunHappeningSpaceWorker(ctx, userCtx, request.HappeningRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
+	if err = dal4calendarium.RunHappeningSpaceWorker(ctx, ctx.User(), request.HappeningRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
 		return addParticipantToHappeningTxWorker(ctx, tx, params, request)
 	}); err != nil {
 		return fmt.Errorf("failed to add participant to happening: %w", err)

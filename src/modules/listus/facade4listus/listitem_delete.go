@@ -13,11 +13,11 @@ import (
 )
 
 // DeleteListItems deletes list items
-func DeleteListItems(ctx context.Context, userCtx facade.UserContext, request dto4listus.ListItemIDsRequest) (deletedItems []*dbo4listus.ListItemBrief, list dal4listus.ListEntry, err error) {
+func DeleteListItems(ctx facade.ContextWithUser, request dto4listus.ListItemIDsRequest) (deletedItems []*dbo4listus.ListItemBrief, list dal4listus.ListEntry, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4listus.RunListWorker(ctx, userCtx, request.ListRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4listus.ListWorkerParams) (err error) {
+	err = dal4listus.RunListWorker(ctx, ctx.User(), request.ListRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4listus.ListWorkerParams) (err error) {
 		list = params.List
 		isInRecentItems := func(item *dbo4listus.ListItemBrief) bool {
 			for _, recentItem := range list.Data.RecentItems {

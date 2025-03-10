@@ -14,11 +14,10 @@ import (
 
 // DeleteOrderCounterparty deletes counterparty from an order
 func DeleteOrderCounterparty(
-	ctx context.Context,
-	userCtx facade.UserContext,
+	ctx facade.ContextWithUser,
 	request dto4logist.DeleteOrderCounterpartyRequest,
 ) (err error) {
-	err = RunOrderWorker(ctx, userCtx, request.OrderRequest,
+	err = RunOrderWorker(ctx, ctx.User(), request.OrderRequest,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) (err error) {
 			return deleteOrderCounterpartyTxWorker(params, request)
 		},

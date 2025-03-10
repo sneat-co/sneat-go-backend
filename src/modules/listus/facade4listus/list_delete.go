@@ -14,10 +14,11 @@ import (
 )
 
 // DeleteList deletes list
-func DeleteList(ctx context.Context, userCtx facade.UserContext, request dto4listus.ListRequest) (err error) {
+func DeleteList(ctx facade.ContextWithUser, request dto4listus.ListRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
+	userCtx := ctx.User()
 	uid := userCtx.GetUserID()
 	if uid == "" {
 		return validation.NewErrRecordIsMissingRequiredField("userCtx.ContactID()")

@@ -19,7 +19,8 @@ import (
 )
 
 // StartRetrospective starts retro
-func StartRetrospective(ctx context.Context, userCtx facade.UserContext, request StartRetrospectiveRequest) (response *RetrospectiveResponse, isNewRetrospective bool, err error) {
+func StartRetrospective(ctx facade.ContextWithUser, request StartRetrospectiveRequest) (response *RetrospectiveResponse, isNewRetrospective bool, err error) {
+	userCtx := ctx.User()
 	uid := userCtx.GetUserID()
 
 	spaceKey := newSpaceKey(request.SpaceID)

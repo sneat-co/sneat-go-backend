@@ -14,7 +14,8 @@ import (
 )
 
 // FixCounts fixes counts
-func FixCounts(ctx context.Context, userCtx facade.UserContext, request FixCountsRequest) (err error) {
+func FixCounts(ctx facade.ContextWithUser, request FixCountsRequest) (err error) {
+	userCtx := ctx.User()
 	uid := userCtx.GetUserID()
 	return facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		now := time.Now()

@@ -11,7 +11,7 @@ var startRetroReview = facade4retrospectus.StartRetroReview
 
 // httpPostStartRetroReview is an API endpoint that starts retrospective
 func httpPostStartRetroReview(w http.ResponseWriter, r *http.Request) {
-	ctx, userContext, err := verifyRequest(w, r, verify.DefaultJsonWithAuthRequired)
+	ctx, err := verifyRequest(w, r, verify.DefaultJsonWithAuthRequired)
 	if err != nil {
 		return
 	}
@@ -19,6 +19,6 @@ func httpPostStartRetroReview(w http.ResponseWriter, r *http.Request) {
 	if err = apicore.DecodeRequestBody(w, r, &request); err != nil {
 		return
 	}
-	response, err := startRetroReview(ctx, userContext, request)
+	response, err := startRetroReview(ctx, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusOK, err, response)
 }

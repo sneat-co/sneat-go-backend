@@ -13,10 +13,10 @@ var createList = facade4listus.CreateList
 // httpPostCreateList creates a list
 func httpPostCreateList(w http.ResponseWriter, r *http.Request) {
 	var request dto4listus.CreateListRequest
-	ctx, userContext, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
+	ctx, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
 	if err != nil {
 		return
 	}
-	response, err := createList(ctx, userContext, request)
+	response, err := createList(ctx, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusCreated, err, &response)
 }

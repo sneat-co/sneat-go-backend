@@ -23,7 +23,7 @@ func registerQuiverHandlers(handle module.HTTPHandleFunc) {
 }
 
 func createWantedItem(w http.ResponseWriter, r *http.Request) {
-	ctx, userContext, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
+	ctx, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
 	if err != nil {
 		return
 	}
@@ -35,7 +35,7 @@ func createWantedItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var id string
-	if id, err = facade4sportus.CreateWanted(ctx, userContext, request); err != nil {
+	if id, err = facade4sportus.CreateWanted(ctx, request); err != nil {
 		httpserver.HandleError(ctx, err, "createWantedItem", w, r)
 		return
 	}
@@ -48,12 +48,12 @@ func updateWantedItem(w http.ResponseWriter, _ *http.Request) {
 }
 
 func deleteWantedItem(w http.ResponseWriter, r *http.Request) {
-	ctx, userContext, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
+	ctx, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
 	if err != nil {
 		return
 	}
 	request := facade4sportus.DeleteWantedRequest{ID: r.URL.Query().Get("id")}
-	if err = facade4sportus.DeleteWanted(ctx, userContext, request); err != nil {
+	if err = facade4sportus.DeleteWanted(ctx, request); err != nil {
 		httpserver.HandleError(ctx, err, "deleteWantedItem", w, r)
 	}
 	w.WriteHeader(http.StatusOK)

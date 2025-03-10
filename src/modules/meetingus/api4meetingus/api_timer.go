@@ -28,7 +28,7 @@ func ToggleMemberTimer(params facade4meetingus.Params) func(w http.ResponseWrite
 
 func toggleTimerEndpoint(params facade4meetingus.Params, requestValidator func(request facade4meetingus.ToggleTimerRequest) error) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		ctx, userContext, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
+		ctx, err := apicore.VerifyRequestAndCreateUserContext(w, r, verify.DefaultJsonWithAuthRequired)
 		if err != nil {
 			return
 		}
@@ -41,7 +41,7 @@ func toggleTimerEndpoint(params facade4meetingus.Params, requestValidator func(r
 				apicore.ReturnError(ctx, w, r, err)
 			}
 		}
-		response, err := toggleTimer(ctx, userContext, facade4meetingus.ToggleParams{Params: params, Request: request})
+		response, err := toggleTimer(ctx, facade4meetingus.ToggleParams{Params: params, Request: request})
 		if err == nil {
 			if err = response.Validate(); err != nil {
 				apicore.ReturnError(ctx, w, r, err)

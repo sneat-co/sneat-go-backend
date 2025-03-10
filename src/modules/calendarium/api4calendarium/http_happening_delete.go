@@ -9,10 +9,10 @@ import (
 
 func httpDeleteHappening(w http.ResponseWriter, r *http.Request) {
 	var request = getHappeningRequestParamsFromURL(r)
-	ctx, userContext, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
+	ctx, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
 	if err != nil {
 		return
 	}
-	err = facade4calendarium.DeleteHappening(ctx, userContext, request)
+	err = facade4calendarium.DeleteHappening(ctx, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusCreated, err, nil)
 }

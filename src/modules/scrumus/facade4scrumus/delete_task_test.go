@@ -19,12 +19,10 @@ func TestDeleteTask(t *testing.T) {
 		return nil, nil //db
 	}
 
-	userContext := facade.NewUserContext("user1")
-
-	ctx := context.Background()
+	ctx := facade.NewContextWithUser(context.Background(), "user1")
 
 	t.Run("empty_request", func(t *testing.T) {
-		if err := DeleteTask(ctx, userContext, DeleteTaskRequest{}); err == nil {
+		if err := DeleteTask(ctx, DeleteTaskRequest{}); err == nil {
 			t.Fatal("Should fail on empty request")
 		}
 	})
@@ -44,13 +42,13 @@ func TestDeleteTask(t *testing.T) {
 		}
 
 		t.Run("no_tasks", func(t *testing.T) {
-			if err := DeleteTask(ctx, userContext, request); err != nil {
+			if err := DeleteTask(ctx, request); err != nil {
 				t.Error(err)
 			}
 		})
 
 		t.Run("existing_task", func(t *testing.T) {
-			if err := DeleteTask(ctx, userContext, request); err != nil {
+			if err := DeleteTask(ctx, request); err != nil {
 				t.Error(err)
 			}
 		})

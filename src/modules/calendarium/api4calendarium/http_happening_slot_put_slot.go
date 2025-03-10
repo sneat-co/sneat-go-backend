@@ -19,10 +19,10 @@ func httpUpdateSlot(w http.ResponseWriter, r *http.Request) {
 func httpPutSlot(w http.ResponseWriter, r *http.Request, putMode facade4calendarium.PutMode) {
 	var request dto4calendarium.HappeningSlotRequest
 	request.HappeningRequest = getHappeningRequestParamsFromURL(r)
-	ctx, userContext, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
+	ctx, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
 	if err != nil {
 		return
 	}
-	err = facade4calendarium.PutSlot(ctx, userContext, putMode, request)
+	err = facade4calendarium.PutSlot(ctx, putMode, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusNoContent, err, nil)
 }

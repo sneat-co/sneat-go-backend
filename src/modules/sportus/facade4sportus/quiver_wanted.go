@@ -45,7 +45,8 @@ func validateBrands(ctx context.Context, brands []string, db dal.DB) error {
 }
 
 // CreateWanted creates wanted records
-func CreateWanted(ctx context.Context, userCtx facade.UserContext, request CreateWantedRequest) (id string, err error) {
+func CreateWanted(ctx facade.ContextWithUser, request CreateWantedRequest) (id string, err error) {
+	userCtx := ctx.User()
 	var db dal.DB
 	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return "", err
@@ -79,11 +80,12 @@ func (v *DeleteWantedRequest) Validate() error {
 }
 
 // DeleteWanted deletes wanted records
-func DeleteWanted(ctx context.Context, userCtx facade.UserContext, request DeleteWantedRequest) error {
+func DeleteWanted(ctx facade.ContextWithUser, request DeleteWantedRequest) error {
 	db, err := facade.GetSneatDB(ctx)
 	if err != nil {
 		return err
 	}
+	userCtx := ctx.User()
 	return db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		key := dal.NewKeyWithID(dbo4sportus.QuiverWantedCollection, request.ID)
 		var wanted dbo4sportus.Wanted

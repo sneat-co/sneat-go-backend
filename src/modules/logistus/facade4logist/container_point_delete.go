@@ -10,8 +10,8 @@ import (
 )
 
 // DeleteContainerPoints deletes container point from an order
-func DeleteContainerPoints(ctx context.Context, userCtx facade.UserContext, request dto4logist.ContainerPointsRequest) error {
-	return RunOrderWorker(ctx, userCtx, request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) error {
+func DeleteContainerPoints(ctx facade.ContextWithUser, request dto4logist.ContainerPointsRequest) error {
+	return RunOrderWorker(ctx, ctx.User(), request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) error {
 		return txDeleteContainerPoints(ctx, tx, params, request)
 	})
 }

@@ -31,7 +31,7 @@ func (v *AddCommentRequest) Validate() error {
 }
 
 // AddComment adds comment
-func AddComment(ctx context.Context, userCtx facade.UserContext, request AddCommentRequest) (comment *dbo4scrumus.Comment, err error) {
+func AddComment(ctx facade.ContextWithUser, request AddCommentRequest) (comment *dbo4scrumus.Comment, err error) {
 	if err = request.Validate(); err != nil {
 		err = fmt.Errorf("facade4retrospectus bad request: %v", err)
 		return
@@ -42,6 +42,7 @@ func AddComment(ctx context.Context, userCtx facade.UserContext, request AddComm
 		return nil, err
 	}
 
+	userCtx := ctx.User()
 	uid := userCtx.GetUserID()
 
 	user := dbo4userus.NewUserEntry(uid)
