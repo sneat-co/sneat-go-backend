@@ -1,5 +1,7 @@
 module github.com/sneat-co/sneat-go-backend
 
+// https://github.com/sneat-co/sneat-go-backend/actions
+
 go 1.23.0
 
 //replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
