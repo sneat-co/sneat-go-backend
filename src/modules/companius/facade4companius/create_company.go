@@ -20,12 +20,12 @@ type CreateCompanyResponse struct {
 }
 
 // CreateCompany creates a company // TODO: Obsolete?
-func CreateCompany(ctx context.Context, request CreateCompanyRequest) (response CreateCompanyResponse, err error) {
-	userID := facade.GetUserIDFromContext(ctx)
+func CreateCompany(ctxWithUser facade.ContextWithUser, request CreateCompanyRequest) (response CreateCompanyResponse, err error) {
+	userID := ctxWithUser.User().GetUserID()
 	if userID == "" {
-		return response, fmt.Errorf("context is missing user ContactID")
+		return response, fmt.Errorf("user ID is missing")
 	}
-	err = facade.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
+	err = facade.RunReadwriteTransaction(ctxWithUser, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		key, err := dal.NewKeyWithOptions("facade4meetingus", dal.WithRandomStringID(dal.RandomLength(5)))
 		if err != nil {
 			return err
