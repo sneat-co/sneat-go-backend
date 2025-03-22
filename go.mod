@@ -23,10 +23,10 @@ go 1.23.0
 
 require (
 	github.com/crediterra/money v0.3.0
-	github.com/dal-go/dalgo v0.18.1
+	github.com/dal-go/dalgo v0.18.2
 	github.com/dal-go/mocks4dalgo v0.2.3
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/sneat-co/sneat-core-modules v0.24.32
+	github.com/sneat-co/sneat-core-modules v0.24.33
 	github.com/sneat-co/sneat-go-core v0.50.3
 	github.com/stretchr/testify v1.10.0
 	github.com/strongo/decimal v0.1.1
