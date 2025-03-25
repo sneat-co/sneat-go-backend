@@ -83,19 +83,10 @@ func createHappeningTx(
 	happeningDto.UserIDs = params.Space.Data.UserIDs
 	happeningDto.Status = "active"
 	if happeningDto.Type == dbo4calendarium.HappeningTypeSingle {
+		// TODO:add comment why we doing it only for single happening
 		for _, slot := range happeningDto.Slots {
 			if slot.Start.Date != "" {
-				happeningDto.Dates = append(happeningDto.Dates, slot.Start.Date)
-			}
-			if happeningDto.DateMin == "" || happeningDto.DateMin > slot.Start.Date {
-				happeningDto.DateMin = slot.Start.Date
-			}
-			endDate := slot.End.Date
-			if endDate == "" {
-				endDate = slot.Start.Date
-			}
-			if happeningDto.DateMax == "" && endDate != "" && happeningDto.DateMax < endDate {
-				happeningDto.DateMax = endDate
+				_ = happeningDto.AddDate(slot.Start.Date)
 			}
 			// TODO(help-wanted): populate dates between start & end dates
 		}

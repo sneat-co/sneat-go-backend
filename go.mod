@@ -23,7 +23,7 @@ go 1.23.0
 
 require (
 	github.com/crediterra/money v0.3.0
-	github.com/dal-go/dalgo v0.18.1
+	github.com/dal-go/dalgo v0.18.2
 	github.com/dal-go/mocks4dalgo v0.2.3
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/sneat-co/sneat-core-modules v0.24.32
@@ -34,7 +34,7 @@ require (
 	github.com/strongo/logus v0.2.1
 	github.com/strongo/random v0.0.1
 	github.com/strongo/slice v0.3.1
-	github.com/strongo/strongoapp v0.26.6
+	github.com/strongo/strongoapp v0.27.0
 	github.com/strongo/validation v0.0.7
 	go.uber.org/mock v0.5.0
 )
