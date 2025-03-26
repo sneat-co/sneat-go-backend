@@ -7,8 +7,8 @@ github.com/crediterra/money v0.3.0 h1:dHWEZhkMGGxkHTAbGQOaeg8eYbL8qJSCgcqdOTbNg2
 github.com/crediterra/money v0.3.0/go.mod h1:0BT7dzPk4Wv+Wi8J6sxlFbCknYioLWVVQM4ciMJh6TI=
 github.com/dal-go/dalgo v0.18.2 h1:KMHfJgkf7wKtyM/VAlg4ZCQa+kFrFdErrgXPCFxPqc4=
 github.com/dal-go/dalgo v0.18.2/go.mod h1:BoMNGwDE9FdjynV7xCn5f/GdVJxvfePwjsMldn+BhqA=
-github.com/dal-go/mocks4dalgo v0.2.3 h1:ttyRcpGwc2X/+Uai4rENf6HxbjMyKiH+RPCJ3vgmJRA=
-github.com/dal-go/mocks4dalgo v0.2.3/go.mod h1:1yZaWk2DwBwf5mzcJeyCe5xo5xV/enrKQtwshZYdBk4=
+github.com/dal-go/mocks4dalgo v0.2.4 h1:zud//F8regnoxkVRabLx7+blY8M2BfU8J0dveimf8Sk=
+github.com/dal-go/mocks4dalgo v0.2.4/go.mod h1:DEV5aq1K2l1UsJoFFlNxPX/y0U6t2Zpvj8ElQ+PQcng=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -26,10 +26,10 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rogpeppe/go-internal v1.13.1 h1:KvO1DLK/DRN07sQ1LQKScxyZJuNnedQ5/wKSR38lUII=
 github.com/rogpeppe/go-internal v1.13.1/go.mod h1:uMEvuHeurkdAXX61udpOXGD/AzZDWNMNyH2VO9fmH0o=
-github.com/sneat-co/sneat-core-modules v0.24.32 h1:h4A8UwKP9kmKBN50cCTOnwwhy0w7iO7NA4shXlDI+Mg=
-github.com/sneat-co/sneat-core-modules v0.24.32/go.mod h1:dd7yLJGycSO3HPKu++ZtD/+xhVFPtnOLO+BgOiprwJE=
-github.com/sneat-co/sneat-go-core v0.50.3 h1:0cUgceC0c3ONmCCP5awwNzIkZiqm22OiZOly+/EBTTI=
-github.com/sneat-co/sneat-go-core v0.50.3/go.mod h1:tWZVQfd/wl01ogDkhfjKY6hPK8uo/ihv2jlnjuYVlhY=
+github.com/sneat-co/sneat-core-modules v0.25.0 h1:GrfIUTr/K7+HEQ0TRWiJViTZkJFT7FyBnX0K1W6P6zU=
+github.com/sneat-co/sneat-core-modules v0.25.0/go.mod h1:tPVPUV172oqQg8vfvjy2DWShqEH56oZSVahpln7aIrQ=
+github.com/sneat-co/sneat-go-core v0.50.5 h1:xS/oLMAlgY0yuJakVXA/Zm583UVmECehP04kPw0ve/4=
+github.com/sneat-co/sneat-go-core v0.50.5/go.mod h1:lAGErggbfSmNJoj/aEhBUoaXw33FGxOQxmVeYGiK63c=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5cxcmMvtA=
 github.com/stretchr/testify v1.10.0 h1:Xv5erBjTwe/5IxqUQTdXv5kgmIvbHo3QQyRwhJsOfJA=
