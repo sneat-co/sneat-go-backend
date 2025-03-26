@@ -77,7 +77,7 @@ func addContactToHappeningBriefInSpaceDbo(
 	happening dbo4calendarium.HappeningEntry,
 	contactID string,
 ) (updates []update.Update, err error) {
-	spaceID := calendariumSpace.Key.Parent().ID.(coretypes.SpaceID)
+	spaceID := coretypes.SpaceID(calendariumSpace.Key.Parent().ID.(string))
 	happeningBriefPointer := calendariumSpace.Data.GetRecurringHappeningBrief(happening.ID)
 	var happeningBrief dbo4calendarium.HappeningBrief
 	if happeningBriefPointer == nil {
