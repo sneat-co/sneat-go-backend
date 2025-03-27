@@ -10,25 +10,33 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
 )
 
-func getHappeningContactRecords(ctx context.Context, tx dal.ReadwriteTransaction, request *dto4calendarium.HappeningContactRequest, params *dal4calendarium.HappeningWorkerParams) (contact dal4contactus.ContactEntry, err error) {
-	if request.Contact.SpaceID == "" {
-		request.Contact.SpaceID = request.SpaceID
-	}
-	contact = dal4contactus.NewContactEntry(request.Contact.SpaceID, request.Contact.ID)
+func getHappeningContactRecords(ctx context.Context, tx dal.ReadwriteTransaction, request *dto4calendarium.HappeningContactsRequest, params *dal4calendarium.HappeningWorkerParams) (contacts []dal4contactus.ContactEntry, err error) {
+	records := make([]dal.Record, len(request.Contacts)+2)
+	records[0] = params.Happening.Record
+	records[1] = params.SpaceModuleEntry.Record
 
-	if err = tx.GetMulti(ctx, []dal.Record{params.Happening.Record, params.SpaceModuleEntry.Record, contact.Record}); err != nil {
-		return contact, fmt.Errorf("failed to get records: %w", err)
+	for _, contactRef := range request.Contacts {
+		if contactRef.SpaceID == "" {
+			contactRef.SpaceID = request.SpaceID
+		}
+		contact := dal4contactus.NewContactEntry(contactRef.SpaceID, contactRef.ID)
+		contacts = append(contacts, contact)
+	}
+	if err = tx.GetMulti(ctx, records); err != nil {
+		return contacts, fmt.Errorf("failed to get records: %w", err)
 	}
 	if err = params.SpaceModuleEntry.Record.Error(); err != nil {
 		if !dal.IsNotFound(err) && !errors.Is(err, dal.NoError) {
-			return contact, fmt.Errorf("failed to get contactus team record: %w", err)
+			return contacts, fmt.Errorf("failed to get contactus team record: %w", err)
 		}
 	}
 	if !params.SpaceModuleEntry.Record.Exists() {
-		return contact, fmt.Errorf("happening not found: %w", params.SpaceModuleEntry.Record.Error())
+		return contacts, fmt.Errorf("happening not found: %w", params.SpaceModuleEntry.Record.Error())
 	}
-	if !contact.Record.Exists() {
-		return contact, fmt.Errorf("contact not found: %w", contact.Record.Error())
+	for _, contact := range contacts {
+		if !contact.Record.Exists() {
+			return contacts, fmt.Errorf("contact not found: %w", contact.Record.Error())
+		}
 	}
 	return
 }

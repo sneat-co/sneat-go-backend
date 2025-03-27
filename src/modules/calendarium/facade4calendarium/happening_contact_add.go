@@ -16,7 +16,7 @@ import (
 	"github.com/strongo/validation"
 )
 
-func AddParticipantToHappening(ctx facade.ContextWithUser, request dto4calendarium.HappeningContactRequest) (err error) {
+func AddParticipantsToHappening(ctx facade.ContextWithUser, request dto4calendarium.HappeningContactsRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
@@ -29,7 +29,7 @@ func AddParticipantToHappening(ctx facade.ContextWithUser, request dto4calendari
 	return nil
 }
 
-func addParticipantToHappeningTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.HappeningContactRequest) error {
+func addParticipantToHappeningTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.HappeningContactsRequest) error {
 	_, err := getHappeningContactRecords(ctx, tx, &request, params)
 	if err != nil {
 		return err
@@ -40,7 +40,7 @@ func addParticipantToHappeningTxWorker(ctx context.Context, tx dal.ReadwriteTran
 		break // No special processing needed
 	case dbo4calendarium.HappeningTypeRecurring:
 		var updates []update.Update
-		if updates, err = addContactToHappeningBriefInSpaceDbo(ctx, tx, params.SpaceModuleEntry, params.Happening, request.Contact.ID); err != nil {
+		if updates, err = addContactsToHappeningBriefInSpaceDbo(ctx, tx, params.SpaceModuleEntry, params.Happening, request.Contacts); err != nil {
 			return fmt.Errorf("failed to add member to happening brief in team DTO: %w", err)
 		}
 		params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, updates...)
@@ -50,33 +50,44 @@ func addParticipantToHappeningTxWorker(ctx context.Context, tx dal.ReadwriteTran
 			validation.NewErrBadRecordFieldValue("type",
 				fmt.Sprintf("unknown value: [%v]", params.Happening.Data.Type)))
 	}
-	contactFullRef := dbo4contactus.NewContactFullRef(request.SpaceID, request.Contact.ID)
+
 	var updates []update.Update
-	if updates, err = dbo4linkage.AddRelationshipAndID(
-		&params.Happening.Data.WithRelated,
-		&params.Happening.Data.WithRelatedIDs,
-		contactFullRef,
-		dbo4linkage.RelationshipItemRolesCommand{
-			Add: &dbo4linkage.RolesCommand{
-				RolesOfItem: []string{"participant"},
+	for _, contactRef := range request.Contacts {
+		if contactRef.SpaceID == "" {
+			contactRef.SpaceID = request.SpaceID
+		}
+		contactFullRef := dbo4contactus.NewContactFullRef(contactRef.SpaceID, contactRef.ID)
+		if updates, err = dbo4linkage.AddRelationshipAndID(
+			&params.Happening.Data.WithRelated,
+			&params.Happening.Data.WithRelatedIDs,
+			contactFullRef,
+			dbo4linkage.RelationshipItemRolesCommand{
+				Add: &dbo4linkage.RolesCommand{
+					RolesOfItem: []string{"participant"},
+				},
 			},
-		},
-	); err != nil {
-		return err
+		); err != nil {
+			return err
+		}
 	}
-	params.HappeningUpdates = append(params.HappeningUpdates, updates...)
-	params.Happening.Record.MarkAsChanged()
+	if len(updates) > 0 {
+		params.HappeningUpdates = append(params.HappeningUpdates, updates...)
+		params.Happening.Record.MarkAsChanged()
+	}
 
 	return err
 }
 
-func addContactToHappeningBriefInSpaceDbo(
+func addContactsToHappeningBriefInSpaceDbo(
 	_ context.Context,
 	_ dal.ReadwriteTransaction,
 	calendariumSpace dal4calendarium.CalendariumSpaceEntry,
 	happening dbo4calendarium.HappeningEntry,
-	contactID string,
+	contactRefs []dbo4linkage.ShortSpaceModuleDocRef,
 ) (updates []update.Update, err error) {
+	if len(contactRefs) == 0 {
+		return updates, fmt.Errorf("no contacts to add to happening")
+	}
 	spaceID := coretypes.SpaceID(calendariumSpace.Key.Parent().ID.(string))
 	happeningBriefPointer := calendariumSpace.Data.GetRecurringHappeningBrief(happening.ID)
 	var happeningBrief dbo4calendarium.HappeningBrief
@@ -87,22 +98,24 @@ func addContactToHappeningBriefInSpaceDbo(
 			WithRelated:    happening.Data.WithRelated,
 		}
 	}
-	contactRef := dbo4linkage.NewSpaceModuleItemRef(spaceID, const4contactus.ModuleID, const4contactus.ContactsCollection, contactID)
+	for _, contactRef := range contactRefs {
+		fullContactRef := dbo4linkage.NewSpaceModuleItemRef(spaceID, const4contactus.ModuleID, const4contactus.ContactsCollection, contactRef.ID)
 
-	updates, err = happeningBriefPointer.AddRelationship(
-		contactRef,
-		dbo4linkage.RelationshipItemRolesCommand{
-			Add: &dbo4linkage.RolesCommand{
-				RolesOfItem: []string{"participant"},
-			},
-		})
+		updates, err = happeningBriefPointer.AddRelationship(
+			fullContactRef,
+			dbo4linkage.RelationshipItemRolesCommand{
+				Add: &dbo4linkage.RolesCommand{
+					RolesOfItem: []string{"participant"},
+				},
+			})
+	}
+
 	for i, u := range updates {
 		updates[i] = update.ByFieldName(
 			fmt.Sprintf("recurringHappenings.%s.%s", happening.ID, u.FieldName()),
 			u.Value(),
 		)
 	}
-
 	calendariumSpace.Data.RecurringHappenings[happening.ID] = happeningBriefPointer
 	return
 }

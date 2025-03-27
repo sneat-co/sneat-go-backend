@@ -8,13 +8,13 @@ import (
 	"net/http"
 )
 
-func httpAddParticipantToHappening(w http.ResponseWriter, r *http.Request) {
-	var request dto4calendarium.HappeningContactRequest
+func httpAddParticipantsToHappening(w http.ResponseWriter, r *http.Request) {
+	var request dto4calendarium.HappeningContactsRequest
 	request.HappeningRequest = getHappeningRequestParamsFromURL(r)
 	ctx, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
 	if err != nil {
 		return
 	}
-	err = facade4calendarium.AddParticipantToHappening(ctx, request)
+	err = facade4calendarium.AddParticipantsToHappening(ctx, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusNoContent, err, nil)
 }

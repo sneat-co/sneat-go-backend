@@ -29,7 +29,11 @@ func RemoveParticipantFromHappening(ctx facade.ContextWithUser, request dto4cale
 }
 
 func removeParticipantFromHappeningTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.HappeningContactRequest) error {
-	_, err := getHappeningContactRecords(ctx, tx, &request, params)
+	contactRequest := dto4calendarium.HappeningContactsRequest{
+		HappeningRequest: request.HappeningRequest,
+		Contacts:         []dbo4linkage.ShortSpaceModuleDocRef{request.Contact},
+	}
+	_, err := getHappeningContactRecords(ctx, tx, &contactRequest, params)
 	if err != nil {
 		return err
 	}
