@@ -11,9 +11,9 @@ import (
 )
 
 func getHappeningContactRecords(ctx context.Context, tx dal.ReadwriteTransaction, request *dto4calendarium.HappeningContactsRequest, params *dal4calendarium.HappeningWorkerParams) (contacts []dal4contactus.ContactEntry, err error) {
-	records := make([]dal.Record, len(request.Contacts)+2)
-	records[0] = params.Happening.Record
-	records[1] = params.SpaceModuleEntry.Record
+	records := make([]dal.Record, 0, len(request.Contacts)+2)
+	records = append(records, params.Happening.Record)
+	records = append(records, params.SpaceModuleEntry.Record)
 
 	for _, contactRef := range request.Contacts {
 		if contactRef.SpaceID == "" {
@@ -21,6 +21,7 @@ func getHappeningContactRecords(ctx context.Context, tx dal.ReadwriteTransaction
 		}
 		contact := dal4contactus.NewContactEntry(contactRef.SpaceID, contactRef.ID)
 		contacts = append(contacts, contact)
+		records = append(records, contact.Record)
 	}
 	if err = tx.GetMulti(ctx, records); err != nil {
 		return contacts, fmt.Errorf("failed to get records: %w", err)
