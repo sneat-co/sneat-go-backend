@@ -28,6 +28,8 @@ github.com/rogpeppe/go-internal v1.13.1 h1:KvO1DLK/DRN07sQ1LQKScxyZJuNnedQ5/wKSR
 github.com/rogpeppe/go-internal v1.13.1/go.mod h1:uMEvuHeurkdAXX61udpOXGD/AzZDWNMNyH2VO9fmH0o=
 github.com/sneat-co/sneat-core-modules v0.25.0 h1:GrfIUTr/K7+HEQ0TRWiJViTZkJFT7FyBnX0K1W6P6zU=
 github.com/sneat-co/sneat-core-modules v0.25.0/go.mod h1:tPVPUV172oqQg8vfvjy2DWShqEH56oZSVahpln7aIrQ=
+github.com/sneat-co/sneat-core-modules v0.25.1 h1:SoQllKVGPMKvzapwI79IIV0eVGqOB5WhnD7EanBlJ24=
+github.com/sneat-co/sneat-core-modules v0.25.1/go.mod h1:Ks987rhkf6Pr9E0vLYogDXF0qPJITBMgZJzH11dTiSk=
 github.com/sneat-co/sneat-go-core v0.50.5 h1:xS/oLMAlgY0yuJakVXA/Zm583UVmECehP04kPw0ve/4=
 github.com/sneat-co/sneat-go-core v0.50.5/go.mod h1:lAGErggbfSmNJoj/aEhBUoaXw33FGxOQxmVeYGiK63c=
 github.com/sneat-co/sneat-go-core v0.50.6 h1:QsNyiOL6T5zsdy16nfUY25OXeW8JuE8ha4glH/ze7sw=
@@ -56,6 +58,8 @@ golang.org/x/crypto v0.36.0 h1:AnAEvhDddvBdpY+uR+MyHmuZzzNqXSe/GvuDeob5L34=
 golang.org/x/crypto v0.36.0/go.mod h1:Y4J0ReaxCR1IMaabaSMugxJES1EpwhBHhv2bDHklZvc=
 golang.org/x/net v0.37.0 h1:1zLorHbz+LYj7MQlSf1+2tPIIgibq2eL5xkrGk6f+2c=
 golang.org/x/net v0.37.0/go.mod h1:ivrbrMbzFq5J41QOQh0siUuly180yBYtLp+CKbEaFx8=
+golang.org/x/net v0.38.0 h1:vRMAPTMaeGqVhG5QyLJHqNDwecKTomGeqbnfZyKlBI8=
+golang.org/x/net v0.38.0/go.mod h1:ivrbrMbzFq5J41QOQh0siUuly180yBYtLp+CKbEaFx8=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c h1:Hei/4ADfdWqJk1ZMxUNpqntNwaWcugrBjAiHlqqRiVk=
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c/go.mod h1:JHkPIbrfpd72SG/EVd6muEfDQjcINNoR0C8j2r3qZ4Q=
