@@ -69,7 +69,7 @@ func txSetContainerEndpointFields(
 	if request.ByContactID != nil {
 		byContactID := *request.ByContactID
 		if byContactID != endpoint.ByContactID {
-			_, orderContact := orderDto.WithOrderContacts.GetContactByID(byContactID)
+			_, orderContact := orderDto.GetContactByID(byContactID)
 			if orderContact == nil {
 				byContact, err := dal4contactus.GetContactByID(ctx, tx, params.SpaceWorkerParams.Space.ID, byContactID)
 				if err != nil {
@@ -89,7 +89,7 @@ func txSetContainerEndpointFields(
 				params.Changed.Contacts = true
 			}
 			const roleTrucker = dbo4logist.CounterpartyRoleTrucker
-			_, truckerCounterparty := orderDto.WithCounterparties.GetCounterpartyByRoleAndContactID(roleTrucker, byContactID)
+			_, truckerCounterparty := orderDto.GetCounterpartyByRoleAndContactID(roleTrucker, byContactID)
 			if truckerCounterparty == nil {
 				truckerCounterparty = &dbo4logist.OrderCounterparty{
 					Role:      roleTrucker,

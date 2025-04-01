@@ -48,14 +48,14 @@ func TestAddComment(t *testing.T) {
 	}
 
 	t.Run("add 1st comment", func(t *testing.T) {
-		body := []byte(strings.Replace(strings.Replace(`{
+		body := []byte(strings.ReplaceAll(strings.ReplaceAll(`{
 	"spaceID":"space1",
 	"meetingID":"2019-11-22",
 	"type":"done",
 	"task":"d1","
 	members":"m1",
 	"message":"msg1"
-}`, "\n", "", -1), "\t", "", -1))
+}`, "\n", ""), "\t", ""))
 		var request AddCommentRequest
 		if err := json.Unmarshal(body, &request); err != nil {
 			t.Fatal(err)

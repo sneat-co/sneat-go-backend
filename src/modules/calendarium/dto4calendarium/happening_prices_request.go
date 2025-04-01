@@ -17,7 +17,7 @@ func (v HappeningPricesRequest) Validate() error {
 	if err := v.HappeningRequest.Validate(); err != nil {
 		return err
 	}
-	if len(v.WithHappeningPrices.Prices) == 0 {
+	if len(v.Prices) == 0 {
 		return validation.NewErrRequestIsMissingRequiredField("prices")
 	}
 	if err := v.WithHappeningPrices.Validate(); err != nil {

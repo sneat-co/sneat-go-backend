@@ -93,21 +93,21 @@ var RunOrderWorker = func(ctx context.Context, userCtx facade.UserContext, reque
 		if err := order.Dto.KeysField.Validate(); err != nil {
 			return err
 		}
-		orderUpdates = append(orderUpdates, order.Dto.KeysField.UpdatesWhenKeysChanged()...)
+		orderUpdates = append(orderUpdates, order.Dto.UpdatesWhenKeysChanged()...)
 
 		order.Dto.UpdateDates()
 		if err := order.Dto.DatesFields.Validate(); err != nil {
 			return err
 		}
-		orderUpdates = append(orderUpdates, order.Dto.DatesFields.UpdatesWhenDatesChanged()...)
+		orderUpdates = append(orderUpdates, order.Dto.UpdatesWhenDatesChanged()...)
 
-		order.Dto.WithModified.MarkAsUpdated(params.SpaceWorkerParams.UserID())
+		order.Dto.MarkAsUpdated(params.SpaceWorkerParams.UserID())
 		if err := order.Dto.Validate(); err != nil {
 			return fmt.Errorf(
 				"order is not valid before pushing updates to DB (ContactID=%s): %w",
 				order.ID, err)
 		}
-		orderUpdates = append(orderUpdates, order.Dto.UpdatedFields.UpdatesWhenUpdatedFieldsChanged()...)
+		orderUpdates = append(orderUpdates, order.Dto.UpdatesWhenUpdatedFieldsChanged()...)
 		if err := tx.Update(ctx, order.Key, orderUpdates); err != nil {
 			return fmt.Errorf("failed to update order record: %w", err)
 		}

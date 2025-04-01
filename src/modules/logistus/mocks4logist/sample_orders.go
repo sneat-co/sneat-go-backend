@@ -354,7 +354,7 @@ func fixCounterpartiesFromContacts(order *dbo4logist.OrderDbo) {
 		cp.CountryID = contact.CountryID
 		cp.Title = contact.Title
 		if contact.ParentID != "" {
-			_, parent := order.WithCounterparties.GetCounterpartyByContactID(contact.ParentID)
+			_, parent := order.GetCounterpartyByContactID(contact.ParentID)
 			cp.Parent = &dbo4logist.CounterpartyParent{
 				ContactID: parent.ContactID,
 				Role:      parent.Role,

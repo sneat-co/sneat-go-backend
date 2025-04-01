@@ -22,7 +22,7 @@ func txUpdateContainerPoint(
 	request dto4logist.UpdateContainerPointRequest,
 ) error {
 	orderDto := params.Order.Dto
-	containerPoint := orderDto.WithContainerPoints.GetContainerPoint(request.ContainerID, request.ShippingPointID)
+	containerPoint := orderDto.GetContainerPoint(request.ContainerID, request.ShippingPointID)
 	containerPoint.ToLoad = request.ToLoad
 	if containerPoint.ToLoad.IsEmpty() {
 		containerPoint.ToLoad = nil

@@ -38,10 +38,10 @@ func Test_deleteSegments(t *testing.T) {
 				assert.Equal(t, 1, len(args.params.Order.Dto.Segments))
 				for _, containerID := range args.request.ContainerIDs {
 					var containerPoint *dbo4logist.ContainerPoint
-					if args.request.SegmentsFilter.FromShippingPointID != "" {
-						containerPoint = args.params.Order.Dto.GetContainerPoint(containerID, args.request.SegmentsFilter.FromShippingPointID)
-					} else if args.request.SegmentsFilter.ToShippingPointID != "" {
-						containerPoint = args.params.Order.Dto.GetContainerPoint(containerID, args.request.SegmentsFilter.ToShippingPointID)
+					if args.request.FromShippingPointID != "" {
+						containerPoint = args.params.Order.Dto.GetContainerPoint(containerID, args.request.FromShippingPointID)
+					} else if args.request.ToShippingPointID != "" {
+						containerPoint = args.params.Order.Dto.GetContainerPoint(containerID, args.request.ToShippingPointID)
 					}
 					assert.NotNilf(t, containerPoint, "ContainerPoints (%d): %v", len(args.params.Order.Dto.ContainerPoints), args.params.Order.Dto.ContainerPoints)
 					assert.NotEqual(t, "", containerPoint.Arrival.ScheduledDate)

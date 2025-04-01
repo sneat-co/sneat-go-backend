@@ -51,12 +51,12 @@ func CreateWanted(ctx facade.ContextWithUser, request CreateWantedRequest) (id s
 	if db, err = facade.GetSneatDB(ctx); err != nil {
 		return "", err
 	}
-	if err = validateBrands(ctx, request.Wanted.Brands, db); err != nil {
+	if err = validateBrands(ctx, request.Brands, db); err != nil {
 		return "", err
 	}
 	err = db.RunReadwriteTransaction(ctx, func(ctx context.Context, tx dal.ReadwriteTransaction) error {
 		record := dal.NewRecordWithIncompleteKey(dbo4sportus.QuiverWantedCollection, reflect.String, &request.Wanted)
-		request.Wanted.UserID = userCtx.GetUserID()
+		request.UserID = userCtx.GetUserID()
 		if err := tx.Insert(ctx, record); err != nil {
 			return fmt.Errorf("failed to create wanted record: %w", err)
 		}

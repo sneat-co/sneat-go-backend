@@ -30,8 +30,7 @@ func (v UpdateShippingPointRequest) Validate() error {
 	}
 	for name := range v.SetDates {
 		switch name {
-		case "scheduledStartDate", "scheduledEndDate":
-			break // OK
+		case "scheduledStartDate", "scheduledEndDate": // Ok
 		case "":
 			return validation.NewErrBadRequestFieldValue("SetDates", "field name must be set")
 		default:
@@ -40,8 +39,7 @@ func (v UpdateShippingPointRequest) Validate() error {
 	}
 	for name := range v.SetStrings {
 		switch name {
-		case "notes", "departsDate", "arrivedDate", "departedDate":
-			break // OK
+		case "notes", "departsDate", "arrivedDate", "departedDate": // OK
 		case "":
 			return validation.NewErrBadRequestFieldValue("SetDates", "field name must be set")
 		default:

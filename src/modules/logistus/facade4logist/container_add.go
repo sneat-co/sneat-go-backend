@@ -22,7 +22,7 @@ func addContainersTx(params *OrderWorkerParams, request dto4logist.AddContainers
 		panic("params.Order.Data == nil")
 	}
 	for _, c := range request.Containers {
-		containerID := params.Order.Dto.WithOrderContainers.GenerateRandomContainerID()
+		containerID := params.Order.Dto.GenerateRandomContainerID()
 		containerBrief := dbo4logist.OrderContainer{
 			ID:                 containerID,
 			OrderContainerBase: c.OrderContainerBase,

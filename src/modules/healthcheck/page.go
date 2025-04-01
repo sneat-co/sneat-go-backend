@@ -36,10 +36,10 @@ func httpGetPage(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 
-	_, err = w.Write([]byte(fmt.Sprintf("Firestore write: OK at %v: id=%v;",
+	_, err = fmt.Fprintf(w, "Firestore write: OK at %v: id=%v;",
 		data.At,
 		key.String(),
-	)))
+	)
 	if err != nil {
 		logus.Errorf(ctx, "Failed to write to output stream: %v", err)
 	}

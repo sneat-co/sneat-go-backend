@@ -16,7 +16,7 @@ type HappeningSlot struct {
 }
 
 func (v *HappeningSlot) IsEmpty() bool {
-	return v == nil || v.HappeningSlotTiming.IsEmpty() && len(v.Locations) == 0 && len(v.WithRelated.Related) == 0
+	return v == nil || v.HappeningSlotTiming.IsEmpty() && len(v.Locations) == 0 && len(v.Related) == 0
 }
 
 // Validate returns error if not valid

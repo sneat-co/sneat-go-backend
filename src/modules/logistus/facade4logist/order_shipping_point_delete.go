@@ -46,7 +46,7 @@ func txDeleteShippingPoint(_ context.Context, _ dal.ReadwriteTransaction, params
 	{ // Remove segments related to the deleted shipping point
 		segments := make([]*dbo4logist.ContainerSegment, 0, len(orderDto.Segments))
 		for _, segment := range orderDto.Segments {
-			if segment.ContainerSegmentKey.From.ShippingPointID == request.ShippingPointID || segment.ContainerSegmentKey.To.ShippingPointID == request.ShippingPointID {
+			if segment.From.ShippingPointID == request.ShippingPointID || segment.To.ShippingPointID == request.ShippingPointID {
 				continue
 			}
 			segments = append(segments, segment)

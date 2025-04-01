@@ -76,7 +76,7 @@ func removeContactFromHappeningBriefInContactusSpaceDbo(
 		return nil, err
 	}
 	contactFullRef := dbo4contactus.NewContactFullRef(contactShortRef.SpaceID(), contactShortRef.ItemID())
-	updates = calendarHappeningBrief.WithRelated.RemoveRelatedItem(contactFullRef)
+	updates = calendarHappeningBrief.RemoveRelatedItem(contactFullRef)
 	if len(updates) > 0 {
 		for i, u := range updates {
 			updates[i] = update.ByFieldName(

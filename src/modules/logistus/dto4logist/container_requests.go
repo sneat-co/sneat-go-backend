@@ -94,8 +94,7 @@ func (v SetContainerFieldsRequest) Validate() error {
 	}
 	for name := range v.SetStrings {
 		switch name {
-		case "instructions", "number":
-			break // OK
+		case "instructions", "number": // OK
 		case "":
 			return validation.NewErrRequestIsMissingRequiredField("setStrings")
 		default:

@@ -143,9 +143,9 @@ type HappeningSlotTiming struct {
 }
 
 func (v HappeningSlotTiming) IsEmpty() bool {
-	return v.Timing.Start.Date == "" ||
-		v.Timing.Start.Time == "" ||
-		v.Timing.End.Time == "" ||
+	return v.Start.Date == "" ||
+		v.Start.Time == "" ||
+		v.End.Time == "" ||
 		len(v.Weeks) > 0 ||
 		len(v.Weekdays) > 0 ||
 		v.DurationInMinutes != 0
@@ -190,10 +190,7 @@ func (v HappeningSlotTiming) Validate() error {
 		switch wd {
 		case "":
 			return validation.NewErrRecordIsMissingRequiredField(fmt.Sprintf("weekdays[%v]", i))
-		case Monday2, Tuesday2, Wednesday2, Thursday2, Friday2, Saturday2, Sunday2:
-			break
-		default:
-
+		case Monday2, Tuesday2, Wednesday2, Thursday2, Friday2, Saturday2, Sunday2: // OK
 		}
 	}
 	for i, wd := range v.Weeks {

@@ -165,8 +165,8 @@ counterparties:
 			order.Dto.Counterparties[i] = newCounterparty
 
 			// Removes oldContact by index from order.Data.Contacts if it is not used by other counterparties
-			if newCounterparty.ContactID != oldCounterparty.ContactID && len(order.Dto.WithCounterparties.GetCounterpartiesByContactID(oldCounterparty.ContactID)) == 0 {
-				if j, _ := order.Dto.WithOrderContacts.GetContactByID(oldCounterparty.ContactID); j >= 0 {
+			if oldCounterparty != nil && newCounterparty.ContactID != oldCounterparty.ContactID && len(order.Dto.GetCounterpartiesByContactID(oldCounterparty.ContactID)) == 0 {
+				if j, _ := order.Dto.GetContactByID(oldCounterparty.ContactID); j >= 0 {
 					order.Dto.Contacts = append(order.Dto.Contacts[:j], order.Dto.Contacts[j+1:]...)
 					params.Changed.Contacts = true
 				}

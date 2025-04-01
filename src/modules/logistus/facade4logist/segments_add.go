@@ -79,7 +79,7 @@ func addSegment(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderW
 			SegmentCounterparty: request.To.Counterparty,
 		},
 	}
-	segment := orderDto.WithSegments.GetSegmentByKey(segmentKey)
+	segment := orderDto.GetSegmentByKey(segmentKey)
 	if segment != nil {
 		return segmentChanges, fmt.Errorf("segment already exists")
 	}

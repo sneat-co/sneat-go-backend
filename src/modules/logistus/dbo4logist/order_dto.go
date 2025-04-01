@@ -167,10 +167,10 @@ func (v *OrderDbo) UpdateDates() {
 
 func (v *OrderDbo) updateDatesFromShippingPoint(p *OrderShippingPoint) {
 	if p.ScheduledStartDate != "" && slice.Index(v.Dates, p.ScheduledStartDate) < 0 {
-		v.DatesFields.AddDate(p.ScheduledStartDate)
+		v.AddDate(p.ScheduledStartDate)
 	}
 	if p.ScheduledEndDate != "" && slice.Index(v.Dates, p.ScheduledEndDate) < 0 {
-		v.DatesFields.AddDate(p.ScheduledEndDate)
+		v.AddDate(p.ScheduledEndDate)
 	}
 }
 

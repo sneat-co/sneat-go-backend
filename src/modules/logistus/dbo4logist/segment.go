@@ -251,10 +251,10 @@ func validateOrderSegment(order OrderDbo, segment *ContainerSegment) (err error)
 		return validation.NewErrBadRecordFieldValue("containerID", fmt.Sprintf("container with ContactID=[%s] does not exist", segment.ContainerID))
 	}
 	//var fromPoint, toPoint *OrderShippingPoint
-	if err = validateSegmentEndpoint(order, segment, "from", segment.ContainerSegmentKey.From); err != nil {
+	if err = validateSegmentEndpoint(order, segment, "from", segment.From); err != nil {
 		return err
 	}
-	if err = validateSegmentEndpoint(order, segment, "to", segment.ContainerSegmentKey.To); err != nil {
+	if err = validateSegmentEndpoint(order, segment, "to", segment.To); err != nil {
 		return err
 	}
 	if err := briefs4contactus.ValidateContactIDRecordField("byContactID", segment.ByContactID, false); err != nil {

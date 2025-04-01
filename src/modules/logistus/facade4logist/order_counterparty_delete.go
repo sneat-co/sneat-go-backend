@@ -55,7 +55,7 @@ func deleteCounterpartyAndChildren(params *OrderWorkerParams, role dbo4logist.Co
 			})
 			continue
 		}
-		_, c := order.WithOrderContacts.GetContactByID(cp.ContactID)
+		_, c := order.GetContactByID(cp.ContactID)
 		if cp.Parent != nil && cp.Parent.ContactID == c.ParentID && cp.Parent.Role == role {
 			params.Changed.Counterparties = true
 			continue
@@ -69,7 +69,7 @@ func deleteCounterpartyAndChildren(params *OrderWorkerParams, role dbo4logist.Co
 func RemoveUnusedContacts(params *OrderWorkerParams) {
 	contacts := make([]*dbo4logist.OrderContact, 0, len(params.Order.Dto.Contacts))
 	for _, contact := range params.Order.Dto.Contacts {
-		i, _ := params.Order.Dto.WithCounterparties.GetCounterpartyByContactID(contact.ID)
+		i, _ := params.Order.Dto.GetCounterpartyByContactID(contact.ID)
 		if i < 0 {
 			params.Changed.Contacts = true
 			continue

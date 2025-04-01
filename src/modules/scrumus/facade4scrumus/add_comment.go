@@ -53,7 +53,7 @@ func AddComment(ctx facade.ContextWithUser, request AddCommentRequest) (comment 
 	err = runTaskWorker(ctx, userCtx, request.TaskRequest,
 		func(ctx context.Context, tx dal.ReadwriteTransaction, params taskWorkerParams) (err error) {
 			if params.task == nil {
-				return errors.New("task not found by ContactID: " + request.TaskRequest.Task)
+				return errors.New("task not found by ContactID: " + request.Task)
 			}
 			comment = &dbo4scrumus.Comment{
 				ID:      random.ID(1),
@@ -75,7 +75,7 @@ func AddComment(ctx facade.ContextWithUser, request AddCommentRequest) (comment 
 			params.task.Comments = append(params.task.Comments, comment)
 			return tx.Update(ctx, params.Meeting.Key, []update.Update{
 				update.ByFieldName(
-					fmt.Sprintf("statuses.%s.byType.%s", request.TaskRequest.ContactID, request.TaskRequest.Type),
+					fmt.Sprintf("statuses.%s.byType.%s", request.ContactID, request.Type),
 					params.tasks,
 				),
 			})

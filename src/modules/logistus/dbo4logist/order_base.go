@@ -135,7 +135,7 @@ func (v OrderBase) validateCounterparty(cp *OrderCounterparty, contactIDsWithRol
 		return err
 	}
 	if cp.Parent != nil {
-		_, parent := v.WithCounterparties.GetCounterpartyByRoleAndContactID(cp.Parent.Role, cp.Parent.ContactID)
+		_, parent := v.GetCounterpartyByRoleAndContactID(cp.Parent.Role, cp.Parent.ContactID)
 		if parent == nil {
 			return validation.NewErrBadRecordFieldValue("parent", fmt.Sprintf("counterparty not found in order by (role=%s, contactID=%s)", cp.Parent.Role, cp.Parent.ContactID))
 		}
