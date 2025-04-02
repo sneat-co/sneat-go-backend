@@ -26,8 +26,8 @@ require (
 	github.com/dal-go/dalgo v0.18.2
 	github.com/dal-go/mocks4dalgo v0.2.4
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/sneat-co/sneat-core-modules v0.25.1
-	github.com/sneat-co/sneat-go-core v0.50.6
+	github.com/sneat-co/sneat-core-modules v0.25.3
+	github.com/sneat-co/sneat-go-core v0.50.7
 	github.com/stretchr/testify v1.10.0
 	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.1.0
