@@ -29,9 +29,10 @@ func RemoveParticipantsFromHappening(ctx facade.ContextWithUser, request dto4cal
 }
 
 func removeParticipantsFromHappeningTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.HappeningContactsRequest) error {
-	for _, contact := range request.Contacts {
-		if contact.SpaceID == "" {
-			contact.SpaceID = request.SpaceID
+	for i := range request.Contacts {
+		// Contacts splice is holding non-pointer structs so we need to use index
+		if request.Contacts[i].SpaceID == "" {
+			request.Contacts[i].SpaceID = request.SpaceID
 		}
 	}
 	_, err := getHappeningContactRecords(ctx, tx, &request, params)
