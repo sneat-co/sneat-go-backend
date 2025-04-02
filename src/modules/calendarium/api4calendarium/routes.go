@@ -13,7 +13,7 @@ func RegisterHttpRoutes(handle module.HTTPHandleFunc) {
 	handle(http.MethodPost, "/v0/happenings/cancel_happening", httpCancelHappening)
 	handle(http.MethodPost, "/v0/happenings/revoke_happening_cancellation", httpRevokeHappeningCancellation)
 	handle(http.MethodPost, "/v0/happenings/add_participants", httpAddParticipantsToHappening)
-	handle(http.MethodPost, "/v0/happenings/remove_participant", httpRemoveParticipantFromHappening)
+	handle(http.MethodPost, "/v0/happenings/remove_participants", httpRemoveParticipantsFromHappening)
 
 	handle(http.MethodPost, "/v0/happenings/add_slot", httpAddSlot)
 	handle(http.MethodPost, "/v0/happenings/update_slot", httpUpdateSlot)

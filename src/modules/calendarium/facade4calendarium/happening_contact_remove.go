@@ -15,54 +15,58 @@ import (
 	"github.com/strongo/validation"
 )
 
-func RemoveParticipantFromHappening(ctx facade.ContextWithUser, request dto4calendarium.HappeningContactRequest) (err error) {
+func RemoveParticipantsFromHappening(ctx facade.ContextWithUser, request dto4calendarium.HappeningContactsRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 
 	if err = dal4calendarium.RunHappeningSpaceWorker(ctx, ctx.User(), request.HappeningRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
-		return removeParticipantFromHappeningTxWorker(ctx, tx, params, request)
+		return removeParticipantsFromHappeningTxWorker(ctx, tx, params, request)
 	}); err != nil {
 		return fmt.Errorf("failed to remove participant from happening: %w", err)
 	}
 	return nil
 }
 
-func removeParticipantFromHappeningTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.HappeningContactRequest) error {
-	contactRequest := dto4calendarium.HappeningContactsRequest{
-		HappeningRequest: request.HappeningRequest,
-		Contacts:         []dbo4linkage.ShortSpaceModuleDocRef{request.Contact},
+func removeParticipantsFromHappeningTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.HappeningContactsRequest) error {
+	for _, contact := range request.Contacts {
+		if contact.SpaceID == "" {
+			contact.SpaceID = request.SpaceID
+		}
 	}
-	_, err := getHappeningContactRecords(ctx, tx, &contactRequest, params)
+	_, err := getHappeningContactRecords(ctx, tx, &request, params)
 	if err != nil {
 		return err
 	}
-	contactShortRef := dbmodels.NewSpaceItemID(request.Contact.SpaceID, request.Contact.ID)
-	switch params.Happening.Data.Type {
-	case dbo4calendarium.HappeningTypeSingle:
-		break // nothing to do
-	case dbo4calendarium.HappeningTypeRecurring:
-		var updates []update.Update
-		if updates, err = removeContactFromHappeningBriefInContactusSpaceDbo(params.SpaceModuleEntry, params.Happening, contactShortRef); err != nil {
-			return fmt.Errorf("failed to remove member from happening brief in space DBO: %w", err)
+	for _, contact := range request.Contacts {
+		contactRef := dbmodels.NewSpaceItemID(contact.SpaceID, contact.ID)
+		switch params.Happening.Data.Type {
+		case dbo4calendarium.HappeningTypeSingle:
+			// nothing to do
+		case dbo4calendarium.HappeningTypeRecurring:
+			var updates []update.Update
+			if updates, err = removeContactFromHappeningBriefInContactusSpaceDbo(params.SpaceModuleEntry, params.Happening, contactRef); err != nil {
+				return fmt.Errorf("failed to remove member from happening brief in space DBO: %w", err)
+			}
+			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, updates...)
+			params.SpaceModuleEntry.Record.MarkAsChanged()
+		default:
+			return fmt.Errorf("invalid happenning record: %w",
+				validation.NewErrBadRecordFieldValue("type",
+					fmt.Sprintf("unknown value: [%v]", params.Happening.Data.Type)))
 		}
-		params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, updates...)
-		params.SpaceModuleEntry.Record.MarkAsChanged()
-	default:
-		return fmt.Errorf("invalid happenning record: %w",
-			validation.NewErrBadRecordFieldValue("type",
-				fmt.Sprintf("unknown value: [%v]", params.Happening.Data.Type)))
+		contactFullRef := dbo4contactus.NewContactFullRef(contactRef.SpaceID(), contactRef.ItemID())
+		params.HappeningUpdates = append(
+			params.HappeningUpdates,
+			dbo4linkage.RemoveRelatedAndID(
+				&params.Happening.Data.WithRelated,
+				&params.Happening.Data.WithRelatedIDs,
+				contactFullRef,
+			)...,
+		)
+		params.Happening.Record.MarkAsChanged()
 	}
-	contactFullRef := dbo4contactus.NewContactFullRef(contactShortRef.SpaceID(), contactShortRef.ItemID())
-	params.HappeningUpdates = append(
-		params.HappeningUpdates,
-		dbo4linkage.RemoveRelatedAndID(
-			&params.Happening.Data.WithRelated,
-			&params.Happening.Data.WithRelatedIDs,
-			contactFullRef,
-		)...,
-	)
-	params.Happening.Record.MarkAsChanged()
+
 	return err
 }
 

@@ -15,6 +15,9 @@ func (v HappeningContactsRequest) Validate() error {
 	if err := v.HappeningRequest.Validate(); err != nil {
 		return err
 	}
+	if len(v.Contacts) == 0 {
+		return validation.NewErrBadRecordFieldValue("contacts", "must not be empty")
+	}
 	for i, contact := range v.Contacts {
 		if err := contact.Validate(); err != nil {
 			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("contacts[%d]", i), err.Error())
