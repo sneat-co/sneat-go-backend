@@ -24,10 +24,10 @@ go 1.23.0
 require (
 	github.com/crediterra/money v0.3.0
 	github.com/dal-go/dalgo v0.18.2
-	github.com/dal-go/mocks4dalgo v0.2.4
+	github.com/dal-go/mocks4dalgo v0.2.5
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/sneat-co/sneat-core-modules v0.25.3
-	github.com/sneat-co/sneat-go-core v0.50.8
+	github.com/sneat-co/sneat-core-modules v0.25.4
+	github.com/sneat-co/sneat-go-core v0.50.9
 	github.com/stretchr/testify v1.10.0
 	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.1.0
@@ -47,7 +47,7 @@ require (
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	golang.org/x/crypto v0.36.0 // indirect
-	golang.org/x/net v0.38.0 // indirect
+	golang.org/x/crypto v0.37.0 // indirect
+	golang.org/x/net v0.39.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
