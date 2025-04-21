@@ -2,7 +2,7 @@ package api4assetus
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/facade4assetus"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/apicore/verify"
@@ -13,7 +13,7 @@ import (
 
 func httpDeleteAsset(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
-	var request dal4spaceus.SpaceItemRequest
+	var request dto4spaceus.SpaceItemRequest
 	request.SpaceID = coretypes.SpaceID(q.Get("space"))
 	request.ID = q.Get("id")
 	apicore.HandleAuthenticatedRequestWithBody(w, r, &request, verify.NoContentAuthRequired, http.StatusNoContent,

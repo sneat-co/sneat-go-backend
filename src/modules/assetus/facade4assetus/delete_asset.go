@@ -6,6 +6,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dal4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
@@ -13,7 +14,7 @@ import (
 )
 
 // DeleteAsset deletes an asset
-func DeleteAsset(ctx facade.ContextWithUser, request dal4spaceus.SpaceItemRequest) (err error) {
+func DeleteAsset(ctx facade.ContextWithUser, request dto4spaceus.SpaceItemRequest) (err error) {
 	if err = request.Validate(); err != nil {
 		return fmt.Errorf("invalid request to facade4assetus.DeleteAsset: %w", err)
 	}

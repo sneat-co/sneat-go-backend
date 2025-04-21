@@ -14,6 +14,7 @@ import (
 	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
+	"time"
 )
 
 func AddParticipantsToHappening(ctx facade.ContextWithUser, request dto4calendarium.HappeningContactsRequest) (err error) {
@@ -40,7 +41,7 @@ func addParticipantToHappeningTxWorker(ctx context.Context, tx dal.ReadwriteTran
 		break // No special processing needed
 	case dbo4calendarium.HappeningTypeRecurring:
 		var updates []update.Update
-		if updates, err = addContactsToHappeningBriefInSpaceDbo(ctx, tx, params.SpaceModuleEntry, params.Happening, request.Contacts); err != nil {
+		if updates, err = addContactsToHappeningBriefInSpaceDbo(ctx, tx, params.Started, params.UserID(), params.SpaceModuleEntry, params.Happening, request.Contacts); err != nil {
 			return fmt.Errorf("failed to add member to happening brief in team DTO: %w", err)
 		}
 		params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, updates...)
@@ -58,10 +59,12 @@ func addParticipantToHappeningTxWorker(ctx context.Context, tx dal.ReadwriteTran
 		}
 		contactFullRef := dbo4contactus.NewContactFullRef(contactRef.SpaceID, contactRef.ID)
 		if updates, err = dbo4linkage.AddRelationshipAndID(
+			params.Started,
+			params.UserID(),
 			&params.Happening.Data.WithRelated,
 			&params.Happening.Data.WithRelatedIDs,
-			contactFullRef,
 			dbo4linkage.RelationshipItemRolesCommand{
+				ItemRef: contactFullRef,
 				Add: &dbo4linkage.RolesCommand{
 					RolesOfItem: []string{"participant"},
 				},
@@ -81,6 +84,8 @@ func addParticipantToHappeningTxWorker(ctx context.Context, tx dal.ReadwriteTran
 func addContactsToHappeningBriefInSpaceDbo(
 	_ context.Context,
 	_ dal.ReadwriteTransaction,
+	now time.Time,
+	userID string,
 	calendariumSpace dal4calendarium.CalendariumSpaceEntry,
 	happening dbo4calendarium.HappeningEntry,
 	contactRefs []dbo4linkage.ShortSpaceModuleDocRef,
@@ -102,8 +107,10 @@ func addContactsToHappeningBriefInSpaceDbo(
 		fullContactRef := dbo4linkage.NewSpaceModuleItemRef(spaceID, const4contactus.ModuleID, const4contactus.ContactsCollection, contactRef.ID)
 
 		updates, err = happeningBriefPointer.AddRelationship(
-			fullContactRef,
+			now,
+			userID,
 			dbo4linkage.RelationshipItemRolesCommand{
+				ItemRef: fullContactRef,
 				Add: &dbo4linkage.RolesCommand{
 					RolesOfItem: []string{"participant"},
 				},
