@@ -155,6 +155,7 @@ func createHappeningTx(
 		}
 		params.SpaceModuleEntry.Data.RecurringHappenings[happeningID] = &dbo4calendarium.CalendarHappeningBrief{
 			HappeningBrief: happeningDto.HappeningBrief,
+			WithRelated:    happeningDto.WithRelated,
 		}
 		params.SpaceModuleUpdates = append(params.SpaceUpdates,
 			update.ByFieldName("recurringHappenings."+happeningID, &happeningDto.HappeningBrief))

@@ -11,6 +11,6 @@ func TestModule(t *testing.T) {
 	module.AssertModule(t, m, module.Expected{
 		ModuleID:      const4calendarium.ModuleID,
 		HandlersCount: 12,
-		DelayersCount: 0,
+		DelayersCount: 1,
 	})
 }
