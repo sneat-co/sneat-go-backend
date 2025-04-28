@@ -1,7 +1,6 @@
 package facade4listus
 
 import (
-	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/update"
@@ -25,9 +24,8 @@ func CreateList(ctx facade.ContextWithUser, request dto4listus.CreateListRequest
 	if err = request.Validate(); err != nil {
 		return
 	}
-	userCtx := ctx.User()
-	err = dal4spaceus2.CreateSpaceItem(ctx, userCtx, request.SpaceRequest, const4listus.ModuleID, new(dbo4listus.ListusSpaceDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus2.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) (err error) {
+	err = dal4spaceus2.CreateSpaceItem(ctx, request.SpaceRequest, const4listus.ModuleID, new(dbo4listus.ListusSpaceDbo),
+		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4spaceus2.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) (err error) {
 
 			for id, brief := range params.SpaceModuleEntry.Data.Lists {
 				if brief.Title == request.Title {
@@ -53,6 +51,7 @@ func CreateList(ctx facade.ContextWithUser, request dto4listus.CreateListRequest
 
 			listID := dbo4listus.NewListKey(listType, listSubID)
 
+			userCtx := ctx.User()
 			modified := dbmodels.Modified{
 				By: userCtx.GetUserID(),
 				At: time.Now(),

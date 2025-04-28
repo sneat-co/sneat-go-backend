@@ -1,7 +1,6 @@
 package dal4calendarium
 
 import (
-	"context"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
@@ -11,10 +10,12 @@ import (
 )
 
 func RunCalendariumSpaceWorker(
-	ctx context.Context,
-	userCtx facade.UserContext,
+	ctx facade.ContextWithUser,
 	request dto4spaceus.SpaceRequest,
-	worker func(ctx context.Context, tx dal.ReadwriteTransaction, params *CalendariumSpaceWorkerParams) (err error),
+	worker func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *CalendariumSpaceWorkerParams) (err error),
 ) error {
-	return dal4spaceus.RunModuleSpaceWorkerWithUserCtx(ctx, userCtx, request.SpaceID, const4calendarium.ModuleID, new(dbo4calendarium.CalendariumSpaceDbo), worker)
+	return dal4spaceus.RunModuleSpaceWorkerWithUserCtx(ctx,
+		request.SpaceID, const4calendarium.ModuleID,
+		new(dbo4calendarium.CalendariumSpaceDbo),
+		worker)
 }

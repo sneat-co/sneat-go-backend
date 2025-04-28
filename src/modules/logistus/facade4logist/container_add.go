@@ -1,7 +1,6 @@
 package facade4logist
 
 import (
-	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
@@ -12,9 +11,10 @@ import (
 
 // AddContainers adds containers to an order
 func AddContainers(ctx facade.ContextWithUser, request dto4logist.AddContainersRequest) error {
-	return RunOrderWorker(ctx, ctx.User(), request.OrderRequest, func(_ context.Context, _ dal.ReadwriteTransaction, params *OrderWorkerParams) error {
-		return addContainersTx(params, request)
-	})
+	return RunOrderWorker(ctx, request.OrderRequest,
+		func(_ facade.ContextWithUser, _ dal.ReadwriteTransaction, params *OrderWorkerParams) error {
+			return addContainersTx(params, request)
+		})
 }
 
 func addContainersTx(params *OrderWorkerParams, request dto4logist.AddContainersRequest) error {

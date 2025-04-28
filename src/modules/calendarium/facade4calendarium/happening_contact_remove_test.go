@@ -22,7 +22,7 @@ func TestRemoveParticipantsFromHappening(t *testing.T) {
 		{
 			name: "remove participants from happening without participants",
 			args: args{
-				ctx: facade.NewContextWithUser(context.Background(), "user1"),
+				ctx: facade.NewContextWithUserID(context.Background(), "user1"),
 				request: dto4calendarium.HappeningContactsRequest{
 					HappeningRequest: dto4calendarium.HappeningRequest{
 						SpaceRequest: dto4spaceus.SpaceRequest{

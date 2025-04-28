@@ -2,6 +2,8 @@ package facade4logist
 
 import (
 	"context"
+	"github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/mocks4logist"
@@ -26,6 +28,9 @@ func Test_addOrderShippingPointTx(t *testing.T) {
 			name: "OK",
 			args: args{
 				params: &OrderWorkerParams{
+					SpaceWorkerParams: &dal4spaceus.SpaceWorkerParams{
+						Space: dbo4spaceus.NewSpaceEntry("space1"),
+					},
 					Order: dbo4logist.NewOrderWithData("space1", "order1", mocks4logist.ValidOrderDto1(t)),
 				},
 				request: dto4logist.AddOrderShippingPointRequest{

@@ -7,6 +7,7 @@ import (
 	"github.com/sneat-co/sneat-core-modules/contactus/dbo4contactus"
 	"github.com/sneat-co/sneat-core-modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
+	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"go.uber.org/mock/gomock"
 	"testing"
@@ -20,6 +21,7 @@ func MockTx(t *testing.T) (tx *mock_dal.MockReadwriteTransaction) {
 		Get(gomock.Any(), gomock.Any()).
 		DoAndReturn(func(ctx context.Context, record dal.Record) error {
 			record.SetError(nil)
+			var spaceID coretypes.SpaceID
 			switch record.Key().Collection() {
 			case dbo4logist.OrdersCollection:
 				orderDto := record.Data().(*dbo4logist.OrderDbo)
@@ -97,7 +99,7 @@ func MockTx(t *testing.T) (tx *mock_dal.MockReadwriteTransaction) {
 				default:
 					return dal.ErrRecordNotFound
 				}
-				dbo4linkage.UpdateRelatedIDs(&contactDto.WithRelated, &contactDto.WithRelatedIDs)
+				dbo4linkage.UpdateRelatedIDs(spaceID, &contactDto.WithRelated, &contactDto.WithRelatedIDs)
 			default:
 				t.Fatalf("Unexpected collection: %v", record.Key())
 			}

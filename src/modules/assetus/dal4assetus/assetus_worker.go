@@ -28,23 +28,21 @@ func RunReadonlyAssetusSpaceWorker(
 	return dal4spaceus2.RunReadonlyModuleSpaceWorker(ctx, userCtx, request, const4assetus.ModuleID, new(dbo4assetus.AssetusSpaceDbo), worker)
 }
 
-type AssetusModuleWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *AssetusSpaceWorkerParams) (err error)
+type AssetusModuleWorker = func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *AssetusSpaceWorkerParams) (err error)
 
 func RunAssetusSpaceWorker(
-	ctx context.Context,
-	userCtx facade.UserContext,
+	ctx facade.ContextWithUser,
 	request dto4spaceus.SpaceRequest,
 	worker AssetusModuleWorker,
 ) error {
-	return dal4spaceus2.RunModuleSpaceWorkerWithUserCtx(ctx, userCtx, request.SpaceID, const4contactus.ModuleID, new(dbo4assetus.AssetusSpaceDbo), worker)
+	return dal4spaceus2.RunModuleSpaceWorkerWithUserCtx(ctx, request.SpaceID, const4contactus.ModuleID, new(dbo4assetus.AssetusSpaceDbo), worker)
 }
 
 func RunAssetusSpaceWorkerTx(
-	ctx context.Context,
+	ctx facade.ContextWithUser,
 	tx dal.ReadwriteTransaction,
-	userCtx facade.UserContext,
 	spaceID coretypes.SpaceID,
 	worker AssetusModuleWorker,
 ) error {
-	return dal4spaceus2.RunModuleSpaceWorkerTx(ctx, tx, userCtx, spaceID, const4contactus.ModuleID, new(dbo4assetus.AssetusSpaceDbo), worker)
+	return dal4spaceus2.RunModuleSpaceWorkerTx(ctx, tx, spaceID, const4contactus.ModuleID, new(dbo4assetus.AssetusSpaceDbo), worker)
 }

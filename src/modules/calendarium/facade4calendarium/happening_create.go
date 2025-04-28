@@ -54,10 +54,10 @@ func CreateHappening(
 			}
 		}
 	}
-	err = dal4spaceus2.CreateSpaceItem(ctx, ctx.User(), request.SpaceRequest,
+	err = dal4spaceus2.CreateSpaceItem(ctx, request.SpaceRequest,
 		const4calendarium.ModuleID,
 		new(dbo4calendarium.CalendariumSpaceDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus2.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo]) (err error) {
+		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4spaceus2.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo]) (err error) {
 			response, err = createHappeningTx(ctx, tx, happeningDto, params)
 			return
 		},
@@ -139,7 +139,7 @@ func createHappeningTx(
 	response.ID = happeningID
 	record := dal.NewRecordWithData(happeningKey, happeningDto)
 
-	_ = dbo4linkage.UpdateRelatedIDs(&happeningDto.WithRelated, &happeningDto.WithRelatedIDs)
+	_ = dbo4linkage.UpdateRelatedIDs(params.Space.ID, &happeningDto.WithRelated, &happeningDto.WithRelatedIDs)
 
 	if err = happeningDto.Validate(); err != nil {
 		return response, fmt.Errorf("happening record is not valid for insertion: %w", err)

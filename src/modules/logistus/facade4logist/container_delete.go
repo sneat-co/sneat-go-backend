@@ -1,7 +1,6 @@
 package facade4logist
 
 import (
-	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
@@ -11,9 +10,10 @@ import (
 
 // DeleteContainer deletes container from an order
 func DeleteContainer(ctx facade.ContextWithUser, request dto4logist.ContainerRequest) error {
-	err := RunOrderWorker(ctx, ctx.User(), request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) error {
-		return deleteContainerTx(request, params)
-	})
+	err := RunOrderWorker(ctx, request.OrderRequest,
+		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *OrderWorkerParams) error {
+			return deleteContainerTx(request, params)
+		})
 	if err != nil {
 		return fmt.Errorf("failed to delete container with id=[%s]: %w", request.ContainerID, err)
 	}

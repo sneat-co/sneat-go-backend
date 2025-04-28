@@ -17,9 +17,10 @@ func AddSegments(ctx facade.ContextWithUser, request dto4logist.AddSegmentsReque
 	if err := request.Validate(); err != nil {
 		return err
 	}
-	return RunOrderWorker(ctx, ctx.User(), request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) error {
-		return addSegmentsTx(ctx, tx, params, request)
-	})
+	return RunOrderWorker(ctx, request.OrderRequest,
+		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *OrderWorkerParams) error {
+			return addSegmentsTx(ctx, tx, params, request)
+		})
 }
 
 func addSegmentsTx(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams, request dto4logist.AddSegmentsRequest) error {

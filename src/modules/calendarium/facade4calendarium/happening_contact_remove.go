@@ -20,9 +20,10 @@ func RemoveParticipantsFromHappening(ctx facade.ContextWithUser, request dto4cal
 		return
 	}
 
-	if err = dal4calendarium.RunHappeningSpaceWorker(ctx, ctx.User(), request.HappeningRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
-		return removeParticipantsFromHappeningTxWorker(ctx, tx, params, request)
-	}); err != nil {
+	if err = dal4calendarium.RunHappeningSpaceWorker(ctx, request.HappeningRequest,
+		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
+			return removeParticipantsFromHappeningTxWorker(ctx, tx, params, request)
+		}); err != nil {
 		return fmt.Errorf("failed to remove participant from happening: %w", err)
 	}
 	return nil
@@ -60,6 +61,7 @@ func removeParticipantsFromHappeningTxWorker(ctx context.Context, tx dal.Readwri
 		params.HappeningUpdates = append(
 			params.HappeningUpdates,
 			dbo4linkage.RemoveRelatedAndID(
+				params.Space.ID,
 				&params.Happening.Data.WithRelated,
 				&params.Happening.Data.WithRelatedIDs,
 				contactFullRef,

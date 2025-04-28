@@ -27,8 +27,8 @@ func StartRetrospective(ctx facade.ContextWithUser, request StartRetrospectiveRe
 
 	retrospective := new(dbo4retrospectus.Retrospective)
 
-	err = dal4contactus.RunContactusSpaceWorker(ctx, userCtx, request.SpaceRequest,
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) (err error) {
+	err = dal4contactus.RunContactusSpaceWorker(ctx, request.SpaceRequest,
+		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4contactus.ContactusSpaceWorkerParams) (err error) {
 			team := params.Space
 
 			if err := tx.GetMulti(ctx, []dal.Record{params.Space.Record, params.SpaceModuleEntry.Record}); err != nil {

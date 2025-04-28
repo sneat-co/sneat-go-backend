@@ -1,7 +1,6 @@
 package facade4logist
 
 import (
-	"context"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
 	"github.com/sneat-co/sneat-go-core/facade"
@@ -9,9 +8,10 @@ import (
 
 // AddContainerPoints adds container point to an order
 func AddContainerPoints(ctx facade.ContextWithUser, request dto4logist.AddContainerPointsRequest) error {
-	return RunOrderWorker(ctx, ctx.User(), request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) (err error) {
-		return txAddContainerPoints(request, params)
-	})
+	return RunOrderWorker(ctx, request.OrderRequest,
+		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *OrderWorkerParams) (err error) {
+			return txAddContainerPoints(request, params)
+		})
 }
 
 func txAddContainerPoints(request dto4logist.AddContainerPointsRequest, params *OrderWorkerParams) error {

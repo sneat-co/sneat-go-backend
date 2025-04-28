@@ -1,7 +1,6 @@
 package facade4calendarium
 
 import (
-	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/update"
@@ -12,14 +11,13 @@ import (
 )
 
 func SetHappeningPrices(ctx facade.ContextWithUser, request dto4calendarium.HappeningPricesRequest) (err error) {
-	userCtx := ctx.User()
-	var setHappeningPricesWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
-		return setHappeningPricesTx(ctx, tx, userCtx, params, request)
+	var setHappeningPricesWorker = func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
+		return setHappeningPricesTx(ctx, tx, params, request)
 	}
-	return dal4calendarium.RunHappeningSpaceWorker(ctx, userCtx, request.HappeningRequest, setHappeningPricesWorker)
+	return dal4calendarium.RunHappeningSpaceWorker(ctx, request.HappeningRequest, setHappeningPricesWorker)
 }
 
-func setHappeningPricesTx(ctx context.Context, tx dal.ReadwriteTransaction, _ facade.UserContext, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.HappeningPricesRequest) (err error) {
+func setHappeningPricesTx(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.HappeningPricesRequest) (err error) {
 	if err = params.GetRecords(ctx, tx); err != nil {
 		return err
 	}

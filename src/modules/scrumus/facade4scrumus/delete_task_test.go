@@ -19,7 +19,7 @@ func TestDeleteTask(t *testing.T) {
 		return nil, nil //db
 	}
 
-	ctx := facade.NewContextWithUser(context.Background(), "user1")
+	ctx := facade.NewContextWithUserID(context.Background(), "user1")
 
 	t.Run("empty_request", func(t *testing.T) {
 		if err := DeleteTask(ctx, DeleteTaskRequest{}); err == nil {

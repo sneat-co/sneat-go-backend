@@ -24,11 +24,11 @@ func PutSlot(ctx facade.ContextWithUser, putMode PutMode, request dto4calendariu
 		return validation.NewBadRequestError(err)
 	}
 
-	worker := func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
+	worker := func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
 		return putSlotTxWorker(ctx, tx, params, putMode, request)
 	}
 
-	return dal4calendarium.RunHappeningSpaceWorker(ctx, ctx.User(), request.HappeningRequest, worker)
+	return dal4calendarium.RunHappeningSpaceWorker(ctx, request.HappeningRequest, worker)
 }
 
 func putSlotTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams, putMode PutMode, request dto4calendarium.HappeningSlotRequest) (err error) {

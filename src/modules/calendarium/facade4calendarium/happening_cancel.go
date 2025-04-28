@@ -21,18 +21,19 @@ func CancelHappening(ctx facade.ContextWithUser, request dto4calendarium.CancelH
 		return
 	}
 
-	err = dal4calendarium.RunHappeningSpaceWorker(ctx, ctx.User(), request.HappeningRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
-		switch params.Happening.Data.Type {
-		case "":
-			return fmt.Errorf("happening record has no type: %w", validation.NewErrRecordIsMissingRequiredField("type"))
-		case dbo4calendarium.HappeningTypeSingle:
-			return cancelSingleHappening(ctx, params, request)
-		case dbo4calendarium.HappeningTypeRecurring:
-			return cancelRecurringHappeningInstance(ctx, tx, params, request)
-		default:
-			return validation.NewErrBadRecordFieldValue("type", "happening has unknown type: "+params.Happening.Data.Type)
-		}
-	})
+	err = dal4calendarium.RunHappeningSpaceWorker(ctx, request.HappeningRequest,
+		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
+			switch params.Happening.Data.Type {
+			case "":
+				return fmt.Errorf("happening record has no type: %w", validation.NewErrRecordIsMissingRequiredField("type"))
+			case dbo4calendarium.HappeningTypeSingle:
+				return cancelSingleHappening(ctx, params, request)
+			case dbo4calendarium.HappeningTypeRecurring:
+				return cancelRecurringHappeningInstance(ctx, tx, params, request)
+			default:
+				return validation.NewErrBadRecordFieldValue("type", "happening has unknown type: "+params.Happening.Data.Type)
+			}
+		})
 	if err != nil {
 		return fmt.Errorf("failed to cancel happening: %w", err)
 	}

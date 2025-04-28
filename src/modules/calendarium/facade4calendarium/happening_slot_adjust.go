@@ -19,7 +19,7 @@ func AdjustSlot(ctx facade.ContextWithUser, request dto4calendarium.HappeningSlo
 		return
 	}
 
-	var worker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
+	var worker = func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
 		switch params.Happening.Data.Type {
 		case dbo4calendarium.HappeningTypeSingle:
 			return errors.New("only recurring happenings can be adjusted, single happenings should be updated")
@@ -32,7 +32,7 @@ func AdjustSlot(ctx facade.ContextWithUser, request dto4calendarium.HappeningSlo
 		return
 	}
 
-	if err = dal4calendarium.RunHappeningSpaceWorker(ctx, ctx.User(), request.HappeningRequest, worker); err != nil {
+	if err = dal4calendarium.RunHappeningSpaceWorker(ctx, request.HappeningRequest, worker); err != nil {
 		return err
 	}
 	return nil

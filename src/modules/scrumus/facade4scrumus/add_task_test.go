@@ -14,7 +14,7 @@ func TestAddTask(t *testing.T) {
 	t.Skip("TODO: re-enable")
 	//var db dal.DB
 	//testdb.NewMockDB(t, db, testdb.WithProfile1())
-	ctx := facade.NewContextWithUser(context.Background(), "user1")
+	ctx := facade.NewContextWithUserID(context.Background(), "user1")
 
 	t.Run("empty request", func(t *testing.T) {
 		if _, err := AddTask(ctx, AddTaskRequest{}); err == nil {

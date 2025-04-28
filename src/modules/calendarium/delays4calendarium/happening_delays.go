@@ -17,27 +17,27 @@ func InitDelaying(mustRegisterFunc func(key string, i any) delaying.Delayer) {
 	updateHappeningBriefDelayer = mustRegisterFunc(delayUpdateHappeningBriefName, delayedUpdateHappeningBrief)
 }
 
-func DelayUpdateHappeningBrief(ctx context.Context, spaceID coretypes.SpaceID, happeningID string) (err error) {
-	return updateHappeningBriefDelayer.EnqueueWork(ctx, delaying.With(const4calendarium.QueueHappeningBrief, delayUpdateHappeningBriefName, 0), spaceID, happeningID)
+func DelayUpdateHappeningBrief(ctx context.Context, userID string, spaceID coretypes.SpaceID, happeningID string) (err error) {
+	return updateHappeningBriefDelayer.EnqueueWork(ctx, delaying.With(const4calendarium.QueueHappeningBrief, delayUpdateHappeningBriefName, 0), userID, spaceID, happeningID)
 }
 
 const delayUpdateHappeningBriefName = "updateHappeningBriefDelayer"
 
 var updateHappeningBriefDelayer delaying.Delayer
 
-func delayedUpdateHappeningBrief(ctx context.Context, spaceID coretypes.SpaceID, happeningID string) (err error) {
+func delayedUpdateHappeningBrief(ctx context.Context, userID string, spaceID coretypes.SpaceID, happeningID string) (err error) {
 	request := dto4spaceus.SpaceItemRequest{
 		SpaceRequest: dto4spaceus.SpaceRequest{SpaceID: spaceID},
 		ID:           happeningID,
 	}
-	return dal4spaceus.RunSpaceItemWorker(ctx,
-		facade.NewUserContext(""),
+	ctxWithUser := facade.NewContextWithUserID(ctx, userID)
+	return dal4spaceus.RunSpaceItemWorker(ctxWithUser,
 		request,
 		const4calendarium.ModuleID,
 		new(dbo4calendarium.CalendariumSpaceDbo),
 		const4calendarium.HappeningsCollection,
 		new(dbo4calendarium.HappeningDbo),
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4spaceus.SpaceItemWorkerParams[*dbo4calendarium.CalendariumSpaceDbo, *dbo4calendarium.HappeningDbo]) (err error) {
+		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4spaceus.SpaceItemWorkerParams[*dbo4calendarium.CalendariumSpaceDbo, *dbo4calendarium.HappeningDbo]) (err error) {
 			if err = params.GetRecords(ctx, tx, params.SpaceModuleEntry.Record); err != nil {
 				return err
 			}

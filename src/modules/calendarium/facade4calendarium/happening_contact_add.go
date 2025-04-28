@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/update"
-	"github.com/sneat-co/sneat-core-modules/contactus/const4contactus"
 	"github.com/sneat-co/sneat-core-modules/contactus/dbo4contactus"
 	"github.com/sneat-co/sneat-core-modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
@@ -22,9 +21,10 @@ func AddParticipantsToHappening(ctx facade.ContextWithUser, request dto4calendar
 		return
 	}
 
-	if err = dal4calendarium.RunHappeningSpaceWorker(ctx, ctx.User(), request.HappeningRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
-		return addParticipantToHappeningTxWorker(ctx, tx, params, request)
-	}); err != nil {
+	if err = dal4calendarium.RunHappeningSpaceWorker(ctx, request.HappeningRequest,
+		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
+			return addParticipantToHappeningTxWorker(ctx, tx, params, request)
+		}); err != nil {
 		return fmt.Errorf("failed to add participant to happening: %w", err)
 	}
 	return nil
@@ -61,6 +61,7 @@ func addParticipantToHappeningTxWorker(ctx context.Context, tx dal.ReadwriteTran
 		if updates, err = dbo4linkage.AddRelationshipAndID(
 			params.Started,
 			params.UserID(),
+			params.Space.ID,
 			&params.Happening.Data.WithRelated,
 			&params.Happening.Data.WithRelatedIDs,
 			dbo4linkage.RelationshipItemRolesCommand{
@@ -88,7 +89,7 @@ func addContactsToHappeningBriefInSpaceDbo(
 	userID string,
 	calendariumSpace dal4calendarium.CalendariumSpaceEntry,
 	happening dbo4calendarium.HappeningEntry,
-	contactRefs []dbo4linkage.ShortSpaceModuleDocRef,
+	contactRefs []dbo4linkage.ShortSpaceModuleItemRef,
 ) (updates []update.Update, err error) {
 	if len(contactRefs) == 0 {
 		return updates, fmt.Errorf("no contacts to add to happening")
@@ -104,7 +105,7 @@ func addContactsToHappeningBriefInSpaceDbo(
 		}
 	}
 	for _, contactRef := range contactRefs {
-		fullContactRef := dbo4linkage.NewSpaceModuleItemRef(spaceID, const4contactus.ModuleID, const4contactus.ContactsCollection, contactRef.ID)
+		fullContactRef := dbo4contactus.NewContactFullRef(spaceID, contactRef.ID)
 
 		updates, err = happeningBriefPointer.AddRelationship(
 			now,

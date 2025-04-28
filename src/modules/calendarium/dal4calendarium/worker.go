@@ -1,7 +1,6 @@
 package dal4calendarium
 
 import (
-	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/update"
@@ -20,11 +19,10 @@ type HappeningWorkerParams struct {
 	HappeningUpdates []update.Update
 }
 
-type HappeningWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *HappeningWorkerParams) (err error)
+type HappeningWorker = func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *HappeningWorkerParams) (err error)
 
 func RunHappeningSpaceWorker(
-	ctx context.Context,
-	userCtx facade.UserContext,
+	ctx facade.ContextWithUser,
 	request dto4calendarium.HappeningRequest,
 	happeningWorker HappeningWorker,
 ) (err error) {
@@ -32,7 +30,7 @@ func RunHappeningSpaceWorker(
 		return validation.NewBadRequestError(err)
 	}
 	moduleSpaceWorker := func(
-		ctx context.Context,
+		ctx facade.ContextWithUser,
 		tx dal.ReadwriteTransaction,
 		moduleSpaceParams *dal4spaceus.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo],
 	) (err error) {
@@ -76,5 +74,5 @@ func RunHappeningSpaceWorker(
 		}
 		return nil
 	}
-	return RunCalendariumSpaceWorker(ctx, userCtx, request.SpaceRequest, moduleSpaceWorker)
+	return RunCalendariumSpaceWorker(ctx, request.SpaceRequest, moduleSpaceWorker)
 }

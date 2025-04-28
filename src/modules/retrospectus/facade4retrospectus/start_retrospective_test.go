@@ -13,11 +13,7 @@ import (
 func TestStartRetrospective(t *testing.T) {
 	t.Skip("TODO: re-enable")
 
-	//newRetrospectiveRef = func(teamRef *firestore.DocumentRef, id string) *firestore.DocumentRef {
-	//	return &firestore.DocumentRef{InviteID: id, Path: "api4meetingus"}
-	//}
-
-	ctx := facade.NewContextWithUser(context.Background(), "user1")
+	ctx := facade.NewContextWithUserID(context.Background(), "user1")
 
 	type expects struct {
 		isNew bool

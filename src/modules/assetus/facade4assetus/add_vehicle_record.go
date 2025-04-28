@@ -1,7 +1,6 @@
 package facade4assetus
 
 import (
-	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dal4assetus"
@@ -17,11 +16,10 @@ func AddVehicleRecord(ctx facade.ContextWithUser, request dto4assetus.AddVehicle
 	if err = request.Validate(); err != nil {
 		return
 	}
-	userCtx := ctx.User()
-	err = dal4assetus.RunAssetusSpaceWorker(ctx, userCtx,
+	err = dal4assetus.RunAssetusSpaceWorker(ctx,
 		request.SpaceRequest,
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4assetus.AssetusSpaceWorkerParams) (err error) {
-			response, err = addVehicleRecordTx(ctx, tx, userCtx, request, params)
+		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4assetus.AssetusSpaceWorkerParams) (err error) {
+			response, err = addVehicleRecordTx(ctx, tx, request, params)
 			return err
 		},
 	)
@@ -30,16 +28,15 @@ func AddVehicleRecord(ctx facade.ContextWithUser, request dto4assetus.AddVehicle
 
 // addVehicleRecordTx creates dbo4assetus.VehicleRecordDbo in n /teams/{teamID}/modules/assetus/{assetID}/mileage/{randomRecordID}
 func addVehicleRecordTx(
-	ctx context.Context,
+	ctx facade.ContextWithUser,
 	tx dal.ReadwriteTransaction,
-	user facade.UserContext,
 	request dto4assetus.AddVehicleRecordRequest,
 	params *dal4assetus.AssetusSpaceWorkerParams,
 	// params *dal4teamus.ModuleTeamWorkerParams[*dal4assetus.Mileage],
 ) (
 	response CreateVehicleRecordResponse, err error,
 ) {
-	_ = fmt.Sprintf("%v, %v, %v, %v, %v", ctx, tx, user, request, params) // TODO: remove this temp line
+	_ = fmt.Sprintf("%v, %v, %v, %v", ctx, tx, request, params) // TODO: remove this temp line
 
 	// TODO:
 	// 1. Get asset record by ID using tx.Get()

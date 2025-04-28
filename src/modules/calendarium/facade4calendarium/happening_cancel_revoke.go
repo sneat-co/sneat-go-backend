@@ -19,8 +19,8 @@ func RevokeHappeningCancellation(ctx facade.ContextWithUser, request dto4calenda
 		return err
 	}
 
-	err = dal4calendarium.RunHappeningSpaceWorker(ctx, ctx.User(), request.HappeningRequest,
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
+	err = dal4calendarium.RunHappeningSpaceWorker(ctx, request.HappeningRequest,
+		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
 
 			var calendarDay dbo4calendarium.CalendarDayEntry
 			{ // Load records that might need to be updated

@@ -18,8 +18,8 @@ func DeleteSlot(ctx facade.ContextWithUser, request dto4calendarium.DeleteHappen
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4calendarium.RunHappeningSpaceWorker(ctx, ctx.User(), request.HappeningRequest,
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
+	err = dal4calendarium.RunHappeningSpaceWorker(ctx, request.HappeningRequest,
+		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
 			return deleteSlotTxWorker(ctx, tx, params, request)
 		})
 	if err != nil {

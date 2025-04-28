@@ -28,7 +28,7 @@ func TestMoveRetroItem(t *testing.T) {
 				To:   dbo4retrospectus.TreePosition{Parent: "goods", Index: 2},
 			}
 
-			ctx := facade.NewContextWithUser(context.Background(), "user1")
+			ctx := facade.NewContextWithUserID(context.Background(), "user1")
 
 			if err := MoveRetroItem(ctx, request); err == nil {
 				t.Fatal("Should fail")
@@ -54,7 +54,7 @@ func TestMoveRetroItem(t *testing.T) {
 			request.From = dbo4retrospectus.TreePosition{Parent: "goods", Index: 0}
 			request.To = dbo4retrospectus.TreePosition{Parent: "goods", Index: 1}
 
-			if err := MoveRetroItem(facade.NewContextWithUser(context.Background(), "user1"), request); err != nil {
+			if err := MoveRetroItem(facade.NewContextWithUserID(context.Background(), "user1"), request); err != nil {
 				t.Fatalf("failed to move retro item: %v", err)
 			}
 		})

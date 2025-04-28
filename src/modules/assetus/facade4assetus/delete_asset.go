@@ -1,7 +1,6 @@
 package facade4assetus
 
 import (
-	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/update"
@@ -29,7 +28,7 @@ func DeleteAsset(ctx facade.ContextWithUser, request dto4spaceus.SpaceItemReques
 		},
 	)
 
-	return dal4spaceus.DeleteSpaceItem(ctx, ctx.User(), request,
+	return dal4spaceus.DeleteSpaceItem(ctx, request,
 		const4assetus.ModuleID, new(dbo4assetus.AssetusSpaceDbo),
 		dal4assetus.AssetsCollection, new(dbo4assetus.AssetDbo),
 		briefsAdapter,
@@ -37,6 +36,6 @@ func DeleteAsset(ctx facade.ContextWithUser, request dto4spaceus.SpaceItemReques
 	)
 }
 
-func deleteAssetTxWorker(_ context.Context, _ dal.ReadwriteTransaction, _ *dal4spaceus.SpaceItemWorkerParams[*dbo4assetus.AssetusSpaceDbo, *dbo4assetus.AssetDbo]) (err error) {
+func deleteAssetTxWorker(_ facade.ContextWithUser, _ dal.ReadwriteTransaction, _ *dal4spaceus.SpaceItemWorkerParams[*dbo4assetus.AssetusSpaceDbo, *dbo4assetus.AssetDbo]) (err error) {
 	return nil
 }

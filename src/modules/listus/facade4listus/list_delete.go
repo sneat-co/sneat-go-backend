@@ -1,7 +1,6 @@
 package facade4listus
 
 import (
-	"context"
 	"errors"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/update"
@@ -39,7 +38,6 @@ func DeleteList(ctx facade.ContextWithUser, request dto4listus.ListRequest) (err
 	}
 	err = dal4spaceus.DeleteSpaceItem(
 		ctx,
-		userCtx,
 		spaceItemRequest,
 		const4listus.ModuleID,
 		new(dbo4listus.ListusSpaceDbo),
@@ -52,6 +50,6 @@ func DeleteList(ctx facade.ContextWithUser, request dto4listus.ListRequest) (err
 	return
 }
 
-func deleteListTxWorker(_ context.Context, _ dal.ReadwriteTransaction, _ *dal4spaceus.SpaceItemWorkerParams[*dbo4listus.ListusSpaceDbo, *dbo4listus.ListDbo]) (err error) {
+func deleteListTxWorker(_ facade.ContextWithUser, _ dal.ReadwriteTransaction, _ *dal4spaceus.SpaceItemWorkerParams[*dbo4listus.ListusSpaceDbo, *dbo4listus.ListDbo]) (err error) {
 	return errors.New("not implemented")
 }

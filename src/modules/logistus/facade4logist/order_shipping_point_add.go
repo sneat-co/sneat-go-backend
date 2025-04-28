@@ -21,11 +21,12 @@ func AddOrderShippingPoint(
 	response dto4logist.OrderResponse,
 	err error,
 ) {
-	err = RunOrderWorker(ctx, ctx.User(), request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) (err error) {
-		_, err = addOrderShippingPointTx(ctx, tx, request, params)
-		response.OrderDto = params.Order.Dto
-		return
-	})
+	err = RunOrderWorker(ctx, request.OrderRequest,
+		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *OrderWorkerParams) (err error) {
+			_, err = addOrderShippingPointTx(ctx, tx, request, params)
+			response.OrderDto = params.Order.Dto
+			return
+		})
 	return response, err
 }
 
@@ -47,7 +48,7 @@ func addOrderShippingPointTx(
 	if err := tx.Get(ctx, locationContact.Record); err != nil {
 		return nil, fmt.Errorf("failed to get locationContact referenced by shipping point: %w", err)
 	}
-	dbo4linkage.UpdateRelatedIDs(&locationContact.Data.WithRelated, &locationContact.Data.WithRelatedIDs)
+	dbo4linkage.UpdateRelatedIDs(params.SpaceWorkerParams.Space.ID, &locationContact.Data.WithRelated, &locationContact.Data.WithRelatedIDs)
 	if err := locationContact.Data.Validate(); err != nil {
 		return nil, fmt.Errorf("locationContact record referenced by request.LocationContactID is not valid (ContactID=%s): %w", locationContact.ID, err)
 	}
@@ -63,7 +64,7 @@ func addOrderShippingPointTx(
 		//} else if !counterpartyContact.Record.Exists() {
 		//	return nil, fmt.Errorf("counterpartyContact referenced by location point does not exist (id=%v): %w", locationContact.Data.ParentID, err)
 	}
-	dbo4linkage.UpdateRelatedIDs(&counterpartyContact.Data.WithRelated, &counterpartyContact.Data.WithRelatedIDs)
+	dbo4linkage.UpdateRelatedIDs(params.SpaceWorkerParams.Space.ID, &counterpartyContact.Data.WithRelated, &counterpartyContact.Data.WithRelatedIDs)
 	if err := counterpartyContact.Data.Validate(); err != nil {
 		return nil, fmt.Errorf("counterpartyContact record referenced by location contact and loaded from DB is not valid (ContactID=%s): %w", counterpartyContact.ID, err)
 	}

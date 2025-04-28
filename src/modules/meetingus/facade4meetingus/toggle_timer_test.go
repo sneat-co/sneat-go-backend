@@ -58,7 +58,7 @@ func TestToggleTimer(t *testing.T) { // TODO(help-wanted): add more test cases
 			}
 		}
 
-		ctx := facade.NewContextWithUser(context.Background(), "user1")
+		ctx := facade.NewContextWithUserID(context.Background(), "user1")
 		response, err := ToggleTimer(ctx, ToggleParams{Params: Params{recordFactory{}, nil}, Request: request})
 		if err != nil {
 			t.Fatal(err)

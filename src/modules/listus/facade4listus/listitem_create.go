@@ -1,7 +1,6 @@
 package facade4listus
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
@@ -21,18 +20,19 @@ func CreateListItems(ctx facade.ContextWithUser, request dto4listus.CreateListIt
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4listus.RunListWorker(ctx, ctx.User(), request.ListRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4listus.ListWorkerParams) (err error) {
-		response, list, err = createListItemsTxWorker(ctx, tx, request, params)
-		if err != nil {
-			return fmt.Errorf("failed in createListItemsTxWorker: %w", err)
-		}
-		return err
-	})
+	err = dal4listus.RunListWorker(ctx, request.ListRequest,
+		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4listus.ListWorkerParams) (err error) {
+			response, list, err = createListItemsTxWorker(ctx, tx, request, params)
+			if err != nil {
+				return fmt.Errorf("failed in createListItemsTxWorker: %w", err)
+			}
+			return err
+		})
 	return
 }
 
 func createListItemsTxWorker(
-	ctx context.Context,
+	ctx facade.ContextWithUser,
 	tx dal.ReadwriteTransaction,
 	request dto4listus.CreateListItemsRequest,
 	params *dal4listus.ListWorkerParams,

@@ -1,7 +1,6 @@
 package facade4logist
 
 import (
-	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
@@ -13,9 +12,10 @@ func DeleteSegments(ctx facade.ContextWithUser, request dto4logist.DeleteSegment
 	if err := request.Validate(); err != nil {
 		return err
 	}
-	return RunOrderWorker(ctx, ctx.User(), request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) error {
-		return deleteSegments(params, request)
-	})
+	return RunOrderWorker(ctx, request.OrderRequest,
+		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *OrderWorkerParams) error {
+			return deleteSegments(params, request)
+		})
 }
 
 func deleteSegments(params *OrderWorkerParams, request dto4logist.DeleteSegmentsRequest) error {

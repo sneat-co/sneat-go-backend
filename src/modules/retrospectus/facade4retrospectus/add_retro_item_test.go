@@ -37,7 +37,7 @@ func TestAddRetroItem(t *testing.T) {
 				Title: "Good # 1",
 			}
 
-			ctx := facade.NewContextWithUser(context.Background(), userContext.GetUserID())
+			ctx := facade.NewContextWithUserID(context.Background(), userContext.GetUserID())
 
 			_, _ = AddRetroItem(ctx, request)
 			//if _, _ = AddRetroItem(ctx, userContext, request); false {

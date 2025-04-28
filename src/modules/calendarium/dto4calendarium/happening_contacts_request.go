@@ -8,7 +8,7 @@ import (
 
 type HappeningContactsRequest struct {
 	HappeningRequest
-	Contacts []dbo4linkage.ShortSpaceModuleDocRef `json:"contacts"`
+	Contacts []dbo4linkage.ShortSpaceModuleItemRef `json:"contacts"`
 }
 
 func (v HappeningContactsRequest) Validate() error {

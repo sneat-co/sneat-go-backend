@@ -1,7 +1,6 @@
 package facade4calendarium
 
 import (
-	"context"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
@@ -12,14 +11,18 @@ import (
 )
 
 func DeleteHappeningPrices(ctx facade.ContextWithUser, request dto4calendarium.DeleteHappeningPricesRequest) (err error) {
-	userCtx := ctx.User()
-	var deleteHappeningPricesWorker = func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
-		return deleteHappeningPricesTx(ctx, tx, userCtx, params, request)
+	var deleteHappeningPricesWorker = func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) error {
+		return deleteHappeningPricesTx(ctx, tx, params, request)
 	}
-	return dal4calendarium.RunHappeningSpaceWorker(ctx, userCtx, request.HappeningRequest, deleteHappeningPricesWorker)
+	return dal4calendarium.RunHappeningSpaceWorker(ctx, request.HappeningRequest, deleteHappeningPricesWorker)
 }
 
-func deleteHappeningPricesTx(ctx context.Context, tx dal.ReadwriteTransaction, _ facade.UserContext, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.DeleteHappeningPricesRequest) (err error) {
+func deleteHappeningPricesTx(
+	ctx facade.ContextWithUser,
+	tx dal.ReadwriteTransaction,
+	params *dal4calendarium.HappeningWorkerParams,
+	request dto4calendarium.DeleteHappeningPricesRequest,
+) (err error) {
 	if err = params.GetRecords(ctx, tx); err != nil {
 		return err
 	}

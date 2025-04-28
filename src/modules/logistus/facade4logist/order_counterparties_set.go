@@ -23,7 +23,7 @@ func SetOrderCounterparties(
 	//	request.Contacts[i].Instructions = strings.TrimSpace(request.Contacts[i].Instructions)
 	//}
 	userCtx := ctx.User()
-	err = RunOrderWorker(ctx, userCtx, request.OrderRequest, func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) (err error) {
+	err = RunOrderWorker(ctx, request.OrderRequest, func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *OrderWorkerParams) (err error) {
 		orderCounterparties, err = setOrderCounterpartyTxWorker(ctx, userCtx.GetUserID(), tx, params, request)
 		return
 	})

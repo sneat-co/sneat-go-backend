@@ -1,7 +1,6 @@
 package facade4listus
 
 import (
-	"context"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/const4listus"
@@ -17,8 +16,8 @@ func SetListItemsIsDone(ctx facade.ContextWithUser, request dto4listus.ListItems
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4listus.RunListWorker(ctx, ctx.User(), request.ListRequest,
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4listus.ListWorkerParams) (err error) {
+	err = dal4listus.RunListWorker(ctx, request.ListRequest,
+		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4listus.ListWorkerParams) (err error) {
 			if err = params.GetRecords(ctx, tx); err != nil {
 				return
 			}

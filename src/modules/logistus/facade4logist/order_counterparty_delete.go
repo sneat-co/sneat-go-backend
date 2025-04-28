@@ -1,7 +1,6 @@
 package facade4logist
 
 import (
-	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
@@ -17,8 +16,8 @@ func DeleteOrderCounterparty(
 	ctx facade.ContextWithUser,
 	request dto4logist.DeleteOrderCounterpartyRequest,
 ) (err error) {
-	err = RunOrderWorker(ctx, ctx.User(), request.OrderRequest,
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderWorkerParams) (err error) {
+	err = RunOrderWorker(ctx, request.OrderRequest,
+		func(_ facade.ContextWithUser, tx dal.ReadwriteTransaction, params *OrderWorkerParams) (err error) {
 			return deleteOrderCounterpartyTxWorker(params, request)
 		},
 	)

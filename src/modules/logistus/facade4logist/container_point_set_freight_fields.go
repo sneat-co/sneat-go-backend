@@ -1,7 +1,6 @@
 package facade4logist
 
 import (
-	"context"
 	"errors"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
@@ -11,8 +10,8 @@ import (
 
 // SetContainerPointFreightFields adds/remove task for a container point
 func SetContainerPointFreightFields(ctx facade.ContextWithUser, request dto4logist.SetContainerPointFreightFieldsRequest) error {
-	return RunOrderWorker(ctx, ctx.User(), request.OrderRequest,
-		func(_ context.Context, _ dal.ReadwriteTransaction, params *OrderWorkerParams) error {
+	return RunOrderWorker(ctx, request.OrderRequest,
+		func(_ facade.ContextWithUser, _ dal.ReadwriteTransaction, params *OrderWorkerParams) error {
 			return txSetContainerPointFreightFields(params, request)
 		},
 	)

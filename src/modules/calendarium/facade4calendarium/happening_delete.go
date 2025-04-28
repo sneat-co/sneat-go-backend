@@ -1,7 +1,6 @@
 package facade4calendarium
 
 import (
-	"context"
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/update"
@@ -16,14 +15,14 @@ func DeleteHappening(ctx facade.ContextWithUser, request dto4calendarium.Happeni
 	if err = request.Validate(); err != nil {
 		return
 	}
-	return dal4calendarium.RunHappeningSpaceWorker(ctx, ctx.User(), request,
-		func(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
+	return dal4calendarium.RunHappeningSpaceWorker(ctx, request,
+		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams) (err error) {
 			return deleteHappeningTx(ctx, tx, params, request)
 		},
 	)
 }
 
-func deleteHappeningTx(ctx context.Context, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.HappeningRequest) (err error) {
+func deleteHappeningTx(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4calendarium.HappeningWorkerParams, request dto4calendarium.HappeningRequest) (err error) {
 	if !params.Happening.Record.Exists() || params.Happening.Data.Type == dbo4calendarium.HappeningTypeRecurring {
 		if err = tx.Get(ctx, params.SpaceModuleEntry.Record); err != nil {
 			return
