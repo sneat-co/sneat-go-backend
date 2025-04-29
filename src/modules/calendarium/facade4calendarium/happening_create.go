@@ -32,7 +32,10 @@ func CreateHappening(
 	//	counter = "recurringHappenings"
 	//}
 	happeningDto := &dbo4calendarium.HappeningDbo{
-		HappeningBrief: *request.Happening,
+		HappeningBase: request.Happening.HappeningBase,
+		WithRelatedAndIDs: dbo4linkage.WithRelatedAndIDs{
+			WithRelated: request.Happening.WithRelated,
+		},
 		CreatedFields: with.CreatedFields{
 			CreatedByField: with.CreatedByField{
 				CreatedBy: ctx.User().GetUserID(),
@@ -69,24 +72,24 @@ func CreateHappening(
 func createHappeningTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
-	happeningDto *dbo4calendarium.HappeningDbo,
+	happeningDbo *dbo4calendarium.HappeningDbo,
 	params *dal4spaceus2.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo],
 ) (
 	response dto4calendarium.CreateHappeningResponse, err error,
 ) {
-	happeningDto.CreatedAt = params.Started
+	happeningDbo.CreatedAt = params.Started
 	contactusSpace := dal4contactus2.NewContactusSpaceEntry(params.Space.ID)
 	if err = params.GetRecords(ctx, tx, contactusSpace.Record); err != nil {
 		return response, err
 	}
 
-	happeningDto.UserIDs = params.Space.Data.UserIDs
-	happeningDto.Status = "active"
-	if happeningDto.Type == dbo4calendarium.HappeningTypeSingle {
+	happeningDbo.UserIDs = params.Space.Data.UserIDs
+	happeningDbo.Status = "active"
+	if happeningDbo.Type == dbo4calendarium.HappeningTypeSingle {
 		// TODO:add comment why we doing it only for single happening
-		for _, slot := range happeningDto.Slots {
+		for _, slot := range happeningDbo.Slots {
 			if slot.Start.Date != "" {
-				_ = happeningDto.AddDate(slot.Start.Date)
+				_ = happeningDbo.AddDate(slot.Start.Date)
 			}
 			// TODO(help-wanted): populate dates between start & end dates
 		}
@@ -94,7 +97,7 @@ func createHappeningTx(
 
 	contactsBySpaceID := make(map[string][]dal4contactus2.ContactEntry)
 
-	//for participantID := range happeningDto.Participants {
+	//for participantID := range happeningDbo.Participants {
 	//	participantKey := dbmodels.SpaceItemID(participantID)
 	//	spaceID := participantKey.Space()
 	//	if spaceID == params.Space.ContactID {
@@ -106,7 +109,7 @@ func createHappeningTx(
 	//			}
 	//			contactsBySpaceID[teamID] = append(teamContacts, dal4contactus.NewContactEntry(teamID, participantKey.ItemID()))
 	//		} else {
-	//			happeningDto.AddContact(teamID, participantKey.ItemID(), contactBrief)
+	//			happeningDbo.AddContact(teamID, participantKey.ItemID(), contactBrief)
 	//		}
 	//	} else {
 	//		return response, errors.New("not implemented yet: adding participants from other teams at happening creation")
@@ -125,7 +128,7 @@ func createHappeningTx(
 		}
 		//for teamID, teamContacts := range contactsBySpaceID {
 		//	for _, contact := range teamContacts {
-		//		happeningDto.AddContact(teamID, contact.ContactID, &contact.Data.ContactBrief)
+		//		happeningDbo.AddContact(teamID, contact.ContactID, &contact.Data.ContactBrief)
 		//	}
 		//}
 	}
@@ -137,28 +140,29 @@ func createHappeningTx(
 		return response, err
 	}
 	response.ID = happeningID
-	record := dal.NewRecordWithData(happeningKey, happeningDto)
+	record := dal.NewRecordWithData(happeningKey, happeningDbo)
 
-	_ = dbo4linkage.UpdateRelatedIDs(params.Space.ID, &happeningDto.WithRelated, &happeningDto.WithRelatedIDs)
+	_ = dbo4linkage.UpdateRelatedIDs(params.Space.ID, &happeningDbo.WithRelated, &happeningDbo.WithRelatedIDs)
 
-	if err = happeningDto.Validate(); err != nil {
+	if err = happeningDbo.Validate(); err != nil {
 		return response, fmt.Errorf("happening record is not valid for insertion: %w", err)
 	}
-	//panic("spaceDates: " + strings.Join(happeningDto.TeamDates, ","))
+	//panic("spaceDates: " + strings.Join(happeningDbo.TeamDates, ","))
 	if err = tx.Insert(ctx, record); err != nil {
 		return response, fmt.Errorf("failed to insert new happening record: %w", err)
 	}
-	if happeningDto.Type == dbo4calendarium.HappeningTypeRecurring {
+	if happeningDbo.Type == dbo4calendarium.HappeningTypeRecurring {
 		params.SpaceModuleEntry.Record.MarkAsChanged()
 		if params.SpaceModuleEntry.Data.RecurringHappenings == nil {
 			params.SpaceModuleEntry.Data.RecurringHappenings = make(map[string]*dbo4calendarium.CalendarHappeningBrief)
 		}
-		params.SpaceModuleEntry.Data.RecurringHappenings[happeningID] = &dbo4calendarium.CalendarHappeningBrief{
-			HappeningBrief: happeningDto.HappeningBrief,
-			WithRelated:    happeningDto.WithRelated,
+		calendarHappeningBrief := &dbo4calendarium.CalendarHappeningBrief{
+			HappeningBase: happeningDbo.HappeningBase,
+			WithRelated:   happeningDbo.WithRelated,
 		}
+		params.SpaceModuleEntry.Data.RecurringHappenings[happeningID] = calendarHappeningBrief
 		params.SpaceModuleUpdates = append(params.SpaceUpdates,
-			update.ByFieldName("recurringHappenings."+happeningID, &happeningDto.HappeningBrief))
+			update.ByFieldName("recurringHappenings."+happeningID, calendarHappeningBrief))
 	}
 	return
 }

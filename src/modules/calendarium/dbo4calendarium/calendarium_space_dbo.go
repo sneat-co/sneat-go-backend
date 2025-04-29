@@ -7,12 +7,12 @@ import (
 )
 
 type CalendarHappeningBrief struct {
-	HappeningBrief
+	HappeningBase
 	dbo4linkage.WithRelated
 }
 
 func (v *CalendarHappeningBrief) Validate() error {
-	if err := v.HappeningBrief.Validate(); err != nil {
+	if err := v.HappeningBase.Validate(); err != nil {
 		return err
 	}
 	if err := v.WithRelated.Validate(); err != nil {

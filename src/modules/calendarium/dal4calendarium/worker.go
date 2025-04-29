@@ -66,10 +66,11 @@ func RunHappeningSpaceWorker(
 				}
 				params.SpaceModuleEntry.Data.RecurringHappenings[params.Happening.ID] = recurringHappening
 			}
-			recurringHappening.HappeningBrief = params.Happening.Data.HappeningBrief
+			recurringHappening.HappeningBase = params.Happening.Data.HappeningBase
 			recurringHappening.WithRelated = params.Happening.Data.WithRelated
 			moduleSpaceParams.SpaceModuleUpdates = append(moduleSpaceParams.SpaceModuleUpdates,
-				update.ByFieldName("recurringHappenings."+request.HappeningID, params.Happening.Data.HappeningBrief))
+				update.ByFieldName("recurringHappenings."+request.HappeningID,
+					params.Happening.Data.HappeningBase))
 			moduleSpaceParams.SpaceModuleEntry.Record.MarkAsChanged()
 		}
 		return nil

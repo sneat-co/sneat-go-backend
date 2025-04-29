@@ -43,8 +43,8 @@ func delayedUpdateHappeningBrief(ctx context.Context, userID string, spaceID cor
 			}
 			if params.SpaceItem.Record.Exists() {
 				brief := dbo4calendarium.CalendarHappeningBrief{
-					HappeningBrief: params.SpaceItem.Data.HappeningBrief,
-					WithRelated:    params.SpaceItem.Data.WithRelated,
+					HappeningBase: params.SpaceItem.Data.HappeningBase,
+					WithRelated:   params.SpaceItem.Data.WithRelated,
 				}
 				params.SpaceModuleEntry.Data.RecurringHappenings[params.SpaceItem.ID] = &brief
 				params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, update.ByFieldPath([]string{"recurringHappenings", params.SpaceItem.ID}, brief))

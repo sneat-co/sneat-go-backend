@@ -28,8 +28,12 @@ github.com/rogpeppe/go-internal v1.13.1 h1:KvO1DLK/DRN07sQ1LQKScxyZJuNnedQ5/wKSR
 github.com/rogpeppe/go-internal v1.13.1/go.mod h1:uMEvuHeurkdAXX61udpOXGD/AzZDWNMNyH2VO9fmH0o=
 github.com/sneat-co/sneat-core-modules v0.27.0 h1:47bJl2hxjt/VGiCWxRLV9ygaQR9bSPX0XcaerVB19Vo=
 github.com/sneat-co/sneat-core-modules v0.27.0/go.mod h1:TC2hS8DLPd2pqQrbjCea8gs1JR5mdt3unep/9nuBiXQ=
+github.com/sneat-co/sneat-core-modules v0.28.1 h1:hnZft+T9G/JR9uSXqnfsQ7QDqBM5baWAMt8nJtCzm28=
+github.com/sneat-co/sneat-core-modules v0.28.1/go.mod h1:0AglvvO6GF90j7uY+wFZnagKB9unsj6WIKoNpZo08EM=
 github.com/sneat-co/sneat-go-core v0.50.11 h1:ZqKRi6UutIN3esyIgTa5VFhw0DNhfw9qjbgeZCW/iRU=
 github.com/sneat-co/sneat-go-core v0.50.11/go.mod h1:RQEn/BF1x19+A3JSlJk3QoFDAKgbR8Reg5Go2oSEju8=
+github.com/sneat-co/sneat-go-core v0.50.13 h1:ddv6+STobBS3IuDaNtHI6Cw8wQY06ArVy7pLF1eCFYY=
+github.com/sneat-co/sneat-go-core v0.50.13/go.mod h1:Lz6WreawVtC/wMtPdPkgTA6WkI70MroQZPkEY6rW3CI=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5cxcmMvtA=
 github.com/stretchr/testify v1.10.0 h1:Xv5erBjTwe/5IxqUQTdXv5kgmIvbHo3QQyRwhJsOfJA=
@@ -50,6 +54,8 @@ github.com/strongo/validation v0.0.7 h1:gs6YkwPsYtVsepQaQOB+ZF+T0Gu5+nk4ZMND8F85
 github.com/strongo/validation v0.0.7/go.mod h1:YUwoPEItLJd/Bc9X1OCUm03ofhvm3kwZvuihU7/jz58=
 go.uber.org/mock v0.5.1 h1:ASgazW/qBmR+A32MYFDB6E2POoTgOwT509VP0CT/fjs=
 go.uber.org/mock v0.5.1/go.mod h1:ge71pBPLYDk7QIi1LupWxdAykm7KIEFchiOqd6z7qMM=
+go.uber.org/mock v0.5.2 h1:LbtPTcP8A5k9WPXj54PPPbjcI4Y6lhyOZXn+VS7wNko=
+go.uber.org/mock v0.5.2/go.mod h1:wLlUxC2vVTPTaE3UD51E0BGOAElKrILxhVSDYQLld5o=
 golang.org/x/crypto v0.37.0 h1:kJNSjF/Xp7kU0iB2Z+9viTPMW4EqqsrywMXLJOOsXSE=
 golang.org/x/crypto v0.37.0/go.mod h1:vg+k43peMZ0pUMhYmVAWysMK35e6ioLh3wB8ZCAfbVc=
 golang.org/x/net v0.39.0 h1:ZCu7HMWDxpXpaiKdhzIfaltL9Lp31x/3fCP11bc6/fY=

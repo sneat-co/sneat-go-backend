@@ -96,18 +96,18 @@ func addContactsToHappeningBriefInSpaceDbo(
 	}
 	spaceID := coretypes.SpaceID(calendariumSpace.Key.Parent().ID.(string))
 	happeningBriefPointer := calendariumSpace.Data.GetRecurringHappeningBrief(happening.ID)
-	var happeningBrief dbo4calendarium.HappeningBrief
+	var happeningBase dbo4calendarium.HappeningBase
 	if happeningBriefPointer == nil {
-		happeningBrief = happening.Data.HappeningBrief // Make copy so we do not affect the DTO object
+		happeningBase = happening.Data.HappeningBase // Make copy so we do not affect the DTO object
 		happeningBriefPointer = &dbo4calendarium.CalendarHappeningBrief{
-			HappeningBrief: happeningBrief,
-			WithRelated:    happening.Data.WithRelated,
+			HappeningBase: happeningBase,
+			WithRelated:   happening.Data.WithRelated,
 		}
 	}
 	for _, contactRef := range contactRefs {
 		fullContactRef := dbo4contactus.NewContactFullRef(spaceID, contactRef.ID)
 
-		updates, err = happeningBriefPointer.AddRelationship(
+		updates, err = happeningBriefPointer.ProcessRelatedCommand(
 			now,
 			userID,
 			dbo4linkage.RelationshipItemRolesCommand{

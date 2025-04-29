@@ -11,12 +11,12 @@ import (
 
 // HappeningDbo DTO
 type HappeningDbo struct {
-	HappeningBrief
+	HappeningBase
 	with.CreatedFields
 	with.TagsField
 	dbmodels.WithUserIDs
 	with.DatesFields
-	dbo4linkage.WithRelatedIDs
+	dbo4linkage.WithRelatedAndIDs
 	Adjustments HappeningAdjustment `json:"adjustments,omitempty" firestore:"adjustments,omitempty"`
 	//dbmodels.WithSpaceDates
 	//briefs4contactus.WithMultiSpaceContacts[*briefs4contactus.ContactBrief]
@@ -24,7 +24,7 @@ type HappeningDbo struct {
 
 // Validate returns error if not valid
 func (v *HappeningDbo) Validate() error {
-	if err := v.HappeningBrief.Validate(); err != nil {
+	if err := v.HappeningBase.Validate(); err != nil {
 		return err
 	}
 	if err := v.WithUserIDs.Validate(); err != nil {
