@@ -7,8 +7,8 @@ github.com/crediterra/money v0.3.0 h1:dHWEZhkMGGxkHTAbGQOaeg8eYbL8qJSCgcqdOTbNg2
 github.com/crediterra/money v0.3.0/go.mod h1:0BT7dzPk4Wv+Wi8J6sxlFbCknYioLWVVQM4ciMJh6TI=
 github.com/dal-go/dalgo v0.18.2 h1:KMHfJgkf7wKtyM/VAlg4ZCQa+kFrFdErrgXPCFxPqc4=
 github.com/dal-go/dalgo v0.18.2/go.mod h1:BoMNGwDE9FdjynV7xCn5f/GdVJxvfePwjsMldn+BhqA=
-github.com/dal-go/mocks4dalgo v0.2.5 h1:xibzY7OQwd3Xi0JR3Nos1aySd5vkmeeC167tT8V+v6c=
-github.com/dal-go/mocks4dalgo v0.2.5/go.mod h1:aHjFq327YV8lkass1tdTqX9rG4nDABDwTSG2Pg3StKo=
+github.com/dal-go/mocks4dalgo v0.2.6 h1:X9UOkNmZLRcaviWQ4ZnGDRabbolZNg9QHpKCNHVeuXk=
+github.com/dal-go/mocks4dalgo v0.2.6/go.mod h1:x/4489RWgb9rXC38nIP4Z57WymujMzvcGAdvDi3eAzQ=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -26,12 +26,8 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rogpeppe/go-internal v1.13.1 h1:KvO1DLK/DRN07sQ1LQKScxyZJuNnedQ5/wKSR38lUII=
 github.com/rogpeppe/go-internal v1.13.1/go.mod h1:uMEvuHeurkdAXX61udpOXGD/AzZDWNMNyH2VO9fmH0o=
-github.com/sneat-co/sneat-core-modules v0.27.0 h1:47bJl2hxjt/VGiCWxRLV9ygaQR9bSPX0XcaerVB19Vo=
-github.com/sneat-co/sneat-core-modules v0.27.0/go.mod h1:TC2hS8DLPd2pqQrbjCea8gs1JR5mdt3unep/9nuBiXQ=
-github.com/sneat-co/sneat-core-modules v0.28.1 h1:hnZft+T9G/JR9uSXqnfsQ7QDqBM5baWAMt8nJtCzm28=
-github.com/sneat-co/sneat-core-modules v0.28.1/go.mod h1:0AglvvO6GF90j7uY+wFZnagKB9unsj6WIKoNpZo08EM=
-github.com/sneat-co/sneat-go-core v0.50.11 h1:ZqKRi6UutIN3esyIgTa5VFhw0DNhfw9qjbgeZCW/iRU=
-github.com/sneat-co/sneat-go-core v0.50.11/go.mod h1:RQEn/BF1x19+A3JSlJk3QoFDAKgbR8Reg5Go2oSEju8=
+github.com/sneat-co/sneat-core-modules v0.28.2 h1:nJjdljvo7ky/qJXSoZk9aUyh1ZtnJYHORgMDW2c06v4=
+github.com/sneat-co/sneat-core-modules v0.28.2/go.mod h1:0AglvvO6GF90j7uY+wFZnagKB9unsj6WIKoNpZo08EM=
 github.com/sneat-co/sneat-go-core v0.50.13 h1:ddv6+STobBS3IuDaNtHI6Cw8wQY06ArVy7pLF1eCFYY=
 github.com/sneat-co/sneat-go-core v0.50.13/go.mod h1:Lz6WreawVtC/wMtPdPkgTA6WkI70MroQZPkEY6rW3CI=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
@@ -52,8 +48,6 @@ github.com/strongo/strongoapp v0.27.0 h1:nC9rzSSC4e8kyIH57ODLCGInIqLSyTdZe/eSE6x
 github.com/strongo/strongoapp v0.27.0/go.mod h1:NpH0QJ0P8VOJpo7mk5leT1f32PKpfbUM39Faz80bloM=
 github.com/strongo/validation v0.0.7 h1:gs6YkwPsYtVsepQaQOB+ZF+T0Gu5+nk4ZMND8F85e+U=
 github.com/strongo/validation v0.0.7/go.mod h1:YUwoPEItLJd/Bc9X1OCUm03ofhvm3kwZvuihU7/jz58=
-go.uber.org/mock v0.5.1 h1:ASgazW/qBmR+A32MYFDB6E2POoTgOwT509VP0CT/fjs=
-go.uber.org/mock v0.5.1/go.mod h1:ge71pBPLYDk7QIi1LupWxdAykm7KIEFchiOqd6z7qMM=
 go.uber.org/mock v0.5.2 h1:LbtPTcP8A5k9WPXj54PPPbjcI4Y6lhyOZXn+VS7wNko=
 go.uber.org/mock v0.5.2/go.mod h1:wLlUxC2vVTPTaE3UD51E0BGOAElKrILxhVSDYQLld5o=
 golang.org/x/crypto v0.37.0 h1:kJNSjF/Xp7kU0iB2Z+9viTPMW4EqqsrywMXLJOOsXSE=
