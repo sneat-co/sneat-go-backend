@@ -17,6 +17,9 @@ type HappeningDbo struct {
 	dbmodels.WithUserIDs
 	with.DatesFields
 	dbo4linkage.WithRelatedAndIDs
+
+	Description string `json:"description,omitempty" firestore:"description,omitempty"`
+
 	Adjustments HappeningAdjustment `json:"adjustments,omitempty" firestore:"adjustments,omitempty"`
 	//dbmodels.WithSpaceDates
 	//briefs4contactus.WithMultiSpaceContacts[*briefs4contactus.ContactBrief]

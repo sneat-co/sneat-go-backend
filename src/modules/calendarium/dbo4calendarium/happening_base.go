@@ -13,6 +13,7 @@ type HappeningBase struct {
 	Status       string                    `json:"status" firestore:"status"`
 	Cancellation *Cancellation             `json:"canceled,omitempty" firestore:"canceled,omitempty"`
 	Title        string                    `json:"title" firestore:"title"`
+	Summary      string                    `json:"summary,omitempty" firestore:"summary,omitempty"`
 	Levels       []string                  `json:"levels,omitempty" firestore:"levels,omitempty"`
 	Slots        map[string]*HappeningSlot `json:"slots,omitempty" firestore:"slots,omitempty"`
 	WithHappeningPrices
@@ -60,6 +61,15 @@ func (v *HappeningBase) Validate() error {
 		return validation.NewErrRecordIsMissingRequiredField("type")
 	default:
 		return validation.NewErrBadRecordFieldValue("type", "unknown value: "+v.Type)
+	}
+	if v.Title == "" {
+		return validation.NewErrRecordIsMissingRequiredField("title")
+	}
+	if len(v.Title) > 100 {
+		return validation.NewErrBadRequestFieldValue("title", "too long, max 100 characters")
+	}
+	if len(v.Summary) > 200 {
+		return validation.NewErrBadRequestFieldValue("summary", "too long, max 200 characters")
 	}
 	if v.Status == "" {
 		return validation.NewErrRecordIsMissingRequiredField("status")

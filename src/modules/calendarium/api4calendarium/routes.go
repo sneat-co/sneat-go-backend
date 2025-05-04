@@ -8,6 +8,7 @@ import (
 // RegisterHttpRoutes register calendarium routes
 func RegisterHttpRoutes(handle module.HTTPHandleFunc) {
 	handle(http.MethodPost, "/v0/happenings/create_happening", httpPostCreateHappening)
+	handle(http.MethodPost, "/v0/happenings/update_happening_texts", httpUpdateHappeningTexts)
 	handle(http.MethodDelete, "/v0/happenings/delete_happening", httpDeleteHappening)
 	handle(http.MethodDelete, "/v0/happenings/delete_slot", httpDeleteSlot)
 	handle(http.MethodPost, "/v0/happenings/cancel_happening", httpCancelHappening)
