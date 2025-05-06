@@ -118,11 +118,14 @@ func addContactsToHappeningBriefInSpaceDbo(
 			})
 	}
 
+	hFieldPath := []string{"recurringHappenings", happening.ID}
 	for i, u := range updates {
-		updates[i] = update.ByFieldName(
-			fmt.Sprintf("recurringHappenings.%s.%s", happening.ID, u.FieldName()),
-			u.Value(),
-		)
+		v := u.Value()
+		if fieldPath := u.FieldPath(); len(fieldPath) == 0 {
+			updates[i] = update.ByFieldPath(append(hFieldPath, u.FieldName()), v)
+		} else {
+			updates[i] = update.ByFieldPath(append(hFieldPath, fieldPath...), v)
+		}
 	}
 	calendariumSpace.Data.RecurringHappenings[happening.ID] = happeningBriefPointer
 	return

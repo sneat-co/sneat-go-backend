@@ -24,7 +24,7 @@ func DeleteAsset(ctx facade.ContextWithUser, request dto4spaceus.SpaceItemReques
 		getBriefsCount,
 		func(teamModuleDbo *dbo4assetus.AssetusSpaceDbo, id string) ([]update.Update, error) {
 			delete(teamModuleDbo.Assets, id)
-			return []update.Update{update.ByFieldName("assets."+id, update.DeleteField)}, teamModuleDbo.Validate()
+			return []update.Update{update.ByFieldPath([]string{"assets", id}, update.DeleteField)}, teamModuleDbo.Validate()
 		},
 	)
 

@@ -106,7 +106,7 @@ func cancelRecurringHappeningInstance(
 		}
 		for _, u := range updates {
 			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates,
-				update.ByFieldName(fmt.Sprintf("recurringHappenings.%s.%s", params.Happening.ID, u.FieldName()), u.Value()),
+				update.ByFieldPath([]string{"recurringHappenings", params.Happening.ID, u.FieldName()}, u.Value()),
 			)
 		}
 		params.SpaceModuleEntry.Record.MarkAsChanged()

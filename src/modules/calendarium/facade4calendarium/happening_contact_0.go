@@ -27,7 +27,7 @@ func getHappeningContactRecords(ctx context.Context, tx dal.ReadwriteTransaction
 		return contacts, fmt.Errorf("failed to get records: %w", err)
 	}
 	if err = params.SpaceModuleEntry.Record.Error(); err != nil {
-		if !dal.IsNotFound(err) && !errors.Is(err, dal.NoError) {
+		if !dal.IsNotFound(err) && !errors.Is(err, dal.ErrNoError) {
 			return contacts, fmt.Errorf("failed to get contactus team record: %w", err)
 		}
 	}

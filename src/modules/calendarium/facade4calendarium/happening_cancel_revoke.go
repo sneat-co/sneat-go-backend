@@ -70,7 +70,9 @@ func removeCancellationFromHappeningBriefInSpaceModuleEntry(params *dal4calendar
 	if updates := happeningBrief.RemoveCancellation(); len(updates) > 0 {
 		for _, u := range updates {
 			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates,
-				update.ByFieldName("recurringHappenings."+params.Happening.ID+"."+u.FieldName(), u.Value()),
+				update.ByFieldPath(
+					[]string{"recurringHappenings", params.Happening.ID, u.FieldName()},
+					u.Value()),
 			)
 		}
 		params.SpaceModuleEntry.Record.MarkAsChanged()

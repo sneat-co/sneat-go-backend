@@ -29,7 +29,7 @@ func DeleteList(ctx facade.ContextWithUser, request dto4listus.ListRequest) (err
 		},
 		func(teamModuleDbo *dbo4listus.ListusSpaceDbo, id string) ([]update.Update, error) {
 			delete(teamModuleDbo.Lists, id)
-			return []update.Update{update.ByFieldName("lists."+id, update.DeleteField)}, teamModuleDbo.Validate()
+			return []update.Update{update.ByFieldPath([]string{"lists", id}, update.DeleteField)}, teamModuleDbo.Validate()
 		},
 	)
 	spaceItemRequest := dto4spaceus.SpaceItemRequest{

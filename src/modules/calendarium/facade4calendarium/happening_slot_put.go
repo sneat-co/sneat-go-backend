@@ -42,7 +42,7 @@ func putSlotTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *d
 		slot := &request.Slot.HappeningSlot
 		params.Happening.Record.MarkAsChanged()
 		params.Happening.Data.Slots[request.Slot.ID] = slot
-		params.HappeningUpdates = []update.Update{update.ByFieldName("slots."+request.Slot.ID, slot)}
+		params.HappeningUpdates = []update.Update{update.ByFieldPath([]string{"slots.", request.Slot.ID}, slot)}
 	}
 
 	if params.Happening.Data.Type == dbo4calendarium.HappeningTypeRecurring {
@@ -68,8 +68,8 @@ func putSlotTxWorker(ctx context.Context, tx dal.ReadwriteTransaction, params *d
 				return fmt.Errorf("happening brief is not valid after update: %w", err)
 			}
 			params.SpaceModuleEntry.Record.MarkAsChanged()
-			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, update.ByFieldName(
-				"recurringHappenings."+params.Happening.ID+".slots",
+			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, update.ByFieldPath(
+				[]string{"recurringHappenings", params.Happening.ID, "slots"},
 				happeningBrief.Slots,
 			))
 		}

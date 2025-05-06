@@ -21,7 +21,7 @@ func (v *WithAssets) AddAssetBrief(assetID string, assetBrief AssetBrief) (updat
 		v.Assets = make(map[string]*AssetBrief, 1)
 	}
 	v.Assets[assetID] = &assetBrief
-	updates = append(updates, update.ByFieldName("assets."+assetID, assetBrief))
+	updates = append(updates, update.ByFieldPath([]string{"assets", assetID}, assetBrief))
 	return
 }
 

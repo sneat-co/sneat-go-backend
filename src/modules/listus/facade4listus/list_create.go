@@ -102,7 +102,8 @@ func CreateList(ctx facade.ContextWithUser, request dto4listus.CreateListRequest
 					return fmt.Errorf("failed to insert team module entry record: %w", err)
 				}
 			} else {
-				params.SpaceUpdates = append(params.SpaceUpdates, update.ByFieldName("lists."+listType, listBrief))
+				params.SpaceUpdates = append(params.SpaceUpdates,
+					update.ByFieldPath([]string{"lists", listType}, listBrief))
 			}
 			return err
 		},

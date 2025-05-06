@@ -141,7 +141,7 @@ func createListItemsTxWorker(
 
 	if params.SpaceModuleEntry.Record.Exists() {
 		params.SpaceModuleUpdates = append(params.SpaceModuleUpdates,
-			update.ByFieldName("lists."+string(request.ListID), listBrief))
+			update.ByFieldPath([]string{"lists", string(request.ListID)}, listBrief))
 		params.SpaceModuleEntry.Record.MarkAsChanged()
 	} else {
 		params.SpaceModuleEntry.Data.CreatedAt = params.Started

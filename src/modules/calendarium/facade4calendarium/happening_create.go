@@ -162,7 +162,7 @@ func createHappeningTx(
 		}
 		params.SpaceModuleEntry.Data.RecurringHappenings[happeningID] = calendarHappeningBrief
 		params.SpaceModuleUpdates = append(params.SpaceUpdates,
-			update.ByFieldName("recurringHappenings."+happeningID, calendarHappeningBrief))
+			update.ByFieldPath([]string{"recurringHappenings", happeningID}, calendarHappeningBrief))
 	}
 	return
 }

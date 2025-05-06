@@ -51,7 +51,7 @@ func (v *WithAssetSpaces) AddAsset(spaceID string, asset AssetEntry) (updates []
 		return
 	}
 	for i, u := range updates {
-		updates[i] = update.ByFieldName("spaces."+spaceID+"."+u.FieldName(), u.Value)
+		updates[i] = update.ByFieldPath([]string{"spaces", spaceID, u.FieldName()}, u.Value)
 	}
 	return
 }
