@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/sneat-co/sneat-core-modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
+	"github.com/sneat-co/sneat-go-core/sharing/dbo4sharing"
 	"github.com/strongo/strongoapp/with"
 	"github.com/strongo/validation"
 	"strings"
@@ -17,6 +18,9 @@ type HappeningDbo struct {
 	dbmodels.WithUserIDs
 	with.DatesFields
 	dbo4linkage.WithRelatedAndIDs
+
+	// TODO: Implement sharing!
+	SharedTo *dbo4sharing.To `json:"sharedTo,omitempty" firestore:"sharedTo,omitempty"`
 
 	Description string `json:"description,omitempty" firestore:"description,omitempty"`
 
@@ -41,6 +45,11 @@ func (v *HappeningDbo) Validate() error {
 	}
 	if err := v.Adjustments.Validate(); err != nil {
 		return err
+	}
+	if v.SharedTo != nil {
+		if err := v.SharedTo.Validate(); err != nil {
+			return validation.NewErrBadRecordFieldValue("sharedTo", err.Error())
+		}
 	}
 	//if err := v.WithSpaceDates.Validate(); err != nil {
 	//	return err
