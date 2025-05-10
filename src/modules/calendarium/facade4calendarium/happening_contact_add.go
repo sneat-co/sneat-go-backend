@@ -53,11 +53,16 @@ func addParticipantToHappeningTxWorker(ctx context.Context, tx dal.ReadwriteTran
 	}
 
 	var updates []update.Update
-	for _, contactRef := range request.Contacts {
-		if contactRef.SpaceID == "" {
-			contactRef.SpaceID = request.SpaceID
+	for _, contactShortRef := range request.Contacts {
+		if contactShortRef.SpaceID == request.SpaceID {
+			contactShortRef.SpaceID = ""
 		}
-		contactFullRef := dbo4contactus.NewContactFullRef(contactRef.SpaceID, contactRef.ID)
+		var contactRef dbo4linkage.ItemRef
+		if contactShortRef.SpaceID == "" {
+			contactRef = dbo4contactus.NewContactRefSameSpace(contactShortRef.ID)
+		} else {
+			contactRef = dbo4contactus.NewContactFullRef(contactShortRef.SpaceID, contactShortRef.ID)
+		}
 		if updates, err = dbo4linkage.AddRelationshipAndID(
 			params.Started,
 			params.UserID(),
@@ -65,7 +70,7 @@ func addParticipantToHappeningTxWorker(ctx context.Context, tx dal.ReadwriteTran
 			&params.Happening.Data.WithRelated,
 			&params.Happening.Data.WithRelatedIDs,
 			dbo4linkage.RelationshipItemRolesCommand{
-				ItemRef: contactFullRef,
+				ItemRef: contactRef,
 				Add: &dbo4linkage.RolesCommand{
 					RolesOfItem: []string{"participant"},
 				},
@@ -104,14 +109,22 @@ func addContactsToHappeningBriefInSpaceDbo(
 			WithRelated:   happening.Data.WithRelated,
 		}
 	}
-	for _, contactRef := range contactRefs {
-		fullContactRef := dbo4contactus.NewContactFullRef(spaceID, contactRef.ID)
+	for _, contactShortRef := range contactRefs {
+		if contactShortRef.SpaceID == spaceID {
+			contactShortRef.SpaceID = ""
+		}
+		var contactRef dbo4linkage.ItemRef
+		if contactShortRef.SpaceID == "" {
+			contactRef = dbo4contactus.NewContactRefSameSpace(contactShortRef.ID)
+		} else {
+			contactRef = dbo4contactus.NewContactFullRef(contactShortRef.SpaceID, contactShortRef.ID)
+		}
 
 		updates, err = happeningBriefPointer.ProcessRelatedCommand(
 			now,
 			userID,
 			dbo4linkage.RelationshipItemRolesCommand{
-				ItemRef: fullContactRef,
+				ItemRef: contactRef,
 				Add: &dbo4linkage.RolesCommand{
 					RolesOfItem: []string{"participant"},
 				},

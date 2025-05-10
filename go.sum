@@ -26,10 +26,8 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rogpeppe/go-internal v1.13.1 h1:KvO1DLK/DRN07sQ1LQKScxyZJuNnedQ5/wKSR38lUII=
 github.com/rogpeppe/go-internal v1.13.1/go.mod h1:uMEvuHeurkdAXX61udpOXGD/AzZDWNMNyH2VO9fmH0o=
-github.com/sneat-co/sneat-core-modules v0.28.6 h1:S2g8/wStcd3yobI+neYaC8zYjA/Bw8jT+QLcjIEcpmI=
-github.com/sneat-co/sneat-core-modules v0.28.6/go.mod h1:RE6dQJG7SPJgnm4Gzrq0yQC2yonmk4K7Zfa/SO/ySUI=
-github.com/sneat-co/sneat-go-core v0.50.17 h1:UduRltndISgtAqbXRJLjAfeyTrxj1BVboNpiLykVMs4=
-github.com/sneat-co/sneat-go-core v0.50.17/go.mod h1:XN6ddudI2MZzrlFO7X/ulJ3rBY7T4nJJ6nYoyry/l6M=
+github.com/sneat-co/sneat-core-modules v0.28.7 h1:rbyWJnr8IVOVRUT3mz2Cz+Aaj74FbKhFg2fL3H7Lekc=
+github.com/sneat-co/sneat-core-modules v0.28.7/go.mod h1:RE6dQJG7SPJgnm4Gzrq0yQC2yonmk4K7Zfa/SO/ySUI=
 github.com/sneat-co/sneat-go-core v0.50.18 h1:yjbkwmZVYC5SOdDxkb29su4AYeFvLWq0zDFlxEBjoGQ=
 github.com/sneat-co/sneat-go-core v0.50.18/go.mod h1:3G+y7rIwvWfnkH+7VP9up0/TLh9eQEcL/Yirfwu4mzE=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=

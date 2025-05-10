@@ -10,6 +10,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
+	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
@@ -41,13 +42,14 @@ func removeParticipantsFromHappeningTxWorker(ctx context.Context, tx dal.Readwri
 		return err
 	}
 	for _, contact := range request.Contacts {
-		contactRef := dbmodels.NewSpaceItemID(contact.SpaceID, contact.ID)
 		switch params.Happening.Data.Type {
 		case dbo4calendarium.HappeningTypeSingle:
 			// nothing to do
 		case dbo4calendarium.HappeningTypeRecurring:
 			var updates []update.Update
-			if updates, err = removeContactFromHappeningBriefInContactusSpaceDbo(params.SpaceModuleEntry, params.Happening, contactRef); err != nil {
+
+			contactShortRef := dbmodels.NewSpaceItemID(contact.SpaceID, contact.ID)
+			if updates, err = removeContactFromHappeningBriefInContactusSpaceDbo(params.SpaceModuleEntry, params.Happening, contactShortRef); err != nil {
 				return fmt.Errorf("failed to remove member from happening brief in space DBO: %w", err)
 			}
 			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, updates...)
@@ -57,14 +59,20 @@ func removeParticipantsFromHappeningTxWorker(ctx context.Context, tx dal.Readwri
 				validation.NewErrBadRecordFieldValue("type",
 					fmt.Sprintf("unknown value: [%v]", params.Happening.Data.Type)))
 		}
-		contactFullRef := dbo4contactus.NewContactFullRef(contactRef.SpaceID(), contactRef.ItemID())
+
+		var contactRef dbo4linkage.ItemRef
+		if contact.SpaceID == "" || contact.SpaceID == request.SpaceID {
+			contactRef = dbo4contactus.NewContactRefSameSpace(contact.ID)
+		} else {
+			contactRef = dbo4contactus.NewContactFullRef(contact.SpaceID, contact.ID)
+		}
 		params.HappeningUpdates = append(
 			params.HappeningUpdates,
 			dbo4linkage.RemoveRelatedAndID(
 				params.Space.ID,
 				&params.Happening.Data.WithRelated,
 				&params.Happening.Data.WithRelatedIDs,
-				contactFullRef,
+				contactRef,
 			)...,
 		)
 		params.Happening.Record.MarkAsChanged()
@@ -82,8 +90,13 @@ func removeContactFromHappeningBriefInContactusSpaceDbo(
 	if calendarHappeningBrief == nil {
 		return nil, err
 	}
-	contactFullRef := dbo4contactus.NewContactFullRef(contactShortRef.SpaceID(), contactShortRef.ItemID())
-	updates = calendarHappeningBrief.RemoveRelatedItem(contactFullRef)
+	var contactRef dbo4linkage.ItemRef
+	if contactSpaceID := contactShortRef.SpaceID(); contactSpaceID == "" || contactSpaceID == coretypes.SpaceID(calendariumSpace.Key.Parent().ID.(string)) {
+		contactRef = dbo4contactus.NewContactRefSameSpace(contactShortRef.ItemID())
+	} else {
+		contactRef = dbo4contactus.NewContactFullRef(contactShortRef.SpaceID(), contactShortRef.ItemID())
+	}
+	updates = calendarHappeningBrief.RemoveRelatedItem(contactRef)
 	if len(updates) > 0 {
 		for i, u := range updates {
 			fieldPath := []string{"recurringHappenings", happening.ID}
