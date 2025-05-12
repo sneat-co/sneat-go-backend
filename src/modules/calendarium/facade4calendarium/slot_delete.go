@@ -84,7 +84,7 @@ func removeSlotFromHappeningDbo(
 					update.ByFieldName("status", params.Happening.Data.Status))
 			} else {
 				params.HappeningUpdates = append(params.HappeningUpdates,
-					update.ByFieldPath([]string{"slots", request.SlotID}, update.DeleteField))
+					update.ByFieldPath([]string{dbo4calendarium.SlotsField, request.SlotID}, update.DeleteField))
 			}
 			params.Happening.Record.MarkAsChanged()
 		}
@@ -92,7 +92,7 @@ func removeSlotFromHappeningDbo(
 		slot := params.Happening.Data.GetSlot(request.SlotID)
 		if changed := removeWeekday(slot, request.Weekday); changed {
 			params.HappeningUpdates = append(params.HappeningUpdates,
-				update.ByFieldName("slots", params.Happening.Data.Slots))
+				update.ByFieldName(dbo4calendarium.SlotsField, params.Happening.Data.Slots))
 			params.Happening.Record.MarkAsChanged()
 		}
 	}
@@ -113,7 +113,7 @@ func removeSlotFromHappeningBriefInSpaceRecord(
 					brief.Status = dbo4calendarium.HappeningStatusDeleted
 
 					params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, update.ByFieldPath(
-						[]string{"recurringHappenings", params.Happening.ID, "status"},
+						[]string{dbo4calendarium.RecurringHappeningsField, params.Happening.ID, "status"},
 						params.Happening.Data.Status,
 					))
 					params.SpaceModuleEntry.Record.MarkAsChanged()
@@ -122,7 +122,7 @@ func removeSlotFromHappeningBriefInSpaceRecord(
 				delete(brief.Slots, request.SlotID)
 
 				params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, update.ByFieldPath(
-					[]string{"recurringHappenings", params.Happening.ID, "slots", request.SlotID},
+					[]string{dbo4calendarium.RecurringHappeningsField, params.Happening.ID, dbo4calendarium.SlotsField, request.SlotID},
 					update.DeleteField,
 				))
 				params.SpaceModuleEntry.Record.MarkAsChanged()

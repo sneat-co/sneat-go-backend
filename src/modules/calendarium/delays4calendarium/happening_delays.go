@@ -47,10 +47,10 @@ func delayedUpdateHappeningBrief(ctx context.Context, userID string, spaceID cor
 					WithRelated:   params.SpaceItem.Data.WithRelated,
 				}
 				params.SpaceModuleEntry.Data.RecurringHappenings[params.SpaceItem.ID] = &brief
-				params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, update.ByFieldPath([]string{"recurringHappenings", params.SpaceItem.ID}, brief))
+				params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, update.ByFieldPath([]string{dbo4calendarium.RecurringHappeningsField, params.SpaceItem.ID}, brief))
 			} else if params.SpaceModuleEntry.Data.RecurringHappenings[params.SpaceItem.ID] != nil {
 				delete(params.SpaceModuleEntry.Data.RecurringHappenings, params.SpaceItem.ID)
-				params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, update.DeleteByFieldPath("recurringHappenings", happeningID))
+				params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, update.DeleteByFieldPath(dbo4calendarium.RecurringHappeningsField, happeningID))
 			}
 			return nil
 		},

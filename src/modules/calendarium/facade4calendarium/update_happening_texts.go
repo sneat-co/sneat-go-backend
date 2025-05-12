@@ -57,11 +57,11 @@ func updateHappeningTextsTxWorker(
 				HappeningBase: params.Happening.Data.HappeningBase,
 				WithRelated:   params.Happening.Data.WithRelated,
 			}
-			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, update.ByFieldPath([]string{"recurringHappenings", request.HappeningID}, brief))
+			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, update.ByFieldPath([]string{dbo4calendarium.RecurringHappeningsField, request.HappeningID}, brief))
 		} else {
 			if brief.Title != params.Happening.Data.Title {
 				brief.Title = params.Happening.Data.Title
-				params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, update.ByFieldPath([]string{"recurringHappenings", request.HappeningID, "title"}, brief.Title))
+				params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, update.ByFieldPath([]string{dbo4calendarium.RecurringHappeningsField, request.HappeningID, "title"}, brief.Title))
 				params.SpaceModuleEntry.Record.MarkAsChanged()
 			}
 			if brief.Summary != params.Happening.Data.Summary {
@@ -72,7 +72,7 @@ func updateHappeningTextsTxWorker(
 				} else {
 					summary = brief.Summary
 				}
-				params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, update.ByFieldPath([]string{"recurringHappenings", request.HappeningID, "summary"}, summary))
+				params.SpaceModuleUpdates = append(params.SpaceModuleUpdates, update.ByFieldPath([]string{dbo4calendarium.RecurringHappeningsField, request.HappeningID, "summary"}, summary))
 				params.SpaceModuleEntry.Record.MarkAsChanged()
 			}
 		}

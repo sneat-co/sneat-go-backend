@@ -88,12 +88,12 @@ func (v *HappeningBase) Validate() error {
 		return err
 	}
 	if len(v.Slots) == 0 {
-		return validation.NewErrRecordIsMissingRequiredField("slots")
+		return validation.NewErrRecordIsMissingRequiredField(SlotsField)
 	}
 
 	for slotID, slot := range v.Slots {
 		if strings.TrimSpace(slotID) == "" {
-			return validation.NewErrBadRecordFieldValue("slots", "has empty string key")
+			return validation.NewErrBadRecordFieldValue(SlotsField, "has empty string key")
 		}
 		if err := slot.Validate(); err != nil {
 			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("slots[%v]", slotID), err.Error())

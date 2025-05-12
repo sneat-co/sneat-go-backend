@@ -21,6 +21,9 @@ func (v *CalendarHappeningBrief) Validate() error {
 	return nil
 }
 
+const RecurringHappeningsField = "recurringHappenings"
+const SlotsField = "slots"
+
 type CalendariumSpaceDbo struct {
 	RecurringHappenings map[string]*CalendarHappeningBrief `json:"recurringHappenings,omitempty" firestore:"recurringHappenings,omitempty"`
 }
@@ -28,7 +31,7 @@ type CalendariumSpaceDbo struct {
 func (v *CalendariumSpaceDbo) Validate() error {
 	for i, rh := range v.RecurringHappenings {
 		if err := rh.Validate(); err != nil {
-			return validation.NewErrBadRecordFieldValue("recurringHappenings", fmt.Errorf("invalid value at index %v: %w", i, err).Error())
+			return validation.NewErrBadRecordFieldValue(RecurringHappeningsField, fmt.Errorf("invalid value at index %v: %w", i, err).Error())
 		}
 		if rh.Type != HappeningTypeRecurring {
 			return validation.NewErrBadRecordFieldValue(fmt.Sprintf("recurringHappenings[%v].type", i),

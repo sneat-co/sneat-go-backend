@@ -30,7 +30,7 @@ func deleteHappeningTx(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, 
 		if happeningBrief := params.SpaceModuleEntry.Data.GetRecurringHappeningBrief(request.HappeningID); happeningBrief != nil {
 			delete(params.SpaceModuleEntry.Data.RecurringHappenings, request.HappeningID)
 			params.SpaceModuleUpdates = append(params.SpaceUpdates,
-				update.ByFieldPath([]string{"recurringHappenings", request.HappeningID}, update.DeleteField))
+				update.ByFieldPath([]string{dbo4calendarium.RecurringHappeningsField, request.HappeningID}, update.DeleteField))
 			params.SpaceModuleEntry.Record.MarkAsChanged()
 		}
 	}

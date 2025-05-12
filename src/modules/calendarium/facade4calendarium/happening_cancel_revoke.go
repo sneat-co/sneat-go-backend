@@ -71,7 +71,7 @@ func removeCancellationFromHappeningBriefInSpaceModuleEntry(params *dal4calendar
 		for _, u := range updates {
 			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates,
 				update.ByFieldPath(
-					[]string{"recurringHappenings", params.Happening.ID, u.FieldName()},
+					[]string{dbo4calendarium.RecurringHappeningsField, params.Happening.ID, u.FieldName()},
 					u.Value()),
 			)
 		}

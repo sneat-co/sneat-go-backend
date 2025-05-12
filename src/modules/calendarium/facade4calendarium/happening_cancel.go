@@ -106,7 +106,7 @@ func cancelRecurringHappeningInstance(
 		}
 		for _, u := range updates {
 			params.SpaceModuleUpdates = append(params.SpaceModuleUpdates,
-				update.ByFieldPath([]string{"recurringHappenings", params.Happening.ID, u.FieldName()}, u.Value()),
+				update.ByFieldPath([]string{dbo4calendarium.RecurringHappeningsField, params.Happening.ID, u.FieldName()}, u.Value()),
 			)
 		}
 		params.SpaceModuleEntry.Record.MarkAsChanged()

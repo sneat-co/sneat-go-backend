@@ -27,10 +27,6 @@ func CreateHappening(
 	if err = request.Validate(); err != nil {
 		return
 	}
-	//var counter string
-	//if request.Happening.ExtraType == dbo4calendarium.HappeningTypeRecurring {
-	//	counter = "recurringHappenings"
-	//}
 	happeningDto := &dbo4calendarium.HappeningDbo{
 		HappeningBase: request.Happening.HappeningBase,
 		WithRelatedAndIDs: dbo4linkage.WithRelatedAndIDs{
@@ -41,13 +37,7 @@ func CreateHappening(
 				CreatedBy: ctx.User().GetUserID(),
 			},
 		},
-		//WithTeamDates: dbmodels.WithSpaceDates{
-		//	WithTeamIDs: dbmodels.WithSpaceIDs{
-		//		SpaceIDs: []string{request.Space},
-		//	},
-		//},
 	}
-	//happeningDto.ContactIDs = append(happeningDto.ContactIDs, "*")
 
 	if happeningDto.Type == dbo4calendarium.HappeningTypeSingle {
 		for _, slot := range happeningDto.Slots {
@@ -162,7 +152,7 @@ func createHappeningTx(
 		}
 		params.SpaceModuleEntry.Data.RecurringHappenings[happeningID] = calendarHappeningBrief
 		params.SpaceModuleUpdates = append(params.SpaceUpdates,
-			update.ByFieldPath([]string{"recurringHappenings", happeningID}, calendarHappeningBrief))
+			update.ByFieldPath([]string{dbo4calendarium.RecurringHappeningsField, happeningID}, calendarHappeningBrief))
 	}
 	return
 }

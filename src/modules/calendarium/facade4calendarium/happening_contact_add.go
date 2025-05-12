@@ -131,7 +131,7 @@ func addContactsToHappeningBriefInSpaceDbo(
 			})
 	}
 
-	hFieldPath := []string{"recurringHappenings", happening.ID}
+	hFieldPath := []string{dbo4calendarium.RecurringHappeningsField, happening.ID}
 	for i, u := range updates {
 		v := u.Value()
 		if fieldPath := u.FieldPath(); len(fieldPath) == 0 {

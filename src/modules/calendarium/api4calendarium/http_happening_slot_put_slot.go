@@ -23,6 +23,6 @@ func httpPutSlot(w http.ResponseWriter, r *http.Request, putMode facade4calendar
 	if err != nil {
 		return
 	}
-	err = facade4calendarium.PutSlot(ctx, putMode, request)
+	err = facade4calendarium.UpdateHappeningSlot(ctx, putMode, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusNoContent, err, nil)
 }

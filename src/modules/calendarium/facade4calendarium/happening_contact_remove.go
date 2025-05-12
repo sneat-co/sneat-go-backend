@@ -99,7 +99,7 @@ func removeContactFromHappeningBriefInContactusSpaceDbo(
 	updates = calendarHappeningBrief.RemoveRelatedItem(contactRef)
 	if len(updates) > 0 {
 		for i, u := range updates {
-			fieldPath := []string{"recurringHappenings", happening.ID}
+			fieldPath := []string{dbo4calendarium.RecurringHappeningsField, happening.ID}
 			if fieldName := u.FieldName(); fieldName != "" {
 				fieldPath = append(fieldPath, fieldName)
 			} else {

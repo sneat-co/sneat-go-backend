@@ -74,7 +74,7 @@ func (v *HappeningDbo) Validate() error {
 		return validation.NewErrRecordIsMissingRequiredField("type")
 	case HappeningTypeSingle:
 		if count := len(v.Slots); count > 1 {
-			return validation.NewErrBadRecordFieldValue("slots", fmt.Sprintf("single time happening should have only single 'once' slot, got: %v", count))
+			return validation.NewErrBadRecordFieldValue(SlotsField, fmt.Sprintf("single time happening should have only single 'once' slot, got: %v", count))
 		}
 		if len(v.Dates) == 0 {
 			return validation.NewErrRecordIsMissingRequiredField("dates")
