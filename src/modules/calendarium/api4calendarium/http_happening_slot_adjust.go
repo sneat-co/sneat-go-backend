@@ -18,3 +18,14 @@ func httpAdjustSlot(w http.ResponseWriter, r *http.Request) {
 	err = facade4calendarium.AdjustSlot(ctx, request)
 	apicore.ReturnJSON(ctx, w, r, http.StatusNoContent, err, nil)
 }
+
+func httpCancelAdjustment(w http.ResponseWriter, r *http.Request) {
+	var request dto4calendarium.HappeningDateSlotIDRequest
+	request.HappeningRequest = getHappeningRequestParamsFromURL(r)
+	ctx, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
+	if err != nil {
+		return
+	}
+	err = facade4calendarium.CancelSlotAdjustment(ctx, request)
+	apicore.ReturnJSON(ctx, w, r, http.StatusNoContent, err, nil)
+}

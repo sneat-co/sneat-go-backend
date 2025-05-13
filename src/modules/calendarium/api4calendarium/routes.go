@@ -21,6 +21,7 @@ func RegisterHttpRoutes(handle module.HTTPHandleFunc) {
 
 	//  temporary changes slot (for example, time changed for a specific date, or first class has been canceled)
 	handle(http.MethodPost, "/v0/happenings/adjust_slot", httpAdjustSlot)
+	handle(http.MethodPost, "/v0/happenings/cancel_adjustment", httpCancelAdjustment)
 
 	handle(http.MethodPost, "/v0/happenings/set_prices", httpSetHappeningPrices)
 	handle(http.MethodPost, "/v0/happenings/delete_prices", httpDeleteHappeningPrices)

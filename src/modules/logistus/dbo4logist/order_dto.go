@@ -62,7 +62,7 @@ func (v *OrderDbo) Validate() error {
 		return err
 	}
 	if slice.Index(v.SpaceIDs, v.SpaceID) < 0 {
-		return validation.NewErrBadRecordFieldValue("field", " should contain value of teamID field")
+		return validation.NewErrBadRecordFieldValue("field", " should contain value of spaceID field")
 	}
 	if err := v.WithUserIDs.Validate(); err != nil {
 		return err

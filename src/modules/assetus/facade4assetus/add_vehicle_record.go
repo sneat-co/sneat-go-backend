@@ -26,7 +26,7 @@ func AddVehicleRecord(ctx facade.ContextWithUser, request dto4assetus.AddVehicle
 	return
 }
 
-// addVehicleRecordTx creates dbo4assetus.VehicleRecordDbo in n /teams/{teamID}/modules/assetus/{assetID}/mileage/{randomRecordID}
+// addVehicleRecordTx creates dbo4assetus.VehicleRecordDbo in n /spaces/{spaceID}/modules/assetus/{assetID}/mileage/{randomRecordID}
 func addVehicleRecordTx(
 	ctx facade.ContextWithUser,
 	tx dal.ReadwriteTransaction,
@@ -41,7 +41,7 @@ func addVehicleRecordTx(
 	// TODO:
 	// 1. Get asset record by ID using tx.Get()
 	// 2. Verify asset exists by checking if (dal.IsErrNotFound(err))
-	// 3. Create dbo4assetus.VehicleRecordDbo in /teams/{teamID}/modules/assetus/{assetID}/mileage/{randomRecordID} using VehicleRecordDbo tx.Insert()
+	// 3. Create dbo4assetus.VehicleRecordDbo in /spaces/{spaceID}/modules/assetus/{assetID}/mileage/{randomRecordID} using VehicleRecordDbo tx.Insert()
 	// 4. Update asset.extra.Mileages with mileage record ID
 	// 4.1 Update asset record
 	// 4.2 Validate asset record

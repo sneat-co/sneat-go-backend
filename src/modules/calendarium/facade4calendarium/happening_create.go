@@ -93,13 +93,13 @@ func createHappeningTx(
 	//	if spaceID == params.Space.ContactID {
 	//		contactBrief := contactusSpace.Data.Contacts[participantKey.ItemID()]
 	//		if contactBrief == nil {
-	//			spaceContacts := contactsBySpaceID[teamID]
+	//			spaceContacts := contactsBySpaceID[spaceID]
 	//			if spaceContacts == nil {
 	//				spaceContacts = make([]dal4contactus.DebtusSpaceContactEntry, 0, 1)
 	//			}
-	//			contactsBySpaceID[teamID] = append(teamContacts, dal4contactus.NewContactEntry(teamID, participantKey.ItemID()))
+	//			contactsBySpaceID[spaceID] = append(teamContacts, dal4contactus.NewContactEntry(spaceID, participantKey.ItemID()))
 	//		} else {
-	//			happeningDbo.AddContact(teamID, participantKey.ItemID(), contactBrief)
+	//			happeningDbo.AddContact(spaceID, participantKey.ItemID(), contactBrief)
 	//		}
 	//	} else {
 	//		return response, errors.New("not implemented yet: adding participants from other teams at happening creation")
@@ -116,9 +116,9 @@ func createHappeningTx(
 		if err = tx.GetMulti(ctx, contactRecords); err != nil {
 			return response, err
 		}
-		//for teamID, teamContacts := range contactsBySpaceID {
+		//for spaceID, spaceContacts := range contactsBySpaceID {
 		//	for _, contact := range teamContacts {
-		//		happeningDbo.AddContact(teamID, contact.ContactID, &contact.Data.ContactBrief)
+		//		happeningDbo.AddContact(spaceID, contact.ContactID, &contact.Data.ContactBrief)
 		//	}
 		//}
 	}

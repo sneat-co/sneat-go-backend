@@ -29,3 +29,9 @@ func (v HappeningSlotDateRequest) Validate() error {
 	}
 	return nil
 }
+
+type HappeningDateSlotIDRequest struct {
+	HappeningRequest
+	Date   string `json:"date"`
+	SlotID string `json:"slotID"`
+}

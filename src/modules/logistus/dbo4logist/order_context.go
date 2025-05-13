@@ -25,11 +25,11 @@ func NewOrderKey(spaceID coretypes.SpaceID, orderID string) *dal.Key {
 }
 
 // NewOrder creates new order context
-func NewOrder(teamID coretypes.SpaceID, orderID string) (order Order) {
-	key := NewOrderKey(teamID, orderID)
+func NewOrder(spaceID coretypes.SpaceID, orderID string) (order Order) {
+	key := NewOrderKey(spaceID, orderID)
 	dto := new(OrderDbo)
 	order.ID = orderID
-	order.FullID = getOrderFullShortID(teamID, orderID)
+	order.FullID = getOrderFullShortID(spaceID, orderID)
 	order.Key = key
 	order.Dto = dto
 	order.Record = dal.NewRecordWithData(key, dto)
