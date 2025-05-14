@@ -27,7 +27,7 @@ require (
 	github.com/dal-go/dalgo v0.18.3
 	github.com/dal-go/mocks4dalgo v0.2.7
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/sneat-co/sneat-core-modules v0.28.7
+	github.com/sneat-co/sneat-core-modules v0.28.10
 	github.com/sneat-co/sneat-go-core v0.50.18
 	github.com/stretchr/testify v1.10.0
 	github.com/strongo/decimal v0.1.1
@@ -35,7 +35,7 @@ require (
 	github.com/strongo/logus v0.2.1
 	github.com/strongo/random v0.0.1
 	github.com/strongo/slice v0.3.1
-	github.com/strongo/strongoapp v0.27.2
+	github.com/strongo/strongoapp v0.29.0
 	github.com/strongo/validation v0.0.7
 	go.uber.org/mock v0.5.2
 )
