@@ -28,6 +28,8 @@ github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0t
 github.com/rogpeppe/go-internal v1.14.1/go.mod h1:MaRKkUm5W0goXpeCfT7UZI6fk/L7L7so1lCWt35ZSgc=
 github.com/sneat-co/sneat-core-modules v0.28.10 h1:yp1kohACUSPbd2lopeORMiYmOiLmSbi+JsBFkqzVxWE=
 github.com/sneat-co/sneat-core-modules v0.28.10/go.mod h1:bDSKf/5ixF6JGVFAcoFJG+JHVkcvP5OTmdaNCu2xS2g=
+github.com/sneat-co/sneat-core-modules v0.28.12 h1:2NwxryWmjQXNZHp+sspxP0M6AXV7/YB1WOZ+R9/oQh4=
+github.com/sneat-co/sneat-core-modules v0.28.12/go.mod h1:9hhY7rMyj3O/O5DG9eEQRU8r08E3PlWt35i245RyNBU=
 github.com/sneat-co/sneat-go-core v0.50.18 h1:yjbkwmZVYC5SOdDxkb29su4AYeFvLWq0zDFlxEBjoGQ=
 github.com/sneat-co/sneat-go-core v0.50.18/go.mod h1:3G+y7rIwvWfnkH+7VP9up0/TLh9eQEcL/Yirfwu4mzE=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
@@ -46,6 +48,8 @@ github.com/strongo/slice v0.3.1 h1:VWkyYBgcVJn6Hs7wYhL9Vxwgb7V3zQAUFTBV9wo5lc4=
 github.com/strongo/slice v0.3.1/go.mod h1:B5ODKCkl0rp2oiG0UBqkN1cCOrSCU2cUuhqCM1sC8r4=
 github.com/strongo/strongoapp v0.29.0 h1:qhEGWrgjlDdqGzngnh8ReUL6lPnR78VcWXyBqfH28gY=
 github.com/strongo/strongoapp v0.29.0/go.mod h1:hNDDbY2ajZ7adR+xVZoDbdQI0AbUfoazoh3QVYpeaHo=
+github.com/strongo/strongoapp v0.30.0 h1:pLTbjenZ4D5o+KfPkUqauC+q/kJaXmlJ7YUjUNIPh9s=
+github.com/strongo/strongoapp v0.30.0/go.mod h1:hNDDbY2ajZ7adR+xVZoDbdQI0AbUfoazoh3QVYpeaHo=
 github.com/strongo/validation v0.0.7 h1:gs6YkwPsYtVsepQaQOB+ZF+T0Gu5+nk4ZMND8F85e+U=
 github.com/strongo/validation v0.0.7/go.mod h1:YUwoPEItLJd/Bc9X1OCUm03ofhvm3kwZvuihU7/jz58=
 go.uber.org/mock v0.5.2 h1:LbtPTcP8A5k9WPXj54PPPbjcI4Y6lhyOZXn+VS7wNko=
