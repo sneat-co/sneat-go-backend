@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/update"
-	dal4spaceus2 "github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
+	"github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/briefs4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dal4assetus"
@@ -14,7 +14,6 @@ import (
 	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
-	"github.com/strongo/random"
 )
 
 // CreateAssetResponse DTO
@@ -28,9 +27,9 @@ func CreateAsset(ctx facade.ContextWithUser, request dto4assetus.CreateAssetRequ
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4spaceus2.CreateSpaceItem(ctx,
+	err = dal4spaceus.CreateSpaceItem(ctx,
 		request.SpaceRequest, const4assetus.ModuleID, new(dbo4assetus.AssetusSpaceDbo),
-		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4spaceus2.ModuleSpaceWorkerParams[*dbo4assetus.AssetusSpaceDbo]) (err error) {
+		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4assetus.AssetusSpaceDbo]) (err error) {
 			if err = params.GetRecords(ctx, tx); err != nil {
 				return err
 			}
@@ -45,11 +44,11 @@ func createAssetTx(
 	ctx context.Context,
 	tx dal.ReadwriteTransaction,
 	request dto4assetus.CreateAssetRequest,
-	params *dal4spaceus2.ModuleSpaceWorkerParams[*dbo4assetus.AssetusSpaceDbo],
+	params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4assetus.AssetusSpaceDbo],
 ) (
 	response CreateAssetResponse, err error,
 ) {
-	asset := dal4assetus.NewAssetEntry(request.SpaceID, random.ID(8)) // TODO: use DALgo random ContactID generator
+	asset := dal4assetus.NewAssetEntryWithoutID(request.SpaceID) // TODO: use DALgo random ContactID generator
 	asset.Data.AssetBaseDbo = request.Asset
 	asset.Data.UserIDs = []string{params.UserID()}
 	asset.Data.SpaceIDs = []coretypes.SpaceID{
@@ -58,13 +57,13 @@ func createAssetTx(
 	//asset.Data.ContactIDs = []string{"*"}
 	asset.Data.WithModified = dbmodels.NewWithModified(params.Started, params.UserID())
 
-	asset.Record.SetError(nil) // Mark record as not having an error
+	asset.Record.SetError(nil) // Mark a record as not having an error so we can access record.Data()
 
 	if err = asset.Data.Validate(); err != nil {
 		return response, fmt.Errorf("assert record data is not valid before insert: %w", err)
 	}
 
-	if err = tx.Set(ctx, asset.Record); err != nil { // TODO: change to .Insert() with random ContactID generator
+	if err = tx.Insert(ctx, asset.Record, dal.WithRandomStringKey(5, 3)); err != nil {
 		return response, fmt.Errorf("failed to insert asset record: %w", err)
 	}
 
