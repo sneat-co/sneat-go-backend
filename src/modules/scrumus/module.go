@@ -7,5 +7,5 @@ import (
 )
 
 func Module() module.Module {
-	return module.NewModule(const4srumus.ModuleID, module.RegisterRoutes(api4scrumus.RegisterHttpRoutes))
+	return module.NewExtension(const4srumus.ModuleID, module.RegisterRoutes(api4scrumus.RegisterHttpRoutes))
 }

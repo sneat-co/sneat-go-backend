@@ -21,7 +21,7 @@ func Module() module.Module {
 			},
 		),
 	)
-	return module.NewModule(const4calendarium.ModuleID,
+	return module.NewExtension(const4calendarium.ModuleID,
 		module.RegisterRoutes(api4calendarium.RegisterHttpRoutes),
 		module.RegisterDelays(delays4calendarium.InitDelaying),
 	)

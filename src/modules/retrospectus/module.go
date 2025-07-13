@@ -7,5 +7,5 @@ import (
 )
 
 func Module() module.Module {
-	return module.NewModule(const4retrospectus.ModuleID, module.RegisterRoutes(api4retrospectus.RegisterHttpRoutes))
+	return module.NewExtension(const4retrospectus.ModuleID, module.RegisterRoutes(api4retrospectus.RegisterHttpRoutes))
 }

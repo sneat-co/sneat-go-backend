@@ -7,7 +7,7 @@ import (
 )
 
 func Module() module.Module {
-	return module.NewModule(const4meetingus.ModuleID, module.RegisterRoutes(func(handle module.HTTPHandleFunc) {
+	return module.NewExtension(const4meetingus.ModuleID, module.RegisterRoutes(func(handle module.HTTPHandleFunc) {
 		handle(http.MethodPost, "/api4meetingus/about", func(writer http.ResponseWriter, request *http.Request) {
 			_, _ = writer.Write([]byte("meetingus"))
 		})

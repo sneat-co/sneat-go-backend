@@ -11,5 +11,5 @@ func Module() module.Module {
 	entities2.Register(
 		entities2.Entity{Name: "Spot", AllowCreate: true, AllowUpdate: true},
 	)
-	return module.NewModule(const4sportus.ModuleID, module.RegisterRoutes(api4sportus.RegisterRoutes))
+	return module.NewExtension(const4sportus.ModuleID, module.RegisterRoutes(api4sportus.RegisterRoutes))
 }
