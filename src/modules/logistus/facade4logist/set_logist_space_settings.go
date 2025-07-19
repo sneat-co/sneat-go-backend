@@ -29,7 +29,7 @@ func SetLogistSpaceSettings(
 		return err
 	}
 	return dal4spaceus.RunModuleSpaceWorkerWithUserCtx(ctx, request.SpaceID,
-		const4logistus.ModuleID,
+		const4logistus.ExtensionID,
 		new(dbo4logist.LogistSpaceDbo),
 		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, teamWorkerParams *dal4spaceus.ModuleSpaceWorkerParams[*dbo4logist.LogistSpaceDbo]) (err error) {
 			return setLogistSpaceSettingsTx(ctx /*userCtx,*/, request, tx, teamWorkerParams)

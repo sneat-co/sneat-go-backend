@@ -1,3 +1,3 @@
 package const4assetus
 
-const ModuleID = "assetus"
+const ExtensionID = "assetus"

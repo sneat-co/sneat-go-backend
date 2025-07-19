@@ -3,9 +3,9 @@ package deedus
 import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/deedus/api4deedus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/deedus/const4deedus"
-	"github.com/sneat-co/sneat-go-core/module"
+	"github.com/sneat-co/sneat-go-core/extension"
 )
 
-func Module() module.Module {
-	return module.NewExtension(const4deedus.ModuleID, module.RegisterRoutes(api4deedus.RegisterHttpRoutes))
+func Extension() extension.Config {
+	return extension.NewExtension(const4deedus.ExtensionID, extension.RegisterRoutes(api4deedus.RegisterHttpRoutes))
 }

@@ -1,3 +1,3 @@
 package const4listus
 
-const ModuleID = "listus"
+const ExtensionID = "listus"

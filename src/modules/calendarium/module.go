@@ -7,11 +7,11 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/const4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/delays4calendarium"
-	"github.com/sneat-co/sneat-go-core/module"
+	"github.com/sneat-co/sneat-go-core/extension"
 )
 
-func Module() module.Module {
-	facade4linkage.RegisterDboFactory(const4calendarium.ModuleID, const4calendarium.HappeningsCollection,
+func Extension() extension.Config {
+	facade4linkage.RegisterDboFactory(const4calendarium.ExtensionID, const4calendarium.HappeningsCollection,
 		facade4linkage.NewDboFactory(
 			func() facade4linkage.SpaceItemDboWithRelatedAndIDs {
 				return new(dbo4calendarium.HappeningDbo)
@@ -21,8 +21,8 @@ func Module() module.Module {
 			},
 		),
 	)
-	return module.NewExtension(const4calendarium.ModuleID,
-		module.RegisterRoutes(api4calendarium.RegisterHttpRoutes),
-		module.RegisterDelays(delays4calendarium.InitDelaying),
+	return extension.NewExtension(const4calendarium.ExtensionID,
+		extension.RegisterRoutes(api4calendarium.RegisterHttpRoutes),
+		extension.RegisterDelays(delays4calendarium.InitDelaying),
 	)
 }

@@ -1,3 +1,3 @@
 package const4srumus
 
-const ModuleID = "scrumus"
+const ExtensionID = "scrumus"

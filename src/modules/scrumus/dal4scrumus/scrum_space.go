@@ -9,9 +9,9 @@ import (
 	"github.com/sneat-co/sneat-go-core/coretypes"
 )
 
-const ScrumusModuleID coretypes.ModuleID = "scrumus"
+const ScrumusModuleID coretypes.ExtID = "scrumus"
 
-type ScrumSpaceEntry = record.DataWithID[coretypes.ModuleID, *dbo4scrumus.ScrumSpaceDto]
+type ScrumSpaceEntry = record.DataWithID[coretypes.ExtID, *dbo4scrumus.ScrumSpaceDto]
 
 func NewScrumSpaceKey(id coretypes.SpaceID) *dal.Key {
 	key := dbo4spaceus2.NewSpaceKey(id)

@@ -30,7 +30,7 @@ func newAssetEntryWithKey(key *dal.Key) (asset dbo4assetus.AssetEntry) {
 }
 
 func NewAssetKeyWithoutID(spaceID coretypes.SpaceID) *dal.Key {
-	spaceModuleKey := dbo4spaceus.NewSpaceModuleKey(spaceID, const4assetus.ModuleID)
+	spaceModuleKey := dbo4spaceus.NewSpaceModuleKey(spaceID, const4assetus.ExtensionID)
 	return dal.NewIncompleteKey(dbo4assetus.SpaceAssetsCollection, reflect.String, spaceModuleKey)
 }
 
@@ -38,6 +38,6 @@ func NewAssetKey(spaceID coretypes.SpaceID, assetID string) *dal.Key {
 	if !core.IsAlphanumericOrUnderscore(assetID) {
 		panic(fmt.Errorf("assetID should be alphanumeric, got: [%s]", assetID))
 	}
-	spaceModuleKey := dbo4spaceus.NewSpaceModuleKey(spaceID, const4assetus.ModuleID)
+	spaceModuleKey := dbo4spaceus.NewSpaceModuleKey(spaceID, const4assetus.ExtensionID)
 	return dal.NewKeyWithParentAndID(spaceModuleKey, dbo4assetus.SpaceAssetsCollection, assetID)
 }

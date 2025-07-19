@@ -1,3 +1,3 @@
 package const4retrospectus
 
-const ModuleID = "retrospectus"
+const ExtensionID = "retrospectus"

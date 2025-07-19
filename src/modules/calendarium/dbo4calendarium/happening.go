@@ -11,7 +11,7 @@ import (
 
 // NewHappeningKey creates a new happening key
 func NewHappeningKey(spaceID coretypes.SpaceID, happeningID string) *dal.Key {
-	return dbo4spaceus.NewSpaceModuleItemKey(spaceID, const4calendarium.ModuleID, const4calendarium.HappeningsCollection, happeningID)
+	return dbo4spaceus.NewSpaceModuleItemKey(spaceID, const4calendarium.ExtensionID, const4calendarium.HappeningsCollection, happeningID)
 }
 
 // HappeningType is either "recurring" or "single"

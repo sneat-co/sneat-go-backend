@@ -48,7 +48,7 @@ func CreateHappening(
 		}
 	}
 	err = dal4spaceus2.CreateSpaceItem(ctx, request.SpaceRequest,
-		const4calendarium.ModuleID,
+		const4calendarium.ExtensionID,
 		new(dbo4calendarium.CalendariumSpaceDbo),
 		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4spaceus2.ModuleSpaceWorkerParams[*dbo4calendarium.CalendariumSpaceDbo]) (err error) {
 			response, err = createHappeningTx(ctx, tx, happeningDto, params)

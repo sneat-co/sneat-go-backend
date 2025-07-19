@@ -13,4 +13,4 @@ type AssetusSpaceEntry = record.DataWithID[string, *dbo4assetus.AssetusSpaceDbo]
 // AssetsCollection is a name of a collection in DB
 const AssetsCollection = "assets"
 
-var AssetusRootKey = dal.NewKeyWithID(dbo4spaceus.SpaceModulesCollection, const4assetus.ModuleID)
+var AssetusRootKey = dal.NewKeyWithID(dbo4spaceus.SpaceModulesCollection, const4assetus.ExtensionID)

@@ -28,7 +28,7 @@ func CreateAsset(ctx facade.ContextWithUser, request dto4assetus.CreateAssetRequ
 		return
 	}
 	err = dal4spaceus.CreateSpaceItem(ctx,
-		request.SpaceRequest, const4assetus.ModuleID, new(dbo4assetus.AssetusSpaceDbo),
+		request.SpaceRequest, const4assetus.ExtensionID, new(dbo4assetus.AssetusSpaceDbo),
 		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4spaceus.ModuleSpaceWorkerParams[*dbo4assetus.AssetusSpaceDbo]) (err error) {
 			if err = params.GetRecords(ctx, tx); err != nil {
 				return err

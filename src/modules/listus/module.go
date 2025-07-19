@@ -3,9 +3,11 @@ package listus
 import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/api4listus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/const4listus"
-	"github.com/sneat-co/sneat-go-core/module"
+	"github.com/sneat-co/sneat-go-core/extension"
 )
 
-func Module() module.Module {
-	return module.NewExtension(const4listus.ModuleID, module.RegisterRoutes(api4listus.RegisterHttpRoutes))
+func Extension() extension.Config {
+	return extension.NewExtension(const4listus.ExtensionID,
+		extension.RegisterRoutes(api4listus.RegisterHttpRoutes),
+	)
 }

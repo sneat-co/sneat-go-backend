@@ -5,6 +5,7 @@ import (
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	dbo4spaceus2 "github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/const4logistus"
 	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
@@ -70,16 +71,16 @@ func (v LogistSpaceDbo) Validate() error {
 }
 
 // LogistSpaceEntry is a context for LogistTeam
-type LogistSpaceEntry = record.DataWithID[coretypes.ModuleID, *LogistSpaceDbo]
+type LogistSpaceEntry = record.DataWithID[coretypes.ExtID, *LogistSpaceDbo]
 
 func newLogistSpaceKey(spaceID coretypes.SpaceID) *dal.Key {
 	key := dbo4spaceus2.NewSpaceKey(spaceID)
-	return dal.NewKeyWithParentAndID(key, dbo4spaceus2.SpaceModulesCollection, ModuleID)
+	return dal.NewKeyWithParentAndID(key, dbo4spaceus2.SpaceModulesCollection, const4logistus.ExtensionID)
 }
 
 // NewLogistSpaceEntry creates new LogistSpaceEntry
 func NewLogistSpaceEntry(spaceID coretypes.SpaceID) (logistSpace LogistSpaceEntry) {
-	logistSpace.ID = ModuleID
+	logistSpace.ID = const4logistus.ExtensionID
 	logistSpace.Key = newLogistSpaceKey(spaceID)
 	logistSpace.Data = new(LogistSpaceDbo)
 	logistSpace.Record = dal.NewRecordWithData(logistSpace.Key, logistSpace.Data)

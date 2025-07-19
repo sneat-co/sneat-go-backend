@@ -3,9 +3,11 @@ package logistus
 import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/api4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/const4logistus"
-	"github.com/sneat-co/sneat-go-core/module"
+	"github.com/sneat-co/sneat-go-core/extension"
 )
 
-func Module() module.Module {
-	return module.NewExtension(const4logistus.ModuleID, module.RegisterRoutes(api4logist.RegisterHttpRoutes))
+func Extension() extension.Config {
+	return extension.NewExtension(const4logistus.ExtensionID,
+		extension.RegisterRoutes(api4logist.RegisterHttpRoutes),
+	)
 }

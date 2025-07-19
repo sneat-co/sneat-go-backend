@@ -24,7 +24,7 @@ func CreateList(ctx facade.ContextWithUser, request dto4listus.CreateListRequest
 	if err = request.Validate(); err != nil {
 		return
 	}
-	err = dal4spaceus2.CreateSpaceItem(ctx, request.SpaceRequest, const4listus.ModuleID, new(dbo4listus.ListusSpaceDbo),
+	err = dal4spaceus2.CreateSpaceItem(ctx, request.SpaceRequest, const4listus.ExtensionID, new(dbo4listus.ListusSpaceDbo),
 		func(ctx facade.ContextWithUser, tx dal.ReadwriteTransaction, params *dal4spaceus2.ModuleSpaceWorkerParams[*dbo4listus.ListusSpaceDbo]) (err error) {
 
 			for id, brief := range params.SpaceModuleEntry.Data.Lists {

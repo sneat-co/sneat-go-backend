@@ -33,7 +33,7 @@ func delayedUpdateHappeningBrief(ctx context.Context, userID string, spaceID cor
 	ctxWithUser := facade.NewContextWithUserID(ctx, userID)
 	return dal4spaceus.RunSpaceItemWorker(ctxWithUser,
 		request,
-		const4calendarium.ModuleID,
+		const4calendarium.ExtensionID,
 		new(dbo4calendarium.CalendariumSpaceDbo),
 		const4calendarium.HappeningsCollection,
 		new(dbo4calendarium.HappeningDbo),

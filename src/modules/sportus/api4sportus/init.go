@@ -1,11 +1,11 @@
 package api4sportus
 
 import (
-	"github.com/sneat-co/sneat-go-core/module"
+	"github.com/sneat-co/sneat-go-core/extension"
 )
 
 // RegisterRoutes registers HTTP handle
-func RegisterRoutes(handle module.HTTPHandleFunc) {
+func RegisterRoutes(handle extension.HTTPHandleFunc) {
 	if handle == nil {
 		panic("handle == nil")
 	}

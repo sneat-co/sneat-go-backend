@@ -39,7 +39,7 @@ func DeleteList(ctx facade.ContextWithUser, request dto4listus.ListRequest) (err
 	err = dal4spaceus.DeleteSpaceItem(
 		ctx,
 		spaceItemRequest,
-		const4listus.ModuleID,
+		const4listus.ExtensionID,
 		new(dbo4listus.ListusSpaceDbo),
 		dbo4listus.ListsCollection,
 		new(dbo4listus.ListDbo),

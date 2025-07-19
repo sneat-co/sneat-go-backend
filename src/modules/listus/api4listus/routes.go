@@ -1,12 +1,12 @@
 package api4listus
 
 import (
-	"github.com/sneat-co/sneat-go-core/module"
+	"github.com/sneat-co/sneat-go-core/extension"
 	"net/http"
 )
 
 // RegisterHttpRoutes registers listus routes
-func RegisterHttpRoutes(handle module.HTTPHandleFunc) {
+func RegisterHttpRoutes(handle extension.HTTPHandleFunc) {
 	handle(http.MethodPost, "/v0/listus/create_list", httpPostCreateList)
 	handle(http.MethodDelete, "/v0/listus/delete_list", httpDeleteList)
 	handle(http.MethodPost, "/v0/listus/list_items_create", httpPostCreateListItems)

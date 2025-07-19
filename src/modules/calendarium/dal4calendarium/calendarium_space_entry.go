@@ -10,15 +10,15 @@ import (
 	"github.com/sneat-co/sneat-go-core/coretypes"
 )
 
-type CalendariumSpaceEntry = record.DataWithID[coretypes.ModuleID, *dbo4calendarium.CalendariumSpaceDbo]
+type CalendariumSpaceEntry = record.DataWithID[coretypes.ExtID, *dbo4calendarium.CalendariumSpaceDbo]
 
 func NewCalendariumSpaceKey(spaceID coretypes.SpaceID) *dal.Key {
-	return dbo4spaceus.NewSpaceModuleKey(spaceID, const4calendarium.ModuleID)
+	return dbo4spaceus.NewSpaceModuleKey(spaceID, const4calendarium.ExtensionID)
 }
 
 func NewCalendariumSpaceEntry(spaceID coretypes.SpaceID) CalendariumSpaceEntry {
 	key := NewCalendariumSpaceKey(spaceID)
-	return record.NewDataWithID(const4calendarium.ModuleID, key, new(dbo4calendarium.CalendariumSpaceDbo))
+	return record.NewDataWithID(const4calendarium.ExtensionID, key, new(dbo4calendarium.CalendariumSpaceDbo))
 }
 
 func GetCalendariumSpace(ctx context.Context, tx dal.ReadwriteTransaction, spaceID coretypes.SpaceID) (CalendariumSpaceEntry, error) {

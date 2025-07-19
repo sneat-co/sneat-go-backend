@@ -1,13 +1,13 @@
 package api4sportus
 
 import (
-	"github.com/sneat-co/sneat-go-core/module"
+	"github.com/sneat-co/sneat-go-core/extension"
 	"net/http"
 )
 
 const spotBuddiesPathPrefix = "/v0/spot_buddies/"
 
-func registerSpotHandlers(handle module.HTTPHandleFunc) {
+func registerSpotHandlers(handle extension.HTTPHandleFunc) {
 	//handle(http.MethodGet, spotBuddiesPathPrefix+"spots/my_spots", mySpots)
 	handle(http.MethodPost, spotBuddiesPathPrefix+"spots/join_spot", joinSpot)
 	handle(http.MethodPost, spotBuddiesPathPrefix+"spots/leave_spot", leaveSpot)

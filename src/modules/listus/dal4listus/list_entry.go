@@ -14,7 +14,7 @@ type ListEntry = record.DataWithID[string, *dbo4listus.ListDbo]
 
 // NewListKey creates a new list key
 func NewListKey(spaceID coretypes.SpaceID, listKey dbo4listus.ListKey) *dal.Key {
-	spaceModuleKey := dbo4spaceus.NewSpaceModuleKey(spaceID, const4listus.ModuleID)
+	spaceModuleKey := dbo4spaceus.NewSpaceModuleKey(spaceID, const4listus.ExtensionID)
 	return dal.NewKeyWithParentAndID(spaceModuleKey, dbo4listus.ListsCollection, string(listKey))
 }
 

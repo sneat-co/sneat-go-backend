@@ -3,9 +3,9 @@ package retrospectus
 import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/api4retrospectus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/const4retrospectus"
-	"github.com/sneat-co/sneat-go-core/module"
+	"github.com/sneat-co/sneat-go-core/extension"
 )
 
-func Module() module.Module {
-	return module.NewExtension(const4retrospectus.ModuleID, module.RegisterRoutes(api4retrospectus.RegisterHttpRoutes))
+func Extension() extension.Config {
+	return extension.NewExtension(const4retrospectus.ExtensionID, extension.RegisterRoutes(api4retrospectus.RegisterHttpRoutes))
 }

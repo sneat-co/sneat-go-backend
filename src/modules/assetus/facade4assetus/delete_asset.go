@@ -29,7 +29,7 @@ func DeleteAsset(ctx facade.ContextWithUser, request dto4spaceus.SpaceItemReques
 	)
 
 	return dal4spaceus.DeleteSpaceItem(ctx, request,
-		const4assetus.ModuleID, new(dbo4assetus.AssetusSpaceDbo),
+		const4assetus.ExtensionID, new(dbo4assetus.AssetusSpaceDbo),
 		dal4assetus.AssetsCollection, new(dbo4assetus.AssetDbo),
 		briefsAdapter,
 		deleteAssetTxWorker,

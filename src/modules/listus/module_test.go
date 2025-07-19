@@ -2,14 +2,14 @@ package listus
 
 import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/const4listus"
-	"github.com/sneat-co/sneat-go-core/module"
+	"github.com/sneat-co/sneat-go-core/extension"
 	"testing"
 )
 
 func TestModule(t *testing.T) {
-	m := Module()
-	module.AssertModule(t, m, module.Expected{
-		ModuleID:      const4listus.ModuleID,
+	m := Extension()
+	extension.AssertExtension(t, m, extension.Expected{
+		ExtID:         const4listus.ExtensionID,
 		HandlersCount: 6,
 		DelayersCount: 0,
 	})

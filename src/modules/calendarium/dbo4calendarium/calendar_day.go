@@ -63,7 +63,7 @@ type CalendarDayEntry = record.DataWithID[string, *CalendarDayDbo]
 
 // NewCalendarDayKey returns key for a record in spaces/{spaceID}/calendarium/days collection with ContactID=YYYY-MM-DD
 func NewCalendarDayKey(spaceID coretypes.SpaceID, date string) *dal.Key {
-	return dbo4spaceus.NewSpaceModuleItemKey(spaceID, const4calendarium.ModuleID, DaysCollection, date)
+	return dbo4spaceus.NewSpaceModuleItemKey(spaceID, const4calendarium.ExtensionID, DaysCollection, date)
 }
 
 // NewCalendarDayEntry creates a new instance of CalendarDayEntry

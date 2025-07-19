@@ -1,7 +1,7 @@
 package api4logist
 
 import (
-	"github.com/sneat-co/sneat-go-core/module"
+	"github.com/sneat-co/sneat-go-core/extension"
 	"net/http"
 )
 
@@ -32,7 +32,7 @@ const (
 )
 
 // RegisterHttpRoutes registers logistus routes
-func RegisterHttpRoutes(handle module.HTTPHandleFunc) {
+func RegisterHttpRoutes(handle extension.HTTPHandleFunc) {
 	handle(http.MethodPost, RoutePathSetLogistSpaceSettings, httpSetLogistSpaceSettings)
 	handle(http.MethodPost, RoutePathCreateCounterparty, httpCreateCounterparty)
 	handle(http.MethodPost, RoutePathCreateOrder, httpCreateOrder)

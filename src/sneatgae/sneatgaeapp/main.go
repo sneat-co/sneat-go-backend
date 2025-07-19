@@ -20,7 +20,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/healthcheck"
 	"github.com/sneat-co/sneat-go-backend/src/sneatgae/sneatgaeapp/pages"
 	"github.com/sneat-co/sneat-go-core/emails"
-	"github.com/sneat-co/sneat-go-core/module"
+	"github.com/sneat-co/sneat-go-core/extension"
 	"github.com/sneat-co/sneat-go-core/monitoring"
 	"github.com/strongo/delaying"
 	"net/http"
@@ -36,7 +36,7 @@ func Start(
 	wrapHandler HandlerWrapper,
 	httpRouter *httprouter.Router,
 	emailClient emails.Client,
-	extraModule ...module.Module,
+	extraModule ...extension.Config,
 ) {
 	if reportPanic != nil {
 		ReportPanic = reportPanic
@@ -65,7 +65,7 @@ func Start(
 	//appengine.Main()
 }
 
-func initHtmlPageHandlers(handle module.HTTPHandleFunc) {
+func initHtmlPageHandlers(handle extension.HTTPHandleFunc) {
 	handle(http.MethodGet, "/", pages.IndexHandler)
 }
 
@@ -74,9 +74,9 @@ func initInfrastructure(emailClient emails.Client) {
 	emails.Init(emailClient)
 }
 
-func RegisterModules(handle module.HTTPHandleFunc, extraModule []module.Module) {
-	args := module.NewModuleRegistrationArgs(handle, delaying.MustRegisterFunc)
-	standardModules := modules.Modules()
+func RegisterModules(handle extension.HTTPHandleFunc, extraModule []extension.Config) {
+	args := extension.NewModuleRegistrationArgs(handle, delaying.MustRegisterFunc)
+	standardModules := modules.Extensions()
 	for _, m := range standardModules {
 		m.Register(args)
 	}

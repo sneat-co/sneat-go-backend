@@ -2,14 +2,14 @@ package scrumus
 
 import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/const4srumus"
-	"github.com/sneat-co/sneat-go-core/module"
+	"github.com/sneat-co/sneat-go-core/extension"
 	"testing"
 )
 
 func TestModule(t *testing.T) {
-	m := Module()
-	module.AssertModule(t, m, module.Expected{
-		ModuleID:      const4srumus.ModuleID,
+	m := Extension()
+	extension.AssertExtension(t, m, extension.Expected{
+		ExtID:         const4srumus.ExtensionID,
 		HandlersCount: 9,
 		DelayersCount: 0,
 	})
