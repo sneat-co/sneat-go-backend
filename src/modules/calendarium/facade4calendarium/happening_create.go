@@ -3,6 +3,8 @@ package facade4calendarium
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/update"
 	dal4contactus2 "github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
@@ -14,7 +16,6 @@ import (
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/slice"
 	"github.com/strongo/strongoapp/with"
-	"strings"
 )
 
 // CreateHappening creates a recurring happening

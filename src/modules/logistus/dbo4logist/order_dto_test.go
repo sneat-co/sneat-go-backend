@@ -1,8 +1,9 @@
 package dbo4logist
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // TestContactKey tests getContactKey

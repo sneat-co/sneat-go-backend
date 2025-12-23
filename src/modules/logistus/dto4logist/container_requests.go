@@ -2,9 +2,10 @@ package dto4logist
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/strongo/validation"
-	"strings"
 )
 
 // PointOfNewContainer is used in NewContainer

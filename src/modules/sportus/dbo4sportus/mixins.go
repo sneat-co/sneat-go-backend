@@ -2,9 +2,10 @@ package dbo4sportus
 
 import (
 	"fmt"
-	"github.com/strongo/validation"
 	"strings"
 	"time"
+
+	"github.com/strongo/validation"
 )
 
 // PriceRange DTO

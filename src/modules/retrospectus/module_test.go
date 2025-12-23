@@ -1,9 +1,10 @@
 package retrospectus
 
 import (
+	"testing"
+
 	"github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/const4retrospectus"
 	"github.com/sneat-co/sneat-go-core/extension"
-	"testing"
 )
 
 func TestModule(t *testing.T) {

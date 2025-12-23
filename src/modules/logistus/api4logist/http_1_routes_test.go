@@ -1,13 +1,14 @@
 package api4logist
 
 import (
-	"github.com/sneat-co/sneat-go-core/apicore"
-	"github.com/sneat-co/sneat-go-core/apicoretest"
-	"github.com/sneat-co/sneat-go-core/sneatauth"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/sneat-co/sneat-go-core/apicore"
+	"github.com/sneat-co/sneat-go-core/apicoretest"
+	"github.com/sneat-co/sneat-go-core/sneatauth"
 )
 
 func TestRegisterLogistRoutes(t *testing.T) {

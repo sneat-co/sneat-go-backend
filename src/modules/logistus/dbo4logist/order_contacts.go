@@ -2,12 +2,13 @@ package dbo4logist
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-core-modules/contactus/briefs4contactus"
 	"github.com/strongo/slice"
 	"github.com/strongo/strongoapp/with"
 	"github.com/strongo/validation"
-	"strings"
 )
 
 // WithOrderContacts is a struct that contains contacts in OrderDbo

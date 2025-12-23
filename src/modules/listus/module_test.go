@@ -1,9 +1,10 @@
 package listus
 
 import (
+	"testing"
+
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/const4listus"
 	"github.com/sneat-co/sneat-go-core/extension"
-	"testing"
 )
 
 func TestModule(t *testing.T) {

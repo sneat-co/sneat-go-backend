@@ -2,11 +2,12 @@ package dbo4meetingus
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-core"
-	"github.com/sneat-co/sneat-go-core/models/dbmodels"
-	"github.com/strongo/validation"
 	"strings"
 	"time"
+
+	core "github.com/sneat-co/sneat-go-core"
+	"github.com/sneat-co/sneat-go-core/models/dbmodels"
+	"github.com/strongo/validation"
 )
 
 var _ core.Validatable = (*Timer)(nil)

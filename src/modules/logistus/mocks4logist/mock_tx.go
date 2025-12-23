@@ -2,6 +2,9 @@ package mocks4logist
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/mocks4dalgo/mock_dal"
 	"github.com/sneat-co/sneat-core-modules/contactus/dbo4contactus"
@@ -10,8 +13,6 @@ import (
 	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"go.uber.org/mock/gomock"
-	"testing"
-	"time"
 )
 
 func MockTx(t *testing.T) (tx *mock_dal.MockReadwriteTransaction) {

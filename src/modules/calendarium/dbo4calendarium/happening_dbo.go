@@ -2,12 +2,13 @@ package dbo4calendarium
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/sneat-co/sneat-core-modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/sneat-co/sneat-go-core/sharing/dbo4sharing"
 	"github.com/strongo/strongoapp/with"
 	"github.com/strongo/validation"
-	"strings"
 )
 
 // HappeningDbo DTO

@@ -2,10 +2,11 @@ package dbo4brands
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-core/validate"
-	"github.com/strongo/validation"
 	"net/url"
 	"strings"
+
+	"github.com/sneat-co/sneat-go-core/validate"
+	"github.com/strongo/validation"
 )
 
 // Maker defines a DB object model

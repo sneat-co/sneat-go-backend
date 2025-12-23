@@ -2,9 +2,10 @@ package dbo4logist
 
 import (
 	"fmt"
-	"github.com/strongo/validation"
 	"strings"
 	"time"
+
+	"github.com/strongo/validation"
 )
 
 // ShippingPointBase is used in OrderShippingPoint and ContainerPoint.

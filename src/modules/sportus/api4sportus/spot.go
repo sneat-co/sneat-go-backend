@@ -1,8 +1,9 @@
 package api4sportus
 
 import (
-	"github.com/sneat-co/sneat-go-core/extension"
 	"net/http"
+
+	"github.com/sneat-co/sneat-go-core/extension"
 )
 
 const spotBuddiesPathPrefix = "/v0/spot_buddies/"

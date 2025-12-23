@@ -1,9 +1,10 @@
 package dbo4brands
 
 import (
-	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 	"strings"
 	"testing"
+
+	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 )
 
 func TestBrand_Validate(t *testing.T) {

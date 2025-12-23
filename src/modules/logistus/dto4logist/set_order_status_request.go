@@ -1,9 +1,10 @@
 package dto4logist
 
 import (
+	"strings"
+
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/strongo/validation"
-	"strings"
 )
 
 // SetOrderStatusRequest is a request to set status of an order

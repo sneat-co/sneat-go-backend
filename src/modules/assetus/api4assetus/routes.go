@@ -1,8 +1,9 @@
 package api4assetus
 
 import (
-	"github.com/sneat-co/sneat-go-core/extension"
 	"net/http"
+
+	"github.com/sneat-co/sneat-go-core/extension"
 )
 
 // RegisterHttpRoutes registers asset routes

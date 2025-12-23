@@ -1,8 +1,9 @@
 package extras4assetus
 
 import (
-	"github.com/strongo/validation"
 	"strings"
+
+	"github.com/strongo/validation"
 )
 
 type WithMakeModelFields struct {

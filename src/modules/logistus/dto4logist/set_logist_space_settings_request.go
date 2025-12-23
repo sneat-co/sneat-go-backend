@@ -2,11 +2,12 @@ package dto4logist
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
-	"strings"
 )
 
 // SetLogistSpaceSettingsRequest represents a request to set logistus team settings

@@ -1,7 +1,9 @@
 package backend
 
-import "testing"
-import "os/exec"
+import (
+	"os/exec"
+	"testing"
+)
 
 func TestGitHooksSetup(t *testing.T) {
 	// git config --local include.path ../.gitconfig

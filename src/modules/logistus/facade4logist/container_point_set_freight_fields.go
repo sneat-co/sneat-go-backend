@@ -2,6 +2,7 @@ package facade4logist
 
 import (
 	"errors"
+
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"

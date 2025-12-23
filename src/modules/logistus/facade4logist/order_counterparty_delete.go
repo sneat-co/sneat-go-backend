@@ -2,13 +2,14 @@ package facade4logist
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
-	"github.com/sneat-co/sneat-go-core"
+	core "github.com/sneat-co/sneat-go-core"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/slice"
-	"strings"
 )
 
 // DeleteOrderCounterparty deletes counterparty from an order

@@ -2,8 +2,9 @@ package const4assetus
 
 import (
 	"fmt"
-	"github.com/strongo/validation"
 	"slices"
+
+	"github.com/strongo/validation"
 )
 
 // AssetPossession is a type of asset possession

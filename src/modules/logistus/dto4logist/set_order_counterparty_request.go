@@ -2,8 +2,9 @@ package dto4logist
 
 import (
 	"fmt"
-	"github.com/strongo/validation"
 	"strings"
+
+	"github.com/strongo/validation"
 )
 
 // SetOrderCounterparty is a request to set a counterparty for an order

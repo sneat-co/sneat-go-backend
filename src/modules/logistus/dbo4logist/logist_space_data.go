@@ -2,6 +2,8 @@ package dbo4logist
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/record"
 	dbo4spaceus2 "github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
@@ -9,7 +11,6 @@ import (
 	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
-	"strings"
 )
 
 // OrderCounter is a counter for orders

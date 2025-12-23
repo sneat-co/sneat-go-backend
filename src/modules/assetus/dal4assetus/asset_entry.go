@@ -2,13 +2,14 @@ package dal4assetus
 
 import (
 	"fmt"
+	"reflect"
+
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus"
 	core "github.com/sneat-co/sneat-go-core"
 	"github.com/sneat-co/sneat-go-core/coretypes"
-	"reflect"
 )
 
 func NewAssetEntryWithoutID(spaceID coretypes.SpaceID) (asset dbo4assetus.AssetEntry) {

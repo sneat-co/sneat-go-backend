@@ -3,14 +3,15 @@ package facade4scrumus
 import (
 	"context"
 	"fmt"
+	"math/rand"
+	"strconv"
+	"time"
+
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus"
 	"github.com/sneat-co/sneat-go-core/facade"
-	"math/rand"
-	"strconv"
-	"time"
 )
 
 var addTaskInTransaction = func(

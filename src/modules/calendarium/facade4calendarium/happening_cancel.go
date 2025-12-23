@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
+
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
@@ -12,7 +14,6 @@ import (
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
 	"github.com/strongo/validation"
-	"slices"
 )
 
 // CancelHappening cancel a happening or it's slot or a single occurrence at specific date

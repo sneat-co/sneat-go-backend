@@ -1,8 +1,9 @@
 package dto4calendarium
 
 import (
-	"github.com/strongo/validation"
 	"strings"
+
+	"github.com/strongo/validation"
 )
 
 // HappeningSlotRefRequest refers to a happening slot

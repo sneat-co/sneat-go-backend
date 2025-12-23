@@ -1,11 +1,12 @@
 package facade4logist
 
 import (
+	"strings"
+
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
-	"strings"
 )
 
 // SetContainerFields sets container number in an order

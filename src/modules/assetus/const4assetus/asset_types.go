@@ -2,8 +2,9 @@ package const4assetus
 
 import (
 	"fmt"
-	"github.com/strongo/validation"
 	"slices"
+
+	"github.com/strongo/validation"
 )
 
 // AssetType is a type of asset, e.g. house, apartment, car, boat, etc

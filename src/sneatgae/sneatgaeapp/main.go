@@ -15,6 +15,8 @@
 package sneatgaeapp
 
 import (
+	"net/http"
+
 	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/sneat-go-backend/src/modules"
 	"github.com/sneat-co/sneat-go-backend/src/modules/healthcheck"
@@ -23,7 +25,6 @@ import (
 	"github.com/sneat-co/sneat-go-core/extension"
 	"github.com/sneat-co/sneat-go-core/monitoring"
 	"github.com/strongo/delaying"
-	"net/http"
 )
 
 func CreateHttpRouter() *httprouter.Router {

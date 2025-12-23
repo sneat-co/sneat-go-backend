@@ -1,9 +1,10 @@
 package dto4logist
 
 import (
+	"strings"
+
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/strongo/validation"
-	"strings"
 )
 
 // DeleteOrderCounterpartyRequest is a request to delete a counterparty from an order

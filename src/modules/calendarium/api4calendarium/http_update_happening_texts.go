@@ -1,11 +1,12 @@
 package api4calendarium
 
 import (
+	"net/http"
+
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/facade4calendarium"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/apicore/verify"
-	"net/http"
 )
 
 func httpUpdateHappeningTexts(w http.ResponseWriter, r *http.Request) {

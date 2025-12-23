@@ -2,6 +2,7 @@ package dto4calendarium
 
 import (
 	"fmt"
+
 	"github.com/sneat-co/sneat-core-modules/linkage/dbo4linkage"
 	"github.com/strongo/validation"
 )

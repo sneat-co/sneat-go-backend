@@ -1,8 +1,9 @@
 package deedus
 
 import (
-	"github.com/sneat-co/sneat-go-core/extension"
 	"testing"
+
+	"github.com/sneat-co/sneat-go-core/extension"
 )
 
 func TestModule(t *testing.T) {

@@ -2,6 +2,7 @@ package dbo4logist
 
 import (
 	"fmt"
+
 	"github.com/dal-go/dalgo/update"
 	"github.com/strongo/validation"
 )

@@ -2,10 +2,11 @@ package dbo4calendarium
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/sneat-co/sneat-core-modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
-	"strconv"
 )
 
 // HappeningSlot DBO

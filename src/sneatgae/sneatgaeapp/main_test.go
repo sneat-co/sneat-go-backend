@@ -1,13 +1,14 @@
 package sneatgaeapp
 
 import (
-	"github.com/sneat-co/sneat-go-core/emails/email2writer"
-	"github.com/stretchr/testify/assert"
-	"github.com/strongo/delaying"
 	"io"
 	"net/http"
 	"os"
 	"testing"
+
+	"github.com/sneat-co/sneat-go-core/emails/email2writer"
+	"github.com/stretchr/testify/assert"
+	"github.com/strongo/delaying"
 )
 
 func TestInitFirebase(t *testing.T) {

@@ -3,15 +3,16 @@ package sneatgaeapp
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"runtime/debug"
+	"time"
+
 	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/sneat-go-core/capturer"
 	"github.com/sneat-co/sneat-go-core/httpserver"
 	"github.com/sneat-co/sneat-go-core/monitoring"
 	"github.com/sneat-co/sneat-go-core/security"
 	"github.com/strongo/logus"
-	"net/http"
-	"runtime/debug"
-	"time"
 )
 
 func initHTTPRouter(globalOptions http.HandlerFunc) *httprouter.Router {

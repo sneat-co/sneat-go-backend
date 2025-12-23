@@ -1,6 +1,8 @@
 package facade4listus
 
 import (
+	"slices"
+
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
@@ -8,7 +10,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/slice"
-	"slices"
 )
 
 // DeleteListItems deletes list items

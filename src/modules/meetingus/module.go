@@ -1,9 +1,10 @@
 package meetingus
 
 import (
+	"net/http"
+
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/const4meetingus"
 	"github.com/sneat-co/sneat-go-core/extension"
-	"net/http"
 )
 
 func Module() extension.Config {

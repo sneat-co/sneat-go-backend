@@ -1,12 +1,13 @@
 package facade4logist
 
 import (
+	"strings"
+	"testing"
+
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/mocks4logist"
 	"github.com/stretchr/testify/assert"
-	"strings"
-	"testing"
 )
 
 func Test_addContainersTx(t *testing.T) {

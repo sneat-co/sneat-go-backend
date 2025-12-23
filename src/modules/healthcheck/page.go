@@ -3,12 +3,13 @@ package healthcheck
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"time"
+
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/logus"
-	"net/http"
-	"time"
 )
 
 // httpGetPage renders health-check page

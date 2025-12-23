@@ -3,10 +3,11 @@ package dbo4logist
 import (
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/strongo/slice"
 	"github.com/strongo/strongoapp/with"
 	"github.com/strongo/validation"
-	"strings"
 )
 
 // OrderBase is a base for order - we use it for storing orders in Firestore and in request for creating a new order

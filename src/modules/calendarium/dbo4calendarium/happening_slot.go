@@ -2,9 +2,10 @@ package dbo4calendarium
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
-	"time"
 )
 
 type Cancellation struct {

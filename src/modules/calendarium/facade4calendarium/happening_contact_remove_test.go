@@ -2,11 +2,12 @@ package facade4calendarium
 
 import (
 	"context"
+	"testing"
+
 	"github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
-	"testing"
 )
 
 func TestRemoveParticipantsFromHappening(t *testing.T) {

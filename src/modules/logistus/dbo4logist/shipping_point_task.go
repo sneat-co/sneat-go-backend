@@ -2,8 +2,9 @@ package dbo4logist
 
 import (
 	"fmt"
-	"github.com/strongo/validation"
 	"strings"
+
+	"github.com/strongo/validation"
 )
 
 type ShippingPointTask = string

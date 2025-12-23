@@ -1,9 +1,10 @@
 package scrumus
 
 import (
+	"testing"
+
 	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/const4srumus"
 	"github.com/sneat-co/sneat-go-core/extension"
-	"testing"
 )
 
 func TestModule(t *testing.T) {

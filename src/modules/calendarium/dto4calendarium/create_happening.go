@@ -2,6 +2,7 @@ package dto4calendarium
 
 import (
 	"fmt"
+
 	"github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/strongo/validation"

@@ -1,9 +1,10 @@
 package dto4calendarium
 
 import (
+	"strconv"
+
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/strongo/validation"
-	"strconv"
 )
 
 // HappeningPricesRequest adds prices to happening

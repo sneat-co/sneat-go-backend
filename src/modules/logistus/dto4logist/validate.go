@@ -1,8 +1,9 @@
 package dto4logist
 
 import (
-	"github.com/strongo/validation"
 	"strings"
+
+	"github.com/strongo/validation"
 )
 
 func validateID(field, v string) error {

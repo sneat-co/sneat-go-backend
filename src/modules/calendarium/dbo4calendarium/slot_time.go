@@ -2,11 +2,12 @@ package dbo4calendarium
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-core/validate"
-	"github.com/strongo/validation"
 	"slices"
 	"strconv"
 	"strings"
+
+	"github.com/sneat-co/sneat-go-core/validate"
+	"github.com/strongo/validation"
 )
 
 // RepeatPeriod defines repeat mode

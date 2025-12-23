@@ -2,8 +2,9 @@ package dbo4logist
 
 import (
 	"fmt"
-	"github.com/strongo/validation"
 	"strings"
+
+	"github.com/strongo/validation"
 )
 
 // FreightLoad is a model for freight load

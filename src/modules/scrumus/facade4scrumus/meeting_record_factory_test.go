@@ -1,9 +1,10 @@
 package facade4scrumus
 
 import (
+	"testing"
+
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/dbo4meetingus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus"
-	"testing"
 )
 
 func TestMeetingRecordFactory_NewRecord(t *testing.T) {

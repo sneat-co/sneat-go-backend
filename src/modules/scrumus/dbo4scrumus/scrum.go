@@ -2,11 +2,12 @@ package dbo4scrumus
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/dbo4meetingus"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
-	"strings"
 )
 
 // Comment record

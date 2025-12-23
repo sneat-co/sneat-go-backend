@@ -1,9 +1,10 @@
 package dto4logist
 
 import (
+	"testing"
+
 	"github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func ValidOrderRequest() OrderRequest {

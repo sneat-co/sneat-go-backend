@@ -1,11 +1,12 @@
 package facade4logist
 
 import (
+	"testing"
+
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/mocks4logist"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func Test_txSetContainerPointFreightFields(t *testing.T) {

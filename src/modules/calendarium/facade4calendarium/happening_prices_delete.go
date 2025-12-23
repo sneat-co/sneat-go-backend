@@ -1,13 +1,14 @@
 package facade4calendarium
 
 import (
+	"slices"
+
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium"
 	"github.com/sneat-co/sneat-go-core/facade"
-	"slices"
 )
 
 func DeleteHappeningPrices(ctx facade.ContextWithUser, request dto4calendarium.DeleteHappeningPricesRequest) (err error) {

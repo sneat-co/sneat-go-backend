@@ -2,9 +2,10 @@ package dbo4logist
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
-	"strings"
 )
 
 type EndpointSide = string

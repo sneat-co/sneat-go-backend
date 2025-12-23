@@ -2,13 +2,14 @@ package dbo4logist
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-core-modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/slice"
 	"github.com/strongo/validation"
-	"strings"
 )
 
 // SegmentDates is a dates of the ContainerSegment.

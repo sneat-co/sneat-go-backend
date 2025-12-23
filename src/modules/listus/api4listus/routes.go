@@ -1,8 +1,9 @@
 package api4listus
 
 import (
-	"github.com/sneat-co/sneat-go-core/extension"
 	"net/http"
+
+	"github.com/sneat-co/sneat-go-core/extension"
 )
 
 // RegisterHttpRoutes registers listus routes

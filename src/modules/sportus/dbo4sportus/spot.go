@@ -1,10 +1,11 @@
 package dbo4sportus
 
 import (
-	"github.com/sneat-co/sneat-go-core/models/dbmodels"
-	"github.com/strongo/validation"
 	"strings"
 	"time"
+
+	"github.com/sneat-co/sneat-go-core/models/dbmodels"
+	"github.com/strongo/validation"
 )
 
 // SpotBrief DTO

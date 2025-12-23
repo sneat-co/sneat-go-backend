@@ -3,6 +3,8 @@ package facade4listus
 import (
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus"
@@ -10,7 +12,6 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus"
 	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/facade"
-	"strings"
 )
 
 // CreateListItems creates list items

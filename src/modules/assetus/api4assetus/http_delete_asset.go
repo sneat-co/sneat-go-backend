@@ -2,13 +2,14 @@ package api4assetus
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/facade4assetus"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/apicore/verify"
 	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/facade"
-	"net/http"
 )
 
 func httpDeleteAsset(w http.ResponseWriter, r *http.Request) {

@@ -1,10 +1,11 @@
 package dbo4listus
 
 import (
+	"strings"
+
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/const4listus"
 	"github.com/strongo/strongoapp/with"
 	"github.com/strongo/validation"
-	"strings"
 )
 
 // ListItemBase DTO

@@ -2,8 +2,9 @@ package extras4assetus
 
 import (
 	"fmt"
-	"github.com/strongo/validation"
 	"slices"
+
+	"github.com/strongo/validation"
 )
 
 // WithEngineData is a struct for engine data

@@ -2,6 +2,7 @@ package dto4logist
 
 import (
 	"fmt"
+
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/strongo/validation"
 )

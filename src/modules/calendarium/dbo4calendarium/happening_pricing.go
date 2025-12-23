@@ -2,9 +2,10 @@ package dbo4calendarium
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/crediterra/money"
 	"github.com/strongo/validation"
-	"strconv"
 )
 
 // WithHappeningPrices describes prices for happening

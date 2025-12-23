@@ -1,8 +1,9 @@
 package dbo4logist
 
 import (
-	"github.com/strongo/validation"
 	"strings"
+
+	"github.com/strongo/validation"
 )
 
 // TransitPoint is a transit point of an order route

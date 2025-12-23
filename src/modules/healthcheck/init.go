@@ -1,8 +1,9 @@
 package healthcheck
 
 import (
-	"github.com/sneat-co/sneat-go-core/extension"
 	"net/http"
+
+	"github.com/sneat-co/sneat-go-core/extension"
 )
 
 // InitHealthCheck registers health check HTTP handlers

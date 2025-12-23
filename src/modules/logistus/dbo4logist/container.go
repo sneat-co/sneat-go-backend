@@ -2,13 +2,14 @@ package dbo4logist
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/random"
 	"github.com/strongo/slice"
 	"github.com/strongo/strongoapp/with"
 	"github.com/strongo/validation"
-	"strings"
 )
 
 // OrderContainerBase is a base type for OrderContainer

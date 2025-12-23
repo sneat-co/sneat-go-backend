@@ -1,8 +1,9 @@
 package dbo4logist
 
 import (
-	"github.com/strongo/slice"
 	"slices"
+
+	"github.com/strongo/slice"
 )
 
 type LogistSpaceRole string

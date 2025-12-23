@@ -1,9 +1,10 @@
 package dto4logist
 
 import (
+	"testing"
+
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestDeleteSegmentsRequest_Validate(t *testing.T) {

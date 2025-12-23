@@ -1,9 +1,10 @@
 package sportus
 
 import (
+	"testing"
+
 	"github.com/sneat-co/sneat-go-backend/src/modules/sportus/const4sportus"
 	"github.com/sneat-co/sneat-go-core/extension"
-	"testing"
 )
 
 func TestModule(t *testing.T) {

@@ -1,8 +1,9 @@
 package const4assetus
 
 import (
-	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"slices"
+
+	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 )
 
 type AssetStatus = string

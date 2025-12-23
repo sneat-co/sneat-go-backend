@@ -1,9 +1,10 @@
 package api4meetingus
 
 import (
+	"testing"
+
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
 	"github.com/sneat-co/sneat-go-core/facade"
-	"testing"
 )
 
 func TestToggleMeetingTimer(t *testing.T) {

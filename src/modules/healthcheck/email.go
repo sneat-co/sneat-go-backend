@@ -2,9 +2,10 @@ package healthcheck
 
 import (
 	"fmt"
-	"github.com/sneat-co/sneat-go-core/emails"
 	"net/http"
 	"time"
+
+	"github.com/sneat-co/sneat-go-core/emails"
 )
 
 // httpGetTestEmail sends a test email

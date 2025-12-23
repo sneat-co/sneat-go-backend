@@ -3,6 +3,8 @@ package facade4calendarium
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/update"
 	"github.com/sneat-co/sneat-core-modules/contactus/dbo4contactus"
@@ -13,7 +15,6 @@ import (
 	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"
-	"time"
 )
 
 func AddParticipantsToHappening(ctx facade.ContextWithUser, request dto4calendarium.HappeningContactsRequest) (err error) {

@@ -3,6 +3,8 @@ package facade4logist
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
@@ -11,7 +13,6 @@ import (
 	"github.com/strongo/slice"
 	"github.com/strongo/strongoapp/with"
 	"github.com/strongo/validation"
-	"strings"
 )
 
 // SetOrderCounterparties sets order Contacts

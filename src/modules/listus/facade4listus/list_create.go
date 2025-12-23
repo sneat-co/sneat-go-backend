@@ -2,6 +2,9 @@ package facade4listus
 
 import (
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/update"
 	dal4spaceus2 "github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
@@ -14,8 +17,6 @@ import (
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/random"
 	"github.com/strongo/strongoapp/with"
-	"strings"
-	"time"
 )
 
 // CreateList creates a new list

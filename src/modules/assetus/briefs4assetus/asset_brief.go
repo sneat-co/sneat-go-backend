@@ -3,8 +3,9 @@ package briefs4assetus
 import (
 	"errors"
 	"fmt"
-	"github.com/sneat-co/sneat-core-modules/core/extra"
 	"strings"
+
+	"github.com/sneat-co/sneat-core-modules/core/extra"
 
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus"
 	"github.com/sneat-co/sneat-go-core/geo"

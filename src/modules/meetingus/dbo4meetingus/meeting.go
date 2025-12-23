@@ -2,13 +2,14 @@ package dbo4meetingus
 
 import (
 	"fmt"
+	"time"
+
 	briefs4contactus2 "github.com/sneat-co/sneat-core-modules/contactus/briefs4contactus"
 	"github.com/sneat-co/sneat-core-modules/contactus/const4contactus"
-	"github.com/sneat-co/sneat-go-core"
+	core "github.com/sneat-co/sneat-go-core"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/slice"
 	"github.com/strongo/validation"
-	"time"
 )
 
 var _ core.Validatable = (*Meeting)(nil)

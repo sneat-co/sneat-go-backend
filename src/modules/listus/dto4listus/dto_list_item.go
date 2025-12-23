@@ -2,10 +2,11 @@ package dto4listus
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
-	"strings"
 )
 
 // CreateListItemsRequest DTO

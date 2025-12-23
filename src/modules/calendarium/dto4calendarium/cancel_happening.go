@@ -2,10 +2,11 @@ package dto4calendarium
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
-	"strings"
 )
 
 type CancelHappeningRequest struct {

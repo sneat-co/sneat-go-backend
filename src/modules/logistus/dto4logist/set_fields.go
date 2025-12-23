@@ -1,9 +1,10 @@
 package dto4logist
 
 import (
+	"strings"
+
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
-	"strings"
 )
 
 type SetFieldsRequest struct {

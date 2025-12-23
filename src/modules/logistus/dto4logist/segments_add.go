@@ -2,10 +2,11 @@ package dto4logist
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-core/validate"
 	"github.com/strongo/validation"
-	"strings"
 )
 
 // SegmentContainerData represents a container for a segment

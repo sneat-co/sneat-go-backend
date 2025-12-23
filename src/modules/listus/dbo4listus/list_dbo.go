@@ -2,9 +2,10 @@ package dbo4listus
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/strongo/validation"
-	"strings"
 )
 
 // ListsCollection defines collection name

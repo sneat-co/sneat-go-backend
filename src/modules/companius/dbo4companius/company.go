@@ -2,6 +2,7 @@ package dbo4companius
 
 import (
 	"fmt"
+
 	"github.com/dal-go/dalgo/record"
 	"github.com/strongo/validation"
 )

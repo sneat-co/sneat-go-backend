@@ -1,9 +1,10 @@
 package meetingus
 
 import (
+	"testing"
+
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/const4meetingus"
 	"github.com/sneat-co/sneat-go-core/extension"
-	"testing"
 )
 
 func TestModule(t *testing.T) {

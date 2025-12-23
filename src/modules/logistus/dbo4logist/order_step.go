@@ -2,8 +2,9 @@ package dbo4logist
 
 import (
 	"fmt"
-	"github.com/strongo/validation"
 	"time"
+
+	"github.com/strongo/validation"
 )
 
 const (
