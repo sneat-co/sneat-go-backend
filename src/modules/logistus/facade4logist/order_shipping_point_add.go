@@ -2,6 +2,7 @@ package facade4logist
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/dal-go/dalgo/dal"
@@ -165,12 +166,12 @@ func addOrderShippingPointTx(
 	}
 
 	for _, container := range request.Containers {
-		_, container := orderDto.GetContainerByID(container.ID)
-		if container == nil {
-			return nil, fmt.Errorf("container with ContactID=[%s] not found", container.ID)
+		_, orderContainer := orderDto.GetContainerByID(container.ID)
+		if orderContainer == nil {
+			return nil, errors.New("orderContainer not found by ID=" + container.ID)
 		}
 		containerPoint := &dbo4logist.ContainerPoint{
-			ContainerID:       container.ID,
+			ContainerID:       orderContainer.ID,
 			ShippingPointID:   shippingPoint.ID,
 			ShippingPointBase: shippingPoint.ShippingPointBase,
 		}

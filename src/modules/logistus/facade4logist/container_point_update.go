@@ -1,6 +1,8 @@
 package facade4logist
 
 import (
+	"fmt"
+
 	"github.com/dal-go/dalgo/dal"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
@@ -22,6 +24,9 @@ func txUpdateContainerPoint(
 ) error {
 	orderDto := params.Order.Dto
 	containerPoint := orderDto.GetContainerPoint(request.ContainerID, request.ShippingPointID)
+	if containerPoint == nil {
+		return fmt.Errorf("container point not found: containerID=%s, shippingPointID=%s", request.ContainerID, request.ShippingPointID)
+	}
 	containerPoint.ToLoad = request.ToLoad
 	if containerPoint.ToLoad.IsEmpty() {
 		containerPoint.ToLoad = nil

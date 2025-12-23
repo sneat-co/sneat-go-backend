@@ -9,9 +9,9 @@ import (
 type AssetStatus = string
 
 const (
-	AssetStatusActive   AssetStatus = dbmodels.StatusActive
-	AssetStatusArchived AssetStatus = dbmodels.StatusArchived
-	AssetStatusDraft    AssetStatus = dbmodels.StatusDraft
+	AssetStatusActive   = dbmodels.StatusActive
+	AssetStatusArchived = dbmodels.StatusArchived
+	AssetStatusDraft    = dbmodels.StatusDraft
 )
 
 var AssetStatuses = []AssetStatus{

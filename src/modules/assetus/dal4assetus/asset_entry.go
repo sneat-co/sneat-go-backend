@@ -13,14 +13,18 @@ import (
 )
 
 func NewAssetEntryWithoutID(spaceID coretypes.SpaceID) (asset dbo4assetus.AssetEntry) {
-	asset.Key = NewAssetKeyWithoutID(spaceID)
-	return newAssetEntryWithKey(asset.Key)
+	key := NewAssetKeyWithoutID(spaceID)
+	return newAssetEntryWithKey(key)
 }
+
 func NewAssetEntry(spaceID coretypes.SpaceID, assetID string) (asset dbo4assetus.AssetEntry) {
 	asset.ID = assetID
 	asset.Key = NewAssetKey(spaceID, assetID)
 	asset.FullID = string(spaceID) + ":" + assetID
-	return newAssetEntryWithKey(asset.Key)
+	entry := newAssetEntryWithKey(asset.Key)
+	entry.ID = asset.ID
+	entry.FullID = asset.FullID
+	return entry
 }
 
 func newAssetEntryWithKey(key *dal.Key) (asset dbo4assetus.AssetEntry) {

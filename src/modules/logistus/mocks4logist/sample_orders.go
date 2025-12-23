@@ -41,7 +41,9 @@ const (
 
 	Trucker1ContactID = "trucker1"
 
-	Port1dock1shippingPointID = "shippingPointPort1dock1"
+	//Port1dock1shippingPointID = "shippingPointPort1dock1"
+
+	// Port2dock1shippingPointID = shippingPointPort2dock1
 	Port2dock1shippingPointID = "shippingPointPort2dock1"
 	Port2dock2shippingPointID = "shippingPointPort2dock2"
 

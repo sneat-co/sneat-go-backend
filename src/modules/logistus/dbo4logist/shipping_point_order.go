@@ -59,10 +59,8 @@ func (v ShippingPointLocation) Validate() error {
 	}
 	if v.Address == nil {
 		return validation.NewErrRequestIsMissingRequiredField("address")
-	} else {
-		if err := v.Address.Validate(); err != nil {
-			return validation.NewErrBadRecordFieldValue("address", err.Error())
-		}
+	} else if err := v.Address.Validate(); err != nil {
+		return validation.NewErrBadRecordFieldValue("address", err.Error())
 	}
 	return nil
 }

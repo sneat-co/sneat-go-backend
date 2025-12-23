@@ -22,6 +22,7 @@ type CreateCompanyResponse struct {
 
 // CreateCompany creates a company // TODO: Obsolete?
 func CreateCompany(ctxWithUser facade.ContextWithUser, request CreateCompanyRequest) (response CreateCompanyResponse, err error) {
+	_ = request
 	userID := ctxWithUser.User().GetUserID()
 	if userID == "" {
 		return response, fmt.Errorf("user ID is missing")

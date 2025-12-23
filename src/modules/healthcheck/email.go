@@ -1,6 +1,7 @@
 package healthcheck
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"time"
@@ -18,7 +19,13 @@ func httpGetTestEmail(w http.ResponseWriter, r *http.Request) {
 		HTML:    "Howdy, is it <b>time to sleep</b>?",
 		ReplyTo: nil,
 	}
-	ctx := r.Context()
+	var ctx context.Context
+	if r == nil {
+		ctx = context.Background()
+	} else {
+		ctx = r.Context()
+	}
+
 	output, err := emails.Send(ctx, message)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

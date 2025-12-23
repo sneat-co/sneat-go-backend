@@ -65,6 +65,12 @@ func setLogistSpaceSettingsTx(
 			return fmt.Errorf("failed to get contact record: %w", err)
 		}
 	}
+
+	contactusWorkerParams := &dal4spaceus.ModuleSpaceWorkerParams[*dbo4contactus2.ContactusSpaceDbo]{
+		SpaceWorkerParams: workerParams.SpaceWorkerParams,
+		SpaceModuleEntry:  dal4contactus2.NewContactusSpaceEntry(request.SpaceID),
+	}
+
 	if dal.IsNotFound(err) {
 		createContactRequest := dto4contactus2.CreateContactRequest{
 			Status:       "active",
@@ -81,25 +87,22 @@ func setLogistSpaceSettingsTx(
 			createContactRequest.Roles = append(createContactRequest.Roles, string(role))
 		}
 
-		contactusWorkerParams := &dal4spaceus.ModuleSpaceWorkerParams[*dbo4contactus2.ContactusSpaceDbo]{
-			SpaceWorkerParams: workerParams.SpaceWorkerParams,
-			SpaceModuleEntry:  dal4contactus2.NewContactusSpaceEntry(request.SpaceID),
-		}
-
 		if teamContact, err = facade4contactus2.CreateContactTx(ctx, tx, false, createContactRequest, contactusWorkerParams); err != nil {
 			// Intentionally do not use original error to prevent wrongly returner HTTP status BadRequest=400
 			return fmt.Errorf("failed to create team contact record: %v", err.Error())
 		}
 	} else if contactUpdates := updateContact(teamContact.Data, request); len(contactUpdates) > 0 {
-		request := dto4contactus2.UpdateContactRequest{
+		updateRequest := dto4contactus2.UpdateContactRequest{
 			ContactRequest: dto4contactus2.ContactRequest{
 				ContactID:    teamContact.ID,
 				SpaceRequest: dto4spaceus.SpaceRequest{SpaceID: request.SpaceID},
 			},
 			VatNumber: &request.VATNumber,
 		}
-		var contactWorkerParams *dal4contactus2.ContactWorkerParams
-		if err = facade4contactus2.UpdateContactTx(ctx, tx, request, contactWorkerParams); err != nil {
+
+		params := dal4contactus2.NewContactWorkerParams(contactusWorkerParams, teamContact.ID)
+
+		if err = facade4contactus2.UpdateContactTx(ctx, tx, updateRequest, params); err != nil {
 			return fmt.Errorf("failed to update team contact record: %w", err)
 		}
 	}

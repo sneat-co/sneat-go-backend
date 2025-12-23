@@ -123,7 +123,7 @@ func (v *MemberStatus) Validate() error {
 }
 
 // GetTask returns task by type & ContactID
-func (v MemberStatus) GetTask(taskType, id string) (*Task, int) {
+func (v *MemberStatus) GetTask(taskType, id string) (*Task, int) {
 	tasks := v.ByType[taskType]
 	for i, t := range tasks {
 		if t.ID == id {

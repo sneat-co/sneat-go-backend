@@ -42,18 +42,18 @@ func updateHappeningSlotTxWorker(ctx context.Context, tx dal.ReadwriteTransactio
 
 	if existingSlot := params.Happening.Data.GetSlot(request.Slot.ID); existingSlot == nil && putMode == UpdateSlot {
 		return validation.NewErrBadRequestFieldValue("slot.id", "slot not found by SlotID="+request.Slot.ID)
-	} else {
-		params.Happening.Data.Slots[request.Slot.ID] = slot
-		params.Happening.Record.MarkAsChanged()
-		params.HappeningUpdates = []update.Update{
-			update.ByFieldPath([]string{dbo4calendarium.SlotsField, request.Slot.ID}, slot),
-		}
-		if params.Happening.Data.Type == dbo4calendarium.HappeningTypeSingle {
-			//TODO: For single happening we need to update the dates fields
-			return errors.New("needs implementation for updating dates fields for 'single' type happening")
-			//params.HappeningUpdates = append(params.HappeningUpdates,
-			//	params.Happening.Data.UpdatesWhenDatesChanged()...)
-		}
+	}
+
+	params.Happening.Data.Slots[request.Slot.ID] = slot
+	params.Happening.Record.MarkAsChanged()
+	params.HappeningUpdates = []update.Update{
+		update.ByFieldPath([]string{dbo4calendarium.SlotsField, request.Slot.ID}, slot),
+	}
+	if params.Happening.Data.Type == dbo4calendarium.HappeningTypeSingle {
+		//TODO: For single happening we need to update the dates fields
+		return errors.New("needs implementation for updating dates fields for 'single' type happening")
+		//params.HappeningUpdates = append(params.HappeningUpdates,
+		//	params.Happening.Data.UpdatesWhenDatesChanged()...)
 	}
 
 	if params.Happening.Data.Type == dbo4calendarium.HappeningTypeRecurring {

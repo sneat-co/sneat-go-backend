@@ -1,7 +1,7 @@
 package modules
 
 import (
-	sneat_core_modules "github.com/sneat-co/sneat-core-modules"
+	sneatcoremodules "github.com/sneat-co/sneat-core-modules"
 	"github.com/sneat-co/sneat-go-backend/src/modules/assetus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/calendarium"
 	"github.com/sneat-co/sneat-go-backend/src/modules/deedus"
@@ -26,7 +26,7 @@ func standardModules() []extension.Config {
 
 func Extensions() []extension.Config {
 	return append(
-		sneat_core_modules.CoreExtensions(),
+		sneatcoremodules.CoreExtensions(),
 		standardModules()...,
 	)
 }

@@ -29,11 +29,11 @@ func addSegmentsTx(ctx context.Context, tx dal.ReadwriteTransaction, params *Ord
 		return fmt.Errorf("invalid request: %w", err)
 	}
 	for i, container := range request.Containers {
-		if segmentChanges, err := addSegment(ctx, tx, params, request, container); err != nil {
+		segmentChanges, err := addSegment(ctx, tx, params, request, container)
+		if err != nil {
 			return fmt.Errorf("failed to add container for segment # %d: %w", i, err)
-		} else {
-			params.Changed.AddChanges(segmentChanges)
 		}
+		params.Changed.AddChanges(segmentChanges)
 	}
 
 	params.Changed.Counterparties = true
@@ -97,26 +97,27 @@ func addSegment(ctx context.Context, tx dal.ReadwriteTransaction, params *OrderW
 	orderDto.Segments = append(orderDto.Segments, segment)
 	spaceID := params.SpaceWorkerParams.Space.ID
 
-	if changes, err := addCounterpartyToOrderIfNeeded(ctx, tx, spaceID, orderDto, "from", request.From); err != nil {
+	changes, err := addCounterpartyToOrderIfNeeded(ctx, tx, spaceID, orderDto, "from", request.From)
+	if err != nil {
 		return segmentChanges, err
-	} else {
-		segmentChanges.AddChanges(changes)
 	}
-	if changes, err := addCounterpartyToOrderIfNeeded(ctx, tx, spaceID, orderDto, "to", request.To); err != nil {
+	segmentChanges.AddChanges(changes)
+
+	changes, err = addCounterpartyToOrderIfNeeded(ctx, tx, spaceID, orderDto, "to", request.To)
+	if err != nil {
 		return segmentChanges.AddChanges(changes), err
-	} else {
-		segmentChanges.AddChanges(changes)
 	}
+	segmentChanges.AddChanges(changes)
 
 	if request.By != nil {
 		segment.ByContactID = request.By.Counterparty.ContactID
-		if changes, err := addCounterpartyToOrderIfNeeded(ctx, tx, spaceID, orderDto, "by", dto4logist.AddSegmentEndpoint{
+		changes, err := addCounterpartyToOrderIfNeeded(ctx, tx, spaceID, orderDto, "by", dto4logist.AddSegmentEndpoint{
 			AddSegmentParty: *request.By,
-		}); err != nil {
+		})
+		if err != nil {
 			return segmentChanges, err
-		} else {
-			segmentChanges.AddChanges(changes)
 		}
+		segmentChanges.AddChanges(changes)
 	}
 	if err := addOrUpdateShippingPoints(ctx, tx, params, orderDto, segment, containerData); err != nil {
 		return segmentChanges, fmt.Errorf("failed to add or update shipping points: %w", err)
@@ -333,17 +334,17 @@ func addShippingPointToOrderIfNeeded(
 		//	ContactID: location.ContactID,
 		//	Title:     location.Data.Title,
 		//}
-	} else {
-		shippingPoint.Counterparty = dbo4logist.ShippingPointCounterparty{
-			ContactID: parent.ID,
-			Title:     parent.Data.Title,
-		}
-		shippingPoint.Location = &dbo4logist.ShippingPointLocation{
-			ContactID: location.ID,
-			Title:     location.Data.Title,
-			Address:   location.Data.Address,
-		}
 	}
+	shippingPoint.Counterparty = dbo4logist.ShippingPointCounterparty{
+		ContactID: parent.ID,
+		Title:     parent.Data.Title,
+	}
+	shippingPoint.Location = &dbo4logist.ShippingPointLocation{
+		ContactID: location.ID,
+		Title:     location.Data.Title,
+		Address:   location.Data.Address,
+	}
+
 	orderDto.ShippingPoints = append(orderDto.ShippingPoints, shippingPoint)
 	//panic(fmt.Sprintf("orderDto: %+v", orderDto))
 	return shippingPoint, nil

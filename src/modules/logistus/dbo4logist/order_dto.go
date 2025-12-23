@@ -273,6 +273,7 @@ func (v *WithShippingPoints) NewOrderShippingPointID() string {
 
 // DeleteShippingPoint deletes a shipping point from an order
 func (v *WithShippingPoints) DeleteShippingPoint(pointType, contactID string) (deletedShippingPointID string, shippingPoints []*OrderShippingPoint) {
+	_ = pointType
 	shippingPoints = make([]*OrderShippingPoint, 0, len(v.ShippingPoints))
 	for _, shippingPoint := range v.ShippingPoints {
 		if shippingPoint.Location.ContactID == contactID {

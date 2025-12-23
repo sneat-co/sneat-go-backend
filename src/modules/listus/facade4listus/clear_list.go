@@ -7,5 +7,5 @@ import (
 )
 
 func ClearList(ctx context.Context, userCtx facade.UserContext, listID string) {
-
+	_, _, _ = ctx, userCtx, listID
 }

@@ -31,11 +31,11 @@ func TestMoveRetroItem(t *testing.T) {
 
 			ctx := facade.NewContextWithUserID(context.Background(), "user1")
 
-			if err := MoveRetroItem(ctx, request); err == nil {
+			err := MoveRetroItem(ctx, request)
+			if err == nil {
 				t.Fatal("Should fail")
-			} else {
-				t.Logf("Failed as expects: %v", err)
 			}
+			t.Logf("Failed as expects: %v", err)
 		})
 	})
 
