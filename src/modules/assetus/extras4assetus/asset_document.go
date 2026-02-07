@@ -77,7 +77,7 @@ func (v *AssetDocumentExtra) Validate() (err error) {
 			return validation.NewErrBadRecordFieldValue("issuedOn", err.Error())
 		}
 	}
-	if !effectiveFrom.IsZero() && !expiresOn.IsZero() || expiresOn.Before(effectiveFrom) {
+	if !effectiveFrom.IsZero() && !expiresOn.IsZero() && expiresOn.Before(effectiveFrom) {
 		return validation.NewErrBadRecordFieldValue("expiresOn", "is before `effectiveFrom`")
 	}
 	return nil

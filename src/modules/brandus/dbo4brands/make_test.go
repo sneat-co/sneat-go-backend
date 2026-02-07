@@ -38,6 +38,32 @@ func TestBrand_Validate(t *testing.T) {
 				AssetTypes: []string{"cars"},
 			},
 		},
+		{
+			name: "valid_with_url",
+			fields: fields{
+				Title:      "Toyota",
+				AssetTypes: []string{"cars"},
+				WebsiteURL: "https://toyota.com",
+			},
+		},
+		{
+			name: "invalid_url",
+			fields: fields{
+				Title:      "Toyota",
+				AssetTypes: []string{"cars"},
+				WebsiteURL: " : invalid",
+			},
+			wantErr: []string{"bad value for field [websiteURL]"},
+		},
+		{
+			name: "invalid_model",
+			fields: fields{
+				Title:      "Toyota",
+				AssetTypes: []string{"cars"},
+				Models:     []string{""},
+			},
+			wantErr: []string{"bad value for field [models[0]]", "missing required field"},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -45,6 +71,7 @@ func TestBrand_Validate(t *testing.T) {
 				Title:      tt.fields.Title,
 				Models:     tt.fields.Models,
 				AssetTypes: tt.fields.AssetTypes,
+				WebsiteURL: tt.fields.WebsiteURL,
 			}
 			err := v.Validate()
 			if err == nil {
