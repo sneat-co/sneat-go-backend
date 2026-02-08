@@ -6,8 +6,24 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/mocks4logist"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestDeleteSegments(t *testing.T) {
+	origRunOrderWorker := RunOrderWorker
+	defer func() { RunOrderWorker = origRunOrderWorker }()
+
+	RunOrderWorker = func(ctx facade.ContextWithUser, request dto4logist.OrderRequest, worker orderWorker) (err error) {
+		return worker(ctx, nil, &OrderWorkerParams{Order: dbo4logist.Order{Dto: &dbo4logist.OrderDbo{}}})
+	}
+
+	request := dto4logist.DeleteSegmentsRequest{
+		OrderRequest: dto4logist.NewOrderRequest("space1", "order1"),
+	}
+	err := DeleteSegments(nil, request)
+	assert.Nil(t, err)
+}
 
 func Test_deleteSegments(t *testing.T) {
 	type args struct {

@@ -9,8 +9,44 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/mocks4logist"
+	"github.com/sneat-co/sneat-go-core/coretypes"
+	"github.com/sneat-co/sneat-go-core/facade"
+	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestAddOrderShippingPoint(t *testing.T) {
+	origRunOrderWorker := RunOrderWorker
+	defer func() { RunOrderWorker = origRunOrderWorker }()
+
+	RunOrderWorker = func(ctx facade.ContextWithUser, request dto4logist.OrderRequest, worker orderWorker) (err error) {
+		spaceEntry := dbo4spaceus.NewSpaceEntry("space1")
+		spaceEntry.Data = &dbo4spaceus.SpaceDbo{
+			WithUserIDs: dbmodels.WithUserIDs{UserIDs: []string{"u1"}},
+		}
+
+		tx := mocks4logist.MockTx(t)
+		order := mocks4logist.ValidEmptyOrder(t)
+		order.SpaceID = "space1"
+		order.SpaceIDs = []coretypes.SpaceID{"space1"}
+		order.UserIDs = []string{"u1"}
+
+		return worker(ctx, tx, &OrderWorkerParams{
+			SpaceWorkerParams: &dal4spaceus.SpaceWorkerParams{
+				Space: spaceEntry,
+			},
+			Order: dbo4logist.Order{Dto: order},
+		})
+	}
+
+	request := dto4logist.AddOrderShippingPointRequest{
+		OrderRequest:      dto4logist.NewOrderRequest("space1", "order1"),
+		LocationContactID: mocks4logist.Dispatcher1warehouse1ContactID,
+		Tasks:             []dbo4logist.ShippingPointTask{dbo4logist.ShippingPointTaskLoad},
+	}
+	_, err := AddOrderShippingPoint(nil, request)
+	assert.Nil(t, err)
+}
 
 func Test_addOrderShippingPointTx(t *testing.T) {
 	type args struct {

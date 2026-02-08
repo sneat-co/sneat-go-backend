@@ -9,8 +9,65 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/mocks4logist"
+	"github.com/sneat-co/sneat-go-core/coretypes"
+	"github.com/sneat-co/sneat-go-core/facade"
+	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestAddSegments(t *testing.T) {
+	origRunOrderWorker := RunOrderWorker
+	defer func() { RunOrderWorker = origRunOrderWorker }()
+
+	RunOrderWorker = func(ctx facade.ContextWithUser, request dto4logist.OrderRequest, worker orderWorker) (err error) {
+		spaceEntry := dbo4spaceus.NewSpaceEntry("space1")
+		spaceEntry.Data = &dbo4spaceus.SpaceDbo{
+			WithUserIDs: dbmodels.WithUserIDs{UserIDs: []string{"u1"}},
+		}
+
+		tx := mocks4logist.MockTx(t)
+
+		order := mocks4logist.ValidEmptyOrder(t)
+		order.SpaceID = "space1"
+		order.SpaceIDs = []coretypes.SpaceID{"space1"}
+		order.UserIDs = []string{"u1"}
+		order.Containers = []*dbo4logist.OrderContainer{
+			{ID: "c1"},
+		}
+
+		return worker(ctx, tx, &OrderWorkerParams{
+			SpaceWorkerParams: &dal4spaceus.SpaceWorkerParams{
+				Space: spaceEntry,
+			},
+			Order: dbo4logist.Order{Dto: order},
+		})
+	}
+
+	request := dto4logist.AddSegmentsRequest{
+		OrderRequest: dto4logist.NewOrderRequest("space1", "order1"),
+		From: dto4logist.AddSegmentEndpoint{
+			AddSegmentParty: dto4logist.AddSegmentParty{
+				Counterparty: dbo4logist.SegmentCounterparty{
+					ContactID: mocks4logist.Port2dock1ContactID,
+					Role:      dbo4logist.CounterpartyRolePickPoint,
+				},
+			},
+		},
+		To: dto4logist.AddSegmentEndpoint{
+			AddSegmentParty: dto4logist.AddSegmentParty{
+				Counterparty: dbo4logist.SegmentCounterparty{
+					ContactID: mocks4logist.Dispatcher1warehouse1ContactID,
+					Role:      dbo4logist.CounterpartyRoleDispatchPoint,
+				},
+			},
+		},
+		Containers: []dto4logist.SegmentContainerData{
+			{ID: "c1"},
+		},
+	}
+	err := AddSegments(nil, request)
+	assert.Nil(t, err)
+}
 
 // TestAddSegmentsTx tests AddSegmentsTx
 func TestAddSegmentsTx(t *testing.T) { // TODO: create few test cases

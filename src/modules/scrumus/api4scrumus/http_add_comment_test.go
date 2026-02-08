@@ -10,47 +10,50 @@ import (
 
 	"github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus"
+	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus"
 	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/facade4scrumus"
 	"github.com/sneat-co/sneat-go-core/coretypes"
 	"github.com/sneat-co/sneat-go-core/facade"
+	"github.com/sneat-co/sneat-go-core/models/dbmodels"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAddTask(t *testing.T) {
-	// Call it with nils just to get coverage
-	_, _ = addTask(nil, facade4scrumus.AddTaskRequest{})
-}
-
-func TestHttpPostAddTask(t *testing.T) {
+func TestHttpPostAddComment(t *testing.T) {
 	setupMockVerify(t)
 
-	// Mock addTask facade function
-	oldAddTask := addTask
-	t.Cleanup(func() { addTask = oldAddTask })
+	oldAddComment := addComment
+	t.Cleanup(func() { addComment = oldAddComment })
 
 	t.Run("success", func(t *testing.T) {
-		addTask = func(ctx facade.ContextWithUser, request facade4scrumus.AddTaskRequest) (*facade4scrumus.AddTaskResponse, error) {
-			return &facade4scrumus.AddTaskResponse{}, nil
+		addComment = func(ctx facade.ContextWithUser, request facade4scrumus.AddCommentRequest) (*dbo4scrumus.Comment, error) {
+			return &dbo4scrumus.Comment{
+				ID:      "c1",
+				Message: "test",
+				By: &dbmodels.ByUser{
+					UID:   "u1",
+					Title: "User 1",
+				},
+			}, nil
 		}
 
-		today := time.Now().Format("2006-01-02")
-		reqBody, _ := json.Marshal(facade4scrumus.AddTaskRequest{
+		reqBody, _ := json.Marshal(facade4scrumus.AddCommentRequest{
 			TaskRequest: facade4scrumus.TaskRequest{
 				Request: facade4meetingus.Request{
 					SpaceRequest: dto4spaceus.SpaceRequest{
 						SpaceID: coretypes.SpaceID("s1"),
 					},
-					MeetingID: today,
+					MeetingID: time.Now().Format("2006-01-02"),
 				},
 				ContactID: "c1",
 				Type:      "todo",
+				Task:      "t1",
 			},
-			Title: "Test Title",
+			Message: "Test comment",
 		})
-		req := httptest.NewRequest(http.MethodPost, "/v0/scrum/add_task", bytes.NewReader(reqBody))
+		req := httptest.NewRequest(http.MethodPost, "/v0/scrum/add_comment", bytes.NewReader(reqBody))
 		w := httptest.NewRecorder()
 
-		httpPostAddTask(w, req)
+		httpPostAddComment(w, req)
 
 		if w.Code == http.StatusInternalServerError {
 			t.Errorf("expected success, got 500: %s", w.Body.String())
@@ -59,10 +62,10 @@ func TestHttpPostAddTask(t *testing.T) {
 	})
 
 	t.Run("bad_request", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodPost, "/v0/scrum/add_task", bytes.NewReader([]byte("invalid json")))
+		req := httptest.NewRequest(http.MethodPost, "/v0/scrum/add_comment", bytes.NewReader([]byte("invalid json")))
 		w := httptest.NewRecorder()
 
-		httpPostAddTask(w, req)
+		httpPostAddComment(w, req)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})

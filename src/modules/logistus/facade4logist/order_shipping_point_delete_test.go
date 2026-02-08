@@ -8,6 +8,7 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist"
 	"github.com/sneat-co/sneat-go-backend/src/modules/logistus/mocks4logist"
+	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -65,4 +66,19 @@ func Test_txDeleteShippingPoint(t *testing.T) {
 			tt.postAssert(t, err, tt.args)
 		})
 	}
+}
+
+func TestDeleteShippingPoint(t *testing.T) {
+	origRunOrderWorker := RunOrderWorker
+	defer func() { RunOrderWorker = origRunOrderWorker }()
+
+	RunOrderWorker = func(ctx facade.ContextWithUser, request dto4logist.OrderRequest, worker orderWorker) (err error) {
+		return worker(ctx, nil, &OrderWorkerParams{Order: dbo4logist.Order{Dto: &dbo4logist.OrderDbo{}}})
+	}
+
+	request := dto4logist.OrderShippingPointRequest{
+		OrderRequest: dto4logist.NewOrderRequest("space1", "order1"),
+	}
+	err := DeleteShippingPoint(nil, request)
+	assert.Nil(t, err)
 }
