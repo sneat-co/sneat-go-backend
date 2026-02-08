@@ -6,4 +6,5 @@ import (
 
 // RegisterHttpRoutes registers asset routes
 func RegisterHttpRoutes(_ extension.HTTPHandleFunc) {
+	_ = "cover"
 }

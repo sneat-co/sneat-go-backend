@@ -1,0 +1,64 @@
+ok  	github.com/sneat-co/sneat-go-backend/src/modules	0.357s	coverage: 100.0% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/assetus	(cached)	coverage: 100.0% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/assetus/api4assetus	(cached)	coverage: 22.7% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/assetus/briefs4assetus	(cached)	coverage: 15.2% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/assetus/const4assetus	(cached)	coverage: 45.5% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/assetus/dal4assetus	(cached)	coverage: 95.8% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/assetus/dbo4assetus	(cached)	coverage: 14.9% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/assetus/dto4assetus	(cached)	coverage: 33.3% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/assetus/extras4assetus	(cached)	coverage: 72.5% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/assetus/facade4assetus	(cached)	coverage: 1.1% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/brandus/dbo4brands	(cached)	coverage: 92.3% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/brandus/facade4brands	(cached)	coverage: 100.0% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/budgetus/dbo4budgetus	(cached)	coverage: 100.0% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/calendarium	(cached)	coverage: 50.0% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/calendarium/api4calendarium	(cached)	coverage: 4.6% of statements
+?   	github.com/sneat-co/sneat-go-backend/src/modules/calendarium/const4calendarium	[no test files]
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dal4calendarium	(cached)	coverage: 15.6% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dbo4calendarium	(cached)	coverage: 3.8% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/calendarium/delays4calendarium	(cached)	coverage: 13.3% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/calendarium/dto4calendarium	(cached)	coverage: 6.2% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/calendarium/facade4calendarium	(cached)	coverage: 0.9% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/companius/dbo4companius	(cached)	coverage: 43.8% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/companius/facade4companius	(cached)	coverage: 27.8% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/deedus	0.321s	coverage: 100.0% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/deedus/api4deedus	0.613s	coverage: [no statements]
+?   	github.com/sneat-co/sneat-go-backend/src/modules/deedus/const4deedus	[no test files]
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/deedus/dbo4deedus	(cached)	coverage: 100.0% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/healthcheck	(cached)	coverage: 24.2% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/listus	(cached)	coverage: 100.0% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/listus/api4listus	(cached)	coverage: 6.8% of statements
+?   	github.com/sneat-co/sneat-go-backend/src/modules/listus/const4listus	[no test files]
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/listus/dal4listus	(cached)	coverage: 30.0% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/listus/dbo4listus	(cached)	coverage: 20.7% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/listus/dto4listus	(cached)	coverage: 23.3% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/listus/facade4listus	(cached)	coverage: 0.4% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/logistus	(cached)	coverage: 100.0% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/logistus/api4logist	(cached)	coverage: 73.3% of statements
+?   	github.com/sneat-co/sneat-go-backend/src/modules/logistus/const4logistus	[no test files]
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/logistus/dbo4logist	(cached)	coverage: 0.5% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/logistus/dto4logist	(cached)	coverage: 4.7% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/logistus/facade4logist	(cached)	coverage: 32.8% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/logistus/mocks4logist	(cached)	coverage: 37.1% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/meetingus	(cached)	coverage: 66.7% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/meetingus/api4meetingus	(cached)	coverage: 15.0% of statements
+?   	github.com/sneat-co/sneat-go-backend/src/modules/meetingus/const4meetingus	[no test files]
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/meetingus/dbo4meetingus	(cached)	coverage: 18.2% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/meetingus/facade4meetingus	(cached)	coverage: 5.3% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/retrospectus	(cached)	coverage: 100.0% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/api4retrospectus	(cached)	coverage: 10.4% of statements
+?   	github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/const4retrospectus	[no test files]
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dal4retrospectus	(cached)	coverage: 66.7% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/dbo4retrospectus	(cached)	coverage: 46.0% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/retrospectus/facade4retrospectus	(cached)	coverage: 0.5% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/scrumus	(cached)	coverage: 100.0% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/scrumus/api4scrumus	(cached)	coverage: 1.4% of statements
+?   	github.com/sneat-co/sneat-go-backend/src/modules/scrumus/const4srumus	[no test files]
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dal4scrumus	(cached)	coverage: 66.7% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/scrumus/dbo4scrumus	(cached)	coverage: 77.3% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/scrumus/facade4scrumus	(cached)	coverage: 5.9% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/sportus	(cached)	coverage: 100.0% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/sportus/api4sportus	(cached)	coverage: 5.3% of statements
+?   	github.com/sneat-co/sneat-go-backend/src/modules/sportus/const4sportus	[no test files]
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/sportus/dbo4sportus	(cached)	coverage: 35.7% of statements
+ok  	github.com/sneat-co/sneat-go-backend/src/modules/sportus/facade4sportus	(cached)	coverage: 6.2% of statements

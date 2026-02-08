@@ -6,9 +6,12 @@ import (
 	"github.com/sneat-co/sneat-go-backend/src/modules/scrumus/facade4scrumus"
 	"github.com/sneat-co/sneat-go-core/apicore"
 	"github.com/sneat-co/sneat-go-core/apicore/verify"
+	"github.com/sneat-co/sneat-go-core/facade"
 )
 
-var addTask = facade4scrumus.AddTask
+func addTask(ctx facade.ContextWithUser, request facade4scrumus.AddTaskRequest) (*facade4scrumus.AddTaskResponse, error) {
+	return facade4scrumus.AddTask(ctx, request)
+}
 
 // httpPostAddTask adds a task
 func httpPostAddTask(w http.ResponseWriter, r *http.Request) {

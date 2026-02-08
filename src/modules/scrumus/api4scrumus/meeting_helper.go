@@ -15,7 +15,7 @@ var meetingParams = facade4meetingus.Params{
 	BeforeSafe:    beforeSafeScrum,
 }
 
-var beforeSafeScrum = func(ctx context.Context, tx dal.ReadwriteTransaction, params facade4meetingus.WorkerParams) error {
+func beforeSafeScrum(ctx context.Context, tx dal.ReadwriteTransaction, params facade4meetingus.WorkerParams) error {
 	if err := facade4scrumus.UpdateLastScrumIDIfNeeded(ctx, tx, params); err != nil {
 		return fmt.Errorf("failed to update team with last scrum ContactID: %w", err)
 	}

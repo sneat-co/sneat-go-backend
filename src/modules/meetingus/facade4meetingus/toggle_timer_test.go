@@ -25,6 +25,35 @@ func (recordFactory) NewRecordData() dbo4meetingus.MeetingInstance {
 	return &dbo4meetingus.Meeting{}
 }
 
+func TestToggleTimerRequest_Validate(t *testing.T) {
+	tests := []struct {
+		name    string
+		req     ToggleTimerRequest
+		wantErr bool
+	}{
+		{"valid", ToggleTimerRequest{
+			Operation: TimerOpStart,
+			Request: Request{
+				SpaceRequest: dto4spaceus.SpaceRequest{SpaceID: "s1"},
+				MeetingID:    "m1",
+			},
+		}, false},
+		{"missing_op", ToggleTimerRequest{
+			Request: Request{
+				SpaceRequest: dto4spaceus.SpaceRequest{SpaceID: "s1"},
+				MeetingID:    "m1",
+			},
+		}, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := tt.req.Validate(); (err != nil) != tt.wantErr {
+				t.Errorf("ToggleTimerRequest.Validate() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
 func TestToggleTimer(t *testing.T) { // TODO(help-wanted): add more test cases
 	t.Skip("TODO: re-enable")
 	//var db dal.DB
