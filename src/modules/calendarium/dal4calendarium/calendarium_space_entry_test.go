@@ -5,23 +5,23 @@ import (
 	"testing"
 
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/dalgo/mocks/mock_dal"
 	"github.com/sneat-co/sneat-go-core/coretypes"
+	"go.uber.org/mock/gomock"
 )
-
-type mockTx struct {
-	dal.ReadwriteTransaction
-	gotRecord dal.Record
-}
-
-func (m *mockTx) Get(_ context.Context, record dal.Record) error {
-	m.gotRecord = record
-	return nil
-}
 
 func TestGetCalendariumSpace(t *testing.T) {
 	ctx := context.Background()
 	spaceID := coretypes.SpaceID("testspace")
-	tx := &mockTx{}
+
+	ctrl := gomock.NewController(t)
+	tx := mock_dal.NewMockReadwriteTransaction(ctrl)
+
+	var gotRecord dal.Record
+	tx.EXPECT().Get(gomock.Any(), gomock.Any()).DoAndReturn(func(ctx context.Context, record dal.Record) error {
+		gotRecord = record
+		return nil
+	})
 
 	entry, err := GetCalendariumSpace(ctx, tx, spaceID)
 	if err != nil {
@@ -30,7 +30,7 @@ func TestGetCalendariumSpace(t *testing.T) {
 	if entry.Record == nil {
 		t.Error("expected record to be set")
 	}
-	if tx.gotRecord != entry.Record {
+	if gotRecord != entry.Record {
 		t.Error("expected tx.Get to be called with entry.Record")
 	}
 }
