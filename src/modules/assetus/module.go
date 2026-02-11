@@ -6,6 +6,7 @@ import (
 	"github.com/sneat-co/sneat-go-core/extension"
 )
 
+// Extension returns description of the assetus extension
 func Extension() extension.Config {
 	return extension.NewExtension(const4assetus.ExtensionID,
 		extension.RegisterRoutes(api4assetus.RegisterHttpRoutes),
