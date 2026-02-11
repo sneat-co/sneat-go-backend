@@ -160,7 +160,7 @@ jobs:
           echo "Total coverage: $total_coverage%"
           awk -v t=$total_coverage -v m=${{ inputs.min_test_coverage_percent }} 'BEGIN { if (t < m) { print "Coverage " t "% is below required " m "%"; exit 1 } }'
       
-      - if : ${{ inputs.min_test_coverage_percent != '' }}
+      - if: ${{ inputs.min_test_coverage_percent != '' }}
         run: go tool cover -func=profile.cov | tail -n 1
 
       # LSIF is not supported by SourceGraph anymore :(
