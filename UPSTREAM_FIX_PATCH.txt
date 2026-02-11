@@ -1,34 +1,31 @@
 =============================================================================
-PATCH FILE FOR strongo/go-ci-action/.github/workflows/workflow.yml
+CHANGES NEEDED IN strongo/go-ci-action/.github/workflows/workflow.yml
 =============================================================================
 
-Apply these changes to fix the "Bad credentials" error:
-
---- Original (WRONG - causes "Bad credentials" error)
-+++ Fixed (CORRECT - will work properly)
+To fix the "Bad credentials" error, make these 3 changes:
 
 Change 1: Line 152 (in shogo82148/actions-goveralls@v1 action)
 --------------------------------------------------------------
--          github-token: ${{ secrets.gh_token }}
-+          github-token: ${{ secrets.GH_TOKEN }}
+BEFORE:  github-token: ${{ secrets.gh_token }}
+AFTER:   github-token: ${{ secrets.GH_TOKEN }}
 
 
 Change 2: Line 172 (in commented sourcegraph/lsif-upload-action)
 ----------------------------------------------------------------
--      #     github_token: ${{ secrets.gh_token }}
-+      #     github_token: ${{ secrets.GH_TOKEN }}
+BEFORE:  #     github_token: ${{ secrets.gh_token }}
+AFTER:   #     github_token: ${{ secrets.GH_TOKEN }}
 
 
 Change 3: Line 180 (in mathieudutour/github-tag-action@v6.2) **MAIN FIX**
 ------------------------------------------------------------------------
--          github_token: ${{ secrets.gh_token }}
-+          github_token: ${{ secrets.GH_TOKEN }}
+BEFORE:  github_token: ${{ secrets.gh_token }}
+AFTER:   github_token: ${{ secrets.GH_TOKEN }}
 
 
 Optional Change: Line 163 (formatting - remove space after 'if')
 ---------------------------------------------------------------
--      - if : ${{ inputs.min_test_coverage_percent != '' }}
-+      - if: ${{ inputs.min_test_coverage_percent != '' }}
+BEFORE:  - if : ${{ inputs.min_test_coverage_percent != '' }}
+AFTER:   - if: ${{ inputs.min_test_coverage_percent != '' }}
 
 =============================================================================
 
@@ -42,5 +39,7 @@ AFTER THE FIX:
 - All actions will receive the correct token value
 - The "Bad credentials" error will be resolved
 - No changes needed in sneat-go-backend repository
+
+A proper Git patch file is available as: upstream-fix.patch
 
 =============================================================================

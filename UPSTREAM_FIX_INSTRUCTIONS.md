@@ -60,12 +60,12 @@ github_token: ${{ secrets.GH_TOKEN }}
 5. Push and create a Pull Request
 
 ### Option 2: Apply Patch File
-A patch file is available at `/tmp/0001-Fix-Use-GH_TOKEN-instead-of-gh_token-for-secret-refe.patch`
+A patch file is available at `upstream-fix.patch` in this repository.
 
 To apply it:
 ```bash
 cd /path/to/strongo/go-ci-action
-git apply /tmp/0001-Fix-Use-GH_TOKEN-instead-of-gh_token-for-secret-refe.patch
+git apply /path/to/sneat-go-backend/upstream-fix.patch
 git commit -am "Fix: Use GH_TOKEN instead of gh_token for secret references"
 ```
 

@@ -1,0 +1,62 @@
+From 4d2c8533c08ee5bf780b4cd89c3b56a722949330 Mon Sep 17 00:00:00 2001
+From: GitHub Copilot <copilot@github.com>
+Date: Wed, 11 Feb 2026 08:01:42 +0000
+Subject: [PATCH] Fix: Use GH_TOKEN instead of gh_token for secret references
+
+The workflow defines GH_TOKEN (uppercase) as a required secret input,
+but was referencing it as secrets.gh_token (lowercase) in three places:
+1. shogo82148/actions-goveralls@v1 action
+2. mathieudutour/github-tag-action@v6.2 action (causing 'Bad credentials' error)
+3. Commented-out sourcegraph/lsif-upload-action action
+
+This bug was introduced in commit 29cf8d7 on Aug 12, 2024 when the secret
+was renamed from gh_token to GH_TOKEN but usage references weren't updated.
+
+Also fixed formatting: removed extra space after 'if' keyword.
+---
+ .github/workflows/workflow.yml | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/.github/workflows/workflow.yml b/.github/workflows/workflow.yml
+index 6225869..cd8dce3 100644
+--- a/.github/workflows/workflow.yml
++++ b/.github/workflows/workflow.yml
+@@ -149,7 +149,7 @@ jobs:
+         env:
+           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+         with:
+-          github-token: ${{ secrets.gh_token }}
++          github-token: ${{ secrets.GH_TOKEN }}
+           path-to-profile: profile.cov
+ 
+       - if: ${{ inputs.min_test_coverage_percent != '' }}
+@@ -160,7 +160,7 @@ jobs:
+           echo "Total coverage: $total_coverage%"
+           awk -v t=$total_coverage -v m=${{ inputs.min_test_coverage_percent }} 'BEGIN { if (t < m) { print "Coverage " t "% is below required " m "%"; exit 1 } }'
+       
+-      - if : ${{ inputs.min_test_coverage_percent != '' }}
++      - if: ${{ inputs.min_test_coverage_percent != '' }}
+         run: go tool cover -func=profile.cov | tail -n 1
+ 
+       # LSIF is not supported by SourceGraph anymore :(
+@@ -169,7 +169,7 @@ jobs:
+       # - name: Upload LSIF data
+       #   uses: sourcegraph/lsif-upload-action@master
+       #   with:
+-      #     github_token: ${{ secrets.gh_token }}
++      #     github_token: ${{ secrets.GH_TOKEN }}
+ 
+       - if: ${{ !inputs.disable-version-bumping && github.ref == 'refs/heads/main' }}
+         id: tag_version
+@@ -177,7 +177,7 @@ jobs:
+         uses: mathieudutour/github-tag-action@v6.2
+ 
+         with:
+-          github_token: ${{ secrets.gh_token }}
++          github_token: ${{ secrets.GH_TOKEN }}
+           default_bump: false
+ 
+       - if: ${{ inputs.run-goreleaser && !inputs.disable-version-bumping && github.ref == 'refs/heads/main' }}
+-- 
+2.52.0
+
