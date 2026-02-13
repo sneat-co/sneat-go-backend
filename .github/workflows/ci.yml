@@ -30,7 +30,7 @@ jobs:
     uses: strongo/go-ci-action/.github/workflows/workflow.yml@main
 
     secrets:
-      #      gh_token: ${{ secrets.GITHUB_TOKEN }}
-      GH_TOKEN: ${{ secrets.GH_PAT_READWRITE_REPOS }}
-    with:
-      GOPRIVATE: 'github.com/sneat-co'
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      GH_TOKEN: ${{ secrets.GH_PAT_READWRITE_REPOS }}
+#    with:
+#      GOPRIVATE: 'github.com/sneat-co'
