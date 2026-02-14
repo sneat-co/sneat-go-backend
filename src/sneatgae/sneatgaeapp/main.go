@@ -20,7 +20,6 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/sneat-co/sneat-go-backend/src/modules"
 	"github.com/sneat-co/sneat-go-backend/src/modules/healthcheck"
-	"github.com/sneat-co/sneat-go-backend/src/sneatgae/sneatgaeapp/pages"
 	"github.com/sneat-co/sneat-go-core/emails"
 	"github.com/sneat-co/sneat-go-core/extension"
 	"github.com/sneat-co/sneat-go-core/monitoring"
@@ -55,8 +54,6 @@ func Start(
 		httpRouter.HandlerFunc(method, path, wrapHTTPHandler(handler, wrapHandler))
 	}
 
-	initHtmlPageHandlers(handle)
-
 	healthcheck.InitHealthCheck(handle)
 
 	RegisterModules(handle, extraModule)
@@ -64,10 +61,6 @@ func Start(
 	// Ready to serve
 	serve(httpRouter)
 	//appengine.Main()
-}
-
-func initHtmlPageHandlers(handle extension.HTTPHandleFunc) {
-	handle(http.MethodGet, "/", pages.IndexHandler)
 }
 
 func initInfrastructure(emailClient emails.Client) {
