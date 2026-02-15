@@ -1,0 +1,23 @@
+package api4listus
+
+import (
+	"net/http"
+
+	"github.com/sneat-co/sneat-go-backend/pkg/extensions/listus/dto4listus"
+	"github.com/sneat-co/sneat-go-backend/pkg/extensions/listus/facade4listus"
+	"github.com/sneat-co/sneat-go-core/apicore"
+	"github.com/sneat-co/sneat-go-core/apicore/verify"
+)
+
+var createList = facade4listus.CreateList
+
+// httpPostCreateList creates a list
+func httpPostCreateList(w http.ResponseWriter, r *http.Request) {
+	var request dto4listus.CreateListRequest
+	ctx, err := apicore.VerifyAuthenticatedRequestAndDecodeBody(w, r, verify.DefaultJsonWithAuthRequired, &request)
+	if err != nil {
+		return
+	}
+	response, err := createList(ctx, request)
+	apicore.ReturnJSON(ctx, w, r, http.StatusCreated, err, &response)
+}

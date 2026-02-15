@@ -18,4 +18,4 @@ Read https://github.com/sneat-co/sneat-devenv
 
 ## Testing chatbots locally
 
-There is a dedicated section regards how to test Telegram bots locally in [src/bots](src/sneatgae/sneatgaeapp/bots).
+There is a dedicated section regards how to test Telegram bots locally in [src/bots](src/sneatgaeapp/bots).

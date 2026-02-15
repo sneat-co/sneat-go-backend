@@ -1,0 +1,25 @@
+package api4retrospectus
+
+import (
+	"net/http"
+
+	"github.com/sneat-co/sneat-go-backend/pkg/extensions/retrospectus/facade4retrospectus"
+	"github.com/sneat-co/sneat-go-core/apicore"
+	"github.com/sneat-co/sneat-go-core/apicore/verify"
+)
+
+var deleteRetroItem = facade4retrospectus.DeleteRetroItem
+
+// httpPostDeleteRetroItem is an API endpoint that removes an items from a retrospective
+func httpPostDeleteRetroItem(w http.ResponseWriter, r *http.Request) {
+	ctx, err := verifyAuthorizedJSONRequest(w, r, verify.MinJSONRequestSize, 10*verify.KB)
+	if err != nil {
+		return
+	}
+	request := facade4retrospectus.RetroItemRequest{}
+	if err := apicore.DecodeRequestBody(w, r, &request); err != nil {
+		return
+	}
+	err = deleteRetroItem(ctx, request)
+	apicore.IfNoErrorReturnOK(ctx, w, r, err)
+}
