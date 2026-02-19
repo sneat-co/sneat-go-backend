@@ -11,6 +11,8 @@ github.com/crediterra/money v0.3.0 h1:dHWEZhkMGGxkHTAbGQOaeg8eYbL8qJSCgcqdOTbNg2
 github.com/crediterra/money v0.3.0/go.mod h1:0BT7dzPk4Wv+Wi8J6sxlFbCknYioLWVVQM4ciMJh6TI=
 github.com/dal-go/dalgo v0.41.1 h1:M3j/oMqE3MQD2l170X04IZBn2MHenrMKL76ma7IXVYM=
 github.com/dal-go/dalgo v0.41.1/go.mod h1:c9vfeYEwt1Emqa9sntGvZlFSLWOfyRAcngefNrk3AoI=
+github.com/dal-go/dalgo v0.41.3 h1:CGalpahqyQ3D5xTD85jwLnsZ+H2m9kSg7BCxsu4Wljk=
+github.com/dal-go/dalgo v0.41.3/go.mod h1:UsfnN3vdZ58s3gGRHNadEiqGheo8yqirEHUWTxGR8a0=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
