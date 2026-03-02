@@ -24,7 +24,7 @@ go 1.24.3
 
 require (
 	github.com/crediterra/money v0.3.0
-	github.com/dal-go/dalgo v0.41.3
+	github.com/dal-go/dalgo v0.41.5
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/sneat-co/sneat-core-modules v0.38.25
 	github.com/sneat-co/sneat-go-core v0.54.13
@@ -40,7 +40,7 @@ require (
 )
 
 require (
-	github.com/RoaringBitmap/roaring/v2 v2.14.4 // indirect
+	github.com/RoaringBitmap/roaring/v2 v2.14.5 // indirect
 	github.com/alexsergivan/transliterator v1.0.1 // indirect
 	github.com/bits-and-blooms/bitset v1.24.4 // indirect
 	github.com/bots-go-framework/bots-fw-store v0.10.0 // indirect
