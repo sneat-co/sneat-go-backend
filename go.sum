@@ -42,10 +42,14 @@ github.com/sneat-co/sneat-core-modules v0.38.24 h1:vQVkqufMkomamQVL9CL3f0ACKuPqZ
 github.com/sneat-co/sneat-core-modules v0.38.24/go.mod h1:sVZ3MWVDL8ZDLBSCC2hOc0mpcZHml+Mn1if4YeSohOg=
 github.com/sneat-co/sneat-core-modules v0.38.25 h1:2VuNqO5TfDaW3YUNFAv9eAv1WMQukfSFo4t7ScMx+N0=
 github.com/sneat-co/sneat-core-modules v0.38.25/go.mod h1:9Y6t+B8J1geEItB27uiDOmMwkF+g73AmsUCae/q08kQ=
+github.com/sneat-co/sneat-core-modules v0.38.26 h1:yOe89A/bJ8axdKwaCbtkDRdBPLfssuDQ/oBdh2o0J74=
+github.com/sneat-co/sneat-core-modules v0.38.26/go.mod h1:IXm5+SB2zx3WWHM30GYgrZ9OokS7GnZa8xvyHK3xtws=
 github.com/sneat-co/sneat-go-core v0.54.11 h1:oaUFmy70we5BBlCKLHC/tfVnT/sP9TRXa6NO1upV5kI=
 github.com/sneat-co/sneat-go-core v0.54.11/go.mod h1:/FgXylNgJDXlhAIWoB06JsW2TWsf7pJkYagwvDXYapc=
 github.com/sneat-co/sneat-go-core v0.54.13 h1:+cw7zzKvuhET8j+f/hNjlzAmUPDdn6/vaJ/Lql4XZ/c=
 github.com/sneat-co/sneat-go-core v0.54.13/go.mod h1:wuN98CZIVoFxx9k7dvTHsaeSjpQqnJegUiIOwH1uHYY=
+github.com/sneat-co/sneat-go-core v0.54.15 h1:8h2n48lVm2Nvd3wNYFWiN8co0aVNlQfUCRGk2pSJgDk=
+github.com/sneat-co/sneat-go-core v0.54.15/go.mod h1:A3h4sngwsv/mETWMTqOtgi1OFPdJkFm3daWpazA6LYM=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5cxcmMvtA=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
@@ -66,6 +70,8 @@ github.com/strongo/strongoapp v0.31.13 h1:mHmdFpkMjGbbPgZLznPhbLowe5nbHM9OgHSwP2
 github.com/strongo/strongoapp v0.31.13/go.mod h1:mzViK6MEq0P6Ks1wlZMZMQcIyaG5palHeKi6AnW+ytA=
 github.com/strongo/strongoapp v0.31.14 h1:DzeoJyk2W7nuK/e5wrk+XBbPu3jPbzzgtmAgjmtt6Mk=
 github.com/strongo/strongoapp v0.31.14/go.mod h1:PgZrJHdUVOnkSSaQoGfWlK+nMkxKEPoMLxS4i2lGKJk=
+github.com/strongo/strongoapp v0.31.15 h1:FxjlnGaeE8xqzETYlu6I3twt/txihvEV8A+V2m/ypWA=
+github.com/strongo/strongoapp v0.31.15/go.mod h1:Z7QT1zzeUH9PdI/jaz6X+ReuzNLTL43dOehF9E/IkSg=
 github.com/strongo/validation v0.0.7 h1:gs6YkwPsYtVsepQaQOB+ZF+T0Gu5+nk4ZMND8F85e+U=
 github.com/strongo/validation v0.0.7/go.mod h1:YUwoPEItLJd/Bc9X1OCUm03ofhvm3kwZvuihU7/jz58=
 go.uber.org/mock v0.6.0 h1:hyF9dfmbgIX5EfOdasqLsWD6xqpNZlXblLB/Dbnwv3Y=
