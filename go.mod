@@ -24,23 +24,23 @@ go 1.24.3
 
 require (
 	github.com/crediterra/money v0.3.0
-	github.com/dal-go/dalgo v0.41.6
+	github.com/dal-go/dalgo v0.41.7
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/sneat-co/sneat-core-modules v0.38.27
-	github.com/sneat-co/sneat-go-core v0.54.15
+	github.com/sneat-co/sneat-core-modules v0.38.28
+	github.com/sneat-co/sneat-go-core v0.54.17
 	github.com/stretchr/testify v1.11.1
 	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.2.1
 	github.com/strongo/logus v0.4.0
 	github.com/strongo/random v0.0.1
 	github.com/strongo/slice v0.3.3
-	github.com/strongo/strongoapp v0.31.15
+	github.com/strongo/strongoapp v0.31.16
 	github.com/strongo/validation v0.0.7
 	go.uber.org/mock v0.6.0
 )
 
 require (
-	github.com/RoaringBitmap/roaring/v2 v2.14.5 // indirect
+	github.com/RoaringBitmap/roaring/v2 v2.15.0 // indirect
 	github.com/alexsergivan/transliterator v1.0.1 // indirect
 	github.com/bits-and-blooms/bitset v1.24.4 // indirect
 	github.com/bots-go-framework/bots-fw-store v0.10.0 // indirect
