@@ -54,6 +54,8 @@ github.com/sneat-co/sneat-core-modules v0.38.27 h1:IANsqd0hQ41mV91rZBVKX0qmVuNCz
 github.com/sneat-co/sneat-core-modules v0.38.27/go.mod h1:SIc3XoKNcQPhArvK3TumgsC2cf9zFbqgm8KlPM7RG84=
 github.com/sneat-co/sneat-core-modules v0.38.28 h1:jiPYA6Teareyt77yLVpcr94UHPr7LrilAtt1GCa22Hs=
 github.com/sneat-co/sneat-core-modules v0.38.28/go.mod h1:oTE+vyhfe+oipSCT1/KLZyOp1vxi00q+ySy8eQyKRB4=
+github.com/sneat-co/sneat-core-modules v0.38.29 h1:bInTEZpNT+buSGFX9/gBkIFB0pnMdeDsLPFTJ05Wmqo=
+github.com/sneat-co/sneat-core-modules v0.38.29/go.mod h1:+FrJyeoYf77TZFdkMLSEbK93FqxyAyx3m8szDyrfJhc=
 github.com/sneat-co/sneat-go-core v0.54.11 h1:oaUFmy70we5BBlCKLHC/tfVnT/sP9TRXa6NO1upV5kI=
 github.com/sneat-co/sneat-go-core v0.54.11/go.mod h1:/FgXylNgJDXlhAIWoB06JsW2TWsf7pJkYagwvDXYapc=
 github.com/sneat-co/sneat-go-core v0.54.13 h1:+cw7zzKvuhET8j+f/hNjlzAmUPDdn6/vaJ/Lql4XZ/c=
@@ -64,6 +66,8 @@ github.com/sneat-co/sneat-go-core v0.54.17 h1:Tm/O215NH9STTXkTd0ez6oebnwVPc7elSh
 github.com/sneat-co/sneat-go-core v0.54.17/go.mod h1:GfrpA9zvrJDRR/LDnLCKegD0wrhsssZ37TJGpBsGKWE=
 github.com/sneat-co/sneat-go-core v0.54.18 h1:VyhLOP6n+RFIx+G/vhLbDbaaRD+IF1jqolUXI4Kf7os=
 github.com/sneat-co/sneat-go-core v0.54.18/go.mod h1:gYrsqFSOKo3vGv/dvnCoRkmJNklERaXANnDmgIQLMg8=
+github.com/sneat-co/sneat-go-core v0.54.19 h1:cFwL3JknayqAnmpH4XxMfBZNQLAeyUCg8RaYOBnsS2o=
+github.com/sneat-co/sneat-go-core v0.54.19/go.mod h1:ZpolLQ/glRrG68ADKqDggOebS+EEPBnTDdhdIicTPCI=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5cxcmMvtA=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
@@ -96,6 +100,8 @@ go.uber.org/mock v0.6.0 h1:hyF9dfmbgIX5EfOdasqLsWD6xqpNZlXblLB/Dbnwv3Y=
 go.uber.org/mock v0.6.0/go.mod h1:KiVJ4BqZJaMj4svdfmHM0AUx4NJYO8ZNpPnZn1Z+BBU=
 golang.org/x/crypto v0.48.0 h1:/VRzVqiRSggnhY7gNRxPauEQ5Drw9haKdM0jqfcCFts=
 golang.org/x/crypto v0.48.0/go.mod h1:r0kV5h3qnFPlQnBSrULhlsRfryS2pmewsg+XfMgkVos=
+golang.org/x/crypto v0.49.0 h1:+Ng2ULVvLHnJ/ZFEq4KdcDd/cfjrrjjNSXNzxg0Y4U4=
+golang.org/x/crypto v0.49.0/go.mod h1:ErX4dUh2UM+CFYiXZRTcMpEcN8b/1gxEuv3nODoYtCA=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c h1:Hei/4ADfdWqJk1ZMxUNpqntNwaWcugrBjAiHlqqRiVk=
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c/go.mod h1:JHkPIbrfpd72SG/EVd6muEfDQjcINNoR0C8j2r3qZ4Q=
