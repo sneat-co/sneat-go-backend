@@ -2,7 +2,7 @@ module github.com/sneat-co/sneat-go-backend
 
 // https://github.com/sneat-co/sneat-go-backend/actions
 
-go 1.24.3
+go 1.25.0
 
 //replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
 //
@@ -26,8 +26,8 @@ require (
 	github.com/crediterra/money v0.3.0
 	github.com/dal-go/dalgo v0.41.7
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/sneat-co/sneat-core-modules v0.38.28
-	github.com/sneat-co/sneat-go-core v0.54.18
+	github.com/sneat-co/sneat-core-modules v0.38.29
+	github.com/sneat-co/sneat-go-core v0.54.19
 	github.com/stretchr/testify v1.11.1
 	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.2.1
@@ -51,6 +51,6 @@ require (
 	github.com/mschoch/smat v0.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/strongo/analytics v0.2.3 // indirect
-	golang.org/x/crypto v0.48.0 // indirect
+	golang.org/x/crypto v0.49.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
