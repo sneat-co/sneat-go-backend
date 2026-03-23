@@ -4,6 +4,8 @@ github.com/RoaringBitmap/roaring/v2 v2.14.5 h1:ckd0o545JqDPeVJDgeFoaM21eBixUnlWf
 github.com/RoaringBitmap/roaring/v2 v2.14.5/go.mod h1:eq4wdNXxtJIS/oikeCzdX1rBzek7ANzbth041hrU8Q4=
 github.com/RoaringBitmap/roaring/v2 v2.15.0 h1:gCbixa3UiG7g6WUZNVOfEEg2HTc1vR4OVdMkX8t1ZFc=
 github.com/RoaringBitmap/roaring/v2 v2.15.0/go.mod h1:eq4wdNXxtJIS/oikeCzdX1rBzek7ANzbth041hrU8Q4=
+github.com/RoaringBitmap/roaring/v2 v2.16.0 h1:Kys1UNf49d5W8Tq3bpuAhIr/Z8/yPB+59CO8A6c/BbE=
+github.com/RoaringBitmap/roaring/v2 v2.16.0/go.mod h1:eq4wdNXxtJIS/oikeCzdX1rBzek7ANzbth041hrU8Q4=
 github.com/alexsergivan/transliterator v1.0.1 h1:vON2ilWCHjq+S5Y4obhLGhHK4Y1VIhsHEtQlij5d9pI=
 github.com/alexsergivan/transliterator v1.0.1/go.mod h1:0IrumukulURJ4PD0z6UcdJKP2job1DYDhnHAP5y+5pE=
 github.com/bits-and-blooms/bitset v1.24.4 h1:95H15Og1clikBrKr/DuzMXkQzECs1M6hhoGXLwLQOZE=
@@ -25,6 +27,8 @@ github.com/dal-go/dalgo v0.41.7 h1:N+FBm+wTNBWo5CoOcTlvLrk0O8DINqIYBh5oljkbSEk=
 github.com/dal-go/dalgo v0.41.7/go.mod h1:Ie27/bswwwVWwQCsUdNl44L3E32uL1raZtg4WSEBd6k=
 github.com/dal-go/dalgo v0.41.8 h1:ro+lY5hZrUECLCYpIV/tYm6olFK2RGX8L4+qf/lOEAg=
 github.com/dal-go/dalgo v0.41.8/go.mod h1:hSQ7sNhf5WZz/XcHgO0UKUCc24rhgU2C7fcrmcsx80U=
+github.com/dal-go/dalgo v0.41.9 h1:gZP/RkVFv5Z1tAp/WPWQ1yNDzF5MWrGe5EDjbAKgOuk=
+github.com/dal-go/dalgo v0.41.9/go.mod h1:jPNOxd415Z6KOuU7ZjdcjiRs4Vl4OkirOzyRbtuFZzI=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -60,6 +64,8 @@ github.com/sneat-co/sneat-core-modules v0.38.29 h1:bInTEZpNT+buSGFX9/gBkIFB0pnMd
 github.com/sneat-co/sneat-core-modules v0.38.29/go.mod h1:+FrJyeoYf77TZFdkMLSEbK93FqxyAyx3m8szDyrfJhc=
 github.com/sneat-co/sneat-core-modules v0.38.30 h1:IeoUa4gb2xvirrVRwTI4TKqzLq0QfRLzEoucZ8E8dGI=
 github.com/sneat-co/sneat-core-modules v0.38.30/go.mod h1:poqyUk4j12Wp2qHpi4hyzSCIp9DdN4d3oFYI/6QVlSg=
+github.com/sneat-co/sneat-core-modules v0.38.33 h1:bKaimbNldxJg+d+oaw/mahMNt4cOvrwbppfoRNtJ150=
+github.com/sneat-co/sneat-core-modules v0.38.33/go.mod h1:KjkrM1XRT6/tnQrcalQgFSTl03oxO4KiqXTzIcuIAaE=
 github.com/sneat-co/sneat-go-core v0.54.11 h1:oaUFmy70we5BBlCKLHC/tfVnT/sP9TRXa6NO1upV5kI=
 github.com/sneat-co/sneat-go-core v0.54.11/go.mod h1:/FgXylNgJDXlhAIWoB06JsW2TWsf7pJkYagwvDXYapc=
 github.com/sneat-co/sneat-go-core v0.54.13 h1:+cw7zzKvuhET8j+f/hNjlzAmUPDdn6/vaJ/Lql4XZ/c=
@@ -72,6 +78,8 @@ github.com/sneat-co/sneat-go-core v0.54.18 h1:VyhLOP6n+RFIx+G/vhLbDbaaRD+IF1jqol
 github.com/sneat-co/sneat-go-core v0.54.18/go.mod h1:gYrsqFSOKo3vGv/dvnCoRkmJNklERaXANnDmgIQLMg8=
 github.com/sneat-co/sneat-go-core v0.54.19 h1:cFwL3JknayqAnmpH4XxMfBZNQLAeyUCg8RaYOBnsS2o=
 github.com/sneat-co/sneat-go-core v0.54.19/go.mod h1:ZpolLQ/glRrG68ADKqDggOebS+EEPBnTDdhdIicTPCI=
+github.com/sneat-co/sneat-go-core v0.54.21 h1:OvBLzncxRVMMdbZc4KROOtE9yBma8lFOTqIr6ASEyoY=
+github.com/sneat-co/sneat-go-core v0.54.21/go.mod h1:snKomxQqIYqYde8iuXdqodbJ0F6aW7ng1pIAgMIlZjg=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5cxcmMvtA=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
@@ -98,6 +106,8 @@ github.com/strongo/strongoapp v0.31.16 h1:/majaG1iLywOBWRxe3CPzOqKMYMjgXtwtjyQLE
 github.com/strongo/strongoapp v0.31.16/go.mod h1:3AEQUXNXp8lm3pFwaZPvfoDOA7hmykKgJb2tAbyWv7o=
 github.com/strongo/strongoapp v0.31.17 h1:WlS6kdhWOdty7KvX2HSgMezJa2DIoH/bKFajot7+e3A=
 github.com/strongo/strongoapp v0.31.17/go.mod h1:O5EkNrwCpxw2CaK02Y9cUDj16E5Gi4BPcpv+Y9Oel/0=
+github.com/strongo/strongoapp v0.31.19 h1:ey7CUrjwg2ldtcnJoHQaXmSaCSDv12FyFA5y0IAuzlQ=
+github.com/strongo/strongoapp v0.31.19/go.mod h1:nkUB/Tl9ah49MyMuZsdb+hruXxlZ29UKbUM6GLbGh9E=
 github.com/strongo/validation v0.0.7 h1:gs6YkwPsYtVsepQaQOB+ZF+T0Gu5+nk4ZMND8F85e+U=
 github.com/strongo/validation v0.0.7/go.mod h1:YUwoPEItLJd/Bc9X1OCUm03ofhvm3kwZvuihU7/jz58=
 go.uber.org/mock v0.6.0 h1:hyF9dfmbgIX5EfOdasqLsWD6xqpNZlXblLB/Dbnwv3Y=
