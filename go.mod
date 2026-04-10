@@ -27,14 +27,14 @@ require (
 	github.com/dal-go/dalgo v0.41.10
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/sneat-co/sneat-core-modules v0.38.35
-	github.com/sneat-co/sneat-go-core v0.54.23
+	github.com/sneat-co/sneat-go-core v0.54.24
 	github.com/stretchr/testify v1.11.1
 	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.2.1
 	github.com/strongo/logus v0.4.1
 	github.com/strongo/random v0.0.1
 	github.com/strongo/slice v0.3.4
-	github.com/strongo/strongoapp v0.31.21
+	github.com/strongo/strongoapp v0.31.22
 	github.com/strongo/validation v0.0.8
 	go.uber.org/mock v0.6.0
 )
