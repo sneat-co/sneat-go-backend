@@ -106,6 +106,8 @@ github.com/sneat-co/sneat-core-modules v0.38.42 h1:LzgkYKIAllhBwRSEfwO50iP2X2Uem
 github.com/sneat-co/sneat-core-modules v0.38.42/go.mod h1:lEQVzsHy1IyV6WSSzDhrGQUrYvQwU7mJTgywtEaRlEg=
 github.com/sneat-co/sneat-core-modules v0.38.43 h1:CJ6iRSbB9bDfrUgO9iSdOjJKjA5w3tK5h2nqM8LR46o=
 github.com/sneat-co/sneat-core-modules v0.38.43/go.mod h1:UAdkBAD9OAxeZAHcUyxNdPmumBm8BHDtRFapkQ6azF8=
+github.com/sneat-co/sneat-core-modules v0.38.45 h1:F91Q01HbXSAmifzZNjep3CZY11lWScEmpo+SudcFuhk=
+github.com/sneat-co/sneat-core-modules v0.38.45/go.mod h1:81osy+rS6pQDxohObjJovFXym7spp7BVQLBYf/0eAjs=
 github.com/sneat-co/sneat-go-core v0.54.11 h1:oaUFmy70we5BBlCKLHC/tfVnT/sP9TRXa6NO1upV5kI=
 github.com/sneat-co/sneat-go-core v0.54.11/go.mod h1:/FgXylNgJDXlhAIWoB06JsW2TWsf7pJkYagwvDXYapc=
 github.com/sneat-co/sneat-go-core v0.54.13 h1:+cw7zzKvuhET8j+f/hNjlzAmUPDdn6/vaJ/Lql4XZ/c=
@@ -134,6 +136,8 @@ github.com/sneat-co/sneat-go-core v0.54.28 h1:9u193fsRCMWmqXlukSeL5zOWGFAfIsXLNm
 github.com/sneat-co/sneat-go-core v0.54.28/go.mod h1:ESfYzOn3qZvptSMy8Lebob+Xqn7znrvHfqizk3vYLos=
 github.com/sneat-co/sneat-go-core v0.54.29 h1:cOt72wC5DJSJdqhjOn8yjpxNMbDZRI8indFDb1YsndE=
 github.com/sneat-co/sneat-go-core v0.54.29/go.mod h1:/w7h0Dhv4zrou9spRW1YlqFPEPXTF9kEgwosLqhgMBk=
+github.com/sneat-co/sneat-go-core v0.54.30 h1:dKisGObXUB4sgCmlWEZsE+dHxthVVX+cEf1pDI3pKkI=
+github.com/sneat-co/sneat-go-core v0.54.30/go.mod h1:H1YgY3fRWwTbZc8z9Vyc21HRC0A47Mt9/7ZA1Sd73os=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5cxcmMvtA=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
@@ -182,6 +186,8 @@ github.com/strongo/strongoapp v0.31.26 h1:IqLNj6+Deqc1lbjBaAKGXq+46Pn7Y2zGOm1+lz
 github.com/strongo/strongoapp v0.31.26/go.mod h1:dvCt/VbzpDwAMs4IqIWeIFP1QTM1IF7yjUAUFr7jFSI=
 github.com/strongo/strongoapp v0.31.27 h1:b3vwCVEPxsN8sbDnTHcj3Fq1D8apfn7Fhh5T9h132mA=
 github.com/strongo/strongoapp v0.31.27/go.mod h1:ctYTJrdmojWZOwdEGCpPwsWjsPOfG5Db4epCmb4b53A=
+github.com/strongo/strongoapp v0.31.28 h1:2toA1wPSI2qTcmG2qX1mwPH1xGEHPtzIGGO1SKyTW8s=
+github.com/strongo/strongoapp v0.31.28/go.mod h1:zauzVQk+SLb7KQLbVfKNhrFVohNEKH+7bzxt08bb1kE=
 github.com/strongo/validation v0.0.7 h1:gs6YkwPsYtVsepQaQOB+ZF+T0Gu5+nk4ZMND8F85e+U=
 github.com/strongo/validation v0.0.7/go.mod h1:YUwoPEItLJd/Bc9X1OCUm03ofhvm3kwZvuihU7/jz58=
 github.com/strongo/validation v0.0.8 h1:LL3FODf1MTOROKa8fHJuwYxiKHcvd1W2Vs0OXc1H46U=
@@ -194,6 +200,8 @@ golang.org/x/crypto v0.49.0 h1:+Ng2ULVvLHnJ/ZFEq4KdcDd/cfjrrjjNSXNzxg0Y4U4=
 golang.org/x/crypto v0.49.0/go.mod h1:ErX4dUh2UM+CFYiXZRTcMpEcN8b/1gxEuv3nODoYtCA=
 golang.org/x/crypto v0.50.0 h1:zO47/JPrL6vsNkINmLoo/PH1gcxpls50DNogFvB5ZGI=
 golang.org/x/crypto v0.50.0/go.mod h1:3muZ7vA7PBCE6xgPX7nkzzjiUq87kRItoJQM1Yo8S+Q=
+golang.org/x/crypto v0.51.0 h1:IBPXwPfKxY7cWQZ38ZCIRPI50YLeevDLlLnyC5wRGTI=
+golang.org/x/crypto v0.51.0/go.mod h1:8AdwkbraGNABw2kOX6YFPs3WM22XqI4EXEd8g+x7Oc8=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c h1:Hei/4ADfdWqJk1ZMxUNpqntNwaWcugrBjAiHlqqRiVk=
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c/go.mod h1:JHkPIbrfpd72SG/EVd6muEfDQjcINNoR0C8j2r3qZ4Q=
