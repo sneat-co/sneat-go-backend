@@ -26,7 +26,7 @@ require (
 	github.com/crediterra/money v0.3.1
 	github.com/dal-go/dalgo v0.41.15
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/sneat-co/sneat-core-modules v0.38.45
+	github.com/sneat-co/sneat-core-modules v0.38.46
 	github.com/sneat-co/sneat-go-core v0.54.30
 	github.com/stretchr/testify v1.11.1
 	github.com/strongo/decimal v0.1.1
