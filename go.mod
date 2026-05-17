@@ -24,7 +24,7 @@ go 1.25.0
 
 require (
 	github.com/crediterra/money v0.3.1
-	github.com/dal-go/dalgo v0.42.2
+	github.com/dal-go/dalgo v0.43.1
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/sneat-co/sneat-core-modules v0.38.47
 	github.com/sneat-co/sneat-go-core v0.54.31
