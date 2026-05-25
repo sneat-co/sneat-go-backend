@@ -120,6 +120,8 @@ github.com/sneat-co/sneat-core-modules v0.38.48 h1:6iZt9g886pJS2NEIhrgQksO0tN+3F
 github.com/sneat-co/sneat-core-modules v0.38.48/go.mod h1:hKHhbSMpNkb00t5Oy2SS9pe3+v5dCZ6TAhBctLGD9CU=
 github.com/sneat-co/sneat-core-modules v0.38.50 h1:dGtYnHH2P8kbmuMq2eOcerLLc9YqGzrq4CM+qpNuqUE=
 github.com/sneat-co/sneat-core-modules v0.38.50/go.mod h1:hepXHvQywLk8smF/k8Qk4tT4+Fy82Y162n5+QXgfqPE=
+github.com/sneat-co/sneat-core-modules v0.38.51 h1:XmNH3/gwL+AnssMLC0XZAR8EdL1lTBK53BCK5EulmBQ=
+github.com/sneat-co/sneat-core-modules v0.38.51/go.mod h1:8/hlJdCi4W8bSpf5aUMiMny5YiLuwTxBoH3FcP+jNoA=
 github.com/sneat-co/sneat-go-core v0.54.11 h1:oaUFmy70we5BBlCKLHC/tfVnT/sP9TRXa6NO1upV5kI=
 github.com/sneat-co/sneat-go-core v0.54.11/go.mod h1:/FgXylNgJDXlhAIWoB06JsW2TWsf7pJkYagwvDXYapc=
 github.com/sneat-co/sneat-go-core v0.54.13 h1:+cw7zzKvuhET8j+f/hNjlzAmUPDdn6/vaJ/Lql4XZ/c=
@@ -224,6 +226,8 @@ golang.org/x/crypto v0.50.0 h1:zO47/JPrL6vsNkINmLoo/PH1gcxpls50DNogFvB5ZGI=
 golang.org/x/crypto v0.50.0/go.mod h1:3muZ7vA7PBCE6xgPX7nkzzjiUq87kRItoJQM1Yo8S+Q=
 golang.org/x/crypto v0.51.0 h1:IBPXwPfKxY7cWQZ38ZCIRPI50YLeevDLlLnyC5wRGTI=
 golang.org/x/crypto v0.51.0/go.mod h1:8AdwkbraGNABw2kOX6YFPs3WM22XqI4EXEd8g+x7Oc8=
+golang.org/x/crypto v0.52.0 h1:RMs7fP2rXdep0CftQlK8Uf+kibLm7qkCcradZWYz988=
+golang.org/x/crypto v0.52.0/go.mod h1:1QgfPxDqh0T2M/elOJtp9RvuR95kVjir0e6/BvEmGbc=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c h1:Hei/4ADfdWqJk1ZMxUNpqntNwaWcugrBjAiHlqqRiVk=
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c/go.mod h1:JHkPIbrfpd72SG/EVd6muEfDQjcINNoR0C8j2r3qZ4Q=
