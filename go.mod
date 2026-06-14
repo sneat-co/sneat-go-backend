@@ -24,17 +24,17 @@ go 1.25.0
 
 require (
 	github.com/crediterra/money v0.3.1
-	github.com/dal-go/dalgo v0.44.2
+	github.com/dal-go/dalgo v0.62.2
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/sneat-co/sneat-core-modules v0.38.55
-	github.com/sneat-co/sneat-go-core v0.54.37
+	github.com/sneat-co/sneat-core-modules v0.38.56
+	github.com/sneat-co/sneat-go-core v0.55.2
 	github.com/stretchr/testify v1.11.1
 	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.2.1
 	github.com/strongo/logus v0.4.1
 	github.com/strongo/random v0.0.1
 	github.com/strongo/slice v0.3.4
-	github.com/strongo/strongoapp v0.31.33
+	github.com/strongo/strongoapp v0.31.35
 	github.com/strongo/validation v0.0.8
 	go.uber.org/mock v0.6.0
 )
@@ -51,6 +51,6 @@ require (
 	github.com/mschoch/smat v0.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/strongo/analytics v0.2.5 // indirect
-	golang.org/x/crypto v0.52.0 // indirect
+	golang.org/x/crypto v0.53.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
