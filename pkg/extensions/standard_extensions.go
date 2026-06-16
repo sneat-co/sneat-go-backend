@@ -5,11 +5,11 @@ import (
 	"github.com/sneat-co/sneat-go-backend/pkg/extensions/assetus"
 	"github.com/sneat-co/sneat-go-backend/pkg/extensions/calendarium"
 	"github.com/sneat-co/sneat-go-backend/pkg/extensions/deedus"
-	"github.com/sneat-co/sneat-go-backend/pkg/extensions/listus"
 	"github.com/sneat-co/sneat-go-backend/pkg/extensions/retrospectus"
 	"github.com/sneat-co/sneat-go-backend/pkg/extensions/scrumus"
 	"github.com/sneat-co/sneat-go-backend/pkg/extensions/sportus"
 	"github.com/sneat-co/sneat-go-core/extension"
+	"github.com/sneat-co/listus/backend/listusext"
 )
 
 func standardExtensions() []extension.Config {
@@ -17,7 +17,7 @@ func standardExtensions() []extension.Config {
 		assetus.Extension(),
 		deedus.Extension(),
 		calendarium.Extension(),
-		listus.Extension(),
+		listusext.Extension(),
 		retrospectus.Extension(),
 		scrumus.Extension(),
 		sportus.Extension(),
