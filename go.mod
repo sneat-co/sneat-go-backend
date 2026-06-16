@@ -25,7 +25,6 @@ go 1.26
 require (
 	github.com/crediterra/money v0.3.1
 	github.com/dal-go/dalgo v0.62.2
-	github.com/sneat-co/listus/backend v0.1.0
 	github.com/sneat-co/sneat-core-modules v0.38.58
 	github.com/sneat-co/sneat-go-core v0.55.4
 	github.com/stretchr/testify v1.11.1
@@ -50,6 +49,7 @@ require (
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mschoch/smat v0.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/sneat-co/listus/backend v0.1.0
 	github.com/strongo/analytics v0.2.5 // indirect
 	golang.org/x/crypto v0.53.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
