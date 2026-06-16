@@ -2,7 +2,7 @@ module github.com/sneat-co/sneat-go-backend
 
 // https://github.com/sneat-co/sneat-go-backend/actions
 
-go 1.25.0
+go 1.26
 
 //replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
 //
@@ -22,9 +22,12 @@ go 1.25.0
 //replace github.com/strongo/i18n => ../../strongo/i18n
 //replace github.com/strongo/strongoapp => ../../strongo/strongoapp
 
+replace github.com/sneat-co/listus/backend => ../listus/backend
+
 require (
 	github.com/crediterra/money v0.3.1
 	github.com/dal-go/dalgo v0.62.2
+	github.com/sneat-co/listus/backend v0.0.0-00010101000000-000000000000
 	github.com/sneat-co/sneat-core-modules v0.38.56
 	github.com/sneat-co/sneat-go-core v0.55.2
 	github.com/stretchr/testify v1.11.1
