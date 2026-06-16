@@ -22,21 +22,19 @@ go 1.26
 //replace github.com/strongo/i18n => ../../strongo/i18n
 //replace github.com/strongo/strongoapp => ../../strongo/strongoapp
 
-replace github.com/sneat-co/listus/backend => ../listus/backend
-
 require (
 	github.com/crediterra/money v0.3.1
 	github.com/dal-go/dalgo v0.62.2
-	github.com/sneat-co/listus/backend v0.0.0-00010101000000-000000000000
-	github.com/sneat-co/sneat-core-modules v0.38.56
-	github.com/sneat-co/sneat-go-core v0.55.2
+	github.com/sneat-co/listus/backend v0.1.0
+	github.com/sneat-co/sneat-core-modules v0.38.58
+	github.com/sneat-co/sneat-go-core v0.55.4
 	github.com/stretchr/testify v1.11.1
 	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.2.1
 	github.com/strongo/logus v0.4.1
 	github.com/strongo/random v0.0.1
-	github.com/strongo/slice v0.3.4
-	github.com/strongo/strongoapp v0.31.35
+	github.com/strongo/slice v0.3.5
+	github.com/strongo/strongoapp v0.31.36
 	github.com/strongo/validation v0.0.8
 	go.uber.org/mock v0.6.0
 )
