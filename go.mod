@@ -28,7 +28,6 @@ require (
 	github.com/sneat-co/sneat-core-modules v0.38.58
 	github.com/sneat-co/sneat-go-core v0.55.4
 	github.com/stretchr/testify v1.11.1
-	github.com/strongo/decimal v0.1.1
 	github.com/strongo/delaying v0.2.1
 	github.com/strongo/logus v0.4.1
 	github.com/strongo/random v0.0.1
@@ -37,6 +36,8 @@ require (
 	github.com/strongo/validation v0.0.8
 	go.uber.org/mock v0.6.0
 )
+
+require github.com/strongo/decimal v0.1.1 // indirect
 
 require (
 	github.com/RoaringBitmap/roaring/v2 v2.18.2 // indirect
@@ -49,6 +50,7 @@ require (
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mschoch/smat v0.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/sneat-co/assetus/backend v0.1.0
 	github.com/sneat-co/listus/backend v0.1.0
 	github.com/strongo/analytics v0.2.5 // indirect
 	golang.org/x/crypto v0.53.0 // indirect
