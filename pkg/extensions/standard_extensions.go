@@ -1,8 +1,8 @@
 package extensions
 
 import (
+	"github.com/sneat-co/assetus/backend/assetusext"
 	sneatcoremodules "github.com/sneat-co/sneat-core-modules"
-	"github.com/sneat-co/sneat-go-backend/pkg/extensions/assetus"
 	"github.com/sneat-co/sneat-go-backend/pkg/extensions/calendarium"
 	"github.com/sneat-co/sneat-go-backend/pkg/extensions/deedus"
 	"github.com/sneat-co/sneat-go-backend/pkg/extensions/retrospectus"
@@ -14,7 +14,7 @@ import (
 
 func standardExtensions() []extension.Config {
 	return []extension.Config{
-		assetus.Extension(),
+		assetusext.Extension(),
 		deedus.Extension(),
 		calendarium.Extension(),
 		listusext.Extension(),

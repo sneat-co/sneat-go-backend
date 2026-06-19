@@ -3,14 +3,12 @@ package dbo4brands
 import (
 	"strings"
 	"testing"
-
-	"github.com/sneat-co/sneat-go-backend/pkg/extensions/assetus/const4assetus"
 )
 
 func TestBrand_Validate(t *testing.T) {
 	type fields struct {
 		Title      string
-		AssetTypes []const4assetus.AssetCategory
+		AssetTypes []string
 		WebsiteURL string
 		Models     []string
 	}
