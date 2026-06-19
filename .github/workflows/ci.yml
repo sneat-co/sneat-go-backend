@@ -27,7 +27,7 @@ jobs:
   strongo_workflow:
     permissions:
       contents: write
-    uses: strongo/go-ci-action/.github/workflows/workflow.yml@main
+    uses: strongo/go-ci-action/.github/workflows/workflow.yml@fix/goprivate-lint-test-auth
 
     secrets:
       GH_TOKEN: ${{ secrets.GH_PAT_READWRITE_REPOS }}
