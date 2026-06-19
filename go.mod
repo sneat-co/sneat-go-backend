@@ -50,11 +50,9 @@ require (
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mschoch/smat v0.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/sneat-co/assetus/backend v0.0.0-00010101000000-000000000000
+	github.com/sneat-co/assetus/backend v0.1.0
 	github.com/sneat-co/listus/backend v0.1.0
 	github.com/strongo/analytics v0.2.5 // indirect
 	golang.org/x/crypto v0.53.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/sneat-co/assetus/backend => ../assetus/backend
