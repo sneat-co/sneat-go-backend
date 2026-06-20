@@ -6,7 +6,6 @@ github.com/bits-and-blooms/bitset v1.24.4 h1:95H15Og1clikBrKr/DuzMXkQzECs1M6hhoG
 github.com/bits-and-blooms/bitset v1.24.4/go.mod h1:7hO7Gc7Pp1vODcmWvKMRA9BNmbv6a/7QIWpPxHddWR8=
 github.com/bots-go-framework/bots-fw-store v0.10.3 h1:nGw1puS+wzI5XAnNyUBFerbaqxAT9sxCMs4ESq+kH9Y=
 github.com/bots-go-framework/bots-fw-store v0.10.3/go.mod h1:s5L7PAMhdpf+zqkewV5m4uQKm/oVtv4QNyhdkSmNJwE=
-github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/crediterra/money v0.3.1 h1:7v3KOvGGWzBwZ/fV1QQedtbtP3KyfxNIDaqc9cdqVQg=
 github.com/crediterra/money v0.3.1/go.mod h1:0BT7dzPk4Wv+Wi8J6sxlFbCknYioLWVVQM4ciMJh6TI=
 github.com/dal-go/dalgo v0.62.2 h1:rA+k9QCgS0UnZV0oonvDtA+QoM3Wj1doVBWo1higBTw=
@@ -30,6 +29,8 @@ github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0t
 github.com/rogpeppe/go-internal v1.14.1/go.mod h1:MaRKkUm5W0goXpeCfT7UZI6fk/L7L7so1lCWt35ZSgc=
 github.com/sneat-co/assetus/backend v0.1.0 h1:1I3KKc9T90xJjYhubH572A+tIOzEzJ46PBH5Km2+c/Y=
 github.com/sneat-co/assetus/backend v0.1.0/go.mod h1:lInMOLtHtWJV/Alux+Bb7p9hAKek45Z6X5y2nuCAQoc=
+github.com/sneat-co/calendarius/backend v0.1.0 h1:n2tS99fRlRI4gZ6yW45Hij+uHKmhgqVve0YyhJYEsrA=
+github.com/sneat-co/calendarius/backend v0.1.0/go.mod h1:nJW3errjx92GWl+GZtWaRGtjf0jUTpGPnfIr0kM7q7c=
 github.com/sneat-co/listus/backend v0.1.0 h1:vGrJNKemDcS/fAkFKKa9qInDzNJrt3sTZB1gjEvIvkc=
 github.com/sneat-co/listus/backend v0.1.0/go.mod h1:B5jOkVPuK/ly4vjh2K4sDLNuCFPJ4f5s3Ps/cEswIhA=
 github.com/sneat-co/sneat-core-modules v0.38.58 h1:oi+kQKOGzyvUt4YotGma5wH7e2L/9uC6TKo0CmGp4+g=
