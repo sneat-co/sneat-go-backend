@@ -66,9 +66,13 @@ func TestDeleteHappeningPricesRequest_Validate(t *testing.T) {
 			HappeningRequest: validHappeningRequest(),
 			PriceIDs:         []string{"p1"},
 		}, false},
-		{"distinct_ids_treated_as_dup", DeleteHappeningPricesRequest{
+		{"distinct_ids", DeleteHappeningPricesRequest{
 			HappeningRequest: validHappeningRequest(),
 			PriceIDs:         []string{"p1", "p2"},
+		}, false},
+		{"duplicate_ids", DeleteHappeningPricesRequest{
+			HappeningRequest: validHappeningRequest(),
+			PriceIDs:         []string{"p1", "p1"},
 		}, true},
 		{"invalid_happening_request", DeleteHappeningPricesRequest{
 			HappeningRequest: HappeningRequest{},
