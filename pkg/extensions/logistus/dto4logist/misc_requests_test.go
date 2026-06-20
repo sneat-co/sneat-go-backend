@@ -3,7 +3,7 @@ package dto4logist
 import (
 	"testing"
 
-	"github.com/sneat-co/sneat-core-modules/contactus/dto4contactus"
+	"github.com/sneat-co/contactus/backend/dto4contactus"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dto4spaceus"
 	"github.com/sneat-co/sneat-go-backend/pkg/extensions/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-core/models/dbmodels"

@@ -4,7 +4,6 @@ module github.com/sneat-co/sneat-go-backend
 
 go 1.26
 
-//replace github.com/sneat-co/sneat-core-modules => ../sneat-core-modules
 //
 //replace github.com/sneat-co/sneat-go-core => ../sneat-go-core
 
@@ -26,7 +25,7 @@ require (
 	github.com/crediterra/money v0.3.1
 	github.com/dal-go/dalgo v0.62.2
 	github.com/sneat-co/calendarius/backend v0.1.0
-	github.com/sneat-co/sneat-core-modules v0.38.58
+	github.com/sneat-co/sneat-core-modules v0.38.60
 	github.com/sneat-co/sneat-go-core v0.55.4
 	github.com/stretchr/testify v1.11.1
 	github.com/strongo/logus v0.4.1
@@ -53,6 +52,7 @@ require (
 	github.com/mschoch/smat v0.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/sneat-co/assetus/backend v0.1.0
+	github.com/sneat-co/contactus/backend v0.1.0
 	github.com/sneat-co/listus/backend v0.1.0
 	github.com/strongo/analytics v0.2.5 // indirect
 	golang.org/x/crypto v0.53.0 // indirect

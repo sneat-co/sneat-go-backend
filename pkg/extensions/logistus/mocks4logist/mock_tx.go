@@ -7,7 +7,7 @@ import (
 
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/mocks/mock_dal"
-	"github.com/sneat-co/sneat-core-modules/contactus/dbo4contactus"
+	"github.com/sneat-co/contactus/backend/dbo4contactus"
 	"github.com/sneat-co/sneat-core-modules/linkage/dbo4linkage"
 	"github.com/sneat-co/sneat-go-backend/pkg/extensions/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-core/coretypes"

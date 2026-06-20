@@ -1,9 +1,9 @@
 package facade4logist
 
 import (
-	"github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
-	"github.com/sneat-co/sneat-core-modules/contactus/dto4contactus"
-	"github.com/sneat-co/sneat-core-modules/contactus/facade4contactus"
+	"github.com/sneat-co/contactus/backend/dal4contactus"
+	"github.com/sneat-co/contactus/backend/dto4contactus"
+	"github.com/sneat-co/contactus/backend/facade4contactus"
 	"github.com/sneat-co/sneat-go-backend/pkg/extensions/logistus/dto4logist"
 	"github.com/sneat-co/sneat-go-core/facade"
 	"github.com/strongo/validation"

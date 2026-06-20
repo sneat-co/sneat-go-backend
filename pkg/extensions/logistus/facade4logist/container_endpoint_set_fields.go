@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/dal-go/dalgo/dal"
-	"github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
+	"github.com/sneat-co/contactus/backend/dal4contactus"
 	"github.com/sneat-co/sneat-go-backend/pkg/extensions/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-backend/pkg/extensions/logistus/dto4logist"
 	"github.com/sneat-co/sneat-go-core/facade"

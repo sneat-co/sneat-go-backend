@@ -3,7 +3,7 @@ package facade4logist
 import (
 	"testing"
 
-	"github.com/sneat-co/sneat-core-modules/contactus/dal4contactus"
+	"github.com/sneat-co/contactus/backend/dal4contactus"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dal4spaceus"
 	"github.com/sneat-co/sneat-core-modules/spaceus/dbo4spaceus"
 	"github.com/sneat-co/sneat-go-backend/pkg/extensions/logistus/dbo4logist"
