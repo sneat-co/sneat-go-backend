@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/sneat-co/sneat-core-modules/contactus/briefs4contactus"
+	"github.com/sneat-co/sneat-core-modules/contactusmodels/briefs4contactus"
 	"github.com/sneat-co/sneat-go-backend/pkg/extensions/logistus/dbo4logist"
 	"github.com/sneat-co/sneat-go-core/coretypes"
 	dbmodels2 "github.com/sneat-co/sneat-go-core/models/dbmodels"
