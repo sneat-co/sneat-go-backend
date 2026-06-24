@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/dal-go/dalgo/update"
-	"github.com/sneat-co/sneat-core-modules/contactusmodels/briefs4contactus"
+	"github.com/sneat-co/contactus-ext/backend/contactusmodels/briefs4contactus"
 	"github.com/strongo/slice"
 	"github.com/strongo/strongoapp/with"
 	"github.com/strongo/validation"
