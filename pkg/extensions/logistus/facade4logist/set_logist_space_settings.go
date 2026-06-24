@@ -6,7 +6,7 @@ import (
 
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/update"
-	"github.com/sneat-co/sneat-core-modules/contactusmodels/briefs4contactus"
+	"github.com/sneat-co/contactus-ext/backend/contactusmodels/briefs4contactus"
 	dal4contactus2 "github.com/sneat-co/contactus/backend/dal4contactus"
 	dbo4contactus2 "github.com/sneat-co/contactus/backend/dbo4contactus"
 	dto4contactus2 "github.com/sneat-co/contactus/backend/dto4contactus"

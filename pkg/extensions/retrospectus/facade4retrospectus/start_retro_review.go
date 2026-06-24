@@ -7,7 +7,7 @@ import (
 
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/update"
-	"github.com/sneat-co/sneat-core-modules/contactusmodels/const4contactus"
+	"github.com/sneat-co/contactus-ext/backend/contactusmodels/const4contactus"
 	"github.com/sneat-co/sneat-go-backend/pkg/extensions/meetingus/facade4meetingus"
 	"github.com/sneat-co/sneat-go-backend/pkg/extensions/retrospectus/dbo4retrospectus"
 	"github.com/sneat-co/sneat-go-core/facade"

@@ -25,8 +25,9 @@ require (
 	github.com/crediterra/money v0.3.1
 	github.com/dal-go/dalgo v0.62.7
 	github.com/sneat-co/calendarius/backend v0.2.1
-	github.com/sneat-co/sneat-core-modules v0.38.61
-	github.com/sneat-co/sneat-go-core v0.55.5
+	github.com/sneat-co/contactus-ext/backend v0.1.0
+	github.com/sneat-co/sneat-core-modules v0.39.0
+	github.com/sneat-co/sneat-go-core v0.55.6
 	github.com/stretchr/testify v1.11.1
 	github.com/strongo/logus v0.4.1
 	github.com/strongo/random v0.0.1
@@ -45,14 +46,14 @@ require (
 	github.com/RoaringBitmap/roaring/v2 v2.18.2 // indirect
 	github.com/alexsergivan/transliterator v1.0.1 // indirect
 	github.com/bits-and-blooms/bitset v1.24.4 // indirect
-	github.com/bots-go-framework/bots-fw-store v0.10.3 // indirect
+	github.com/bots-go-framework/bots-fw-store v0.10.5 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gosimple/slug v1.15.0 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/mschoch/smat v0.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/sneat-co/assetus/backend v0.1.0
-	github.com/sneat-co/contactus/backend v0.1.0
+	github.com/sneat-co/contactus/backend v0.1.2
 	github.com/sneat-co/listus/backend v0.1.1
 	github.com/strongo/analytics v0.2.5 // indirect
 	golang.org/x/crypto v0.53.0 // indirect
