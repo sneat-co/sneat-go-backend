@@ -23,11 +23,11 @@ go 1.26
 
 require (
 	github.com/crediterra/money v0.3.1
-	github.com/dal-go/dalgo v0.62.7
+	github.com/dal-go/dalgo v0.62.8
 	github.com/sneat-co/calendarius/backend v0.2.1
 	github.com/sneat-co/contactus-ext/backend v0.1.0
-	github.com/sneat-co/sneat-core-modules v0.39.1
-	github.com/sneat-co/sneat-go-core v0.55.6
+	github.com/sneat-co/sneat-core-modules v0.40.0
+	github.com/sneat-co/sneat-go-core v0.57.0
 	github.com/stretchr/testify v1.11.1
 	github.com/strongo/logus v0.4.1
 	github.com/strongo/random v0.0.1
