@@ -26,7 +26,7 @@ require (
 	github.com/dal-go/dalgo v0.62.8
 	github.com/sneat-co/calendarius/backend v0.3.0
 	github.com/sneat-co/contactus-ext/backend v0.1.0
-	github.com/sneat-co/sneat-core-modules v0.42.4
+	github.com/sneat-co/sneat-core-modules v0.42.6
 	github.com/sneat-co/sneat-go-core v0.58.3
 	github.com/stretchr/testify v1.11.1
 	github.com/strongo/logus v0.4.1
@@ -52,7 +52,7 @@ require (
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/mschoch/smat v0.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/sneat-co/assetus/backend v0.2.0
+	github.com/sneat-co/assetus/backend v0.3.0
 	github.com/sneat-co/contactus/backend v0.1.2
 	github.com/sneat-co/listus/backend v0.1.1
 	github.com/strongo/analytics v0.2.5 // indirect
