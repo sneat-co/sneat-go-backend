@@ -24,15 +24,15 @@ go 1.26
 require (
 	github.com/crediterra/money v0.3.1
 	github.com/dal-go/dalgo v0.62.8
-	github.com/sneat-co/calendarius/backend v0.2.1
+	github.com/sneat-co/calendarius/backend v0.3.0
 	github.com/sneat-co/contactus-ext/backend v0.1.0
-	github.com/sneat-co/sneat-core-modules v0.39.2
-	github.com/sneat-co/sneat-go-core v0.56.0
+	github.com/sneat-co/sneat-core-modules v0.42.4
+	github.com/sneat-co/sneat-go-core v0.58.3
 	github.com/stretchr/testify v1.11.1
 	github.com/strongo/logus v0.4.1
 	github.com/strongo/random v0.0.1
 	github.com/strongo/slice v0.3.5
-	github.com/strongo/strongoapp v0.31.39
+	github.com/strongo/strongoapp v0.31.40
 	github.com/strongo/validation v0.0.9
 	go.uber.org/mock v0.6.0
 )
