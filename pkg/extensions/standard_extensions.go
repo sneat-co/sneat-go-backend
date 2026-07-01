@@ -5,7 +5,6 @@ import (
 	"github.com/sneat-co/calendarius/backend/calendariusext"
 	"github.com/sneat-co/contactus/backend/contactusext"
 	"github.com/sneat-co/listus/backend/listusext"
-	"github.com/sneat-co/requoter/backend/requoterext"
 	sneatcoremodules "github.com/sneat-co/sneat-core-modules"
 	"github.com/sneat-co/sneat-go-backend/pkg/extensions/deedus"
 	"github.com/sneat-co/sneat-go-backend/pkg/extensions/retrospectus"
@@ -14,6 +13,9 @@ import (
 	"github.com/sneat-co/sneat-go-core/extension"
 )
 
+// standardExtensions lists extensions built from public repos only.
+// sneat-go-backend is for public dev work and has no GOPRIVATE/PAT auth in CI;
+// extensions backed by private repos (e.g. requoter) must be wired into sneat-go instead.
 func standardExtensions() []extension.Config {
 	return []extension.Config{
 		assetusext.Extension(),
@@ -21,7 +23,6 @@ func standardExtensions() []extension.Config {
 		deedus.Extension(),
 		calendariusext.Extension(),
 		listusext.Extension(),
-		requoterext.Extension(),
 		retrospectus.Extension(),
 		scrumus.Extension(),
 		sportus.Extension(),
