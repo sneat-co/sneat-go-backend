@@ -26,6 +26,7 @@ require (
 	github.com/dal-go/dalgo v0.62.8
 	github.com/sneat-co/calendarius/backend v0.3.0
 	github.com/sneat-co/contactus-ext/backend v0.1.0
+	github.com/sneat-co/requoter/backend v0.1.0
 	github.com/sneat-co/sneat-core-modules v0.42.4
 	github.com/sneat-co/sneat-go-core v0.58.3
 	github.com/stretchr/testify v1.11.1
@@ -38,7 +39,6 @@ require (
 )
 
 require (
-	github.com/sneat-co/requoter/backend v0.1.0 // indirect
 	github.com/strongo/decimal v0.1.1 // indirect
 	github.com/strongo/delaying v0.2.2 // indirect
 )
